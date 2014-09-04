@@ -1,0 +1,53 @@
+#loader {
+    height: auto;
+    width: 10%;
+    display: block;
+    margin-top:150px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#loader img {
+    height:40px;
+    display:block;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#loader img:nth-child(1) {
+    position:relative;
+    left:-1px;
+
+    -webkit-animation: bounce 1s infinite;
+    -moz-animation:    bounce 1s infinite;
+    -o-animation:      bounce 1s infinite;
+    animation:         bounce 1s infinite;
+}
+
+@-webkit-keyframes bounce {
+  0%    { top : 0px;    }
+  50%   { top : 12px;   }
+  100%  { top : 0px;    }
+
+}
+@-moz-keyframes bounce {
+   0%   { top : 0px;    }
+  25%   { top : 6px;    }
+  50%   { top : 12px;   }
+  75%   { top : 6px;    }
+  100%  { top : 0px;    }
+}
+@-o-keyframes bounce {
+    0%  { top : 0px;    }
+  25%   { top : 6px;    }
+  50%   { top : 12px;   }
+  75%   { top : 6px;    }
+  100%  { top : 0px;    }
+}
+@keyframes bounce {
+    0%  { top : 0px;    }
+  25%   { top : 6px;    }
+  50%   { top : 12px;   }
+  75%   { top : 6px;    }
+  100%  { top : 0px;    }
+}
