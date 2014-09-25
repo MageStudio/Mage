@@ -213,6 +213,12 @@ core = {
 							}
 						    core.camera = new t.PerspectiveCamera( c_util.fov , util.ratio , c_util.near , c_util.far );
 						    core.renderer = new t.WebGLRenderer({alpha:false});
+						    if (config) {
+						    	if (config.cast_shadow == true) {
+						    		core.renderer.shadowMapEnabled = true;
+						    		core.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+						    	}
+						    }
 						    core.renderer.setSize( util.w , util.h );
 						    document.body.appendChild( core.renderer.domElement );
 						    /*------------------------------------------------------------------------------------------
