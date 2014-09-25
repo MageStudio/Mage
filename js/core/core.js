@@ -39,6 +39,7 @@ core = {
 		"js/lib/OBJLoader",
 		"js/lib/jquery.min",
 		"js/lib/jquery.color.min",
+		"js/lib/tween",
 		"js/lib/physi",
 		"js/lib/ammo",
 		"js/core/controls/FlyControl",
@@ -122,12 +123,18 @@ core = {
 		//requestAnimationFrame(core.render);
 
 		//updating camera if we need to do so.
+		if (core.camera._render) {
+			core.camera._render();
+		} 
 
 		setTimeout(function() {
 			if (config.physics_enabled) {
 				if (Physijs._isLoaded) {
 					core.scene.simulate();
 				}	
+			}
+			if (config.tween_enabled) {
+				TWEEN.update();
 			}
 			requestAnimationFrame(core.render);
 		}, 1000 / core.util.frameRate);
