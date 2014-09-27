@@ -1,6 +1,8 @@
 var core = {};
 
 var onCreate = function() {};
+var load = function() {};
+var preload = function() {};
 var input = function() {};
 input.keydown = function() {};
 input.keyup = function() {};
@@ -157,21 +159,7 @@ core = {
 		requirejsScript.async = false;
 		document.getElementsByTagName('head')[0].appendChild(requirejsScript);
 
-		window.onload = function() {
-
-
-			//setting up permission on whole js folder
-			//var fs = require("fs");
-			/*fs.chmodr("./*",0777, function(err) {
-				//se sono presenti errori nel settaggio dei permessi.
-				if (err) {
-					console.log(err);
-				}
-				else {
-					console.log("FILE PERMISSION OK");
-				}
-			});*/
-
+		load = function() {
 			core.main_progress_bar = document.getElementById("progress_bar");
 			requirejs(core.modules, function() {	
 				$('#loader').animate({"opacity" : "0", "margin-top" : "250px"}, 1000 , function () {
@@ -280,6 +268,10 @@ core = {
 				});
 			});			
 		};
+		window.onload = function() {
+			preload();
+			load();
+		}
 		window.onresize = function() {
 
 			core.util.h 	= window.innerHeight;
