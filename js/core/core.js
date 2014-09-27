@@ -269,8 +269,9 @@ core = {
 			});			
 		};
 		window.onload = function() {
-			preload();
-			load();
+			preload(function() {
+				load();
+			});
 		}
 		window.onresize = function() {
 
