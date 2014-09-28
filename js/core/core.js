@@ -1,11 +1,12 @@
 var core = {};
 
-var onCreate = function() {};
-var load = function() {};
-var preload = function() {};
-var input = function() {};
-input.keydown = function() {};
-input.keyup = function() {};
+var onCreate 			= function() {};
+var load 				= function() {};
+var preload 			= function() {};
+var progressAnimation	= function() {};
+var input 				= function() {};
+input.keydown 			= function() {};
+input.keyup 			= function() {};
 
 var _util = {
 	log_types : {
@@ -39,7 +40,6 @@ core = {
 	modules : [
 		"js/lib/underscore",
 		"js/lib/OBJLoader",
-		"js/lib/jquery.min",
 		"js/lib/jquery.color.min",
 		"js/lib/tween",
 		"js/lib/physi",
@@ -159,114 +159,117 @@ core = {
 		requirejsScript.async = false;
 		document.getElementsByTagName('head')[0].appendChild(requirejsScript);
 
+		var createScene = function () {
+			//this is like having imports.
+			core.threeLib = THREE;
+			var c_util 	= core.util.camera; //camera util
+			var util 	= core.util;
+			var t 		= core.threeLib;
+
+			try{
+				//l("about to create new scene");
+				//configuring threejs and physijs
+				if (config) {
+					l("config loaded");
+					if (config.physics_enabled) {
+						l("physics enabled.");
+						try {
+							Physijs.scripts.worker = '/js/lib/workers/physijs_worker.js';
+							Physijs.scripts.ammo = '/js/lib/ammo.js';
+							core.scene = new Physijs.Scene();
+							Physijs._isLoaded = true;
+						} catch (ex) {
+							l("something bad trying to create physijs scene", "e");
+							l(ex);
+							Physijs._isLoaded = false;
+							core.scene = new t.Scene();
+						}
+					} else {
+						l("physics not enabled.");
+						Physijs._isLoaded = false;
+						core.scene = new t.Scene();	
+					}
+				} else {
+					l("config not loaded, switching to three.js");
+					Physijs._isLoaded = false;
+					core.scene = new t.Scene();
+				}
+			    core.camera = new t.PerspectiveCamera( c_util.fov , util.ratio , c_util.near , c_util.far );
+			    core.renderer = new t.WebGLRenderer({alpha:false});
+			    if (config) {
+			    	if (config.cast_shadow == true) {
+			    		core.renderer.shadowMapEnabled = true;
+			    		core.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+			    	}
+			    }
+			    core.renderer.setSize( util.w , util.h );
+			    document.body.appendChild( core.renderer.domElement );
+			    /*------------------------------------------------------------------------------------------
+					
+					trying to retrieve user input. from keyboard, mouse and joystick.
+					we're going to add leap motion as available controller.
+
+			    ------------------------------------------------------------------------------------------*/
+
+
+				if ((User.handleUserInput instanceof Function ) && (User.handleUserInput)) {
+					User.handleUserInput();
+				} 
+
+		    	/*------------------------------------------------------------------------------------------
+
+					now we are going to check our game state. using game.updateGame() function.
+
+				------------------------------------------------------------------------------------------*/
+
+				if ((Game.updateGame instanceof Function )&&(Game.updateGame)) {
+					Game.updateGame();
+				}
+
+			    /*------------------------------------------------------------------------------------------
+			    
+			    	now it's time to add elements to my scene.
+			    	we must handle a "universe" object that will know the exact number of elements to be
+			    	drawn on our screen. each object must have a method called : 'render()' so that
+			   		every universe object will be rendered automatically.
+
+			    ------------------------------------------------------------------------------------------*/
+
+				if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
+					Universe.updateUniverse();
+				}
+
+			   	/*------------------------------------------------------------------------------------------
+					
+					we can now launch our render function.
+
+			   	------------------------------------------------------------------------------------------*/
+			   	Control.init();
+			   	core.render();
+
+			    //we are pretty sure we can add stuff to our universe
+				if (onCreate instanceof Function) {
+					onCreate();
+				} else {
+					console.log("Something wrong in your onCreate method");
+				}
+
+			} catch( error ) {
+
+			//	console.log("ERROR OCCURRED while trying to create scene: " + error );
+			} 
+
+		}
+
 		load = function() {
 			core.main_progress_bar = document.getElementById("progress_bar");
-			requirejs(core.modules, function() {	
-				$('#loader').animate({"opacity" : "0", "margin-top" : "250px"}, 1000 , function () {
-					$('#loader').remove();	
-					$('body').animate({backgroundColor : "#fff"}, 200 , function () {
-						//this is like having imports.
-						core.threeLib = THREE;
-						var c_util 	= core.util.camera; //camera util
-						var util 	= core.util;
-						var t 		= core.threeLib;
-
-						//try{
-							//l("about to create new scene");
-							//configuring threejs and physijs
-							if (config) {
-								l("config loaded");
-								if (config.physics_enabled) {
-									l("physics enabled.");
-									try {
-										Physijs.scripts.worker = '/js/lib/workers/physijs_worker.js';
-    									Physijs.scripts.ammo = '/js/lib/ammo.js';
-										core.scene = new Physijs.Scene();
-										Physijs._isLoaded = true;
-									} catch (ex) {
-										l("something bad trying to create physijs scene", "e");
-										l(ex);
-    									Physijs._isLoaded = false;
-										core.scene = new t.Scene();
-									}
-								} else {
-									l("physics not enabled.");
-									Physijs._isLoaded = false;
-									core.scene = new t.Scene();	
-								}
-							} else {
-								l("config not loaded, switching to three.js");
-								Physijs._isLoaded = false;
-								core.scene = new t.Scene();
-							}
-						    core.camera = new t.PerspectiveCamera( c_util.fov , util.ratio , c_util.near , c_util.far );
-						    core.renderer = new t.WebGLRenderer({alpha:false});
-						    if (config) {
-						    	if (config.cast_shadow == true) {
-						    		core.renderer.shadowMapEnabled = true;
-						    		core.renderer.shadowMapType = THREE.PCFSoftShadowMap;
-						    	}
-						    }
-						    core.renderer.setSize( util.w , util.h );
-						    document.body.appendChild( core.renderer.domElement );
-						    /*------------------------------------------------------------------------------------------
-								
-								trying to retrieve user input. from keyboard, mouse and joystick.
-								we're going to add leap motion as available controller.
-
-						    ------------------------------------------------------------------------------------------*/
-
-
-							if ((User.handleUserInput instanceof Function ) && (User.handleUserInput)) {
-								User.handleUserInput();
-							} 
-
-					    	/*------------------------------------------------------------------------------------------
-
-								now we are going to check our game state. using game.updateGame() function.
-
-							------------------------------------------------------------------------------------------*/
-
-							if ((Game.updateGame instanceof Function )&&(Game.updateGame)) {
-								Game.updateGame();
-							}
-
-						    /*------------------------------------------------------------------------------------------
-						    
-						    	now it's time to add elements to my scene.
-						    	we must handle a "universe" object that will know the exact number of elements to be
-						    	drawn on our screen. each object must have a method called : 'render()' so that
-						   		every universe object will be rendered automatically.
-
-						    ------------------------------------------------------------------------------------------*/
-
-							if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
-								Universe.updateUniverse();
-							}
-
-						   	/*------------------------------------------------------------------------------------------
-								
-								we can now launch our render function.
-
-						   	------------------------------------------------------------------------------------------*/
-						   	Control.init();
-						   	core.render();
-
-						    //we are pretty sure we can add stuff to our universe
-							if (onCreate instanceof Function) {
-								onCreate();
-							} else {
-								console.log("Something wrong in your onCreate method");
-							}
-
-						//} catch( error ) {
-
-						//	console.log("ERROR OCCURRED while trying to create scene: " + error );
-						//} 
-
-					});	
-				});
-			});			
+			if (!(typeof progressAnimation == "function")) {
+				progressAnimation = function(callback) {
+					console.log("def progressAnimation");
+					callback();
+				}
+			}
+			requirejs(core.modules, progressAnimation(createScene));			
 		};
 		window.onload = function() {
 			preload(function() {
