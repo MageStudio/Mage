@@ -44,7 +44,7 @@ core = {
 		"js/lib/tween",
 		"js/lib/physi",
 		"js/lib/ammo",
-		"js/core/util/classy"
+		"js/core/util/classy",
 		"js/core/controls/FlyControl",
 		"js/core/controls/PointerLockControls",
 		"js/core/game",
@@ -204,7 +204,8 @@ core = {
 			    	}
 			    }
 			    core.renderer.setSize( util.w , util.h );
-			    document.body.appendChild( core.renderer.domElement );
+			    //document.body.appendChild( core.renderer.domElement );
+			    document.getElementById("gameContainer").appendChild(core.renderer.domElement);
 			    /*------------------------------------------------------------------------------------------
 					
 					trying to retrieve user input. from keyboard, mouse and joystick.
