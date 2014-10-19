@@ -2,7 +2,7 @@ var core = {};
 
 var onCreate 			= function() {};
 var load 				= function() {};
-var preload 			= function() {};
+var preload 			= function(callback) {callback();};
 var progressAnimation	= function() {};
 var input 				= function() {};
 input.keydown 			= function() {};
@@ -195,30 +195,30 @@ core = {
 					Physijs._isLoaded = false;
 					core.scene = new t.Scene();
 				}
-			    core.camera = new t.PerspectiveCamera( c_util.fov , util.ratio , c_util.near , c_util.far );
-			    core.renderer = new t.WebGLRenderer({alpha:false});
-			    if (config) {
-			    	if (config.cast_shadow == true) {
-			    		core.renderer.shadowMapEnabled = true;
-			    		core.renderer.shadowMapType = THREE.PCFSoftShadowMap;
-			    	}
-			    }
-			    core.renderer.setSize( util.w , util.h );
-			    //document.body.appendChild( core.renderer.domElement );
-			    document.getElementById("gameContainer").appendChild(core.renderer.domElement);
-			    /*------------------------------------------------------------------------------------------
+				core.camera = new t.PerspectiveCamera( c_util.fov , util.ratio , c_util.near , c_util.far );
+				core.renderer = new t.WebGLRenderer({alpha:false});
+				if (config) {
+					if (config.cast_shadow == true) {
+						core.renderer.shadowMapEnabled = true;
+						core.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+					}
+				}
+				core.renderer.setSize( util.w , util.h );
+				//document.body.appendChild( core.renderer.domElement );
+				document.getElementById("gameContainer").appendChild(core.renderer.domElement);
+				/*------------------------------------------------------------------------------------------
 					
 					trying to retrieve user input. from keyboard, mouse and joystick.
 					we're going to add leap motion as available controller.
 
-			    ------------------------------------------------------------------------------------------*/
+				------------------------------------------------------------------------------------------*/
 
 
 				if ((User.handleUserInput instanceof Function ) && (User.handleUserInput)) {
 					User.handleUserInput();
 				} 
 
-		    	/*------------------------------------------------------------------------------------------
+				/*------------------------------------------------------------------------------------------
 
 					now we are going to check our game state. using game.updateGame() function.
 
@@ -228,28 +228,28 @@ core = {
 					Game.updateGame();
 				}
 
-			    /*------------------------------------------------------------------------------------------
-			    
-			    	now it's time to add elements to my scene.
-			    	we must handle a "universe" object that will know the exact number of elements to be
-			    	drawn on our screen. each object must have a method called : 'render()' so that
-			   		every universe object will be rendered automatically.
+				/*------------------------------------------------------------------------------------------
+				
+					now it's time to add elements to my scene.
+					we must handle a "universe" object that will know the exact number of elements to be
+					drawn on our screen. each object must have a method called : 'render()' so that
+					every universe object will be rendered automatically.
 
-			    ------------------------------------------------------------------------------------------*/
+				------------------------------------------------------------------------------------------*/
 
 				if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
 					Universe.updateUniverse();
 				}
 
-			   	/*------------------------------------------------------------------------------------------
+				/*------------------------------------------------------------------------------------------
 					
 					we can now launch our render function.
 
-			   	------------------------------------------------------------------------------------------*/
-			   	Control.init();
-			   	core.render();
+				------------------------------------------------------------------------------------------*/
+				Control.init();
+				core.render();
 
-			    //we are pretty sure we can add stuff to our universe
+				//we are pretty sure we can add stuff to our universe
 				if (onCreate instanceof Function) {
 					onCreate();
 				} else {
@@ -265,6 +265,7 @@ core = {
 
 		load = function() {
 			core.main_progress_bar = document.getElementById("progress_bar");
+			console.log("inside load");
 			if (!(typeof progressAnimation == "function")) {
 				progressAnimation = function(callback) {
 					console.log("def progressAnimation");
@@ -274,6 +275,7 @@ core = {
 			requirejs(core.modules, progressAnimation(createScene));			
 		};
 		window.onload = function() {
+			console.log("inside window onload");
 			preload(function() {
 				load();
 			});
