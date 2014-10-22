@@ -44,7 +44,6 @@ core = {
 		"js/lib/tween",
 		"js/lib/physi",
 		"js/lib/ammo",
-		"js/core/util/classy",
 		"js/core/controls/FlyControl",
 		"js/core/controls/PointerLockControls",
 		"js/core/game",
