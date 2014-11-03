@@ -48,3 +48,10 @@ __class__.prototype._setMethods = function() {
 function __upperCaseFirstLetter__ (s) {
 	return (s.length > 2) ? s[0].toUpperCase() + s.substring(1, s.length) : s.toUpperCase();
 }
+
+function include(scriptname) {
+	var s = document.createElement("script");
+	s.src = scriptname+".js";
+	s.async = false;
+	document.getElementsByTagName('head')[0].appendChild(s);
+}

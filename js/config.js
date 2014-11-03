@@ -1,7 +1,13 @@
 var config = {};
 
 config = {
-	physics_enabled : false,
+	physics_enabled : true,
 	tween_enabled : true,
-	cast_shadow : false
+	cast_shadow : true,
+	camera : {
+		fov: 40, 
+		ratio: (window.innerWidth / window.innerHeight), 
+		near: 1, 
+		far: 3000
+	}
 };

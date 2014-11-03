@@ -44,6 +44,7 @@ core = {
 		"js/lib/tween",
 		"js/lib/physi",
 		"js/lib/ammo",
+		"js/core/util/classy",
 		"js/core/controls/FlyControl",
 		"js/core/controls/PointerLockControls",
 		"js/core/game",
@@ -194,7 +195,16 @@ core = {
 					Physijs._isLoaded = false;
 					core.scene = new t.Scene();
 				}
-				core.camera = new t.PerspectiveCamera( c_util.fov , util.ratio , c_util.near , c_util.far );
+				var fov = c_util.fov, ratio = util.ratio, near = c_util.near, far = c_util.far;
+				if (config) {
+					if (config.camera) {
+						fov = config.camera.fov ? config.camera.fov : fov;
+						ratio = config.camera.ratio ? config.camera.ratio : ratio;
+						near = config.camera.near ? config.camera.near : near;
+						far = config.camera.far ? config.camera.far : far;
+					}
+				}
+				core.camera = new t.PerspectiveCamera(fov, ratio ,near, far );
 				core.renderer = new t.WebGLRenderer({alpha:false});
 				if (config) {
 					if (config.cast_shadow == true) {
@@ -256,7 +266,7 @@ core = {
 				}
 
 			} catch( error ) {
-
+				console.err(error);
 			//	console.log("ERROR OCCURRED while trying to create scene: " + error );
 			} 
 
