@@ -5,9 +5,9 @@ config = {
 	tween_enabled : true,
 	cast_shadow : true,
 	camera : {
-		fov: 40, 
+		fov: 45, 
 		ratio: (window.innerWidth / window.innerHeight), 
 		near: 1, 
-		far: 3000
+		far: 5000
 	}
 };

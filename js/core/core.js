@@ -1,12 +1,42 @@
+/////////////////
+// TWEEN CLASS //
+/////////////////
+
+function ParticleTween(timeArray, valueArray)
+{
+	this.times  = timeArray || [];
+	this.values = valueArray || [];
+}
+
+ParticleTween.prototype.lerp = function(t)
+{
+	var i = 0;
+	var n = this.times.length;
+	while (i < n && t > this.times[i])  
+		i++;
+	if (i == 0) return this.values[0];
+	if (i == n)	return this.values[n-1];
+	var p = (t - this.times[i-1]) / (this.times[i] - this.times[i-1]);
+	if (this.values[0] instanceof THREE.Vector3)
+		return this.values[i-1].clone().lerp( this.values[i], p );
+	else // its a float
+		return this.values[i-1] + p * (this.values[i] - this.values[i-1]);
+}
+
 var core = {};
 
-var onCreate 			= function() {};
-var load 				= function() {};
-var preload 			= function(callback) {callback();};
-var progressAnimation	= function() {};
-var input 				= function() {};
-input.keydown 			= function() {};
-input.keyup 			= function() {};
+var onCreate = function() {};
+var load = function() {};
+var preload = function(callback) {callback();};
+var progressAnimation = function(callback) {
+	$('#loader').animate({"opacity" : "0", "margin-top" : "250px"}, 1000 , function () {
+		$('#loader').remove();	
+		$('body').animate({backgroundColor : "#fff"}, 200 , callback);
+	});
+}
+var input = function() {};
+input.keydown = function() {};
+input.keyup = function() {};
 
 var _util = {
 	log_types : {
@@ -44,6 +74,8 @@ core = {
 		"js/lib/tween",
 		"js/lib/physi",
 		"js/lib/ammo",
+		"js/lib/ParticleEngine",
+		"js/lib/ParticleEngineExamples",
 		"js/core/util/classy",
 		"js/core/controls/FlyControl",
 		"js/core/controls/PointerLockControls",
@@ -51,7 +83,8 @@ core = {
 		"js/core/universe",
 		"js/core/user",
 		"js/core/control",
-		"js/core/gui"
+		"js/core/gui",
+		"app/main"
 	],
 
 	util : {
@@ -79,6 +112,8 @@ core = {
 	//debug mode
 	debug : true,
 
+	clock : new THREE.Clock(),
+
 	//first thing that will be called.
 	//this is to create s new black scene
 	render : function () {
@@ -89,9 +124,9 @@ core = {
 
 		------------------------------------------------------------------------------------------*/
 		
-		if ((User.handleUserInput instanceof Function ) && (User.handleUserInput)) {
-			User.handleUserInput();
-		}
+		//if ((User.handleUserInput instanceof Function ) && (User.handleUserInput)) {
+			setTimeout(User.handleUserInput, 0);
+		//}
 
 		/*------------------------------------------------------------------------------------------
 
@@ -99,9 +134,9 @@ core = {
 
 		------------------------------------------------------------------------------------------*/
 
-		if ((Game.updateGame instanceof Function )&&(Game.updateGame)) {
-			Game.updateGame();
-		}
+		//if ((Game.updateGame instanceof Function )&&(Game.updateGame)) {
+			setTimeout(Game.updateGame, 0);
+		//}
 
 		/*------------------------------------------------------------------------------------------
 
@@ -111,16 +146,16 @@ core = {
 
 		------------------------------------------------------------------------------------------*/
 		
-		if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
-			Universe.updateUniverse();
-		}
+		//if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
+			setTimeout(Universe.updateUniverse, 0);
+		//}
 
 		//update our control updater
-		if (Control.update) {
+		//if (Control.update) {
 
-			Control.update();
+			setTimeout(Control.update, 0);
 
-		}
+		//}
 
 		//l("inside render function");
 		//requestAnimationFrame(core.render);
@@ -149,6 +184,11 @@ core = {
 		//method to be called when creating a new element
 		core.scene.add(element);
 		Universe.universe.put(element.uuid, element);
+	},
+
+	remove : function(element) {
+		core.scene.remove(element);
+		Universe.universe.remove(element.uuid);
 	},
 
 	main_progress_bar : undefined,
