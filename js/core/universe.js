@@ -180,7 +180,12 @@
 						//_.defer(o._render);
 						//console.log(o._render);
 						if (o._render) {
-							o._render(core.clock.getDelta());
+							//o._render(core.clock.getDelta());
+							with(o) {
+								setTimeout(function() {
+									_render(core.clock.getDelta());
+								}, 0);
+							}
 						}
 						/*setTimeout(function() {
 							var o = Universe.universe.get(keys_list.shift());

@@ -1,6 +1,6 @@
 (function() {
 	window.Game = {};
-	Game.updateGame = function() {
+	Game.update = function() {
 		//console.log("inside old updateGame");
 	};
 })();
