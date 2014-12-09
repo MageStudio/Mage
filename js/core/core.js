@@ -28,6 +28,7 @@ var core = {};
 var onCreate = function() {};
 var load = function() {};
 var preload = function(callback) {callback();};
+var prepareScene = function() {};
 var progressAnimation = function(callback) {
 	$('#loader').animate({"opacity" : "0", "margin-top" : "250px"}, 1000 , function () {
 		$('#loader').remove();	
@@ -330,6 +331,7 @@ core = {
 		window.onload = function() {
 			console.log("inside window onload");
 			preload(function() {
+				prepareScene();
 				load();
 			});
 		}
