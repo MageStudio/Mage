@@ -59,6 +59,9 @@ var windowHalfY = window.innerHeight / 2;
 var CAMERA_MAX_Z = 1000, CAMERA_MIN_Z = 250;
 
 function onCreate() {
+
+	//add your code HERE
+
 	console.log("Inside onCreate method");
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.addEventListener( 'touchstart', onDocumentTouchStart, false );
