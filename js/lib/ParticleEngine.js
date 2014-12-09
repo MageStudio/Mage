@@ -390,7 +390,9 @@ ParticleEngine.prototype.update = function(dt)
 
 	// stop emitter?
 	this.emitterAge += dt;
-	if ( this.emitterAge > this.emitterDeathAge )  this.emitterAlive = false;
+	if (!this.repeat) {
+		if ( this.emitterAge > this.emitterDeathAge )  this.emitterAlive = false;
+	}
 }
 
 ParticleEngine.prototype.destroy = function()

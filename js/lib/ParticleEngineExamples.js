@@ -328,8 +328,8 @@ ParticleEngineModels =
     candle :
 	{
 		positionStyle  : Type.SPHERE,
-		positionBase   : new THREE.Vector3( 0, 50, 0 ),
-		positionRadius : 2,
+		positionBase   : new THREE.Vector3( 0, 0, 0 ),
+		positionRadius : 1,
 		
 		velocityStyle  : Type.CUBE,
 		velocityBase   : new THREE.Vector3(0,100,0),
@@ -342,9 +342,11 @@ ParticleEngineModels =
 		colorTween   : new ParticleTween( [0.5, 1.0], [ new THREE.Vector3(0.02, 1, 0.5), new THREE.Vector3(0.05, 1, 0) ] ),
 		blendStyle : THREE.AdditiveBlending,  
 		
-		particlesPerSecond : 100,
+		particlesPerSecond : 20,
 		particleDeathAge   : 1.5,		
-		emitterDeathAge    : 60
+		emitterDeathAge    : 60,
+
+		repeat : true
 	}
 	
 }

@@ -24,6 +24,7 @@
 		worker : undefined,
 
 		init : (function(){
+			console.log("inside univers init");
 			/*------------------------------------------------------------------------------------------
 
 				this is an auto-call method. it will initialize our object map
@@ -79,12 +80,12 @@
 			//shader ha bisogno di uniforms
 
 
-		    var material = new THREE.ShaderMaterial( {
-		    	uniforms: { 
+			var material = new THREE.ShaderMaterial( {
+				uniforms: { 
 					tExplosion: { 
 					  type: "t", 
 					  value: THREE.ImageUtils.loadTexture( 'img/explosion.png' , {}, function(t) {
-					  	console.log(t);
+						console.log(t);
 					  })
 					},
 					time: { 
@@ -92,24 +93,24 @@
 					  value: 0.0 
 					}
 				},
-			    vertexShader: document.getElementById( 'vertexShader' ).textContent,
-			    fragmentShader: document.getElementById( 'fragmentShader' ).textContent
+				vertexShader: document.getElementById( 'vertexShader' ).textContent,
+				fragmentShader: document.getElementById( 'fragmentShader' ).textContent
 			} );
-		     
-		    // create a sphere and assign the material
-		    var mesh = new THREE.Mesh( 
-		        new THREE.IcosahedronGeometry( 20, 4 ), 
-		        material 
-		    );
+			 
+			// create a sphere and assign the material
+			var mesh = new THREE.Mesh( 
+				new THREE.IcosahedronGeometry( 20, 4 ), 
+				material 
+			);
 
-		    mesh.start_time = Date.now();
+			mesh.start_time = Date.now();
 
-		    mesh.auto_render = function() {
+			mesh.auto_render = function() {
 
-		    	this.material.uniforms[ 'time' ].value = .00025 * ( Date.now() - this.start_time);
-		    }
-		    core.scene.add( mesh );
-		    Universe.universe.put(mesh.uuid, mesh);
+				this.material.uniforms[ 'time' ].value = .00025 * ( Date.now() - this.start_time);
+			}
+			core.scene.add( mesh );
+			Universe.universe.put(mesh.uuid, mesh);
 
 		},
 
@@ -121,8 +122,8 @@
 
 
 			var planet = new THREE.Mesh(geometry, material);
-	      	
-	      	planet.position.x = 0;
+			
+			planet.position.x = 0;
 			planet.position.y = 0;
 			planet.position.z = 0;
 
@@ -170,26 +171,32 @@
 			------------------------------------------------------------------------------------------*/
 			var keys_list = Universe.universe.keys.concat();   //create a clone of the original
 			if (keys_list.length != 0) {
-			    setTimeout(function(){
+				//setTimeout(function(){
+					var start = +new Date();
+					do {
+						//console.log(new Date() - start);
+						var o = Universe.universe.get(keys_list.shift());
+						//console.log(o);
+						//_.defer(o._render);
+						//console.log(o._render);
+						if (o._render) {
+							o._render(core.clock.getDelta());
+						}
+						/*setTimeout(function() {
+							var o = Universe.universe.get(keys_list.shift());
+							console.log("CULO");
+							//o._render(o, core.clock.getDelta());
+						}, 0);*/
+						//Universe.performUpdate(keys_list.shift());
+					} while (keys_list.length > 0 && (+new Date() - start < 50));
 
-			        var start = +new Date();
-
-			        do {
-			        	//console.log(new Date() - start);
-			        	var o = Universe.universe.get(keys_list.shift());
-			        	if (o._render) {
-			        		setTimeout(o._render, 0);
-			        	}
-			        	//Universe.performUpdate(keys_list.shift());
-			        } while (keys_list.length > 0 && (+new Date() - start < 50));
-
-			        //if (todo.length > 0){
-			        //    setTimeout(arguments.callee, 0);
-			        //} else {
-			            //callback(items);
-			            //l("ho finito di eseguire il render"),
-			        //}
-			    }, 0);
+					//if (todo.length > 0){
+					//    setTimeout(arguments.callee, 0);
+					//} else {
+						//callback(items);
+						//l("ho finito di eseguire il render"),
+					//}
+				//}, 0);
 			}	
 			//Universe.performUpdate();
 		},

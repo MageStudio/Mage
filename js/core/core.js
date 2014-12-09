@@ -34,6 +34,7 @@ var progressAnimation = function(callback) {
 		$('body').animate({backgroundColor : "#fff"}, 200 , callback);
 	});
 }
+var customRender = function() {};
 var input = function() {};
 input.keydown = function() {};
 input.keyup = function() {};
@@ -77,14 +78,14 @@ core = {
 		"js/lib/ParticleEngine",
 		"js/lib/ParticleEngineExamples",
 		"js/core/util/classy",
+		"js/core/util/colors",
 		"js/core/controls/FlyControl",
 		"js/core/controls/PointerLockControls",
 		"js/core/game",
 		"js/core/universe",
 		"js/core/user",
 		"js/core/control",
-		"js/core/gui",
-		"app/main"
+		"js/core/gui"
 	],
 
 	util : {
@@ -147,7 +148,8 @@ core = {
 		------------------------------------------------------------------------------------------*/
 		
 		//if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
-			setTimeout(Universe.updateUniverse, 0);
+			//setTimeout(Universe.updateUniverse, 0);
+			Universe.updateUniverse();
 		//}
 
 		//update our control updater
@@ -176,8 +178,10 @@ core = {
 			}
 			requestAnimationFrame(core.render);
 		}, 1000 / core.util.frameRate);
+		core.renderer.autoClear = false;
+		core.renderer.clear();
+		customRender();
 		core.renderer.render(core.scene, core.camera);
-
 	},
 
 	add : function(element) {
@@ -263,9 +267,9 @@ core = {
 				------------------------------------------------------------------------------------------*/
 
 
-				if ((User.handleUserInput instanceof Function ) && (User.handleUserInput)) {
+				//if ((User.handleUserInput instanceof Function ) && (User.handleUserInput)) {
 					User.handleUserInput();
-				} 
+				//} 
 
 				/*------------------------------------------------------------------------------------------
 
@@ -273,9 +277,9 @@ core = {
 
 				------------------------------------------------------------------------------------------*/
 
-				if ((Game.updateGame instanceof Function )&&(Game.updateGame)) {
+				//if ((Game.updateGame instanceof Function )&&(Game.updateGame)) {
 					Game.updateGame();
-				}
+				//}
 
 				/*------------------------------------------------------------------------------------------
 				
@@ -286,9 +290,9 @@ core = {
 
 				------------------------------------------------------------------------------------------*/
 
-				if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
+				//if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
 					Universe.updateUniverse();
-				}
+				//}
 
 				/*------------------------------------------------------------------------------------------
 					
@@ -306,7 +310,7 @@ core = {
 				}
 
 			} catch( error ) {
-				console.err(error);
+				console.log(error);
 			//	console.log("ERROR OCCURRED while trying to create scene: " + error );
 			} 
 
