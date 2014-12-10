@@ -292,7 +292,7 @@ core = {
 				------------------------------------------------------------------------------------------*/
 
 				//if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
-					Universe.updateUniverse();
+					Universe.update();
 				//}
 
 				/*------------------------------------------------------------------------------------------
