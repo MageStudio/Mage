@@ -137,7 +137,7 @@ core = {
 		------------------------------------------------------------------------------------------*/
 
 		//if ((Game.updateGame instanceof Function )&&(Game.updateGame)) {
-			setTimeout(Game.updateGame, 0);
+			setTimeout(Game.update, 0);
 		//}
 
 		/*------------------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ core = {
 		
 		//if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
 			//setTimeout(Universe.updateUniverse, 0);
-			Universe.updateUniverse();
+			Universe.update();
 		//}
 
 		//update our control updater
