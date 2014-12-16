@@ -86,7 +86,11 @@ core = {
 		"js/core/universe",
 		"js/core/user",
 		"js/core/control",
-		"js/core/gui"
+		"js/core/gui",
+		//loading entities
+		"js/core/entities/entity",
+		"js/core/entities/camera",
+		"js/core/entities/mesh"
 	],
 
 	util : {
@@ -125,21 +129,13 @@ core = {
 			we are going to use our universe object to handle every updates.
 
 		------------------------------------------------------------------------------------------*/
-		
-		//if ((User.handleUserInput instanceof Function ) && (User.handleUserInput)) {
-			setTimeout(User.handleUserInput, 0);
-		//}
-
+		setTimeout(User.handleUserInput, 0);
 		/*------------------------------------------------------------------------------------------
 
 			now we are going to check our game state. using game.updateGame() function.
 
 		------------------------------------------------------------------------------------------*/
-
-		//if ((Game.updateGame instanceof Function )&&(Game.updateGame)) {
-			setTimeout(Game.update, 0);
-		//}
-
+		setTimeout(Game.update, 0);
 		/*------------------------------------------------------------------------------------------
 
 			it's now time to perform our scene render.
@@ -147,26 +143,17 @@ core = {
 			erase elements and set our world just before render.
 
 		------------------------------------------------------------------------------------------*/
-		
-		//if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
-			//setTimeout(Universe.updateUniverse, 0);
-			Universe.update();
-		//}
-
-		//update our control updater
-		//if (Control.update) {
-
-			setTimeout(Control.update, 0);
-
-		//}
-
-		//l("inside render function");
-		//requestAnimationFrame(core.render);
+		Universe.update();
+		setTimeout(Control.update, 0);
 
 		//updating camera if we need to do so.
-		if (core.camera._render) {
-			core.camera._render();
-		} 
+		if (core.camera.update) {
+			with(core.camera) {
+				setTimeout(function() {
+					update(core.clock.getDelta());
+				}, 0);
+			}
+		}
 
 		setTimeout(function() {
 			if (config.physics_enabled) {
@@ -182,7 +169,7 @@ core = {
 		core.renderer.autoClear = false;
 		core.renderer.clear();
 		customRender();
-		core.renderer.render(core.scene, core.camera);
+		core.renderer.render(core.scene, core.camera.object);
 	},
 
 	add : function(element) {
@@ -241,16 +228,21 @@ core = {
 					Physijs._isLoaded = false;
 					core.scene = new t.Scene();
 				}
-				var fov = c_util.fov, ratio = util.ratio, near = c_util.near, far = c_util.far;
+				var cameraOptions = {
+					fov : c_util.fov,
+					ratio : util.ratio,
+					near : c_util.near,
+					far : c_util.far
+				};
 				if (config) {
 					if (config.camera) {
-						fov = config.camera.fov ? config.camera.fov : fov;
-						ratio = config.camera.ratio ? config.camera.ratio : ratio;
-						near = config.camera.near ? config.camera.near : near;
-						far = config.camera.far ? config.camera.far : far;
+						cameraOptions.fov = config.camera.fov ? config.camera.fov : cameraOptions.fov;
+						cameraOptions.ratio = config.camera.ratio ? config.camera.ratio : cameraOptions.ratio;
+						cameraOptions.near = config.camera.near ? config.camera.near : cameraOptions.near;
+						cameraOptions.far = config.camera.far ? config.camera.far : cameraOptions.far;
 					}
 				}
-				core.camera = new t.PerspectiveCamera(fov, ratio ,near, far );
+				core.camera = new Camera(cameraOptions);
 				core.renderer = new t.WebGLRenderer({alpha:false});
 				if (config) {
 					if (config.cast_shadow == true) {
@@ -267,22 +259,13 @@ core = {
 					we're going to add leap motion as available controller.
 
 				------------------------------------------------------------------------------------------*/
-
-
-				//if ((User.handleUserInput instanceof Function ) && (User.handleUserInput)) {
-					User.handleUserInput();
-				//} 
-
+				User.handleUserInput();
 				/*------------------------------------------------------------------------------------------
 
 					now we are going to check our game state. using game.updateGame() function.
 
 				------------------------------------------------------------------------------------------*/
-
-				//if ((Game.updateGame instanceof Function )&&(Game.updateGame)) {
-					Game.update();
-				//}
-
+				Game.update();
 				/*------------------------------------------------------------------------------------------
 				
 					now it's time to add elements to my scene.
@@ -291,11 +274,7 @@ core = {
 					every universe object will be rendered automatically.
 
 				------------------------------------------------------------------------------------------*/
-
-				//if ((Universe.updateUniverse instanceof Function)&&(Universe.updateUniverse)) {
-					Universe.update();
-				//}
-
+				Universe.update();
 				/*------------------------------------------------------------------------------------------
 					
 					we can now launch our render function.
@@ -313,9 +292,7 @@ core = {
 
 			} catch( error ) {
 				console.log(error);
-			//	console.log("ERROR OCCURRED while trying to create scene: " + error );
-			} 
-
+			}
 		}
 
 		load = function() {
@@ -342,8 +319,8 @@ core = {
 			core.util.w 	= window.innerWidth;
 			core.util.ratio = core.util.w/core.util.h;
 
-			core.camera.aspect = core.util.ratio;
-			core.camera.updateProjectionMatrix();
+			core.camera.object.aspect = core.util.ratio;
+			core.camera.object.updateProjectionMatrix();
 			core.renderer.setSize(core.util.w, core.util.h);
 
 		};

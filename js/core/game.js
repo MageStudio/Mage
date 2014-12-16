@@ -25,46 +25,4 @@
 		});
 	}
 	Game.scripts = {};
-
-	/**************************************************
-		MESH CLASS
-	**************************************************/
-
-	Class("Mesh", {
-		Mesh : function(geometry, material, options) {
-			this.geometry = geometry;
-			this.material = material;
-			this.script = {};
-			this.hasScript = false;
-
-			this.mesh = new THREE.Mesh(geometry, material);
-			//adding to core
-			core.add(this);
-
-			if (options) {
-				//do something with options
-				for (var o in options) {
-					this[o] = options[o];
-					if (o == "script") {
-						this.hasScript = true;
-						var dir = Game.SCRIPTS_DIR + (options.dir || "");
-						if (dir[dir.length - 1] != "/") {
-							dir += "/"; //adding dir separator if we forgot it
-						}
-						this.__attachScript(options[o], dir);
-					}
-				}
-			}
-		},
-
-		__attachScript : function(scriptname, dir) {
-			Game.attachScriptToObject(this, scriptname, dir);
-		},
-
-		__loadScript : function(script) {
-			this.start = script.start;
-			this.start();
-			this.update = script.update;
-		}
-	});
 })();

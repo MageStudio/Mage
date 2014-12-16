@@ -92,10 +92,11 @@ function onCreate() {
 		color: 0x00ff00, 
 		wireframe : true 
 	});
-	var cube = new Mesh(geometry, material, {script : "mybox", dir : "cube"});
-	var cube2 = new Mesh(geometry, material, {script : "mybox", dir : "cube"});
+	
+	window.cube = new Mesh(geometry, material, {script : "mybox", dir : "cube"});
+	window.cube2 = new Mesh(geometry, material, {script : "mybox", dir : "cube"});
 
-	cube2.mesh.position.x = 15;
+	cube2.mesh.position.x = 50;
 
 	console.log("Inside onCreate method");
 
@@ -105,18 +106,7 @@ function onCreate() {
 	document.addEventListener( 'mousewheel', onDocumentMouseWheel, false);
 
 	//example for camera movement
-	core.camera.update = function(dt) {
-		this.position.x += ( mouseX/2 - this.position.x ) * 0.01;
-		this.position.y += ( - mouseY - this.position.y ) * 0.05;
-		//blocking camera 
-		if (this.position.z < CAMERA_MIN_Z) {
-			this.position.z = CAMERA_MIN_Z;
-		}
-		if (this.position.z > CAMERA_MAX_Z) {
-			this.position.z = CAMERA_MAX_Z;
-		}
-		this.lookAt( core.scene.position );
-	}
+	core.camera.addScript("cameraScript", "camera");
 }
 
 function onDocumentMouseWheel (event) {
