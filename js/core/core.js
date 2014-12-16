@@ -187,8 +187,9 @@ core = {
 
 	add : function(element) {
 		//method to be called when creating a new element
-		core.scene.add(element);
-		Universe.universe.put(element.uuid, element);
+		var tmesh = element.mesh;
+		core.scene.add(tmesh);
+		Universe.universe.put(tmesh.uuid, element);
 	},
 
 	remove : function(element) {

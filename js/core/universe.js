@@ -179,11 +179,11 @@
 						//console.log(o);
 						//_.defer(o._render);
 						//console.log(o._render);
-						if (o._render) {
+						if (o.update) {
 							//o._render(core.clock.getDelta());
 							with(o) {
 								setTimeout(function() {
-									_render(core.clock.getDelta());
+									update(core.clock.getDelta());
 								}, 0);
 							}
 						}

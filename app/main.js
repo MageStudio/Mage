@@ -62,14 +62,50 @@ function onCreate() {
 
 	//add your code HERE
 
+	/********************************************************************************
+		This is just an example. It shows you how to properly create a cube,
+		and attach a custom script to it.
+
+		You can see object scripts inside "app/scripts" folder. Open spaceman.js or 
+		"app/scripts/cube/mybox.js" to see how a object script is made. Remember, script name and
+		file name MUST be equal.
+
+		example :
+
+		file customBox.js
+	
+		Game.script("customBox", {
+			start : function() {
+				//always provide a start method
+			},
+
+			update : function(dt) {
+				//ALWAYS provide an update method
+			}
+		});
+
+
+	********************************************************************************/
+
+	var geometry = new THREE.CubeGeometry(20, 20, 20);
+	var material = new THREE.MeshBasicMaterial({ 
+		color: 0x00ff00, 
+		wireframe : true 
+	});
+	var cube = new Mesh(geometry, material, {script : "mybox", dir : "cube"});
+	var cube2 = new Mesh(geometry, material, {script : "mybox", dir : "cube"});
+
+	cube2.mesh.position.x = 15;
+
 	console.log("Inside onCreate method");
+
 	document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 	document.addEventListener( 'touchstart', onDocumentTouchStart, false );
 	document.addEventListener( 'touchmove', onDocumentTouchMove, false );
 	document.addEventListener( 'mousewheel', onDocumentMouseWheel, false);
 
 	//example for camera movement
-	core.camera._render = function(dt) {
+	core.camera.update = function(dt) {
 		this.position.x += ( mouseX/2 - this.position.x ) * 0.01;
 		this.position.y += ( - mouseY - this.position.y ) * 0.05;
 		//blocking camera 

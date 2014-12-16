@@ -55,7 +55,7 @@ function include(src, callback) {
 	s = document.createElement('script');
 	s.type = 'text/javascript';
 	s.src = src + ".js";
-	if (!callback) {
+	if (callback) {
 		s.onload = s.onreadystatechange = function() {
 			//console.log( this.readyState ); //uncomment this line to see which ready states are called.
 			if ( !r && (!this.readyState || this.readyState == 'complete') ) {
