@@ -49,9 +49,21 @@ function __upperCaseFirstLetter__ (s) {
 	return (s.length > 2) ? s[0].toUpperCase() + s.substring(1, s.length) : s.toUpperCase();
 }
 
-function include(scriptname) {
-	var s = document.createElement("script");
-	s.src = scriptname+".js";
-	s.async = false;
-	document.getElementsByTagName('head')[0].appendChild(s);
+function include(src, callback) {
+	var s, r, t;
+	r = false;
+	s = document.createElement('script');
+	s.type = 'text/javascript';
+	s.src = src + ".js";
+	if (!callback) {
+		s.onload = s.onreadystatechange = function() {
+			//console.log( this.readyState ); //uncomment this line to see which ready states are called.
+			if ( !r && (!this.readyState || this.readyState == 'complete') ) {
+				r = true;
+				callback();
+			}
+		};
+	}
+	t = document.getElementsByTagName('script')[0];
+	t.parentNode.insertBefore(s, t);
 }
