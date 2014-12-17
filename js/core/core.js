@@ -87,6 +87,7 @@ core = {
 		"js/core/user",
 		"js/core/control",
 		"js/core/gui",
+		"Js/core/assetsManager"
 		//loading entities
 		"js/core/entities/entity",
 		"js/core/entities/camera",
@@ -136,6 +137,7 @@ core = {
 
 		------------------------------------------------------------------------------------------*/
 		setTimeout(Game.update, 0);
+		setTimeout(AudioEngine.update, 0);
 		/*------------------------------------------------------------------------------------------
 
 			it's now time to perform our scene render.
@@ -309,8 +311,10 @@ core = {
 		window.onload = function() {
 			console.log("inside window onload");
 			preload(function() {
-				prepareScene();
-				load();
+				AssetsManager.load(function() {
+					prepareScene();
+					load();
+				});
 			});
 		}
 		window.onresize = function() {
