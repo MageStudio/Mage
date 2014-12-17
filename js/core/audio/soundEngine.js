@@ -38,9 +38,7 @@
 
 			for (var audio in Assets.Audio) {
 				AudioEngine.numSound++;
-				setTimeout(function() {
-					AudioEngine.loadSingleFile(audio, Assets.Audio[audio]);
-				}, 0);
+				AudioEngine.loadSingleFile(audio, Assets.Audio[audio]);
 			}
 
 		});
