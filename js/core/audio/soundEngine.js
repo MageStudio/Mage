@@ -28,6 +28,7 @@
 				AudioEngine.context = new AudioEngine.AudioContext();
 				//creating a gain node to control volume
 				AudioEngine.volume = AudioEngine.context.createGain();
+				AudioEngine.volume.gain.value = 50;
 				//connecting volume node to context destination
 				AudioEngine.volume.connect(AudioEngine.context.destination);
 			} else {
@@ -99,6 +100,31 @@
 
 			//setting audio engine context listener position on camera position
 			AudioEngine.context.listener.setPosition(p.x, p.y, p.z);
+
+
+			//this is to add up and down vector to our camera
+			// The camera's world matrix is named "matrix".
+			var m = core.camera.object.matrix;
+
+			mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
+			m.elements[12] = m.elements[13] = m.elements[14] = 0;
+
+			// Multiply the orientation vector by the world matrix of the camera.
+			var vec = new THREE.Vector3(0,0,1);
+			vec.applyProjection(m);
+			vec.normalize();
+
+			// Multiply the up vector by the world matrix.
+			var up = new THREE.Vector3(0,-1,0);
+			up.applyProjection(m);
+			up.normalize();
+
+			// Set the orientation and the up-vector for the listener.
+			AudioEngine.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
+
+			m.elements[12] = mx;
+			m.elements[13] = my;
+			m.elements[14] = mz;
 			
 			if ((+new Date() - start) > 50) return;
 		}

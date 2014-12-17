@@ -15,24 +15,46 @@ Class("AmbientSound", {
 		//storing mesh
 		this.mesh = options.mesh;
 
+		//if we set up an effect in our options, we need to create a convolver node
+		if (options.effect) {
+
+			this.convolver = AudioEngine.context.createConvolver();
+			this.mixer = AudioEngine.createGain();
+			this.sound.panner.disconnect();
+			this.sound.panner.connect(this.mixer);
+			//creating gains
+			this.plainGain = AudioEngine.context.createGain();
+			this.convolverGain = AudioEngine.context.createGain();
+			//connect mixer to new gains
+			this.mixer.connect(plainGain);
+			this.mixer.connect(convolverGain);
+
+			this.plainGain.connect(AudioEngine.volume);
+			this.convolverGain.connect(AudioEngine.volume);
+
+			this.convolver.buffer = AudioEngine.get(options.effect);
+			this.convolverGain.gain.value = 0.7;
+			this.plainGain.gain.value = 0.3;
+
+		}
+		//autoplay option
+		var autoplay = options.autoplay || false;
+		if (autoplay) {
+			this.start();
+		}
 		//adding this sound to AudioEngine
 		AudioEngine.add(this);
 	},
 
 	update : function(dt) {
 
+		// In the frame handler function, get the object's position.
+		this.mesh.updateMatrixWorld();
 		var p = new THREE.Vector3();
 		p.setFromMatrixPosition(this.mesh.matrixWorld);
-		var px = p.x, py = p.y, pz = p.z;
 
-		this.mesh.updateMatrixWorld();
-
-		var q = new THREE.Vector3();
-		q.setFromMatrixPosition(this.mesh.matrixWorld);
-		var dx = q.x-px, dy = q.y-py, dz = q.z-pz;
-		//setting panner position and velocity using doppler effect.
-		this.sound.panner.setPosition(q.x, q.y, q.z);
-		this.sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);
+		// And copy the position over to the sound of the object.
+		this.sound.panner.setPosition(p.x, p.y, p.z);
 	}
 
 })._extends("Beat");

@@ -11,7 +11,28 @@ Class("Sound", {
 
 		//storing mesh
 		this.mesh = options.mesh;
+		
+		if (options.effect) {
 
+			this.convolver = AudioEngine.context.createConvolver();
+			this.mixer = AudioEngine.createGain();
+			this.sound.panner.disconnect();
+			this.sound.panner.connect(this.mixer);
+			//creating gains
+			this.plainGain = AudioEngine.context.createGain();
+			this.convolverGain = AudioEngine.context.createGain();
+			//connect mixer to new gains
+			this.mixer.connect(plainGain);
+			this.mixer.connect(convolverGain);
+
+			this.plainGain.connect(AudioEngine.volume);
+			this.convolverGain.connect(AudioEngine.volume);
+
+			this.convolver.buffer = AudioEngine.get(options.effect);
+			this.convolverGain.gain.value = 0.7;
+			this.plainGain.gain.value = 0.3;
+
+		}
 		//adding this sound to AudioEngine
 		AudioEngine.add(this);
 	},
