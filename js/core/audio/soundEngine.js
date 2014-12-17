@@ -6,40 +6,42 @@
 	AudioEngine.DELAY_MIN_VALUE = 0.01;
 
 	var soundPath = "js/core/sound/";
-	var soundModules = [
-		soundPath + "beat" //parent
-		soundPath + "sound",
-		soundPath + "ambientSound",
+	AudioEngine.soundModules = [
+		"js/core/audio/beat", //parent
+		"js/core/audio/sound",
+		"js/core/audio/ambientSound"
 	];
-
-	requirejs(soundModules, function() {
-
-		AudioEngine.map = new Hashmap();
-		AudioEngine.sounds = [];
-
-		AudioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null;
-
-		if (AudioEngine.AudioContext) {
-			//creating a new audio context if it's available.
-			AudioEngine.context = new AudioEngine.AudioContext();
-			//creating a gain node to control volume
-			AudioEngine.volume = AudioEngine.context.createGainNode();
-			//connecting volume node to context destination
-			AudioEngine.volume.connect(AudioEngine.context.destination);
-		} else {
-			console.error("No Audio Context available, sorry.");
-		}
-	});
 
 	AudioEngine.numSound = 0;
 	AudioEngine.soundLoaded = 0;
 	AudioEngine.load = function() {
-		for (var audio in Assets.Audio) {
-			AudioEngine.numSound++;
-			setTimeout(function() {
-				AudioEngine.loadSingleFile(audio, Assets.Audio[audio]);
-			}, 0);
-		}
+
+		requirejs(AudioEngine.soundModules, function() {
+
+			AudioEngine.map = new HashMap();
+			AudioEngine.sounds = [];
+
+			AudioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null;
+
+			if (AudioEngine.AudioContext) {
+				//creating a new audio context if it's available.
+				AudioEngine.context = new AudioEngine.AudioContext();
+				//creating a gain node to control volume
+				AudioEngine.volume = AudioEngine.context.createGain();
+				//connecting volume node to context destination
+				AudioEngine.volume.connect(AudioEngine.context.destination);
+			} else {
+				console.error("No Audio Context available, sorry.");
+			}
+
+			for (var audio in Assets.Audio) {
+				AudioEngine.numSound++;
+				setTimeout(function() {
+					AudioEngine.loadSingleFile(audio, Assets.Audio[audio]);
+				}, 0);
+			}
+
+		});
 	};
 
 	AudioEngine.get = function(id) {
@@ -55,7 +57,7 @@
 		request.onload = function(e) {
 
 			// Create a buffer from the response ArrayBuffer.
-			AudioContext.context.decodeAudioData(this.response, function onSuccess(buffer) {
+			AudioEngine.context.decodeAudioData(this.response, function onSuccess(buffer) {
 				//storing audio buffer inside map
 				AudioEngine.map.put(id, buffer);
 				AudioEngine.soundLoaded++;
@@ -83,7 +85,8 @@
 
 	AudioEngine.update = function() {
 		var start = new Date();
-		for (var sound in AudioEngine.sounds) {
+		for (var index in AudioEngine.sounds) {
+			var sound = AudioEngine.sounds[index];
 			with(sound) {
 				setTimeout(function() {
 					update(core.clock.getDelta());

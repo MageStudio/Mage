@@ -4,14 +4,16 @@
 		"js/core/audio/soundEngine",
 		"js/core/video/videoEngine",
 		"js/core/images/imagesEngine",
-		"js/core/generalAssets/generalAssetsEngine"
+		"js/core/generalAssets/generalAssetsEngine",
+
+		"js/core/util/HashMap"
 	];
 
 	AssetsManager.completed = {
 		sound : false,
-		video : false,
-		images : false,
-		general : false
+		video : true,
+		images : true,
+		general : true
 	};
 
 	AssetsManager.load = function(callback) {
@@ -29,6 +31,7 @@
 
 	AssetsManager.loadingMessage = function(loaded) {
 		//this method is up to you, developer!
+		console.log(loaded);
 	}
 
 	AssetsManager.check = function() {

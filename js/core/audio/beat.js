@@ -20,8 +20,8 @@ Class("Beat", {
 			return;
 		}
 		this.sound.source.buffer = AudioEngine.get(this.name);
-		this.sound.source.start(ctx.currentTime);
-	}
+		this.sound.source.start(AudioEngine.context.currentTime);
+	},
 
 	stop : function() {
 		var self = this;
@@ -36,5 +36,5 @@ Class("Beat", {
 		}
 		_delay();
 	}
-
-})
+	
+});

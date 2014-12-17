@@ -87,8 +87,6 @@ core = {
 		"js/core/user",
 		"js/core/control",
 		"js/core/gui",
-		"Js/core/assetsManager"
-		//loading entities
 		"js/core/entities/entity",
 		"js/core/entities/camera",
 		"js/core/entities/mesh"

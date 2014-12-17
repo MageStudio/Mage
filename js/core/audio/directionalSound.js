@@ -1,10 +1,8 @@
-Class("AmbientSound", {
-	
-	AmbientSound : function(name, options) {
+Class("DirectionalSound", {
+
+	DirectionalSound : function(name, direction, options) {
 		Beat.call(this, name);
-		//use options to choose whether have a loop or not.
-		this.sound.source.loop = options.loop || false;
-		
+
 		//creating panner, we need to update on object movements.
 		this.sound.panner = AudioEngine.context.createPanner();
 		//disconnecting from main volume, then connecting to panner and main volume again
@@ -33,6 +31,7 @@ Class("AmbientSound", {
 		//setting panner position and velocity using doppler effect.
 		this.sound.panner.setPosition(q.x, q.y, q.z);
 		this.sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);
+		
 	}
 
 })._extends("Beat");

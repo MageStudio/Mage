@@ -107,12 +107,16 @@ function onCreate() {
 
 	//example for camera movement
 	core.camera.addScript("cameraScript", "camera");
+
+	//adding rain sound to cube
+	window.rain = new AmbientSound("rain", {mesh : cube.mesh, loop : true});
+	rain.start();
 }
 
 function onDocumentMouseWheel (event) {
 	event.preventDefault();
 	zoom = event.wheelDelta * 0.05;
-	core.camera.position.z += zoom;
+	core.camera.object.position.z += zoom;
 }
 
 function onDocumentMouseMove( event ) {

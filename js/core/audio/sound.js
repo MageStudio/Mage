@@ -1,4 +1,4 @@
-Class("Sound", function() {
+Class("Sound", {
 
 	Sound : function(name, options) {
 		Beat.call(this, name);
@@ -11,6 +11,9 @@ Class("Sound", function() {
 
 		//storing mesh
 		this.mesh = options.mesh;
+
+		//adding this sound to AudioEngine
+		AudioEngine.add(this);
 	},
 
 	update : function(dt) {
@@ -27,6 +30,7 @@ Class("Sound", function() {
 		//setting panner position and velocity using doppler effect.
 		this.sound.panner.setPosition(q.x, q.y, q.z);
 		this.sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);
+
 	}
 
 })._extends("Beat");
