@@ -2,8 +2,9 @@
 	window.AudioEngine = {};
 
 	AudioEngine.DELAY_FACTOR = 0.02;
-	AudioEngine.DELAY_STEP = 5; //millis
-	AudioEngine.DELAY_MIN_VALUE = 0.01;
+	AudioEngine.DELAY_STEP = 1; //millis
+	AudioEngine.DELAY_MIN_VALUE = 0.2;
+	AudioEngine.DELAY_NORMAL_VALUE = 40;
 
 	var soundPath = "js/core/sound/";
 	AudioEngine.soundModules = [

@@ -21,6 +21,43 @@ Class("Entity", {
 		this.start = script.start;
 		this.start();
 		this.update = script.update;
+	},
+
+	addSound : function(name, options) {
+		var _autoplay = options.autoplay || false;
+		this.isPlayingSound = _autoplay;
+		this.sound = new Sound(name, {mesh : this.mesh , autoplay : _autoplay , effect : options.effect });
+	},
+
+	addDirectionalSound : function(name, options) {
+		var _autoplay = options.autoplay || false;
+		this.isPlayingSound = _autoplay;
+		this.sound = new DirectionalSound(name, {mesh : this.mesh , autoplay : _autoplay , effect : options.effect});
+	},
+
+	addAmbientSound : function(name, options) {
+		var _autoplay = options.autoplay || false;
+		var _loop = options.loop || false;
+		this.isPlayingSound = _autoplay;
+		this.sound = new AmbientSound(name, {mesh : this.mesh , autoplay : _autoplay, loop : _loop , effect : options.effect});
+	},
+
+	playSound : function() {
+		if (this.sound) {
+			if (!this.isPlayingSound){
+				this.sound.start();
+				this.isPlayingSound = true;
+			}
+		}
+	},
+
+	stopSound : function() {
+		if (this.sound) {
+			if (this.isPlayingSound){
+				this.sound.stop();
+				this.isPlayingSound = false;
+			}
+		}
 	}
 
 });

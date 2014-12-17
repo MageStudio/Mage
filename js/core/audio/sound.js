@@ -11,7 +11,7 @@ Class("Sound", {
 
 		//storing mesh
 		this.mesh = options.mesh;
-		
+
 		if (options.effect) {
 
 			this.convolver = AudioEngine.context.createConvolver();
@@ -32,6 +32,11 @@ Class("Sound", {
 			this.convolverGain.gain.value = 0.7;
 			this.plainGain.gain.value = 0.3;
 
+		}
+		//autoplay option
+		var autoplay = options.autoplay || false;
+		if (autoplay) {
+			this.start();
 		}
 		//adding this sound to AudioEngine
 		AudioEngine.add(this);

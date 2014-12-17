@@ -20,17 +20,26 @@ Class("Beat", {
 			return;
 		}
 		this.sound.source.buffer = AudioEngine.get(this.name);
+		this.sound.volume.gain.value = 0;
 		this.sound.source.start(AudioEngine.context.currentTime);
+		var self = this;
+		var _delay = function() {
+			self.sound.volume.gain.value = self.sound.volume.gain.value + AudioEngine.DELAY_FACTOR;
+			if (self.sound.volume.gain.value < AudioEngine.DELAY_NORMAL_VALUE) {
+				setTimeout(_delay, AudioEngine.DELAY_STEP);
+			}
+		}
+		_delay();
 	},
 
 	stop : function() {
 		var self = this;
 		var _delay = function() {
-			self.gain.gain.value = self.gain.gain.value - AudioEngine.DELAY_FACTOR;
-			if (self.gain.gain.value > AudioEngine.DELAY_MIN_VALUE) {
+			self.sound.volume.gain.value = self.sound.volume.gain.value - AudioEngine.DELAY_FACTOR;
+			if (self.sound.volume.gain.value > AudioEngine.DELAY_MIN_VALUE) {
 				setTimeout(_delay, AudioEngine.DELAY_STEP);
 			} else {
-				self.sound.stop();
+				self.sound.source.stop();
 				// i don't need to stop disconnect the sound.
 			}
 		}
