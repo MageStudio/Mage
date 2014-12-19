@@ -10,8 +10,15 @@
 		//this will load our scripts
 		var obj = {};
 		obj.name = name;
-		obj.start = methods.start || new Function("console.log('please, add a start method');");
-		obj.update = methods.update || new Function("console.log('please, add an update method');");
+		for (var method in methods) {
+			obj[method] = methods[method];
+		}
+		if (!obj.start) {
+			obj.start = new Function("console.log('please, add a start method');");
+		}
+		if (!obj.update) {
+			obj.update = new Function("console.log('please, add a update method');");
+		}
 
 		if (!(name in Game.scripts)) {
 			//we never created this script

@@ -8,6 +8,10 @@ Class("Entity", {
 
 	},
 
+	start : function() {},
+
+	update : function() {},
+
 	addScript : function(scriptname, dir) {
 		var path = Game.SCRIPTS_DIR + (dir || "");
 		if (path[path.length - 1] != "/") {
@@ -18,9 +22,10 @@ Class("Entity", {
 
 	//__loadScript will be automatically called by Game object
 	__loadScript : function(script) {
-		this.start = script.start;
+		for (var method in script) {
+			this[method] = script[method];
+		}
 		this.start();
-		this.update = script.update;
 	},
 
 	addSound : function(name, options) {

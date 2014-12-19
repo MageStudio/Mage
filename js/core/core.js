@@ -89,7 +89,8 @@ core = {
 		"js/core/gui",
 		"js/core/entities/entity",
 		"js/core/entities/camera",
-		"js/core/entities/mesh"
+		"js/core/entities/mesh",
+		"js/core/entities/lights"
 	],
 
 	util : {

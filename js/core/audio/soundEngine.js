@@ -41,6 +41,10 @@
 				AudioEngine.loadSingleFile(audio, Assets.Audio[audio]);
 			}
 
+			if (AudioEngine.numSound == 0) {
+				AssetsManager.completed.sound = true;
+			} 
+
 		});
 	};
 
