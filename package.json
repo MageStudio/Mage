@@ -1,8 +1,8 @@
 {
   "name": "wage",
-  "version": "0.0.1",
+  "version": "0.0.4",
   "description": "A Javascript (wannabe) Game Engine, built on top of THREE.js and many other libraries.",
-  "main": "core.js",
+  "main": "builder.js",
   "author": {
     "name": "Marco Stagni",
     "email": "mrc.stagni@gmail.com"
@@ -11,5 +11,16 @@
     "type": "git",
     "url": "git://github.com/marco-ponds/Wage.git"
   },
-  "license": "BSD-3-Clause"
+  "license": "BSD-3-Clause",
+  "keywords" : ["wage", "three.js", "webgl", "game", "engine", "game engine", "javascript", "browser", "shader"],
+  "dependencies" : {
+    "ncp" : "*"
+  },
+  "devDependencies" : {
+    "grunt": "~0.4.5",
+    "grunt-contrib-jshint": "~0.10.0",
+    "grunt-contrib-concat": "*",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-uglify": "~0.5.0"
+  }
 }
