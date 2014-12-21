@@ -6142,8 +6142,8 @@ core = {
 					if (config.physics_enabled) {
 						l("physics enabled.");
 						try {
-							Physijs.scripts.worker = '/js/lib/workers/physijs_worker.js';
-							Physijs.scripts.ammo = '/js/lib/ammo.js';
+							Physijs.scripts.worker = 'workers/physijs_worker.js';
+							Physijs.scripts.ammo = 'ammo.js';
 							core.scene = new Physijs.Scene();
 							Physijs._isLoaded = true;
 						} catch (ex) {
@@ -6187,8 +6187,6 @@ core = {
 				core.renderer.setSize( util.w , util.h );
 				//document.body.appendChild( core.renderer.domElement );
 				document.getElementById("gameContainer").appendChild(core.renderer.domElement);
-				//calling inits
-				Universe.init();
 				/*------------------------------------------------------------------------------------------
 					
 					trying to retrieve user input. from keyboard, mouse and joystick.
