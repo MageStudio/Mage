@@ -5,6 +5,7 @@
 	AudioEngine.DELAY_STEP = 1; //millis
 	AudioEngine.DELAY_MIN_VALUE = 0.2;
 	AudioEngine.DELAY_NORMAL_VALUE = 40;
+	AudioEngine.VOLUME = 80;
 
 	var soundPath = "js/core/sound/";
 	AudioEngine.soundModules = [
@@ -27,7 +28,7 @@
 			AudioEngine.context = new AudioEngine.AudioContext();
 			//creating a gain node to control volume
 			AudioEngine.volume = AudioEngine.context.createGain();
-			AudioEngine.volume.gain.value = 50;
+			AudioEngine.volume.gain.value = AudioEngine.VOLUME;
 			//connecting volume node to context destination
 			AudioEngine.volume.connect(AudioEngine.context.destination);
 		} else {

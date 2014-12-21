@@ -1,6 +1,6 @@
 {
   "name": "wage",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "A Javascript (wannabe) Game Engine, built on top of THREE.js and many other libraries.",
   "main": "builder.js",
   "preferGlobal": "true",

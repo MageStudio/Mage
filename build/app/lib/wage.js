@@ -5556,6 +5556,7 @@ Universe.init();
 	AudioEngine.DELAY_STEP = 1; //millis
 	AudioEngine.DELAY_MIN_VALUE = 0.2;
 	AudioEngine.DELAY_NORMAL_VALUE = 40;
+	AudioEngine.VOLUME = 80;
 
 	var soundPath = "js/core/sound/";
 	AudioEngine.soundModules = [
@@ -5578,7 +5579,7 @@ Universe.init();
 			AudioEngine.context = new AudioEngine.AudioContext();
 			//creating a gain node to control volume
 			AudioEngine.volume = AudioEngine.context.createGain();
-			AudioEngine.volume.gain.value = 50;
+			AudioEngine.volume.gain.value = AudioEngine.VOLUME;
 			//connecting volume node to context destination
 			AudioEngine.volume.connect(AudioEngine.context.destination);
 		} else {
@@ -5690,10 +5691,29 @@ Class("Beat", {
 		this.sound.source = AudioEngine.context.createBufferSource();
 		this.sound.volume = AudioEngine.context.createGain();
 
+		//setting listeners
+		this.setListeners();
+
 		// Connect the sound source to the volume control.
 		this.sound.source.connect(this.sound.volume);
 		// Hook up the sound volume control to the main volume.
 		this.sound.volume.connect(AudioEngine.volume);
+	},
+
+	setListeners : function() {
+		//setting listeners
+		this.sound.source._caller = this;
+		this.sound.source.onended = this.onEnd;
+		this.sound.source.loopEnd = this.onLoopEnd;
+		this.sound.source.loopStart = this.onLoopstart; 
+	},
+
+	reset : function() {
+		this.sound.source.disconnect();
+		this.sound.source = AudioEngine.context.createBufferSource();
+		this.sound.source.connect(this.sound.volume);
+		//setting listeners
+		this.setListeners();
 	},
 
 	start : function() {
@@ -5702,7 +5722,7 @@ Class("Beat", {
 			console.error("Unable to load sound, sorry.");
 			return;
 		}
-		this.sound.source.buffer = AudioEngine.get(this.name);
+		this.sound.source.buffer = buffer;
 		this.sound.volume.gain.value = 0;
 		this.sound.source.start(AudioEngine.context.currentTime);
 		var self = this;
@@ -5723,17 +5743,36 @@ Class("Beat", {
 				setTimeout(_delay, AudioEngine.DELAY_STEP);
 			} else {
 				self.sound.source.stop();
-				// i don't need to stop disconnect the sound.
 			}
 		}
 		_delay();
+	},
+
+	onEnd : function() {
+		if (this._caller.onEndCallback) {
+			this._caller.onEndCallback();
+		}
+		this._caller.reset();
+	},
+
+	onLoopEnd : function() {
+		if (this._caller.onLoopEndCallback) {
+			this._caller.onLoopEndCallback();
+		}
+	},
+
+	onLoopStart : function() {
+		if (this._caller.onLoopStartCallback) {
+			this._caller.onLoopStartCallback();
+		}
 	}
 	
 });;
 Class("Sound", {
 
-	Sound : function(name, options) {
+	Sound : function(name, opt) {
 		Beat.call(this, name);
+		var options = opt || {};
 		//creating panner, we need to update on object movements.
 		this.sound.panner = AudioEngine.context.createPanner();
 		//disconnecting from main volume, then connecting to panner and main volume again
@@ -5741,8 +5780,11 @@ Class("Sound", {
 		this.sound.volume.connect(this.sound.panner);
 		this.sound.panner.connect(AudioEngine.volume);
 
-		//storing mesh
-		this.mesh = options.mesh;
+		if (options.mesh) {
+			this.mesh = options.mesh;
+		} else {
+			this.update = function() {};
+		}
 
 		if (options.effect) {
 
@@ -5770,6 +5812,11 @@ Class("Sound", {
 		if (autoplay) {
 			this.start();
 		}
+		//setting listeners if provided
+		this.onEndCallback = options.onEnd || new Function();
+		this.onLoopStartCallback = options.onLoopStart || new Function();
+		this.onLoopEndCallback = options.onLoopEnd || new Function();
+
 		//adding this sound to AudioEngine
 		AudioEngine.add(this);
 	},

@@ -7,10 +7,29 @@ Class("Beat", {
 		this.sound.source = AudioEngine.context.createBufferSource();
 		this.sound.volume = AudioEngine.context.createGain();
 
+		//setting listeners
+		this.setListeners();
+
 		// Connect the sound source to the volume control.
 		this.sound.source.connect(this.sound.volume);
 		// Hook up the sound volume control to the main volume.
 		this.sound.volume.connect(AudioEngine.volume);
+	},
+
+	setListeners : function() {
+		//setting listeners
+		this.sound.source._caller = this;
+		this.sound.source.onended = this.onEnd;
+		this.sound.source.loopEnd = this.onLoopEnd;
+		this.sound.source.loopStart = this.onLoopstart; 
+	},
+
+	reset : function() {
+		this.sound.source.disconnect();
+		this.sound.source = AudioEngine.context.createBufferSource();
+		this.sound.source.connect(this.sound.volume);
+		//setting listeners
+		this.setListeners();
 	},
 
 	start : function() {
@@ -19,7 +38,7 @@ Class("Beat", {
 			console.error("Unable to load sound, sorry.");
 			return;
 		}
-		this.sound.source.buffer = AudioEngine.get(this.name);
+		this.sound.source.buffer = buffer;
 		this.sound.volume.gain.value = 0;
 		this.sound.source.start(AudioEngine.context.currentTime);
 		var self = this;
@@ -40,10 +59,28 @@ Class("Beat", {
 				setTimeout(_delay, AudioEngine.DELAY_STEP);
 			} else {
 				self.sound.source.stop();
-				// i don't need to stop disconnect the sound.
 			}
 		}
 		_delay();
+	},
+
+	onEnd : function() {
+		if (this._caller.onEndCallback) {
+			this._caller.onEndCallback();
+		}
+		this._caller.reset();
+	},
+
+	onLoopEnd : function() {
+		if (this._caller.onLoopEndCallback) {
+			this._caller.onLoopEndCallback();
+		}
+	},
+
+	onLoopStart : function() {
+		if (this._caller.onLoopStartCallback) {
+			this._caller.onLoopStartCallback();
+		}
 	}
 	
 });

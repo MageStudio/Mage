@@ -1,7 +1,8 @@
 Class("Sound", {
 
-	Sound : function(name, options) {
+	Sound : function(name, opt) {
 		Beat.call(this, name);
+		var options = opt || {};
 		//creating panner, we need to update on object movements.
 		this.sound.panner = AudioEngine.context.createPanner();
 		//disconnecting from main volume, then connecting to panner and main volume again
@@ -9,8 +10,11 @@ Class("Sound", {
 		this.sound.volume.connect(this.sound.panner);
 		this.sound.panner.connect(AudioEngine.volume);
 
-		//storing mesh
-		this.mesh = options.mesh;
+		if (options.mesh) {
+			this.mesh = options.mesh;
+		} else {
+			this.update = function() {};
+		}
 
 		if (options.effect) {
 
@@ -38,6 +42,11 @@ Class("Sound", {
 		if (autoplay) {
 			this.start();
 		}
+		//setting listeners if provided
+		this.onEndCallback = options.onEnd || new Function();
+		this.onLoopStartCallback = options.onLoopStart || new Function();
+		this.onLoopEndCallback = options.onLoopEnd || new Function();
+
 		//adding this sound to AudioEngine
 		AudioEngine.add(this);
 	},
