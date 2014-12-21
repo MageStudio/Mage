@@ -184,8 +184,8 @@ core = {
 					if (config.physics_enabled) {
 						l("physics enabled.");
 						try {
-							Physijs.scripts.worker = '/js/lib/workers/physijs_worker.js';
-							Physijs.scripts.ammo = '/js/lib/ammo.js';
+							Physijs.scripts.worker = 'workers/physijs_worker.js';
+							Physijs.scripts.ammo = 'ammo.js';
 							core.scene = new Physijs.Scene();
 							Physijs._isLoaded = true;
 						} catch (ex) {
