@@ -1,6 +1,7 @@
 function Builder() {
 
 	this.ncp = require("ncp").ncp;
+	this.colors = require("colors");
 
 	Builder.prototype.create = function ( projectName ) {
 		
