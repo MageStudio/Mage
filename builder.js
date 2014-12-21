@@ -8,7 +8,7 @@ function Builder() {
 			this must copy the whole build folder
 		*/
 
-		console.log("------------------------------");
+		console.log("...".blue);
 		console.log("This script will create your ");
 		console.log("project in just a few seconds.");
 		
@@ -17,10 +17,10 @@ function Builder() {
 			if (err) {
 				console.log("\n\nSomething went wrong.");
 				console.error(err);
-				return console.log("------------------------------");
+				return console.log("...".blue);
 			} else {
 				console.log("Your project is ok, enjoy!");
-				return console.log("------------------------------");
+				return console.log("...\n\n".blue);
 			}
 		});
 
