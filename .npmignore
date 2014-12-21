@@ -1,6 +1,4 @@
 .git
 npm-debug.log
-run
-create
 Gruntfile.js
 src/**/*.js

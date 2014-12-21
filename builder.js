@@ -1,5 +1,3 @@
-//this should be our app builder
-
 function Builder() {
 
 	this.ncp = require("ncp").ncp;
@@ -15,7 +13,7 @@ function Builder() {
 		console.log("project in just a few seconds.");
 		
 
-		this.ncp("node_modules/wage/build", projectName, function (err) {
+		this.ncp("/usr/local/lib/node_modules/wage/build", projectName, function (err) {
 			if (err) {
 				console.log("\n\nSomething went wrong.");
 				console.error(err);

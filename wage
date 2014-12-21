@@ -1,0 +1,17 @@
+#!/usr/bin/env node
+"use strict"
+
+var builder = require("./builder.js");
+if (process.argv.length > 3) {
+	if (process.argv[2] == "create") {
+		console.log("\n\n\n--- Wage is a wannabe Game Engine. ---");
+		console.log("written by Marco Stagni, thanks MrDoob.");
+		console.log("----- < http://marcostagni.com > -----\n\n\n");
+		builder.create(process.argv[3]);
+	} else {
+		console.log("Sorry, only create method avaible right now.");
+	}
+} else {
+	console.log("Sorry, please give at least two arguments.");
+	console.log("USAGE: wage create <projectName>");
+}

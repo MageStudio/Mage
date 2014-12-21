@@ -1,11 +1,15 @@
 {
   "name": "wage",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A Javascript (wannabe) Game Engine, built on top of THREE.js and many other libraries.",
   "main": "builder.js",
+  "preferGlobal": "true",
   "author": {
     "name": "Marco Stagni",
     "email": "mrc.stagni@gmail.com"
+  },
+  "bin": {
+    "wage": "wage"
   },
   "repository": {
     "type": "git",
