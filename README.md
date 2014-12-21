@@ -102,8 +102,7 @@ This method is your custom animation on the loader, and you can do whatever you 
 
 To add each mesh to the scene you will need to call:
 ```javascript
-	var m = new THREE.Mesh(geometry, material);
-    core.add(m);
+	var m = new Mesh(geometry, material);
 ```
 
 You can now paste the example code you saw before just after the "//add your code HERE" comment. Now, the only thing left to do is launching your app.
