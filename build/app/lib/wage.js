@@ -5949,6 +5949,12 @@ Class("DirectionalSound", {
 		//loading images
 	};
 })();;
+(function() {
+	window.GeneralAssetsEngine = {};
+	GeneralAssetsEngine.load = function() {
+		//loading general assets, man!
+	};
+})();;
 var core = {};
 
 var onCreate = function() {};
