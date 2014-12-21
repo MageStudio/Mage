@@ -55,7 +55,7 @@ module.exports = (function() {
 		//images
 		IMAGES + "imagesEngine.js",
 		//general
-		GENERALASSETS + "generalAssetsManager.js"
+		GENERALASSETS + "generalAssetsEngine.js"
 	];
 
 	modules.entities = [
