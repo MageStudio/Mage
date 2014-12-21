@@ -2,7 +2,7 @@
 var Assets = {
 	Audio : {
 		//name : path
-		"test" : "assets/audio/test.mp3"
+		"rain" : "assets/audio/rain.mp3"
 	},
 
 	Video : {
