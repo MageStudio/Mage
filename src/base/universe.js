@@ -1,4 +1,3 @@
-(function() {
 	window.Universe = {};
 	Universe =  {
 		/*------------------------------------------------------------------------------------------
@@ -30,7 +29,7 @@
 				this is an auto-call method. it will initialize our object map
 
 			------------------------------------------------------------------------------------------*/
-			requirejs(["js/core/util/HashMap"], function() {
+			//requirejs(["js/core/util/HashMap"], function() {
 				Universe.loaded = true;
 				Universe.universe = new HashMap();
 
@@ -50,7 +49,7 @@
 				//}
 
 
-			});
+			//});
 
 		})(),
 
@@ -221,4 +220,3 @@
 
 		}
 	}
-})();

@@ -17,35 +17,31 @@
 	AudioEngine.soundLoaded = 0;
 	AudioEngine.load = function() {
 
-		requirejs(AudioEngine.soundModules, function() {
+		AudioEngine.map = new HashMap();
+		AudioEngine.sounds = [];
 
-			AudioEngine.map = new HashMap();
-			AudioEngine.sounds = [];
+		AudioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null;
 
-			AudioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null;
+		if (AudioEngine.AudioContext) {
+			//creating a new audio context if it's available.
+			AudioEngine.context = new AudioEngine.AudioContext();
+			//creating a gain node to control volume
+			AudioEngine.volume = AudioEngine.context.createGain();
+			AudioEngine.volume.gain.value = 50;
+			//connecting volume node to context destination
+			AudioEngine.volume.connect(AudioEngine.context.destination);
+		} else {
+			console.error("No Audio Context available, sorry.");
+		}
 
-			if (AudioEngine.AudioContext) {
-				//creating a new audio context if it's available.
-				AudioEngine.context = new AudioEngine.AudioContext();
-				//creating a gain node to control volume
-				AudioEngine.volume = AudioEngine.context.createGain();
-				AudioEngine.volume.gain.value = 50;
-				//connecting volume node to context destination
-				AudioEngine.volume.connect(AudioEngine.context.destination);
-			} else {
-				console.error("No Audio Context available, sorry.");
-			}
+		for (var audio in Assets.Audio) {
+			AudioEngine.numSound++;
+			AudioEngine.loadSingleFile(audio, Assets.Audio[audio]);
+		}
 
-			for (var audio in Assets.Audio) {
-				AudioEngine.numSound++;
-				AudioEngine.loadSingleFile(audio, Assets.Audio[audio]);
-			}
-
-			if (AudioEngine.numSound == 0) {
-				AssetsManager.completed.sound = true;
-			} 
-
-		});
+		if (AudioEngine.numSound == 0) {
+			AssetsManager.completed.sound = true;
+		}
 	};
 
 	AudioEngine.get = function(id) {

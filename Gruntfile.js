@@ -1,3 +1,21 @@
+function getDependencies() {
+	/*
+		qusta funzione dovrebbe recuperare per ogni modulo un file chiamato
+		sources.js e leggerne il contenuto. usando come ordine l'ordine dei moduli
+		contenuto nel file modules.js, che ha module.exports
+	*/
+	var toCompile = require("./modules"),
+		modules = [];
+
+	for (var i=0; i<toCompile.order.length; i++) {
+		for (var j=0; j<toCompile.modules[toCompile.order[i]].length; j++) {
+			modules.push(toCompile.modules[toCompile.order[i]][j]);
+		}
+	}
+	console.log(modules);
+	return modules;
+}
+
 module.exports = function(grunt) {
 
 	var license = 	"Copyright (c) 2014 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. "+
@@ -32,20 +50,21 @@ module.exports = function(grunt) {
 		pkg: grunt.file.readJSON('package.json'),
 		concat: {
 			options: {
-				separator: ';'
+				separator: ';\n'
 			},
 			dist: {
-				src: ['src/**/*.js'],
+				src: getDependencies(),//['src/main.js', 'src/test.js'],
 				dest: 'build/app/lib/<%= pkg.name %>.js'
 			}
 		},
 		uglify: {
 			options: {
-				banner: '/*! <%= pkg.name %> version: <%= pkg.version %>, <%= grunt.template.today("dd-mm-yyyy") %>\n' + license + '*/\n'
+				banner: '/*! <%= pkg.name %> version: <%= pkg.version %>, <%= grunt.template.today("dd-mm-yyyy") %>\n' + license + '*/\n',
+				beautify : true
 			},
 			dist: {
 				files: {
-					'build/app/lib/<%= pkg.name %>.min.js': ['<%= concat.dist.dest %>']
+					'build/app/lib/<%= pkg.name %>.min.js': ['build/app/lib/<%= pkg.name %>.js'] //prima era concat.dist.dest
 				}
 			}
 		},
@@ -56,13 +75,15 @@ module.exports = function(grunt) {
 					jQuery: true,
 					console: true,
 					module: true,
-					document: true
+					document: true,
+					window: true
 				}
 			}
 		},
 		watch: {
 			files: ['<%= jshint.files %>'],
 			tasks: ['concat', 'uglify']
+			//tasks : ['concat_in_order', 'uglify']
 		}
 	});
 
@@ -70,7 +91,9 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	//grunt.loadNpmTasks('grunt-concat-in-order');
 
-	grunt.registerTask('default', ['jshint', 'concat', 'uglify']);
+	grunt.registerTask('default', ['concat', 'uglify']);
+	//grunt.registerTask('default', ['jshint', 'concat_in_order', 'uglify']);
 
 };

@@ -1,14 +1,5 @@
-(function() {
 	window.AssetsManager = {};
-	var managers = [
-		"js/core/audio/soundEngine",
-		"js/core/video/videoEngine",
-		"js/core/images/imagesEngine",
-		"js/core/generalAssets/generalAssetsEngine",
-
-		"js/core/util/HashMap"
-	];
-
+	
 	AssetsManager.completed = {
 		sound : false,
 		video : true,
@@ -19,14 +10,12 @@
 	AssetsManager.load = function(callback) {
 		//first we load scripts
 		AssetsManager.callback = callback;
-		requirejs(managers, function() {
-			//over loading scripts
-			AudioEngine.load();
-			VideoEngine.load();
-			ImagesEngine.load();
-			GeneralAssetsEngine.load();
-			AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
-		});
+		//over loading scripts
+		AudioEngine.load();
+		VideoEngine.load();
+		ImagesEngine.load();
+		GeneralAssetsEngine.load();
+		AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
 	};
 
 	AssetsManager.loadingMessage = function(loaded) {
@@ -44,5 +33,3 @@
 			AssetsManager.loadingMessage(false);
 		}
 	}
-
-})();

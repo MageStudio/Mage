@@ -1,4 +1,3 @@
-(function() {
 	window.Game = {};
 
 	Game.SCRIPTS_DIR = "app/scripts/";
@@ -32,4 +31,3 @@
 		});
 	}
 	Game.scripts = {};
-})();

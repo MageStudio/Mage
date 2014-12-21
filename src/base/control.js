@@ -1,4 +1,3 @@
-(function() {
 	window.Control = {};
 	Control = {
 
@@ -696,4 +695,4 @@
 
 		},
 	}
-})();
+
