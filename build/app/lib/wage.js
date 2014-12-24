@@ -4390,6 +4390,11 @@ Class("Entity", {
 		for (var method in script) {
 			this[method] = script[method];
 		}
+		try {
+			this.start()
+		} catch(e) {
+			console.log("I told you, man. Check your start method inside your " + script.name + ".js script");
+		}
 		this.start();
 	},
 
@@ -5210,9 +5215,14 @@ Class("AmbientLight", {
 	};
 	Game.attachScriptToObject = function(object, scriptname, dir) {
 		var path = dir + scriptname;
+		Game.finished = false;
 		include(path, function() {
 			object.__loadScript(Game.scripts[scriptname]);
+			Game.finished = true;
+			console.log("changing game finished value " + Game.finished);
 		});
+		//while (!object.finished) {console.log(object.finished);}
+		//while(!Game.finished){}
 	}
 	Game.scripts = {};
 ;
@@ -5690,6 +5700,7 @@ Class("Beat", {
 		this.sound = {};
 		this.sound.source = AudioEngine.context.createBufferSource();
 		this.sound.volume = AudioEngine.context.createGain();
+		this.sound.volume.gain.value = AudioEngine.VOLUME;
 
 		//setting listeners
 		this.setListeners();
@@ -6272,7 +6283,7 @@ core = {
 				}
 
 			} catch( error ) {
-				console.log(error);
+				console.error(error);
 			}
 		}
 

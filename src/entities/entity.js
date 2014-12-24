@@ -25,6 +25,11 @@ Class("Entity", {
 		for (var method in script) {
 			this[method] = script[method];
 		}
+		try {
+			this.start()
+		} catch(e) {
+			console.log("I told you, man. Check your start method inside your " + script.name + ".js script");
+		}
 		this.start();
 	},
 

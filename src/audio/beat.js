@@ -6,6 +6,7 @@ Class("Beat", {
 		this.sound = {};
 		this.sound.source = AudioEngine.context.createBufferSource();
 		this.sound.volume = AudioEngine.context.createGain();
+		this.sound.volume.gain.value = AudioEngine.VOLUME;
 
 		//setting listeners
 		this.setListeners();
