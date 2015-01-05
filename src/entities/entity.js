@@ -30,7 +30,6 @@ Class("Entity", {
 		} catch(e) {
 			console.log("I told you, man. Check your start method inside your " + script.name + ".js script");
 		}
-		this.start();
 	},
 
 	addSound : function(name, options) {

@@ -268,6 +268,7 @@ core = {
 
 			} catch( error ) {
 				console.error(error);
+				console.trace();
 			}
 		}
 
