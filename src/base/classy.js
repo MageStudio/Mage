@@ -92,6 +92,10 @@ function include(src, callback) {
 				}
 				t = document.getElementsByTagName('script')[0];
 				t.parentNode.insertBefore(s, t);
+			} else {
+				if (callback) {
+					check();
+				}
 			}
 		}
 	} else if (typeof src == "string") {
@@ -111,6 +115,10 @@ function include(src, callback) {
 			}
 			t = document.getElementsByTagName('script')[0];
 			t.parentNode.insertBefore(s, t);
+		} else {
+			if (callback) {
+				callback();
+			}
 		}
 	}
 }
