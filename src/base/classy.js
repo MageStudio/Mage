@@ -49,21 +49,68 @@ function __upperCaseFirstLetter__ (s) {
 	return (s.length > 2) ? s[0].toUpperCase() + s.substring(1, s.length) : s.toUpperCase();
 }
 
+
 function include(src, callback) {
-	var s, r, t;
-	r = false;
-	s = document.createElement('script');
-	s.type = 'text/javascript';
-	s.src = src + ".js";
-	if (callback) {
-		s.onload = s.onreadystatechange = function() {
-			//console.log( this.readyState ); //uncomment this line to see which ready states are called.
-			if ( !r && (!this.readyState || this.readyState == 'complete') ) {
-				r = true;
-				callback();
-			}
-		};
+
+	var s, r, t, scripts = [];
+	var _scripts = document.getElementsByTagName("script");
+	for (var i=0; i<_scripts.length; i++) {
+		//collecting all script names.
+		scripts.push(_scripts[i].src);
 	}
-	t = document.getElementsByTagName('script')[0];
-	t.parentNode.insertBefore(s, t);
+	var alreadyGot = function( value ) {
+		for (var i=0; i<scripts.length; i++) {
+			if (scripts[i].indexOf(value) != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	//check if src is array or not,
+	//split function in two separate parts
+	if (src instanceof Array) {
+		//for each element import, than call callback
+		var got = 0;
+		if (src.length == 0) {
+			console.log("Why are you triyng to include 0 scripts? This makes me sad.")
+			return;
+		}
+		var check = function() {
+			if (got == src.length) callback();
+		}
+		for (var j=0; j<src.length; j++) {
+			if (!alreadyGot(src[j])) {
+				s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.src = src + ".js";
+				if (callback) {
+					s.onload = s.onreadystatechange = function() {
+						if (!this.readyState || this.readyState == 'complete') {
+							check();
+						}
+					};
+				}
+				t = document.getElementsByTagName('script')[0];
+				t.parentNode.insertBefore(s, t);
+			}
+		}
+	} else if (typeof src == "string") {
+		console.log("trying to load " + src);
+		if (!alreadyGot(src)) {
+			r = false;
+			s = document.createElement('script');
+			s.type = 'text/javascript';
+			s.src = src + ".js";
+			if (callback) {
+				s.onload = s.onreadystatechange = function() {
+					if ( !r && (!this.readyState || this.readyState == 'complete') ) {
+						r = true;
+						callback();
+					}
+				};
+			}
+			t = document.getElementsByTagName('script')[0];
+			t.parentNode.insertBefore(s, t);
+		}
+	}
 }

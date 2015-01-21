@@ -7,6 +7,8 @@ function getDependencies() {
 	var toCompile = require("./modules"),
 		modules = [];
 
+	modules.push("src/license.js");
+
 	for (var i=0; i<toCompile.order.length; i++) {
 		for (var j=0; j<toCompile.modules[toCompile.order[i]].length; j++) {
 			modules.push(toCompile.modules[toCompile.order[i]][j]);
@@ -18,7 +20,7 @@ function getDependencies() {
 
 module.exports = function(grunt) {
 
-	var license = 	"Copyright (c) 2014 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. "+
+	var license = 	"Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. "+
 					"Redistribution and use in source and binary forms, with or without\n"+
 					"modification, are permitted provided that the following conditions are\n"+
 					"met:\n\n"+
@@ -54,17 +56,17 @@ module.exports = function(grunt) {
 			},
 			dist: {
 				src: getDependencies(),//['src/main.js', 'src/test.js'],
-				dest: 'build/app/lib/<%= pkg.name %>.js'
+				dest: 'build/app/lib/<%= pkg.name %>.min.js'
 			}
 		},
 		uglify: {
 			options: {
-				banner: '/*! <%= pkg.name %> version: <%= pkg.version %>, <%= grunt.template.today("dd-mm-yyyy") %>\n' + license + '*/\n',
+				banner: '/*! <%= pkg.name %> version: <%= pkg.version %>, <%= grunt.template.today("dd-mm-yyyy") %> */\n',
 				beautify : true
 			},
 			dist: {
 				files: {
-					'build/app/lib/<%= pkg.name %>.min.js': ['build/app/lib/<%= pkg.name %>.js'] //prima era concat.dist.dest
+					'build/app/lib/<%= pkg.name %>.js': ['build/app/lib/<%= pkg.name %>.min.js'] //prima era concat.dist.dest
 				}
 			}
 		},

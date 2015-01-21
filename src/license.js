@@ -1,4 +1,4 @@
-Copyright (c) 2015 by Marco Stagni and contributors.
+"Copyright (c) 2015 by Marco Stagni and contributors.
 
 Some rights reserved.
 
@@ -19,7 +19,7 @@ met:
       prior written permission.
 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
 LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
 A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
 OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
@@ -32,4 +32,4 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 Wage contains third party software in the 'app/vendor' directory: each
-file/module in this directory is distributed under its original license.
+file/module in this directory is distributed under its original license."
