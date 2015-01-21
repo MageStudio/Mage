@@ -1,4 +1,4 @@
-/*! wage version: 0.0.18, 21-01-2015 */
+/*! wage version: 0.0.19, 21-01-2015 */
 "Copyright (c) 2015 by Marco Stagni and contributors.\n\nSome rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are\nmet:\n\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n\n    * Redistributions in binary form must reproduce the above\n      copyright notice, this list of conditions and the following\n      disclaimer in the documentation and/or other materials provided\n      with the distribution.\n\n    * The names of the contributors may not be used to endorse or\n      promote products derived from this software without specific\n      prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\nLIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\nA PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\nOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\nSPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\nDATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\nTHEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\n\nWage contains third party software in the 'app/vendor' directory: each\nfile/module in this directory is distributed under its original license.";
 
 function ParticleTween(a, b) {
@@ -88,7 +88,7 @@ function include(a, b) {
             j == a.length && b();
         }, l = 0; l < a.length; l++) i(a[l]) ? b && k() : (c = document.createElement("script"), 
         c.type = "text/javascript", c.src = a + ".js", b && (c.onload = c.onreadystatechange = function() {
-            this.readyState && "complete" != this.readyState || k();
+            this.readyState && "complete" != this.readyState || (j++, k());
         }), e = document.getElementsByTagName("script")[0], e.parentNode.insertBefore(c, e));
     } else "string" == typeof a && (console.log("trying to load " + a), i(a) ? b && b() : (d = !1, 
     c = document.createElement("script"), c.type = "text/javascript", c.src = a + ".js", 
@@ -16330,8 +16330,8 @@ Game.script = function(a, b) {
     a in Game.scripts || (Game.scripts[a] = c);
 }, Game.attachScriptToObject = function(a, b, c) {
     var d = c + b;
-    Game.finished = !1, include(d, function() {
-        a.__loadScript(Game.scripts[b]), Game.finished = !0, console.log("changing game finished value " + Game.finished);
+    include(d, function() {
+        a.__loadScript(Game.scripts[b]);
     });
 }, Game.scripts = {};
 

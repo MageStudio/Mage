@@ -86,6 +86,7 @@ function include(src, callback) {
 				if (callback) {
 					s.onload = s.onreadystatechange = function() {
 						if (!this.readyState || this.readyState == 'complete') {
+							got++;
 							check();
 						}
 					};

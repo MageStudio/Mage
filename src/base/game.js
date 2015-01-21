@@ -26,13 +26,8 @@
 	};
 	Game.attachScriptToObject = function(object, scriptname, dir) {
 		var path = dir + scriptname;
-		Game.finished = false;
 		include(path, function() {
 			object.__loadScript(Game.scripts[scriptname]);
-			Game.finished = true;
-			console.log("changing game finished value " + Game.finished);
 		});
-		//while (!object.finished) {console.log(object.finished);}
-		//while(!Game.finished){}
 	}
 	Game.scripts = {};
