@@ -13,7 +13,7 @@ Class("Mesh", {
 
 		this.mesh = new THREE.Mesh(geometry, material);
 		//adding to core
-		core.add(this);
+		core.add(this.mesh, this);
 
 		if (options) {
 			//do something with options

@@ -358,7 +358,7 @@ ParticleEngine.prototype.initialize = function()
 	this.particleMesh = new THREE.PointCloud( this.particleGeometry, this.particleMaterial );
 	this.particleMesh.dynamic = true;
 	this.particleMesh.sortParticles = true;
-	core.add( this.particleMesh );
+	core.add( this.particleMesh, this );
 }
 
 ParticleEngine.prototype.update = function(dt)

@@ -1,4 +1,4 @@
-/*! wage version: 0.0.19, 21-01-2015 */
+/*! wage version: 0.0.20, 27-01-2015 */
 "Copyright (c) 2015 by Marco Stagni and contributors.\n\nSome rights reserved.\n\nRedistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are\nmet:\n\n    * Redistributions of source code must retain the above copyright\n      notice, this list of conditions and the following disclaimer.\n\n    * Redistributions in binary form must reproduce the above\n      copyright notice, this list of conditions and the following\n      disclaimer in the documentation and/or other materials provided\n      with the distribution.\n\n    * The names of the contributors may not be used to endorse or\n      promote products derived from this software without specific\n      prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\nLIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\nA PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\nOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\nSPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\nDATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\nTHEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\n\nWage contains third party software in the 'app/vendor' directory: each\nfile/module in this directory is distributed under its original license.";
 
 function ParticleTween(a, b) {
@@ -13839,7 +13839,7 @@ ParticleEngine.prototype.setValues = function(a) {
     this.particleMaterial.attributes.customAngle.value[a] = this.particleArray[a].angle;
     this.particleMaterial.blending = this.blendStyle, this.blendStyle != THREE.NormalBlending && (this.particleMaterial.depthTest = !1), 
     this.particleMesh = new THREE.PointCloud(this.particleGeometry, this.particleMaterial), 
-    this.particleMesh.dynamic = !0, this.particleMesh.sortParticles = !0, core.add(this.particleMesh);
+    this.particleMesh.dynamic = !0, this.particleMesh.sortParticles = !0, core.add(this.particleMesh, this);
 }, ParticleEngine.prototype.update = function(a) {
     for (var b = [], c = 0; c < this.particleCount; c++) this.particleArray[c].alive && (this.particleArray[c].update(a), 
     this.particleArray[c].age > this.particleDeathAge && (this.particleArray[c].alive = 0, 
@@ -15953,12 +15953,12 @@ Materials.AtmosphereMaterial = function() {
 })._extends("Entity"), Class("Mesh", {
     Mesh: function(a, b, c) {
         if (Entity.call(this), this.geometry = a, this.material = b, this.script = {}, this.hasScript = !1, 
-        this.mesh = new THREE.Mesh(a, b), core.add(this), c) for (var d in c) this[d] = c[d], 
+        this.mesh = new THREE.Mesh(a, b), core.add(this.mesh, this), c) for (var d in c) this[d] = c[d], 
         "script" == d && (this.hasScript = !0, this.addScript(c[d], c.dir));
     }
 })._extends("Entity"), Class("AmbientLight", {
     AmbientLight: function(a) {
-        this.mesh = new THREE.AmbientLight(a), core.add(this);
+        this.mesh = new THREE.AmbientLight(a), core.add(this.mesh, this);
     }
 })._extends("Entity"), window.Control = {}, Control = {
     type: void 0,
@@ -16662,9 +16662,8 @@ core = {
         }, 1e3 / core.util.frameRate), core.renderer.autoClear = !1, core.renderer.clear(), 
         customRender(), core.renderer.render(core.scene, core.camera.object);
     },
-    add: function(a) {
-        var b = a.mesh;
-        core.scene.add(b), Universe.universe.put(b.uuid, a);
+    add: function(a, b) {
+        core.scene.add(a), Universe.universe.put(a.uuid, b);
     },
     remove: function(a) {
         core.scene.remove(a), Universe.universe.remove(a.uuid);

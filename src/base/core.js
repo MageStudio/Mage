@@ -148,11 +148,10 @@ core = {
 		core.renderer.render(core.scene, core.camera.object);
 	},
 
-	add : function(element) {
+	add : function(mesh, element) {
 		//method to be called when creating a new element
-		var tmesh = element.mesh;
-		core.scene.add(tmesh);
-		Universe.universe.put(tmesh.uuid, element);
+		core.scene.add(mesh);
+		Universe.universe.put(mesh.uuid, element);
 	},
 
 	remove : function(element) {
