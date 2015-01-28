@@ -151,12 +151,12 @@ core = {
 	add : function(mesh, element) {
 		//method to be called when creating a new element
 		core.scene.add(mesh);
-		Universe.universe.put(mesh.uuid, element);
+		Universe.universe.put(mesh.uuid.replace("-", ""), element);
 	},
 
-	remove : function(element) {
-		core.scene.remove(element);
-		Universe.universe.remove(element.uuid);
+	remove : function(mesh) {
+		core.scene.remove(mesh);
+		Universe.universe.remove(mesh.uuid.replace("-", ""));
 	},
 
 	main_progress_bar : undefined,

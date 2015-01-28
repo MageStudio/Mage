@@ -154,7 +154,7 @@ HashMap.prototype.put = function( key, value) {
 
 
 
-HashMap.prototype.remove = function ( key ) { 
+HashMap.prototype.remove = function ( key ) {
 	//must return true or false if our deletion
 	//is succesful or not.
 	try {

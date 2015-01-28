@@ -1,4 +1,4 @@
-/*! wage version: 0.0.20, 28-01-2015 */
+/*! wage version: 0.0.21, 28-01-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16663,10 +16663,10 @@ core = {
         customRender(), core.renderer.render(core.scene, core.camera.object);
     },
     add: function(a, b) {
-        core.scene.add(a), Universe.universe.put(a.uuid, b);
+        core.scene.add(a), Universe.universe.put(a.uuid.replace("-", ""), b);
     },
     remove: function(a) {
-        core.scene.remove(a), Universe.universe.remove(a.uuid);
+        core.scene.remove(a), Universe.universe.remove(a.uuid.replace("-", ""));
     },
     main_progress_bar: void 0,
     init: function() {
