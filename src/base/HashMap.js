@@ -164,7 +164,7 @@ HashMap.prototype.remove = function ( key ) {
 				var b = new Array();
 				for (var i =0; i < this.keys.length; i++) {
 					if (i!=index) {
-						b.push(a[i]);
+						b.push(this.keys[i]);
 					}
 				}
 				this.keys = new Array();
@@ -178,7 +178,9 @@ HashMap.prototype.remove = function ( key ) {
 		return false;
 	}
 	catch ( error ) {
-		console.log("HASHMAP ERROR " + error);
+		console.log("HASHMAP ERROR ");
+		console.error(error);
+		console.trace();
 		return false;
 	}
 

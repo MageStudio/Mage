@@ -88,9 +88,8 @@ function include(a, b) {
         c.type = "text/javascript", c.src = a + ".js", b && (c.onload = c.onreadystatechange = function() {
             this.readyState && "complete" != this.readyState || (j++, k());
         }), e = document.getElementsByTagName("script")[0], e.parentNode.insertBefore(c, e));
-    } else "string" == typeof a && (console.log("trying to load " + a), i(a) ? b && b() : (d = !1, 
-    c = document.createElement("script"), c.type = "text/javascript", c.src = a + ".js", 
-    b && (c.onload = c.onreadystatechange = function() {
+    } else "string" == typeof a && (i(a) ? b && b() : (d = !1, c = document.createElement("script"), 
+    c.type = "text/javascript", c.src = a + ".js", b && (c.onload = c.onreadystatechange = function() {
         d || this.readyState && "complete" != this.readyState || (d = !0, b());
     }), e = document.getElementsByTagName("script")[0], e.parentNode.insertBefore(c, e)));
 }
@@ -15588,16 +15587,16 @@ __class__ = function(a, b) {
     return this.maxDimension ? this.total < this.maxDimension ? (this.map["" + a] = b, 
     this.keys.push(a), this.total += 1, !0) : !1 : (this.map["" + a] = b, this.keys.push(a), 
     this.total += 1, !0);
-}, HashMap.prototype.remove = function(b) {
+}, HashMap.prototype.remove = function(a) {
     try {
-        for (innerkey in this.map) if (innerkey == b) {
-            for (var c = this.keys.indexOf(innerkey), d = new Array(), e = 0; e < this.keys.length; e++) e != c && d.push(a[e]);
-            return this.keys = new Array(), this.keys = d, delete this.map["" + innerkey], this.total = 0, 
+        for (innerkey in this.map) if (innerkey == a) {
+            for (var b = this.keys.indexOf(innerkey), c = new Array(), d = 0; d < this.keys.length; d++) d != b && c.push(this.keys[d]);
+            return this.keys = new Array(), this.keys = c, delete this.map["" + innerkey], this.total = 0, 
             !0;
         }
         return !1;
-    } catch (f) {
-        return console.log("HASHMAP ERROR " + f), !1;
+    } catch (e) {
+        return console.log("HASHMAP ERROR "), console.error(e), console.trace(), !1;
     }
 }, HashMap.prototype.size = function() {
     return this.total;
@@ -16663,10 +16662,10 @@ core = {
         customRender(), core.renderer.render(core.scene, core.camera.object);
     },
     add: function(a, b) {
-        core.scene.add(a), Universe.universe.put(a.uuid.replace("-", ""), b);
+        core.scene.add(a), Universe.universe.put(a.uuid, b);
     },
     remove: function(a) {
-        core.scene.remove(a), Universe.universe.remove(a.uuid.replace("-", ""));
+        core.scene.remove(a), Universe.universe.remove(a.uuid);
     },
     main_progress_bar: void 0,
     init: function() {

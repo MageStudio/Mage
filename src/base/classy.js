@@ -100,7 +100,6 @@ function include(src, callback) {
 			}
 		}
 	} else if (typeof src == "string") {
-		console.log("trying to load " + src);
 		if (!alreadyGot(src)) {
 			r = false;
 			s = document.createElement('script');
