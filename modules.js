@@ -23,6 +23,7 @@ module.exports = (function() {
 		LIB + "physi.js",
 		LIB + "tween.js",
 		LIB + "underscore.js",
+		LIB + "bee.min.js",
 		BASE + "classy.js",
 		BASE + "colors.js",
 		BASE + "HashMap.js",

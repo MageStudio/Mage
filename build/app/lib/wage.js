@@ -1,4 +1,4 @@
-/*! wage version: 0.0.22, 28-01-2015 */
+/*! wage version: 0.0.22, 29-01-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -57,6 +57,80 @@ function ParticleEngine() {
         blending: THREE.NormalBlending,
         depthTest: !0
     }), this.particleMesh = new THREE.Mesh();
+}
+
+function BEE() {
+    this.options = void 0, this.nodes = [], this.size = 0, this.hasRoot = !1, this._idPool = [];
+}
+
+function _preEach(a, b, c) {
+    if (c) {
+        var d = b + 1;
+        a(c, d), _preEach(a, b, c.leftBranch), _preEach(a, b, c.rightBranch);
+    }
+}
+
+function _postEach(a, b, c) {
+    if (c) {
+        console.log("inside _postEach"), _postEach(a, b, c.leftBranch), _postEach(a, b, c.rightBranch);
+        var d = b + 1;
+        a(c, d);
+    }
+}
+
+function _defEach(a, b, c) {
+    if (c) {
+        _defEach(a, b, c.leftBranch);
+        var d = b + 1;
+        a(c, d), _defEach(a, b, c.rightBranch);
+    }
+}
+
+function _hasLTR(a, b, c) {
+    return b ? c(a.data, b.data) ? !0 : _hasLTR(e, b.leftBranch) || _hasLTR(e, b.rightBranch) : !1;
+}
+
+function _hasRTL(a, b, c) {
+    return b ? c(a.data, b.data) ? !0 : _hasRTL(e, b.rightBranch) || _hasRTL(e, b.leftBranch) : !1;
+}
+
+function _orderedHas(a, b, c) {
+    return b ? 0 == c(a.data, b.data) ? !0 : c(a.data, b.data) < 0 ? _orderedHas(a, b.leftBranch) : _orderedHas(a, b.rightBranch) : !1;
+}
+
+function height(a) {
+    return a ? 1 + Math.max(_height(a.leftBranch), _height(a.rightBranch)) : 0;
+}
+
+function _orderedIns(a, b, c) {
+    return b ? (c(a.data, b.data) < 0 || 0 == c(a.data, b.data) ? b.leftBranch = _orderedIns(a, b.leftBranch) : b.rightBranch = _orderedIns(a, b.rightBranch), 
+    b) : buildNode(data, void 0, void 0);
+}
+
+function buildNode(a, b, c) {
+    var d = this.createNode(a);
+    return d.addLeaf(b, {
+        branch: "left"
+    }), d.addLeaf(c, {
+        branch: "right"
+    }), d;
+}
+
+function Node(a) {
+    if (!(a.tree && a.tree instanceof BEE)) throw BEE.VALID_BEE;
+    this.tree = a.tree;
+    for (var b = Math.random().toString(BEE.MAX_ID_SIZE).slice(2); this.tree._idPool.indexOf(b) > -1; ) b = Math.random().toString(BEE.MAX_ID_SIZE).slice(2);
+    this.tree._idPool.push(b), this._id = b, Object.defineProperty(this, "_id", {
+        set: function() {
+            throw BEE.UNTOUCHABLE;
+        },
+        get: function() {
+            return b;
+        }
+    }), this.data = a.data, this.tree.size += 1, this.tree.nodes.push(this), this.leftBranch = void 0, 
+    this.rightBranch = void 0, this.rightWeight = void 0, this.leftWeight = void 0, 
+    this._isRoot = !1, this._isLeaf = !1, this._isParent = !1, this.children = 0, this.parents = 0, 
+    this.parent = void 0;
 }
 
 function Class(a, b) {
@@ -15542,7 +15616,107 @@ TWEEN.Tween = function(a) {
     }, "function" == typeof define && define.amd && define("underscore", [], function() {
         return n;
     });
-}.call(this);
+}.call(this), BEE.version = "0.1", BEE.authors = [ {
+    name: "Marco Stagni",
+    website: "http://marcostagni.com"
+} ], BEE.MAX_CHILDREN_COUNT = 2, BEE.MAX_PARENTS_COUNT = 1, BEE.MAX_ID_SIZE = 12, 
+BEE.MAX_ROOT_NUMBER = 1, BEE.VALID_BEE = "Please use a valid BEE object.", BEE.UNTOUCHABLE = "Untouchable value. Get away.", 
+BEE.VALID_BRANCH = "Please specify a valid branch.", BEE.NO_MORE_CHILDREN = "No more children allowed for this node.", 
+BEE.NO_MORE_PARENTS = "This node already have a parent.", BEE.ERROR_NO_LEAVES = "Sorry, something wrong in your BEE. There are no leaves :(", 
+BEE.ERROR_NO_PARENTS = "Sorry, something wrong in your BEE. There are no leaves :(", 
+BEE.ERROR_STRANGE_ROOTS = "Sorry, something wrong in your BEE. Strange number of root nodes", 
+BEE.ERROR_ALREADY_LEFT = "Sorry, this node already have a left branch.", BEE.ERROR_ALREADY_RIGHT = "Sorry, this node already have a right branch.", 
+BEE.BAD_ARGUMENTS = "BAD ARGUMENTS, please check them.", BEE.prototype.createNode = function(a) {
+    var b = new Node({
+        tree: this,
+        data: a
+    });
+    return b;
+}, BEE.prototype.getAllLeaves = function() {
+    var a = [];
+    for (var b in this.nodes) this.nodes[b]._isLeaf && a.push(this.nodes[b]);
+    if (0 == a.length) throw BEE.ERROR_NO_LEAVES;
+    return a;
+}, BEE.prototype.getRootNode = function() {
+    var a = [];
+    for (var b in this.nodes) this.nodes[b]._isRoot && a.push(this.nodes[b]);
+    if (1 != a.length) throw BEE.ERROR_STRANGE_ROOTS;
+    return a[0];
+}, BEE.prototype.getAllParents = function() {
+    var a = [];
+    for (var b in this.nodes) this.nodes[b]._isParent && a.push(this.nodes[b]);
+    if (0 == a.length) throw BEE.ERROR_NO_PARENTS;
+    return a;
+}, BEE.prototype.getPath = function(a) {
+    var b, c, d = [];
+    for (d.push({
+        n: a,
+        w: void 0
+    }), b = a.parent, c = a; b; ) {
+        var e = b.leftBranch._id == c._id ? b.leftWeight : b.rightWeight;
+        d.push({
+            n: b,
+            w: e
+        }), c = b, b = b.parent;
+    }
+    return d.reverse();
+}, BEE.prototype.each = function(a, b) {
+    var c = 0;
+    if ("function" != typeof a) throw BEE.BAD_ARGUMENTS;
+    "post" == b ? (console.log("inside post"), console.log(this.getRootNode()), _postEach(a, c, this.getRootNode())) : "pre" == b ? _preEach(a, c, this.getRootNode()) : _defEach(a, c, this.getRootNode());
+}, BEE.prototype.has = function(a, b, c) {
+    if ("function" != typeof b) throw BEE.BAD_ARGUMENTS;
+    var d;
+    if (c) if (_s = c.toLowerCase(), "ltr" == _s) d = _hasLTR(a, this.getRootNode(), b); else {
+        if ("rtl" != _s) throw BEE.BAD_ARGUMENTS;
+        d = _hasRTL(a, this.getRootNode(), b);
+    } else d = _hasLTR(a, this.getRootNode(), b);
+    return d;
+}, BEE.prototype.orderedHas = function(a, b) {
+    return _orderedIns(a, this.getRootNode(), b);
+}, BEE.prototype.height = function() {
+    var a = _height(this.getRootNode());
+    return a;
+}, BEE.prototype.orderedIns = function(a, b) {
+    try {
+        _orderedIns(a, this.getRootNode(), b);
+    } catch (c) {
+        return console.log("Something bad happened in ordIns"), !1;
+    }
+}, BEE.prototype.buildNode = function(a, b, c) {
+    var d = this.createNode(a);
+    return d.addLeaf(b, {
+        branch: "left"
+    }), d.addLeaf(c, {
+        branch: "right"
+    }), d;
+}, Node.prototype.setRoot = function(a) {
+    this._isRoot = a;
+}, Node.prototype.setParent = function(a) {
+    this._isParent = a;
+}, Node.prototype.setLeaf = function(a) {
+    this._isLeaf = a;
+}, Node.prototype.update = function() {
+    0 == this.children ? 0 == this.parents ? (this.setLeaf(!1), this.setRoot(!0), this.setParent(!1)) : (this.setLeaf(!0), 
+    this.setRoot(!1), this.setParent(!1)) : 0 == this.parents ? (this.setLeaf(!1), this.setRoot(!0), 
+    this.setParent(!0)) : (this.setLeaf(!1), this.setRoot(!1), this.setParent(!0));
+}, Node.prototype.addLeaf = function(a, b) {
+    if (this.children + 1 > BEE.MAX_CHILDREN_COUNT) throw BEE.NO_MORE_CHILDREN;
+    if (!b.branch) throw BEE.BAD_ARGUMENTS;
+    if ("left" == b.branch) {
+        if (this.leftBranch) throw BEE.ERROR_ALREADY_LEFT;
+        this.leftBranch = a, this.leftWeight = b.weights && b.weights.l ? b.weights.l : 0;
+    } else {
+        if ("right" != b.branch) throw BEE.VALID_BRANCH;
+        if (this.rightBranch) throw BEE.ERROR_ALREADY_RIGHT;
+        this.rightBranch = a, this.rightWeight = b.weights && b.weights.r ? b.weights.r : 1;
+    }
+    this.children += 1, a.parent = this, a.parents = 1, this.update(), a.update();
+}, Node.prototype.addParent = function(a, b) {
+    if (this.parents + 1 > BEE.MAX_PARENTS_COUNT) throw BEE.NO_MORE_PARENTS;
+    if (a.children + 1 > BEE.MAX_CHILDREN_COUNT) throw BEE.NO_MORE_CHILDREN;
+    a.addLeaf(this, b);
+};
 
 var __pool__ = {};
 
