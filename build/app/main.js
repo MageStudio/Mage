@@ -58,6 +58,8 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 var CAMERA_MAX_Z = 1000, CAMERA_MIN_Z = 250;
 
+include("app/scripts/cube/mybox")
+
 function onCreate() {
 
 	//add your code HERE
@@ -93,10 +95,7 @@ function onCreate() {
 		wireframe : true 
 	});
 	
-	window.cube = new Mesh(geometry, material, {script : "mybox", dir : "cube"});
-	window.cube2 = new Mesh(geometry, material, {script : "mybox", dir : "cube"});
-
-	cube2.mesh.position.x = 50;
+	var cube = new Mesh(geometry, material, {script : "mybox", dir : "cube"});
 
 	console.log("Inside onCreate method");
 

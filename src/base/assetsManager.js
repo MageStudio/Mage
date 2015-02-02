@@ -9,6 +9,7 @@
 
 	AssetsManager.load = function(callback) {
 		//first we load scripts
+		console.log(include);
 		AssetsManager.callback = callback;
 		//over loading scripts
 		AudioEngine.load();

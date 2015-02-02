@@ -1,4 +1,4 @@
-/*! wage version: 0.0.22, 29-01-2015 */
+/*! wage version: 0.0.24, 02-02-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -156,10 +156,11 @@ function include(a, b) {
     if (a instanceof Array) {
         var j = 0;
         if (0 == a.length) return void console.log("Why are you triyng to include 0 scripts? This makes me sad.");
+        console.log(a), console.log(a.length);
         for (var k = function() {
             j == a.length && b();
         }, l = 0; l < a.length; l++) i(a[l]) ? b && k() : (c = document.createElement("script"), 
-        c.type = "text/javascript", c.src = a + ".js", b && (c.onload = c.onreadystatechange = function() {
+        c.type = "text/javascript", c.src = a[l] + ".js", b && (c.onload = c.onreadystatechange = function() {
             this.readyState && "complete" != this.readyState || (j++, k());
         }), e = document.getElementsByTagName("script")[0], e.parentNode.insertBefore(c, e));
     } else "string" == typeof a && (i(a) ? b && b() : (d = !1, c = document.createElement("script"), 
@@ -16607,8 +16608,8 @@ Gui = {
     images: !0,
     general: !0
 }, AssetsManager.load = function(a) {
-    AssetsManager.callback = a, AudioEngine.load(), VideoEngine.load(), ImagesEngine.load(), 
-    GeneralAssetsEngine.load(), AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
+    console.log(include), AssetsManager.callback = a, AudioEngine.load(), VideoEngine.load(), 
+    ImagesEngine.load(), GeneralAssetsEngine.load(), AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
 }, AssetsManager.loadingMessage = function(a) {
     console.log(a);
 }, AssetsManager.check = function() {

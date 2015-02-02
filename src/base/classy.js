@@ -75,6 +75,8 @@ function include(src, callback) {
 			console.log("Why are you triyng to include 0 scripts? This makes me sad.")
 			return;
 		}
+		console.log(src);
+		console.log(src.length);
 		var check = function() {
 			if (got == src.length) callback();
 		}
@@ -82,7 +84,7 @@ function include(src, callback) {
 			if (!alreadyGot(src[j])) {
 				s = document.createElement('script');
 				s.type = 'text/javascript';
-				s.src = src + ".js";
+				s.src = src[j] + ".js";
 				if (callback) {
 					s.onload = s.onreadystatechange = function() {
 						if (!this.readyState || this.readyState == 'complete') {
