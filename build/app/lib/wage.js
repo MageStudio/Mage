@@ -1,4 +1,4 @@
-/*! wage version: 0.0.24, 02-02-2015 */
+/*! wage version: 0.0.24, 03-02-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16140,7 +16140,19 @@ Materials.AtmosphereMaterial = function() {
     oldType: void 0,
     handler: void 0,
     clock: void 0,
-    changeControl: function(a) {
+    options: {
+        fps: {
+            height: 5,
+            mouseFactor: .002,
+            jumpHeight: 5,
+            fallFactor: .25,
+            delta: .1,
+            velocity: .5,
+            crouch: .25
+        },
+        fly: {}
+    },
+    set: function(a) {
         var b = "" + a, c = Control.allowedTypes.indexOf(b);
         if (-1 != c) switch (c) {
           case 0:
@@ -16155,7 +16167,7 @@ Materials.AtmosphereMaterial = function() {
             document.removeEventListener("mousemove", Control.handler.onMouseMove, !1), document.removeEventListener("keydown", Control.handler.onKeyDown, !1), 
             document.removeEventListener("keyup", Control.handler.onKeyUp, !1), document.removeEventListener("click", Control.internal_pointerlockonclick, !1), 
             Control.handler.enabled = !1, Control.handler = {}), l("creating new fly control"), 
-            Control.fly(core.camera), Control.type = "fly", Control.oldType = 0;
+            Control.fly(core.camera.object), Control.type = "fly", Control.oldType = 0;
             break;
 
           case 1:
@@ -16164,7 +16176,7 @@ Materials.AtmosphereMaterial = function() {
             }, !1), document.removeEventListener("mousemove", Control.handler.mousemove, !1), 
             document.removeEventListener("mousedown", Control.handler.mousedown, !1), document.removeEventListener("mouseup", Control.handler.mouseup, !1), 
             document.removeEventListener("keydown", Control.handler.keydown, !1), document.removeEventListener("keyup", Control.handler.keyup, !1)), 
-            l("creating new fps control"), Control.fps(core.camera), core.scene.add(Control.handler.getObject()), 
+            l("creating new fps control"), Control.fps(core.camera.object), core.add(Control.handler.getObject(), Control.handler), 
             Control.fps_uuid = Control.handler.getObject().uuid, Control.type = "fps", Control.oldType = 1;
         }
     },
@@ -16365,7 +16377,7 @@ Materials.AtmosphereMaterial = function() {
     fly: function() {
         $("body").css({
             cursor: "url(img/pointer_cross.png), auto"
-        }), Control.handler = new Control.internal_fly(core.camera), Control.handler.movementSpeed = 3, 
+        }), Control.handler = new Control.internal_fly(core.camera.object), Control.handler.movementSpeed = 3, 
         Control.handler.domElement = document, Control.handler.rollSpeed = .05, Control.handler.autoForward = !1, 
         Control.handler.dragToLook = !1;
     },
@@ -16390,7 +16402,7 @@ Materials.AtmosphereMaterial = function() {
     },
     fps_uuid: void 0,
     fps: function() {
-        Control.handler = new Control.internal_fps(core.camera);
+        Control.handler = new Control.internal_fps(core.camera.object);
         var a = "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document;
         a ? (l("we have pointer lock ability"), Control.handler.enabled = !0, document.addEventListener("pointerlockchange", Control.internal_pointerlockchange, !1), 
         document.addEventListener("mozpointerlockchange", Control.internal_pointerlockchange, !1), 
@@ -16406,12 +16418,13 @@ Materials.AtmosphereMaterial = function() {
         var c = new THREE.Object3D();
         c.add(a);
         var d = new THREE.Object3D();
-        d.position.y = 10, d.add(c);
+        d.position.y = Control.options.fps.height, d.add(c);
         var e = !1, f = !1, g = !1, h = !1, i = !1, j = !1, k = new THREE.Vector3(), m = Math.PI / 2;
         this.onMouseMove = function(a) {
             if (b.enabled !== !1) {
                 var e = a.movementX || a.mozMovementX || a.webkitMovementX || 0, f = a.movementY || a.mozMovementY || a.webkitMovementY || 0;
-                d.rotation.y -= .002 * e, c.rotation.x -= .002 * f, c.rotation.x = Math.max(-m, Math.min(m, c.rotation.x));
+                d.rotation.y -= e * Control.options.fps.mouseFactor, c.rotation.x -= f * Control.options.fps.mouseFactor, 
+                c.rotation.x = Math.max(-m, Math.min(m, c.rotation.x));
             }
         }, this.onKeyDown = function(a) {
             switch (l("inside pointer lock controls onKeyDown " + a.keyCode), a.keyCode) {
@@ -16436,7 +16449,12 @@ Materials.AtmosphereMaterial = function() {
                 break;
 
               case 32:
-                j === !0 && (k.y += 10), j = !1;
+                j === !0 && (k.y += Control.options.fps.jumpHeight), j = !1;
+                break;
+
+              case 16:
+                Control.options.fps._oldV = Control.options.fps.velocity, Control.options.fps.velocity = Control.options.fps.crouch, 
+                d.position.y = Control.options.fps.height / 2, j = !1;
             }
         }, this.onKeyUp = function(a) {
             switch (a.keyCode) {
@@ -16458,6 +16476,11 @@ Materials.AtmosphereMaterial = function() {
               case 39:
               case 68:
                 h = !1;
+                break;
+
+              case 16:
+                Control.options.fps.velocity = Control.options.fps._oldV, d.position.y = Control.options.fps.height, 
+                j = !0;
             }
         }, document.addEventListener("mousemove", this.onMouseMove, !1), document.addEventListener("keydown", this.onKeyDown, !1), 
         document.addEventListener("keyup", this.onKeyUp, !1), this.enabled = !1, this.getObject = function() {
@@ -16471,27 +16494,34 @@ Materials.AtmosphereMaterial = function() {
             };
         }(), this.update = function(a) {
             if (b.enabled === !1) return void l("pointerlock not enabled. please enable it.");
-            a *= .1, k.y -= .25 * a;
-            var c = .1;
+            a *= Control.options.fps.delta, k.y -= Control.options.fps.fallFactor * a;
+            var c = Control.options.fps.velocity;
             e && (k.z = -c), f && (k.z = c), f || e || (k.z = 0), g && (k.x = -c), h && (k.x = c), 
             h || g || (k.x = 0), i === !0 && (k.y = Math.max(0, k.y)), d.translateX(k.x), d.translateY(k.y), 
-            d.translateZ(k.z), d.position.y < 10 && (k.y = 0, d.position.y = 10, j = !0);
+            d.translateZ(k.z), d.position.y < Control.options.fps.height && (k.y = 0, d.position.y = Control.options.fps.height, 
+            j = !0);
         };
     },
     update: function() {
         if (input) "function" == typeof input && input(); else if (Control.handler) {
-            var a = Control.clock.getDelta();
-            Control.handler.update && Control.handler.update(a);
+            {
+                Control.clock.getDelta();
+            }
+            try {
+                Control.handler.update(core.clock.getDelta());
+            } catch (a) {
+                console.error(a), console.trace();
+            }
         }
     },
     init: function() {
         Control.clock = new THREE.Clock();
         try {
             input ? (Control.type = "custom", Control.oldType = 2, window.addEventListener("keydown", input.keydown), 
-            window.addEventListener("keyup", input.keyup)) : (Control.type = "fly", Control.fly(core.camera), 
+            window.addEventListener("keyup", input.keyup)) : (Control.type = "fly", Control.fly(core.camera.object), 
             Control.oldType = 0);
         } catch (a) {
-            Control.type = "fly", Control.fly(core.camera), Control.oldType = 0;
+            Control.type = "fly", Control.fly(core.camera.object), Control.oldType = 0;
         }
     }
 }, window.Game = {}, Game.SCRIPTS_DIR = "app/scripts/", Game.update = function() {}, 
