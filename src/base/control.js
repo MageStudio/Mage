@@ -504,6 +504,8 @@
 
 			var PI_2 = Math.PI / 2;
 
+			var shift_clicked = false;
+
 			this.onMouseMove = function ( event ) {
 
 				if ( scope.enabled === false ) return;
@@ -552,6 +554,7 @@
 						Control.options.fps.velocity = Control.options.fps.crouch;
 						yawObject.position.y = Control.options.fps.height/2;
 						canJump = false;
+						shift_clicked = true;
 						break;
 
 				}
@@ -586,6 +589,8 @@
 						Control.options.fps.velocity = Control.options.fps._oldV
 						yawObject.position.y = Control.options.fps.height;
 						canJump = true;
+						shift_clicked = false;
+						break;
 
 				}
 
@@ -665,7 +670,7 @@
 				if ( yawObject.position.y < Control.options.fps.height ) {
 
 					velocity.y = 0;
-					yawObject.position.y = Control.options.fps.height;
+					yawObject.position.y = shift_clicked ? Control.options.fps.height/2 : Control.options.fps.height;
 
 					canJump = true;
 

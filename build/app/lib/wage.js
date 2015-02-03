@@ -16419,7 +16419,7 @@ Materials.AtmosphereMaterial = function() {
         c.add(a);
         var d = new THREE.Object3D();
         d.position.y = Control.options.fps.height, d.add(c);
-        var e = !1, f = !1, g = !1, h = !1, i = !1, j = !1, k = new THREE.Vector3(), m = Math.PI / 2;
+        var e = !1, f = !1, g = !1, h = !1, i = !1, j = !1, k = new THREE.Vector3(), m = Math.PI / 2, n = !1;
         this.onMouseMove = function(a) {
             if (b.enabled !== !1) {
                 var e = a.movementX || a.mozMovementX || a.webkitMovementX || 0, f = a.movementY || a.mozMovementY || a.webkitMovementY || 0;
@@ -16454,7 +16454,7 @@ Materials.AtmosphereMaterial = function() {
 
               case 16:
                 Control.options.fps._oldV = Control.options.fps.velocity, Control.options.fps.velocity = Control.options.fps.crouch, 
-                d.position.y = Control.options.fps.height / 2, j = !1;
+                d.position.y = Control.options.fps.height / 2, j = !1, n = !0;
             }
         }, this.onKeyUp = function(a) {
             switch (a.keyCode) {
@@ -16480,7 +16480,7 @@ Materials.AtmosphereMaterial = function() {
 
               case 16:
                 Control.options.fps.velocity = Control.options.fps._oldV, d.position.y = Control.options.fps.height, 
-                j = !0;
+                j = !0, n = !1;
             }
         }, document.addEventListener("mousemove", this.onMouseMove, !1), document.addEventListener("keydown", this.onKeyDown, !1), 
         document.addEventListener("keyup", this.onKeyUp, !1), this.enabled = !1, this.getObject = function() {
@@ -16498,7 +16498,7 @@ Materials.AtmosphereMaterial = function() {
             var c = Control.options.fps.velocity;
             e && (k.z = -c), f && (k.z = c), f || e || (k.z = 0), g && (k.x = -c), h && (k.x = c), 
             h || g || (k.x = 0), i === !0 && (k.y = Math.max(0, k.y)), d.translateX(k.x), d.translateY(k.y), 
-            d.translateZ(k.z), d.position.y < Control.options.fps.height && (k.y = 0, d.position.y = Control.options.fps.height, 
+            d.translateZ(k.z), d.position.y < Control.options.fps.height && (k.y = 0, d.position.y = n ? Control.options.fps.height / 2 : Control.options.fps.height, 
             j = !0);
         };
     },
