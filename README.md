@@ -8,6 +8,11 @@ Of course, tons of contributors made this awesome project a reality. Thanks, con
 
 So, I really love THREE.js. It's incredible, and you can achieve truly amazing stuff, and I'm the perfect user for this library: I've never fully understood how WebGL works. Yep, I'm a dummy.
 
+#####EXAMPLES
+
+These are a few examples of my "engine" working on very simple games.
+[WORM](http://marcostagni.com/projects/worm)
+
 -----
 ####Creating a THREE.js Boilerplate
 
