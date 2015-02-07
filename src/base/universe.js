@@ -23,7 +23,7 @@ Universe =  {
 	worker : undefined,
 
 	init : function(){
-		console.log("inside univers init");
+		console.log("inside universe init");
 		/*------------------------------------------------------------------------------------------
 
 			this is an auto-call method. it will initialize our object map

@@ -175,7 +175,7 @@ core = {
 			var util 	= core.util;
 			var t 		= core.threeLib;
 
-			try{
+			//try{
 				//l("about to create new scene");
 				//configuring threejs and physijs
 				if (config) {
@@ -265,10 +265,10 @@ core = {
 					console.log("Something wrong in your onCreate method");
 				}
 
-			} catch( error ) {
-				console.error(error);
-				console.trace();
-			}
+			//} catch( error ) {
+			//	console.error(error);
+			//	console.trace();
+			//}
 		}
 
 		load = function() {

@@ -28,8 +28,8 @@ __class__.prototype._extends = function(toextend) {
 	this._setMethods();
 	//apparently useless code below.
 	window[this.name].prototype.__getSuper = function() {
-		console.log(c);
-		console.log(sup);
+		//console.log(c);
+		//console.log(sup);
 		return sup;
 	}
 	/*
@@ -75,8 +75,8 @@ function include(src, callback) {
 			console.log("Why are you triyng to include 0 scripts? This makes me sad.")
 			return;
 		}
-		console.log(src);
-		console.log(src.length);
+		//console.log(src);
+		//console.log(src.length);
 		var check = function() {
 			if (got == src.length) callback();
 		}

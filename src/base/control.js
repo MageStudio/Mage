@@ -506,6 +506,22 @@
 
 			var shift_clicked = false;
 
+			//adding custom keyDownListener
+			this._onKeyDown = function(event){};
+			this.setKeyDownListener = function (callback) {
+				this._onKeyDown = callback;
+			}
+			//adding custom keyUpListener
+			this._onKeyUp = function(event){};
+			this.setKeyUpListener = function (callback) {
+				this._onKeyUp = callback;
+			}
+			//adding custom keyDownListener
+			this._onMouseMove = function(event){};
+			this.setMouseMoveListener = function (callback) {
+				this._onMouseMove = callback;
+			}
+
 			this.onMouseMove = function ( event ) {
 
 				if ( scope.enabled === false ) return;
@@ -517,11 +533,10 @@
 				pitchObject.rotation.x -= movementY * Control.options.fps.mouseFactor;
 
 				pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, pitchObject.rotation.x ) );
-
+				Control.handler._onMouseMove(event);
 			};
 
 			this.onKeyDown = function ( event ) {
-				l("inside pointer lock controls onKeyDown " + event.keyCode);
 				switch ( event.keyCode ) {
 
 					case 38: // up
@@ -558,6 +573,7 @@
 						break;
 
 				}
+				Control.handler._onKeyDown(event);
 
 			};
 
@@ -591,9 +607,8 @@
 						canJump = true;
 						shift_clicked = false;
 						break;
-
 				}
-
+				Control.handler._onKeyUp(event);
 			};
 
 			document.addEventListener( 'mousemove', this.onMouseMove, false );

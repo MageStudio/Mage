@@ -1,4 +1,4 @@
-/*! wage version: 0.0.24, 03-02-2015 */
+/*! wage version: 0.0.25, 07-02-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -156,7 +156,6 @@ function include(a, b) {
     if (a instanceof Array) {
         var j = 0;
         if (0 == a.length) return void console.log("Why are you triyng to include 0 scripts? This makes me sad.");
-        console.log(a), console.log(a.length);
         for (var k = function() {
             j == a.length && b();
         }, l = 0; l < a.length; l++) i(a[l]) ? b && k() : (c = document.createElement("script"), 
@@ -15724,11 +15723,11 @@ var __pool__ = {};
 __class__ = function(a, b) {
     this.name = a, this.methods = b;
 }, __class__.prototype.has = {}.hasOwnProperty, __class__.prototype._extends = function(a) {
-    var b = window[this.name], c = "string" == typeof a ? window[a] : a;
-    if (!c) throw "NO UPPER CLASS";
-    window[this.name].prototype = Object.create(c.prototype), window[this.name].prototype.constructor = window[this.name], 
+    var b = (window[this.name], "string" == typeof a ? window[a] : a);
+    if (!b) throw "NO UPPER CLASS";
+    window[this.name].prototype = Object.create(b.prototype), window[this.name].prototype.constructor = window[this.name], 
     this._setMethods(), window[this.name].prototype.__getSuper = function() {
-        return console.log(b), console.log(c), c;
+        return b;
     }, window[this.name].prototype._super = "string" == typeof a ? window[a].call : a.call;
 }, __class__.prototype._setMethods = function() {
     for (var a in this.methods) a != this.name && (window[__upperCaseFirstLetter__(this.name)].prototype[a] = this.methods[a]);
@@ -16420,14 +16419,20 @@ Materials.AtmosphereMaterial = function() {
         var d = new THREE.Object3D();
         d.position.y = Control.options.fps.height, d.add(c);
         var e = !1, f = !1, g = !1, h = !1, i = !1, j = !1, k = new THREE.Vector3(), m = Math.PI / 2, n = !1;
-        this.onMouseMove = function(a) {
+        this._onKeyDown = function() {}, this.setKeyDownListener = function(a) {
+            this._onKeyDown = a;
+        }, this._onKeyUp = function() {}, this.setKeyUpListener = function(a) {
+            this._onKeyUp = a;
+        }, this._onMouseMove = function() {}, this.setMouseMoveListener = function(a) {
+            this._onMouseMove = a;
+        }, this.onMouseMove = function(a) {
             if (b.enabled !== !1) {
                 var e = a.movementX || a.mozMovementX || a.webkitMovementX || 0, f = a.movementY || a.mozMovementY || a.webkitMovementY || 0;
                 d.rotation.y -= e * Control.options.fps.mouseFactor, c.rotation.x -= f * Control.options.fps.mouseFactor, 
-                c.rotation.x = Math.max(-m, Math.min(m, c.rotation.x));
+                c.rotation.x = Math.max(-m, Math.min(m, c.rotation.x)), Control.handler._onMouseMove(a);
             }
         }, this.onKeyDown = function(a) {
-            switch (l("inside pointer lock controls onKeyDown " + a.keyCode), a.keyCode) {
+            switch (a.keyCode) {
               case 38:
               case 87:
                 e = !0;
@@ -16456,6 +16461,7 @@ Materials.AtmosphereMaterial = function() {
                 Control.options.fps._oldV = Control.options.fps.velocity, Control.options.fps.velocity = Control.options.fps.crouch, 
                 d.position.y = Control.options.fps.height / 2, j = !1, n = !0;
             }
+            Control.handler._onKeyDown(a);
         }, this.onKeyUp = function(a) {
             switch (a.keyCode) {
               case 38:
@@ -16482,6 +16488,7 @@ Materials.AtmosphereMaterial = function() {
                 Control.options.fps.velocity = Control.options.fps._oldV, d.position.y = Control.options.fps.height, 
                 j = !0, n = !1;
             }
+            Control.handler._onKeyUp(a);
         }, document.addEventListener("mousemove", this.onMouseMove, !1), document.addEventListener("keydown", this.onKeyDown, !1), 
         document.addEventListener("keyup", this.onKeyUp, !1), this.enabled = !1, this.getObject = function() {
             return d;
@@ -16550,7 +16557,7 @@ Gui = {
     loaded: !1,
     worker: void 0,
     init: function() {
-        console.log("inside univers init"), Universe.loaded = !0, Universe.universe = new HashMap();
+        console.log("inside universe init"), Universe.loaded = !0, Universe.universe = new HashMap();
     },
     cube: void 0,
     addRandomCube: function() {
@@ -16638,58 +16645,77 @@ Gui = {
     images: !0,
     general: !0
 }, AssetsManager.load = function(a) {
-    console.log(include), AssetsManager.callback = a, AudioEngine.load(), VideoEngine.load(), 
-    ImagesEngine.load(), GeneralAssetsEngine.load(), AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
-}, AssetsManager.loadingMessage = function(a) {
-    console.log(a);
-}, AssetsManager.check = function() {
+    AssetsManager.callback = a, AudioEngine.load(), VideoEngine.load(), ImagesEngine.load(), 
+    GeneralAssetsEngine.load(), AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
+}, AssetsManager.loadingMessage = function() {}, AssetsManager.check = function() {
     AssetsManager.completed.sound && AssetsManager.completed.video && AssetsManager.completed.images && AssetsManager.completed.general ? (AssetsManager.loadingMessage(!0), 
     clearInterval(AssetsManager.checkInterval), AssetsManager.callback()) : AssetsManager.loadingMessage(!1);
 }, function() {
-    window.AudioEngine = {}, AudioEngine.DELAY_FACTOR = .02, AudioEngine.DELAY_STEP = 1, 
-    AudioEngine.DELAY_MIN_VALUE = .2, AudioEngine.DELAY_NORMAL_VALUE = 40, AudioEngine.VOLUME = 80;
-    AudioEngine.soundModules = [ "js/core/audio/beat", "js/core/audio/sound", "js/core/audio/ambientSound" ], 
-    AudioEngine.numSound = 0, AudioEngine.soundLoaded = 0, AudioEngine.load = function() {
-        AudioEngine.map = new HashMap(), AudioEngine.sounds = [], AudioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null, 
-        AudioEngine.AudioContext ? (AudioEngine.context = new AudioEngine.AudioContext(), 
-        AudioEngine.volume = AudioEngine.context.createGain(), AudioEngine.volume.gain.value = AudioEngine.VOLUME, 
-        AudioEngine.volume.connect(AudioEngine.context.destination)) : console.error("No Audio Context available, sorry.");
-        for (var a in Assets.Audio) AudioEngine.numSound++, AudioEngine.loadSingleFile(a, Assets.Audio[a]);
-        0 == AudioEngine.numSound && (AssetsManager.completed.sound = !0);
-    }, AudioEngine.get = function(a) {
-        return AudioEngine.map.get(a) || !1;
-    }, AudioEngine.loadSingleFile = function(a, b) {
-        var c = new XMLHttpRequest();
-        c.open("GET", b, !0), c.responseType = "arraybuffer", c.onload = function() {
-            AudioEngine.context.decodeAudioData(this.response, function(b) {
-                AudioEngine.map.put(a, b), AudioEngine.soundLoaded++, AudioEngine.checkLoad();
-            }, function() {
-                AudioEngine.map.put(a, null), AudioEngine.soundLoaded++, console.error("Decoding the audio buffer failed");
-            });
-        }, c.send();
-    }, AudioEngine.checkLoad = function() {
-        AudioEngine.soundLoaded == AudioEngine.numSound && (AssetsManager.completed.sound = !0);
-    }, AudioEngine.add = function(a) {
-        AudioEngine.sounds.push(a);
-    }, AudioEngine.update = function() {
-        var start = new Date();
-        for (var index in AudioEngine.sounds) {
-            var sound = AudioEngine.sounds[index];
-            with (sound) setTimeout(function() {
-                update(core.clock.getDelta());
-            }, 0);
-            core.camera.object.updateMatrixWorld();
-            var p = new THREE.Vector3();
-            p.setFromMatrixPosition(core.camera.object.matrixWorld), AudioEngine.context.listener.setPosition(p.x, p.y, p.z);
-            var m = core.camera.object.matrix;
-            mx = m.elements[12], my = m.elements[13], mz = m.elements[14], m.elements[12] = m.elements[13] = m.elements[14] = 0;
-            var vec = new THREE.Vector3(0, 0, 1);
-            vec.applyProjection(m), vec.normalize();
-            var up = new THREE.Vector3(0, -1, 0);
-            if (up.applyProjection(m), up.normalize(), AudioEngine.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z), 
-            m.elements[12] = mx, m.elements[13] = my, m.elements[14] = mz, +new Date() - start > 50) return;
+    window.AudioEngine = {
+        DELAY_FACTOR: .02,
+        DELAY_STEP: 1,
+        DELAY_MIN_VALUE: .2,
+        DELAY_NORMAL_VALUE: 40,
+        VOLUME: 80,
+        _volume: 80,
+        soundPath: "js/core/sound/",
+        soundModules: [ "js/core/audio/beat", "js/core/audio/sound", "js/core/audio/ambientSound" ],
+        numSound: 0,
+        soundLoaded: 0,
+        load: function() {
+            AudioEngine.map = new HashMap(), AudioEngine.sounds = [], AudioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null, 
+            AudioEngine.AudioContext ? (AudioEngine.context = new AudioEngine.AudioContext(), 
+            AudioEngine.volume = AudioEngine.context.createGain(), AudioEngine.volume.gain.value = AudioEngine.VOLUME, 
+            AudioEngine.volume.connect(AudioEngine.context.destination)) : console.error("No Audio Context available, sorry.");
+            for (var a in Assets.Audio) AudioEngine.numSound++, AudioEngine.loadSingleFile(a, Assets.Audio[a]);
+            0 == AudioEngine.numSound && (AssetsManager.completed.sound = !0);
+        },
+        get: function(a) {
+            return AudioEngine.map.get(a) || !1;
+        },
+        loadSingleFile: function(a, b) {
+            var c = new XMLHttpRequest();
+            c.open("GET", b, !0), c.responseType = "arraybuffer", c.onload = function() {
+                AudioEngine.context.decodeAudioData(this.response, function(b) {
+                    AudioEngine.map.put(a, b), AudioEngine.soundLoaded++, AudioEngine.checkLoad();
+                }, function() {
+                    AudioEngine.map.put(a, null), AudioEngine.soundLoaded++, console.error("Decoding the audio buffer failed");
+                });
+            }, c.send();
+        },
+        checkLoad: function() {
+            AudioEngine.soundLoaded == AudioEngine.numSound && (AssetsManager.completed.sound = !0);
+        },
+        add: function(a) {
+            AudioEngine.sounds.push(a);
+        },
+        update: function() {
+            var start = new Date();
+            for (var index in AudioEngine.sounds) {
+                var sound = AudioEngine.sounds[index];
+                with (sound) setTimeout(function() {
+                    update(core.clock.getDelta());
+                }, 0);
+                core.camera.object.updateMatrixWorld();
+                var p = new THREE.Vector3();
+                p.setFromMatrixPosition(core.camera.object.matrixWorld), AudioEngine.context.listener.setPosition(p.x, p.y, p.z);
+                var m = core.camera.object.matrix;
+                mx = m.elements[12], my = m.elements[13], mz = m.elements[14], m.elements[12] = m.elements[13] = m.elements[14] = 0;
+                var vec = new THREE.Vector3(0, 0, 1);
+                vec.applyProjection(m), vec.normalize();
+                var up = new THREE.Vector3(0, -1, 0);
+                if (up.applyProjection(m), up.normalize(), AudioEngine.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z), 
+                m.elements[12] = mx, m.elements[13] = my, m.elements[14] = mz, +new Date() - start > 50) return;
+            }
         }
-    };
+    }, Object.defineProperty(AudioEngine, "VOLUME", {
+        set: function(a) {
+            AudioEngine._volume = a, AudioEngine.volume.gain.value = AudioEngine._volume;
+        },
+        get: function() {
+            return AudioEngine._volume ? AudioEngine._volume : void 0;
+        }
+    });
 }(), Class("Beat", {
     Beat: function(a) {
         this.name = a, this.sound = {}, this.sound.source = AudioEngine.context.createBufferSource(), 
@@ -16877,36 +16903,32 @@ core = {
         var a = function() {
             core.threeLib = THREE;
             var a = core.util.camera, b = core.util, c = core.threeLib;
-            try {
-                if (config) if (l("config loaded"), config.physics_enabled) {
-                    l("physics enabled.");
-                    try {
-                        Physijs.scripts.worker = "workers/physijs_worker.js", Physijs.scripts.ammo = "ammo.js", 
-                        core.scene = new Physijs.Scene(), Physijs._isLoaded = !0;
-                    } catch (d) {
-                        l("something bad trying to create physijs scene", "e"), l(d), Physijs._isLoaded = !1, 
-                        core.scene = new c.Scene();
-                    }
-                } else l("physics not enabled."), Physijs._isLoaded = !1, core.scene = new c.Scene(); else l("config not loaded, switching to three.js"), 
-                Physijs._isLoaded = !1, core.scene = new c.Scene();
-                var e = {
-                    fov: a.fov,
-                    ratio: b.ratio,
-                    near: a.near,
-                    far: a.far
-                };
-                config && config.camera && (e.fov = config.camera.fov ? config.camera.fov : e.fov, 
-                e.ratio = config.camera.ratio ? config.camera.ratio : e.ratio, e.near = config.camera.near ? config.camera.near : e.near, 
-                e.far = config.camera.far ? config.camera.far : e.far), core.camera = new Camera(e), 
-                core.renderer = new c.WebGLRenderer({
-                    alpha: !1
-                }), config && 1 == config.cast_shadow && (core.renderer.shadowMapEnabled = !0, core.renderer.shadowMapType = THREE.PCFSoftShadowMap), 
-                core.renderer.setSize(b.w, b.h), document.getElementById("gameContainer").appendChild(core.renderer.domElement), 
-                User.handleUserInput(), Game.update(), Universe.update(), Control.init(), core.render(), 
-                onCreate instanceof Function ? onCreate() : console.log("Something wrong in your onCreate method");
-            } catch (f) {
-                console.error(f), console.trace();
-            }
+            if (config) if (l("config loaded"), config.physics_enabled) {
+                l("physics enabled.");
+                try {
+                    Physijs.scripts.worker = "workers/physijs_worker.js", Physijs.scripts.ammo = "ammo.js", 
+                    core.scene = new Physijs.Scene(), Physijs._isLoaded = !0;
+                } catch (d) {
+                    l("something bad trying to create physijs scene", "e"), l(d), Physijs._isLoaded = !1, 
+                    core.scene = new c.Scene();
+                }
+            } else l("physics not enabled."), Physijs._isLoaded = !1, core.scene = new c.Scene(); else l("config not loaded, switching to three.js"), 
+            Physijs._isLoaded = !1, core.scene = new c.Scene();
+            var e = {
+                fov: a.fov,
+                ratio: b.ratio,
+                near: a.near,
+                far: a.far
+            };
+            config && config.camera && (e.fov = config.camera.fov ? config.camera.fov : e.fov, 
+            e.ratio = config.camera.ratio ? config.camera.ratio : e.ratio, e.near = config.camera.near ? config.camera.near : e.near, 
+            e.far = config.camera.far ? config.camera.far : e.far), core.camera = new Camera(e), 
+            core.renderer = new c.WebGLRenderer({
+                alpha: !1
+            }), config && 1 == config.cast_shadow && (core.renderer.shadowMapEnabled = !0, core.renderer.shadowMapType = THREE.PCFSoftShadowMap), 
+            core.renderer.setSize(b.w, b.h), document.getElementById("gameContainer").appendChild(core.renderer.domElement), 
+            User.handleUserInput(), Game.update(), Universe.update(), Control.init(), core.render(), 
+            onCreate instanceof Function ? onCreate() : console.log("Something wrong in your onCreate method");
         };
         load = function() {
             core.main_progress_bar = document.getElementById("progress_bar"), console.log("inside load"), 
