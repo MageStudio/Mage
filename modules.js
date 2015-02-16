@@ -51,6 +51,7 @@ module.exports = (function() {
 		AUDIO + "sound.js",
 		AUDIO + "ambientSound.js",
 		AUDIO + "directionalSound.js",
+		AUDIO + "backgroundSound.js",
 		//video
 		VIDEO + "videoEngine.js",
 		//images
