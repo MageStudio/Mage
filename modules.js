@@ -7,6 +7,7 @@ module.exports = (function() {
 		BASE = DIR + "base/",
 		AUDIO = DIR + "audio/",
 		VIDEO = DIR + "video/",
+		LIGHTS = DIR + "lights/",
 		IMAGES = DIR + "images/",
 		ENTITIES = DIR + "entities/"
 		GENERALASSETS = DIR + "generalAssets/",
@@ -64,7 +65,9 @@ module.exports = (function() {
 		ENTITIES + "entity.js",
 		ENTITIES + "camera.js",
 		ENTITIES + "mesh.js",
-		ENTITIES + "lights.js"
+		LIGHTS + "light.js",
+		LIGHTS + "ambiendLight.js",
+		LIGHTS + "pointLight.js",
 	];
 
 	modules.final = [

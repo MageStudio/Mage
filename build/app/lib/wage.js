@@ -1,4 +1,4 @@
-/*! wage version: 0.0.25, 07-02-2015 */
+/*! wage version: 0.0.25, 16-02-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16113,6 +16113,9 @@ Materials.AtmosphereMaterial = function() {
             effect: b.effect
         });
     },
+    addMesh: function(a) {
+        this.mesh.add(a);
+    },
     playSound: function() {
         this.sound && (this.isPlayingSound || (this.sound.start(), this.isPlayingSound = !0));
     },
@@ -16129,11 +16132,41 @@ Materials.AtmosphereMaterial = function() {
         this.mesh = new THREE.Mesh(a, b), core.add(this.mesh, this), c) for (var d in c) this[d] = c[d], 
         "script" == d && (this.hasScript = !0, this.addScript(c[d], c.dir));
     }
-})._extends("Entity"), Class("AmbientLight", {
-    AmbientLight: function(a) {
-        this.mesh = new THREE.AmbientLight(a), core.add(this.mesh, this);
+})._extends("Entity"), Class("Light", {
+    Light: function(a, b, c) {
+        Entity.call(this), this.color = a, this.intensity = b, this.position = c || {
+            x: 0,
+            y: 0,
+            z: 0
+        }, this.isLightOn = !1, this.mesh = void 0;
+    },
+    on: function() {
+        if (this.light) {
+            var a = this, b = function() {
+                a.light.intensity += Light.delayFactor, a.light.intensity < a.intensity ? setTimeout(b, Light.delayStep) : a.isLightOn = !0;
+            };
+            b();
+        } else console.log("You should create your light, first");
+    },
+    off: function() {
+        if (this.light) {
+            var a = this, b = function() {
+                a.light.intensity -= Light.delayFactor, a.light.intensity > 0 ? setTimeout(b, Light.delayStep) : a.isLightOn = !1;
+            };
+            b();
+        } else console.log("You should create your light, first");
     }
-})._extends("Entity"), window.Control = {}, Control = {
+})._extends("Entity"), Light.delayFactor = .1, Light.delayStep = 30, Light.holderRadius = .01, 
+Light.holderSegments = 1, Class("PointLight", {
+    PointLight: function(a, b, c, d) {
+        Light.call(this, a, b, d), this.geometry = new THREE.SphereGeometry(Light.holderRadius, Light.holderSegment, Light.holderSegment), 
+        this.material = new THREE.MeshPhongMaterial({
+            color: this.color
+        }), this.sphere = new Mesh(this.geometry, this.material), this.light = new THREE.PointLight(a, b, c), 
+        this.sphere.mesh.position.set(this.position.x, this.position.y, this.position.z), 
+        this.light.position = this.sphere.mesh.position, this.sphere.mesh.add(this.light);
+    }
+})._extends("Light"), window.Control = {}, Control = {
     type: void 0,
     allowedTypes: [ "fly", "fps", "custom" ],
     oldType: void 0,
@@ -16828,6 +16861,18 @@ Gui = {
         this.sound.panner.setOrientation(j.x, j.y, j.z), k.elements[12] = l, k.elements[13] = m, 
         k.elements[14] = n;
     }
+})._extends("Beat"), Class("BackgroundSound", {
+    BackgroundSound: function(a, b) {
+        Beat.call(this, a), this.sound.source.loop = b.loop || !0, this.mesh = b.mesh, b.effect && (this.convolver = AudioEngine.context.createConvolver(), 
+        this.mixer = AudioEngine.context.createGain(), this.sound.panner.disconnect(), this.sound.panner.connect(this.mixer), 
+        this.plainGain = AudioEngine.context.createGain(), this.convolverGain = AudioEngine.context.createGain(), 
+        this.mixer.connect(plainGain), this.mixer.connect(convolverGain), this.plainGain.connect(AudioEngine.volume), 
+        this.convolverGain.connect(AudioEngine.volume), this.convolver.buffer = AudioEngine.get(b.effect), 
+        this.convolverGain.gain.value = .7, this.plainGain.gain.value = .3);
+        var c = b.autoplay || !0;
+        c && this.start(), AudioEngine.add(this);
+    },
+    update: function() {}
 })._extends("Beat"), function() {
     window.VideoEngine = {}, VideoEngine.load = function() {};
 }(), function() {
