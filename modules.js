@@ -65,6 +65,7 @@ module.exports = (function() {
 		ENTITIES + "entity.js",
 		ENTITIES + "camera.js",
 		ENTITIES + "mesh.js",
+		LIGHTS + "lightEngine.js",
 		LIGHTS + "light.js",
 		LIGHTS + "ambiendLight.js",
 		LIGHTS + "pointLight.js",

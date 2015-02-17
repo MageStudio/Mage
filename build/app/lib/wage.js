@@ -1,4 +1,4 @@
-/*! wage version: 0.0.25, 16-02-2015 */
+/*! wage version: 0.0.26, 17-02-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16132,18 +16132,42 @@ Materials.AtmosphereMaterial = function() {
         this.mesh = new THREE.Mesh(a, b), core.add(this.mesh, this), c) for (var d in c) this[d] = c[d], 
         "script" == d && (this.hasScript = !0, this.addScript(c[d], c.dir));
     }
-})._extends("Entity"), Class("Light", {
+})._extends("Entity"), function() {
+    window.LightEngine = {
+        delayFactor: .1,
+        delayStep: 30,
+        holderRadius: .01,
+        holderSegments: 1,
+        init: function() {
+            LightEngine.map = new HashMap(), LightEngine.lights = [];
+        },
+        numLights: 0,
+        add: function(a) {
+            LightEngine.lights.push(a);
+        },
+        update: function() {
+            var start = new Date();
+            for (var index in LightEngine.lights) {
+                var light = LightEngine.lights[index];
+                with (light) setTimeout(function() {
+                    update(core.clock.getDelta());
+                }, 0);
+                if (+new Date() - start > 50) return;
+            }
+        }
+    }, LightEngine.init();
+}(), Class("Light", {
     Light: function(a, b, c) {
         Entity.call(this), this.color = a, this.intensity = b, this.position = c || {
             x: 0,
             y: 0,
             z: 0
-        }, this.isLightOn = !1, this.mesh = void 0;
+        }, this.isLightOn = !1, this.mesh = void 0, LightEngine.add(this);
     },
     on: function() {
         if (this.light) {
             var a = this, b = function() {
-                a.light.intensity += Light.delayFactor, a.light.intensity < a.intensity ? setTimeout(b, Light.delayStep) : a.isLightOn = !0;
+                a.light.intensity += LightEngine.delayFactor, a.light.intensity < a.intensity ? setTimeout(b, LightEngine.delayStep) : a.isLightOn = !0;
             };
             b();
         } else console.log("You should create your light, first");
@@ -16151,20 +16175,19 @@ Materials.AtmosphereMaterial = function() {
     off: function() {
         if (this.light) {
             var a = this, b = function() {
-                a.light.intensity -= Light.delayFactor, a.light.intensity > 0 ? setTimeout(b, Light.delayStep) : a.isLightOn = !1;
+                a.light.intensity -= LightEngine.delayFactor, a.light.intensity > 0 ? setTimeout(b, LightEngine.delayStep) : a.isLightOn = !1;
             };
             b();
         } else console.log("You should create your light, first");
     }
-})._extends("Entity"), Light.delayFactor = .1, Light.delayStep = 30, Light.holderRadius = .01, 
-Light.holderSegments = 1, Class("PointLight", {
+})._extends("Entity"), Class("PointLight", {
     PointLight: function(a, b, c, d) {
-        Light.call(this, a, b, d), this.geometry = new THREE.SphereGeometry(Light.holderRadius, Light.holderSegment, Light.holderSegment), 
+        Light.call(this, a, b, d), this.geometry = new THREE.SphereGeometry(LightEngine.holderRadius, LightEngine.holderSegment, LightEngine.holderSegment), 
         this.material = new THREE.MeshPhongMaterial({
             color: this.color
-        }), this.sphere = new Mesh(this.geometry, this.material), this.light = new THREE.PointLight(a, b, c), 
-        this.sphere.mesh.position.set(this.position.x, this.position.y, this.position.z), 
-        this.light.position = this.sphere.mesh.position, this.sphere.mesh.add(this.light);
+        }), this.mesh = new Mesh(this.geometry, this.material), this.light = new THREE.PointLight(a, b, c), 
+        this.mesh.mesh.position.set(this.position.x, this.position.y, this.position.z), 
+        this.light.position = this.mesh.mesh.position, this.mesh.mesh.add(this.light);
     }
 })._extends("Light"), window.Control = {}, Control = {
     type: void 0,
@@ -16928,7 +16951,8 @@ core = {
     clock: new THREE.Clock(),
     render: function() {
         if (setTimeout(User.handleUserInput, 0), setTimeout(Game.update, 0), setTimeout(AudioEngine.update, 0), 
-        Universe.update(), setTimeout(Control.update, 0), core.camera.update) with (core.camera) setTimeout(function() {
+        setTimeout(LightEngine.update, 0), Universe.update(), setTimeout(Control.update, 0), 
+        core.camera.update) with (core.camera) setTimeout(function() {
             update(core.clock.getDelta());
         }, 0);
         setTimeout(function() {

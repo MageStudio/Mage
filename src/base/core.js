@@ -112,6 +112,7 @@ core = {
 		------------------------------------------------------------------------------------------*/
 		setTimeout(Game.update, 0);
 		setTimeout(AudioEngine.update, 0);
+		setTimeout(LightEngine.update, 0);
 		/*------------------------------------------------------------------------------------------
 
 			it's now time to perform our scene render.
