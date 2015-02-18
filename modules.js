@@ -64,13 +64,15 @@ module.exports = (function() {
 		//general
 		GENERALASSETS + "generalAssetsEngine.js",
 		//shaders
-		SHADERS + "shadersEngine.js"
+		SHADERS + "shadersEngine.js",
+		SHADERS + "shader.js"
 	];
 
 	modules.entities = [
 		ENTITIES + "entity.js",
 		ENTITIES + "camera.js",
 		ENTITIES + "mesh.js",
+		ENTITIES + "shaderMesh.js",
 		LIGHTS + "lightEngine.js",
 		LIGHTS + "light.js",
 		LIGHTS + "ambiendLight.js",

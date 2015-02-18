@@ -1,4 +1,4 @@
-/*! wage version: 0.0.27, 18-02-2015 */
+/*! wage version: 0.0.28, 18-02-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16132,6 +16132,14 @@ Materials.AtmosphereMaterial = function() {
         this.mesh = new THREE.Mesh(a, b), core.add(this.mesh, this), c) for (var d in c) this[d] = c[d], 
         "script" == d && (this.hasScript = !0, this.addScript(c[d], c.dir));
     }
+})._extends("Entity"), Class("ShaderMesh", {
+    ShaderMesh: function(a, b, c, d, e) {
+        if (Entity.call(this), this.geometry = a, this.attributes = c, this.uniforms = d, 
+        this.shaderName = b, this.shader = new Shader(this.shaderName, this.attributes, this.uniforms), 
+        this.script = {}, this.hasScript = !1, this.mesh = new THREE.Mesh(a, this.shader.material), 
+        core.add(this.mesh, this), e) for (var f in e) this[f] = e[f], "script" == f && (this.hasScript = !0, 
+        this.addScript(e[f], e.dir));
+    }
 })._extends("Entity"), function() {
     window.LightEngine = {
         delayFactor: .1,
@@ -16936,7 +16944,21 @@ Gui = {
     add: function(a) {
         fx.ShadersEngine.shaders.push(a);
     }
-};
+}, Class("Shader", {
+    Shader: function(a, b, c) {
+        this.shader = fx.ShadersEngine.get(a), this.name = this.shader.name, this.vertex = this.shader.vertex, 
+        this.fragment = this.shader.fragment, this.attributes = b, this.uniforms = c, this.material = new THREE.ShaderMaterial({
+            attributes: this.attributes,
+            uniforms: this.uniforms,
+            vertexShader: this.shader.vertex,
+            fragmentShader: this.shader.fragment
+        });
+    }
+}), window.requestAnimFrame = function() {
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(a) {
+        window.setTimeout(a, 1e3 / 60);
+    };
+}();
 
 var core = {}, onCreate = function() {}, load = function() {}, preload = function(a) {
     a();
