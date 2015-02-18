@@ -11,6 +11,8 @@ module.exports = (function() {
 		IMAGES = DIR + "images/",
 		ENTITIES = DIR + "entities/"
 		GENERALASSETS = DIR + "generalAssets/",
+		FX = DIR + "fx/",
+		SHADERS = FX + "shaders/",
 		CONTROLS = DIR + "controls/";
 
 	modules.libs = [
@@ -42,7 +44,9 @@ module.exports = (function() {
 		BASE + "gui.js",
 		BASE + "universe.js",
 		BASE + "user.js",
-		BASE + "assetsManager.js"
+		BASE + "assetsManager.js",
+		//loading effects
+		FX + "fx.js"
 	];
 
 	modules.assets = [
@@ -58,7 +62,9 @@ module.exports = (function() {
 		//images
 		IMAGES + "imagesEngine.js",
 		//general
-		GENERALASSETS + "generalAssetsEngine.js"
+		GENERALASSETS + "generalAssetsEngine.js",
+		//shaders
+		SHADERS + "shadersEngine.js"
 	];
 
 	modules.entities = [

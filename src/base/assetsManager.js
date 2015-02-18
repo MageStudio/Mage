@@ -4,7 +4,8 @@
 		sound : false,
 		video : true,
 		images : true,
-		general : true
+		general : true,
+		shaders : false
 	};
 
 	AssetsManager.load = function(callback) {
@@ -16,6 +17,8 @@
 		VideoEngine.load();
 		ImagesEngine.load();
 		GeneralAssetsEngine.load();
+		//effects
+		fx.ShadersEngine.load();
 		AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
 	};
 

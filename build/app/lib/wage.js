@@ -1,4 +1,4 @@
-/*! wage version: 0.0.26, 17-02-2015 */
+/*! wage version: 0.0.27, 18-02-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16699,14 +16699,15 @@ Gui = {
     sound: !1,
     video: !0,
     images: !0,
-    general: !0
+    general: !0,
+    shaders: !1
 }, AssetsManager.load = function(a) {
     AssetsManager.callback = a, AudioEngine.load(), VideoEngine.load(), ImagesEngine.load(), 
-    GeneralAssetsEngine.load(), AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
+    GeneralAssetsEngine.load(), fx.ShadersEngine.load(), AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
 }, AssetsManager.loadingMessage = function() {}, AssetsManager.check = function() {
     AssetsManager.completed.sound && AssetsManager.completed.video && AssetsManager.completed.images && AssetsManager.completed.general ? (AssetsManager.loadingMessage(!0), 
     clearInterval(AssetsManager.checkInterval), AssetsManager.callback()) : AssetsManager.loadingMessage(!1);
-}, function() {
+}, window.fx = {}, function() {
     window.AudioEngine = {
         DELAY_FACTOR: .02,
         DELAY_STEP: 1,
@@ -16902,7 +16903,40 @@ Gui = {
     window.ImagesEngine = {}, ImagesEngine.load = function() {};
 }(), function() {
     window.GeneralAssetsEngine = {}, GeneralAssetsEngine.load = function() {};
-}();
+}(), window.fx.ShadersEngine = {
+    SHADERS_DIR: "app/shaders/",
+    shaders: {},
+    numShaders: 0,
+    shadersLoaded: 0,
+    update: function() {},
+    load: function() {
+        if (fx.ShadersEngine.map = new HashMap(), fx.ShadersEngine.shaders = [], Assets.Shaders) for (var a in Assets.Shaders) fx.ShadersEngine.numShaders++, 
+        fx.ShadersEngine.loadSingleFile(a, Assets.Shaders[a]);
+        0 == fx.ShadersEngine.numShaders && (AssetsManager.completed.shaders = !0);
+    },
+    get: function(a) {
+        return fx.ShadersEngine.map.get(a) || !1;
+    },
+    loadSingleFile: function(a, b) {
+        var c = new XMLHttpRequest();
+        c.open("GET", b, !0), c.responseType = "text", c.onload = function() {
+            var b = fx.ShadersEngine._parseShader(this.responseText);
+            fx.ShadersEngine.map.put(a, b);
+        }, c.send();
+    },
+    _parseShader: function(a) {
+        var b = {};
+        return b.name = a.substring(a.indexOf("<name>") + 6, a.indexOf("</name>")), b.vertex = a.substring(a.indexOf("<vertex>") + 8, a.indexOf("</vertex>")), 
+        b.fragment = a.substring(a.indexOf("<fragment>") + 10, a.indexOf("</fragment>")), 
+        b;
+    },
+    checkLoad: function() {
+        fx.ShadersEngine.shadersLoaded == fx.ShadersEngine.numShaders && (AssetsManager.completed.shaders = !0);
+    },
+    add: function(a) {
+        fx.ShadersEngine.shaders.push(a);
+    }
+};
 
 var core = {}, onCreate = function() {}, load = function() {}, preload = function(a) {
     a();
