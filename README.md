@@ -1,8 +1,9 @@
+
 #Wage
 
 -----
 ##Intro
-What is THREE.js? It's a pretty damn powerful javascript library, which allows you to create WebGL projects with just a few lines of code. It's the de facto "WebGL for Dummies". It's the result of years of amazing work by Riccardo Cabello (aka [@mrdoob](https://twitter.com/mrdoob)) and Altered Qualia ( [@alteredq](https://twitter.com/alteredq)), you can find their works and projects respectively on [mrdoob.com](http://mrdoob.com) and [alteredqualia.com](http://alteredqualia.com/) . 
+What is THREE.js? It's a pretty damn powerful javascript library, which allows you to create WebGL projects with just a few lines of code. It's the de facto "WebGL for Dummies". It's the result of years of amazing work by Riccardo Cabello (aka [@mrdoob](https://twitter.com/mrdoob)) and Altered Qualia ( [@alteredq](https://twitter.com/alteredq)), you can find their works and projects respectively on [mrdoob.com](http://mrdoob.com) and [alteredqualia.com](http://alteredqualia.com/) .
 
 Of course, tons of contributors made this awesome project a reality. Thanks, contributors.
 
@@ -29,9 +30,9 @@ So, just to make you sure you understand what can be done:
 (We create a simple cube, then we'll add it to the scene.)
 ```javascript
 	var geometry = new THREE.CubeGeometry(20, 20, 20);
-	var material = new THREE.MeshBasicMaterial({ 
-    	color: 0x00ff00, 
-        wireframe : true 
+	var material = new THREE.MeshBasicMaterial({
+    	color: 0x00ff00,
+        wireframe : true
     });
 	var cube = new Mesh(geometry, material);
 ```
@@ -93,7 +94,7 @@ This method has only a logic difference from the preload method. I decided to cr
     }
 ```
 
-**progressAnimation.** 
+**progressAnimation.**
 This method is your custom animation on the loader, and you can do whatever you want to make you loader disappear. You can also create your custom loader, modifying the index.html file inside your simpleApp folder. The "progressAnimation" method will give you a callback method, which you will need to call in order to proceed the app flow. Your app is now ready to call the onCreate method. To modify your progressAnimation, you will need to write:
 
 ```javascript
@@ -102,7 +103,7 @@ This method is your custom animation on the loader, and you can do whatever you 
         callback();
     };
 ```
-	
+
 **onCreate.** This is the method that Wage will call just after the scene creation. Here, you will be able to add your meshes, and after that the main loop will start. Here, you can insert the code you saw before (when we created the box) : for each mesh, you can add a custom "_render" method (just as explained before). You don't have to add this custom method if you don't need to.
 
 To add each mesh to the scene you will need to call:
@@ -119,9 +120,9 @@ You simpleApp folder provides you a script called "run". You just have to launch
 	./run
 ```
 
-and you're good to go. The "run" script uses the python module SimpleHTTPServer, so you will need to set up Python first. When you finally manage to launch your app, you can go [here](http://localhost:8000) to see it live. 
+and you're good to go. The "run" script uses the python module SimpleHTTPServer, so you will need to set up Python first. When you finally manage to launch your app, you can go [here](http://localhost:8000) to see it live.
 
-If you did everithing correctly, you will see something like [this](http://marcostagni.com/projects/simpleApp). 
+If you did everithing correctly, you will see something like [this](http://marcostagni.com/projects/simpleApp).
 
 ----
 ####Conclusion
