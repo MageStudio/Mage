@@ -1,6 +1,7 @@
 Class("PointLight", {
 
     PointLight: function(color, intensity, distance, position) {
+
         Light.call(this, color, intensity, position);
 
         this.geometry = new THREE.SphereGeometry( LightEngine.holderRadius, LightEngine.holderSegment, LightEngine.holderSegment );
@@ -10,6 +11,7 @@ Class("PointLight", {
         this.mesh.mesh.position.set(this.position.x, this.position.y, this.position.z);
         this.light.position = this.mesh.mesh.position;
         this.mesh.mesh.add(this.light);
+
     }
 
 })._extends("Light");

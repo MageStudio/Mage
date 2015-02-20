@@ -1,4 +1,4 @@
-/*! wage version: 0.0.28, 20-02-2015 */
+/*! wage version: 0.0.29, 20-02-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16087,6 +16087,14 @@ __class__ = function(a, b) {
     },
     addMesh: function(a) {
         this.mesh.add(a);
+    },
+    addLight: function(a, b, c) {
+        var d = {
+            x: this.mesh.position.x,
+            y: this.mesh.position.y,
+            z: this.mesh.position.z
+        };
+        this.light = new PointLight(a, b, c, d), this.addMesh(this.light.mesh.mesh);
     },
     playSound: function() {
         this.sound && (this.isPlayingSound || (this.sound.start(), this.isPlayingSound = !0));
