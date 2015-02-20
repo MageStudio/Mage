@@ -1,4 +1,4 @@
-/*! wage version: 0.0.28, 18-02-2015 */
+/*! wage version: 0.0.28, 20-02-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -15774,34 +15774,6 @@ __class__ = function(a, b) {
     }
 }, HashMap.prototype.size = function() {
     return this.total;
-};
-
-var Materials = Materials || {};
-
-Materials.AtmosphereMaterial = function() {
-    var a = [ "varying vec3 vNormal;", "void main(){", "	// compute intensity", "	vNormal		= normalize( normalMatrix * normal );", "	// set gl_Position", "	gl_Position	= projectionMatrix * modelViewMatrix * vec4( position, 1.0 );", "}" ].join("\n"), b = [ "uniform float coeficient;", "uniform float power;", "uniform vec3  glowColor;", "varying vec3  vNormal;", "void main(){", "	float intensity	= pow( coeficient - dot(vNormal, vec3(0.0, 0.0, 1.0)), power );", "	gl_FragColor	= vec4( glowColor * intensity, 1.0 );", "}" ].join("\n"), c = new THREE.ShaderMaterial({
-        uniforms: {
-            coeficient: {
-                type: "f",
-                value: 1
-            },
-            power: {
-                type: "f",
-                value: 2
-            },
-            glowColor: {
-                type: "c",
-                value: new THREE.Color("pink")
-            }
-        },
-        vertexShader: a,
-        fragmentShader: b,
-        side: THREE.FrontSide,
-        blending: THREE.AdditiveBlending,
-        transparent: !0,
-        depthWrite: !1
-    });
-    return c;
 }, THREE.FlyControls = function(a, b) {
     function c(a, b) {
         return function() {
@@ -16134,11 +16106,11 @@ Materials.AtmosphereMaterial = function() {
     }
 })._extends("Entity"), Class("ShaderMesh", {
     ShaderMesh: function(a, b, c, d, e) {
-        if (Entity.call(this), this.geometry = a, this.attributes = c, this.uniforms = d, 
-        this.shaderName = b, this.shader = new Shader(this.shaderName, this.attributes, this.uniforms), 
-        this.script = {}, this.hasScript = !1, this.mesh = new THREE.Mesh(a, this.shader.material), 
-        core.add(this.mesh, this), e) for (var f in e) this[f] = e[f], "script" == f && (this.hasScript = !0, 
-        this.addScript(e[f], e.dir));
+        Entity.call(this), this.geometry = a, this.attributes = c, this.uniforms = d, this.shaderName = b;
+        var f = new Shader(this.shaderName, this.attributes, this.uniforms);
+        if (c || (this.attributes = f.attributes), d || (this.uniforms = f.uniforms), this.script = {}, 
+        this.hasScript = !1, this.mesh = new THREE.Mesh(a, f.material), core.add(this.mesh, this), 
+        e) for (var g in e) this[g] = e[g], "script" == g && (this.hasScript = !0, this.addScript(e[g], e.dir));
     }
 })._extends("Entity"), function() {
     window.LightEngine = {
@@ -16926,17 +16898,25 @@ Gui = {
         return fx.ShadersEngine.map.get(a) || !1;
     },
     loadSingleFile: function(a, b) {
-        var c = new XMLHttpRequest();
-        c.open("GET", b, !0), c.responseType = "text", c.onload = function() {
-            var b = fx.ShadersEngine._parseShader(this.responseText);
-            fx.ShadersEngine.map.put(a, b);
-        }, c.send();
+        var c = b.split(".")[1];
+        if ("js" == c) include(b.split(".js")[0], this.checkLoad); else {
+            var d = new XMLHttpRequest();
+            d.open("GET", b, !0), d.responseType = "text", d.onload = function() {
+                var b = fx.ShadersEngine._parseShader(this.responseText);
+                fx.ShadersEngine.map.put(a, b), fx.ShadersEngine.shadersLoaded++, fx.ShadersEngine.checkLoad();
+            }, d.send();
+        }
     },
     _parseShader: function(a) {
         var b = {};
         return b.name = a.substring(a.indexOf("<name>") + 6, a.indexOf("</name>")), b.vertex = a.substring(a.indexOf("<vertex>") + 8, a.indexOf("</vertex>")), 
         b.fragment = a.substring(a.indexOf("<fragment>") + 10, a.indexOf("</fragment>")), 
-        b;
+        b.options = {}, b.attributes = {}, b.uniforms = {}, b;
+    },
+    create: function(a, b) {
+        var c = {};
+        c.name = a, c.vertex = b.vertex || "", c.fragment = b.fragment || "", c.options = b.options || {}, 
+        c.attributes = b.attributes || {}, c.uniforms = b.uniforms || {}, fx.ShadersEngine.map.put(a, c);
     },
     checkLoad: function() {
         fx.ShadersEngine.shadersLoaded == fx.ShadersEngine.numShaders && (AssetsManager.completed.shaders = !0);
@@ -16945,14 +16925,18 @@ Gui = {
         fx.ShadersEngine.shaders.push(a);
     }
 }, Class("Shader", {
-    Shader: function(a, b, c) {
+    Shader: function(a, b, c, d) {
         this.shader = fx.ShadersEngine.get(a), this.name = this.shader.name, this.vertex = this.shader.vertex, 
-        this.fragment = this.shader.fragment, this.attributes = b, this.uniforms = c, this.material = new THREE.ShaderMaterial({
+        this.fragment = this.shader.fragment, this.attributes = b ? b : this.shader.attributes, 
+        this.uniforms = c ? c : this.shader.uniforms;
+        var e = {
             attributes: this.attributes,
             uniforms: this.uniforms,
             vertexShader: this.shader.vertex,
             fragmentShader: this.shader.fragment
-        });
+        }, f = d ? d : this.shader.options;
+        for (o in f) e[o] = f[o];
+        this.material = new THREE.ShaderMaterial(e);
     }
 }), window.requestAnimFrame = function() {
     return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(a) {

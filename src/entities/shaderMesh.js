@@ -6,11 +6,17 @@ Class("ShaderMesh", {
         this.attributes = attributes;
         this.uniforms = uniforms;
         this.shaderName = name;
-        this.shader = new Shader(this.shaderName, this.attributes, this.uniforms);
+        var shader = new Shader(this.shaderName, this.attributes, this.uniforms);
+        if ( !attributes ) {
+          this.attributes = shader.attributes;
+        }
+        if ( !uniforms ) {
+          this.uniforms = shader.uniforms;
+        }
         this.script = {};
         this.hasScript = false;
 
-        this.mesh = new THREE.Mesh(geometry, this.shader.material);
+        this.mesh = new THREE.Mesh(geometry, shader.material);
         //adding to core
         core.add(this.mesh, this);
 

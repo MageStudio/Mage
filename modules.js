@@ -29,8 +29,7 @@ module.exports = (function() {
 		LIB + "bee.min.js",
 		BASE + "classy.js",
 		BASE + "colors.js",
-		BASE + "HashMap.js",
-		BASE + "materials.js",
+		BASE + "HashMap.js"
 	];
 
 	modules.controls = [
