@@ -2,7 +2,7 @@ Class("Light", {
 
 	Light : function(color, intensity, position) {
 		//this.mesh = new THREE.AmbientLight(color);
-		//core.add(this.mesh, this);
+		//app.add(this.mesh, this);
 		Entity.call(this);
 		this.color = color;
 		this.intensity = intensity;

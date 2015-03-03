@@ -22,11 +22,7 @@
             var start = new Date();
             for (var index in LightEngine.lights) {
                 var light = LightEngine.lights[index];
-                with(light) {
-                    setTimeout(function() {
-                        update(core.clock.getDelta());
-                    }, 0);
-                }
+                light.update(app.clock.getDelta());
                 if ((+new Date() - start) > 50) return;
             }
         }

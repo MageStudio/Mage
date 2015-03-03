@@ -89,15 +89,12 @@
 			var start = new Date();
 			for (var index in AudioEngine.sounds) {
 				var sound = AudioEngine.sounds[index];
-				with(sound) {
-					setTimeout(function() {
-						update(core.clock.getDelta());
-					}, 0);
-				}
+				sound.update(app.clock.getDelta());
+
 				//now handling listener
-				core.camera.object.updateMatrixWorld();
+				app.camera.object.updateMatrixWorld();
 				var p = new THREE.Vector3();
-				p.setFromMatrixPosition(core.camera.object.matrixWorld);
+				p.setFromMatrixPosition(app.camera.object.matrixWorld);
 
 				//setting audio engine context listener position on camera position
 				AudioEngine.context.listener.setPosition(p.x, p.y, p.z);
@@ -105,7 +102,7 @@
 
 				//this is to add up and down vector to our camera
 				// The camera's world matrix is named "matrix".
-				var m = core.camera.object.matrix;
+				var m = app.camera.object.matrix;
 
 				mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
 				m.elements[12] = m.elements[13] = m.elements[14] = 0;
@@ -126,7 +123,7 @@
 				m.elements[12] = mx;
 				m.elements[13] = my;
 				m.elements[14] = mz;
-				
+
 				if ((+new Date() - start) > 50) return;
 			}
 		}
@@ -136,7 +133,7 @@
 
 		set: function(value) {
 			AudioEngine._volume = value;
-			AudioEngine.volume.gain.value = AudioEngine._volume; 
+			AudioEngine.volume.gain.value = AudioEngine._volume;
 		},
 
 		get: function() {

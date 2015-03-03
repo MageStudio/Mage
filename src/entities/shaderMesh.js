@@ -18,7 +18,7 @@ Class("ShaderMesh", {
 
         this.mesh = new THREE.Mesh(geometry, shader.material);
         //adding to core
-        core.add(this.mesh, this);
+        app.add(this.mesh, this);
 
         if (options) {
             //do something with options
