@@ -701,7 +701,7 @@ Control = {
 
 	update : function () {
 		//questa funzione viene chiamata ogni volta.
-		if (input) {
+		/*if (input) {
 			if (typeof input == "function")  {
 				input();
 			}
@@ -715,6 +715,15 @@ Control = {
 					catch(e) {console.error(e); console.trace();}
 				//}
 			}
+		}*/
+		if (Control.handler) {
+			var delta = Control.clock.getDelta();
+			//if (Control.handler.update) {
+				try {
+					Control.handler.update(app.clock.getDelta())
+				}
+				catch(e) {console.error(e); console.trace();}
+			//}
 		}
 	},
 
@@ -727,7 +736,7 @@ Control = {
 		//Control.fps_uuid = Control.handler.getObject().uuid;
 		//Control.oldType = 1;
 		try {
-			if (input) {
+			if (app.keydown && app.keyup) {
 				Control.type = "custom";
 				Control.oldType = 2;
 				window.addEventListener("keydown", app.keydown);

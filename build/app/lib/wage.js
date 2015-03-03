@@ -16548,7 +16548,7 @@ __class__ = function(a, b) {
         };
     },
     update: function() {
-        if (input) "function" == typeof input && input(); else if (Control.handler) {
+        if (Control.handler) {
             {
                 Control.clock.getDelta();
             }
@@ -16562,7 +16562,7 @@ __class__ = function(a, b) {
     init: function() {
         Control.clock = new THREE.Clock();
         try {
-            input ? (Control.type = "custom", Control.oldType = 2, window.addEventListener("keydown", app.keydown), 
+            app.keydown && app.keyup ? (Control.type = "custom", Control.oldType = 2, window.addEventListener("keydown", app.keydown), 
             window.addEventListener("keyup", app.keyup)) : (Control.type = "fly", Control.fly(app.camera.object), 
             Control.oldType = 0);
         } catch (a) {
@@ -16956,18 +16956,18 @@ Gui = {
         this.CAMERA_MAX_Z = 1e3, this.CAMERA_MIN_Z = 250;
     },
     onCreate: function() {},
-    preLoad: function(a) {
+    preload: function(a) {
         a();
     },
     prepareScene: function() {},
-    progressAnimation: function() {
+    progressAnimation: function(a) {
         $("#loader").animate({
             opacity: "0",
             "margin-top": "250px"
         }, 1e3, function() {
             $("#loader").remove(), $("body").animate({
                 backgroundColor: "#fff"
-            }, 200, callback);
+            }, 200, a);
         });
     },
     customRender: function() {},
@@ -16977,12 +16977,12 @@ Gui = {
     onLeapDeviceDisconnected: function() {},
     render: function() {
         User.handleUserInput(), Game.update(), AudioEngine.update(), LightEngine.update(), 
-        Universe.update(), Control.update(), this.camera.update && this.update(this.clock.getDelta()), 
+        Universe.update(), Control.update(), app.camera.update && app.camera.update(app.clock.getDelta()), 
         setTimeout(function() {
             config.physics_enabled && Physijs._isLoaded && app.scene.simulate(), config.tween_enabled && TWEEN.update(), 
             requestAnimationFrame(app.render);
         }, 1e3 / app.util.frameRate), app.renderer.autoClear = !1, app.renderer.clear(), 
-        this.customRender(), app.renderer.render(app.scene, app.camera.object);
+        app.customRender(), app.renderer.render(app.scene, app.camera.object);
     },
     add: function(a, b) {
         this.scene.add(a), Universe.universe.put(a.uuid, b);
@@ -16991,63 +16991,57 @@ Gui = {
         this.scene.remove(a), Universe.universe.remove(a.uuid);
     },
     init: function() {
-        this.createScene = function() {
-            app.threeLib = THREE;
-            var a = app.util.camera, b = app.util, c = app.threeLib;
+        app.three = THREE;
+        var a = app.util.camera, b = app.util;
+        if (config) if (app.log("config loaded"), config.physics_enabled) {
+            app.log("physics enabled.");
             try {
-                if (config) if (this.log("config loaded"), config.physics_enabled) {
-                    this.log("physics enabled.");
-                    try {
-                        Physijs.scripts.worker = "workers/physijs_worker.js", Physijs.scripts.ammo = "ammo.js", 
-                        this.scene = new Physijs.Scene(), Physijs._isLoaded = !0;
-                    } catch (d) {
-                        this.log("something bad trying to create physijs scene", "e"), this.log(d), Physijs._isLoaded = !1, 
-                        this.scene = new c.Scene();
-                    }
-                } else this.log("physics not enabled."), Physijs._isLoaded = !1, this.scene = new c.Scene(); else this.log("config not loaded, switching to three.js"), 
-                Physijs._isLoaded = !1, this.scene = new c.Scene();
-                var e = {
-                    fov: a.fov,
-                    ratio: b.ratio,
-                    near: a.near,
-                    far: a.far
-                };
-                config && config.camera && (e.fov = config.camera.fov ? config.camera.fov : e.fov, 
-                e.ratio = config.camera.ratio ? config.camera.ratio : e.ratio, e.near = config.camera.near ? config.camera.near : e.near, 
-                e.far = config.camera.far ? config.camera.far : e.far), this.camera = new Camera(e);
-                var f = !1;
-                config.alpha && (f = !0), this.renderer = new c.WebGLRenderer({
-                    alpha: f
-                }), config && 1 == config.cast_shadow && (this.renderer.shadowMapEnabled = !0, this.renderer.shadowMapType = THREE.PCFSoftShadowMap), 
-                app.renderer.setSize(b.w, b.h), document.getElementById("gameContainer").appendChild(app.renderer.domElement), 
-                User.handleUserInput(), Game.update(), Universe.update(), Control.init(), app.render(), 
-                this.onCreate instanceof Function ? this.onCreate() : console.log("Something wrong in your onCreate method");
-            } catch (g) {
-                console.error(g), console.trace();
+                Physijs.scripts.worker = "workers/physijs_worker.js", Physijs.scripts.ammo = "ammo.js", 
+                app.scene = new Physijs.Scene(), Physijs._isLoaded = !0;
+            } catch (c) {
+                app.log("something bad trying to create physijs scene", "e"), app.log(c), Physijs._isLoaded = !1, 
+                app.scene = new app.three.Scene();
             }
+        } else app.log("physics not enabled."), Physijs._isLoaded = !1, app.scene = new app.three.Scene(); else app.log("config not loaded, switching to three.js"), 
+        Physijs._isLoaded = !1, app.scene = new app.three.Scene();
+        var d = {
+            fov: a.fov,
+            ratio: b.ratio,
+            near: a.near,
+            far: a.far
         };
+        config && config.camera && (d.fov = config.camera.fov ? config.camera.fov : d.fov, 
+        d.ratio = config.camera.ratio ? config.camera.ratio : d.ratio, d.near = config.camera.near ? config.camera.near : d.near, 
+        d.far = config.camera.far ? config.camera.far : d.far), app.camera = new Camera(d);
+        var e = !1;
+        config.alpha && (e = !0), app.renderer = new app.three.WebGLRenderer({
+            alpha: e
+        }), config && 1 == config.cast_shadow && (app.renderer.shadowMapEnabled = !0, app.renderer.shadowMapType = THREE.PCFSoftShadowMap), 
+        app.renderer.setSize(b.w, b.h), document.getElementById("gameContainer").appendChild(app.renderer.domElement), 
+        User.handleUserInput(), Game.update(), Universe.update(), Control.init(), app.render(), 
+        app.onCreate instanceof Function ? app.onCreate() : console.log("Something wrong in your onCreate method");
     },
     load: function() {
         console.log("inside load"), "function" != typeof this.progressAnimation && (this.progressAnimation = function(a) {
             console.log("def progressAnimation"), a();
-        }), this.progressAnimation(this.createScene);
+        }), this.progressAnimation(app.init);
     },
     log: function() {
         this.debug && (arguments.length > 1 && arguments[1] in this.log_types ? console[this.log_types[arguments[1]]](arguments[0]) : console.log(arguments[0]));
     },
     onDocumentMouseWheel: function(a) {
-        a.preventDefault(), this.zoom = .05 * a.wheelDelta, app.camera.object.position.z += zoom;
+        a.preventDefault(), app.zoom = .05 * a.wheelDelta, app.camera.object.position.z += app.zoom;
     },
     onDocumentMouseMove: function(a) {
-        this.mouseX = a.clientX - windowHalfX, this.mouseY = a.clientY - windowHalfY;
+        app.mouseX = a.clientX - app.windowHalfX, app.mouseY = a.clientY - app.windowHalfY;
     },
     onDocumentTouchStart: function(a) {
-        1 === a.touches.length && (a.preventDefault(), this.mouseX = a.touches[0].pageX - windowHalfX, 
-        this.mouseY = a.touches[0].pageY - windowHalfY);
+        1 === a.touches.length && (a.preventDefault(), app.mouseX = a.touches[0].pageX - app.windowHalfX, 
+        app.mouseY = a.touches[0].pageY - app.windowHalfY);
     },
     onDocumentTouchMove: function(a) {
-        1 === a.touches.length && (a.preventDefault(), this.mouseX = a.touches[0].pageX - windowHalfX, 
-        this.mouseY = a.touches[0].pageY - windowHalfY);
+        1 === a.touches.length && (a.preventDefault(), app.mouseX = a.touches[0].pageX - app.windowHalfX, 
+        app.mouseY = a.touches[0].pageY - app.windowHalfY);
     },
     keyup: function() {},
     keydown: function() {}
@@ -17056,8 +17050,11 @@ Gui = {
 var app;
 
 window.onload = function() {
-    console.log("inside window onload"), window.subClasses.App ? (app = new window.subClasses.App(), 
-    app.init()) : (app = new App(), app.init()), app.preload(function() {
+    if (console.log("inside window onload"), window.subClasses.App) {
+        var a = window.subClasses.App;
+        app = new window[a]();
+    } else app = new App();
+    app.preload(function() {
         AssetsManager.load(function() {
             app.prepareScene(), app.load();
         });
