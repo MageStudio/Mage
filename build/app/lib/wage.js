@@ -1,4 +1,4 @@
-/*! wage version: 0.0.30, 01-03-2015 */
+/*! wage version: 0.0.31, 03-03-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -190,10 +190,6 @@ function HashMap() {
     0 == arguments.length ? (this.total = 0, this.keys = new Array(), this.maxDimension = void 0) : 1 == arguments.length && (isNaN(arguments[0]) ? (this.total = 0, 
     this.keys = new Array(), this.maxDimension = void 0) : (this.total = 0, this.maxDimension = arguments[0], 
     this.keys = new Array())), this.map = {};
-}
-
-function l() {
-    core.debug && (arguments.length > 1 && arguments[1] in _util.log_types ? console[_util.log_types[arguments[1]]](arguments[0]) : console.log(arguments[0]));
 }
 
 var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. Redistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are\nmet:\n\n* Redistributions of source code must retain the above copyright\n  notice, this list of conditions and the following disclaimer.\n\n* Redistributions in binary form must reproduce the above\n  copyright notice, this list of conditions and the following\n  disclaimer in the documentation and/or other materials provided\n  with the distribution.\n\n* The names of the contributors may not be used to endorse or\n  promote products derived from this software without specific\n  prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\nLIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\nA PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\nOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\nSPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\nDATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\nTHEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\nWage contains third party software in the 'app/vendor' directory: each\nfile/module in this directory is distributed under its original license.\n\n";
@@ -13912,7 +13908,7 @@ ParticleEngine.prototype.setValues = function(a) {
     this.particleMaterial.attributes.customAngle.value[a] = this.particleArray[a].angle;
     this.particleMaterial.blending = this.blendStyle, this.blendStyle != THREE.NormalBlending && (this.particleMaterial.depthTest = !1), 
     this.particleMesh = new THREE.PointCloud(this.particleGeometry, this.particleMaterial), 
-    this.particleMesh.dynamic = !0, this.particleMesh.sortParticles = !0, core.add(this.particleMesh, this);
+    this.particleMesh.dynamic = !0, this.particleMesh.sortParticles = !0, app.add(this.particleMesh, this);
 }, ParticleEngine.prototype.update = function(a) {
     for (var b = [], c = 0; c < this.particleCount; c++) this.particleArray[c].alive && (this.particleArray[c].update(a), 
     this.particleArray[c].age > this.particleDeathAge && (this.particleArray[c].alive = 0, 
@@ -13935,7 +13931,7 @@ ParticleEngine.prototype.setValues = function(a) {
         this.emitterAge += a, this.repeat || this.emitterAge > this.emitterDeathAge && (this.emitterAlive = !1);
     }
 }, ParticleEngine.prototype.destroy = function() {
-    core.remove(this.particleMesh);
+    app.remove(this.particleMesh);
 };
 
 var Type = Object.freeze({
@@ -15728,7 +15724,8 @@ __class__ = function(a, b) {
     window[this.name].prototype = Object.create(b.prototype), window[this.name].prototype.constructor = window[this.name], 
     this._setMethods(), window[this.name].prototype.__getSuper = function() {
         return b;
-    }, window[this.name].prototype._super = "string" == typeof a ? window[a].call : a.call;
+    }, window.subClasses = window.subClasses || {}, window.subClasses[a] || (window.subClasses[a] = this.name), 
+    window[this.name].prototype._super = "string" == typeof a ? window[a].call : a.call;
 }, __class__.prototype._setMethods = function() {
     for (var a in this.methods) a != this.name && (window[__upperCaseFirstLetter__(this.name)].prototype[a] = this.methods[a]);
 }, HashMap.prototype.clear = function() {
@@ -16109,7 +16106,7 @@ __class__ = function(a, b) {
 })._extends("Entity"), Class("Mesh", {
     Mesh: function(a, b, c) {
         if (Entity.call(this), this.geometry = a, this.material = b, this.script = {}, this.hasScript = !1, 
-        this.mesh = new THREE.Mesh(a, b), core.add(this.mesh, this), c) for (var d in c) this[d] = c[d], 
+        this.mesh = new THREE.Mesh(a, b), app.add(this.mesh, this), c) for (var d in c) this[d] = c[d], 
         "script" == d && (this.hasScript = !0, this.addScript(c[d], c.dir));
     }
 })._extends("Entity"), Class("ShaderMesh", {
@@ -16117,7 +16114,7 @@ __class__ = function(a, b) {
         Entity.call(this), this.geometry = a, this.attributes = c, this.uniforms = d, this.shaderName = b;
         var f = new Shader(this.shaderName, this.attributes, this.uniforms);
         if (c || (this.attributes = f.attributes), d || (this.uniforms = f.uniforms), this.script = {}, 
-        this.hasScript = !1, this.mesh = new THREE.Mesh(a, f.material), core.add(this.mesh, this), 
+        this.hasScript = !1, this.mesh = new THREE.Mesh(a, f.material), app.add(this.mesh, this), 
         e) for (var g in e) this[g] = e[g], "script" == g && (this.hasScript = !0, this.addScript(e[g], e.dir));
     }
 })._extends("Entity"), function() {
@@ -16134,13 +16131,10 @@ __class__ = function(a, b) {
             LightEngine.lights.push(a);
         },
         update: function() {
-            var start = new Date();
-            for (var index in LightEngine.lights) {
-                var light = LightEngine.lights[index];
-                with (light) setTimeout(function() {
-                    update(core.clock.getDelta());
-                }, 0);
-                if (+new Date() - start > 50) return;
+            var a = new Date();
+            for (var b in LightEngine.lights) {
+                var c = LightEngine.lights[b];
+                if (c.update(app.clock.getDelta()), +new Date() - a > 50) return;
             }
         }
     }, LightEngine.init();
@@ -16210,7 +16204,7 @@ __class__ = function(a, b) {
             document.removeEventListener("mousemove", Control.handler.onMouseMove, !1), document.removeEventListener("keydown", Control.handler.onKeyDown, !1), 
             document.removeEventListener("keyup", Control.handler.onKeyUp, !1), document.removeEventListener("click", Control.internal_pointerlockonclick, !1), 
             Control.handler.enabled = !1, Control.handler = {}), l("creating new fly control"), 
-            Control.fly(core.camera.object), Control.type = "fly", Control.oldType = 0;
+            Control.fly(app.camera.object), Control.type = "fly", Control.oldType = 0;
             break;
 
           case 1:
@@ -16219,7 +16213,7 @@ __class__ = function(a, b) {
             }, !1), document.removeEventListener("mousemove", Control.handler.mousemove, !1), 
             document.removeEventListener("mousedown", Control.handler.mousedown, !1), document.removeEventListener("mouseup", Control.handler.mouseup, !1), 
             document.removeEventListener("keydown", Control.handler.keydown, !1), document.removeEventListener("keyup", Control.handler.keyup, !1)), 
-            l("creating new fps control"), Control.fps(core.camera.object), core.add(Control.handler.getObject(), Control.handler), 
+            l("creating new fps control"), Control.fps(app.camera.object), app.add(Control.handler.getObject(), Control.handler), 
             Control.fps_uuid = Control.handler.getObject().uuid, Control.type = "fps", Control.oldType = 1;
         }
     },
@@ -16420,7 +16414,7 @@ __class__ = function(a, b) {
     fly: function() {
         $("body").css({
             cursor: "url(img/pointer_cross.png), auto"
-        }), Control.handler = new Control.internal_fly(core.camera.object), Control.handler.movementSpeed = 3, 
+        }), Control.handler = new Control.internal_fly(app.camera.object), Control.handler.movementSpeed = 3, 
         Control.handler.domElement = document, Control.handler.rollSpeed = .05, Control.handler.autoForward = !1, 
         Control.handler.dragToLook = !1;
     },
@@ -16445,7 +16439,7 @@ __class__ = function(a, b) {
     },
     fps_uuid: void 0,
     fps: function() {
-        Control.handler = new Control.internal_fps(core.camera.object);
+        Control.handler = new Control.internal_fps(app.camera.object);
         var a = "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document;
         a ? (l("we have pointer lock ability"), Control.handler.enabled = !0, document.addEventListener("pointerlockchange", Control.internal_pointerlockchange, !1), 
         document.addEventListener("mozpointerlockchange", Control.internal_pointerlockchange, !1), 
@@ -16559,7 +16553,7 @@ __class__ = function(a, b) {
                 Control.clock.getDelta();
             }
             try {
-                Control.handler.update(core.clock.getDelta());
+                Control.handler.update(app.clock.getDelta());
             } catch (a) {
                 console.error(a), console.trace();
             }
@@ -16568,11 +16562,11 @@ __class__ = function(a, b) {
     init: function() {
         Control.clock = new THREE.Clock();
         try {
-            input ? (Control.type = "custom", Control.oldType = 2, window.addEventListener("keydown", input.keydown), 
-            window.addEventListener("keyup", input.keyup)) : (Control.type = "fly", Control.fly(core.camera.object), 
+            input ? (Control.type = "custom", Control.oldType = 2, window.addEventListener("keydown", app.keydown), 
+            window.addEventListener("keyup", app.keyup)) : (Control.type = "fly", Control.fly(app.camera.object), 
             Control.oldType = 0);
         } catch (a) {
-            Control.type = "fly", Control.fly(core.camera.object), Control.oldType = 0;
+            Control.type = "fly", Control.fly(app.camera.object), Control.oldType = 0;
         }
     }
 }, window.Game = {}, Game.SCRIPTS_DIR = "app/scripts/", Game.update = function() {}, 
@@ -16612,7 +16606,7 @@ Gui = {
         c.position.x = 5 * Math.random(), c.position.y = 5 * Math.random(), c.position.z = 5 * Math.random(), 
         c.auto_render = function() {
             this.rotation.x += .01;
-        }, core.scene.add(c), Universe.universe.put(c.uuid, c);
+        }, app.scene.add(c), Universe.universe.put(c.uuid, c);
     },
     testingShaders: function() {
         var a = new THREE.ShaderMaterial({
@@ -16633,7 +16627,7 @@ Gui = {
         }), b = new THREE.Mesh(new THREE.IcosahedronGeometry(20, 4), a);
         b.start_time = Date.now(), b.auto_render = function() {
             this.material.uniforms.time.value = 25e-5 * (Date.now() - this.start_time);
-        }, core.scene.add(b), Universe.universe.put(b.uuid, b);
+        }, app.scene.add(b), Universe.universe.put(b.uuid, b);
     },
     addPlanetAndSatellite: function() {
         var a = new THREE.MeshBasicMaterial({
@@ -16644,7 +16638,7 @@ Gui = {
         var c = new THREE.Mesh(b, a);
         c.position.x = 0, c.position.y = 0, c.position.z = 0, c.auto_render = function() {
             this.rotation.y += 1e-4;
-        }, core.scene.add(c), Universe.universe.put(c.uuid, c), l("PLANET GEOMETRY"), l(c.geometry.dynamic + " - " + c.geometry.verticesNeedUpdate + " - " + c.geometry.normalsNeedUpdate);
+        }, app.scene.add(c), Universe.universe.put(c.uuid, c), l("PLANET GEOMETRY"), l(c.geometry.dynamic + " - " + c.geometry.verticesNeedUpdate + " - " + c.geometry.normalsNeedUpdate);
         var a = new THREE.MeshBasicMaterial({
             color: 16777215,
             wireframe: !0
@@ -16654,18 +16648,15 @@ Gui = {
         };
     },
     update: function() {
-        var keys_list = Universe.universe.keys.concat();
-        if (0 != keys_list.length) {
-            var start = +new Date();
+        var a = Universe.universe.keys.concat();
+        if (0 != a.length) {
+            var b = +new Date();
             do {
-                var o = Universe.universe.get(keys_list.shift());
-                if (o.update) with (o) setTimeout(function() {
-                    update(core.clock.getDelta());
-                }, 0);
-            } while (keys_list.length > 0 && +new Date() - start < 50);
+                var c = Universe.universe.get(a.shift());
+                c.update && c.update(app.clock.getDelta());
+            } while (a.length > 0 && +new Date() - b < 50);
         }
-    },
-    performUpdate: function() {}
+    }
 }, Universe.init(), window.User = {}, User = {
     real_name: void 0,
     real_surname: void 0,
@@ -16674,8 +16665,8 @@ Gui = {
     flyControl: void 0,
     fpsControl: void 0,
     init: function() {
-        User.clock = new THREE.Clock(), User.fpsControl = new THREE.PointerLockControls(core.camera), 
-        core.scene.add(User.fpsControl.getObject());
+        User.clock = new THREE.Clock(), User.fpsControl = new THREE.PointerLockControls(app.camera), 
+        app.scene.add(User.fpsControl.getObject());
     },
     position: {
         x: void 0,
@@ -16735,22 +16726,19 @@ Gui = {
             AudioEngine.sounds.push(a);
         },
         update: function() {
-            var start = new Date();
-            for (var index in AudioEngine.sounds) {
-                var sound = AudioEngine.sounds[index];
-                with (sound) setTimeout(function() {
-                    update(core.clock.getDelta());
-                }, 0);
-                core.camera.object.updateMatrixWorld();
-                var p = new THREE.Vector3();
-                p.setFromMatrixPosition(core.camera.object.matrixWorld), AudioEngine.context.listener.setPosition(p.x, p.y, p.z);
-                var m = core.camera.object.matrix;
-                mx = m.elements[12], my = m.elements[13], mz = m.elements[14], m.elements[12] = m.elements[13] = m.elements[14] = 0;
-                var vec = new THREE.Vector3(0, 0, 1);
-                vec.applyProjection(m), vec.normalize();
-                var up = new THREE.Vector3(0, -1, 0);
-                if (up.applyProjection(m), up.normalize(), AudioEngine.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z), 
-                m.elements[12] = mx, m.elements[13] = my, m.elements[14] = mz, +new Date() - start > 50) return;
+            var a = new Date();
+            for (var b in AudioEngine.sounds) {
+                var c = AudioEngine.sounds[b];
+                c.update(app.clock.getDelta()), app.camera.object.updateMatrixWorld();
+                var d = new THREE.Vector3();
+                d.setFromMatrixPosition(app.camera.object.matrixWorld), AudioEngine.context.listener.setPosition(d.x, d.y, d.z);
+                var e = app.camera.object.matrix;
+                mx = e.elements[12], my = e.elements[13], mz = e.elements[14], e.elements[12] = e.elements[13] = e.elements[14] = 0;
+                var f = new THREE.Vector3(0, 0, 1);
+                f.applyProjection(e), f.normalize();
+                var g = new THREE.Vector3(0, -1, 0);
+                if (g.applyProjection(e), g.normalize(), AudioEngine.context.listener.setOrientation(f.x, f.y, f.z, g.x, g.y, g.z), 
+                e.elements[12] = mx, e.elements[13] = my, e.elements[14] = mz, +new Date() - a > 50) return;
             }
         }
     }, Object.defineProperty(AudioEngine, "VOLUME", {
@@ -16946,123 +16934,136 @@ Gui = {
         for (o in f) e[o] = f[o];
         this.material = new THREE.ShaderMaterial(e);
     }
-}), window.requestAnimFrame = function() {
-    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(a) {
-        window.setTimeout(a, 1e3 / 60);
-    };
-}();
-
-var core = {}, onCreate = function() {}, load = function() {}, preload = function(a) {
-    a();
-}, prepareScene = function() {}, progressAnimation = function(a) {
-    $("#loader").animate({
-        opacity: "0",
-        "margin-top": "250px"
-    }, 1e3, function() {
-        $("#loader").remove(), $("body").animate({
-            backgroundColor: "#fff"
-        }, 200, a);
-    });
-}, customRender = function() {}, input = function() {};
-
-input.keydown = function() {}, input.keyup = function() {};
-
-var _util = {
-    log_types: {
-        e: "error",
-        w: "warn",
-        i: "info"
-    }
-};
-
-core = {
-    baseLib: "js/lib",
-    baseUtil: "js/lib/util",
-    modules: [ "js/lib/underscore", "js/lib/OBJLoader", "js/lib/jquery.color.min", "js/lib/tween", "js/lib/physi", "js/lib/ammo", "js/lib/ParticleEngine", "js/lib/ParticleEngineExamples", "js/core/util/classy", "js/core/util/colors", "js/core/controls/FlyControl", "js/core/controls/PointerLockControls", "js/core/game", "js/core/universe", "js/core/user", "js/core/control", "js/core/gui", "js/core/entities/entity", "js/core/entities/camera", "js/core/entities/mesh", "js/core/entities/lights" ],
-    util: {
-        h: window.innerHeight,
-        w: window.innerWidth,
-        ratio: window.innerWidth / window.innerHeight,
-        frameRate: 60,
-        camera: {
-            fov: 75,
-            near: .1,
-            far: 100
-        }
+}), Class("App", {
+    App: function() {
+        this.log_types = {
+            e: "error",
+            w: "warn",
+            i: "info"
+        }, this.util = {
+            h: window.innerHeight,
+            w: window.innerWidth,
+            ratio: window.innerWidth / window.innerHeight,
+            frameRate: 60,
+            camera: {
+                fov: 75,
+                near: .1,
+                far: 100
+            }
+        }, this.threeLib = void 0, this.camera = void 0, this.user = void 0, this.scene = void 0, 
+        this.renderer = void 0, this.debug = !0, this.clock = new THREE.Clock(), this.mouseX = 0, 
+        this.mouseY = 0, this.zoom = 0, this.windowHalfX = window.innerWidth / 2, this.windowHalfY = window.innerHeight / 2, 
+        this.CAMERA_MAX_Z = 1e3, this.CAMERA_MIN_Z = 250;
     },
-    threeLib: void 0,
-    camera: void 0,
-    user: void 0,
-    scene: void 0,
-    renderer: void 0,
-    debug: !0,
-    clock: new THREE.Clock(),
+    onCreate: function() {},
+    preLoad: function(a) {
+        a();
+    },
+    prepareScene: function() {},
+    progressAnimation: function() {
+        $("#loader").animate({
+            opacity: "0",
+            "margin-top": "250px"
+        }, 1e3, function() {
+            $("#loader").remove(), $("body").animate({
+                backgroundColor: "#fff"
+            }, 200, callback);
+        });
+    },
+    customRender: function() {},
+    setUpLeap: function() {},
+    onLeapSocketConnected: function() {},
+    onLeapDeviceConnected: function() {},
+    onLeapDeviceDisconnected: function() {},
     render: function() {
-        if (setTimeout(User.handleUserInput, 0), setTimeout(Game.update, 0), setTimeout(AudioEngine.update, 0), 
-        setTimeout(LightEngine.update, 0), Universe.update(), setTimeout(Control.update, 0), 
-        core.camera.update) with (core.camera) setTimeout(function() {
-            update(core.clock.getDelta());
-        }, 0);
+        User.handleUserInput(), Game.update(), AudioEngine.update(), LightEngine.update(), 
+        Universe.update(), Control.update(), this.camera.update && this.update(this.clock.getDelta()), 
         setTimeout(function() {
-            config.physics_enabled && Physijs._isLoaded && core.scene.simulate(), config.tween_enabled && TWEEN.update(), 
-            requestAnimationFrame(core.render);
-        }, 1e3 / core.util.frameRate), core.renderer.autoClear = !1, core.renderer.clear(), 
-        customRender(), core.renderer.render(core.scene, core.camera.object);
+            config.physics_enabled && Physijs._isLoaded && app.scene.simulate(), config.tween_enabled && TWEEN.update(), 
+            requestAnimationFrame(app.render);
+        }, 1e3 / app.util.frameRate), app.renderer.autoClear = !1, app.renderer.clear(), 
+        this.customRender(), app.renderer.render(app.scene, app.camera.object);
     },
     add: function(a, b) {
-        core.scene.add(a), Universe.universe.put(a.uuid, b);
+        this.scene.add(a), Universe.universe.put(a.uuid, b);
     },
     remove: function(a) {
-        core.scene.remove(a), Universe.universe.remove(a.uuid);
+        this.scene.remove(a), Universe.universe.remove(a.uuid);
     },
-    main_progress_bar: void 0,
     init: function() {
-        var a = function() {
-            core.threeLib = THREE;
-            var a = core.util.camera, b = core.util, c = core.threeLib;
-            if (config) if (l("config loaded"), config.physics_enabled) {
-                l("physics enabled.");
-                try {
-                    Physijs.scripts.worker = "workers/physijs_worker.js", Physijs.scripts.ammo = "ammo.js", 
-                    core.scene = new Physijs.Scene(), Physijs._isLoaded = !0;
-                } catch (d) {
-                    l("something bad trying to create physijs scene", "e"), l(d), Physijs._isLoaded = !1, 
-                    core.scene = new c.Scene();
-                }
-            } else l("physics not enabled."), Physijs._isLoaded = !1, core.scene = new c.Scene(); else l("config not loaded, switching to three.js"), 
-            Physijs._isLoaded = !1, core.scene = new c.Scene();
-            var e = {
-                fov: a.fov,
-                ratio: b.ratio,
-                near: a.near,
-                far: a.far
-            };
-            config && config.camera && (e.fov = config.camera.fov ? config.camera.fov : e.fov, 
-            e.ratio = config.camera.ratio ? config.camera.ratio : e.ratio, e.near = config.camera.near ? config.camera.near : e.near, 
-            e.far = config.camera.far ? config.camera.far : e.far), core.camera = new Camera(e);
-            var f = !1;
-            config.alpha && (f = !0), core.renderer = new c.WebGLRenderer({
-                alpha: f
-            }), config && 1 == config.cast_shadow && (core.renderer.shadowMapEnabled = !0, core.renderer.shadowMapType = THREE.PCFSoftShadowMap), 
-            core.renderer.setSize(b.w, b.h), document.getElementById("gameContainer").appendChild(core.renderer.domElement), 
-            User.handleUserInput(), Game.update(), Universe.update(), Control.init(), core.render(), 
-            onCreate instanceof Function ? onCreate() : console.log("Something wrong in your onCreate method");
+        this.createScene = function() {
+            app.threeLib = THREE;
+            var a = app.util.camera, b = app.util, c = app.threeLib;
+            try {
+                if (config) if (this.log("config loaded"), config.physics_enabled) {
+                    this.log("physics enabled.");
+                    try {
+                        Physijs.scripts.worker = "workers/physijs_worker.js", Physijs.scripts.ammo = "ammo.js", 
+                        this.scene = new Physijs.Scene(), Physijs._isLoaded = !0;
+                    } catch (d) {
+                        this.log("something bad trying to create physijs scene", "e"), this.log(d), Physijs._isLoaded = !1, 
+                        this.scene = new c.Scene();
+                    }
+                } else this.log("physics not enabled."), Physijs._isLoaded = !1, this.scene = new c.Scene(); else this.log("config not loaded, switching to three.js"), 
+                Physijs._isLoaded = !1, this.scene = new c.Scene();
+                var e = {
+                    fov: a.fov,
+                    ratio: b.ratio,
+                    near: a.near,
+                    far: a.far
+                };
+                config && config.camera && (e.fov = config.camera.fov ? config.camera.fov : e.fov, 
+                e.ratio = config.camera.ratio ? config.camera.ratio : e.ratio, e.near = config.camera.near ? config.camera.near : e.near, 
+                e.far = config.camera.far ? config.camera.far : e.far), this.camera = new Camera(e);
+                var f = !1;
+                config.alpha && (f = !0), this.renderer = new c.WebGLRenderer({
+                    alpha: f
+                }), config && 1 == config.cast_shadow && (this.renderer.shadowMapEnabled = !0, this.renderer.shadowMapType = THREE.PCFSoftShadowMap), 
+                app.renderer.setSize(b.w, b.h), document.getElementById("gameContainer").appendChild(app.renderer.domElement), 
+                User.handleUserInput(), Game.update(), Universe.update(), Control.init(), app.render(), 
+                this.onCreate instanceof Function ? this.onCreate() : console.log("Something wrong in your onCreate method");
+            } catch (g) {
+                console.error(g), console.trace();
+            }
         };
-        load = function() {
-            core.main_progress_bar = document.getElementById("progress_bar"), console.log("inside load"), 
-            "function" != typeof progressAnimation && (progressAnimation = function(a) {
-                console.log("def progressAnimation"), a();
-            }), progressAnimation(a);
-        }, window.onload = function() {
-            console.log("inside window onload"), preload(function() {
-                AssetsManager.load(function() {
-                    prepareScene(), load();
-                });
-            });
-        }, window.onresize = function() {
-            core.util.h = window.innerHeight, core.util.w = window.innerWidth, core.util.ratio = core.util.w / core.util.h, 
-            core.camera.object.aspect = core.util.ratio, core.camera.object.updateProjectionMatrix(), 
-            core.renderer.setSize(core.util.w, core.util.h);
-        };
-    }()
+    },
+    load: function() {
+        console.log("inside load"), "function" != typeof this.progressAnimation && (this.progressAnimation = function(a) {
+            console.log("def progressAnimation"), a();
+        }), this.progressAnimation(this.createScene);
+    },
+    log: function() {
+        this.debug && (arguments.length > 1 && arguments[1] in this.log_types ? console[this.log_types[arguments[1]]](arguments[0]) : console.log(arguments[0]));
+    },
+    onDocumentMouseWheel: function(a) {
+        a.preventDefault(), this.zoom = .05 * a.wheelDelta, app.camera.object.position.z += zoom;
+    },
+    onDocumentMouseMove: function(a) {
+        this.mouseX = a.clientX - windowHalfX, this.mouseY = a.clientY - windowHalfY;
+    },
+    onDocumentTouchStart: function(a) {
+        1 === a.touches.length && (a.preventDefault(), this.mouseX = a.touches[0].pageX - windowHalfX, 
+        this.mouseY = a.touches[0].pageY - windowHalfY);
+    },
+    onDocumentTouchMove: function(a) {
+        1 === a.touches.length && (a.preventDefault(), this.mouseX = a.touches[0].pageX - windowHalfX, 
+        this.mouseY = a.touches[0].pageY - windowHalfY);
+    },
+    keyup: function() {},
+    keydown: function() {}
+});
+
+var app;
+
+window.onload = function() {
+    console.log("inside window onload"), window.subClasses.App ? (app = new window.subClasses.App(), 
+    app.init()) : (app = new App(), app.init()), app.preload(function() {
+        AssetsManager.load(function() {
+            app.prepareScene(), app.load();
+        });
+    });
+}, window.onresize = function() {
+    app.util.h = window.innerHeight, app.util.w = window.innerWidth, app.util.ratio = app.util.w / app.util.h, 
+    app.camera.object.aspect = app.util.ratio, app.camera.object.updateProjectionMatrix(), 
+    app.renderer.setSize(app.util.w, app.util.h);
 };

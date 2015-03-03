@@ -32,6 +32,11 @@ __class__.prototype._extends = function(toextend) {
 		//console.log(sup);
 		return sup;
 	}
+
+	window.subClasses = window.subClasses || {};
+	if (!window.subClasses[toextend]) {
+		window.subClasses[toextend] = this.name;
+	}
 	/*
 	window[this.name].prototype._super = function() {
 		this.__getSuper().apply(this, arguments);

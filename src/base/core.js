@@ -22,7 +22,7 @@ Class("App", {
     			far : 100
     		}
     	};
-        
+
     	//importing libraries
     	this.threeLib = undefined;
 
@@ -37,6 +37,16 @@ Class("App", {
 
         //CLOCK!
         this.clock = new THREE.Clock();
+
+        //window and mouse variables
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.zoom = 0;
+
+        this.windowHalfX = window.innerWidth / 2;
+        this.windowHalfY = window.innerHeight / 2;
+        this.CAMERA_MAX_Z = 1000;
+        this.CAMERA_MIN_Z = 250;
 
     },
 
@@ -61,6 +71,18 @@ Class("App", {
 
     //needed if user wants to add a customRender method
     customRender: function() {},
+
+    //setupleap motion device
+    setUpLeap: function() {},
+
+    //leap motion socket connected
+    onLeapSocketConnected: function() {},
+
+    //leap motion device connected
+    onLeapDeviceConnected: function() {},
+
+    //leap motion device disconnected
+    onLeapDeviceDisconnected: function() {},
 
     render : function () {
 
@@ -115,7 +137,7 @@ Class("App", {
 
     init: function() {
 
-        var createScene = function () {
+        this.createScene = function () {
 
             app.threeLib = THREE;
             var c_util 	= app.util.camera; //camera util
@@ -214,7 +236,7 @@ Class("App", {
                 callback();
             }
         }
-        this.progressAnimation(createScene);
+        this.progressAnimation(this.createScene);
 
     },
 
@@ -235,6 +257,54 @@ Class("App", {
 
     },
 
+    //document input method
+    onDocumentMouseWheel: function(event) {
+
+    	event.preventDefault();
+    	this.zoom = event.wheelDelta * 0.05;
+    	app.camera.object.position.z += zoom;
+
+    },
+
+    onDocumentMouseMove: function(event) {
+
+    	this.mouseX = event.clientX - windowHalfX;
+    	this.mouseY = event.clientY - windowHalfY;
+
+    },
+
+    onDocumentTouchStart: function(event) {
+
+    	if ( event.touches.length === 1 ) {
+
+    		event.preventDefault();
+
+    		this.mouseX = event.touches[ 0 ].pageX - windowHalfX;
+    		this.mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+    	}
+
+    },
+
+    onDocumentTouchMove: function(event) {
+
+    	if ( event.touches.length === 1 ) {
+
+    		event.preventDefault();
+
+    		this.mouseX = event.touches[ 0 ].pageX - windowHalfX;
+    		this.mouseY = event.touches[ 0 ].pageY - windowHalfY;
+
+    	}
+
+    },
+
+    //keyup event
+    keyup: function(event) {},
+
+    //keydown event
+    keydown: function(event) {}
+
 });
 
 var app;
@@ -243,8 +313,13 @@ window.onload = function() {
 
     console.log("inside window onload");
     //creating app object
-    app = new App();
-    app.init();
+    if (window.subClasses["App"]) {
+        app = new window.subClasses["App"]();
+        app.init();
+    } else {
+        app = new App();
+        app.init();
+    }
 
     app.preload(function() {
         AssetsManager.load(function() {

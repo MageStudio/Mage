@@ -730,8 +730,8 @@ Control = {
 			if (input) {
 				Control.type = "custom";
 				Control.oldType = 2;
-				window.addEventListener("keydown", input.keydown);
-				window.addEventListener("keyup", input.keyup);
+				window.addEventListener("keydown", app.keydown);
+				window.addEventListener("keyup", app.keyup);
 			} else {
 				Control.type = "fly";
 				Control.fly(app.camera.object);
