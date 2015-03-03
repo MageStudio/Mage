@@ -1,4 +1,4 @@
-/*! wage version: 0.0.29, 20-02-2015 */
+/*! wage version: 0.0.30, 01-03-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -17039,9 +17039,10 @@ core = {
             };
             config && config.camera && (e.fov = config.camera.fov ? config.camera.fov : e.fov, 
             e.ratio = config.camera.ratio ? config.camera.ratio : e.ratio, e.near = config.camera.near ? config.camera.near : e.near, 
-            e.far = config.camera.far ? config.camera.far : e.far), core.camera = new Camera(e), 
-            core.renderer = new c.WebGLRenderer({
-                alpha: !1
+            e.far = config.camera.far ? config.camera.far : e.far), core.camera = new Camera(e);
+            var f = !1;
+            config.alpha && (f = !0), core.renderer = new c.WebGLRenderer({
+                alpha: f
             }), config && 1 == config.cast_shadow && (core.renderer.shadowMapEnabled = !0, core.renderer.shadowMapType = THREE.PCFSoftShadowMap), 
             core.renderer.setSize(b.w, b.h), document.getElementById("gameContainer").appendChild(core.renderer.domElement), 
             User.handleUserInput(), Game.update(), Universe.update(), Control.init(), core.render(), 

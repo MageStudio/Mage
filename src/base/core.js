@@ -1,10 +1,10 @@
 // @see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
 window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       || 
-          window.webkitRequestAnimationFrame || 
-          window.mozRequestAnimationFrame    || 
-          window.oRequestAnimationFrame      || 
-          window.msRequestAnimationFrame     || 
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          window.oRequestAnimationFrame      ||
+          window.msRequestAnimationFrame     ||
           function(/* function */ callback, /* DOMElement */ element){
             window.setTimeout(callback, 1000 / 60);
           };
@@ -18,7 +18,7 @@ var preload = function(callback) {callback();};
 var prepareScene = function() {};
 var progressAnimation = function(callback) {
 	$('#loader').animate({"opacity" : "0", "margin-top" : "250px"}, 1000 , function () {
-		$('#loader').remove();	
+		$('#loader').remove();
 		$('body').animate({backgroundColor : "#fff"}, 200 , callback);
 	});
 }
@@ -54,7 +54,7 @@ function l () {
 core = {
 
 	baseLib 	: "js/lib",
-	baseUtil 	: "js/lib/util", 
+	baseUtil 	: "js/lib/util",
 
 	modules : [
 		"js/lib/underscore",
@@ -110,8 +110,8 @@ core = {
 	//first thing that will be called.
 	//this is to create s new black scene
 	render : function () {
-		/*------------------------------------------------------------------------------------------	
-			
+		/*------------------------------------------------------------------------------------------
+
 			this is part of our game loop. this is used to update every game object
 			we are going to use our universe object to handle every updates.
 
@@ -128,7 +128,7 @@ core = {
 		/*------------------------------------------------------------------------------------------
 
 			it's now time to perform our scene render.
-			we are going to use our universe object so we can add more elements to the scene, 
+			we are going to use our universe object so we can add more elements to the scene,
 			erase elements and set our world just before render.
 
 		------------------------------------------------------------------------------------------*/
@@ -148,7 +148,7 @@ core = {
 			if (config.physics_enabled) {
 				if (Physijs._isLoaded) {
 					core.scene.simulate();
-				}	
+				}
 			}
 			if (config.tween_enabled) {
 				TWEEN.update();
@@ -209,7 +209,7 @@ core = {
 					} else {
 						l("physics not enabled.");
 						Physijs._isLoaded = false;
-						core.scene = new t.Scene();	
+						core.scene = new t.Scene();
 					}
 				} else {
 					l("config not loaded, switching to three.js");
@@ -231,7 +231,11 @@ core = {
 					}
 				}
 				core.camera = new Camera(cameraOptions);
-				core.renderer = new t.WebGLRenderer({alpha:false});
+                var alphaRenderer = false;
+                if (config.alpha) {
+                    alphaRenderer = true;
+                }
+				core.renderer = new t.WebGLRenderer({alpha:alphaRenderer});
 				if (config) {
 					if (config.cast_shadow == true) {
 						core.renderer.shadowMapEnabled = true;
@@ -242,7 +246,7 @@ core = {
 				//document.body.appendChild( core.renderer.domElement );
 				document.getElementById("gameContainer").appendChild(core.renderer.domElement);
 				/*------------------------------------------------------------------------------------------
-					
+
 					trying to retrieve user input. from keyboard, mouse and joystick.
 					we're going to add leap motion as available controller.
 
@@ -255,7 +259,7 @@ core = {
 				------------------------------------------------------------------------------------------*/
 				Game.update();
 				/*------------------------------------------------------------------------------------------
-				
+
 					now it's time to add elements to my scene.
 					we must handle a "universe" object that will know the exact number of elements to be
 					drawn on our screen. each object must have a method called : 'render()' so that
@@ -264,7 +268,7 @@ core = {
 				------------------------------------------------------------------------------------------*/
 				Universe.update();
 				/*------------------------------------------------------------------------------------------
-					
+
 					we can now launch our render function.
 
 				------------------------------------------------------------------------------------------*/
@@ -294,7 +298,7 @@ core = {
 				}
 			}
 			progressAnimation(createScene)
-			//requirejs(core.modules, progressAnimation(createScene));			
+			//requirejs(core.modules, progressAnimation(createScene));
 		};
 		window.onload = function() {
 			console.log("inside window onload");
@@ -319,5 +323,5 @@ core = {
 
 	})(),
 
-	
+
 }
