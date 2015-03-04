@@ -44,7 +44,7 @@ Control = {
 				case 0 : {
 					if (Control.oldType == 1) {
 						//rimuoviamo i listener usati per fps
-						l("oldType was fps");
+						//l("oldType was fps");
 						//l("indexof control handler" + app.scene.children.indexOf(Control.handler.getObject()));
 						document.removeEventListener( 'pointerlockchange', Control.internal_pointerlockchange, false );
 						document.removeEventListener( 'mozpointerlockchange',Control.internal_pointerlockchange, false );
@@ -70,7 +70,7 @@ Control = {
 
 						//dobbiamo anche rimuovere l'oggetto inserito nella scena da fps.
 					}
-					l("creating new fly control");
+					//l("creating new fly control");
 					Control.fly( app.camera.object );
 					Control.type = "fly";
 					Control.oldType = 0;
@@ -79,7 +79,7 @@ Control = {
 				case 1 : {
 					if (Control.oldType == 0) {
 						//rimuoviamo i listener usati per fly
-						l("oldtype was fly");
+						//l("oldtype was fly");
 						document.removeEventListener( 'contextmenu', function ( event ) { event.preventDefault(); }, false );
 
 						document.removeEventListener( 'mousemove', Control.handler.mousemove, false );
@@ -89,7 +89,7 @@ Control = {
 						document.removeEventListener( 'keydown', Control.handler.keydown 	, false );
 						document.removeEventListener( 'keyup',   Control.handler.keyup 		, false );
 					}
-					l("creating new fps control");
+					//l("creating new fps control");
 					Control.fps( app.camera.object );
 					app.add(Control.handler.getObject(), Control.handler);
 					Control.fps_uuid = Control.handler.getObject().uuid;
@@ -145,7 +145,7 @@ Control = {
 		};
 
 		this.keydown = function( event ) {
-			l("keydown inside fly");
+			//l("keydown inside fly");
 			if ( event.altKey ) {
 
 				return;
@@ -184,7 +184,7 @@ Control = {
 		};
 
 		this.keyup = function( event ) {
-			l("keyup inside fly");
+			//l("keyup inside fly");
 			switch( event.keyCode ) {
 
 				case 16: /* shift */ this.movementSpeedMultiplier = 1; break;
@@ -215,7 +215,7 @@ Control = {
 		};
 
 		this.mousedown = function( event ) {
-			l("mousedown inside fly");
+			//l("mousedown inside fly");
 			if ( this.domElement !== document ) {
 
 				this.domElement.focus();
@@ -245,7 +245,7 @@ Control = {
 		};
 
 		this.mousemove = function( event ) {
-			l("mousemove inside fly");
+			//l("mousemove inside fly");
 			if ( !this.dragToLook || this.mouseStatus > 0 ) {
 
 				var container = this.getContainerDimensions();
@@ -262,7 +262,7 @@ Control = {
 		};
 
 		this.mouseup = function( event ) {
-			l("mouseup inside fly");
+			//l("mouseup inside fly");
 			event.preventDefault();
 			event.stopPropagation();
 
@@ -430,7 +430,7 @@ Control = {
 	},
 
 	internal_pointerlockerror : function ( event ) {
-		l("POINTER LOCK ERROR");
+		app.log("POINTER LOCK ERROR");
 	},
 
 	internal_fullscreenchange : function ( event ) {
@@ -456,7 +456,7 @@ Control = {
 
 		if ( havePointerLock ) {
 
-			l("we have pointer lock ability");
+			app.log("we have pointer lock ability");
 			Control.handler.enabled = true;
 
 			// Hook pointer lock state change events
@@ -473,7 +473,7 @@ Control = {
 
 		} else {
 
-			l("BROWSER DOESN'T SUPPORT POINTER LOCK API.");
+			app.log("BROWSER DOESN'T SUPPORT POINTER LOCK API.");
 			//instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
 
 		}
@@ -651,7 +651,7 @@ Control = {
 
 		this.update = function ( delta ) {
 			if ( scope.enabled === false )  {
-				l("pointerlock not enabled. please enable it.");
+				app.log("pointerlock not enabled. please enable it.");
 				return;
 			}
 
@@ -678,9 +678,13 @@ Control = {
 
 			}
 
-			yawObject.translateX( velocity.x );
-			yawObject.translateY( velocity.y );
-			yawObject.translateZ( velocity.z );
+			//yawObject.translateX( velocity.x );
+			//yawObject.translateY( velocity.y );
+			//yawObject.translateZ( velocity.z );
+
+			yawObject.position.x += velocity.x;
+			yawObject.position.y += velocity.y;
+			yawObject.position.z += velocity.z;
 
 			if ( yawObject.position.y < Control.options.fps.height ) {
 
@@ -689,7 +693,7 @@ Control = {
 
 				canJump = true;
 
-			}
+			} else { app.log(" vel " + velocity.y); app.log(" yawobject position y " + yawObject.position.y);}
 
 		};
 

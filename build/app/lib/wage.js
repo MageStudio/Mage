@@ -1,4 +1,4 @@
-/*! wage version: 0.0.31, 03-03-2015 */
+/*! wage version: 0.0.31, 04-03-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16117,6 +16117,30 @@ __class__ = function(a, b) {
         this.hasScript = !1, this.mesh = new THREE.Mesh(a, f.material), app.add(this.mesh, this), 
         e) for (var g in e) this[g] = e[g], "script" == g && (this.hasScript = !0, this.addScript(e[g], e.dir));
     }
+})._extends("Entity"), Class("AnimatedMesh", {
+    AnimatedMesh: function(a, b, c) {
+        Entity.call(this);
+        var d = function(a) {
+            for (var b = 0; b < a.hierarchy.length; b++) {
+                var c = a.hierarchy[b], d = c.keys[0], e = c.keys[c.keys.length - 1];
+                e.pos = d.pos, e.rot = d.rot, e.scl = d.scl;
+            }
+        };
+        d(a.animation), this.geometry = a, this.material = b, this.script = {}, this.hasScript = !1, 
+        this.geometry.computeBoundingBox();
+        this.geometry.boundingBox;
+        if (this.mesh = new THREE.SkinnedMesh(a, b), app.add(this.mesh, this), this.helper = new THREE.SkeletonHelper(this.mesh), 
+        this.helper.material.linewidth = 3, this.helper.visible = !0, app.add(this.helper, this.helper), 
+        this.animation = new THREE.Animation(this.mesh, this.geometry.animation), this.animation.play(), 
+        c) for (var e in c) this[e] = c[e], "script" == e && (this.hasScript = !0, this.addScript(c[e], c.dir));
+    },
+    update: function() {
+        this.animate();
+    },
+    animate: function() {
+        var a = .75 * app.clock.getDelta();
+        THREE.AnimationHandler.update(a), this.helper && this.helper.update();
+    }
 })._extends("Entity"), function() {
     window.LightEngine = {
         delayFactor: .1,
@@ -16193,7 +16217,7 @@ __class__ = function(a, b) {
         var b = "" + a, c = Control.allowedTypes.indexOf(b);
         if (-1 != c) switch (c) {
           case 0:
-            1 == Control.oldType && (l("oldType was fps"), document.removeEventListener("pointerlockchange", Control.internal_pointerlockchange, !1), 
+            1 == Control.oldType && (document.removeEventListener("pointerlockchange", Control.internal_pointerlockchange, !1), 
             document.removeEventListener("mozpointerlockchange", Control.internal_pointerlockchange, !1), 
             document.removeEventListener("webkitpointerlockchange", Control.internal_pointerlockchange, !1), 
             document.removeEventListener("pointerlockerror", Control.internal_pointerlockerror, !1), 
@@ -16203,17 +16227,17 @@ __class__ = function(a, b) {
             document.removeEventListener("mozfullscreenchange", Control.internal_fullscreenchange, !1), 
             document.removeEventListener("mousemove", Control.handler.onMouseMove, !1), document.removeEventListener("keydown", Control.handler.onKeyDown, !1), 
             document.removeEventListener("keyup", Control.handler.onKeyUp, !1), document.removeEventListener("click", Control.internal_pointerlockonclick, !1), 
-            Control.handler.enabled = !1, Control.handler = {}), l("creating new fly control"), 
-            Control.fly(app.camera.object), Control.type = "fly", Control.oldType = 0;
+            Control.handler.enabled = !1, Control.handler = {}), Control.fly(app.camera.object), 
+            Control.type = "fly", Control.oldType = 0;
             break;
 
           case 1:
-            0 == Control.oldType && (l("oldtype was fly"), document.removeEventListener("contextmenu", function(a) {
+            0 == Control.oldType && (document.removeEventListener("contextmenu", function(a) {
                 a.preventDefault();
             }, !1), document.removeEventListener("mousemove", Control.handler.mousemove, !1), 
             document.removeEventListener("mousedown", Control.handler.mousedown, !1), document.removeEventListener("mouseup", Control.handler.mouseup, !1), 
             document.removeEventListener("keydown", Control.handler.keydown, !1), document.removeEventListener("keyup", Control.handler.keyup, !1)), 
-            l("creating new fps control"), Control.fps(app.camera.object), app.add(Control.handler.getObject(), Control.handler), 
+            Control.fps(app.camera.object), app.add(Control.handler.getObject(), Control.handler), 
             Control.fps_uuid = Control.handler.getObject().uuid, Control.type = "fps", Control.oldType = 1;
         }
     },
@@ -16242,7 +16266,7 @@ __class__ = function(a, b) {
         this.handleEvent = function(a) {
             "function" == typeof this[a.type] && this[a.type](a);
         }, this.keydown = function(a) {
-            if (l("keydown inside fly"), !a.altKey) {
+            if (!a.altKey) {
                 switch (a.keyCode) {
                   case 16:
                     this.movementSpeedMultiplier = .1;
@@ -16298,7 +16322,7 @@ __class__ = function(a, b) {
                 this.updateMovementVector(), this.updateRotationVector();
             }
         }, this.keyup = function(a) {
-            switch (l("keyup inside fly"), a.keyCode) {
+            switch (a.keyCode) {
               case 16:
                 this.movementSpeedMultiplier = 1;
                 break;
@@ -16352,8 +16376,8 @@ __class__ = function(a, b) {
             }
             this.updateMovementVector(), this.updateRotationVector();
         }, this.mousedown = function(a) {
-            if (l("mousedown inside fly"), this.domElement !== document && this.domElement.focus(), 
-            a.preventDefault(), a.stopPropagation(), this.dragToLook) this.mouseStatus++; else {
+            if (this.domElement !== document && this.domElement.focus(), a.preventDefault(), 
+            a.stopPropagation(), this.dragToLook) this.mouseStatus++; else {
                 switch (a.button) {
                   case 0:
                     this.moveState.forward = 1;
@@ -16365,13 +16389,13 @@ __class__ = function(a, b) {
                 this.updateMovementVector();
             }
         }, this.mousemove = function(a) {
-            if (l("mousemove inside fly"), !this.dragToLook || this.mouseStatus > 0) {
+            if (!this.dragToLook || this.mouseStatus > 0) {
                 var b = this.getContainerDimensions(), c = b.size[0] / 2, d = b.size[1] / 2;
                 this.moveState.yawLeft = 3 * -((a.pageX - b.offset[0] - c) / c), this.moveState.pitchDown = (a.pageY - b.offset[1] - d) / d * 3, 
                 this.updateRotationVector();
             }
         }, this.mouseup = function(a) {
-            if (l("mouseup inside fly"), a.preventDefault(), a.stopPropagation(), this.dragToLook) this.mouseStatus--, 
+            if (a.preventDefault(), a.stopPropagation(), this.dragToLook) this.mouseStatus--, 
             this.moveState.yawLeft = this.moveState.pitchDown = 0; else {
                 switch (a.button) {
                   case 0:
@@ -16430,7 +16454,7 @@ __class__ = function(a, b) {
         a.requestFullscreen()) : a.requestPointerLock();
     },
     internal_pointerlockerror: function() {
-        l("POINTER LOCK ERROR");
+        app.log("POINTER LOCK ERROR");
     },
     internal_fullscreenchange: function() {
         (document.fullscreenElement === document || document.mozFullscreenElement === document || document.mozFullScreenElement === document) && (document.removeEventListener("fullscreenchange", Control.internal_fullscreenchange), 
@@ -16441,13 +16465,13 @@ __class__ = function(a, b) {
     fps: function() {
         Control.handler = new Control.internal_fps(app.camera.object);
         var a = "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document;
-        a ? (l("we have pointer lock ability"), Control.handler.enabled = !0, document.addEventListener("pointerlockchange", Control.internal_pointerlockchange, !1), 
+        a ? (app.log("we have pointer lock ability"), Control.handler.enabled = !0, document.addEventListener("pointerlockchange", Control.internal_pointerlockchange, !1), 
         document.addEventListener("mozpointerlockchange", Control.internal_pointerlockchange, !1), 
         document.addEventListener("webkitpointerlockchange", Control.internal_pointerlockchange, !1), 
         document.addEventListener("pointerlockerror", Control.internal_pointerlockerror, !1), 
         document.addEventListener("mozpointerlockerror", Control.internal_pointerlockerror, !1), 
         document.addEventListener("webkitpointerlockerror", Control.internal_pointerlockerror, !1), 
-        document.addEventListener("click", Control.internal_pointerlockonclick, !1)) : l("BROWSER DOESN'T SUPPORT POINTER LOCK API.");
+        document.addEventListener("click", Control.internal_pointerlockonclick, !1)) : app.log("BROWSER DOESN'T SUPPORT POINTER LOCK API.");
     },
     internal_fps: function(a) {
         var b = this;
@@ -16456,7 +16480,7 @@ __class__ = function(a, b) {
         c.add(a);
         var d = new THREE.Object3D();
         d.position.y = Control.options.fps.height, d.add(c);
-        var e = !1, f = !1, g = !1, h = !1, i = !1, j = !1, k = new THREE.Vector3(), m = Math.PI / 2, n = !1;
+        var e = !1, f = !1, g = !1, h = !1, i = !1, j = !1, k = new THREE.Vector3(), l = Math.PI / 2, m = !1;
         this._onKeyDown = function() {}, this.setKeyDownListener = function(a) {
             this._onKeyDown = a;
         }, this._onKeyUp = function() {}, this.setKeyUpListener = function(a) {
@@ -16467,7 +16491,7 @@ __class__ = function(a, b) {
             if (b.enabled !== !1) {
                 var e = a.movementX || a.mozMovementX || a.webkitMovementX || 0, f = a.movementY || a.mozMovementY || a.webkitMovementY || 0;
                 d.rotation.y -= e * Control.options.fps.mouseFactor, c.rotation.x -= f * Control.options.fps.mouseFactor, 
-                c.rotation.x = Math.max(-m, Math.min(m, c.rotation.x)), Control.handler._onMouseMove(a);
+                c.rotation.x = Math.max(-l, Math.min(l, c.rotation.x)), Control.handler._onMouseMove(a);
             }
         }, this.onKeyDown = function(a) {
             switch (a.keyCode) {
@@ -16497,7 +16521,7 @@ __class__ = function(a, b) {
 
               case 16:
                 Control.options.fps._oldV = Control.options.fps.velocity, Control.options.fps.velocity = Control.options.fps.crouch, 
-                d.position.y = Control.options.fps.height / 2, j = !1, n = !0;
+                d.position.y = Control.options.fps.height / 2, j = !1, m = !0;
             }
             Control.handler._onKeyDown(a);
         }, this.onKeyUp = function(a) {
@@ -16524,7 +16548,7 @@ __class__ = function(a, b) {
 
               case 16:
                 Control.options.fps.velocity = Control.options.fps._oldV, d.position.y = Control.options.fps.height, 
-                j = !0, n = !1;
+                j = !0, m = !1;
             }
             Control.handler._onKeyUp(a);
         }, document.addEventListener("mousemove", this.onMouseMove, !1), document.addEventListener("keydown", this.onKeyDown, !1), 
@@ -16538,13 +16562,14 @@ __class__ = function(a, b) {
                 return b.set(c.rotation.x, d.rotation.y, 0), e.copy(a).applyEuler(b), e;
             };
         }(), this.update = function(a) {
-            if (b.enabled === !1) return void l("pointerlock not enabled. please enable it.");
+            if (b.enabled === !1) return void app.log("pointerlock not enabled. please enable it.");
             a *= Control.options.fps.delta, k.y -= Control.options.fps.fallFactor * a;
             var c = Control.options.fps.velocity;
             e && (k.z = -c), f && (k.z = c), f || e || (k.z = 0), g && (k.x = -c), h && (k.x = c), 
-            h || g || (k.x = 0), i === !0 && (k.y = Math.max(0, k.y)), d.translateX(k.x), d.translateY(k.y), 
-            d.translateZ(k.z), d.position.y < Control.options.fps.height && (k.y = 0, d.position.y = n ? Control.options.fps.height / 2 : Control.options.fps.height, 
-            j = !0);
+            h || g || (k.x = 0), i === !0 && (k.y = Math.max(0, k.y)), d.position.x += k.x, 
+            d.position.y += k.y, d.position.z += k.z, d.position.y < Control.options.fps.height ? (k.y = 0, 
+            d.position.y = m ? Control.options.fps.height / 2 : Control.options.fps.height, 
+            j = !0) : (app.log(" vel " + k.y), app.log(" yawobject position y " + d.position.y));
         };
     },
     update: function() {
