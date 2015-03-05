@@ -678,13 +678,13 @@ Control = {
 
 			}
 
-			//yawObject.translateX( velocity.x );
-			//yawObject.translateY( velocity.y );
-			//yawObject.translateZ( velocity.z );
+			yawObject.translateX( velocity.x );
+			yawObject.translateY( velocity.y );
+			yawObject.translateZ( velocity.z );
 
-			yawObject.position.x += velocity.x;
-			yawObject.position.y += velocity.y;
-			yawObject.position.z += velocity.z;
+			//yawObject.position.x += velocity.x;
+			//yawObject.position.y += velocity.y;
+			//yawObject.position.z += velocity.z;
 
 			if ( yawObject.position.y < Control.options.fps.height ) {
 

@@ -1,4 +1,4 @@
-/*! wage version: 0.0.31, 04-03-2015 */
+/*! wage version: 0.0.32, 05-03-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16566,9 +16566,8 @@ __class__ = function(a, b) {
             a *= Control.options.fps.delta, k.y -= Control.options.fps.fallFactor * a;
             var c = Control.options.fps.velocity;
             e && (k.z = -c), f && (k.z = c), f || e || (k.z = 0), g && (k.x = -c), h && (k.x = c), 
-            h || g || (k.x = 0), i === !0 && (k.y = Math.max(0, k.y)), d.position.x += k.x, 
-            d.position.y += k.y, d.position.z += k.z, d.position.y < Control.options.fps.height ? (k.y = 0, 
-            d.position.y = m ? Control.options.fps.height / 2 : Control.options.fps.height, 
+            h || g || (k.x = 0), i === !0 && (k.y = Math.max(0, k.y)), d.translateX(k.x), d.translateY(k.y), 
+            d.translateZ(k.z), d.position.y < Control.options.fps.height ? (k.y = 0, d.position.y = m ? Control.options.fps.height / 2 : Control.options.fps.height, 
             j = !0) : (app.log(" vel " + k.y), app.log(" yawobject position y " + d.position.y));
         };
     },
