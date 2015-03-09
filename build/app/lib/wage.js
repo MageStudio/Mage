@@ -1,4 +1,4 @@
-/*! wage version: 0.0.32, 05-03-2015 */
+/*! wage version: 0.0.32, 07-03-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16118,28 +16118,94 @@ __class__ = function(a, b) {
         e) for (var g in e) this[g] = e[g], "script" == g && (this.hasScript = !0, this.addScript(e[g], e.dir));
     }
 })._extends("Entity"), Class("AnimatedMesh", {
-    AnimatedMesh: function(a, b, c) {
-        Entity.call(this);
-        var d = function(a) {
-            for (var b = 0; b < a.hierarchy.length; b++) {
-                var c = a.hierarchy[b], d = c.keys[0], e = c.keys[c.keys.length - 1];
-                e.pos = d.pos, e.rot = d.rot, e.scl = d.scl;
+    AnimatedMesh: function(a, b) {
+        Entity.call(this), this.animations = {}, this.weightSchedule = [], this.warpSchedule = [];
+        var c = b[0];
+        c.skinning = !0, this.meshVisible = !0, this.mesh = new THREE.SkinnedMesh(a, c), 
+        this.mesh.visible = this.meshVisible, app.add(this.mesh, this);
+        for (var d = 0; d < a.animations.length; ++d) {
+            var e = a.animations[d].name;
+            this.animations[e] = new THREE.Animation(this.mesh, a.animations[d]);
+        }
+        this.skeleton = new THREE.SkeletonHelper(this.mesh), this.skeleton.material.linediwth = 3, 
+        this.mesh.add(this.skeleton), this.skeletonVisible = !1, this.skeleton.visible = this.skeletonVisible;
+    },
+    toggleSkeleton: function() {
+        this.skeletonVisible = !this.skeletonVisible, this.skeleton.visible = this.skeletonVisible;
+    },
+    toggleModel: function() {
+        this.meshVisible = !this.meshVisible, this.mesh.visible = this.meshVisible;
+    },
+    update: function(a) {
+        this.animate(a);
+    },
+    animate: function(a) {
+        for (var b = this.weightSchedule.length - 1; b >= 0; --b) {
+            var c = this.weightSchedule[b];
+            c.timeElapsed += a, c.timeElapsed > c.duration ? (c.anim.weight = c.endWeight, this.weightSchedule.splice(b, 1), 
+            0 == c.anim.weight && c.anim.stop(0)) : c.anim.weight = c.startWeight + (c.endWeight - c.startWeight) * c.timeElapsed / c.duration;
+        }
+        this.updateWarps(a), this.skeleton.update(), THREE.AnimationHandler.update(a);
+    },
+    updateWarps: function(a) {
+        for (var b = this.warpSchedule.length - 1; b >= 0; --b) {
+            var c = this.warpSchedule[b];
+            if (c.timeElapsed += a, c.timeElapsed > c.duration) c.to.weight = 1, c.to.timeScale = 1, 
+            c.from.weight = 0, c.from.timeScale = 1, c.from.stop(0), this.warpSchedule.splice(b, 1); else {
+                var d = c.timeElapsed / c.duration, e = c.from.data.length, f = c.to.data.length, g = e / f, h = f / e;
+                c.from.timeScale = 1 - d + g * d, c.to.timeScale = d + h * (1 - d), c.from.weight = 1 - d, 
+                c.to.weight = d;
             }
+        }
+    },
+    play: function(a, b) {
+        this.animations[a].play(0, b);
+    },
+    crossfade: function(a, b, c) {
+        var d = this.animations[a], e = this.animations[b];
+        d.play(0, 1), e.play(0, 0), this.weightSchedule.push({
+            anim: d,
+            startWeight: 1,
+            endWeight: 0,
+            timeElapsed: 0,
+            duration: c
+        }), this.weightSchedule.push({
+            anim: e,
+            startWeight: 0,
+            endWeight: 1,
+            timeElapsed: 0,
+            duration: c
+        });
+    },
+    warp: function(a, b, c) {
+        var d = this.animations[a], e = this.animations[b];
+        d.play(0, 1), e.play(0, 0), this.warpSchedule.push({
+            from: d,
+            to: e,
+            timeElapsed: 0,
+            duration: c
+        });
+    },
+    applyWeight: function(a, b) {
+        this.animations[a].weight = b;
+    },
+    pauseAll: function() {
+        for (var a in this.animations) this.animations[a].isPlaying && this.animations[a].stop();
+    },
+    unPauseAll: function() {
+        for (var a in this.animations) this.animations[a].isPlaying && this.animations[a].isPaused && this.animations[a].pause();
+    },
+    stopAll: function() {
+        for (a in this.animations) this.animations[a].isPlaying && this.animations[a].stop(0), 
+        this.animations[a].weight = 0;
+        this.weightSchedule.length = 0, this.warpSchedule.length = 0;
+    },
+    getForward: function() {
+        var a = new THREE.Vector3();
+        return function() {
+            return a.set(-this.matrix.elements[8], -this.matrix.elements[9], -this.matrix.elements[10]), 
+            a;
         };
-        d(a.animation), this.geometry = a, this.material = b, this.script = {}, this.hasScript = !1, 
-        this.geometry.computeBoundingBox();
-        this.geometry.boundingBox;
-        if (this.mesh = new THREE.SkinnedMesh(a, b), app.add(this.mesh, this), this.helper = new THREE.SkeletonHelper(this.mesh), 
-        this.helper.material.linewidth = 3, this.helper.visible = !0, app.add(this.helper, this.helper), 
-        this.animation = new THREE.Animation(this.mesh, this.geometry.animation), this.animation.play(), 
-        c) for (var e in c) this[e] = c[e], "script" == e && (this.hasScript = !0, this.addScript(c[e], c.dir));
-    },
-    update: function() {
-        this.animate();
-    },
-    animate: function() {
-        var a = .75 * app.clock.getDelta();
-        THREE.AnimationHandler.update(a), this.helper && this.helper.update();
     }
 })._extends("Entity"), function() {
     window.LightEngine = {

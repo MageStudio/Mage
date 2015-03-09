@@ -66,7 +66,7 @@ Class("Entity", {
 		}
 		this.light = new PointLight( color, intensity, distance, position );
 		this.addMesh( this.light.mesh.mesh );
-		
+
 	},
 
 	playSound : function() {
@@ -89,6 +89,12 @@ Class("Entity", {
 			}
 		}
 
+	},
+
+	scale: function(x, y, z) {
+		if (this.mesh) {
+			this.mesh.scale.set(x, y, z);
+		}
 	}
 
 });
