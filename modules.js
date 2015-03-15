@@ -80,6 +80,7 @@ module.exports = (function() {
 	];
 
 	modules.final = [
+		BASE + "util.js",
 		BASE + "core.js"
 	]
 

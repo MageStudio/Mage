@@ -32,18 +32,3 @@ Class("MyGame", {
 	}
 
 })._extends("App");
-
-/********************************************************************************
-	HELPERS
-
-	These methods will be inside a custom core class. This is just a temporary
-	solution.
-********************************************************************************/
-
-function degToRad(angle) {
-	return angle * (Math.PI / 180);
-}
-
-function getProportion(max1, b, max2) {
-	return (max1 * b)/max2;
-}

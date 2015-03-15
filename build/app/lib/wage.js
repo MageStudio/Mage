@@ -1,4 +1,4 @@
-/*! wage version: 0.0.32, 07-03-2015 */
+/*! wage version: 0.0.34, 16-03-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16098,6 +16098,9 @@ __class__ = function(a, b) {
     },
     stopSound: function() {
         this.sound && this.isPlayingSound && (this.sound.stop(), this.isPlayingSound = !1);
+    },
+    scale: function(a, b, c) {
+        this.mesh && this.mesh.scale.set(a, b, c);
     }
 }), Class("Camera", {
     Camera: function(a) {
@@ -16118,23 +16121,27 @@ __class__ = function(a, b) {
         e) for (var g in e) this[g] = e[g], "script" == g && (this.hasScript = !0, this.addScript(e[g], e.dir));
     }
 })._extends("Entity"), Class("AnimatedMesh", {
-    AnimatedMesh: function(a, b) {
+    AnimatedMesh: function(a, b, c) {
         Entity.call(this), this.animations = {}, this.weightSchedule = [], this.warpSchedule = [];
-        var c = b[0];
-        c.skinning = !0, this.meshVisible = !0, this.mesh = new THREE.SkinnedMesh(a, c), 
+        var d = b[0];
+        d.skinning = !0, this.meshVisible = !0, this.mesh = new THREE.SkinnedMesh(a, d), 
         this.mesh.visible = this.meshVisible, app.add(this.mesh, this);
-        for (var d = 0; d < a.animations.length; ++d) {
-            var e = a.animations[d].name;
-            this.animations[e] = new THREE.Animation(this.mesh, a.animations[d]);
+        for (var e = 0; e < a.animations.length; ++e) {
+            var f = a.animations[e].name;
+            this.animations[f] = new THREE.Animation(this.mesh, a.animations[e]);
         }
-        this.skeleton = new THREE.SkeletonHelper(this.mesh), this.skeleton.material.linediwth = 3, 
-        this.mesh.add(this.skeleton), this.skeletonVisible = !1, this.skeleton.visible = this.skeletonVisible;
+        if (this.skeleton = new THREE.SkeletonHelper(this.mesh), this.skeleton.material.linediwth = 3, 
+        this.mesh.add(this.skeleton), this.skeletonVisible = !1, this.skeleton.visible = this.skeletonVisible, 
+        c) for (var g in c) this[g] = c[g], "script" == g && (this.hasScript = !0, this.addScript(c[g], c.dir));
     },
     toggleSkeleton: function() {
         this.skeletonVisible = !this.skeletonVisible, this.skeleton.visible = this.skeletonVisible;
     },
     toggleModel: function() {
         this.meshVisible = !this.meshVisible, this.mesh.visible = this.meshVisible;
+    },
+    setWeights: function(a) {
+        for (name in a) this.animations[name] && (this.animations[name].weight = a[name]);
     },
     update: function(a) {
         this.animate(a);
@@ -16158,7 +16165,8 @@ __class__ = function(a, b) {
             }
         }
     },
-    play: function(a, b) {
+    play: function(a) {
+        var b = void 0 === this.animations[a].weight ? this.animations[a] : 1;
         this.animations[a].play(0, b);
     },
     crossfade: function(a, b, c) {
@@ -17024,7 +17032,51 @@ Gui = {
         for (o in f) e[o] = f[o];
         this.material = new THREE.ShaderMaterial(e);
     }
-}), Class("App", {
+}), window.Util = Util || {}, Util.tests = [ "webgl", "webaudioapi", "webworker", "ajax" ], 
+Util.start = function() {
+    window.requestAnimFrame = function() {
+        return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(a) {
+            window.setTimeout(a, 1e3 / 60);
+        };
+    }();
+}, Util.check = {
+    start: function(a, b) {
+        var c = config.tests || Util.tests;
+        -1 == c.indexOf("webgl") && c.push("webgl");
+        for (var d in c) {
+            if (-1 == Util.tests.indexOf(c[d])) return b("No Such Test", c[d]), !1;
+            if (!Util.check[c[d]]()) return b("Test failed", c[d]), !1;
+        }
+        return a("All systems are go!"), !0;
+    },
+    webgl: function() {
+        var a = document.createElement("canvas"), b = a.getContext("webgl") || a.getContext("experimental-webgl");
+        return b ? !0 : !1;
+    },
+    webaudioapi: function() {
+        return !(!window.webkitAudioContext && !window.AudioContext);
+    },
+    webworker: function() {
+        return !!window.Worker;
+    },
+    ajax: function() {
+        var a = null;
+        try {
+            a = new XMLHttpRequest();
+        } catch (b) {}
+        try {
+            a = new ActiveXObject("Microsoft.XMLHTTP");
+        } catch (b) {}
+        try {
+            a = new ActiveXObject("Msxml2.XMLHTTP");
+        } catch (b) {}
+        return null != a;
+    }
+}, Util.degToRad = function(a) {
+    return a * (Math.PI / 180);
+}, Util.getProportion = function(a, b, c) {
+    return a * b / c;
+}, Class("App", {
     App: function() {
         this.log_types = {
             e: "error",
@@ -17134,7 +17186,9 @@ Gui = {
         app.mouseY = a.touches[0].pageY - app.windowHalfY);
     },
     keyup: function() {},
-    keydown: function() {}
+    keydown: function() {},
+    onFailedTest: function() {},
+    onSuccededTest: function() {}
 });
 
 var app;
@@ -17144,7 +17198,7 @@ window.onload = function() {
         var a = window.subClasses.App;
         app = new window[a]();
     } else app = new App();
-    app.preload(function() {
+    Util.start(), Util.check.start(app.onSuccededTest, app.onFailedTest) && app.preload(function() {
         AssetsManager.load(function() {
             app.prepareScene(), app.load();
         });

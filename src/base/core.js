@@ -299,7 +299,13 @@ Class("App", {
     keyup: function(event) {},
 
     //keydown event
-    keydown: function(event) {}
+    keydown: function(event) {},
+
+    //handling failed tests
+    onFailedTest: function(message, test) {},
+
+    //handling succesful tests
+    onSuccededTest: function(message) {}
 
 });
 
@@ -316,12 +322,18 @@ window.onload = function() {
         app = new App();
     }
 
-    app.preload(function() {
-        AssetsManager.load(function() {
-            app.prepareScene();
-            app.load();
+    //before starting loading stuff, be sure to pass all tests
+    Util.start();
+    
+    if (Util.check.start(app.onSuccededTest, app.onFailedTest)) {
+        //we passed every test, we can go
+        app.preload(function() {
+            AssetsManager.load(function() {
+                app.prepareScene();
+                app.load();
+            });
         });
-    });
+    }
 
 };
 
