@@ -27,9 +27,9 @@ Class("App", {
     	this.threeLib = undefined;
 
     	//scnee parameters
-        this.camera 	= undefined;
-        this.user 	= undefined;
-        this.scene 	= undefined;
+        this.camera = undefined;
+        this.user = undefined;
+        this.scene = undefined;
         this.renderer= undefined;
 
     	//debug mode

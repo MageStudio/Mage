@@ -9,7 +9,7 @@ window.fx.ShadersEngine = {
 		//console.log("inside old update ShadersEngine");
 	},
 
-	load : function() {
+	load: function() {
 
 		fx.ShadersEngine.map = new HashMap();
 		fx.ShadersEngine.shaders = [];
@@ -25,15 +25,15 @@ window.fx.ShadersEngine = {
 		}
 	},
 
-	get : function(id) {
+	get: function(id) {
 		//returning stored shader;
 		return fx.ShadersEngine.map.get(id) || false;
 	},
 
-	loadSingleFile : function(id, path) {
+	loadSingleFile: function(id, path) {
 		var type = path.split(".")[1];
 		if ( type == "js" ) {
-			include( path.split(".js")[0], this.checkLoad );
+			include(path.split(".js")[0], this.checkLoad);
 		} else {
 			// Load a sound file using an ArrayBuffer XMLHttpRequest.
 			var request = new XMLHttpRequest();
