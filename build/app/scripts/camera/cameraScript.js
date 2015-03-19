@@ -14,7 +14,7 @@ Game.script("cameraScript", {
 		if (this.object.position.z > app.CAMERA_MAX_Z) {
 			this.object.position.z = app.CAMERA_MAX_Z;
 		}
-		this.object.lookAt( core.scene.position );
+		this.object.lookAt( app.scene.position );
 	}
 
 });

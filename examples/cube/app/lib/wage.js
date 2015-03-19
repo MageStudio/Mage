@@ -1,4 +1,4 @@
-/*! wage version: 0.0.33, 16-03-2015 */
+/*! wage version: 0.0.35, 19-03-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -17032,7 +17032,7 @@ Gui = {
         for (o in f) e[o] = f[o];
         this.material = new THREE.ShaderMaterial(e);
     }
-}), window.Util = Util || {}, Util.tests = [ "webgl", "webaudioapi", "webworker", "ajax" ], 
+}), window.Util = window.Util || {}, Util.tests = [ "webgl", "webaudioapi", "webworker", "ajax" ], 
 Util.start = function() {
     window.requestAnimFrame = function() {
         return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(a) {
