@@ -1,4 +1,4 @@
-window.Util = Util || {};
+window.Util = window.Util || {};
 
 Util.tests = ["webgl", "webaudioapi", "webworker", "ajax"];
 
