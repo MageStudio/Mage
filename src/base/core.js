@@ -101,6 +101,11 @@ Class("App", {
             app.camera.update(app.clock.getDelta());
         }
 
+        app.renderer.autoClear = false;
+        app.renderer.clear();
+        app.customRender();
+        app.renderer.render(app.scene, app.camera.object);
+
         setTimeout(function() {
             if (config.physics_enabled) {
                 if (Physijs._isLoaded) {
@@ -110,13 +115,8 @@ Class("App", {
             if (config.tween_enabled) {
                 TWEEN.update();
             }
-            requestAnimationFrame(app.render);
+            requestAnimFrame(app.render);
         }, 1000 / app.util.frameRate);
-
-        app.renderer.autoClear = false;
-        app.renderer.clear();
-        app.customRender();
-        app.renderer.render(app.scene, app.camera.object);
 
     },
 

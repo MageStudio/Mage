@@ -1,4 +1,4 @@
-/*! wage version: 0.0.35, 19-03-2015 */
+/*! wage version: 0.0.36, 21-03-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -17120,11 +17120,11 @@ Util.start = function() {
     render: function() {
         User.handleUserInput(), Game.update(), AudioEngine.update(), LightEngine.update(), 
         Universe.update(), Control.update(), app.camera.update && app.camera.update(app.clock.getDelta()), 
+        app.renderer.autoClear = !1, app.renderer.clear(), app.customRender(), app.renderer.render(app.scene, app.camera.object), 
         setTimeout(function() {
             config.physics_enabled && Physijs._isLoaded && app.scene.simulate(), config.tween_enabled && TWEEN.update(), 
-            requestAnimationFrame(app.render);
-        }, 1e3 / app.util.frameRate), app.renderer.autoClear = !1, app.renderer.clear(), 
-        app.customRender(), app.renderer.render(app.scene, app.camera.object);
+            requestAnimFrame(app.render);
+        }, 1e3 / app.util.frameRate);
     },
     add: function(a, b) {
         this.scene.add(a), Universe.universe.put(a.uuid, b);

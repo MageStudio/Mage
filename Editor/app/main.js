@@ -1,0 +1,5 @@
+Class("Editor", {
+    Editor: function() {
+
+    }
+});
