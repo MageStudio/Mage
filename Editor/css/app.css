@@ -1,8 +1,9 @@
+/* navbar */
+
 #nav {
     border-radius: 0px;
 }
 
-/* navbar */
 .navbar-primary .navbar { background:#222; border-bottom:none; }
 .navbar-primary .navbar .nav > li > a {color: #aaa;}
 .navbar-primary .navbar .nav > li > a:hover {color: #fff; background-color: #555;}
@@ -19,3 +20,42 @@
 .navbar-sm .navbar-primary .navbar { min-height:40px; height: 40px; }
 .navbar-sm .navbar-primary .navbar .navbar-brand{ padding: 0px 12px;font-size: 16px;line-height: 40px; }
 .navbar-sm .navbar-primary .navbar .navbar-nav > li > a {  padding-top: 0px; padding-bottom: 0px; line-height: 40px; }
+
+/* main css */
+
+#maincontainer {
+    height: calc(100% - 40px);
+    top: 40px;
+    width: 100%;
+    position: absolute;
+}
+
+#innercontainer {
+    height: calc(100% - 40px);
+}
+
+.column {
+    height: 100%;
+    float: left;
+    position: relative;
+    -webkit-transition: width 200ms ease;
+    -moz-transition: width 200ms ease;
+    -o-transition: width 200ms ease;
+    transition: width 200ms ease;
+}
+
+#left-column, #right-column {
+    background-color: #222;
+    border: 1px solid rgba(255,255,255,0.1);
+    width: 16%;
+}
+
+#center {
+    width: 68%;
+}
+
+#footer {
+    min-height: 40px;
+    height: 40px;
+    background: #222;
+}
