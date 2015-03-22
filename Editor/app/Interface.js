@@ -37,6 +37,8 @@ Class("Interface", {
     setListener: function() {
         //setting onykeydown listener
         document.onkeydown = this.onkeydown;
+        //setting resize event listener
+        window.addEventListener( 'resize', app.sm.onWindowResize, false );
     },
 
     onkeydown: function(event) {
@@ -44,7 +46,6 @@ Class("Interface", {
     },
     //this should be in column handler class
     toggleColumns: function(code) {
-        console.log(code);
         if (app.interface.recognizableKeys.indexOf(code) != -1) {
             var change = app.interface.columnChanger[this.currentColumns][code][0];
             var toHide = app.interface.columnChanger[this.currentColumns][code][1];
@@ -55,11 +56,10 @@ Class("Interface", {
             $("#center").removeClass("hidden");
             $("#right-column").removeClass("hidden");
             //updating columns width
-            $("#left-column").css("width", widths[0]);
-            $('#center').css('width', widths[1]);
-            $('#right-column').css('width', widths[2]);
+            $("#left-column").animate({"width": widths[0]}, 200);
+            $('#center').css({'width': widths[1]});
+            $('#right-column').animate({'width': widths[2]}, 200);
             //adding proper hidden class
-            console.log("tohide " + toHide);
             if (toHide == "") return;
             if (toHide == "both") {
                 $('#left-column').addClass("hidden");
@@ -67,6 +67,8 @@ Class("Interface", {
             } else {
                 $('#'+toHide).addClass("hidden");
             }
+            //also updating scene manager
+            app.sm.onWindowResize();
         } else {
             //not recognized
             console.log("not a recognizable key");

@@ -9,6 +9,10 @@
         %script{:type=>"text/javascript", :src=>"app/lib/jquery.min.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/bootstrap.min.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/classy.min.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/three.min.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/OrbitControls.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/stats.min.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/util.js"}
 
         %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/bootstrap.dark.min.css"}
         %link{:rel=>"stylesheet", :href=>"css/font-awesome/css/font-awesome.min.css"}
@@ -128,6 +132,7 @@
             #innercontainer.row
                 #left-column.column
                 #center.column
+                    #scenecontainer
                 #right-column.column
             .row
                 #footer.col-md-12

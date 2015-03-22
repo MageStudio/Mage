@@ -38,10 +38,11 @@
     height: 100%;
     float: left;
     position: relative;
-    -webkit-transition: width 200ms ease;
+    /*-webkit-transition: width 200ms ease;
     -moz-transition: width 200ms ease;
     -o-transition: width 200ms ease;
     transition: width 200ms ease;
+    */
 }
 
 #left-column, #right-column {
@@ -50,8 +51,17 @@
     width: 16%;
 }
 
+#right-column {
+    float: right;
+}
+
 #center {
     width: 68%;
+}
+
+#scenecontainer {
+    height: 100%;
+    width: 100%;
 }
 
 #footer {
