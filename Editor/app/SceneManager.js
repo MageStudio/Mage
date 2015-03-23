@@ -9,6 +9,7 @@ Class("SceneManager", {
     animate: function() {
         requestAnimFrame(app.sm.animate);
         app.sm.controls.update();
+        app.sm.transformControl.update();
     },
 
     init: function() {
@@ -21,6 +22,7 @@ Class("SceneManager", {
         this.controls = new THREE.OrbitControls( this.camera );
         this.controls.damping = 0.2;
         this.controls.addEventListener( 'change', app.sm.render );
+
 
         this.scene = new THREE.Scene();
         this.scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
@@ -72,6 +74,10 @@ Class("SceneManager", {
         this.stats.domElement.style.zIndex = 100;
         this.container.appendChild( this.stats.domElement );
 
+        this.transformControl = new THREE.TransformControls( this.camera, this.renderer.domElement );
+        this.transformControl.addEventListener( 'change', this.render );
+        this.scene.add(this.transformControl);
+
         this.animate();
     },
 
@@ -87,5 +93,30 @@ Class("SceneManager", {
         app.sm.renderer.setSize( $(app.sm.container).width(), $(app.sm.container).height() );
 
         app.sm.render();
+    },
+
+    handleInput: function(code) {
+        switch ( code ) {
+            case 81: // Q
+                app.sm.transformControl.setSpace( app.sm.transformControl.space == "local" ? "world" : "local" );
+                break;
+            case 87: // W
+                app.sm.transformControl.setMode( "translate" );
+                break;
+            case 69: // E
+                app.sm.transformControl.setMode( "rotate" );
+                break;
+            case 82: // R
+                app.sm.transformControl.setMode( "scale" );
+                break;
+            case 187:
+            case 107: // +,=,num+
+                app.sm.transformControl.setSize( app.sm.transformControl.size + 0.1 );
+                break;
+            case 189:
+            case 10: // -,_,num-
+                app.sm.transformControl.setSize( Math.max(app.sm.transformControl.size - 0.1, 0.1 ) );
+                break;
+        }
     }
 });

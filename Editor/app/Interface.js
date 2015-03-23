@@ -43,6 +43,7 @@ Class("Interface", {
 
     onkeydown: function(event) {
         app.interface.toggleColumns(""+event.keyCode);
+        app.sm.handleInput(event.keyCode);
     },
     //this should be in column handler class
     toggleColumns: function(code) {
