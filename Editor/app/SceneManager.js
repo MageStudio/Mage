@@ -27,47 +27,14 @@ Class("SceneManager", {
         this.controls.maxDistance = 4000;
         this.controls.addEventListener( 'change', app.sm.render );
 
-
+        // creating scene
         this.scene = new THREE.Scene();
-        //this.scene.fog = new THREE.FogExp2( 0xcccccc, 0.002 );
 
-        // world
-        /*
-        var geometry = new THREE.CylinderGeometry( 0, 10, 30, 4, 1 );
-        var material =  new THREE.MeshLambertMaterial( { color:0xffffff, shading: THREE.FlatShading } );
-
-        for ( var i = 0; i < 500; i ++ ) {
-
-            var mesh = new THREE.Mesh( geometry, material );
-            mesh.position.x = ( Math.random() - 0.5 ) * 1000;
-            mesh.position.y = ( Math.random() - 0.5 ) * 1000;
-            mesh.position.z = ( Math.random() - 0.5 ) * 1000;
-            mesh.updateMatrix();
-            mesh.matrixAutoUpdate = false;
-            this.scene.add( mesh );
-
-        }*/
-
-
-        // lights
-        /*
-        light = new THREE.DirectionalLight( 0xffffff );
-        light.position.set( 1, 1, 1 );
-        this.scene.add( light );
-
-        light = new THREE.DirectionalLight( 0x002288 );
-        light.position.set( -1, -1, -1 );
-        this.scene.add( light );
-
-        light = new THREE.AmbientLight( 0x222222 );
-        this.scene.add( light );
-        */
-
-        //attaching grid to the scene
+        // attaching grid to the scene
         this.grid = new THREE.GridHelper(1000,100);
         this.scene.add( this.grid );
-        // renderer
-
+       
+        // creating renderer
         this.renderer = new THREE.WebGLRenderer( { antialias: false } );
         //this.renderer.setClearColor( this.scene.fog.color );
         this.renderer.sortObjects = false;
@@ -76,19 +43,19 @@ Class("SceneManager", {
 
         this.container.appendChild( this.renderer.domElement );
 
-        //creating stats helper
+        // creating stats helper
         this.stats = new Stats();
         this.stats.domElement.style.position = 'absolute';
         this.stats.domElement.style.top = '0px';
         this.stats.domElement.style.zIndex = 100;
         this.container.appendChild( this.stats.domElement );
 
-        //creating transform control
+        // creating transform control
         this.transformControl = new THREE.TransformControls( this.camera, this.renderer.domElement );
         this.transformControl.addEventListener( 'change', app.sm.render );
         this.scene.add(this.transformControl);
 
-        //calling animate and render methods
+        // calling animate and render methods
         this.animate();
         this.render();
     },

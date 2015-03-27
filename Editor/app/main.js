@@ -1,12 +1,14 @@
 include([
     "app/Interface",
-    "app/SceneManager"
+    "app/SceneManager",
+    "app/MeshManager"
 ]);
 
 Class("Editor", {
     Editor: function() {
         this.interface = new Interface();
         this.sm = new SceneManager();
+        this.mm = new MeshManager();
     },
 
     init: function() {

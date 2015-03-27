@@ -15,6 +15,8 @@
         %script{:type=>"text/javascript", :src=>"app/lib/stats.min.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/util.js"}
 
+        %script{:type=>"text/javascript", :src=>"app/lib/HashMap.js"}
+
         %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/bootstrap.dark.min.css"}
         %link{:rel=>"stylesheet", :href=>"css/font-awesome/css/font-awesome.min.css"}
         %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/app.css"}
@@ -66,15 +68,15 @@
                                                 One more separated link
                                 %li.dropdown
                                     %a.dropdown-toggle{:href=>"#", "data-toggle"=>"dropdown", :role=>"button", "aria-expanded"=>"false"}
-                                        Edit 
+                                        Add
                                         %span.caret
                                     %ul.dropdown-menu{:role=>"menu"}
                                         %li
-                                            %a{:href=>"#"}
-                                                Action
+                                            %a{:href=>"javascript:app.mm.addMesh('cube');"}
+                                                Cube
                                         %li
                                             %a{:href=>"#"}
-                                                Another action
+                                                Sphere
                                         %li
                                             %a{:href=>"#"}
                                                 Something else here
@@ -88,7 +90,7 @@
                                                 One more separated link
                                 %li.dropdown
                                     %a.dropdown-toggle{:href=>"#", "data-toggle"=>"dropdown", :role=>"button", "aria-expanded"=>"false"}
-                                        Project 
+                                        Project
                                         %span.caret
                                     %ul.dropdown-menu{:role=>"menu"}
                                         %li
