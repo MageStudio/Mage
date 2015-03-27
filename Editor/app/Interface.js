@@ -28,6 +28,9 @@ Class("Interface", {
         this.currentColumns = "11";
 
         this.recognizableKeys = ["49", "50"];
+
+        //pool of events listeners
+        this.pool = {}
     },
 
     init: function() {
@@ -39,12 +42,71 @@ Class("Interface", {
         document.onkeydown = this.onkeydown;
         //setting resize event listener
         window.addEventListener( 'resize', app.sm.onWindowResize, false );
+        /*window.addEventListener( "resize", function(event) {
+            app.interface.on("resize", event);
+        }, false);
+        window.addEventListener( "mousedown", function() {
+            app.interface.on("mousedown", event);
+        }, false );
+        window.addEventListener( "touchstart", function(event) {
+            app.interface.on("touchstart", event);
+        }, false );
+        window.addEventListener( "mousemove", function(event) {
+            app.interface.on("mousemove", event);
+        }, false );
+        window.addEventListener( "touchmove", function(event) {
+            app.interface.on("touchmove", event);
+        }, false );
+        window.addEventListener( "mousemove", function(event) {
+            app.interface.on("mousemove", event);
+        }, false );
+        window.addEventListener( "touchmove", function(event) {
+            app.interface.on("touchmove", event);
+        }, false );
+        window.addEventListener( "mouseup", function(event) {
+            app.interface.on("mouseup", event);
+        }, false );
+        window.addEventListener( "mouseout", function(event) {
+            app.interface.on("mouseout", event);
+        }, false );
+        window.addEventListener( "touchend", function(event) {
+            app.interface.on("touchend", event);
+        }, false );
+        window.addEventListener( "touchcancel", function(event) {
+            app.interface.on("touchcancel", event);
+        }, false );
+        window.addEventListener( "touchleave", function(event) {
+            app.interface.on("touchleave", event);
+        }, false );
+        window.addEventListener( "contextmenu", function(event) {
+            app.interface.on("contextmenu", event);
+        }, false );
+        window.addEventListener( "DOMMouseScroll", function(event) {
+            app.interface.on("DOMMouseScroll", event);
+        }, false );*/
+    },
+
+    addEventListener: function(eventName, method) {
+        //every eventName has a list of methods to be called
+        if (!app.interface.pool[eventName]) {
+            app.interface.pool[eventName] = [];
+        }
+        app.interface.pool[eventName].push(method);
+    },
+
+    on: function(eventName, event) {
+        //general event listener, will call each
+        if (!app.interface.pool[eventName]) return;
+        for (var i=0; i<app.interface.pool[eventName].length; i++) {
+            app.interface.pool[eventName][i](event);
+        }
     },
 
     onkeydown: function(event) {
         app.interface.toggleColumns(""+event.keyCode);
         app.sm.handleInput(event.keyCode);
     },
+
     //this should be in column handler class
     toggleColumns: function(code) {
         if (app.interface.recognizableKeys.indexOf(code) != -1) {
