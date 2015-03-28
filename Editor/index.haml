@@ -4,18 +4,22 @@
         %title
             Wage Editor
 
-        %script{:type=>"text/javascript", :src=>"app/lib/angular.min.js"}
-        %script{:type=>"text/javascript", :src=>"app/lib/react-with-addons.min.js"}
+        / basic imports, we don't need angular or react
         %script{:type=>"text/javascript", :src=>"app/lib/jquery.min.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/bootstrap.min.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/classy.min.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/util.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/HashMap.js"}
+
+        / actual three.js import
         %script{:type=>"text/javascript", :src=>"app/lib/three.min.js"}
+
+        / three js related imports
+        %script{:type=>"text/javascript", :src=>"app/lib/Projector.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/threex.domevents.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/OrbitControls.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/TransformControls.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/stats.min.js"}
-        %script{:type=>"text/javascript", :src=>"app/lib/util.js"}
-
-        %script{:type=>"text/javascript", :src=>"app/lib/HashMap.js"}
 
         %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/bootstrap.dark.min.css"}
         %link{:rel=>"stylesheet", :href=>"css/font-awesome/css/font-awesome.min.css"}

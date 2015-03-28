@@ -4,17 +4,21 @@ Class("SceneManager", {
         this.renderer = undefined;
         this.scene = undefined;
         this.controls = undefined;
+        this.container = document.getElementById( 'scenecontainer' );
     },
 
-    animate: function() {
-        requestAnimFrame(app.sm.animate);
+    update: function() {
         app.sm.controls.update();
         app.sm.transformControl.update();
+
+        //rendering scene
+        app.sm.render();
+
+        //requesting new animation frame
+        requestAnimFrame(app.sm.update);
     },
 
     init: function() {
-
-        this.container = document.getElementById( 'scenecontainer' );
 
         this.camera = new THREE.PerspectiveCamera( 70, $(this.container).width() / $(this.container).height(), 1, 5000 );
         this.camera.position.set( 1000, 500, 1000 );
@@ -55,8 +59,8 @@ Class("SceneManager", {
         this.transformControl.addEventListener( 'change', app.sm.render );
         this.scene.add(this.transformControl);
 
-        // calling animate and render methods
-        this.animate();
+        // calling update and render methods
+        this.update();
         this.render();
     },
 

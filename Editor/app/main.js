@@ -14,6 +14,7 @@ Class("Editor", {
     init: function() {
         this.interface.init();
         this.sm.init();
+        this.interface.afterSceneCreation();
     }
 });
 

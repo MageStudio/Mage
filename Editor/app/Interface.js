@@ -29,19 +29,27 @@ Class("Interface", {
 
         this.recognizableKeys = ["49", "50"];
 
-        //pool of events listeners
-        this.pool = {}
+        // pool of events listeners
+        this.pool = {};
     },
 
     init: function() {
+        // setting listeners
         this.setListener();
+    },
+
+    afterSceneCreation: function() {
+        // domEvent from threex
+        this.meshEvents = new THREEx.DomEvents(app.sm.camera, app.sm.container);
     },
 
     setListener: function() {
         //setting onykeydown listener
-        document.onkeydown = this.onkeydown;
+        document.addEventListener("keydown", app.interface.onkeydown, false);
         //setting resize event listener
-        window.addEventListener( 'resize', app.sm.onWindowResize, false );
+        window.addEventListener('resize', app.sm.onWindowResize, false);
+        //setting mousedown event listener
+        app.sm.container.addEventListener("mousedown", app.mm.onMouseDown, false);
         /*window.addEventListener( "resize", function(event) {
             app.interface.on("resize", event);
         }, false);
