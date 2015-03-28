@@ -49,49 +49,6 @@ Class("Interface", {
         //setting resize event listener
         window.addEventListener('resize', app.sm.onWindowResize, false);
         //setting mousedown event listener
-        app.sm.container.addEventListener("mousedown", app.mm.onMouseDown, false);
-        /*window.addEventListener( "resize", function(event) {
-            app.interface.on("resize", event);
-        }, false);
-        window.addEventListener( "mousedown", function() {
-            app.interface.on("mousedown", event);
-        }, false );
-        window.addEventListener( "touchstart", function(event) {
-            app.interface.on("touchstart", event);
-        }, false );
-        window.addEventListener( "mousemove", function(event) {
-            app.interface.on("mousemove", event);
-        }, false );
-        window.addEventListener( "touchmove", function(event) {
-            app.interface.on("touchmove", event);
-        }, false );
-        window.addEventListener( "mousemove", function(event) {
-            app.interface.on("mousemove", event);
-        }, false );
-        window.addEventListener( "touchmove", function(event) {
-            app.interface.on("touchmove", event);
-        }, false );
-        window.addEventListener( "mouseup", function(event) {
-            app.interface.on("mouseup", event);
-        }, false );
-        window.addEventListener( "mouseout", function(event) {
-            app.interface.on("mouseout", event);
-        }, false );
-        window.addEventListener( "touchend", function(event) {
-            app.interface.on("touchend", event);
-        }, false );
-        window.addEventListener( "touchcancel", function(event) {
-            app.interface.on("touchcancel", event);
-        }, false );
-        window.addEventListener( "touchleave", function(event) {
-            app.interface.on("touchleave", event);
-        }, false );
-        window.addEventListener( "contextmenu", function(event) {
-            app.interface.on("contextmenu", event);
-        }, false );
-        window.addEventListener( "DOMMouseScroll", function(event) {
-            app.interface.on("DOMMouseScroll", event);
-        }, false );*/
     },
 
     addEventListener: function(eventName, method) {

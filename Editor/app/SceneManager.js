@@ -15,7 +15,10 @@ Class("SceneManager", {
         app.sm.render();
 
         //requesting new animation frame
-        requestAnimFrame(app.sm.update);
+        setTimeout(function() {
+            requestAnimFrame(app.sm.update);
+        }, 1000/60);
+        //requestAnimFrame(app.sm.update);
     },
 
     init: function() {

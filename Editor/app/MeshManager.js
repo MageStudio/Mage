@@ -6,7 +6,15 @@ Class("MeshManager", {
         this.map = new HashMap();
         this.meshes = [];
         this.lastClicked = undefined;
-        this.allowedMeshes = ["cube", "sphere"];
+        this.allowedMeshes = [
+            "cube",
+            "sphere",
+            "cylinder",
+            "plane",
+            "dodecahedron",
+            "tube",
+            "thorus"
+        ];
     },
 
     store: function(uuid, element) {
@@ -37,49 +45,94 @@ Class("MeshManager", {
                 if (app.sm.lastClicked) {
                     app.sm.transformControl.detach(app.sm.lastClicked);
                 }
+                app.sm.transformControl.setMode("translate");
                 app.sm.transformControl.attach(event.target);
                 app.mm.lastClicked = event.target;
             });
         }
     },
 
-    onMouseDown: function(event) {
-        /*console.log("click");
-        event.preventDefault();
-
-        var raycaster = new THREE.Raycaster();
-        var mouse = new THREE.Vector2();
-
-        mouse.x = ( event.clientX / document.body.clientWidth ); //* 2 - 1;
-        mouse.y = - ( event.clientY / document.body.clientHeight ); //* 2 + 1;
-
-        console.log(mouse);
-        console.log(event);
-
-        raycaster.setFromCamera( mouse, app.sm.camera );
-        if (app.mm.meshes.length != 0) {
-            var intersects = raycaster.intersectObjects(app.mm.meshes);
-            if ( intersects.length > 0 ) {
-                intersects[0].object.callback();
-            }
-        } else {
-            console.log("no elements to check");
-        }*/
-    },
-
     //Creation methods
 
     _addCube: function() {
-        /*
-            create simple cube with simple wireframe
-            then return it;
-        */
         var geo, mat, cube;
 
         geo = new THREE.BoxGeometry(100, 100, 100);
-        mat = new THREE.MeshBasicMaterial({wireframe: false, color: 0xff0000});
+        mat = new THREE.MeshBasicMaterial({wireframe: true, color: Math.random() * 0xffffff});
         cube = new THREE.Mesh(geo, mat);
 
         return cube;
     },
+
+    _addSphere: function() {
+        var geo, mat, sphere;
+
+        geo = new THREE.SphereGeometry(50, 32, 32);
+        mat = new THREE.MeshBasicMaterial({wireframe: true, color: Math.random() * 0xffffff});
+        sphere = new THREE.Mesh(geo, mat);
+
+        return sphere;
+    },
+
+    _addCylinder: function() {
+        var geo, mat, cyl;
+        
+        geo = new THREE.CylinderGeometry( 50, 50, 20, 32 );
+        mat = new THREE.MeshBasicMaterial({wireframe: true, color: Math.random() * 0xffffff});
+        cyl = new THREE.Mesh(geo, mat);
+
+        return cyl;
+    },
+
+    _addPlane: function() {
+        var geo, mat, plane;
+
+        geo = new THREE.PlaneGeometry(50, 20, 32);
+        mat = new THREE.MeshBasicMaterial({wireframe: true, color: Math.random() * 0xffffff});
+        plane = new THREE.Mesh(geo, mat);
+
+        return plane;
+    },
+
+    _addDodecahedron: function() {
+        var geo, mat, dode;
+
+        geo = new THREE.DodecahedronGeometry(50);
+        mat = new THREE.MeshBasicMaterial({wireframe: true, color: Math.random() * 0xffffff});
+        dode = new THREE.Mesh(geo, mat);
+
+        return dode;
+    },
+
+    _addTube: function() {
+        var geo, mat, tube;
+
+        var CustomSinCurve = THREE.Curve.create(
+            function ( scale ) { //custom curve constructor
+                this.scale = (scale === undefined) ? 1 : scale;
+            },
+            
+            function ( t ) { //getPoint: t is between 0-1
+                var tx = t * 3 - 1.5,
+                    ty = Math.sin( 2 * Math.PI * t ),
+                    tz = 0;
+                
+                return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+            }
+        );
+
+        var path = new CustomSinCurve( 10 );
+
+        geo = new THREE.TubeGeometry(path, 20, 20, 80, false);
+        mat = new THREE.MeshBasicMaterial({wireframe: true, color: Math.random() * 0xffffff});
+        tube = new THREE.Mesh(geo, mat);
+
+        return tube;
+    },
+
+    _addThorus: function() {
+
+    }
+
+
 });
