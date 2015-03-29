@@ -29,6 +29,9 @@ Class("Interface", {
 
         this.recognizableKeys = ["49", "50"];
 
+        //flag for modal showing
+        this.isModalShowing = false;
+
         // pool of events listeners
         this.pool = {};
     },
@@ -47,8 +50,15 @@ Class("Interface", {
         //setting onykeydown listener
         document.addEventListener("keydown", app.interface.onkeydown, false);
         //setting resize event listener
-        window.addEventListener('resize', app.sm.onWindowResize, false);
+        window.addEventListener('resize', app.interface.onWindowResize, false);
         //setting mousedown event listener
+        //setting listeners for modals events
+        $('.wagemodal').on("show.bs.modal", function() {
+            app.interface.isModalShowing = true;
+        });
+        $('.wagemodal').on("hide.bs.modal", function() {
+            app.interface.isModalShowing = false;
+        });
     },
 
     addEventListener: function(eventName, method) {
@@ -67,9 +77,15 @@ Class("Interface", {
         }
     },
 
+    //listeners
+
     onkeydown: function(event) {
         app.interface.toggleColumns(""+event.keyCode);
         app.sm.handleInput(event.keyCode);
+    },
+
+    onWindowResize: function(event) {
+        app.sm.onWindowResize(event);
     },
 
     //this should be in column handler class

@@ -90,55 +90,25 @@
                   </a>
                   <ul class='dropdown-menu' role='menu'>
                     <li>
-                      <a href="javascript:app.mm.addMesh('cube');">
-                        Cube
+                      <a data-target='#addMeshModal' data-toggle='modal' href='#'>
+                        Mesh
                       </a>
                     </li>
                     <li>
-                      <a href="javascript:app.mm.addMesh('sphere')">
-                        Sphere
-                      </a>
-                    </li>
-                    <li>
-                      <a href="javascript:app.mm.addMesh('cylinder');">
-                        Cylinder
-                      </a>
-                    </li>
-                    <li>
-                      <a href="javascript:app.mm.addMesh('plane')">
-                        Plane
-                      </a>
-                    </li>
-                    <li>
-                      <a href="javascript:app.mm.addMesh('dodecahedron')">
-                        Dodecahedron
-                      </a>
-                    </li>
-                    <li>
-                      <a href="javascript:app.mm.addMesh('tube')">
-                        Tube
-                      </a>
-                    </li>
-                    <li>
-                      <a href="javascript:app.mm.addMesh('thorus')">
-                        Thorus
-                      </a>
-                    </li>
-                    <li>
-                      <a href='#'>
-                        Something else here
+                      <a data-target='#addModelModal' data-toggle='modal' href='#'>
+                        Model
                       </a>
                     </li>
                     <li class='divider'></li>
                     <li>
-                      <a href='#'>
-                        Separated link
+                      <a data-target='#addLightModal' data-toggle='modal' href='#'>
+                        Lights
                       </a>
                     </li>
                     <li class='divider'></li>
                     <li>
-                      <a href='#'>
-                        One more separated link
+                      <a data-target='#addSoundModal' data-toggle='modal' href='#'>
+                        Sound
                       </a>
                     </li>
                   </ul>
@@ -226,6 +196,175 @@
       </div>
       <div class='row'>
         <div class='col-md-12' id='footer'></div>
+      </div>
+    </div>
+    <!-- modals -->
+    <!-- addMeshModal -->
+    <div aria-hidden='true' aria-labelledby='myModalLabel' class='wagemodal modal fade bs-example-modal-sm' id='addMeshModal' role='dialog' tabindex='-1'>
+      <div class='modal-dialog' style='z-index:99999;'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h4 class='modal-title' id='addMeshModalTitle'>
+              Add > Mesh
+            </h4>
+          </div>
+          <div class='modal-body'>
+            <ul class='list-group'>
+              <li class='list-group-item' onclick="app.mm.addMesh('cube');$('#addMeshModal').modal('hide');">
+                Cube
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('sphere');$('#addMeshModal').modal('hide');">
+                Sphere
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('cylinder');$('#addMeshModal').modal('hide');">
+                Cylinder
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('plane');$('#addMeshModal').modal('hide');">
+                Plane
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('dodecahedron');$('#addMeshModal').modal('hide');">
+                Dodecahedron
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('tube');$('#addMeshModal').modal('hide');">
+                Tube
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('thorus');$('#addMeshModal').modal('hide');">
+                Thorus
+              </li>
+            </ul>
+          </div>
+          <div class='modal-footer'>
+            <button class='topcoat-button--large--cta' data-dismiss='modal' type='button'>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- add model modal -->
+    <div aria-hidden='true' aria-labelledby='myModalLabel' class='wagemodal modal fade bs-example-modal-sm' id='addModelModal' role='dialog' tabindex='-1'>
+      <div class='modal-dialog' style='z-index:99999;'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h4 class='modal-title' id='addMeshModalTitle'>
+              Add > Model
+            </h4>
+          </div>
+          <div class='modal-body'>
+            <ul class='list-group'>
+              <li class='list-group-item' onclick="app.mm.addMesh('cube');">
+                Cube
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('sphere')">
+                Sphere
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('cylinder');">
+                Cylinder
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('plane')">
+                Plane
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('dodecahedron')">
+                Dodecahedron
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('tube')">
+                Tube
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('thorus')">
+                Thorus
+              </li>
+            </ul>
+          </div>
+          <div class='modal-footer'>
+            <button class='topcoat-button--large--cta' data-dismiss='modal' type='button'>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- add model modal -->
+    <div aria-hidden='true' aria-labelledby='myModalLabel' class='wagemodal modal fade bs-example-modal-sm' id='addLightModal' role='dialog' tabindex='-1'>
+      <div class='modal-dialog' style='z-index:99999;'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h4 class='modal-title' id='addMeshModalTitle'>
+              Add > Model
+            </h4>
+          </div>
+          <div class='modal-body'>
+            <ul class='list-group'>
+              <li class='list-group-item' onclick="app.mm.addMesh('cube');">
+                Cube
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('sphere')">
+                Sphere
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('cylinder');">
+                Cylinder
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('plane')">
+                Plane
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('dodecahedron')">
+                Dodecahedron
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('tube')">
+                Tube
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('thorus')">
+                Thorus
+              </li>
+            </ul>
+          </div>
+          <div class='modal-footer'>
+            <button class='topcoat-button--large--cta' data-dismiss='modal' type='button'>
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- add model modal -->
+    <div aria-hidden='true' aria-labelledby='myModalLabel' class='wagemodal modal fade bs-example-modal-sm' id='addSoundModal' role='dialog' tabindex='-1'>
+      <div class='modal-dialog' style='z-index:99999;'>
+        <div class='modal-content'>
+          <div class='modal-header'>
+            <h4 class='modal-title' id='addMeshModalTitle'>
+              Add > Model
+            </h4>
+          </div>
+          <div class='modal-body'>
+            <ul class='list-group'>
+              <li class='list-group-item' onclick="app.mm.addMesh('cube');">
+                Cube
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('sphere')">
+                Sphere
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('cylinder');">
+                Cylinder
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('plane')">
+                Plane
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('dodecahedron')">
+                Dodecahedron
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('tube')">
+                Tube
+              </li>
+              <li class='list-group-item' onclick="app.mm.addMesh('thorus')">
+                Thorus
+              </li>
+            </ul>
+          </div>
+          <div class='modal-footer'>
+            <button class='topcoat-button--large--cta' data-dismiss='modal' type='button'>
+              Close
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </body>

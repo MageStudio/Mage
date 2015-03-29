@@ -23,6 +23,15 @@
 
 /* main css */
 
+* {
+    color: #ccc;
+}
+
+.list-group-item:hover {
+    background: #2a9fd6;
+    color: white;
+}
+
 #maincontainer {
     height: calc(100% - 40px);
     top: 40px;

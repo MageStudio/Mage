@@ -82,6 +82,7 @@ Class("SceneManager", {
     },
 
     handleInput: function(code) {
+        if (app.interface.isModalShowing) return;
         switch ( code ) {
             case 81: // Q
                 app.sm.transformControl.setSpace( app.sm.transformControl.space == "local" ? "world" : "local" );

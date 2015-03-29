@@ -131,7 +131,13 @@ Class("MeshManager", {
     },
 
     _addThorus: function() {
+        var geo, mat, tho;
 
+        geo = new THREE.TorusGeometry(100, 30, 16, 100);
+        mat = new THREE.MeshBasicMaterial({wireframe: true, color: Math.random() * 0xffffff});
+        tho = new THREE.Mesh(geo, mat);
+
+        return tho;
     }
 
 
