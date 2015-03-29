@@ -196,34 +196,24 @@
                         %button.topcoat-button--large--cta{:type=>"button", "data-dismiss"=>"modal"}
                             Close
 
-        / add model modal
+        / add light modal
         #addLightModal.wagemodal.modal.fade.bs-example-modal-sm{:tabindex=>"-1", :role=>"dialog", "aria-labelledby"=>"myModalLabel", "aria-hidden"=>"true"}
             .modal-dialog{:style=>"z-index:99999;"}
                 .modal-content
                     .modal-header
                         %h4#addMeshModalTitle.modal-title
-                            Add > Model
+                            Add > Light
                     .modal-body
                         %ul.list-group
-                            %li.list-group-item{:onclick=>"app.mm.addMesh('cube');"}
-                                Cube
-                            %li.list-group-item{:onclick=>"app.mm.addMesh('sphere')"}
-                                Sphere
-                            %li.list-group-item{:onclick=>"app.mm.addMesh('cylinder');"}
-                                Cylinder
-                            %li.list-group-item{:onclick=>"app.mm.addMesh('plane')"}
-                                Plane
-                            %li.list-group-item{:onclick=>"app.mm.addMesh('dodecahedron')"}
-                                Dodecahedron
-                            %li.list-group-item{:onclick=>"app.mm.addMesh('tube')"}
-                                Tube
-                            %li.list-group-item{:onclick=>"app.mm.addMesh('thorus')"}
-                                Thorus
+                            %li.list-group-item{:onclick=>"app.mm.addLight('ambientLight');$('#addLightModal').modal('hide');"}
+                                Ambient Light
+                            %li.list-group-item{:onclick=>"app.mm.addLight('pointLight');$('#addLightModal').modal('hide');"}
+                                Point Light
                     .modal-footer
                         %button.topcoat-button--large--cta{:type=>"button", "data-dismiss"=>"modal"}
                             Close
 
-        / add model modal
+        / add sound modal
         #addSoundModal.wagemodal.modal.fade.bs-example-modal-sm{:tabindex=>"-1", :role=>"dialog", "aria-labelledby"=>"myModalLabel", "aria-hidden"=>"true"}
             .modal-dialog{:style=>"z-index:99999;"}
                 .modal-content

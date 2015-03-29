@@ -283,37 +283,22 @@
         </div>
       </div>
     </div>
-    <!-- add model modal -->
+    <!-- add light modal -->
     <div aria-hidden='true' aria-labelledby='myModalLabel' class='wagemodal modal fade bs-example-modal-sm' id='addLightModal' role='dialog' tabindex='-1'>
       <div class='modal-dialog' style='z-index:99999;'>
         <div class='modal-content'>
           <div class='modal-header'>
             <h4 class='modal-title' id='addMeshModalTitle'>
-              Add > Model
+              Add > Light
             </h4>
           </div>
           <div class='modal-body'>
             <ul class='list-group'>
-              <li class='list-group-item' onclick="app.mm.addMesh('cube');">
-                Cube
+              <li class='list-group-item' onclick="app.mm.addLight('ambientLight');$('#addLightModal').modal('hide');">
+                Ambient Light
               </li>
-              <li class='list-group-item' onclick="app.mm.addMesh('sphere')">
-                Sphere
-              </li>
-              <li class='list-group-item' onclick="app.mm.addMesh('cylinder');">
-                Cylinder
-              </li>
-              <li class='list-group-item' onclick="app.mm.addMesh('plane')">
-                Plane
-              </li>
-              <li class='list-group-item' onclick="app.mm.addMesh('dodecahedron')">
-                Dodecahedron
-              </li>
-              <li class='list-group-item' onclick="app.mm.addMesh('tube')">
-                Tube
-              </li>
-              <li class='list-group-item' onclick="app.mm.addMesh('thorus')">
-                Thorus
+              <li class='list-group-item' onclick="app.mm.addLight('pointLight');$('#addLightModal').modal('hide');">
+                Point Light
               </li>
             </ul>
           </div>
@@ -325,7 +310,7 @@
         </div>
       </div>
     </div>
-    <!-- add model modal -->
+    <!-- add sound modal -->
     <div aria-hidden='true' aria-labelledby='myModalLabel' class='wagemodal modal fade bs-example-modal-sm' id='addSoundModal' role='dialog' tabindex='-1'>
       <div class='modal-dialog' style='z-index:99999;'>
         <div class='modal-content'>

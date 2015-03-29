@@ -52,6 +52,7 @@ Class("Interface", {
         //setting resize event listener
         window.addEventListener('resize', app.interface.onWindowResize, false);
         //setting mousedown event listener
+        window.addEventListener("mousedown", app.interface.onMouseDown, false);
         //setting listeners for modals events
         $('.wagemodal').on("show.bs.modal", function() {
             app.interface.isModalShowing = true;
@@ -86,6 +87,10 @@ Class("Interface", {
 
     onWindowResize: function(event) {
         app.sm.onWindowResize(event);
+    },
+
+    onMouseDown: function(event) {
+        app.mm.onMouseDown();
     },
 
     //this should be in column handler class
