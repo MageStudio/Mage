@@ -6,6 +6,7 @@
 
         / basic imports, we don't need angular or react
         %script{:type=>"text/javascript", :src=>"app/lib/jquery.min.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/signals.min.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/bootstrap.min.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/classy.min.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/util.js"}
@@ -205,11 +206,11 @@
                             Add > Light
                     .modal-body
                         %ul.list-group
-                            %li.list-group-item{:onclick=>"app.mm.addLight('ambientLight');$('#addLightModal').modal('hide');"}
+                            %li.list-group-item{:onclick=>"app.lm.addLight('ambientLight');$('#addLightModal').modal('hide');"}
                                 Ambient Light
-                            %li.list-group-item{:onclick=>"app.mm.addLight('pointLight');$('#addLightModal').modal('hide');"}
+                            %li.list-group-item{:onclick=>"app.lm.addLight('pointLight');$('#addLightModal').modal('hide');"}
                                 Point Light
-                            %li.list-group-item{:onclick=>"app.mm.addLight('directionalLight');$('#addLightModal').modal('hide');"}
+                            %li.list-group-item{:onclick=>"app.lm.addLight('directionalLight');$('#addLightModal').modal('hide');"}
                                 Directional Light
                     .modal-footer
                         %button.topcoat-button--large--cta{:type=>"button", "data-dismiss"=>"modal"}

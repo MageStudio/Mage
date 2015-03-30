@@ -1,44 +1,48 @@
 Class("Interface", {
     Interface: function() {
-        //column helper, should be in column handler class
-        this.columnsHelper = {
-            "11": ["16%", "68%", "16%"],
-            "01": ["0%", "84%", "16%"],
-            "10": ["16%", "84%", "0%"],
-            "00": ["0%", "100%", "0%"]
-        };
-        this.columnChanger = {
-            "11": {
-                "49": ["01", "left-column"],
-                "50": ["10", "right-column"]
-            },
-            "01": {
-                "49": ["11", ""],
-                "50": ["00", "both"]
-            },
-            "10": {
-                "49": ["00", "both"],
-                "50": ["11", ""]
-            },
-            "00": {
-                "49": ["10", "right-column"],
-                "50": ["01", "left-column"]
-            }
-        };
-        this.currentColumns = "11";
-
-        this.recognizableKeys = ["49", "50"];
+        //list of recognizable keys
+        this.recognizableKeys = [
+            49, // 1
+            50, // 2
+            87, // w
+            69, // e
+            81, // q
+            82, // r
+            187,
+            107, // + = num+
+            189,
+            10, // - _ num-
+            68 // d
+        ];
 
         //flag for modal showing
         this.isModalShowing = false;
 
         // pool of events listeners
         this.pool = {};
+
+        //using signals to dispatch events
+        this.events = {
+            //triggered when "1" button is clicked
+            columnToggle: new signals.Signal(),
+            //transform space change
+            transformSpaceChange: new signals.Signal(),
+            //transform mode change
+            transformModeChange: new signals.Signal(),
+            //transform size change
+            transformSizeChange: new signals.Signal(),
+            //on deselect all
+            deselectedAll: new signals.Signal()
+        };
     },
 
     init: function() {
+        //creating sidebars
+        this.leftSidebar = new LeftSidebar();
+        this.rightSidebar = new RightSidebar();
+        this.sidebarHelper = new HelperSidebar();
         // setting listeners
-        this.setListener();
+        this.setListeners();
     },
 
     afterSceneCreation: function() {
@@ -46,9 +50,12 @@ Class("Interface", {
         this.meshEvents = new THREEx.DomEvents(app.sm.camera, app.sm.container);
     },
 
-    setListener: function() {
+    setListeners: function() {
+        //setting listeners for interface objects
+        this.leftSidebar.setListeners();
+        this.rightSidebar.setListeners();
         //setting onykeydown listener
-        document.addEventListener("keydown", app.interface.onkeydown, false);
+        document.addEventListener("keydown", app.interface.onKeyDown, false);
         //setting resize event listener
         window.addEventListener('resize', app.interface.onWindowResize, false);
         //setting mousedown event listener
@@ -62,27 +69,44 @@ Class("Interface", {
         });
     },
 
-    addEventListener: function(eventName, method) {
-        //every eventName has a list of methods to be called
-        if (!app.interface.pool[eventName]) {
-            app.interface.pool[eventName] = [];
-        }
-        app.interface.pool[eventName].push(method);
-    },
-
-    on: function(eventName, event) {
-        //general event listener, will call each
-        if (!app.interface.pool[eventName]) return;
-        for (var i=0; i<app.interface.pool[eventName].length; i++) {
-            app.interface.pool[eventName][i](event);
-        }
-    },
-
     //listeners
 
-    onkeydown: function(event) {
-        app.interface.toggleColumns(""+event.keyCode);
-        app.sm.handleInput(event.keyCode);
+    onKeyDown: function(event) {
+        //app.interface.toggleColumns(""+event.keyCode);
+        //app.sm.handleInput(event.keyCode);
+        if (app.interface.recognizableKeys.indexOf(event.keyCode)!= -1) {
+            switch(event.keyCode) {
+                case 50:
+                case 49:
+                    //1 = 49, 2 = 50
+                    app.interface.events.columnToggle.dispatch(""+event.keyCode);
+                    break;
+                case 81: // Q
+                    app.interface.events.transformSpaceChange.dispatch();
+                    break;
+                case 87: // W
+                    app.interface.events.transformModeChange.dispatch("translate");
+                    break;
+                case 69: // E
+                    app.interface.events.transformModeChange.dispatch("rotate");
+                    break;
+                case 82: // R
+                    app.interface.events.transformModeChange.dispatch("scale");
+                    break;
+                case 187:
+                case 107: // +,=,num+
+                    app.interface.events.transformSizeChange.dispatch(true);
+                    break;
+                case 189:
+                case 10: // -,_,num-
+                    app.interface.events.transformSizeChange.dispatch(false);
+                    break;
+                case 68:
+                    //deselect
+                    app.sm.deselect();
+                    break;
+            }
+        }
     },
 
     onWindowResize: function(event) {
@@ -90,37 +114,6 @@ Class("Interface", {
     },
 
     onMouseDown: function(event) {
-        app.mm.onMouseDown(event);
-    },
-
-    //this should be in column handler class
-    toggleColumns: function(code) {
-        if (app.interface.recognizableKeys.indexOf(code) != -1) {
-            var change = app.interface.columnChanger[this.currentColumns][code][0];
-            var toHide = app.interface.columnChanger[this.currentColumns][code][1];
-            this.currentColumns = change;
-            var widths = app.interface.columnsHelper[this.currentColumns];
-            //removing hidden class
-            $("#left-column").removeClass("hidden");
-            $("#center").removeClass("hidden");
-            $("#right-column").removeClass("hidden");
-            //updating columns width
-            $("#left-column").animate({"width": widths[0]}, 200);
-            $('#center').css({'width': widths[1]});
-            $('#right-column').animate({'width': widths[2]}, 200);
-            //adding proper hidden class
-            if (toHide == "") return;
-            if (toHide == "both") {
-                $('#left-column').addClass("hidden");
-                $('#right-column').addClass("hidden");
-            } else {
-                $('#'+toHide).addClass("hidden");
-            }
-            //also updating scene manager
-            app.sm.onWindowResize();
-        } else {
-            //not recognized
-            console.log("not a recognizable key");
-        }
+        //app.mm.onMouseDown(event);
     }
 });

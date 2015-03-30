@@ -16,7 +16,9 @@ Class("SceneManager", {
 
         //updating mesh manager
         app.mm.update();
-
+        //updating light manager
+        app.lm.update();
+        
         //rendering scene
         app.sm.render();
 
@@ -25,6 +27,11 @@ Class("SceneManager", {
             requestAnimFrame(app.sm.update);
         }, 1000/60);
         //requestAnimFrame(app.sm.update);
+    },
+
+    render: function() {
+        app.sm.renderer.render( app.sm.scene, app.sm.camera );
+        app.sm.stats.update();
     },
 
     init: function() {
@@ -73,9 +80,13 @@ Class("SceneManager", {
         this.render();
     },
 
-    render: function() {
-        app.sm.renderer.render( app.sm.scene, app.sm.camera );
-        app.sm.stats.update();
+    setListeners: function() {
+        //setting listener for column toggle event
+        app.interface.events.columnToggle.add(this.onWindowResize);
+        //adding transform events
+        app.interface.events.transformSpaceChange.add(this.onTransformSpaceChange);
+        app.interface.events.transformModeChange.add(this.onTransformModeChange);
+        app.interface.events.transformSizeChange.add(this.onTransformSizeChange);
     },
 
     onWindowResize: function() {
@@ -87,36 +98,24 @@ Class("SceneManager", {
         app.sm.render();
     },
 
-    handleInput: function(code) {
-        if (app.interface.isModalShowing) return;
-        switch ( code ) {
-            case 81: // Q
-                app.sm.transformControl.setSpace( app.sm.transformControl.space == "local" ? "world" : "local" );
-                break;
-            case 87: // W
-                app.sm.transformControl.setMode( "translate" );
-                break;
-            case 69: // E
-                app.sm.transformControl.setMode( "rotate" );
-                break;
-            case 82: // R
-                app.sm.transformControl.setMode( "scale" );
-                break;
-            case 187:
-            case 107: // +,=,num+
-                app.sm.transformControl.setSize( app.sm.transformControl.size + 0.1 );
-                break;
-            case 189:
-            case 10: // -,_,num-
-                app.sm.transformControl.setSize( Math.max(app.sm.transformControl.size - 0.1, 0.1 ) );
-                break;
-            case 68:
-                //deselect
-                app.sm.deselect();
-                break;
+    // transform controls events
+    onTransformSpaceChange: function(space) {
+        app.sm.transformControl.setSpace( app.sm.transformControl.space == "local" ? "world" : "local" );
+    },
+
+    onTransformModeChange: function(mode) {
+        app.sm.transformControl.setMode(mode);
+    },
+
+    onTransformSizeChange: function(increase) {
+        if (increase) {
+            app.sm.transformControl.setSize( app.sm.transformControl.size + 0.1 );
+        } else {
+            app.sm.transformControl.setSize( Math.max(app.sm.transformControl.size - 0.1, 0.1 ) );
         }
     },
 
+    //selecting and deselecting meshes
     select: function(mesh, mode) {
         if (this.availableTransformModes.indexOf(mode) == -1) return;
         this.transformControl.setMode(mode);
@@ -131,5 +130,8 @@ Class("SceneManager", {
             return;
         }
         this.transformControl.detach();
+
+        //triggering on deselect all event
+        app.interface.events.deselectedAll.dispatch();
     }
 });

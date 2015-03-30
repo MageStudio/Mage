@@ -6,6 +6,7 @@
     </title>
     <!-- basic imports, we don't need angular or react -->
     <script src='app/lib/jquery.min.js' type='text/javascript'></script>
+    <script src='app/lib/signals.min.js' type='text/javascript'></script>
     <script src='app/lib/bootstrap.min.js' type='text/javascript'></script>
     <script src='app/lib/classy.min.js' type='text/javascript'></script>
     <script src='app/lib/util.js' type='text/javascript'></script>
@@ -23,7 +24,7 @@
     <link href='css/app.css' rel='stylesheet' type='text/css'>
     <link href='css/topcoat-desktop-dark.css' rel='stylesheet' type='text/css'>
     <link href='css/main.css' rel='stylesheet' type='text/css'>
-    <script src='app/main.js' type='text/javascript'></script>
+    <script src='app/App.main.js' type='text/javascript'></script>
   </head>
   <body>
     <!-- navbar -->
@@ -294,13 +295,13 @@
           </div>
           <div class='modal-body'>
             <ul class='list-group'>
-              <li class='list-group-item' onclick="app.mm.addLight('ambientLight');$('#addLightModal').modal('hide');">
+              <li class='list-group-item' onclick="app.lm.addLight('ambientLight');$('#addLightModal').modal('hide');">
                 Ambient Light
               </li>
-              <li class='list-group-item' onclick="app.mm.addLight('pointLight');$('#addLightModal').modal('hide');">
+              <li class='list-group-item' onclick="app.lm.addLight('pointLight');$('#addLightModal').modal('hide');">
                 Point Light
               </li>
-              <li class='list-group-item' onclick="app.mm.addLight('directionalLight');$('#addLightModal').modal('hide');">
+              <li class='list-group-item' onclick="app.lm.addLight('directionalLight');$('#addLightModal').modal('hide');">
                 Directional Light
               </li>
             </ul>
