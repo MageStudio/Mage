@@ -90,7 +90,7 @@ Class("Interface", {
     },
 
     onMouseDown: function(event) {
-        app.mm.onMouseDown();
+        app.mm.onMouseDown(event);
     },
 
     //this should be in column handler class

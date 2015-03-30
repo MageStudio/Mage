@@ -5,6 +5,9 @@ Class("SceneManager", {
         this.scene = undefined;
         this.controls = undefined;
         this.container = document.getElementById( 'scenecontainer' );
+        //holding clicked mesh
+        this.lastClicked = {uuid: ""};
+        this.availableTransformModes = ["translate", "rotate", "scale"];
     },
 
     update: function() {
@@ -104,6 +107,26 @@ Class("SceneManager", {
             case 10: // -,_,num-
                 app.sm.transformControl.setSize( Math.max(app.sm.transformControl.size - 0.1, 0.1 ) );
                 break;
+            case 68:
+                //deselect
+                app.sm.deselect();
+                break;
         }
+    },
+
+    select: function(mesh, mode) {
+        if (this.availableTransformModes.indexOf(mode) == -1) return;
+        this.transformControl.setMode(mode);
+        this.transformControl.attach(mesh);
+        //setting lastclicked in meshmanager
+        this.lastclicked = mesh;
+    },
+
+    deselect: function(mesh) {
+        if (mesh) {
+            this.transformControl.detach(mesh);
+            return;
+        }
+        this.transformControl.detach();
     }
 });

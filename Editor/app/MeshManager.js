@@ -5,7 +5,7 @@ Class("MeshManager", {
         //remember last clicked mesh
         this.map = new HashMap();
         this.meshes = [];
-        this.lastClicked = undefined;
+        this.lights = [];
         this.allowedMeshes = [
             "cube",
             "sphere",
@@ -46,13 +46,9 @@ Class("MeshManager", {
             //creating a callback for our mesh
             app.interface.meshEvents.bind(mesh, "click", function(event) {
                 //now only adding this mesh to the transform control
-                if (app.sm.lastClicked) {
-                    if (app.sm.lastClicked.uuid == event.target.uuid) return;
-                    app.sm.transformControl.detach(app.sm.lastClicked);
-                }
-                app.sm.transformControl.setMode("translate");
-                app.sm.transformControl.attach(event.target);
-                app.mm.lastClicked = event.target;
+                if (app.sm.lastClicked.uuid == event.target.uuid) return;
+                app.sm.deselect();
+                app.sm.select(event.target, "translate");
             });
         }
     },
@@ -60,37 +56,46 @@ Class("MeshManager", {
     addLight: function(type) {
         if (this.allowedLights.indexOf(type) != -1) {
             var object = this["_add"+__upperCaseFirstLetter__(type)]();
-            //adding light to scene
-            app.sm.scene.add(object.light);
+            console.log(object);
+            //add light to scene
+            app.sm.scene.add(object.light)
+            //pushing light into array
+            app.mm.lights.push(object.light);
+            //storing this light
+            app.mm.store(object.light.uuid, object);
+            //forcing scene update
+            app.sm.update();
+            //adding to transform
+            app.sm.transformControl.attach(object.light);
             //check if this light has helper
             if (object.helper) {
-                //add helper to scene
+                //adding helper to scene
                 app.sm.scene.add(object.helper);
                 //ading helper to mesh lists
                 app.mm.meshes.push(object.helper);
                 //adding click listener to helper
                 app.interface.meshEvents.bind(object.helper, "click", function(event) {
                     //now only adding this mesh to the transform control
-                    if (app.sm.lastClicked) {
-                        if (app.sm.lastClicked.uuid == event.target.uuid) return;
-                        app.sm.transformControl.detach(app.sm.lastClicked);
-                    }
-                    app.sm.transformControl.setMode("translate");
-                    app.sm.transformControl.attach(event.target);
-                    app.mm.lastClicked = event.target;
+                    if (app.sm.lastClicked.uuid === event.target.light.uuid) return;
+                    app.sm.deselect();
+                    app.sm.select(event.target.light, "translate");
                 });
             }
-            //storing this light
-            app.mm.store(object.light.uuid, object);
-            //forcing scene update
-            app.sm.update();
         }
     },
 
-    onMouseDown: function() {
-        if (app.mm.lastClicked) {
-            app.sm.transformControl.detach(app.sm.lastClicked);
-        }
+    onMouseDown: function(event) {
+        /*if (app.mm.meshes.length == 0) return;
+        var raycaster = new THREE.Raycaster();
+        var position = app.interface.meshEvents._getRelativeMouseXY(event);
+        var vector = new THREE.Vector3(position.x, position.y, 0.5);
+
+        //mouse.x = ( event.clientX / app.sm.renderer.domElement.clientWidth ) * 2 - 1;
+        //mouse.y = - ( event.clientY / app.sm.renderer.domElement.clientHeight ) * 2 + 1;
+
+        raycaster.setFromCamera(vector, app.sm.camera);
+        var intersects = raycaster.intersectObjects(app.mm.meshes);
+        if ( intersects.length == 0 ) app.sm.deselect();*/
     },
 
     //Creation methods
@@ -200,8 +205,12 @@ Class("MeshManager", {
         var pointLight = new THREE.PointLight( 0xff0000, 1, 100 );
         pointLight.position.set( 10, 10, 10 );
 
+        app.sm.scene.add(pointLight);
+
         var sphereSize = 50;
         var pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
+
+        app.sm.scene.add(pointLightHelper);
 
         return {
             light: pointLight,
