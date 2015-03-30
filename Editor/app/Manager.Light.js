@@ -41,7 +41,6 @@ Class("LightManager", {
     addLight: function(type) {
         if (this.allowedLights.indexOf(type) != -1) {
             var object = this["_add"+__upperCaseFirstLetter__(type)]();
-            console.log(object);
             //add light to scene
             app.sm.scene.add(object.light)
             //pushing light into array

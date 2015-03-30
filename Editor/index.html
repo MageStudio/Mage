@@ -11,6 +11,7 @@
     <script src='app/lib/classy.min.js' type='text/javascript'></script>
     <script src='app/lib/util.js' type='text/javascript'></script>
     <script src='app/lib/HashMap.js' type='text/javascript'></script>
+    <script src='app/lib/colorpicker.js' type='text/javascript'></script>
     <!-- actual three.js import -->
     <script src='app/lib/three.min.js' type='text/javascript'></script>
     <!-- three js related imports -->
@@ -21,6 +22,7 @@
     <script src='app/lib/stats.min.js' type='text/javascript'></script>
     <link href='css/bootstrap.dark.min.css' rel='stylesheet' type='text/css'>
     <link href='css/font-awesome/css/font-awesome.min.css' rel='stylesheet'>
+    <link href='css/colorpicker.css' rel='stylesheet' type='text/css'>
     <link href='css/app.css' rel='stylesheet' type='text/css'>
     <link href='css/topcoat-desktop-dark.css' rel='stylesheet' type='text/css'>
     <link href='css/main.css' rel='stylesheet' type='text/css'>
@@ -189,7 +191,48 @@
     <!-- main container -->
     <div class='container-fluid' id='maincontainer'>
       <div class='row' id='innercontainer'>
-        <div class='column' id='left-column'></div>
+        <div class='column' id='left-column'>
+          <h6 class='title'>
+            Scene Settings
+          </h6>
+          <div aria-multiselectable='true' class='panel-group' id='accordion' role='tablist'>
+            <!-- first expandable -->
+            <div class='panel panel-default'>
+              <div class='panel-heading' id='headingOne' role='tab'>
+                <h6 class='panel-title'>
+                  <i class='fa fa-caret-right' id='fogcaret'></i>
+                  <a aria-controls='fogCollapse' aria-expanded='true' data-parent='#accordion' data-toggle='collapse' href='#fogCollapse'>
+                    Fog
+                  </a>
+                </h6>
+              </div>
+              <div aria-labelledby='headingOne' class='panel-collapse collapse settingHeader' data-type='fog' id='fogCollapse' role='tabpanel'>
+                <div class='panel-body' style='padding:0;'>
+                  <div class='row panel-content'>
+                    <div class='col-md-4 panel-content-title'>
+                      Color
+                    </div>
+                    <div class='col-md-8'>
+                      <input class='color' data-toggle='fog' style='width: 80px; margin-top: 4px;'>
+                    </div>
+                  </div>
+                  <div class='row panel-content'>
+                    <div class='col-md-4 panel-content-title'>
+                      Enabled
+                    </div>
+                    <div class='col-md-8'>
+                      <label class='topcoat-switch'>
+                        <input class='topcoat-switch__input' data-flag='fog' type='checkbox'>
+                        <div class='topcoat-switch__toggle'></div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- here secondo expandable -->
+          </div>
+        </div>
         <div class='column' id='center'>
           <div id='scenecontainer'></div>
         </div>

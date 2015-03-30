@@ -1,5 +1,6 @@
 window.onload = function() {
     include([
+        "app/lib/jsColorPicker.min",
         "app/Interface",
         "app/Manager.Scene",
         "app/Manager.Mesh",

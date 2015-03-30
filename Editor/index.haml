@@ -11,6 +11,7 @@
         %script{:type=>"text/javascript", :src=>"app/lib/classy.min.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/util.js"}
         %script{:type=>"text/javascript", :src=>"app/lib/HashMap.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/colorpicker.js"}
 
         / actual three.js import
         %script{:type=>"text/javascript", :src=>"app/lib/three.min.js"}
@@ -24,6 +25,7 @@
 
         %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/bootstrap.dark.min.css"}
         %link{:rel=>"stylesheet", :href=>"css/font-awesome/css/font-awesome.min.css"}
+        %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/colorpicker.css"}
         %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/app.css"}
 
         %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/topcoat-desktop-dark.css"}
@@ -136,6 +138,31 @@
         #maincontainer.container-fluid
             #innercontainer.row
                 #left-column.column
+                    %h6.title
+                        Scene Settings
+                    #accordion.panel-group{"role"=>"tablist", "aria-multiselectable"=>"true"}
+                        / first expandable
+                        .panel.panel-default
+                            #headingOne.panel-heading{:role=>"tab"}
+                                %h6.panel-title
+                                    %i#fogcaret.fa.fa-caret-right
+                                    %a{"data-toggle"=>"collapse", "data-parent"=>"#accordion", :href=>"#fogCollapse", "aria-expanded"=>"true", "aria-controls"=>"fogCollapse"}
+                                        Fog
+                            #fogCollapse.panel-collapse.collapse.settingHeader{:role=>"tabpanel", "aria-labelledby"=>"headingOne", "data-type"=>"fog"}
+                                .panel-body{:style=>"padding:0;"}
+                                    .row.panel-content
+                                        .col-md-4.panel-content-title
+                                            Color
+                                        .col-md-8
+                                            %input.color{:style=>"width: 80px; margin-top: 4px;", "data-toggle"=>"fog"}
+                                    .row.panel-content
+                                        .col-md-4.panel-content-title
+                                            Enabled
+                                        .col-md-8
+                                            %label.topcoat-switch
+                                                %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"fog"}
+                                                .topcoat-switch__toggle
+                        / here secondo expandable
                 #center.column
                     #scenecontainer
                 #right-column.column

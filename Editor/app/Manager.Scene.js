@@ -87,6 +87,9 @@ Class("SceneManager", {
         app.interface.events.transformSpaceChange.add(this.onTransformSpaceChange);
         app.interface.events.transformModeChange.add(this.onTransformModeChange);
         app.interface.events.transformSizeChange.add(this.onTransformSizeChange);
+
+        //adding fog color change listener
+        app.interface.events.fogColorChange.add(this.onFogColorChanged);
     },
 
     onWindowResize: function() {
@@ -113,6 +116,11 @@ Class("SceneManager", {
         } else {
             app.sm.transformControl.setSize( Math.max(app.sm.transformControl.size - 0.1, 0.1 ) );
         }
+    },
+
+    //fog color changed event
+    onFogColorChanged: function(color) {
+        app.sm.scene.fog = new THREE.FogExp2(color);
     },
 
     //selecting and deselecting meshes

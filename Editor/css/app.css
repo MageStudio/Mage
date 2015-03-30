@@ -54,6 +54,28 @@
     */
 }
 
+.column .title {
+    color: #ccc;
+    margin-left: 20px;
+}
+
+.panel-heading {
+    background: #1d1d1d !important;
+    border-bottom: 0.07em solid #333 !important;
+    border-top: 0.07em solid #333 !important;
+}
+
+.panel-content {
+    padding-left: 27px;
+    padding-right: 20px;
+}
+
+.panel-content-title {
+    line-height: 35px;
+    font-size: 12px;
+    height: 35px;
+}
+
 #left-column, #right-column {
     background-color: #222;
     border: 1px solid rgba(255,255,255,0.1);
