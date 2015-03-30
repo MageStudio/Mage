@@ -27,6 +27,10 @@ Class("LightManager", {
             var start = +new Date();
             do {
                 var o = this.map.get(keys_list.shift());
+                if (o.target) {
+                    o.light.target.position.copy(o.target.position);
+                    o.light.target.updateMatrixWorld();
+                }
                 if (o.helper) {
                     o.helper.update();
                 }
@@ -62,6 +66,19 @@ Class("LightManager", {
                     app.sm.select(event.target.light, "translate");
                 });
             }
+            //check if this has target
+            if (object.target) {
+                //add target to the scene
+                app.sm.scene.add(object.target);
+                //adding target to meshes list
+                app.mm.meshes.push(object.target);
+                //adding click listener to target
+                app.interface.meshEvents.bind(object.target, "click", function(event) {
+                    if (app.sm.lastClicked.uuid === event.target.uuid) return;
+                    app.sm.deselect();
+                    app.sm.select(event.target, "translate");
+                });
+            }
         }
     },
 
@@ -74,7 +91,8 @@ Class("LightManager", {
 
         return {
             "light": light,
-            "helper": false
+            "helper": false,
+            target: false
         };
 
     },
@@ -88,7 +106,8 @@ Class("LightManager", {
 
         return {
             light: pointLight,
-            helper: pointLightHelper
+            helper: pointLightHelper,
+            target: false
         };
     },
 
@@ -99,9 +118,14 @@ Class("LightManager", {
         var size = 50;
         var directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, size);
 
+        var geo = new THREE.SphereGeometry(20, 4, 4);
+        var mat = new THREE.MeshBasicMaterial({wireframe: false, color: 0x0000ff});
+        var target = new THREE.Mesh(geo, mat);
+
         return {
             light: directionalLight,
-            helper: directionalLightHelper
+            helper: directionalLightHelper,
+            target: target
         };
     }
 
