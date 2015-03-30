@@ -28,7 +28,7 @@
         %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/topcoat-desktop-dark.css"}
         %link{:rel=>"stylesheet", :type=>"text/css", :href=>"css/main.css"}
 
-        %script{:type=>"text/javascript", :src=>"app/main.js"}
+        %script{:type=>"text/javascript", :src=>"app/App.main.js"}
     %body
         / navbar
         .navbar-sm
@@ -209,6 +209,8 @@
                                 Ambient Light
                             %li.list-group-item{:onclick=>"app.mm.addLight('pointLight');$('#addLightModal').modal('hide');"}
                                 Point Light
+                            %li.list-group-item{:onclick=>"app.mm.addLight('directionalLight');$('#addLightModal').modal('hide');"}
+                                Directional Light
                     .modal-footer
                         %button.topcoat-button--large--cta{:type=>"button", "data-dismiss"=>"modal"}
                             Close

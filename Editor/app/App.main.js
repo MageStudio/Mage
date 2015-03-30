@@ -1,7 +1,9 @@
 include([
     "app/Interface",
-    "app/SceneManager",
-    "app/MeshManager"
+    "app/Manager.Scene",
+    "app/Manager.Mesh",
+    "app/Manager.Light",
+    "app/Manager.Model"
 ]);
 
 Class("Editor", {

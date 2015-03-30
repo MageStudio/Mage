@@ -17,7 +17,8 @@ Class("MeshManager", {
         ];
         this.allowedLights = [
             "ambientLight",
-            "pointLight"
+            "pointLight",
+            "directionalLight"
         ];
     },
 
@@ -96,6 +97,20 @@ Class("MeshManager", {
         raycaster.setFromCamera(vector, app.sm.camera);
         var intersects = raycaster.intersectObjects(app.mm.meshes);
         if ( intersects.length == 0 ) app.sm.deselect();*/
+    },
+
+    update: function() {
+        //updating lights
+        var keys_list = this.map.keys.concat();   //create a clone of the original
+        if (keys_list.length != 0) {
+            var start = +new Date();
+            do {
+                var o = this.map.get(keys_list.shift());
+                if (o.helper) {
+                    o.helper.update();
+                }
+            } while (keys_list.length > 0 && (+new Date() - start < 50));
+        }
     },
 
     //Creation methods
@@ -201,20 +216,28 @@ Class("MeshManager", {
     },
 
     _addPointLight: function() {
-
-        var pointLight = new THREE.PointLight( 0xff0000, 1, 100 );
-        pointLight.position.set( 10, 10, 10 );
-
-        app.sm.scene.add(pointLight);
+        var pointLight = new THREE.PointLight(0xff0000, 1, 100);
+        pointLight.position.set(10, 10, 10);
 
         var sphereSize = 50;
-        var pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
-
-        app.sm.scene.add(pointLightHelper);
+        var pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
 
         return {
             light: pointLight,
             helper: pointLightHelper
+        };
+    },
+
+    _addDirectionalLight: function() {
+        var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+        directionalLight.position.set( 0, 1, 0 );
+
+        var size = 50;
+        var directionalLightHelper = new THREE.DirectionalLightHelper(directionalLight, size);
+
+        return {
+            light: directionalLight,
+            helper: directionalLightHelper
         };
     }
 
