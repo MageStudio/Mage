@@ -91,6 +91,7 @@ Class("Interface", {
         //settin input color picker
         document.querySelector('input.color').addEventListener("click", function() {
             app.interface.colorPickerClicked = this;
+            app.interface.disableEvents = true;
         });
         $('input.color').ColorPicker({
             color: '#0000ff',
@@ -108,6 +109,7 @@ Class("Interface", {
             onChange: function (hsb, hex, rgb) {
                 if (app.interface.colorPickerClicked) {
                     $(app.interface.colorPickerClicked).css("background", "#"+hex);
+                    $(app.interface.colorPickerClicked).val("#"+hex);
                     var toToggle = $(app.interface.colorPickerClicked).data("toggle");
                     if (app.interface.flags[toToggle]) {
                         //controllo se possiamo cambiare il valore in toToggle
@@ -115,6 +117,7 @@ Class("Interface", {
                         app.interface.events[toToggle+"ColorChange"].dispatch("#"+hex);
                     }
                 }
+                app.interface.disableEvents = true;
             }
         });
         //setting al toggles

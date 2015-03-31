@@ -198,7 +198,7 @@
           <div aria-multiselectable='true' class='panel-group' id='accordion' role='tablist'>
             <!-- first expandable -->
             <div class='panel panel-default'>
-              <div class='panel-heading' id='headingOne' role='tab'>
+              <div class='panel-heading' id='fogHeading' role='tab'>
                 <h6 class='panel-title'>
                   <i class='fa fa-caret-right' id='fogcaret'></i>
                   <a aria-controls='fogCollapse' aria-expanded='true' data-parent='#accordion' data-toggle='collapse' href='#fogCollapse'>
@@ -206,7 +206,7 @@
                   </a>
                 </h6>
               </div>
-              <div aria-labelledby='headingOne' class='panel-collapse collapse settingHeader' data-type='fog' id='fogCollapse' role='tabpanel'>
+              <div aria-labelledby='fogHeading' class='panel-collapse collapse settingHeader' data-type='fog' id='fogCollapse' role='tabpanel'>
                 <div class='panel-body' style='padding:0;'>
                   <div class='row panel-content'>
                     <div class='col-md-4 panel-content-title'>
@@ -232,13 +232,61 @@
                       Density
                     </div>
                     <div class='col-md-8'>
-                      <input class='topcoat-range' data-toggle='fog' style='width: 80px; margin-top: 4px;' type='range'>
+                      <input class='topcoat-range' data-toggle='fog' id='fogDensity' max='1' min='0' step='0.1' style='width: 80px; margin-top: 13px;' type='range' value='0.5'>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
             <!-- here secondo expandable -->
+            <div class='panel panel-default panel-column'>
+              <div class='panel-heading' id='controlsHeading' role='tab'>
+                <h6 class='panel-title'>
+                  <i class='fa fa-caret-right' id='controlscaret'></i>
+                  <a aria-controls='controlsCollapse' aria-expanded='true' data-parent='#accordion' data-toggle='collapse' href='#controlsCollapse'>
+                    Controls
+                  </a>
+                </h6>
+              </div>
+              <div aria-labelledby='controlsHeading' class='panel-collapse collapse settingHeader' data-type='controls' id='controlsCollapse' role='tabpanel'>
+                <div class='panel-body' style='padding:0;'>
+                  <div class='panel-content' style='padding: 0;'>
+                    <div class='topcoat-button-bar' style='margin-left: auto; margin-right: auto;'>
+                      <div class='topcoat-button-bar__item'>
+                        <button class='topcoat-button-bar__button--large settingButton' id='controlsTranslate'>
+                          Translate
+                        </button>
+                      </div>
+                      <div class='topcoat-button-bar__item'>
+                        <button class='topcoat-button-bar__button--large settingButton' id='controlsRotate'>
+                          Rotate
+                        </button>
+                      </div>
+                      <div class='topcoat-button-bar__item'>
+                        <button class='topcoat-button-bar__button--large settingButton' id='controlsScale'>
+                          Scale
+                        </button>
+                      </div>
+                      <div class='topcoat-button-bar__item'>
+                        <button class='topcoat-button-bar__button--large settingButton' id='controlsSpace'>
+                          Scale
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class='row panel-content'>
+                    <div class='col-md-12 panel-content-title'>
+                      Control Mode: Translate
+                    </div>
+                  </div>
+                  <div class='row panel-content'>
+                    <div class='col-md-12 panel-content-title'>
+                      Control Space: Global
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class='column' id='center'>

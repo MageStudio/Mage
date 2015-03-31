@@ -31,6 +31,10 @@ Class("LightManager", {
                     o.light.target.position.copy(o.target.position);
                     o.light.target.updateMatrixWorld();
                 }
+                if (o.holder) {
+                    o.light.position.copy(o.holder.position);
+                    o.light.updateMatrixWorld();
+                }
                 if (o.helper) {
                     o.helper.update();
                 }
@@ -50,7 +54,11 @@ Class("LightManager", {
             //forcing scene update
             app.sm.update();
             //adding to transform
-            app.sm.transformControl.attach(object.light);
+            if (object.holder) {
+                app.sm.select(object.holder, "translate");
+            } else {
+                app.sm.select(object.light, "translate");
+            }
             //check if this light has helper
             if (object.helper) {
                 //adding helper to scene
@@ -70,9 +78,24 @@ Class("LightManager", {
                 //add target to the scene
                 app.sm.scene.add(object.target);
                 //adding target to meshes list
+                // #TODO remove this when exporting
                 app.mm.meshes.push(object.target);
                 //adding click listener to target
                 app.interface.meshEvents.bind(object.target, "click", function(event) {
+                    if (app.sm.lastClicked.uuid === event.target.uuid) return;
+                    app.sm.deselect();
+                    app.sm.select(event.target, "translate");
+                });
+            }
+            //check if we need to use holder
+            if (object.holder) {
+                //adding holder to the scene
+                app.sm.scene.add(object.holder);
+                //adding holder to meshesh list -- do we really need to do this?
+                // #TODO remove this when exporting
+                app.mm.meshes.push(object.holder);
+                //adding click listener to holder
+                app.interface.meshEvents.bind(object.holder, "click", function(event) {
                     if (app.sm.lastClicked.uuid === event.target.uuid) return;
                     app.sm.deselect();
                     app.sm.select(event.target, "translate");
@@ -91,7 +114,8 @@ Class("LightManager", {
         return {
             "light": light,
             "helper": false,
-            target: false
+            target: false,
+            holder: false
         };
 
     },
@@ -106,7 +130,8 @@ Class("LightManager", {
         return {
             light: pointLight,
             helper: pointLightHelper,
-            target: false
+            target: false,
+            holder: false
         };
     },
 
@@ -120,11 +145,13 @@ Class("LightManager", {
         var geo = new THREE.SphereGeometry(20, 4, 4);
         var mat = new THREE.MeshBasicMaterial({wireframe: false, color: 0x0000ff});
         var target = new THREE.Mesh(geo, mat);
+        var holder = new THREE.Mesh(geo, mat);
 
         return {
             light: directionalLight,
             helper: directionalLightHelper,
-            target: target
+            target: target,
+            holder: holder
         };
     }
 
