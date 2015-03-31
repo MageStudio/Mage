@@ -9,6 +9,8 @@ Class("SceneManager", {
         this.lastClicked = {uuid: ""};
         this.availableTransformModes = ["translate", "rotate", "scale"];
         this.currentTransformSpace = "local";
+        //holder for hierarchy.
+        this.hierarchy = 0;
     },
 
     update: function() {
@@ -42,6 +44,17 @@ Class("SceneManager", {
 
         // creating scene
         this.scene = new THREE.Scene();
+
+        //rewriting scene.traverse method
+        this.scene.traverse = function ( callback ) {
+            callback( this );
+            if (this.children.length > 0 ) app.sm.hierarchy++;
+
+            for ( var i = 0, l = this.children.length; i < l; i ++ ) {
+                this.children[ i ].traverse( callback );
+            }
+            if (app.sm.hierarchy > 0) app.sm.hierarchy--;
+        }
 
         // attaching grid to the scene
         this.grid = new THREE.GridHelper(1000,100);

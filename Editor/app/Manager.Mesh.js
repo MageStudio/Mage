@@ -36,6 +36,7 @@ Class("MeshManager", {
             var mesh = this["_add"+__upperCaseFirstLetter__(type)]();
             //changing mesh name
             mesh.name = "Mesh_"+this.meshCount;
+            mesh.flag = "mesh";
             //add new mesh to the scene and to meshes list
             app.sm.scene.add(mesh);
             app.mm.meshes.push(mesh);
@@ -54,6 +55,8 @@ Class("MeshManager", {
             });
             //increasing meshcount
             this.meshCount++;
+            //calling addedmesh event
+            app.interface.events.meshAdded.dispatch();
         }
     },
 

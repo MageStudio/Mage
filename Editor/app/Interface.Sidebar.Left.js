@@ -42,7 +42,16 @@ Class("LeftSidebar", {
 
     //events listeners for mesh, light and sound added
     onMeshAdded: function() {
-
+        //first we clear the list
+        $('#sceneHierarchy').html("");
+        //traversing the scene then adding elements;
+        app.sm.scene.traverse(function(object) {
+            if (object.flag == "mesh") {
+                var c = (app.interface.hierarchy > 0) ? "son" : "parent";
+                var margin = app.interface.hierarchy * 20;
+                $('#sceneHierarchy').append('<li data-uuid="'+object.uuid+'" class="'+c+'" style="margin-left:'+margin+'px;">'+object.name+'</li>')
+            }
+        });
     },
 
     onLightAdded: function() {

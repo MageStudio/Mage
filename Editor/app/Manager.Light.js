@@ -49,6 +49,7 @@ Class("LightManager", {
             var object = this["_add"+__upperCaseFirstLetter__(type)]();
             //setting light name
             object.light.name = "Light_"+this.lightCount;
+            object.light.flag = "light";
             //add light to scene
             app.sm.scene.add(object.light)
             //pushing light into array
@@ -76,9 +77,14 @@ Class("LightManager", {
                     app.sm.deselect();
                     app.sm.select(event.target.light, "translate");
                 });
+                //calling addedmesh event
+                app.interface.events.meshAdded.dispatch();
             }
             //check if this has target
             if (object.target) {
+                //Setting target name
+                object.target.name = "Target_"+this.lightCount;
+                object.target.flag = "target";
                 //add target to the scene
                 app.sm.scene.add(object.target);
                 //adding target to meshes list
@@ -90,9 +96,14 @@ Class("LightManager", {
                     app.sm.deselect();
                     app.sm.select(event.target, "translate");
                 });
+                //calling addedmesh event
+                app.interface.events.meshAdded.dispatch();
             }
             //check if we need to use holder
             if (object.holder) {
+                //Setting holder name
+                object.holder.name = "Holder_"+this.lightCount;
+                object.holder.flag = "holder";
                 //adding holder to the scene
                 app.sm.scene.add(object.holder);
                 //adding holder to meshesh list -- do we really need to do this?
@@ -104,6 +115,8 @@ Class("LightManager", {
                     app.sm.deselect();
                     app.sm.select(event.target, "translate");
                 });
+                //calling addedmesh event
+                app.interface.events.meshAdded.dispatch();
             }
             //increasing light count
             this.lightCount++;
