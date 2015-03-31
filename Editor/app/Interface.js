@@ -64,6 +64,8 @@ Class("Interface", {
     setListeners: function() {
         //setting listeners for interface objects
         this.sidebarHelper.setListeners();
+        this.leftSidebar.setListeners();
+        this.rightSidebar.setListeners();
         //setting onykeydown listener
         document.addEventListener('keydown', app.interface.onKeyDown, false);
         //setting resize event listener

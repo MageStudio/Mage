@@ -40,13 +40,6 @@ Class("SceneManager", {
         this.camera.position.set( 1000, 500, 1000 );
         this.camera.lookAt( new THREE.Vector3( 0, 200, 0 ) );
 
-
-        this.controls = new THREE.OrbitControls( this.camera );
-        this.controls.damping = 0.2;
-        //setting max distance
-        this.controls.maxDistance = 4000;
-        this.controls.addEventListener( 'change', app.sm.render );
-
         // creating scene
         this.scene = new THREE.Scene();
 
@@ -69,6 +62,13 @@ Class("SceneManager", {
         this.stats.domElement.style.top = '0px';
         this.stats.domElement.style.zIndex = 100;
         this.container.appendChild( this.stats.domElement );
+
+        //creating orbit controls
+        this.controls = new THREE.OrbitControls( this.camera );
+        this.controls.damping = 0.2;
+        //setting max distance
+        this.controls.maxDistance = 4000;
+        this.controls.addEventListener( 'change', app.sm.render );
 
         // creating transform control
         this.transformControl = new THREE.TransformControls( this.camera, this.renderer.domElement );
@@ -120,7 +120,7 @@ Class("SceneManager", {
 
     //fog color changed event
     onFogColorChanged: function(color) {
-        app.sm.scene.fog = new THREE.FogExp2(color);
+        app.sm.scene.fog = new THREE.FogExp2(color, 0.001);
     },
 
     //selecting and deselecting meshes

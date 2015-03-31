@@ -152,16 +152,21 @@
                                 .panel-body{:style=>"padding:0;"}
                                     .row.panel-content
                                         .col-md-4.panel-content-title
-                                            Color
-                                        .col-md-8
-                                            %input.color{:style=>"width: 80px; margin-top: 4px;", "data-toggle"=>"fog"}
-                                    .row.panel-content
-                                        .col-md-4.panel-content-title
                                             Enabled
                                         .col-md-8
                                             %label.topcoat-switch
                                                 %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"fog"}
                                                 .topcoat-switch__toggle
+                                    .row.panel-content
+                                        .col-md-4.panel-content-title
+                                            Color
+                                        .col-md-8
+                                            %input.color{:style=>"width: 80px; margin-top: 4px;", "data-toggle"=>"fog"}
+                                    .row.panel-content
+                                        .col-md-4.panel-content-title
+                                            Density
+                                        .col-md-8
+                                            %input.topcoat-range{:style=>"width: 80px; margin-top: 4px;", :type=>"range", "data-toggle"=>"fog"}
                         / here secondo expandable
                 #center.column
                     #scenecontainer
