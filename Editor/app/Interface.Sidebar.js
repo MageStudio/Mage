@@ -4,10 +4,11 @@ Class("Sidebar", {
     },
 
     setListeners: function() {
+        //disabling events on mouse enter
         $('#'+this.type+"-column").mouseenter(function() {
-            app.interface.isModalShowing = true;
+            app.interface.disableEvents = true;
         }).mouseleave(function() {
-            app.interface.isModalShowing = false;
+            app.interface.disableEvents = false;
         });
     }
 });

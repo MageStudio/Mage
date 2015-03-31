@@ -383,7 +383,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onMouseDown( event ) {
 
-		if (app.interface.isModalShowing) return;
+		if (app.interface.disableEvents) return;
 
 		if ( scope.enabled === false ) return;
 		event.preventDefault();
@@ -421,7 +421,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onMouseMove( event ) {
 
-		if (app.interface.isModalShowing) return;
+		if (app.interface.disableEvents) return;
 
 		if ( scope.enabled === false ) return;
 
@@ -482,7 +482,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onMouseUp( /* event */ ) {
 
-		if (app.interface.isModalShowing) return;
+		if (app.interface.disableEvents) return;
 
 		if ( scope.enabled === false ) return;
 
@@ -495,7 +495,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onMouseWheel( event ) {
 
-		if (app.interface.isModalShowing) return;
+		if (app.interface.disableEvents) return;
 
 		if ( scope.enabled === false || scope.noZoom === true || state !== STATE.NONE ) return;
 
@@ -532,7 +532,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function onKeyDown( event ) {
 
-		if (app.interface.isModalShowing) return;
+		if (app.interface.disableEvents) return;
 
 		if ( scope.enabled === false || scope.noKeys === true || scope.noPan === true ) return;
 
@@ -564,7 +564,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function touchstart( event ) {
 
-		if (app.interface.isModalShowing) return;
+		if (app.interface.disableEvents) return;
 
 		if ( scope.enabled === false ) return;
 
@@ -612,7 +612,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function touchmove( event ) {
 
-		if (app.interface.isModalShowing) return;
+		if (app.interface.disableEvents) return;
 
 		if ( scope.enabled === false ) return;
 
@@ -693,7 +693,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 
 	function touchend( /* event */ ) {
 		
-		if (app.interface.isModalShowing) return;
+		if (app.interface.disableEvents) return;
 
 		if ( scope.enabled === false ) return;
 
@@ -703,7 +703,7 @@ THREE.OrbitControls = function ( object, domElement ) {
 	}
 
 	this.domElement.addEventListener( 'contextmenu', function ( event ) { 
-		if (app.interface.isModalShowing) return;
+		if (app.interface.disableEvents) return;
 		event.preventDefault(); 
 	}, false );
 	this.domElement.addEventListener( 'mousedown', onMouseDown, false );

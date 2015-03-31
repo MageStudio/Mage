@@ -253,7 +253,7 @@ THREEx.DomEvents.prototype._bound	= function(eventName, object3d)
 
 THREEx.DomEvents.prototype._onMove	= function(eventName, mouseX, mouseY, origDomEvent)
 {
-	if (app.interface.isModalShowing) return;
+	if (app.interface.disableEvents) return;
 //console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])
 	// get objects bound to this event
 	var boundObjs	= this._boundObjs[eventName];
@@ -305,7 +305,7 @@ THREEx.DomEvents.prototype._onMove	= function(eventName, mouseX, mouseY, origDom
 
 THREEx.DomEvents.prototype._onEvent	= function(eventName, mouseX, mouseY, origDomEvent)
 {
-	if (app.interface.isModalShowing) return;
+	if (app.interface.disableEvents) return;
 //console.log('eventName', eventName, 'boundObjs', this._boundObjs[eventName])
 	// get objects bound to this event
 	var boundObjs	= this._boundObjs[eventName];
@@ -378,14 +378,14 @@ THREEx.DomEvents.prototype._onMouseUp	= function(event){ return this._onMouseEve
 
 THREEx.DomEvents.prototype._onMouseEvent	= function(eventName, domEvent)
 {
-	if (app.interface.isModalShowing) return;
+	if (app.interface.disableEvents) return;
 	var mouseCoords = this._getRelativeMouseXY(domEvent);
 	this._onEvent(eventName, mouseCoords.x, mouseCoords.y, domEvent);
 }
 
 THREEx.DomEvents.prototype._onMouseMove	= function(domEvent)
 {
-	if (app.interface.isModalShowing) return;
+	if (app.interface.disableEvents) return;
 	var mouseCoords = this._getRelativeMouseXY(domEvent);
 	this._onMove('mousemove', mouseCoords.x, mouseCoords.y, domEvent);
 	this._onMove('mouseover', mouseCoords.x, mouseCoords.y, domEvent);
@@ -394,20 +394,20 @@ THREEx.DomEvents.prototype._onMouseMove	= function(domEvent)
 
 THREEx.DomEvents.prototype._onClick		= function(event)
 {
-	if (app.interface.isModalShowing) return;
+	if (app.interface.disableEvents) return;
 	// TODO handle touch ?
 	this._onMouseEvent('click'	, event);
 }
 THREEx.DomEvents.prototype._onDblClick		= function(event)
 {
-	if (app.interface.isModalShowing) return;
+	if (app.interface.disableEvents) return;
 	// TODO handle touch ?
 	this._onMouseEvent('dblclick'	, event);
 }
 
 THREEx.DomEvents.prototype._onContextmenu	= function(event)
 {
-	if (app.interface.isModalShowing) return;
+	if (app.interface.disableEvents) return;
 	//TODO don't have a clue about how this should work with touch..
 	this._onMouseEvent('contextmenu'	, event);
 }
@@ -423,7 +423,7 @@ THREEx.DomEvents.prototype._onTouchEnd	= function(event){ return this._onTouchEv
 
 THREEx.DomEvents.prototype._onTouchMove	= function(domEvent)
 {
-	if (app.interface.isModalShowing) return;
+	if (app.interface.disableEvents) return;
 
 	if( domEvent.touches.length != 1 )	return undefined;
 
@@ -438,7 +438,7 @@ THREEx.DomEvents.prototype._onTouchMove	= function(domEvent)
 
 THREEx.DomEvents.prototype._onTouchEvent	= function(eventName, domEvent)
 {
-	if (app.interface.isModalShowing) return;
+	if (app.interface.disableEvents) return;
 	
 	if( domEvent.touches.length != 1 )	return undefined;
 

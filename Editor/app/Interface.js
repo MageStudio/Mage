@@ -16,7 +16,7 @@ Class("Interface", {
         ];
 
         //flag for modal showing
-        this.isModalShowing = false;
+        this.disableEvents = false;
         this.colorPickerClicked = undefined;
 
         // pool of events listeners
@@ -74,10 +74,10 @@ Class("Interface", {
         window.addEventListener('mousedown', app.interface.onMouseDown, false);
         //setting listeners for modals events
         $('.wagemodal').on('show.bs.modal', function() {
-            app.interface.isModalShowing = true;
+            app.interface.disableEvents = true;
         });
         $('.wagemodal').on('hide.bs.modal', function() {
-            app.interface.isModalShowing = false;
+            app.interface.disableEvents = false;
         });
         //setting listener for collapse event
         $('.settingHeader').on('show.bs.collapse', function() {
@@ -95,12 +95,12 @@ Class("Interface", {
         $('input.color').ColorPicker({
             color: '#0000ff',
             onShow: function (colpkr) {
-                app.interface.isModalShowing = true;
+                app.interface.disableEvents = true;
                 $(colpkr).fadeIn(500);
                 return false;
             },
             onHide: function (colpkr) {
-                app.interface.isModalShowing = false;
+                app.interface.disableEvents = false;
                 app.interface.colorPickerClicked = undefined;
                 $(colpkr).fadeOut(500);
                 return false;

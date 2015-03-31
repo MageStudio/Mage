@@ -724,7 +724,7 @@
 
 		function onPointerHover( event ) {
 
-			if (app.interface.isModalShowing) return;
+			if (app.interface.disableEvents) return;
 
 			if ( scope.object === undefined || _dragging === true ) return;
 
@@ -754,7 +754,7 @@
 
 		function onPointerDown( event ) {
 
-			if (app.interface.isModalShowing) return;
+			if (app.interface.disableEvents) return;
 
 			if ( scope.object === undefined || _dragging === true ) return;
 
@@ -802,7 +802,7 @@
 
 		function onPointerMove( event ) {
 
-			if (app.interface.isModalShowing) return;
+			if (app.interface.disableEvents) return;
 
 			if ( scope.object === undefined || scope.axis === null || _dragging === false ) return;
 
@@ -974,7 +974,7 @@
 
 		function onPointerUp( event ) {
 
-			if (app.interface.isModalShowing) return;
+			if (app.interface.disableEvents) return;
 
 			if ( _dragging && ( scope.axis !== null ) ) {
 				mouseUpEvent.mode = _mode;
