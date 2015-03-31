@@ -8,6 +8,7 @@ Class("SceneManager", {
         //holding clicked mesh
         this.lastClicked = {uuid: ""};
         this.availableTransformModes = ["translate", "rotate", "scale"];
+        this.currentTransformSpace = "local";
     },
 
     update: function() {
@@ -35,7 +36,6 @@ Class("SceneManager", {
     },
 
     init: function() {
-
         this.camera = new THREE.PerspectiveCamera( 70, $(this.container).width() / $(this.container).height(), 1, 5000 );
         this.camera.position.set( 1000, 500, 1000 );
         this.camera.lookAt( new THREE.Vector3( 0, 200, 0 ) );
@@ -90,6 +90,8 @@ Class("SceneManager", {
 
         //adding fog color change listener
         app.interface.events.fogColorChange.add(this.onFogColorChanged);
+        //adding fog density change listener
+        app.interface.events.fogDensityChange.add(this.onFogDensityChanged);
     },
 
     onWindowResize: function() {
@@ -121,6 +123,12 @@ Class("SceneManager", {
     //fog color changed event
     onFogColorChanged: function(color) {
         app.sm.scene.fog = new THREE.FogExp2(color, 0.001);
+    },
+
+    onFogDensityChanged: function(value) {
+        if (app.sm.scene.fog.density) {
+            app.sm.scene.fog.density = value;
+        }
     },
 
     //selecting and deselecting meshes

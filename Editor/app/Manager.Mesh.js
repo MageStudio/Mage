@@ -14,6 +14,7 @@ Class("MeshManager", {
             "tube",
             "thorus"
         ];
+        this.meshCount = 0;
     },
 
     store: function(uuid, element) {
@@ -33,6 +34,8 @@ Class("MeshManager", {
         if (this.allowedMeshes.indexOf(type) != -1) {
             //we're creating a valid mesh
             var mesh = this["_add"+__upperCaseFirstLetter__(type)]();
+            //changing mesh name
+            mesh.name = "Mesh_"+this.meshCount;
             //add new mesh to the scene and to meshes list
             app.sm.scene.add(mesh);
             app.mm.meshes.push(mesh);
@@ -49,6 +52,8 @@ Class("MeshManager", {
                 app.sm.deselect();
                 app.sm.select(event.target, "translate");
             });
+            //increasing meshcount
+            this.meshCount++;
         }
     },
 

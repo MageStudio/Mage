@@ -34,11 +34,22 @@ Class("Interface", {
             transformSizeChange: new signals.Signal(),
             //on deselect all
             deselectedAll: new signals.Signal(),
+            //on selected mesh
+            selectedMesh: new signals.Signal(),
 
             //fog enabled/disabled flag
             fogChange: new signals.Signal(),
             //fog color changed event
-            fogColorChange: new signals.Signal()
+            fogColorChange: new signals.Signal(),
+            //fog density changed event
+            fogDensityChange: new signals.Signal(),
+
+            //mesh added event
+            meshAdded: new signals.Signal(),
+            //light added event
+            lightAdded: new signals.Signal(),
+            //sound added event
+            soundAdded: new signals.Signal()
         };
 
         //flags

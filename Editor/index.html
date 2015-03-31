@@ -238,7 +238,7 @@
                 </div>
               </div>
             </div>
-            <!-- here secondo expandable -->
+            <!-- here second expandable -->
             <div class='panel panel-default panel-column'>
               <div class='panel-heading' id='controlsHeading' role='tab'>
                 <h6 class='panel-title'>
@@ -269,19 +269,120 @@
                       </div>
                       <div class='topcoat-button-bar__item'>
                         <button class='topcoat-button-bar__button--large settingButton' id='controlsSpace'>
-                          Scale
+                          Space
                         </button>
                       </div>
                     </div>
                   </div>
                   <div class='row panel-content'>
-                    <div class='col-md-12 panel-content-title'>
+                    <div class='col-md-12 panel-content-title' id='controlsMode'>
                       Control Mode: Translate
                     </div>
                   </div>
                   <div class='row panel-content'>
-                    <div class='col-md-12 panel-content-title'>
-                      Control Space: Global
+                    <div class='col-md-12 panel-content-title' id='controlsSpaceValue'>
+                      Control Space: Local
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h6 class='title'>
+              Scene Hierarchy
+            </h6>
+            <!-- third scene hierarchy -->
+            <div class='panel panel-default panel-column'>
+              <div class='panel-heading' id='sceneHeading' role='tab'>
+                <h6 class='panel-title'>
+                  <i class='fa fa-caret-right' id='scenecaret'></i>
+                  <a aria-controls='sceneCollapse' aria-expanded='true' data-parent='#accordion' data-toggle='collapse' href='#sceneCollapse'>
+                    Meshes
+                  </a>
+                </h6>
+              </div>
+              <div aria-labelledby='sceneHeading' class='panel-collapse collapse settingHeader' data-type='scene' id='sceneCollapse' role='tabpanel'>
+                <div class='panel-body' style='padding:0;'>
+                  <div class='panel-content' style='padding: 0;'>
+                    <ul class='hierarchy'>
+                      <li class='parent'>
+                        Ciao
+                      </li>
+                      <li class='son'>
+                        Ciao
+                      </li>
+                      <li class='parent'>
+                        Ciao
+                      </li>
+                      <li class='son'>
+                        Ciao
+                      </li>
+                      <li class='son'>
+                        Ciao
+                      </li>
+                    </ul>
+                  </div>
+                  <div class='row panel-content'>
+                    <div class='col-md-12 panel-content-title' id='sceneVertex'>
+                      Vertices: 0
+                    </div>
+                  </div>
+                  <div class='row panel-content'>
+                    <div class='col-md-12 panel-content-title' id='sceneFaces'>
+                      Faces: 0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- fourth lights -->
+            <div class='panel panel-default panel-column'>
+              <div class='panel-heading' id='lightsHeading' role='tab'>
+                <h6 class='panel-title'>
+                  <i class='fa fa-caret-right' id='lightscaret'></i>
+                  <a aria-controls='lightsCollapse' aria-expanded='true' data-parent='#accordion' data-toggle='collapse' href='#lightsCollapse'>
+                    Lights
+                  </a>
+                </h6>
+              </div>
+              <div aria-labelledby='lightsHeading' class='panel-collapse collapse settingHeader' data-type='lights' id='lightsCollapse' role='tabpanel'>
+                <div class='panel-body' style='padding:0;'>
+                  <div class='panel-content' style='padding: 0;'>
+                    <ul class='hierarchy'>
+                      <li>
+                        Ciao
+                      </li>
+                    </ul>
+                  </div>
+                  <div class='row panel-content'>
+                    <div class='col-md-12 panel-content-title' id='lightsVertex'>
+                      Light: 0
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- fifth sounds -->
+            <div class='panel panel-default panel-column'>
+              <div class='panel-heading' id='soundsHeading' role='tab'>
+                <h6 class='panel-title'>
+                  <i class='fa fa-caret-right' id='soundscaret'></i>
+                  <a aria-controls='soundsCollapse' aria-expanded='true' data-parent='#accordion' data-toggle='collapse' href='#soundsCollapse'>
+                    Sounds
+                  </a>
+                </h6>
+              </div>
+              <div aria-labelledby='soundsHeading' class='panel-collapse collapse settingHeader' data-type='sounds' id='soundsCollapse' role='tabpanel'>
+                <div class='panel-body' style='padding:0;'>
+                  <div class='panel-content' style='padding: 0;'>
+                    <ul class='hierarchy'>
+                      <li>
+                        Ciao
+                      </li>
+                    </ul>
+                  </div>
+                  <div class='row panel-content'>
+                    <div class='col-md-12 panel-content-title' id='soundsVertex'>
+                      Sounds: 0
                     </div>
                   </div>
                 </div>

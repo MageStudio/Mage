@@ -10,6 +10,8 @@ Class("LightManager", {
             "pointLight",
             "directionalLight"
         ];
+        //lights count
+        this.lightCount = 0;
     },
 
     setListeners: function() {
@@ -27,13 +29,13 @@ Class("LightManager", {
             var start = +new Date();
             do {
                 var o = this.map.get(keys_list.shift());
-                if (o.target) {
-                    o.light.target.position.copy(o.target.position);
-                    o.light.target.updateMatrixWorld();
-                }
                 if (o.holder) {
                     o.light.position.copy(o.holder.position);
                     o.light.updateMatrixWorld();
+                }
+                if (o.target) {
+                    o.light.target.position.copy(o.target.position);
+                    o.light.target.updateMatrixWorld();
                 }
                 if (o.helper) {
                     o.helper.update();
@@ -45,6 +47,8 @@ Class("LightManager", {
     addLight: function(type) {
         if (this.allowedLights.indexOf(type) != -1) {
             var object = this["_add"+__upperCaseFirstLetter__(type)]();
+            //setting light name
+            object.light.name = "Light_"+this.lightCount;
             //add light to scene
             app.sm.scene.add(object.light)
             //pushing light into array
@@ -101,6 +105,8 @@ Class("LightManager", {
                     app.sm.select(event.target, "translate");
                 });
             }
+            //increasing light count
+            this.lightCount++;
         }
     },
 

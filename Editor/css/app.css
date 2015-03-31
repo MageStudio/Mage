@@ -116,3 +116,41 @@ a {
     height: 40px;
     background: #222;
 }
+
+
+/*
+    
+    LEFT SIDEBAR CSS
+
+*/
+
+.hierarchy {
+    border-bottom: 1px solid #282828;
+    padding-bottom: 10px;
+}
+
+.hierarchy .parent {
+    list-style-image: url("../img/arrow_list.png");
+    margin: 5px;
+}
+
+.hierarchy .son {
+    list-style-image: url("../img/arrow.png");
+    margin: 5px 0px 0px 20px;
+}
+
+.hierarchy .parent:after {
+    background: blue;
+    height: 10px;
+    width: 10px;
+    position: relative;
+    float: left;
+}
+
+.hierarchy .son:after {
+    background: blue;
+    height: 10px;
+    width: 10px;
+    position: relative;
+    float: left;
+}
