@@ -2,6 +2,7 @@ function Builder() {
 
 	this.ncp = require("ncp").ncp;
 	this.colors = require("colors");
+	this.global = require("node-prefix").global;
 
 	Builder.prototype.create = function ( projectName ) {
 		
@@ -11,10 +12,11 @@ function Builder() {
 
 		console.log("...".blue);
 		console.log("This script will create your ");
-		console.log("project in just a few seconds.");
+		console.log("project in just a few (milli)seconds.");
 		
+		var PATH = this.global("wage")+"/build";
 
-		this.ncp("/usr/local/lib/node_modules/wage/build", projectName, function (err) {
+		this.ncp(PATH, projectName, function (err) {
 			if (err) {
 				console.log("\n\nSomething went wrong.");
 				console.error(err);

@@ -29,7 +29,8 @@
   ],
   "dependencies": {
     "ncp": "*",
-    "colors": "*"
+    "colors": "*",
+    "node-prefix": "*"
   },
   "devDependencies": {
     "grunt": "~0.4.5",
