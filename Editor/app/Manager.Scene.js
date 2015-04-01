@@ -151,6 +151,9 @@ Class("SceneManager", {
         this.transformControl.attach(mesh);
         //setting lastclicked in meshmanager
         this.lastclicked = mesh;
+
+        //triggering select mesh event
+        app.interface.events.selectedMesh.dispatch();
     },
 
     deselect: function(mesh) {
