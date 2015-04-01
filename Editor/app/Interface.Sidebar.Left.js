@@ -108,16 +108,13 @@ Class("LeftSidebar", {
     //on light added
     onlightAdded: function() {
         var keys_list = app.lm.map.keys.concat(); 
+        //writing lights count
+        $('#lightsCount').text("Lights: " + keys_list.length);
         if (keys_list.length != 0) {
             var start = +new Date();
             do {
                 var o = app.lm.map.get(keys_list.shift());
                 var uuid = o.light.uuid;
-                /*if (o.holder) {
-                    uuid = o.holder.uuid;
-                } else if (o.helper) {
-                    uuid = o.helper.uuid;
-                }*/
                 var f = "parent light_flag";
                 if (app.interface.leftSidebar.lastClicked == o.uuid) {
                     f += " selected";
