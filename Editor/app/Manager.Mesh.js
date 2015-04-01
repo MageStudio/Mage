@@ -37,17 +37,17 @@ Class("MeshManager", {
             //changing mesh name
             mesh.name = "Mesh_"+this.meshCount;
             mesh.flag = "mesh";
-            //add new mesh to the scene and to meshes list
-            app.sm.scene.add(mesh);
-            app.mm.meshes.push(mesh);
             //store new mesh in our map
             app.mm.store(mesh.uuid, mesh);
+            //add new mesh to the scene and to meshes list
+            app.sm.scene.add(app.mm.map.get(mesh.uuid));
+            app.mm.meshes.push(app.mm.map.get(mesh.uuid));
             //forcing scene to update itself
             app.sm.update();
             //attach new mesh to transform control
             //app.sm.transformControl.attach(mesh);
             //creating a callback for our mesh
-            app.interface.meshEvents.bind(mesh, "click", function(event) {
+            app.interface.meshEvents.bind(app.mm.map.get(mesh.uuid), "click", function(event) {
                 //now only adding this mesh to the transform control
                 if (app.sm.lastClicked.uuid == event.target.uuid) return;
                 app.sm.deselect();

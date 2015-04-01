@@ -209,7 +209,7 @@
                                     .panel-content{:style=>"padding: 0;"}
                                         %ul#sceneHierarchy.hierarchy
                                     .row.panel-content
-                                        #sceneVertex.col-md-12.panel-content-title
+                                        #sceneVertices.col-md-12.panel-content-title
                                             Vertices: 0
                                     .row.panel-content
                                         #sceneFaces.col-md-12.panel-content-title
@@ -224,7 +224,7 @@
                             #lightsCollapse.panel-collapse.collapse.settingHeader{:role=>"tabpanel", "aria-labelledby"=>"lightsHeading", "data-type"=>"lights"}
                                 .panel-body{:style=>"padding:0;"}
                                     .panel-content{:style=>"padding: 0;"}
-                                        %ul.hierarchy
+                                        %ul#lightHierarchy.hierarchy
                                             %li
                                                 Ciao
                                     .row.panel-content
@@ -240,9 +240,7 @@
                             #soundsCollapse.panel-collapse.collapse.settingHeader{:role=>"tabpanel", "aria-labelledby"=>"soundsHeading", "data-type"=>"sounds"}
                                 .panel-body{:style=>"padding:0;"}
                                     .panel-content{:style=>"padding: 0;"}
-                                        %ul.hierarchy
-                                            %li
-                                                Ciao
+                                        %ul#soundsHierarchy.hierarchy
                                     .row.panel-content
                                         #soundsVertex.col-md-12.panel-content-title
                                             Sounds: 0

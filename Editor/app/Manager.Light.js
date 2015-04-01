@@ -120,6 +120,8 @@ Class("LightManager", {
             }
             //increasing light count
             this.lightCount++;
+            //triggering light added event
+            app.interface.events.lightAdded.dispatch();
         }
     },
 

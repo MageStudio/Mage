@@ -127,12 +127,29 @@ a {
 .hierarchy {
     border-bottom: 1px solid #282828;
     padding-bottom: 10px;
+    overflow: auto;
+    max-width: 100%;
+    max-height: 200px;
+}
+
+.hierarchy .parent, .son {
+    font-size: 14px;
+}
+
+.hierarchy .parent:hover, .son:hover {
+    background: #2a9fd6;
 }
 
 .hierarchy .parent {
-    list-style-image: url("../img/arrow_list.png");
+    list-style-image: url("../img/mesh_flag.png");
     margin: 5px;
 }
+
+.hierarchy .parent.mesh_flag {list-style-image: url("../img/mesh_flag.png");}
+.hierarchy .parent.light_flag {list-style-image: url("../img/light_flag.png");}
+.hierarchy .parent.sound_flag {list-style-image: url("../img/sound_flag.png");}
+
+.hierarchy .parent.selected, .son.selected {list-style-image: url("../img/selected_flag.png") !important;}
 
 .hierarchy .son {
     list-style-image: url("../img/arrow.png");
