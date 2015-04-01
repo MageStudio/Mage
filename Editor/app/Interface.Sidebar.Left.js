@@ -40,8 +40,10 @@ Class("LeftSidebar", {
         app.interface.events.meshAdded.add(this.onAdded)
         //registering for light added event
         app.interface.events.lightAdded.add(this.onAdded);
+        app.interface.events.lightAdded.add(this.onlightAdded);
         //registering for sound added event
         app.interface.events.soundAdded.add(this.onAdded);
+        app.interface.events.soundAdded.add(this.onSoundAdded);
     },
 
     //events listeners for mesh, light and sound added
@@ -85,15 +87,68 @@ Class("LeftSidebar", {
                 //retrieving mesh
                 o = app.mm.map.get(uuid);
                 //selecting the mesh
+                app.sm.deselect();
                 app.sm.select(o, "translate");
             } else if (flag == "light") {
                 //retrieving light
-                o = app.sm.scene.getObjectByProperty("uuid", uuid);
+                o = app.lm.map.get(uuid);
                 //selecting the light
-                app.sm.select(o.light);
+                app.sm.deselect();
+                if (o.holder) {
+                    app.sm.select(o.holder, "translate");
+                } else {
+                    app.sm.select(o.light, "translate");
+                }
             } else {
                 console.log("bazza");
             }
         });
+    },
+
+    //on light added
+    onlightAdded: function() {
+        var keys_list = app.lm.map.keys.concat(); 
+        if (keys_list.length != 0) {
+            var start = +new Date();
+            do {
+                var o = app.lm.map.get(keys_list.shift());
+                var uuid = o.light.uuid;
+                /*if (o.holder) {
+                    uuid = o.holder.uuid;
+                } else if (o.helper) {
+                    uuid = o.helper.uuid;
+                }*/
+                var f = "parent light_flag";
+                if (app.interface.leftSidebar.lastClicked == o.uuid) {
+                    f += " selected";
+                }
+                $('#lightHierarchy').append('<li id="'+uuid+'" data-uuid="'+uuid+'" class="'+f+'">'+o.light.name+'</li>');
+
+            } while (keys_list.length > 0 && (+new Date() - start < 50));
+        }
+
+        //setting #sceneHierarchy li listeners
+        $('#lightHierarchy li').unbind().click(function() {
+            var uuid = $(this).data("uuid");
+            var flag = $(this).data("flag");
+            //storing uuid of selected
+            app.interface.leftSidebar.lastClicked = uuid;
+            //removing selected class from al elements
+            $('#lightHierarchy li').removeClass("selected");
+            $(this).addClass("selected");
+            //selecting object
+            var o = app.lm.map.get(uuid);
+            app.sm.deselect();
+            if (o.holder) {
+                app.sm.select(o.holder, "translate");
+            } else {
+                app.sm.select(o.light, "translate");
+            }
+        });
+    },
+
+    //on sound added
+    onSoundAdded: function() {
+
     }
 })._extends("Sidebar");
