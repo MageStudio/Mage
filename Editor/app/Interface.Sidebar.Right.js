@@ -1,6 +1,7 @@
 Class("RightSidebar", {
     RightSidebar: function() {
         Sidebar.call(this, "right");
+        this.meshViewOrder = ["meshHeader"];
     },
 
     setListeners: function() {
@@ -16,6 +17,11 @@ Class("RightSidebar", {
     onSelectedMesh: function() {
         //no mesh selected message must disappear
         $('#nomeshselected').addClass('hidden');
+        //we must check element type [mesh, light, sound, model]
+        //loading corresponding views
+        for (var i in app.interface.rightSidebar.meshViewOrder) {
+            app.interface.loader.load(app.interface.rightSidebar.meshViewOrder[i]);
+        }
     },
 
     onDeselectedAll: function() {

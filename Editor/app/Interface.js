@@ -63,6 +63,8 @@ Class("Interface", {
         this.leftSidebar = new LeftSidebar();
         this.rightSidebar = new RightSidebar();
         this.sidebarHelper = new HelperSidebar();
+        //creating sidebar loader
+        this.loader = new SidebarLoader();
         // setting listeners
         this.setListeners();
     },
@@ -77,6 +79,7 @@ Class("Interface", {
         this.sidebarHelper.setListeners();
         this.leftSidebar.setListeners();
         this.rightSidebar.setListeners();
+        this.loader.setListeners();
         //setting onykeydown listener
         document.addEventListener('keydown', app.interface.onKeyDown, false);
         //setting resize event listener

@@ -7,6 +7,7 @@ window.onload = function() {
         "app/Manager.Light",
         "app/Manager.Model",
         "app/Interface.Sidebar",
+        "app/Interface.Sidebar.Loader",
         "app/Interface.Sidebar.Helper",
         "app/Interface.Sidebar.Right",
         "app/Interface.Sidebar.Left"

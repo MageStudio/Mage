@@ -186,4 +186,17 @@ a {
     margin-top: 100px;
 }
 
+#rightContainer {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    font-size: 12px;
+    padding: 10px;
+}
+
+.form-control {
+    height: 24px !important;
+    background-color: #555;
+    color: #ccc;
+}
 
