@@ -51,6 +51,9 @@ Class("MeshManager", {
                 //now only adding this mesh to the transform control
                 if (app.sm.lastClicked.uuid == event.target.uuid) return;
                 app.sm.deselect();
+                //Setting uuid to the scene
+                app.sm.uuid = event.target.uuid;
+                app.sm.typeClicked = "mesh";
                 app.sm.select(event.target, "translate");
             });
             //increasing meshcount

@@ -7,6 +7,8 @@ Class("SceneManager", {
         this.container = document.getElementById( 'scenecontainer' );
         //holding clicked mesh
         this.lastClicked = {uuid: ""};
+        this.uuid = "";
+        this.typeClicked = "";
         this.availableTransformModes = ["translate", "rotate", "scale"];
         this.currentTransformSpace = "local";
         //holder for hierarchy.
@@ -152,8 +154,11 @@ Class("SceneManager", {
         //setting lastclicked in meshmanager
         this.lastclicked = mesh;
 
-        //triggering select mesh event
-        app.interface.events.selectedMesh.dispatch();
+        //triggering select mesh event only if not holder or target, but light or mesh
+        // #TODO remember to add "model" to typeclicked
+        if ((app.sm.typeClicked == "mesh") || (app.sm.typeClicked == "light")) {
+            app.interface.events.selectedMesh.dispatch();
+        }
     },
 
     deselect: function(mesh) {
@@ -165,5 +170,11 @@ Class("SceneManager", {
 
         //triggering on deselect all event
         app.interface.events.deselectedAll.dispatch();
+    },
+
+    //remove object from the scene
+    // #TODO add remove method
+    remove: function(uuid) {
+        
     }
 });

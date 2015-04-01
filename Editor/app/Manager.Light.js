@@ -75,6 +75,9 @@ Class("LightManager", {
                     //now only adding this mesh to the transform control
                     if (app.sm.lastClicked.uuid === event.target.light.uuid) return;
                     app.sm.deselect();
+                    //Setting uuid to the scene
+                    app.sm.uuid = event.target.light.uuid;
+                    app.sm.typeClicked = "light";
                     app.sm.select(event.target.light, "translate");
                 });
                 //calling addedmesh event
@@ -136,7 +139,8 @@ Class("LightManager", {
             "light": light,
             "helper": false,
             target: false,
-            holder: false
+            holder: false,
+            flag: "light"
         };
 
     },
@@ -152,7 +156,8 @@ Class("LightManager", {
             light: pointLight,
             helper: pointLightHelper,
             target: false,
-            holder: false
+            holder: false,
+            flag: "light"
         };
     },
 
@@ -172,7 +177,8 @@ Class("LightManager", {
             light: directionalLight,
             helper: directionalLightHelper,
             target: target,
-            holder: holder
+            holder: holder,
+            flag: "light"
         };
     }
 

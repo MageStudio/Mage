@@ -7,6 +7,7 @@ Class("SidebarLoader", {
         this.views = {
             "meshHeader": "meshheader.html"
         };
+        this.holder = [];
     },
 
     setListeners: function() {
@@ -20,6 +21,23 @@ Class("SidebarLoader", {
             $.ajax(url).done(function(data) {
                 app.interface.loader.container.append(data);
             });
+        }
+    },
+
+    loadArray: function(views, callback) {
+        var view  = views[0];
+        if (!view) {
+            //the end of views array
+            callback();
+        } else {
+            if (view in this.views) {
+                var url = this.baseUrl + "" + this.views[view];
+                $.ajax(url).done(function(data) {
+                    app.interface.loader.container.append(data);
+                    views.reverse().pop();
+                    app.interface.loader.loadArray(views.reverse(), callback);
+                });
+            }
         }
     },
 
