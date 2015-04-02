@@ -45,7 +45,10 @@ Class("RightSidebar", {
         //we must check element type [mesh, light, sound, model]
         //loading corresponding views
         //we should load views depending on mesh properties
-        var views = ["meshHeader", "MeshBasicMaterial"];
+        var o = app.mm.map.get(app.sm.uuid);
+        var views = ["meshHeader"];
+        views.push(o.material.type);
+        //loading views
         app.interface.loader.loadArray(views, function() {
             //resetting interface input listeners
             app.interface.setInputEvents("#meshColor");
@@ -53,7 +56,6 @@ Class("RightSidebar", {
             //this is used only to show values for first time
             //to see what happens when values are changed,
             //see file Interface.Sidebar.MeshListener
-            var o = app.mm.map.get(app.sm.uuid);
 
             //setting name
             $('#meshName').val(o.name);

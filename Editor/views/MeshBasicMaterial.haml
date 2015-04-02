@@ -6,6 +6,24 @@
         %h6.panel-title-medium
             type: MeshBasicMaterial
         .row.panel-content{:style=>"padding-left:0; margin-top: 10px;"}
+            .dropdown{:style=>"margin-bottom:10px;"}
+                #changeMaterial.topcoat-button--large--cta.dropdown-toggle{:type=>"button", "data-toggle"=>"dropdown", "aria-expanded"=>"true", :style=>"margin-left: 13px;height: 20px;line-height: 20px;"}
+                    Change Material
+                    %span.caret
+                %ul.dropdown-menu{:role=>"menu", "aria-labelledby"=>"changeMaterial"}
+                    %li{:role=>"presentation"}
+                        %a{:role=>"menuitem", :tabindex=>"-1", :href=>"#"}
+                            Action
+                    %li{:role=>"presentation"}
+                        %a{:role=>"menuitem", :tabindex=>"-1", :href=>"#"}
+                            Another action
+                    %li{:role=>"presentation"}
+                        %a{:role=>"menuitem", :tabindex=>"-1", :href=>"#"}
+                            Something else here
+                    %li{:role=>"presentation"}
+                        %a{:role=>"menuitem", :tabindex=>"-1", :href=>"#"}
+                            Separated link
+        .row.panel-content{:style=>"padding-left:0;"}
             .col-md-4.panel-content-title
                 Visible
             .col-md-8
