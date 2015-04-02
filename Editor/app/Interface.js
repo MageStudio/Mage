@@ -56,13 +56,24 @@ Class("Interface", {
             //element position change events
             positionChange: new signals.Signal(),
             //element rotation change events
-            rotationChange: new signals.Signal()
+            rotationChange: new signals.Signal(),
+
+            //materials events
+            meshWireframeChange: new signals.Signal(),
+            meshFogChange: new signals.Signal(),
+            meshVisibleChange: new signals.Signal(),
+            meshColorChange: new signals.Signal()
 
         };
 
         //flags
         this.flags = {
-            "fog": false
+            "fog": false,
+            //meshes flags
+            "mesh": true,
+            "meshWireframe": true,
+            "meshFog": true,
+            "meshVisible": true,
         }
     },
 
@@ -110,12 +121,18 @@ Class("Interface", {
             var control = $(this).data("type");
             $('#'+control+'caret').removeClass('fa-caret-down').addClass('fa-caret-right');
         });
-        //settin input color picker
-        document.querySelector('input.color').addEventListener("click", function() {
+        
+        //setting input events: color, slider checkbox
+        this.setInputEvents("#fogColor");
+    },
+
+    setInputEvents: function(inputColorId) {
+        //setting input color picker
+        document.querySelector(inputColorId).addEventListener("click", function() {
             app.interface.colorPickerClicked = this;
             app.interface.disableEvents = true;
         });
-        $('input.color').ColorPicker({
+        $(inputColorId).ColorPicker({
             color: '#0000ff',
             onShow: function (colpkr) {
                 app.interface.disableEvents = true;
@@ -135,22 +152,18 @@ Class("Interface", {
                     var toToggle = $(app.interface.colorPickerClicked).data("toggle");
                     if (app.interface.flags[toToggle]) {
                         //controllo se possiamo cambiare il valore in toToggle
-                        console.log("about to dispatch " +toToggle+"ColorChange");
                         app.interface.events[toToggle+"ColorChange"].dispatch("#"+hex);
                     }
                 }
                 app.interface.disableEvents = true;
             }
         });
-        //setting al toggles
-        $('input[type=checkbox]').on("click", function(event) {
-            console.log(this.checked);
-            console.log("here");
+        //setting all toggles
+        $('input[type=checkbox]').unbind().on("click", function(event) {
+            //retrieving interface flag
             var flag = $(this).data("flag");
-            console.log(flag);
             if (flag in app.interface.flags) {
-                console.log("inside if");
-                console.log(app.interface.flags[flag]);
+                //retriving checked status 
                 app.interface.flags[flag] = this.checked;
                 //triggering event
                 app.interface.events[flag+"Change"].dispatch(app.interface.flags[flag]);

@@ -84,6 +84,14 @@ a {
     height: 35px;
 }
 
+.panel-title-medium {
+    font-size: 14px;
+}
+
+.panel-title-small {
+    font-size: 12px;
+}
+
 .panel-body{
     padding-top: 10px !important;
 }

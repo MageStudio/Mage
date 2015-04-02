@@ -1,0 +1,34 @@
+.panel.panel-default
+    .panel-heading
+        %h3.panel-title
+            Material Properties
+    .panel-body
+        %h6.panel-title-medium
+            type: MeshBasicMaterial
+        .row.panel-content{:style=>"padding-left:0; margin-top: 10px;"}
+            .col-md-4.panel-content-title
+                Visible
+            .col-md-8
+                %label.topcoat-switch
+                    %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshVisible", "checked"=>"true"}
+                    .topcoat-switch__toggle
+        .row.panel-content{:style=>"padding-left:0;"}
+            .col-md-4.panel-content-title
+                Wireframe
+            .col-md-8
+                %label.topcoat-switch
+                    %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshWireframe", "checked"=>"true"}
+                    .topcoat-switch__toggle
+        .row.panel-content{:style=>"padding-left:0;"}
+            .col-md-4.panel-content-title
+                Fog
+            .col-md-8
+                %label.topcoat-switch
+                    %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshFog", "checked"=>"true"}
+                    .topcoat-switch__toggle
+        .row.panel-content{:style=>"padding-left:0;"}
+            .col-md-4.panel-content-title
+                Color
+            .col-md-8
+                %input#meshColor.color{:style=>"width: 80px; margin-top: 4px;", "data-toggle"=>"mesh"}
+

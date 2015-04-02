@@ -6,7 +6,7 @@ Class("SidebarLoader", {
         this.baseUrl = "views/";
         this.views = {
             "meshHeader": "meshheader.html",
-            "material": "material.html"
+            "MeshBasicMaterial": "MeshBasicMaterial.html"
         };
         this.holder = [];
     },

@@ -103,6 +103,8 @@ Class("SceneManager", {
         app.interface.events.transformModeChange.add(this.onTransformModeChange);
         app.interface.events.transformSizeChange.add(this.onTransformSizeChange);
 
+        //adding fog toggle listener
+        app.interface.events.fogChange.add(this.onFogChange);
         //adding fog color change listener
         app.interface.events.fogColorChange.add(this.onFogColorChanged);
         //adding fog density change listener
@@ -144,13 +146,25 @@ Class("SceneManager", {
         }
     },
 
+    //fog toggle
+    onFogChange: function(flag) {
+        if (flag) {
+            app.sm.scene.fog = new THREE.FogExp2("#ffffff", 0.5);
+        } else {
+            app.sm.scene.fog = null;
+        }
+    },
+
     //fog color changed event
     onFogColorChanged: function(color) {
-        app.sm.scene.fog = new THREE.FogExp2(color, 0.001);
+        if (app.sm.scene.fog) {
+            app.sm.scene.fog.color = new THREE.Color(color);
+        }
+        //app.sm.scene.fog = new THREE.FogExp2(color, 1);//0.001);
     },
 
     onFogDensityChanged: function(value) {
-        if (app.sm.scene.fog.density) {
+        if (app.sm.scene.fog) {
             app.sm.scene.fog.density = value;
         }
     },
@@ -161,7 +175,7 @@ Class("SceneManager", {
         this.transformControl.setMode(mode);
         this.transformControl.attach(mesh);
         //setting lastclicked in meshmanager
-        this.lastclicked = mesh;
+        this.lastClicked = mesh;
 
         //triggering select mesh event only if not holder or target, but light or mesh
         // #TODO remember to add "model" to typeclicked
