@@ -5,7 +5,8 @@ Class("SidebarLoader", {
         //storing file names
         this.baseUrl = "views/";
         this.views = {
-            "meshHeader": "meshheader.html"
+            "meshHeader": "meshheader.html",
+            "material": "material.html"
         };
         this.holder = [];
     },

@@ -45,7 +45,7 @@ Class("RightSidebar", {
         //we must check element type [mesh, light, sound, model]
         //loading corresponding views
         //we should load views depending on mesh properties
-        var views = ["meshHeader"];
+        var views = ["meshHeader", "material"];
         app.interface.loader.loadArray(views, function() {
             //we are now sure views have been inflated
             //this is used only to show values for first time

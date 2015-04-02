@@ -87,7 +87,7 @@ Class("SceneManager", {
 
         // creating transform control
         this.transformControl = new THREE.TransformControls( this.camera, this.renderer.domElement );
-        this.transformControl.addEventListener( 'change', app.sm.render );
+        this.transformControl.addEventListener( 'change', app.sm.onTransformChange );
         this.scene.add(this.transformControl);
 
         // calling update and render methods
@@ -115,6 +115,15 @@ Class("SceneManager", {
 
         app.sm.renderer.setSize( $(app.sm.container).width(), $(app.sm.container).height() );
 
+        app.sm.render();
+    },
+
+    //on transform change listener
+    onTransformChange: function() {
+        //triggering events for mesh position/rotation update
+        app.interface.events.positionChange.dispatch();
+        app.interface.events.rotationChange.dispatch();
+        //calling scene render
         app.sm.render();
     },
 
@@ -175,6 +184,6 @@ Class("SceneManager", {
     //remove object from the scene
     // #TODO add remove method
     remove: function(uuid) {
-        
+
     }
 });

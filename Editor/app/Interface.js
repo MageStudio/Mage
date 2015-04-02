@@ -1,18 +1,20 @@
 Class("Interface", {
     Interface: function() {
+        //initializing keyboard object
+        this.keys = new Keyboard();
         //list of recognizable keys
         this.recognizableKeys = [
-            49, // 1
-            50, // 2
-            87, // w
-            69, // e
-            81, // q
-            82, // r
-            187,
-            107, // + = num+
-            189,
-            10, // - _ num-
-            68 // d
+            this.keys.map.NUM_1, // 1
+            this.keys.map.NUM_2, // 2
+            this.keys.map.KEY_W, // w
+            this.keys.map.KEY_E, // e
+            this.keys.map.KEY_Q, // q
+            this.keys.map.KEY_R, // r
+            this.keys.map.KEY_PLUS,
+            this.keys.map.KEY_NUMPAD_PLUS, // + = num+
+            this.keys.map.KEY_MINUS,
+            this.keys.map.KEY_NUMPAD_MINUS, // - _ num-
+            this.keys.map.KEY_D // d
         ];
 
         //flag for modal showing
@@ -49,7 +51,13 @@ Class("Interface", {
             //light added event
             lightAdded: new signals.Signal(),
             //sound added event
-            soundAdded: new signals.Signal()
+            soundAdded: new signals.Signal(),
+
+            //element position change events
+            positionChange: new signals.Signal(),
+            //element rotation change events
+            rotationChange: new signals.Signal()
+
         };
 
         //flags
@@ -158,32 +166,31 @@ Class("Interface", {
         //app.sm.handleInput(event.keyCode);
         if (app.interface.recognizableKeys.indexOf(event.keyCode)!= -1) {
             switch(event.keyCode) {
-                case 50:
-                case 49:
-                    //1 = 49, 2 = 50
+                case app.interface.keys.map.NUM_1:
+                case app.interface.keys.map.NUM_2:
                     app.interface.events.columnToggle.dispatch(""+event.keyCode);
                     break;
-                case 81: // Q
+                case app.interface.keys.map.KEY_Q: // Q
                     app.interface.events.transformSpaceChange.dispatch();
                     break;
-                case 87: // W
+                case app.interface.keys.map.KEY_W:
                     app.interface.events.transformModeChange.dispatch("translate");
                     break;
-                case 69: // E
+                case app.interface.keys.map.KEY_E:
                     app.interface.events.transformModeChange.dispatch("rotate");
                     break;
-                case 82: // R
+                case app.interface.keys.map.KEY_R:
                     app.interface.events.transformModeChange.dispatch("scale");
                     break;
-                case 187:
-                case 107: // +,=,num+
+                case app.interface.keys.map.KEY_PLUS:
+                case app.interface.keys.map.KEY_NUMPAD_PLUS:
                     app.interface.events.transformSizeChange.dispatch(true);
                     break;
-                case 189:
-                case 10: // -,_,num-
+                case app.interface.keys.map.KEY_MINUS:
+                case app.interface.keys.map.KEY_NUMPAD_MINUS: // -,_,num-
                     app.interface.events.transformSizeChange.dispatch(false);
                     break;
-                case 68:
+                case app.interface.keys.map.KEY_D:
                     //deselect
                     app.sm.deselect();
                     break;

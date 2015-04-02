@@ -6,6 +6,7 @@ window.onload = function() {
         "app/Manager.Mesh",
         "app/Manager.Light",
         "app/Manager.Model",
+        "app/Input.Keyboard",
         "app/Interface.Sidebar",
         "app/Interface.Sidebar.MeshListener",
         "app/Interface.Sidebar.Loader",
