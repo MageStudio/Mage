@@ -10,7 +10,7 @@
     </h6>
     <div class='row panel-content' style='padding-left:0; margin-top: 10px;'>
       <div class='dropdown' style='margin-bottom:10px;'>
-        <div aria-expanded='true' class='topcoat-button--large dropdown-toggle' data-toggle='dropdown' id='changeMaterial' style='margin-left: 13px;height: 20px;line-height: 20px;' type='button'>
+        <div aria-expanded='true' class='topcoat-button--large--cta dropdown-toggle' data-toggle='dropdown' id='changeMaterial' style='margin-left: 13px;height: 20px;line-height: 20px;' type='button'>
           Change Material
           <span class='caret'></span>
         </div>
@@ -78,6 +78,58 @@
       <div class='col-md-8'>
         <input class='color' data-toggle='mesh' id='meshColor' style='width: 80px; margin-top: 4px;'>
       </div>
+    </div>
+    <h6 class='panel-title-medium'>
+      Textures
+    </h6>
+    <div class='row panel-content' style='padding-left:0; margin-top:10px;'>
+      <form>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='textureMap'>
+            Texture Map
+          </label>
+          <input id='textureMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Texture.
+          </p>
+        </div>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='lightMap'>
+            Light Map
+          </label>
+          <input id='lightMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Light Map.
+          </p>
+        </div>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='specularMap'>
+            Specular Map
+          </label>
+          <input id='specularMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Specular Map.
+          </p>
+        </div>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='alphaMap'>
+            Alpha Map
+          </label>
+          <input id='alphaMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Alpha Map.
+          </p>
+        </div>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='envMap'>
+            Env Map
+          </label>
+          <input id='envMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Alpha Map.
+          </p>
+        </div>
+      </form>
     </div>
   </div>
 </div>

@@ -150,6 +150,7 @@ Class("SceneManager", {
     onFogChange: function(flag) {
         if (flag) {
             app.sm.scene.fog = new THREE.FogExp2("#ffffff", 0.5);
+            app.sm.render();
         } else {
             app.sm.scene.fog = null;
         }
@@ -161,12 +162,14 @@ Class("SceneManager", {
             app.sm.scene.fog.color = new THREE.Color(color);
         }
         //app.sm.scene.fog = new THREE.FogExp2(color, 1);//0.001);
+        app.sm.render();
     },
 
     onFogDensityChanged: function(value) {
         if (app.sm.scene.fog) {
             app.sm.scene.fog.density = value;
         }
+        app.sm.render();
     },
 
     //selecting and deselecting meshes
@@ -190,6 +193,9 @@ Class("SceneManager", {
             return;
         }
         this.transformControl.detach();
+        //removing old reference
+        app.sm.lastClicked = "";
+        app.sm.typeClicked = "";
 
         //triggering on deselect all event
         app.interface.events.deselectedAll.dispatch();

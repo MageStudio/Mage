@@ -69,7 +69,7 @@ Class("MeshManager", {
         var geo, mat, cube;
 
         geo = new THREE.BoxGeometry(100, 100, 100);
-        mat = new THREE.MeshBasicMaterial({wireframe: true, color: Math.random() * 0xffffff});
+        mat = new THREE.MeshBasicMaterial({wireframe: false, color: Math.random() * 0xffffff});
         cube = new THREE.Mesh(geo, mat);
 
         return cube;

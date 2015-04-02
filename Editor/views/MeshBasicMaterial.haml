@@ -49,4 +49,38 @@
                 Color
             .col-md-8
                 %input#meshColor.color{:style=>"width: 80px; margin-top: 4px;", "data-toggle"=>"mesh"}
+        %h6.panel-title-medium
+            Textures
+        .row.panel-content{:style=>"padding-left:0; margin-top:10px;"}
+            %form
+                .form-group{:style=>"margin-left: 13px;"}
+                    %label{:for=>"textureMap"}
+                        Texture Map
+                    %input#textureMap{:type=>"file", :style=>"width:100%;"}
+                    %p.help-block
+                        Load Texture.
+                .form-group{:style=>"margin-left: 13px;"}
+                    %label{:for=>"lightMap"}
+                        Light Map
+                    %input#lightMap{:type=>"file", :style=>"width:100%;"}
+                    %p.help-block
+                        Load Light Map.
+                .form-group{:style=>"margin-left: 13px;"}
+                    %label{:for=>"specularMap"}
+                        Specular Map
+                    %input#specularMap{:type=>"file", :style=>"width:100%;"}
+                    %p.help-block
+                        Load Specular Map.
+                .form-group{:style=>"margin-left: 13px;"}
+                    %label{:for=>"alphaMap"}
+                        Alpha Map
+                    %input#alphaMap{:type=>"file", :style=>"width:100%;"}
+                    %p.help-block
+                        Load Alpha Map.
+                .form-group{:style=>"margin-left: 13px;"}
+                    %label{:for=>"envMap"}
+                        Env Map
+                    %input#envMap{:type=>"file", :style=>"width:100%;"}
+                    %p.help-block
+                        Load Alpha Map.
 

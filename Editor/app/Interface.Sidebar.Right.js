@@ -69,6 +69,14 @@ Class("RightSidebar", {
             $('#rotation_x').val(o.rotation.x);
             $('#rotation_y').val(o.rotation.y);
             $('#rotation_z').val(o.rotation.z);
+
+            //setting textures listeners
+            //listening for file inputs
+            $('#textureMap').change(app.interface.rightSidebar.meshListener.onTextureLoaded);
+            $('#lightMap').change(app.interface.rightSidebar.meshListener.onLightMapLoaded);
+            $('#specularMap').change(app.interface.rightSidebar.meshListener.onSpecularMapLoaded);
+            $('#alphaMap').change(app.interface.rightSidebar.meshListener.onAlphaMapLoaded);
+            $('#envMap').change(app.interface.rightSidebar.meshListener.onEnvMapLoaded);
         });
     },
 
