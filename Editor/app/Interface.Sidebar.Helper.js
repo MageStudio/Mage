@@ -8,20 +8,20 @@ Class("HelperSidebar", {
         };
         this.columnChanger = {
             "11": {
-                "49": ["01", "left-column"],
-                "50": ["10", "right-column"]
+                "83": ["01", "left-column"],
+                "77": ["10", "right-column"]
             },
             "01": {
-                "49": ["11", ""],
-                "50": ["00", "both"]
+                "83": ["11", ""],
+                "77": ["00", "both"]
             },
             "10": {
-                "49": ["00", "both"],
-                "50": ["11", ""]
+                "83": ["00", "both"],
+                "77": ["11", ""]
             },
             "00": {
-                "49": ["10", "right-column"],
-                "50": ["01", "left-column"]
+                "83": ["10", "right-column"],
+                "77": ["01", "left-column"]
             }
         };
 

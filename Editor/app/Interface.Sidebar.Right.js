@@ -80,6 +80,9 @@ Class("RightSidebar", {
             $('#specularMap').change(app.interface.rightSidebar.meshListener.onSpecularMapLoaded);
             $('#alphaMap').change(app.interface.rightSidebar.meshListener.onAlphaMapLoaded);
             $('#envMap').change(app.interface.rightSidebar.meshListener.onEnvMapLoaded);
+
+            //setting updateMesh click listener
+            $('#updateMesh').click(app.interface.rightSidebar.meshListener.updateMeshRotPosName);
         });
     },
 

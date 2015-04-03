@@ -7,7 +7,10 @@ Class("SidebarLoader", {
         this.views = {
             "meshHeader": "meshheader.html",
             "MeshBasicMaterial": "MeshBasicMaterial.html",
-            "MeshPhongMaterial": "MeshPhongMaterial.html"
+            "MeshPhongMaterial": "MeshPhongMaterial.html",
+            "MeshLambertMaterial": "MeshLambertMaterial.html",
+            "MeshDepthMaterial": "MeshDepthMaterial.html",
+            "MeshNormalMaterial": "MeshNormalMaterial.html",
         };
         this.holder = [];
     },

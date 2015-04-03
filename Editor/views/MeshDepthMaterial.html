@@ -1,0 +1,135 @@
+<div class='panel panel-default'>
+  <div class='panel-heading'>
+    <h3 class='panel-title'>
+      Material Properties
+    </h3>
+  </div>
+  <div class='panel-body'>
+    <h6 class='panel-title-medium'>
+      type: MeshDepthMaterial
+    </h6>
+    <div class='row panel-content' style='padding-left:0; margin-top: 10px;'>
+      <div class='dropdown' style='margin-bottom:10px;'>
+        <div aria-expanded='true' class='topcoat-button--large--cta dropdown-toggle' data-toggle='dropdown' id='changeMaterial' style='margin-left: 13px;height: 20px;line-height: 20px;' type='button'>
+          Change Material
+          <span class='caret'></span>
+        </div>
+        <ul aria-labelledby='changeMaterial' class='dropdown-menu' role='menu'>
+          <li role='presentation'>
+            <a href="javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshBasicMaterial');" role='menuitem' tabindex='-1'>
+              MeshBasicMaterial
+            </a>
+          </li>
+          <li role='presentation'>
+            <a href="javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshPhongMaterial');" role='menuitem' tabindex='-1'>
+              MeshPhongMaterial
+            </a>
+          </li>
+          <li role='presentation'>
+            <a href="javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshlambertMaterial');" role='menuitem' tabindex='-1'>
+              MeshLambertMaterial
+            </a>
+          </li>
+          <li role='presentation'>
+            <a href="javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshNormalMaterial');" role='menuitem' tabindex='-1'>
+              MeshNormalMaterial
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class='row panel-content' style='padding-left:0;'>
+      <div class='col-md-4 panel-content-title'>
+        Visible
+      </div>
+      <div class='col-md-8'>
+        <label class='topcoat-switch'>
+          <input checked='true' class='topcoat-switch__input' data-flag='meshVisible' type='checkbox'>
+          <div class='topcoat-switch__toggle'></div>
+        </label>
+      </div>
+    </div>
+    <div class='row panel-content' style='padding-left:0;'>
+      <div class='col-md-4 panel-content-title'>
+        Wireframe
+      </div>
+      <div class='col-md-8'>
+        <label class='topcoat-switch'>
+          <input checked='true' class='topcoat-switch__input' data-flag='meshWireframe' type='checkbox'>
+          <div class='topcoat-switch__toggle'></div>
+        </label>
+      </div>
+    </div>
+    <div class='row panel-content' style='padding-left:0;'>
+      <div class='col-md-4 panel-content-title'>
+        Fog
+      </div>
+      <div class='col-md-8'>
+        <label class='topcoat-switch'>
+          <input checked='true' class='topcoat-switch__input' data-flag='meshFog' type='checkbox'>
+          <div class='topcoat-switch__toggle'></div>
+        </label>
+      </div>
+    </div>
+    <div class='row panel-content' style='padding-left:0;'>
+      <div class='col-md-4 panel-content-title'>
+        Color
+      </div>
+      <div class='col-md-8'>
+        <input class='color' data-toggle='mesh' id='meshColor' style='width: 80px; margin-top: 4px;'>
+      </div>
+    </div>
+    <h6 class='panel-title-medium'>
+      Textures
+    </h6>
+    <div class='row panel-content' style='padding-left:0; margin-top:10px;'>
+      <form>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='textureMap'>
+            Texture Map
+          </label>
+          <input id='textureMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Texture.
+          </p>
+        </div>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='lightMap'>
+            Light Map
+          </label>
+          <input id='lightMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Light Map.
+          </p>
+        </div>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='specularMap'>
+            Specular Map
+          </label>
+          <input id='specularMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Specular Map.
+          </p>
+        </div>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='alphaMap'>
+            Alpha Map
+          </label>
+          <input id='alphaMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Alpha Map.
+          </p>
+        </div>
+        <div class='form-group' style='margin-left: 13px;'>
+          <label for='envMap'>
+            Env Map
+          </label>
+          <input id='envMap' style='width:100%;' type='file'>
+          <p class='help-block'>
+            Load Alpha Map.
+          </p>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

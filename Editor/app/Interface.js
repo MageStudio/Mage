@@ -7,6 +7,8 @@ Class("Interface", {
             this.keys.map.NUM_1, // 1
             this.keys.map.NUM_2, // 2
             this.keys.map.KEY_W, // w
+            this.keys.map.KEY_S, // s
+            this.keys.map.KEY_M, // m
             this.keys.map.KEY_E, // e
             this.keys.map.KEY_Q, // q
             this.keys.map.KEY_R, // r
@@ -182,8 +184,8 @@ Class("Interface", {
         //app.sm.handleInput(event.keyCode);
         if (app.interface.recognizableKeys.indexOf(event.keyCode)!= -1) {
             switch(event.keyCode) {
-                case app.interface.keys.map.NUM_1:
-                case app.interface.keys.map.NUM_2:
+                case app.interface.keys.map.KEY_S:
+                case app.interface.keys.map.KEY_M:
                     app.interface.events.columnToggle.dispatch(""+event.keyCode);
                     break;
                 case app.interface.keys.map.KEY_Q: // Q

@@ -71,6 +71,22 @@ Class("MeshListener", {
         app.mm.map.get(app.sm.uuid).fog = flag;
     },
 
+    //mesh update rotation, position and name
+    updateMeshRotPosName: function() {
+        if (app.sm.typeClicked != "mesh") return;
+        //changing mesh fog
+        var o = app.mm.map.get(app.sm.uuid);
+
+        //setting name
+        o.name = $('#meshName').val();
+
+        //setting position 
+        o.position.set($('#position_x').val(), $('#position_y').val(), $('#position_z').val());
+
+        //settting rotation
+        o.rotation.set($('#rotation_x').val(), $('#rotation_y').val(), $('#rotation_z').val());
+    },
+
     //texture events listeners
     onLightMapLoaded: function(event) {
         if (app.sm.typeClicked != "mesh") return;
@@ -83,8 +99,20 @@ Class("MeshListener", {
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
         texture.repeat.set(2, 2);
-
-        app.mm.map.get(app.sm.uuid).material.lightMap = texture;
+        var o = app.mm.map.get(app.sm.uuid);
+        o.material.lightMap = texture;
+        o.material.needsUpdate = true;
+        //resetting click listener
+        app.interface.meshEvents.unbind(app.mm.map.get(app.sm.uuid), "click");
+        app.interface.meshEvents.bind(o, "click", function(event) {
+            //now only adding this mesh to the transform control
+            if (app.sm.lastClicked.uuid == event.target.uuid) return;
+            app.sm.deselect();
+            //Setting uuid to the scene
+            app.sm.uuid = event.target.uuid;
+            app.sm.typeClicked = "mesh";
+            app.sm.select(event.target, "translate");
+        });
     },
 
     onTextureLoaded: function(event) {
@@ -207,7 +235,18 @@ Class("MeshListener", {
         if (app.mm.allowedMaterials.indexOf(material) != -1) {
             var o = app.mm.map.get(app.sm.uuid);
             // #TODO should recreate mesh with exact properties of previous material
-            o.material = new THREE[material]({wireframe: true, color: Math.random() * 0xffffff});
+            var material_prop = {
+                visible: o.material.visible,
+                color: o.material.color,
+                wireframe: o.material.wireframe,
+                map: o.material.map,
+                envMap: o.material.envMap,
+                lightMap: o.material.lightMap,
+                specularMap: o.material.specularMap,
+                alphaMap: o.material.alphaMap
+            };
+            //now creating new material
+            o.material = new THREE[material](material_prop);
             o.material.needsUpdate = true;
             //resetting click listener
             app.interface.meshEvents.unbind(app.mm.map.get(app.sm.uuid), "click");
