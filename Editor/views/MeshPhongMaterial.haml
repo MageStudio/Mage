@@ -4,7 +4,7 @@
             Material Properties
     .panel-body
         %h6.panel-title-medium
-            type: MeshBasicMaterial
+            type: MeshPhongMaterial
         .row.panel-content{:style=>"padding-left:0; margin-top: 10px;"}
             .dropdown{:style=>"margin-bottom:10px;"}
                 #changeMaterial.topcoat-button--large--cta.dropdown-toggle{:type=>"button", "data-toggle"=>"dropdown", "aria-expanded"=>"true", :style=>"margin-left: 13px;height: 20px;line-height: 20px;"}
@@ -12,13 +12,13 @@
                     %span.caret
                 %ul.dropdown-menu{:role=>"menu", "aria-labelledby"=>"changeMaterial"}
                     %li{:role=>"presentation"}
-                        %a{:role=>"menuitem", :tabindex=>"-1", :href=>"javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshPhongMaterial');"}
-                            MeshPhongMaterial
+                        %a{:role=>"menuitem", :tabindex=>"-1", :href=>"javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshBasicMaterial');"}
+                            MeshBasicMaterial
                     %li{:role=>"presentation"}
                         %a{:role=>"menuitem", :tabindex=>"-1", :href=>"javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshDepthMaterial');"}
                             MeshDepthMaterial
                     %li{:role=>"presentation"}
-                        %a{:role=>"menuitem", :tabindex=>"-1", :href=>"javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshLambertMaterial');"}
+                        %a{:role=>"menuitem", :tabindex=>"-1", :href=>"javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshlambertMaterial');"}
                             MeshLambertMaterial
                     %li{:role=>"presentation"}
                         %a{:role=>"menuitem", :tabindex=>"-1", :href=>"javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshNormalMaterial');"}

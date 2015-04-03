@@ -5,7 +5,6 @@ R0.1:
   ☐ add applyShader method to meshes @low
   ☐ fix ambient sound doppler effect @critical
   ☐ change package name to avoid user classes @critical
-  ☐ map keyboard case @high
   ☐ subdivide control package @high
   ☐ add networking @low
   ☐ add FirstPerson control class @high
@@ -15,4 +14,5 @@ R0.2:
 
 ＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿
 Archive:
+ ✔ map keyboard case @high @done (15-04-03 12:55) @project(R0.1)
  ✔ builder not working on windows and linux @critical @done (15-03-31 14:32) @project(R0.1)

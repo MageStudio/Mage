@@ -15,7 +15,11 @@ Class("MeshListener", {
         app.interface.events.meshWireframeChange.add(this.onMeshWireframeChange);
         app.interface.events.meshFogChange.add(this.onMeshFogChange);
 
-        //#TODO we need also shading option
+        //setting listener for material change
+        //we must reload right sidebar
+        app.interface.events.meshMaterialChange.add(app.interface.rightSidebar.onSelectedMesh);
+
+        //#TODO we need also shadow option
     },
 
     //position change listener
@@ -78,7 +82,7 @@ Class("MeshListener", {
         var texture = THREE.ImageUtils.loadTexture("textures/"+path);
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1, 1);
+        texture.repeat.set(2, 2);
 
         app.mm.map.get(app.sm.uuid).material.lightMap = texture;
     },
@@ -94,7 +98,7 @@ Class("MeshListener", {
         var texture = THREE.ImageUtils.loadTexture("textures/"+path);
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1, 1);
+        texture.repeat.set(2, 2);
         //setting new material
         var o = app.mm.map.get(app.sm.uuid);
         o.material.map = texture;
@@ -122,7 +126,7 @@ Class("MeshListener", {
         var texture = THREE.ImageUtils.loadTexture("textures/"+path);
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1, 1);
+        texture.repeat.set(2, 2);
         //setting new material
         var o = app.mm.map.get(app.sm.uuid);
         o.material.specularMap = texture;
@@ -150,7 +154,7 @@ Class("MeshListener", {
         var texture = THREE.ImageUtils.loadTexture("textures/"+path);
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1, 1);
+        texture.repeat.set(2, 2);
         //setting new material
         var o = app.mm.map.get(app.sm.uuid);
         o.material.alphaMap = texture;
@@ -178,7 +182,7 @@ Class("MeshListener", {
         var texture = THREE.ImageUtils.loadTexture("textures/"+path);
         texture.wrapS = THREE.RepeatWrapping;
         texture.wrapT = THREE.RepeatWrapping;
-        texture.repeat.set(1, 1);
+        texture.repeat.set(2, 2);
         //setting new material
         var o = app.mm.map.get(app.sm.uuid);
         o.material.envMap = texture;
@@ -194,7 +198,34 @@ Class("MeshListener", {
             app.sm.typeClicked = "mesh";
             app.sm.select(event.target, "translate");
         });
-    }
+    },
+
+    //setting listener for material change
+    changeMaterial: function(material) {
+        //setting new material, then reload sidebar triggering
+        console.log(material);
+        if (app.mm.allowedMaterials.indexOf(material) != -1) {
+            var o = app.mm.map.get(app.sm.uuid);
+            // #TODO should recreate mesh with exact properties of previous material
+            o.material = new THREE[material]({wireframe: true, color: Math.random() * 0xffffff});
+            o.material.needsUpdate = true;
+            //resetting click listener
+            app.interface.meshEvents.unbind(app.mm.map.get(app.sm.uuid), "click");
+            app.interface.meshEvents.bind(o, "click", function(event) {
+                //now only adding this mesh to the transform control
+                if (app.sm.lastClicked.uuid == event.target.uuid) return;
+                app.sm.deselect();
+                //Setting uuid to the scene
+                app.sm.uuid = event.target.uuid;
+                app.sm.typeClicked = "mesh";
+                app.sm.select(event.target, "translate");
+            });
+            //triggering event
+            app.interface.events.meshMaterialChange.dispatch();
+        } else {
+            console.log("not allowed");
+        }
+    },
 
 
 });

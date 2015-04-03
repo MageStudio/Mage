@@ -88,6 +88,11 @@ Class("LeftSidebar", {
                 o = app.mm.map.get(uuid);
                 //selecting the mesh
                 app.sm.deselect();
+                //setting type clicked
+                app.sm.uuid = uuid;
+                app.sm.typeClicked = "mesh";
+                //triggering selectedMesh event
+                //app.interface.events.selectedMesh.dispatch();
                 app.sm.select(o, "translate");
             } else if (flag == "light") {
                 //retrieving light
@@ -99,6 +104,11 @@ Class("LeftSidebar", {
                 } else {
                     app.sm.select(o.light, "translate");
                 }
+                //setting type clicked
+                app.sm.uuid = uuid;
+                app.sm.typeClicked = "light";
+                //triggering selectedLight event
+                // #TODO trigger event
             } else {
                 console.log("bazza");
             }
@@ -107,6 +117,8 @@ Class("LeftSidebar", {
 
     //on light added
     onlightAdded: function() {
+        //first we clear the list
+        $('#lightHierarchy').html("");
         var keys_list = app.lm.map.keys.concat(); 
         //writing lights count
         $('#lightsCount').text("Lights: " + keys_list.length);
@@ -141,6 +153,11 @@ Class("LeftSidebar", {
             } else {
                 app.sm.select(o.light, "translate");
             }
+            //setting type clicked
+            app.sm.uuid = uuid;
+            app.sm.typeClicked = "light";
+            //triggering selectedLight event
+            // #TODO trigger event
         });
     },
 

@@ -21,7 +21,9 @@ Class("RightSidebar", {
 
     onSelectedMesh: function() {
         //no mesh selected message must disappear
-        $('#nomeshselected').addClass('hidden');
+        if (!$('#nomeshselected').hasClass('hidden')) $('#nomeshselected').addClass('hidden');
+        //unloading previous view
+        app.interface.loader.unload();
         //retrieving object
         switch(app.sm.typeClicked) {
             case "mesh":
@@ -41,7 +43,7 @@ Class("RightSidebar", {
     },
 
     // handling meshes
-    _handleMesh: function(mesh) {
+    _handleMesh: function() {
         //we must check element type [mesh, light, sound, model]
         //loading corresponding views
         //we should load views depending on mesh properties
@@ -72,6 +74,7 @@ Class("RightSidebar", {
 
             //setting textures listeners
             //listening for file inputs
+            // #TODO should write texture name
             $('#textureMap').change(app.interface.rightSidebar.meshListener.onTextureLoaded);
             $('#lightMap').change(app.interface.rightSidebar.meshListener.onLightMapLoaded);
             $('#specularMap').change(app.interface.rightSidebar.meshListener.onSpecularMapLoaded);

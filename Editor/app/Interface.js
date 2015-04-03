@@ -62,7 +62,10 @@ Class("Interface", {
             meshWireframeChange: new signals.Signal(),
             meshFogChange: new signals.Signal(),
             meshVisibleChange: new signals.Signal(),
-            meshColorChange: new signals.Signal()
+            meshColorChange: new signals.Signal(),
+
+            //material changed event
+            meshMaterialChange: new signals.Signal()
 
         };
 
