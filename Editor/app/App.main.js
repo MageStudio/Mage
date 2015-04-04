@@ -9,6 +9,7 @@ window.onload = function() {
         "app/Input.Keyboard",
         "app/Interface.Sidebar",
         "app/Interface.Sidebar.MeshListener",
+        "app/Interface.Sidebar.LightListener",
         "app/Interface.Sidebar.Loader",
         "app/Interface.Sidebar.Helper",
         "app/Interface.Sidebar.Right",

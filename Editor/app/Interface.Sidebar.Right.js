@@ -2,8 +2,10 @@ Class("RightSidebar", {
     RightSidebar: function() {
         Sidebar.call(this, "right");
         this.meshViewOrder = ["meshHeader"];
-        //setting 
+        //setting mesh listener
         this.meshListener = new MeshListener();
+        //setting light listener
+        this.lightListener = new LightListener();
     },
 
     setListeners: function() {
@@ -12,6 +14,8 @@ Class("RightSidebar", {
 
         //Setting mesh listeners 
         this.meshListener.setListeners();
+        //Setting light listeners
+        this.lightListener.setListeners();
 
         //setting listener for mesh selected
         app.interface.events.selectedMesh.add(this.onSelectedMesh);
@@ -88,6 +92,32 @@ Class("RightSidebar", {
 
     // handling light
     _handleLight: function(light) {
+        //check the type of light
+        var l = app.lm.map.get(app.sm.uuid);
+        var views = ["lightHeader"];
+        views.push[l.light.type];
+        //loading views
+        app.interface.loader.loadArray(views, function() {
+            //resetting interface input listeners
+            app.interface.setInputEvents("#meshColor");
+            //we are now sure views have been inflated
+            //this is used only to show values for first time
+            //to see what happens when values are changed,
+            //see file Interface.Sidebar.MeshListener
 
+            //setting name
+            $('#meshName').val(l.light.name);
+
+            //setting position from holder
+            $('#position_x').val(o.holder.position.x);
+            $('#position_y').val(o.holder.position.y);
+            $('#position_z').val(o.holder.position.z);
+
+            //setting rotation from holder
+            $('#rotation_x').val(o.holder.rotation.x);
+            $('#rotation_y').val(o.holder.rotation.y);
+            $('#rotation_z').val(o.holder.rotation.z);
+        });
     }
+
 })._extends("Sidebar");

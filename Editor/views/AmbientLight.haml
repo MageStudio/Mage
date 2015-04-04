@@ -1,0 +1,26 @@
+.panel.panel-default
+    .panel-heading
+        %h3.panel-title
+            Light Properties
+    .panel-body
+        %h6.panel-title-medium
+            type: Ambient Light
+        .row.panel-content{:style=>"padding-left:0;"}
+            .col-md-4.panel-content-title
+                Cast Shadow
+            .col-md-8
+                %label.topcoat-switch
+                    %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"lightCastShadow", "checked"=>"true"}
+                    .topcoat-switch__toggle
+        .row.panel-content{:style=>"padding-left:0;"}
+            .col-md-4.panel-content-title
+                Receive Shadow
+            .col-md-8
+                %label.topcoat-switch
+                    %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"lightReceiveShadow", "checked"=>"true"}
+                    .topcoat-switch__toggle
+        .row.panel-content{:style=>"padding-left:0;"}
+            .col-md-4.panel-content-title
+                Color
+            .col-md-8
+                %input#lightColor.color{:style=>"width: 80px; margin-top: 4px;", "data-toggle"=>"light"}

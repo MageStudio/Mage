@@ -7,7 +7,7 @@
   "window": {
     "title": "Wage Editor",
     "icon": "link.png",
-    "toolbar": false,
+    "toolbar": true,
     "frame": true,
     "width": 800,
     "height": 500,

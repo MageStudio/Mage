@@ -65,9 +65,16 @@ Class("Interface", {
             meshFogChange: new signals.Signal(),
             meshVisibleChange: new signals.Signal(),
             meshColorChange: new signals.Signal(),
+            meshCastShadow: new signals.Signal(),
+            meshReceiveShadow: new signals.Signal(),
 
             //material changed event
-            meshMaterialChange: new signals.Signal()
+            meshMaterialChange: new signals.Signal(),
+
+            //light events
+            lightCastShadowChange: new signals.Signal(),
+            lightReceiveShadowChange: new signals.Signal(),
+            lightShadowDarknessChange: new signals.Signal()
 
         };
 
