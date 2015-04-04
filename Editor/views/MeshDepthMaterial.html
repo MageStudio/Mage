@@ -39,34 +39,56 @@
       </div>
     </div>
     <div class='row panel-content' style='padding-left:0;'>
-      <div class='col-md-4 panel-content-title'>
+      <div class='col-md-6 panel-content-title'>
         Visible
       </div>
-      <div class='col-md-8'>
+      <div class='col-md-6'>
         <label class='topcoat-switch'>
-          <input checked='true' class='topcoat-switch__input' data-flag='meshVisible' type='checkbox'>
+          <input checked='true' class='topcoat-switch__input' data-flag='meshVisible' id='visibleToggle' type='checkbox'>
           <div class='topcoat-switch__toggle'></div>
         </label>
       </div>
     </div>
     <div class='row panel-content' style='padding-left:0;'>
-      <div class='col-md-4 panel-content-title'>
+      <div class='col-md-6 panel-content-title'>
+        Cast
+      </div>
+      <div class='col-md-6'>
+        <label class='topcoat-switch'>
+          <input checked='false' class='topcoat-switch__input' data-flag='meshCastShadow' id='castToggle' type='checkbox'>
+          <div class='topcoat-switch__toggle'></div>
+        </label>
+      </div>
+    </div>
+    <div class='row panel-content' style='padding-left:0;'>
+      <div class='col-md-6 panel-content-title'>
+        Receive
+      </div>
+      <div class='col-md-6'>
+        <label class='topcoat-switch'>
+          <input checked='false' class='topcoat-switch__input' data-flag='meshReceiveShadow' id='receiveToggle' type='checkbox'>
+          <div class='topcoat-switch__toggle'></div>
+        </label>
+      </div>
+    </div>
+    <div class='row panel-content' style='padding-left:0;'>
+      <div class='col-md-6 panel-content-title'>
         Wireframe
       </div>
-      <div class='col-md-8'>
+      <div class='col-md-6'>
         <label class='topcoat-switch'>
-          <input checked='true' class='topcoat-switch__input' data-flag='meshWireframe' type='checkbox'>
+          <input checked='true' class='topcoat-switch__input' data-flag='meshWireframe' id='wireframeToggle' type='checkbox'>
           <div class='topcoat-switch__toggle'></div>
         </label>
       </div>
     </div>
     <div class='row panel-content' style='padding-left:0;'>
-      <div class='col-md-4 panel-content-title'>
+      <div class='col-md-6 panel-content-title'>
         Fog
       </div>
-      <div class='col-md-8'>
+      <div class='col-md-6'>
         <label class='topcoat-switch'>
-          <input checked='true' class='topcoat-switch__input' data-flag='meshFog' type='checkbox'>
+          <input checked='true' class='topcoat-switch__input' data-flag='meshFog' id='fogToggle' type='checkbox'>
           <div class='topcoat-switch__toggle'></div>
         </label>
       </div>

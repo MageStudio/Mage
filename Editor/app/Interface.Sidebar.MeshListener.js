@@ -20,6 +20,8 @@ Class("MeshListener", {
         app.interface.events.meshMaterialChange.add(app.interface.rightSidebar.onSelectedMesh);
 
         //#TODO we need also shadow option
+        app.interface.events.meshReceiveShadowChange.add(this.onMeshReceiveShadowChange);
+        app.interface.events.meshCastShadowChange.add(this.onMeshCastShadowChange);
     },
 
     //position change listener
@@ -113,6 +115,11 @@ Class("MeshListener", {
             app.sm.typeClicked = "mesh";
             app.sm.select(event.target, "translate");
         });
+        //we added our texture
+        $('#lightMap').next().html(
+            "textures/"+ path + 
+            "<img style='height:30px; margin-left:5px;' src='textures/"+path+"'></img>"
+        );
     },
 
     onTextureLoaded: function(event) {
@@ -142,6 +149,11 @@ Class("MeshListener", {
             app.sm.typeClicked = "mesh";
             app.sm.select(event.target, "translate");
         });
+        //we added our texture
+        $('#textureMap').next().html(
+            "textures/"+ path + 
+            "<img style='height:30px; margin-left:5px;' src='textures/"+path+"'></img>"
+        );
     },
 
     onSpecularMapLoaded: function(event) {
@@ -170,6 +182,11 @@ Class("MeshListener", {
             app.sm.typeClicked = "mesh";
             app.sm.select(event.target, "translate");
         });
+        //we added our texture
+        $('#specularMap').next().html(
+            "textures/"+ path + 
+            "<img style='height:30px; margin-left:5px;' src='textures/"+path+"'></img>"
+        );
     },
 
     onAlphaMapLoaded: function(event) {
@@ -198,6 +215,11 @@ Class("MeshListener", {
             app.sm.typeClicked = "mesh";
             app.sm.select(event.target, "translate");
         });
+        //we added our texture
+        $('#alphaMap').next().html(
+            "textures/"+ path + 
+            "<img style='height:30px; margin-left:5px;' src='textures/"+path+"'></img>"
+        );
     },
 
     onEnvMapLoaded: function(event) {
@@ -226,10 +248,16 @@ Class("MeshListener", {
             app.sm.typeClicked = "mesh";
             app.sm.select(event.target, "translate");
         });
+        //we added our texture
+        $('#envMap').next().html(
+            "textures/"+ path + 
+            "<img style='height:30px; margin-left:5px;' src='textures/"+path+"'></img>"
+        );
     },
 
     //setting listener for material change
     changeMaterial: function(material) {
+        if (app.sm.typeClicked != "mesh") return;
         //setting new material, then reload sidebar triggering
         console.log(material);
         if (app.mm.allowedMaterials.indexOf(material) != -1) {
@@ -266,5 +294,17 @@ Class("MeshListener", {
         }
     },
 
+    //receive shadow change event listener
+    onMeshReceiveShadowChange: function(flag) {
+        if (app.sm.typeClicked != "mesh") return;
+        //retrieving object
+        var o = app.mm.map.get(app.sm.uuid).receiveShadow = flag;
+    },
 
+    //cast shadow change event listener
+    onMeshCastShadowChange: function(flag) {
+        if (app.sm.typeClicked != "mesh") return;
+        //retrieving object
+        app.mm.map.get(app.sm.uuid).castShadow = flag;
+    }
 });

@@ -1,6 +1,7 @@
 window.onload = function() {
     include([
         "app/lib/jsColorPicker.min",
+        "app/App.Global",
         "app/Interface",
         "app/Manager.Scene",
         "app/Manager.Mesh",
@@ -25,6 +26,7 @@ function start() {
             this.sm = new SceneManager();
             this.mm = new MeshManager();
             this.lm = new LightManager();
+            this.util = new Global();
         },
 
         init: function() {

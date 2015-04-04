@@ -29,6 +29,7 @@ Class("RightSidebar", {
         //unloading previous view
         app.interface.loader.unload();
         //retrieving object
+        console.log(app.sm.typeClicked);
         switch(app.sm.typeClicked) {
             case "mesh":
                 //we clicked on a mesh
@@ -79,14 +80,58 @@ Class("RightSidebar", {
             //setting textures listeners
             //listening for file inputs
             // #TODO should write texture name
-            $('#textureMap').change(app.interface.rightSidebar.meshListener.onTextureLoaded);
-            $('#lightMap').change(app.interface.rightSidebar.meshListener.onLightMapLoaded);
-            $('#specularMap').change(app.interface.rightSidebar.meshListener.onSpecularMapLoaded);
-            $('#alphaMap').change(app.interface.rightSidebar.meshListener.onAlphaMapLoaded);
-            $('#envMap').change(app.interface.rightSidebar.meshListener.onEnvMapLoaded);
+            $('#textureMap').unbind().change(app.interface.rightSidebar.meshListener.onTextureLoaded);
+            $('#lightMap').unbind().change(app.interface.rightSidebar.meshListener.onLightMapLoaded);
+            $('#specularMap').unbind().change(app.interface.rightSidebar.meshListener.onSpecularMapLoaded);
+            $('#alphaMap').unbind().change(app.interface.rightSidebar.meshListener.onAlphaMapLoaded);
+            $('#envMap').unbind().change(app.interface.rightSidebar.meshListener.onEnvMapLoaded);
 
             //setting updateMesh click listener
             $('#updateMesh').click(app.interface.rightSidebar.meshListener.updateMeshRotPosName);
+
+            //setting flags
+            $('#visibleToggle').attr('checked', o.visible);
+            $('#castToggle').attr('checked', o.castShadow);
+            $('#wireframeToggle').attr('checked', o.material.wireframe);
+            $('#receiveToggle').attr('checked', o.receiveShadow);
+            $('#fogToggle').attr('checked', o.fog);
+
+            //setting color
+            var colorString = app.util.RgbToHex(parseInt(o.material.color.r), parseInt(o.material.color.g), parseInt(o.material.color.b));
+            $('#meshColor').val(colorString);
+            $('#meshColor').css('background-color', colorString);
+
+            //Setting textures info if available
+            if (o.material.map) {
+                $('#textureMap').next().html(
+                    o.material.map.sourceFile + 
+                    "<img style='height:30px; margin-left: 5px;' src='"+o.material.map.sourceFile+"'></img>"
+                );
+            }
+            if (o.material.lightMap) {
+                $('#lightMap').next().html(
+                    o.material.lightMap.sourceFile + 
+                    "<img style='height:30px; margin-left: 5px;' src='"+o.material.lightMap.sourceFile+"'></img>"
+                );
+            }
+            if (o.material.specularMap) {
+                $('#specularMap').next().html(
+                    o.material.specularMap.sourceFile + 
+                    "<img style='height:30px; margin-left: 5px;' src='"+o.material.specularMap.sourceFile+"'></img>"
+                );
+            }
+            if (o.material.envMap) {
+                $('#envMap').next().html(
+                    o.material.envMap.sourceFile + 
+                    "<img style='height:30px; margin-left: 5px;' src='"+o.material.envMap.sourceFile+"'></img>"
+                );
+            }
+            if (o.material.alphaMap) {
+                $('#alphaMap').next().html(
+                    o.material.alphaMap.sourceFile + 
+                    "<img style='height:30px; margin-left: 5px;' src='"+o.material.alphaMap.sourceFile+"'></img>"
+                );
+            }
         });
     },
 
@@ -95,28 +140,31 @@ Class("RightSidebar", {
         //check the type of light
         var l = app.lm.map.get(app.sm.uuid);
         var views = ["lightHeader"];
-        views.push[l.light.type];
+        views.push(l.light.type);
         //loading views
         app.interface.loader.loadArray(views, function() {
             //resetting interface input listeners
-            app.interface.setInputEvents("#meshColor");
+            app.interface.setInputEvents("#lightColor");
             //we are now sure views have been inflated
             //this is used only to show values for first time
             //to see what happens when values are changed,
             //see file Interface.Sidebar.MeshListener
 
             //setting name
-            $('#meshName').val(l.light.name);
+            $('#lightName').val(l.light.name);
 
             //setting position from holder
-            $('#position_x').val(o.holder.position.x);
-            $('#position_y').val(o.holder.position.y);
-            $('#position_z').val(o.holder.position.z);
+            $('#position_x').val((l.holder) ? l.holder.position.x : l.light.position.x);
+            $('#position_y').val((l.holder) ? l.holder.position.y : l.light.position.y);
+            $('#position_z').val((l.holder) ? l.holder.position.z : l.light.position.z);
 
             //setting rotation from holder
-            $('#rotation_x').val(o.holder.rotation.x);
-            $('#rotation_y').val(o.holder.rotation.y);
-            $('#rotation_z').val(o.holder.rotation.z);
+            $('#rotation_x').val((l.holder) ? l.holder.rotation.x : l.light.rotation.x);
+            $('#rotation_y').val((l.holder) ? l.holder.rotation.x : l.light.rotation.x);
+            $('#rotation_z').val((l.holder) ? l.holder.rotation.x : l.light.rotation.x);
+
+            //setting updateLight click listener
+            $('#updateLight').click(app.interface.rightSidebar.lightListener.updateLightRotPosName);
         });
     }
 

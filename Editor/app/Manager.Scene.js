@@ -13,6 +13,8 @@ Class("SceneManager", {
         this.currentTransformSpace = "local";
         //holder for hierarchy.
         this.hierarchy = 0;
+        //allowes shadow types
+        this.allowedShadowTypes = ["BasicShadowMap", "PCFShadowMap", "PCFSoftShadowMap"]
     },
 
     update: function() {
@@ -66,6 +68,7 @@ Class("SceneManager", {
         this.renderer = new THREE.WebGLRenderer( { antialias: false } );
         //this.renderer.setClearColor( this.scene.fog.color );
         this.renderer.sortObjects = false;
+        this.renderer.setClearColor(new THREE.Color('#000000'));
         this.renderer.setPixelRatio( window.devicePixelRatio );
         this.renderer.setSize( $(this.container).width(), $(this.container).height() );
 
@@ -109,6 +112,8 @@ Class("SceneManager", {
         app.interface.events.fogColorChange.add(this.onFogColorChanged);
         //adding fog density change listener
         app.interface.events.fogDensityChange.add(this.onFogDensityChanged);
+        //registering for shadow enabled 
+        app.interface.events.shadowChange.add(this.onShadowChange);
     },
 
     onWindowResize: function() {
@@ -172,6 +177,21 @@ Class("SceneManager", {
         app.sm.render();
     },
 
+    //on shadow change event
+    onShadowChange: function(flag) {
+        app.sm.renderer.shadowMapEnabled = flag;
+        if (flag) {
+            app.sm.renderer.shadowMapType = THREE.PCFShadowMap;
+        }
+    },
+
+    //changing shadow type for renderer
+    changeShadow: function(type) {
+        if (app.sm.allowedShadowTypes.indexOf(type) == -1) return;
+        app.sm.renderer.shadowMapType = THREE[type];
+        app.interface.events.shadowTypeChanged.dispatch(type);
+    },
+
     //selecting and deselecting meshes
     select: function(mesh, mode) {
         if (this.availableTransformModes.indexOf(mode) == -1) return;
@@ -182,9 +202,9 @@ Class("SceneManager", {
 
         //triggering select mesh event only if not holder or target, but light or mesh
         // #TODO remember to add "model" to typeclicked
-        if ((app.sm.typeClicked == "mesh") || (app.sm.typeClicked == "light")) {
+        //if ((app.sm.typeClicked == "mesh") || (app.sm.typeClicked == "light")) {
             app.interface.events.selectedMesh.dispatch();
-        }
+        //}
     },
 
     deselect: function(mesh) {

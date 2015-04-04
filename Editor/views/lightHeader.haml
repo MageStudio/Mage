@@ -36,6 +36,19 @@
             %label{:for=>"rotation_z"}
                 z:
             %input#rotation_z.form-control{:type=>"text", :style=>"width: 40px; font-size: 10px;"}
+    %form{:style=>"margin-top:10px;"}
+        .form-group
+            %label{:for=>"decay"}
+                Decay:
+            %input#decay.form-control{:type=>"text", :style=>"width: 100%; font-size: 10px;"}
+        .form-group
+            %label{:for=>"intensity"}
+                Intensity:
+            %input#itensity.form-control{:type=>"text", :style=>"width: 100%; font-size: 10px;"}
+        .form-group
+            %label{:for=>"distance"}
+                Distance:
+            %input#distance.form-control{:type=>"text", :style=>"width: 100%; font-size: 10px;"}
     .row.panel-content{:style=>"margin-top:20px;"}
         %button#updatelight.topcoat-button--large--cta{:style=>"width:100%;"}
             Update

@@ -24,25 +24,39 @@
                         %a{:role=>"menuitem", :tabindex=>"-1", :href=>"javascript:app.interface.rightSidebar.meshListener.changeMaterial('MeshPhongMaterial');"}
                             MeshPhongMaterial
         .row.panel-content{:style=>"padding-left:0;"}
-            .col-md-4.panel-content-title
+            .col-md-6.panel-content-title
                 Visible
-            .col-md-8
+            .col-md-6
                 %label.topcoat-switch
-                    %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshVisible", "checked"=>"true"}
+                    %input#visibleToggle.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshVisible", "checked"=>"true"}
                     .topcoat-switch__toggle
         .row.panel-content{:style=>"padding-left:0;"}
-            .col-md-4.panel-content-title
+            .col-md-6.panel-content-title
+                Cast
+            .col-md-6
+                %label.topcoat-switch
+                    %input#castToggle.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshCastShadow", "checked"=>"false"}
+                    .topcoat-switch__toggle
+        .row.panel-content{:style=>"padding-left:0;"}
+            .col-md-6.panel-content-title
+                Receive
+            .col-md-6
+                %label.topcoat-switch
+                    %input#receiveToggle.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshReceiveShadow", "checked"=>"false"}
+                    .topcoat-switch__toggle
+        .row.panel-content{:style=>"padding-left:0;"}
+            .col-md-6.panel-content-title
                 Wireframe
-            .col-md-8
+            .col-md-6
                 %label.topcoat-switch
-                    %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshWireframe", "checked"=>"true"}
+                    %input#wireframeToggle.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshWireframe", "checked"=>"true"}
                     .topcoat-switch__toggle
         .row.panel-content{:style=>"padding-left:0;"}
-            .col-md-4.panel-content-title
+            .col-md-6.panel-content-title
                 Fog
-            .col-md-8
+            .col-md-6
                 %label.topcoat-switch
-                    %input.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshFog", "checked"=>"true"}
+                    %input#fogToggle.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"meshFog", "checked"=>"true"}
                     .topcoat-switch__toggle
         .row.panel-content{:style=>"padding-left:0;"}
             .col-md-4.panel-content-title

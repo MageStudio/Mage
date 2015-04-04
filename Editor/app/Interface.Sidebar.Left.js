@@ -7,6 +7,12 @@ Class("LeftSidebar", {
         this.lastClicked = "";
     },
 
+    set: function() {
+        //setting fog and shadow toggle
+        $('#fogToggle').attr('checked', app.interface.flags.fog);
+        $('#shadowToggle').attr('checked', app.interface.flags.shadow);
+    },
+
     setListeners: function() {
         //calling the super method
         this._setListeners();

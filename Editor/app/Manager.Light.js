@@ -58,6 +58,9 @@ Class("LightManager", {
             app.lm.store(object.light.uuid, object);
             //forcing scene update
             app.sm.update();
+            //setting
+            app.sm.uuid = object.light.uuid;
+            app.sm.typeClicked = "light";
             //adding to transform
             if (object.holder) {
                 app.sm.select(object.holder, "translate");
@@ -116,6 +119,8 @@ Class("LightManager", {
                 app.interface.meshEvents.bind(object.holder, "click", function(event) {
                     if (app.sm.lastClicked.uuid === event.target.uuid) return;
                     app.sm.deselect();
+                    app.sm.uuid = object.light.uuid;
+                    app.sm.typeClicked = "light";
                     app.sm.select(event.target, "translate");
                 });
                 //calling addedmesh event
@@ -135,11 +140,15 @@ Class("LightManager", {
 
         light = new THREE.AmbientLight(0x404040);
 
+        var geo = new THREE.SphereGeometry(20, 4, 4);
+        var mat = new THREE.MeshBasicMaterial({wireframe: false, color: 0x0000ff});
+        var holder = new THREE.Mesh(geo, mat);
+
         return {
             "light": light,
             "helper": false,
             target: false,
-            holder: false,
+            holder: holder,
             flag: "light"
         };
 

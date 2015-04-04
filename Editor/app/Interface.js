@@ -48,6 +48,10 @@ Class("Interface", {
             //fog density changed event
             fogDensityChange: new signals.Signal(),
 
+            //shadow type changed
+            shadowTypeChanged: new signals.Signal(),
+            shadowChange: new signals.Signal(),
+
             //mesh added event
             meshAdded: new signals.Signal(),
             //light added event
@@ -65,27 +69,41 @@ Class("Interface", {
             meshFogChange: new signals.Signal(),
             meshVisibleChange: new signals.Signal(),
             meshColorChange: new signals.Signal(),
-            meshCastShadow: new signals.Signal(),
-            meshReceiveShadow: new signals.Signal(),
+            meshCastShadowChange: new signals.Signal(),
+            meshReceiveShadowChange: new signals.Signal(),
 
             //material changed event
             meshMaterialChange: new signals.Signal(),
 
-            //light events
+            //light shadow events
             lightCastShadowChange: new signals.Signal(),
             lightReceiveShadowChange: new signals.Signal(),
-            lightShadowDarknessChange: new signals.Signal()
+            lightShadowDarknessChange: new signals.Signal(),
+
+            //light events
+            lightColorChange: new signals.Signal(),
+            lightDistanceChange: new signals.Signal(),
+            lightIntensityChange: new signals.Signal(),
+            lightVisibleChange: new signals.Signal()
+
 
         };
 
         //flags
         this.flags = {
             "fog": false,
+            "shadow": false,
             //meshes flags
             "mesh": true,
             "meshWireframe": true,
             "meshFog": true,
             "meshVisible": true,
+            "meshCastShadow": false,
+            "meshReceiveShadow": false,
+            //lights
+            "light": true,
+            "lightCastShadow": false,
+            "lightReceiveShadow": false
         }
     },
 
@@ -103,6 +121,9 @@ Class("Interface", {
     afterSceneCreation: function() {
         // domEvent from threex
         this.meshEvents = new THREEx.DomEvents(app.sm.camera, app.sm.container);
+
+        //setting toggles
+        this.leftSidebar.set();
     },
 
     setListeners: function() {
@@ -174,11 +195,14 @@ Class("Interface", {
         $('input[type=checkbox]').unbind().on("click", function(event) {
             //retrieving interface flag
             var flag = $(this).data("flag");
+            console.log(flag);
             if (flag in app.interface.flags) {
                 //retriving checked status 
                 app.interface.flags[flag] = this.checked;
                 //triggering event
-                app.interface.events[flag+"Change"].dispatch(app.interface.flags[flag]);
+                console.log(flag+"Change");
+                console.log(this.checked);
+                app.interface.events[flag+"Change"].dispatch(this.checked);
             }
             event.stopPropagation();
         });

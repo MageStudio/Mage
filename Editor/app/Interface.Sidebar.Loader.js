@@ -13,7 +13,7 @@ Class("SidebarLoader", {
             "MeshNormalMaterial": "MeshNormalMaterial.html",
             //lights
             "lightHeader": "lightHeader.html",
-            "AmbientLight": "AmbientLight"
+            "AmbientLight": "AmbientLight.html"
         };
         this.holder = [];
     },

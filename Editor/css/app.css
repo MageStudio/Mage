@@ -31,6 +31,10 @@ a {
     text-decoration: none;
 }
 
+.topcoat-switch__input.active + .topcoat-switch__toggle{
+    margin-left: 3.80rem;
+}
+
 .list-group-item:hover {
     background: #2a9fd6;
     color: white;
@@ -199,7 +203,8 @@ a {
     height: calc(100% - 50px);
     margin: 0;
     font-size: 12px;
-    overflow: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .form-control {
