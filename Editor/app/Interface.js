@@ -79,6 +79,7 @@ Class("Interface", {
             lightCastShadowChange: new signals.Signal(),
             lightReceiveShadowChange: new signals.Signal(),
             lightShadowDarknessChange: new signals.Signal(),
+            lightShowCameraChange: new signals.Signal(),
 
             //light events
             lightColorChange: new signals.Signal(),
@@ -103,7 +104,8 @@ Class("Interface", {
             //lights
             "light": true,
             "lightCastShadow": false,
-            "lightReceiveShadow": false
+            "lightReceiveShadow": false,
+            "lightShowCamera": false
         }
     },
 

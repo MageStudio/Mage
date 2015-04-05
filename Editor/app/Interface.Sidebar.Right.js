@@ -174,6 +174,7 @@ Class("RightSidebar", {
             //setting shadow properties
             $('#castShadow').attr('checked', l.light.castShadow);
             $('#receiveShadow').attr('checked', l.light.receiveShadow);
+            $('#showCamera').attr("checked", l.light.shadowCameraVisible);
         });
     }
 

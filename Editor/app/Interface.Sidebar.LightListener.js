@@ -17,6 +17,7 @@ Class("LightListener", {
         app.interface.events.lightVisibleChange.add(this.onLightVisibleChange);
 
         //setting listeners for shadow
+        app.interface.events.lightShowCameraChange.add(this.onLightShowCameraChange);
         app.interface.events.lightCastShadowChange.add(this.onLightCastShadowChange);
         app.interface.events.lightReceiveShadowChange.add(this.onLightReceiveShadowChange);
     },
@@ -63,7 +64,7 @@ Class("LightListener", {
     onLightCastShadowChange: function(flag) {
         if (app.sm.typeClicked != "light") return;
         //app.lm.map.get(app.sm.uuid).light.castShadow = flag;
-        app.lm.map.get(app.sm.uuid).light.shadowCameraVisible = flag;
+        //app.lm.map.get(app.sm.uuid).light.shadowCameraVisible = flag;
         if (flag) {
             app.lm.map.get(app.sm.uuid).light.shadowCameraFar = 1000;
             app.lm.map.get(app.sm.uuid).light.shadowDarkness = 0.2;
@@ -94,6 +95,12 @@ Class("LightListener", {
         light.shadowCameraFar = 1000;
         light.shadowDarkness = 0.2;
         */
+    },
+
+    //toggling light camera helper
+    onLightShowCameraChange: function(flag) {
+        if (app.sm.typeClicked != "light") return;
+        app.lm.map.get(app.sm.uuid).light.shadowCameraVisible = flag;
     },
 
     //mesh update rotation, position and name
