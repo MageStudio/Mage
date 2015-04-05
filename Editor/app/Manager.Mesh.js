@@ -41,6 +41,9 @@ Class("MeshManager", {
         if (this.allowedMeshes.indexOf(type) != -1) {
             //we're creating a valid mesh
             var mesh = this["_add"+__upperCaseFirstLetter__(type)]();
+            //every mesh must have castshadow and receive shadow enabled
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
             //changing mesh name
             mesh.name = "Mesh_"+this.meshCount;
             mesh.flag = "mesh";

@@ -161,6 +161,17 @@ Class("LightManager", {
         var sphereSize = 50;
         var pointLightHelper = new THREE.PointLightHelper(pointLight, sphereSize);
 
+        //every light must cast shadow
+        pointLight.castShadow = true;
+        var d = 200;
+        pointLight.shadowCameraLeft = -d;
+        pointLight.shadowCameraRight = d;
+        pointLight.shadowCameraTop = d;
+        pointLight.shadowCameraBottom = -d;
+        // #TODO be able to change shadow camera far
+        pointLight.shadowCameraFar = 1000;
+        pointLight.shadowDarkness = 0.2;
+
         return {
             light: pointLight,
             helper: pointLightHelper,
@@ -171,7 +182,7 @@ Class("LightManager", {
     },
 
     _addDirectionalLight: function() {
-        var directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+        var directionalLight = new THREE.DirectionalLight( 0xffffff, 1.75 );
         directionalLight.position.set( 0, 1, 0 );
 
         var size = 50;
@@ -181,6 +192,22 @@ Class("LightManager", {
         var mat = new THREE.MeshBasicMaterial({wireframe: false, color: 0x0000ff});
         var target = new THREE.Mesh(geo, mat);
         var holder = new THREE.Mesh(geo, mat);
+
+        //every light must cast shadow
+        directionalLight.castShadow = true;
+        directionalLight.shadowCameraVisible = true;
+
+        directionalLight.shadowMapWidth = 512;
+        directionalLight.shadowMapHeight = 512;
+
+        var d = 200;
+        directionalLight.shadowCameraLeft = -d;
+        directionalLight.shadowCameraRight = d;
+        directionalLight.shadowCameraTop = d;
+        directionalLight.shadowCameraBottom = -d;
+        // #TODO be able to change shadow camera far
+        directionalLight.shadowCameraFar = 1000;
+        directionalLight.shadowDarkness = 0.2;
 
         return {
             light: directionalLight,

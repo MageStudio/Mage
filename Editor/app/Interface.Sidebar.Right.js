@@ -165,6 +165,15 @@ Class("RightSidebar", {
 
             //setting updateLight click listener
             $('#updateLight').click(app.interface.rightSidebar.lightListener.updateLightRotPosName);
+
+            //setting light properties
+            $('#intensity').val(l.light.intensity ? l.light.intensity : 1);
+            $('#distance').val(l.light.distance ? l.light.distance : 100);
+            $('#decay').val(l.light.decay ? l.light.decay : 100);
+
+            //setting shadow properties
+            $('#castShadow').attr('checked', l.light.castShadow);
+            $('#receiveShadow').attr('checked', l.light.receiveShadow);
         });
     }
 

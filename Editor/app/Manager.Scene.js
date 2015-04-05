@@ -65,12 +65,16 @@ Class("SceneManager", {
         this.scene.add( this.grid );
        
         // creating renderer
-        this.renderer = new THREE.WebGLRenderer( { antialias: false } );
+        this.renderer = new THREE.WebGLRenderer( { antialias: true } );
         //this.renderer.setClearColor( this.scene.fog.color );
         this.renderer.sortObjects = false;
         this.renderer.setClearColor(new THREE.Color('#000000'));
         this.renderer.setPixelRatio( window.devicePixelRatio );
-        this.renderer.setSize( $(this.container).width(), $(this.container).height() );
+        this.renderer.setSize($(this.container).width(), $(this.container).height());
+        //enabling shadows
+        this.renderer.shadowMapEnabled = true;
+        this.renderer.shadowMapSoft = true;
+        this.renderer.shadowMapType = THREE.PCFSoftShadowMap;
 
         this.container.appendChild( this.renderer.domElement );
 
@@ -190,6 +194,18 @@ Class("SceneManager", {
         if (app.sm.allowedShadowTypes.indexOf(type) == -1) return;
         app.sm.renderer.shadowMapType = THREE[type];
         app.interface.events.shadowTypeChanged.dispatch(type);
+    },
+
+    //update all meshes for shadows
+    updateShadows: function() {
+        //updating meshes
+        var keys_list = app.mm.map.keys.concat();
+        if (keys_list.length != 0) {
+            var start = +new Date();
+            do {
+                app.mm.map.get(keys_list.shift()).material.needsUpdate = true;
+            } while (keys_list.length > 0 && (+new Date() - start < 50));
+        }
     },
 
     //selecting and deselecting meshes

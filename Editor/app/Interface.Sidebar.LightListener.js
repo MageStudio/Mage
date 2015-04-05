@@ -62,23 +62,42 @@ Class("LightListener", {
     //event listner for cast shadow
     onLightCastShadowChange: function(flag) {
         if (app.sm.typeClicked != "light") return;
-        app.lm.map.get(app.sm.uuid).light.castShadow = flag;
-        app.lm.map.get(app.sm.uuid).light.shadowCamera = app.sm.camera;
-        app.lm.map.get(app.sm.uuid).light.shadowCameraNear = 1;
-        app.lm.map.get(app.sm.uuid).light.shadowCameraFar = 5000;
-        app.lm.map.get(app.sm.uuid).light.shadowCameraFov = 70;
-
+        //app.lm.map.get(app.sm.uuid).light.castShadow = flag;
+        app.lm.map.get(app.sm.uuid).light.shadowCameraVisible = flag;
+        if (flag) {
+            app.lm.map.get(app.sm.uuid).light.shadowCameraFar = 1000;
+            app.lm.map.get(app.sm.uuid).light.shadowDarkness = 0.2;
+        } else {
+            app.lm.map.get(app.sm.uuid).light.shadowCameraFar = 1;
+            app.lm.map.get(app.sm.uuid).light.shadowDarkness = 0;
+        }
+        /*
         //app.lm.map.get(app.sm.uuid).light.shadowCameraVisible = true;
 
-        app.lm.map.get(app.sm.uuid).light.shadowBias = 0.0001;
-        app.lm.map.get(app.sm.uuid).light.shadowDarkness = 0.5;
+        light.shadowBias = 0.0001;
+        light.shadowDarkness = 0.5;
 
-        app.lm.map.get(app.sm.uuid).light.shadowMapWidth = 2048;
-        app.lm.map.get(app.sm.uuid).light.shadowMapHeight = 1024;
+        //light.shadowMapWidth = 2048;
+        //light.shadowMapHeight = 1024;
+        //TEMP below
+        
+        light.shadowMapWidth = 512;
+        light.shadowMapHeight = 512;
+
+        var d = 200;
+
+        light.shadowCameraLeft = -d;
+        light.shadowCameraRight = d;
+        light.shadowCameraTop = d;
+        light.shadowCameraBottom = -d;
+
+        light.shadowCameraFar = 1000;
+        light.shadowDarkness = 0.2;
+        */
     },
 
     //mesh update rotation, position and name
-    updatelightRotPosName: function() {
+    updateLightRotPosName: function() {
         if (app.sm.typeClicked != "light") return;
         var o = app.lm.map.get(app.sm.uuid);
 
@@ -89,14 +108,17 @@ Class("LightListener", {
             o.holder.position.set($('#position_x').val(), $('#position_y').val(), $('#position_z').val());
             //settting rotation
             o.holder.rotation.set($('#rotation_x').val(), $('#rotation_y').val(), $('#rotation_z').val());
-            return;
+        } else {
+            //setting name
+            o.light.name = $('#lightName').val();
+            //setting position 
+            o.light.position.set($('#position_x').val(), $('#position_y').val(), $('#position_z').val());
+            //settting rotation
+            o.light.rotation.set($('#rotation_x').val(), $('#rotation_y').val(), $('#rotation_z').val());
         }
-
-        //setting name
-        o.light.name = $('#lightName').val();
-        //setting position 
-        o.light.position.set($('#position_x').val(), $('#position_y').val(), $('#position_z').val());
-        //settting rotation
-        o.light.rotation.set($('#rotation_x').val(), $('#rotation_y').val(), $('#rotation_z').val());
+        //setting decay, intensity and distance
+        o.light.intensity = !isNaN(parseFloat($('#intensity').val())) ? parseFloat($('#intensity').val()) : 0 ;
+        o.light.decay = !isNaN(parseFloat($('#decay').val())) ? parseFloat($('#decay').val()) : 0 ;
+        o.light.distance = !isNaN(parseFloat($('#distance').val())) ? parseFloat($('#distance').val()) : 0 ;
     },
 });

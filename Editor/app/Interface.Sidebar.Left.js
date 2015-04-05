@@ -23,6 +23,11 @@ Class("LeftSidebar", {
             app.interface.events.fogDensityChange.dispatch($(this).val());
         });
 
+        //setting listener for update shadows button
+        $('#updateShadows').click(function() {
+            app.sm.updateShadows();
+        });
+
         //adding listeners for controls button
         $('#controlsTranslate').click(function() {
             app.interface.events.transformModeChange.dispatch("translate");

@@ -92,7 +92,7 @@ Class("Interface", {
         //flags
         this.flags = {
             "fog": false,
-            "shadow": false,
+            "shadow": true,
             //meshes flags
             "mesh": true,
             "meshWireframe": true,

@@ -298,7 +298,7 @@ Class("MeshListener", {
     onMeshReceiveShadowChange: function(flag) {
         if (app.sm.typeClicked != "mesh") return;
         //retrieving object
-        var o = app.mm.map.get(app.sm.uuid).receiveShadow = flag;
+        app.mm.map.get(app.sm.uuid).receiveShadow = flag;
     },
 
     //cast shadow change event listener
