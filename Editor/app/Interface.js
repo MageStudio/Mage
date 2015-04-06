@@ -34,6 +34,10 @@ Class("Interface", {
             saveEvent: new signals.Signal(),
             //save started
             saveStarted: new signals.Signal(),
+            //load event
+            loadEvent: new signals.Signal(),
+            //load started
+            loadStarted: new signals.Signal(),
 
             //triggered when "1" button is clicked
             columnToggle: new signals.Signal(),
