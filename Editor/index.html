@@ -60,17 +60,17 @@
                   <ul class='dropdown-menu' role='menu'>
                     <li>
                       <a href='#'>
-                        Action
+                        New
+                      </a>
+                    </li>
+                    <li>
+                      <a href='javascript:app.storage.save();'>
+                        Save
                       </a>
                     </li>
                     <li>
                       <a href='#'>
-                        Another action
-                      </a>
-                    </li>
-                    <li>
-                      <a href='#'>
-                        Something else here
+                        Load
                       </a>
                     </li>
                     <li class='divider'></li>
@@ -439,7 +439,25 @@
         </div>
       </div>
       <div class='row'>
-        <div class='col-md-12' id='footer'></div>
+        <div class='col-md-12' id='footer'>
+          <div class='row panel-content'>
+            <div class='col-md-2'>
+              <span style='line-height: 40px; font-size: 12px;'>
+                Autosave
+              </span>
+              <label class='topcoat-switch' style='margin-top:7px;'>
+                <input class='topcoat-switch__input' data-flag='autosave' id='autosaveToggle' type='checkbox'>
+                <div class='topcoat-switch__toggle'></div>
+              </label>
+            </div>
+            <div class='col-md-2' id='status' style='font-size:12px; line-height: 40px;'>
+              <i class='fa fa-close'></i>
+              <span>
+                Not Saved.
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <!-- modals -->

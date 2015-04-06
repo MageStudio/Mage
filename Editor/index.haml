@@ -59,13 +59,13 @@
                                     %ul.dropdown-menu{:role=>"menu"}
                                         %li
                                             %a{:href=>"#"}
-                                                Action
+                                                New
+                                        %li
+                                            %a{:href=>"javascript:app.storage.save();"}
+                                                Save
                                         %li
                                             %a{:href=>"#"}
-                                                Another action
-                                        %li
-                                            %a{:href=>"#"}
-                                                Something else here
+                                                Load
                                         %li.divider
                                         %li
                                             %a{:href=>"#"}
@@ -288,6 +288,17 @@
                     #rightContainer
             .row
                 #footer.col-md-12
+                    .row.panel-content
+                        .col-md-2
+                            %span{:style=>"line-height: 40px; font-size: 12px;"}
+                                Autosave
+                            %label.topcoat-switch{:style=>"margin-top:7px;"}
+                                %input#autosaveToggle.topcoat-switch__input{:type=>"checkbox", "data-flag"=>"autosave"}
+                                .topcoat-switch__toggle
+                        .col-md-2#status{:style=>"font-size:12px; line-height: 40px;"}
+                            %i.fa.fa-close
+                            %span
+                                Not Saved.
 
         / modals
         / addMeshModal

@@ -28,6 +28,13 @@ Class("Interface", {
 
         //using signals to dispatch events
         this.events = {
+            //autosave event 
+            autosaveChange: new signals.Signal(),
+            //Save event
+            saveEvent: new signals.Signal(),
+            //save started
+            saveStarted: new signals.Signal(),
+
             //triggered when "1" button is clicked
             columnToggle: new signals.Signal(),
             //transform space change
@@ -92,6 +99,9 @@ Class("Interface", {
 
         //flags
         this.flags = {
+            //save
+            "autosave": false,
+            //fog and shadow
             "fog": false,
             "shadow": true,
             //meshes flags
@@ -114,6 +124,7 @@ Class("Interface", {
         this.leftSidebar = new LeftSidebar();
         this.rightSidebar = new RightSidebar();
         this.sidebarHelper = new HelperSidebar();
+        this.footer = new Footer();
         //creating sidebar loader
         this.loader = new SidebarLoader();
         // setting listeners
@@ -126,6 +137,9 @@ Class("Interface", {
 
         //setting toggles
         this.leftSidebar.set();
+
+        //Setting footer
+        this.footer.set();
     },
 
     setListeners: function() {
@@ -134,6 +148,7 @@ Class("Interface", {
         this.leftSidebar.setListeners();
         this.rightSidebar.setListeners();
         this.loader.setListeners();
+        this.footer.setListeners();
         //setting onykeydown listener
         document.addEventListener('keydown', app.interface.onKeyDown, false);
         //setting resize event listener
