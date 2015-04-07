@@ -157,7 +157,7 @@ Class("RightSidebar", {
             $('#lightName').val(l.light.name);
 
             //setting group
-            $('#lightGroup')val(l.light.group);
+            $('#lightGroup').val(l.light.group);
 
             //setting position from holder
             $('#position_x').val((l.holder) ? l.holder.position.x : l.light.position.x);

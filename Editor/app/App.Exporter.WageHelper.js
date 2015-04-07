@@ -1,13 +1,5 @@
 Class("WageHelper", {
-    WageHelper: function() {
-        //check if there's something to restore or not
-        this.nothingToRestore = false;
-        for (var k in app.storage.keys) {
-            if (!data[app.storage.currentProject+"_"+k]) {
-                this.nothingToRestore = true;
-                return;
-            }
-        }
+    WageHelper: function(data) {
         this.lights = data[app.storage.currentProject+"_lights"];
         this.meshes = data[app.storage.currentProject+"_meshes"];
         //flags
@@ -17,7 +9,7 @@ Class("WageHelper", {
 
     begin: function() {
         //for every mesh and light we use a different class depending on each group
-    }
+    },
 
     _writeMain: function() {
         var text = "";

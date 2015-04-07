@@ -40,8 +40,6 @@ function start() {
             this.util = new Global();
             //storage
             this.storage = new Storage();
-            //exporter
-            this.exporter = new Exporter();
             //check if new project or not
             if (this.storage.currentProject == "BaseProject") {
                 this.storage.currentProject = prompt("Choose project's name.");
@@ -54,6 +52,8 @@ function start() {
             this.interface.afterSceneCreation();
             //restorer
             this.restorer = new Restorer(this.storage.load());
+            //exporter
+            this.exporter = new Exporter();
         },
 
         setListeners: function() {

@@ -9,11 +9,11 @@
     "icon": "link.png",
     "toolbar": true,
     "frame": true,
-    "width": 800,
-    "height": 500,
+    "width": 1024,
+    "height": 768,
     "position": "mouse",
-    "min_width": 400,
-    "min_height": 200
+    "min_width": 1024,
+    "min_height": 768
   },
   "dependencies": {
     "ncp": "*",

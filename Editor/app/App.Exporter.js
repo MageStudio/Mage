@@ -7,7 +7,17 @@ Class("Exporter", {
 
         //creating helper
         this.helper = new ExporterHelper();
-        this.wageHelper = new WageHelper();
+    },
+
+    fail: function() {
+        //check if there's something to restore or not
+        var data = app.storage.load();
+        for (var k in app.storage.keys) {
+            if (!data[app.storage.currentProject+"_"+k]) {
+                return true;
+            }
+        }
+        return false;
     },
 
     Android: function() {
@@ -19,6 +29,11 @@ Class("Exporter", {
     },
 
     wage: function() {
+        if (this.fail()) {
+            alert("nothing to export!");
+            return;
+        }
+        this.wageHelper = new WageHelper(app.storage.load());
         //requestind directory
         var totalSteps = 10;
         var currentStep = 1;
