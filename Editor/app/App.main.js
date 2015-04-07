@@ -4,6 +4,9 @@ window.onload = function() {
         "app/App.Global",
         "app/App.Restorer",
         "app/App.Storage",
+        "app/App.Exporter",
+        "app/App.Exporter.Helper",
+        "app/App.Exporter.WageHelper",
         "app/Interface",
         "app/Manager.Scene",
         "app/Manager.Mesh",
@@ -25,12 +28,20 @@ function start() {
 
     Class("Editor", {
         Editor: function() {
+            //interface
             this.interface = new Interface();
+            //scene manager
             this.sm = new SceneManager();
+            //mesh manager
             this.mm = new MeshManager();
+            //light manager
             this.lm = new LightManager();
+            //util
             this.util = new Global();
+            //storage
             this.storage = new Storage();
+            //exporter
+            this.exporter = new Exporter();
         },
 
         init: function() {

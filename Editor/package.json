@@ -1,6 +1,6 @@
 {
   "main": "index.html",
-  "name": "Wage Editor",
+  "name": "Editor",
   "description": "Wage Editor",
   "version": "0.1.0",
   "keywords": [ "wage", "three.js" ],
@@ -14,6 +14,11 @@
     "position": "mouse",
     "min_width": 400,
     "min_height": 200
+  },
+  "dependencies": {
+    "ncp": "*",
+    "colors": "*",
+    "node-prefix": "*"
   },
   "webkit": {
     "plugin": true

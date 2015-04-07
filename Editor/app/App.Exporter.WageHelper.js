@@ -1,0 +1,7 @@
+Class("WageHelper", {
+    WageHelper: function() {
+        
+    },
+
+
+});
