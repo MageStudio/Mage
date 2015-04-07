@@ -15,7 +15,7 @@
         %script{:type=>"text/javascript", :src=>"app/lib/colorpicker.js"}
 
         / actual three.js import
-        %script{:type=>"text/javascript", :src=>"app/lib/three.js"}
+        %script{:type=>"text/javascript", :src=>"app/lib/three.min.js"}
 
         / three js related imports
         %script{:type=>"text/javascript", :src=>"app/lib/Projector.js"}
@@ -298,7 +298,12 @@
                             %i.fa.fa-close
                             %span
                                 Not Saved.
-
+                        .col-md-2
+                        .col-md-2
+                        .col-md-4
+                            .progress{:style=>"margin-top:10px;"}
+                                .progress-bar#progressBar{:role=>"progressbar", "aria-valuenow"=>"60", "aria-valuemin"=>"0", "aria-valuemax"=>"100", :style=>"width: 0%;"}
+                                    0%
         / modals
         / addMeshModal
         #addMeshModal.wagemodal.modal.fade.bs-example-modal-sm{:tabindex=>"-1", :role=>"dialog", "aria-labelledby"=>"myModalLabel", "aria-hidden"=>"true"}

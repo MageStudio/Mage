@@ -200,7 +200,7 @@ a {
 
 #rightContainer {
     width: 100%;
-    height: calc(100% - 50px);
+    max-height: calc(100% - 50px);
     margin: 0;
     font-size: 12px;
     overflow-x: hidden;

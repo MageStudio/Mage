@@ -57,9 +57,20 @@ Class("LeftSidebar", {
         app.interface.events.soundAdded.add(this.onSoundAdded);
 
         //on new project
-        app.interface.events.newProject.add(this.onAdded);
-        app.interface.events.newProject.add(this.onSoundAdded);
-        app.interface.events.newProject.add(this.onLightAdded);
+        app.interface.events.newProject.add(this.clear);
+    },
+
+    clear: function() {
+        //clearing meshes list
+        $('#sceneHierarchy').html("");
+        $('#sceneHierarchy li').unbind();
+        $('#sceneVertices').text('Vertices: 0');
+        $('#sceneFaces').text('Faces: 0');
+        //clearing lights list
+        $('#lightHierarchy').html('');
+        $('#lightsCount').text('Lights: 0');
+        $('#lightHierarchy li').unbind();
+        //clearing sounds list
     },
 
     //events listeners for mesh, light and sound added
