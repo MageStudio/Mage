@@ -42,6 +42,10 @@ function start() {
             this.storage = new Storage();
             //exporter
             this.exporter = new Exporter();
+            //check if new project or not
+            if (this.storage.currentProject == "BaseProject") {
+                this.storage.currentProject = prompt("Choose project's name.");
+            }
         },
 
         init: function() {
@@ -60,8 +64,12 @@ function start() {
         },
 
         new: function() {
-            cancelAnimationFrame(app.sm.animId);// Stop the animation
-            app.sm.renderer.domElement.addEventListener('dblclick', null, false); //remove listener to render
+            var projectName = prompt("Choose project's name.");
+            app.storage.currentProject = projectName;
+            app.storage.set("currentProject", projectName);
+            //stopping animation
+            cancelAnimationFrame(app.sm.animId);
+            app.sm.renderer.domElement.addEventListener('dblclick', null, false);//remove listener to render
             app.sm.scene = null;
             app.sm.projector = null;
             app.sm.camera = null;

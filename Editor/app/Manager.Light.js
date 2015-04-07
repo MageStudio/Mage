@@ -50,6 +50,7 @@ Class("LightManager", {
             //setting light name
             object.light.name = "Light_"+this.lightCount;
             object.light.flag = "light";
+            object.light.group = "World";
             //add light to scene
             app.sm.scene.add(object.light)
             //pushing light into array

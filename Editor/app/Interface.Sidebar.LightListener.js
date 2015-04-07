@@ -111,6 +111,8 @@ Class("LightListener", {
         if (o.holder) {
             //setting name
             o.light.name = $('#lightName').val();
+            //setting group
+            o.light.group = $('#lightGroup').val();
             //setting position 
             o.holder.position.set($('#position_x').val(), $('#position_y').val(), $('#position_z').val());
             //settting rotation
@@ -118,6 +120,8 @@ Class("LightListener", {
         } else {
             //setting name
             o.light.name = $('#lightName').val();
+            //setting group
+            o.light.group = $('#lightGroup').val();
             //setting position 
             o.light.position.set($('#position_x').val(), $('#position_y').val(), $('#position_z').val());
             //settting rotation

@@ -8,7 +8,7 @@ Class("Storage", {
         this.autoSave = false;
         this.autoSaveId = undefined;
         this.autoSaveTimer = 10000; //saving every 10 seconds
-        this.currentProject = "test"; //reference to current project
+        this.currentProject = (localStorage.getItem("currentProject")) ? localStorage.getItem("currentProject") : "BaseProject"; //reference to current project
     },
 
     //Setting listeners if we want auto save or not

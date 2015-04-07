@@ -46,6 +46,7 @@ Class("MeshManager", {
             mesh.receiveShadow = true;
             //changing mesh name
             mesh.name = "Mesh_"+this.meshCount;
+            mesh.group = "World";
             mesh.flag = "mesh";
             //store new mesh in our map
             app.mm.store(mesh.uuid, mesh);

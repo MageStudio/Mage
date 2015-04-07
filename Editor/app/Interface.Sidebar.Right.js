@@ -67,6 +67,9 @@ Class("RightSidebar", {
             //setting name
             $('#meshName').val(o.name);
 
+            //setting group
+            $('#meshGroup').val(o.group);
+
             //setting position
             $('#position_x').val(o.position.x);
             $('#position_y').val(o.position.y);
@@ -152,6 +155,9 @@ Class("RightSidebar", {
 
             //setting name
             $('#lightName').val(l.light.name);
+
+            //setting group
+            $('#lightGroup')val(l.light.group);
 
             //setting position from holder
             $('#position_x').val((l.holder) ? l.holder.position.x : l.light.position.x);

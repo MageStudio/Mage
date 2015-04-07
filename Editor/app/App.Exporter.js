@@ -64,4 +64,9 @@ Class("Exporter", {
 
         nw: ??
 
+        create scene
+        add lights and objects
+        create renderer;
+        start
+
 */

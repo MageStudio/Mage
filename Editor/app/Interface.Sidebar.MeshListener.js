@@ -82,6 +82,9 @@ Class("MeshListener", {
         //setting name
         o.name = $('#meshName').val();
 
+        //setting group
+        o.group = $('#meshGroup').val();
+
         //setting position 
         o.position.set($('#position_x').val(), $('#position_y').val(), $('#position_z').val());
 
