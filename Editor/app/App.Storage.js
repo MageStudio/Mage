@@ -66,5 +66,10 @@ Class("Storage", {
     //getting elements from localstorage
     get: function(key) {
         return localStorage.getItem(key);
+    },
+
+    //clearing all data
+    clear: function() {
+        localStorage.clear();
     }
 })

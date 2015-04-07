@@ -2,6 +2,7 @@ window.onload = function() {
     include([
         "app/lib/jsColorPicker.min",
         "app/App.Global",
+        "app/App.Restorer",
         "app/App.Storage",
         "app/Interface",
         "app/Manager.Scene",
@@ -36,6 +37,8 @@ function start() {
             this.interface.init();
             this.sm.init();
             this.interface.afterSceneCreation();
+            //restorer
+            this.restorer = new Restorer(this.storage.load());
         },
 
         setListeners: function() {
@@ -54,6 +57,8 @@ function start() {
         app = new Editor();
         app.init();
         app.setListeners();
+        //trying to restore old data
+        app.restorer.restore();
     }, function() {
         //on check failure
     });
