@@ -14,26 +14,30 @@ Class("SceneManager", {
         //holder for hierarchy.
         this.hierarchy = 0;
         //allowes shadow types
-        this.allowedShadowTypes = ["BasicShadowMap", "PCFShadowMap", "PCFSoftShadowMap"]
+        this.allowedShadowTypes = ["BasicShadowMap", "PCFShadowMap", "PCFSoftShadowMap"];
+        //storing animation id
+        this.animId = undefined;
     },
 
     update: function() {
-        app.sm.controls.update();
-        app.sm.transformControl.update();
+        try {
+            app.sm.controls.update();
+            app.sm.transformControl.update();
 
-        //updating mesh manager
-        app.mm.update();
-        //updating light manager
-        app.lm.update();
-        
-        //rendering scene
-        app.sm.render();
+            //updating mesh manager
+            app.mm.update();
+            //updating light manager
+            app.lm.update();
+            
+            //rendering scene
+            app.sm.render();
 
-        //requesting new animation frame
-        setTimeout(function() {
-            requestAnimFrame(app.sm.update);
-        }, 1000/60);
-        //requestAnimFrame(app.sm.update);
+            //requesting new animation frame
+            setTimeout(function() {
+                app.sm.animId = requestAnimationFrame(app.sm.update);
+            }, 1000/60);
+            //requestAnimFrame(app.sm.update);
+        } catch(exception) {}
     },
 
     render: function() {

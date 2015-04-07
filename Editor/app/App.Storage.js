@@ -68,8 +68,16 @@ Class("Storage", {
         return localStorage.getItem(key);
     },
 
-    //clearing all data
+    //clearing all data for this project
     clear: function() {
+        for (k in app.storage.keys) {
+            //getting json version of our map
+            app.storage.set(app.storage.currentProject+"_"+k, null);
+        }
+    },
+
+    //wiping all data stored
+    clearAll: function() {
         localStorage.clear();
     }
 })

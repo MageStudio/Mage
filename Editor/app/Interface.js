@@ -28,6 +28,13 @@ Class("Interface", {
 
         //using signals to dispatch events
         this.events = {
+            //new project
+            newProject: new signals.Signal(),
+            //closing project
+            closedProject: new signals.Signal(),
+            //loading project
+            loadProject: new signals.Signal(),
+
             //autosave event 
             autosaveChange: new signals.Signal(),
             //Save event

@@ -1,5 +1,13 @@
 Class("Restorer", {
     Restorer: function(data) {
+        //check if there's something to restore or not
+        this.nothingToRestore = false;
+        for (var k in app.storage.keys) {
+            if (!data[app.storage.currentProject+"_"+k]) {
+                this.nothingToRestore = true;
+                return;
+            }
+        }
         this.lights = data[app.storage.currentProject+"_lights"];
         this.meshes = data[app.storage.currentProject+"_meshes"];
         //flags
@@ -10,6 +18,8 @@ Class("Restorer", {
     },
 
     restore: function() {
+        //if nothing to restore, return
+        if (this.nothingToRestore) return;
         //restoring meshes
         for (var i=0; i<this.meshes.total; i++) {
             var k = this.meshes.keys[i];

@@ -51,10 +51,15 @@ Class("LeftSidebar", {
         app.interface.events.meshAdded.add(this.onAdded)
         //registering for light added event
         app.interface.events.lightAdded.add(this.onAdded);
-        app.interface.events.lightAdded.add(this.onlightAdded);
+        app.interface.events.lightAdded.add(this.onLightAdded);
         //registering for sound added event
         app.interface.events.soundAdded.add(this.onAdded);
         app.interface.events.soundAdded.add(this.onSoundAdded);
+
+        //on new project
+        app.interface.events.newProject.add(this.onAdded);
+        app.interface.events.newProject.add(this.onSoundAdded);
+        app.interface.events.newProject.add(this.onLightAdded);
     },
 
     //events listeners for mesh, light and sound added
@@ -127,7 +132,7 @@ Class("LeftSidebar", {
     },
 
     //on light added
-    onlightAdded: function() {
+    onLightAdded: function() {
         //first we clear the list
         $('#lightHierarchy').html("");
         var keys_list = app.lm.map.keys.concat(); 

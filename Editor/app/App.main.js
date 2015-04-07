@@ -46,6 +46,26 @@ function start() {
             this.sm.setListeners();
             this.lm.setListeners();
             this.storage.setListeners();
+        },
+
+        new: function() {
+            cancelAnimationFrame(app.sm.animId);// Stop the animation
+            app.sm.renderer.domElement.addEventListener('dblclick', null, false); //remove listener to render
+            app.sm.scene = null;
+            app.sm.projector = null;
+            app.sm.camera = null;
+            app.sm.controls = null;
+            app.sm.transformControl = null;
+            var empty = function(element) {
+                while (element.lastChild) element.removeChild(element.lastChild);
+            }
+            empty(app.sm.container);
+            //wiping all stored data
+            app.storage.clear();
+            //trying to recreate scene
+            app.sm.init();
+            //dispatching new project signal
+            app.interface.events.newProject.dispatch();
         }
     });
 
