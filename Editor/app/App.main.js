@@ -43,6 +43,7 @@ function start() {
             //check if new project or not
             if (this.storage.currentProject == "BaseProject") {
                 this.storage.currentProject = prompt("Choose project's name.");
+                this.storage.set("currentProject", this.storage.currentProject);
             }
         },
 

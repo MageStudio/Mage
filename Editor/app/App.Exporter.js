@@ -2,6 +2,11 @@
 Class("Exporter", {
     Exporter: function() {
         //including necessary modules
+        var require = window.require || false;  
+        if (!require) {
+            alert("Exporter not available. Can be used only with standalone package. Please download it.");
+            return;
+        }
         this.ncp = require("ncp").ncp;
         this.fs = require("fs");
 
