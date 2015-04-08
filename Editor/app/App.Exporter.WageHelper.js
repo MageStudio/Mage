@@ -9,6 +9,11 @@ Class("WageHelper", {
 
     begin: function() {
         //for every mesh and light we use a different class depending on each group
+        var groups = [];
+        for (var i=0; i<this.meshes.total; i++) {
+            
+        }
+
     },
 
     _writeMain: function() {

@@ -1,6 +1,6 @@
 Class("ExporterHelper", {
     ExporterHelper: function() {
-
+        this.fs = require("fs");
     },
 
     requestDirectory: function(callback) {
@@ -18,5 +18,13 @@ Class("ExporterHelper", {
         });
         //triggering click
         $('#directoryChooser').click();
+    },
+
+    writeAppend: function(path, text, callback) {
+        this.fs.open(path, "a", "0666", function(error, descriptor) {
+            if (error) return;
+            //writing text to file
+            app.exporter.helper.fs.write(descriptor, text, callback);
+        });
     }
 })

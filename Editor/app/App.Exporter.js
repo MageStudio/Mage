@@ -7,17 +7,23 @@ Class("Exporter", {
 
         //creating helper
         this.helper = new ExporterHelper();
+        var flags = {
+            "lights": false,
+            "meshes": false
+        };
     },
 
     fail: function() {
         //check if there's something to restore or not
         var data = app.storage.load();
+        var allFailed = true;
         for (var k in app.storage.keys) {
-            if (!data[app.storage.currentProject+"_"+k]) {
-                return true;
+            if (data[app.storage.currentProject+"_"+k]) {
+                allFailed = false;
+                break;
             }
         }
-        return false;
+        return allFailed;
     },
 
     Android: function() {
@@ -54,7 +60,7 @@ Class("Exporter", {
                     app.interface.footer.incProgressBar(currentStep, totalSteps);
                     currentStep++;
                     //begin wage process
-                    app.interface.exporter.wageHelper.begin();
+                    app.exporter.wageHelper.begin();
                 }
             });
         });
