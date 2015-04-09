@@ -7,7 +7,17 @@ class Entity
                 # TODO: better injection of script
             else
                 this[key] = val
+        @_create()
+        return this
+
+    _create: ->
+        @object = @create()
+        if @object isnt null
+            app.add(@object, this)
         return
+
+    create: ->
+        return null
 
     hasScript: ->
         @script isnt null
