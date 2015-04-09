@@ -1,4 +1,17 @@
 class Entity
+    constructor: (@options={}) ->
+        @script = null
+        for key, val of @options
+            if val is "script"
+                @script = val
+                # TODO: better injection of script
+            else
+                this[key] = val
+        return
+
+    hasScript: ->
+        @script isnt null
+
     start: ->
         return
 

@@ -73,9 +73,13 @@ class App
         return
 
     add: (mesh, element) ->
+        @scene.add mesh
+        @world.entities[mesh.uuid] = element
         return
 
     remove: (mesh) ->
+        @scene.remove(mesh)
+        delete @world.entities[mesh.uuid]
         return
 
     init: ->
