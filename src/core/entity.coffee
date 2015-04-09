@@ -17,7 +17,7 @@ class Entity
         return
 
     create: ->
-        return null
+        null
 
     hasScript: ->
         @script isnt null
