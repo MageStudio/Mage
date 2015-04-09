@@ -4,7 +4,7 @@ class PointLight extends Wage.Light
 
     create: ->
         super
-        @geometry = new THREE.SphereGeometry Wage.managers.lights.holderRadius, Wage.managers.lights.holderSegment, Wage.managers.lights.holderSegment
+        @geometry = new THREE.SphereGeometry @lights.holderRadius, @lights.holderSegment, @lights.holderSegment
         @material = new THREE.MeshPhongMaterial
             color: @color
         mesh = new THREE.Mesh @geometry, @material
@@ -17,9 +17,9 @@ class PointLight extends Wage.Light
     on: ->
         self = this
         _delay = ->
-            self.light.intensity += Wage.managers.lights.delayFactor
+            self.light.intensity += self.lights.delayFactor
             if self.light.intensity < self.intensity
-                setTimeout _delay, Wage.managers.lights.delayStep
+                setTimeout _delay, self.lights.delayStep
             else
                 self.isOn = true
             return
@@ -29,9 +29,9 @@ class PointLight extends Wage.Light
     off: ->
         self = this
         _delay = ->
-            self.light.intensity -= Wage.managers.lights.delayFactor
+            self.light.intensity -= self.lights.delayFactor
             if self.light.intensity > 0
-                setTimeout _delay, Wage.managers.lights.delayStep
+                setTimeout _delay, self.lights.delayStep
             else
                 self.isOn = false
             return

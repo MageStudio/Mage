@@ -1,4 +1,4 @@
-class LightManager
+class LightsManager
     constructor: ->
         lights = []
         @delayFactor = 0.1
@@ -21,6 +21,6 @@ class LightManager
         return
 
 env = self.Wage ?= {}
-env.LightManager = LightManager
+env.LightsManager = LightsManager
 managers = env.managers ?= {}
-managers.lights = new LightManager()
+managers.lights = new LightsManager()

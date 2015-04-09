@@ -7,6 +7,7 @@ class Light extends Wage.Entity
                 z: 0
         @position = position
         @isOn = false
+        {@lights} = Wage.managers
         super options
 
     create: ->
