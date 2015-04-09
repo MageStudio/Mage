@@ -4,7 +4,7 @@ class AnimatedMesh extends Wage.Mesh
         @fadeStack = []
         @warpStack = []
         # get skinning material
-        originalMaterial = materials[0]
+        originalMaterial = @materials[0]
         originalMaterial.skinning = true
         # default visibility
         @meshVisible = true
