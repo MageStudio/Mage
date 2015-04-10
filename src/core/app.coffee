@@ -52,6 +52,12 @@ class App
         @CAMERA_MAX_Z = 1000;
         @CAMERA_MIN_Z = 250;
 
+        @assets =
+            sounds: {}
+            images: {}
+            shaders: {}
+            videos: {}
+
     onCreate: ->
         return
 
@@ -147,6 +153,16 @@ class App
         return
 
     load: ->
+        return
+
+    _prepare: ->
+        @prepareScene()
+        @load()
+        return
+
+    start: ->
+        {assets} = Wage.managers
+        assets.load @_prepare
         return
 
     log: ->
