@@ -7,10 +7,10 @@ class Shader
         @attributes = attributes ?= @shader.attributes
         @uniforms = uniforms ?= @shader.uniforms
         obj =
-            attributes = @attributes
-            uniforms = @uniforms
-            vertexShader = @vertex
-            fragmentShader = @fragment
+            attributes: @attributes
+            uniforms: @uniforms
+            vertexShader: @vertex
+            fragmentShader: @fragment
         opt = @shader.options
         for key, val of options
             opt[key] = val

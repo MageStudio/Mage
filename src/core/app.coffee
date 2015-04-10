@@ -1,9 +1,30 @@
 class App
-    constructor: ->
+    constructor: (@options={}) ->
+        @debug = true or @options.debug
+
         @log_types =
             e: "error"
             w: "warn"
             i: "info"
+
+        @_config =
+            physics: false
+            camera:
+                fov: 75
+                near: 0.1
+                far: 100
+            frameRate: 60
+            alphaRender: false
+            castShadows: true
+            handlers:
+                mouse: Wage.Mouse
+                leap: Wage.Leap
+
+        @config = {}
+
+        @_physiscs = false
+
+        @devices = {}
 
         @util =
             h: window.innerHeight
@@ -15,18 +36,11 @@ class App
                 near: 0.1
                 far: 100
 
-        @threeLib = undefined
-
         # scene parameters
         @camera = undefined;
         @user = undefined;
         @scene = undefined;
         @renderer= undefined;
-
-        # debug mode
-        @debug = true
-
-        @clock = new THREE.Clock()
 
         # window and mouse variables
         @mouseX = 0;
@@ -37,8 +51,6 @@ class App
         @windowHalfY = window.innerHeight / 2;
         @CAMERA_MAX_Z = 1000;
         @CAMERA_MIN_Z = 250;
-
-        {@leap} = Wage
 
     onCreate: ->
         return
@@ -70,27 +82,76 @@ class App
         return
 
     render: ->
+        scope = this
+        {scene} = Wage
+
+        setTimeout( ->
+            if scope._physiscs
+                scene.simulate()
+            requestAnimationFrame(scope.render)
+            return
+        1000 / @config.frameRate)
         return
 
     add: (mesh, element) ->
-        @scene.add mesh
-        @world.entities[mesh.uuid] = element
+        {scene, world} = Wage
+        scene.add mesh
+        world.entities[mesh.uuid] = element
         return
 
     remove: (mesh) ->
-        @scene.remove(mesh)
-        delete @world.entities[mesh.uuid]
+        {scene, world} = Wage
+        scene.remove(mesh)
+        delete world.entities[mesh.uuid]
+        return
+
+    _loadConfig: ->
+        for key, val of @_config
+            if @options[key] isnt undefined
+                val = @options[key]
+            @config[key] = val
+        # max fps to 120
+        if @config.frameRate > 120
+            @config.frameRate = 120
+        # init devices handlers
+        for key, val of @config.devices
+            @devices[key] = new val()
         return
 
     init: ->
-        @three = THREE
+        {screen, world} = Wage
+        @_loadConfig()
+        if @config.physics
+            try
+                Physijs.scripts.worker = 'workers/physijs_worker.js'
+                Wage.scene = new Physijs.Scene()
+                @_physiscs = true
+            catch e
+                @log(e)
+        if not @_physiscs
+            Wage.scene = new THREE.Scene()
+        Wage.camera = new Wage.Camera(@config.camera).object
+        renderer = Wage.renderer = new THREE.WebGLRenderer
+            alpha: @config.alphaRender
+        if @config.castShadows
+            renderer.shadowMapEnabled = true
+            renderer.shadowMapType = THREE.PCFSoftShadowMap
+        renderer.setSize(screen.w, screen.h)
+        document.getElementById('gameContainer').appendChild renderer.domElement
+        # TODO user control
+        #      game
+        world.update()
+        # TODO control
+        @onCreate()
+        @render()
         return
 
     load: ->
         return
 
     log: ->
-        return
+        if not @debug
+            return
 
     keyup: (e) ->
         return

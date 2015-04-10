@@ -4,12 +4,13 @@ class World
         return
 
     update: ->
+        {clock} = Wage
         keys = Object.keys(@entities)
         t = new Date()
         while keys
             obj = @entities[keys.shift()]
             if obj.update
-                obj.update(app.clock.getDelta())
+                obj.update(clock.getDelta())
             #: prevent loop to take > 50 msecs
             dt = new Date()
             if dt - start > 50
@@ -17,4 +18,5 @@ class World
         return
 
 env = self.Wage ?= {}
-env.World = World
+#env.World = World
+env.world = new World()
