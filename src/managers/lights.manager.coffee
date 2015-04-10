@@ -11,9 +11,10 @@ class LightsManager
         return
 
     update: ->
+        {clock} = Wage
         t = new Date()
         for light in @lights
-            light.update app.clock.getDelta()
+            light.update clock.getDelta()
             #: prevent loop to take > 50 msecs
             dt = new Date()
             if dt - start > 50

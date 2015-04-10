@@ -20,6 +20,7 @@ class ShadersManager extends Wage.AssetsManager
                 scope._add shader
                 return
             request.send()
+        @_loadCallback name
         return
 
     _parseShader: (text) ->

@@ -2,9 +2,9 @@ class Assets
     constructor: ->
         @loaded =
             audio: false
-            images: false
+            #images: false
             shaders: false
-            video: false
+            #video: false
         return
 
     load: (callback) ->
@@ -12,7 +12,7 @@ class Assets
         {managers} = Wage
         for name, manager of managers
             if manager instanceOf Wage.AssetsManager
-                manager.load()
+                manager.loadAssets()
         return
 
     notifyEnd: (namespace) ->
