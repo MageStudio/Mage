@@ -11,7 +11,7 @@ class Assets
         @callback = callback
         {managers} = Wage
         for name, manager of managers
-            if manager instanceOf Wage.AssetsManager
+            if manager instanceof Wage.AssetsManager
                 manager.loadAssets()
         return
 

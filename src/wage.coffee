@@ -2,7 +2,7 @@ env = self.Wage ?= {}
 env.clock = new THREE.Clock()
 
 include = (srcs, callback, params) ->
-    if not src instanceOf Array
+    if not src instanceof Array
         srcs = [srcs]
     scripts = []
     alreadyGot = (value) ->
@@ -56,10 +56,8 @@ self.onload = ->
 
 self.onresize = ->
     {screen, camera, renderer} = Wage
-    screen.w = window.innerWidth
-    screen.h = window.innerHeight
-    screen.ratio = screen.w / screen.h
+    screen.set()
     camera.aspect = screen.ratio
     camera.updateProjectionMatrix()
-    renderer.setSize(screen.w / screen.h)
+    renderer.setSize screen.w, screen.h
     return
