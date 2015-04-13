@@ -1,10 +1,15 @@
 class FreeController extends Wage.Controller
-    constructor: (domElement=document) ->
+    constructor: (options={}, domElement=document) ->
+        @_defaults =
+            movementSpeed: 1.0
+            rollSpeed: 0.5
+            dragToLook: false
+            autoForward: false
+        super options, domElement
         @speed =
-            movement: 1.0
-            roll: 0.5
-        @dragToLook = false
-        @autoForward = false
+            movement: @config.movementSpeed
+            roll: @config.rollSpeed
+        {@dragToLook, @autoForward} = @config
         @mouseStatus = 0
         @moveState =
             up: 0
@@ -22,12 +27,12 @@ class FreeController extends Wage.Controller
         @vectors =
             move: new THREE.Vector3 0, 0, 0
             rotation: new THREE.Vector3 0, 0, 0
-        super domElement
-
-    handleEvent: (e) ->
-        if typeof this[e.type] is 'function'
-            this[e.type](e)
         return
+
+    #handleEvent: (e) ->
+    #    if typeof this[e.type] is 'function'
+    #        this[e.type](e)
+    #    return
 
     updateMovementVector: ->
         forward = if @moveState.forward or (@autoForward and not @moveState.back) then 1 else 0
@@ -156,7 +161,7 @@ class FreeController extends Wage.Controller
                 when 0 then @moveState.forward = 0
                 when 2 then @moveState.back = 0
             @updateMovementVector()
-        @updateRotationVector()ù
+        @updateRotationVector()
         return
 
     update: (dt) ->

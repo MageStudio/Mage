@@ -1,5 +1,14 @@
 class LockController extends Wage.Controller
-    constructor: ->
+    constructor: (options={}) ->
+        @_defaults =
+            height: 5
+            crouch: 0.25
+            jumpHeight: 5
+            speed: 0.5
+            fallFactor: 0.25
+            delta: 0.1
+            mouseFactor: 0.002
+        super options
         {camera} = Wage
         camera.rotation.set 0, 0, 0
         @pitch = new THREE.Object3D()
@@ -13,12 +22,12 @@ class LockController extends Wage.Controller
             backward: false
             left: false
             right: false
-            velocity: @config.velocity
+            velocity: @config.speed
         @isOnObject = false
         @canJump = false
         @shiftClicked = false
         @enabled = false
-        super
+        return
 
     keydown: (e) ->
         if e.altKey
@@ -49,7 +58,7 @@ class LockController extends Wage.Controller
         switch e.keyCode
             # shift
             when 16
-                @move.velocity = @config.velocity
+                @move.velocity = @config.speed
                 @yaw.position.y = @config.height
                 @canJump = true
                 @shiftClicked = false
@@ -76,7 +85,7 @@ class LockController extends Wage.Controller
     update: (dt) ->
         alpha = dt * @config.delta
         @velocity.y -= @config.fallFactor * alpha
-        v = @config.velocity
+        v = @config.speed
         if @move.forward
             velocity.z = -v
         if @move.backward

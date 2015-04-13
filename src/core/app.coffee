@@ -17,6 +17,7 @@ class App
             alphaRender: false
             castShadows: true
             controller: Wage.FreeController
+            controllerOptions: {}
             handlers:
                 mouse: Wage.Mouse
                 leap: Wage.Leap
@@ -138,7 +139,7 @@ class App
         document.getElementById('gameContainer').appendChild renderer.domElement
         # TODO game
         #: init controls manager
-        Wage.control = new Wage.Control()
+        Wage.control = new Wage.Control @config.controllerOptions
         #: finish init and render
         @onCreate()
         @_render()
