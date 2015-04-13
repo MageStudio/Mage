@@ -3,9 +3,9 @@ class DirectionalSound extends Wage.MeshSound
         super name, mesh, options
 
     _init: (options) ->
-        @panner.coneInnerAngle = angles.innerAngleDegrees
-        @panner.coneOuterAngle = angles.outerAngleDegrees
-        @panner.coneOuterGain = angles.outerGainFactor
+        @panner.coneInnerAngle = @angles.innerAngleDegrees
+        @panner.coneOuterAngle = @angles.outerAngleDegrees
+        @panner.coneOuterGain = @angles.outerGainFactor
         return
 
     update: (dt) ->
