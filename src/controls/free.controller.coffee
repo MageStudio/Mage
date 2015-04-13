@@ -11,7 +11,7 @@ class FreeController extends Wage.Controller
             roll: @config.rollSpeed
         {@dragToLook, @autoForward} = @config
         @mouseStatus = 0
-        @moveState =
+        @state =
             up: 0
             down: 0
             left: 0
@@ -35,16 +35,16 @@ class FreeController extends Wage.Controller
     #    return
 
     updateMovementVector: ->
-        forward = if @moveState.forward or (@autoForward and not @moveState.back) then 1 else 0
-        @vectors.move.x = - @moveState.left + @moveState.right
-        @vectors.move.y = - @moveState.down + @moveState.up
-        @vectors.move.z = - forward + @moveState.back
+        forward = if @state.forward or (@autoForward and not @state.back) then 1 else 0
+        @vectors.move.x = - @state.left + @state.right
+        @vectors.move.y = - @state.down + @state.up
+        @vectors.move.z = - forward + @state.back
         return
 
     updateRotationVector: ->
-        @vectors.rotation.x = - @moveState.pitchDown + @moveState.pitchUp
-        @vectors.rotation.y = - @moveState.yawRight + @moveState.yawLeft
-        @vectors.rotation.z = - @moveState.rollRight + @moveState.rollLeft
+        @vectors.rotation.x = - @state.pitchDown + @state.pitchUp
+        @vectors.rotation.y = - @state.yawRight + @state.yawLeft
+        @vectors.rotation.z = - @state.rollRight + @state.rollLeft
         return
 
     getContainerDimensions: ->
@@ -69,29 +69,29 @@ class FreeController extends Wage.Controller
             # shift
             when 16 then @movementSpeedMultiplier = 1
             # w
-            when 87 then @moveState.forward = 1
+            when 87 then @state.forward = 1
             # s
-            when 83 then @moveState.back = 1
+            when 83 then @state.back = 1
             # a
-            when 65 then @moveState.left = 1
+            when 65 then @state.left = 1
             # d
-            when 68 then @moveState.right = 1
+            when 68 then @state.right = 1
             # r
-            when 82 then @moveState.up = 1
+            when 82 then @state.up = 1
             # f
-            when 70 then @moveState.down = 1
+            when 70 then @state.down = 1
             # arrow up
-            when 38 then @moveState.pitchUp = 1
+            when 38 then @state.pitchUp = 1
             # arrow down
-            when 40 then @moveState.pitchDown = 1
+            when 40 then @state.pitchDown = 1
             # arrow left
-            when 37 then @moveState.yawLeft = 1
+            when 37 then @state.yawLeft = 1
             # arrow right
-            when 39 then @moveState.yawRight = 1
+            when 39 then @state.yawRight = 1
             # q
-            when 81 then @moveState.rollLeft = 1
+            when 81 then @state.rollLeft = 1
             # e
-            when 69 then @moveState.rollRight = 1
+            when 69 then @state.rollRight = 1
         @updateMovementVector()
         @updateRotationVector()
         return
@@ -101,29 +101,29 @@ class FreeController extends Wage.Controller
             # shift
             when 16 then @movementSpeedMultiplier = 1
             # w
-            when 87 then @moveState.forward = 0
+            when 87 then @state.forward = 0
             # s
-            when 83 then @moveState.back = 0
+            when 83 then @state.back = 0
             # a
-            when 65 then @moveState.left = 0
+            when 65 then @state.left = 0
             # d
-            when 68 then @moveState.right = 0
+            when 68 then @state.right = 0
             # r
-            when 82 then @moveState.up = 0
+            when 82 then @state.up = 0
             # f
-            when 70 then @moveState.down = 0
+            when 70 then @state.down = 0
             # arrow up
-            when 38 then @moveState.pitchUp = 0
+            when 38 then @state.pitchUp = 0
             # arrow down
-            when 40 then @moveState.pitchDown = 0
+            when 40 then @state.pitchDown = 0
             # arrow left
-            when 37 then @moveState.yawLeft = 0
+            when 37 then @state.yawLeft = 0
             # arrow right
-            when 39 then @moveState.yawRight = 0
+            when 39 then @state.yawRight = 0
             # q
-            when 81 then @moveState.rollLeft = 0
+            when 81 then @state.rollLeft = 0
             # e
-            when 69 then @moveState.rollRight = 0
+            when 69 then @state.rollRight = 0
         @updateMovementVector()
         @updateRotationVector()
         return
@@ -137,16 +137,16 @@ class FreeController extends Wage.Controller
             @mouseStatus += 1
         else
             switch e.button
-                when 0 then @moveState.forward = 1
-                when 2 then @moveState.back = 1
+                when 0 then @state.forward = 1
+                when 2 then @state.back = 1
         @updateMovementVector()
         return
 
     mousemove: (e) ->
         if not @dragToLook or @mouseStatus > 0
             {w, h, woffset, hoffset} = @getContainerDimensions
-            @moveState.yawLeft = - (e.pageX - woffset - w/2) / (w/2) * 3
-            @moveState.pitchDown = (e.pageY - hoffset - h/2) / (h/2) * 3
+            @state.yawLeft = - (e.pageX - woffset - w/2) / (w/2) * 3
+            @state.pitchDown = (e.pageY - hoffset - h/2) / (h/2) * 3
             @updateRotationVector()
         return
 
@@ -155,11 +155,11 @@ class FreeController extends Wage.Controller
         e.stopPropagation()
         if @dragToLook
             @mouseStatus -= 1
-            @moveState.yawLeft = @moveState.pitchDown = 0
+            @state.yawLeft = @state.pitchDown = 0
         else
             switch e.button
-                when 0 then @moveState.forward = 0
-                when 2 then @moveState.back = 0
+                when 0 then @state.forward = 0
+                when 2 then @state.back = 0
             @updateMovementVector()
         @updateRotationVector()
         return

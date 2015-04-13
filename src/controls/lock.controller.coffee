@@ -17,7 +17,7 @@ class LockController extends Wage.Controller
         @yaw.position.y = @config.height
         @pitch.add camera
         @yaw.add @pitch
-        @move =
+        @state =
             forward: false
             backward: false
             left: false
@@ -35,18 +35,18 @@ class LockController extends Wage.Controller
         switch e.keyCode
             # shift
             when 16
-                @move.velocity = @config.crouch
+                @state.velocity = @config.crouch
                 @yaw.position.y = @config.height/2
                 @canJump = false
                 @shiftClicked = true
             # w
-            when 87 or 38 then @move.forward = true
+            when 87 or 38 then @state.forward = true
             # s
-            when 83 or 40 then @move.backward = true
+            when 83 or 40 then @state.backward = true
             # a
-            when 65 or 37 then @move.left = true
+            when 65 or 37 then @state.left = true
             # d
-            when 68 or 39 then @move.right = true
+            when 68 or 39 then @state.right = true
             # space
             when 32
                 if canJump
@@ -58,18 +58,18 @@ class LockController extends Wage.Controller
         switch e.keyCode
             # shift
             when 16
-                @move.velocity = @config.speed
+                @state.velocity = @config.speed
                 @yaw.position.y = @config.height
                 @canJump = true
                 @shiftClicked = false
             # w
-            when 87 or 38 then @move.forward = false
+            when 87 or 38 then @state.forward = false
             # s
-            when 83 or 40 then @move.backward = false
+            when 83 or 40 then @state.backward = false
             # a
-            when 65 or 37 then @move.left = false
+            when 65 or 37 then @state.left = false
             # d
-            when 68 or 39 then @move.right = false
+            when 68 or 39 then @state.right = false
         return
 
     mousemove: (e) ->
@@ -86,17 +86,17 @@ class LockController extends Wage.Controller
         alpha = dt * @config.delta
         @velocity.y -= @config.fallFactor * alpha
         v = @config.speed
-        if @move.forward
+        if @state.forward
             velocity.z = -v
-        if @move.backward
+        if @state.backward
             velocity.z = v
-        if not @move.forward and not @move.backward
+        if not @state.forward and not @state.backward
             velocity.z = 0
-        if @move.left
+        if @state.left
             velocity.x = -v
-        if @move.right
+        if @state.right
             @velocity.x = v
-        if not @move.left and not @move.right
+        if not @state.left and not @state.right
             @velocity.x = 0
         if @isOnObject
             velocity.y = Math.max 0, @velocity.y

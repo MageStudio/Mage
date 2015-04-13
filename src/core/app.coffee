@@ -7,7 +7,7 @@ class App
             w: "warn"
             i: "info"
         #: default configuration
-        @_config =
+        @_defaults =
             physics: false
             camera:
                 fov: 75
@@ -100,7 +100,7 @@ class App
         return
 
     _loadConfig: ->
-        for key, val of @_config
+        for key, val of @_defaults
             if @options[key] isnt undefined
                 val = @options[key]
             @config[key] = val
