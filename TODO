@@ -1,3 +1,4 @@
+- Util and initial tests
 - review and implement Entity add methods
 - redesign assets management
 - better implement scripts injection
