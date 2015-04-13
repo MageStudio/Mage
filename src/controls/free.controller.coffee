@@ -1,0 +1,176 @@
+class FreeController extends Wage.Controller
+    constructor: (domElement=document) ->
+        @speed =
+            movement: 1.0
+            roll: 0.5
+        @dragToLook = false
+        @autoForward = false
+        @mouseStatus = 0
+        @moveState =
+            up: 0
+            down: 0
+            left: 0
+            right: 0
+            forward: 0
+            back: 0
+            pitchUp: 0
+            pitchDown: 0
+            yawLeft: 0
+            yawRight: 0
+            rollLeft: 0
+            rollRight: 0
+        @vectors =
+            move: new THREE.Vector3 0, 0, 0
+            rotation: new THREE.Vector3 0, 0, 0
+        super domElement
+
+    handleEvent: (e) ->
+        if typeof this[e.type] is 'function'
+            this[e.type](e)
+        return
+
+    updateMovementVector: ->
+        forward = if @moveState.forward or (@autoForward and not @moveState.back) then 1 else 0
+        @vectors.move.x = - @moveState.left + @moveState.right
+        @vectors.move.y = - @moveState.down + @moveState.up
+        @vectors.move.z = - forward + @moveState.back
+        return
+
+    updateRotationVector: ->
+        @vectors.rotation.x = - @moveState.pitchDown + @moveState.pitchUp
+        @vectors.rotation.y = - @moveState.yawRight + @moveState.yawLeft
+        @vectors.rotation.z = - @moveState.rollRight + @moveState.rollLeft
+        return
+
+    getContainerDimensions: ->
+        if @domElement isnt document
+            rv =
+                w: @domElement.offsetWidth
+                h: @domElement.offsetHeight
+                woffset: @domElement.offsetLeft
+                hoffset: @domElement.offsetTop
+        else
+            rv =
+                w: window.innerWidth
+                h: window.innerHeight
+                woffset: 0
+                hoffset: 0
+        rv
+
+    keydown: (e) ->
+        if e.altKey
+            return
+        switch e.keyCode
+            # shift
+            when 16 then @movementSpeedMultiplier = 1
+            # w
+            when 87 then @moveState.forward = 1
+            # s
+            when 83 then @moveState.back = 1
+            # a
+            when 65 then @moveState.left = 1
+            # d
+            when 68 then @moveState.right = 1
+            # r
+            when 82 then @moveState.up = 1
+            # f
+            when 70 then @moveState.down = 1
+            # arrow up
+            when 38 then @moveState.pitchUp = 1
+            # arrow down
+            when 40 then @moveState.pitchDown = 1
+            # arrow left
+            when 37 then @moveState.yawLeft = 1
+            # arrow right
+            when 39 then @moveState.yawRight = 1
+            # q
+            when 81 then @moveState.rollLeft = 1
+            # e
+            when 69 then @moveState.rollRight = 1
+        @updateMovementVector()
+        @updateRotationVector()
+        return
+
+    keyup: (e) ->
+        switch e.keyCode
+            # shift
+            when 16 then @movementSpeedMultiplier = 1
+            # w
+            when 87 then @moveState.forward = 0
+            # s
+            when 83 then @moveState.back = 0
+            # a
+            when 65 then @moveState.left = 0
+            # d
+            when 68 then @moveState.right = 0
+            # r
+            when 82 then @moveState.up = 0
+            # f
+            when 70 then @moveState.down = 0
+            # arrow up
+            when 38 then @moveState.pitchUp = 0
+            # arrow down
+            when 40 then @moveState.pitchDown = 0
+            # arrow left
+            when 37 then @moveState.yawLeft = 0
+            # arrow right
+            when 39 then @moveState.yawRight = 0
+            # q
+            when 81 then @moveState.rollLeft = 0
+            # e
+            when 69 then @moveState.rollRight = 0
+        @updateMovementVector()
+        @updateRotationVector()
+        return
+
+    mousedown: (e) ->
+        if @domElement isnt document
+            @domElement.focus()
+        e.preventDefault()
+        e.stopPropagation()
+        if @dragToLook
+            @mouseStatus += 1
+        else
+            switch e.button
+                when 0 then @moveState.forward = 1
+                when 2 then @moveState.back = 1
+        @updateMovementVector()
+        return
+
+    mousemove: (e) ->
+        if not @dragToLook or @mouseStatus > 0
+            {w, h, woffset, hoffset} = @getContainerDimensions
+            @moveState.yawLeft = - (e.pageX - woffset - w/2) / (w/2) * 3
+            @moveState.pitchDown = (e.pageY - hoffset - h/2) / (h/2) * 3
+            @updateRotationVector()
+        return
+
+    mouseup: (e) ->
+        e.preventDefault()
+        e.stopPropagation()
+        if @dragToLook
+            @mouseStatus -= 1
+            @moveState.yawLeft = @moveState.pitchDown = 0
+        else
+            switch e.button
+                when 0 then @moveState.forward = 0
+                when 2 then @moveState.back = 0
+            @updateMovementVector()
+        @updateRotationVector()ù
+        return
+
+    update: (dt) ->
+        {camera} = Wage
+        alphaMove = dt * @speed.movement
+        alphaRotate = dt * @speed.roll
+        camera.translateX @vectors.move.x * alphaMove
+        camera.translateY @vectors.move.y * alphaMove
+        camera.translateZ @vectors.move.z * alphaMove
+        quaternion = new THREE.Quaternion @vectors.rotation.x * alphaRotate, @vectors.rotation.y * alphaRotate, @vectors.rotation.z * alphaRotate
+        quaternion.normalize()
+        camera.quaternion.multiply quaternion
+        camera.rotation.setFromQuaternion quaternion, camera.rotation.order
+        return
+
+env = self.Wage ?= {}
+env.FreeController = FreeController
