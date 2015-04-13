@@ -6,6 +6,9 @@ class AssetsManager
         {@assets} = Wage.managers
         return
 
+    get: (id) ->
+        @data[id]
+
     loadAssets: ->
         {app} = Wage
         for name, path of app.assets[@namespace]

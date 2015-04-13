@@ -3,9 +3,6 @@ class ShadersManager extends Wage.AssetsManager
         super
         @namespace = "shaders"
 
-    get: (id) ->
-        @data[id]
-
     _loadFile: (name, path) ->
         scope = this
         type = path.split(".")[1]

@@ -4,6 +4,10 @@ class AudioManager extends Wage.AssetsManager
         @namespace = "audio"
         @config =
             volume: 80
+            delayFactor: 0.02
+            delayMaxTo: 40
+            delayMinTo: 0.2
+            delayStep: 1
         context = window.AudioContext or window.webkitAudioContext
         if context
             @context = new context()

@@ -1,5 +1,6 @@
 class Entity
     constructor: (@options={}) ->
+        {@app} = Wage
         @script = null
         for key, val of @options
             if val is "script"
@@ -13,7 +14,7 @@ class Entity
     _create: ->
         @object = @create()
         if @object isnt null
-            app.add(@object, this)
+            @app.add @object, this
         return
 
     create: ->
