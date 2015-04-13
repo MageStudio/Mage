@@ -10,7 +10,7 @@ class World
         while keys
             obj = @entities[keys.shift()]
             if obj.update
-                obj.update(clock.getDelta())
+                obj.update clock.getDelta()
             #: prevent loop to take > 50 msecs
             dt = new Date()
             if dt - start > 50

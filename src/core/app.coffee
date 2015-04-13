@@ -1,12 +1,12 @@
 class App
     constructor: (@options={}) ->
         @debug = true or @options.debug
-
+        #: some log utils
         @log_types =
             e: "error"
             w: "warn"
             i: "info"
-
+        #: default configuration
         @_config =
             physics: false
             camera:
@@ -16,47 +16,23 @@ class App
             frameRate: 60
             alphaRender: false
             castShadows: true
+            controller: Wage.FreeController
             handlers:
                 mouse: Wage.Mouse
                 leap: Wage.Leap
-
+        #: configuration object (filled in with default and user options)
         @config = {}
-
+        #: handle physics only if requested
         @_physiscs = false
-
+        #: to store input devices handlers
         @devices = {}
-
-        @util =
-            h: window.innerHeight
-            w: window.innerWidth
-            ratio: (window.innerWidth/window.innerHeight)
-            frameRate: 60
-            camera:
-                fov: 75
-                near: 0.1
-                far: 100
-
-        # scene parameters
-        @camera = undefined;
-        @user = undefined;
-        @scene = undefined;
-        @renderer= undefined;
-
-        # window and mouse variables
-        @mouseX = 0;
-        @mouseY = 0;
-        @zoom = 0;
-
-        @windowHalfX = window.innerWidth / 2;
-        @windowHalfY = window.innerHeight / 2;
-        @CAMERA_MAX_Z = 1000;
-        @CAMERA_MIN_Z = 250;
-
+        #: to store game assets
         @assets =
             sounds: {}
             images: {}
             shaders: {}
             videos: {}
+        return this
 
     onCreate: ->
         return
@@ -65,7 +41,7 @@ class App
         callback()
         return
 
-    prepareScene: ->
+    onPrepare: ->
         return
 
     progressAnimation: (callback) ->
@@ -84,17 +60,28 @@ class App
         )
         return
 
-    customRender: ->
+    render: ->
         return
 
-    render: ->
+    _render: ->
         scope = this
-        {scene} = Wage
-
+        {scene, camera, world, control, renderer} = Wage
+        {audio, lights} = Wage.managers
+        #: call updates
+        audio.update()
+        lights.update()
+        # [note] camera entity is updated by world
+        world.update()
+        control.update()
+        #: update scene
+        renderer.clear()
+        @render()
+        renderer.render scene, camera
+        #: set next call
         setTimeout( ->
             if scope._physiscs
                 scene.simulate()
-            requestAnimationFrame(scope.render)
+            requestAnimationFrame(scope._render)
             return
         1000 / @config.frameRate)
         return
@@ -107,7 +94,7 @@ class App
 
     remove: (mesh) ->
         {scene, world} = Wage
-        scene.remove(mesh)
+        scene.remove mesh
         delete world.entities[mesh.uuid]
         return
 
@@ -116,17 +103,19 @@ class App
             if @options[key] isnt undefined
                 val = @options[key]
             @config[key] = val
-        # max fps to 120
+        # max fps to 120!
         if @config.frameRate > 120
             @config.frameRate = 120
-        # init devices handlers
+        #: init devices handlers
         for key, val of @config.devices
             @devices[key] = new val()
         return
 
     init: ->
         {screen, world} = Wage
+        #: load configuration
         @_loadConfig()
+        #: init physics (if requested) and scene
         if @config.physics
             try
                 Physijs.scripts.worker = 'workers/physijs_worker.js'
@@ -136,27 +125,31 @@ class App
                 @log(e)
         if not @_physiscs
             Wage.scene = new THREE.Scene()
+        #: init camera
         Wage.camera = new Wage.Camera(@config.camera).object
+        #: init renderer
         renderer = Wage.renderer = new THREE.WebGLRenderer
             alpha: @config.alphaRender
         if @config.castShadows
             renderer.shadowMapEnabled = true
             renderer.shadowMapType = THREE.PCFSoftShadowMap
-        renderer.setSize(screen.w, screen.h)
+        renderer.autoClear = false
+        renderer.setSize screen.w, screen.h
         document.getElementById('gameContainer').appendChild renderer.domElement
-        # TODO user control
-        #      game
-        world.update()
-        # TODO control
+        # TODO game
+        #: init controls manager
+        Wage.control = new Wage.Control()
+        #: finish init and render
         @onCreate()
-        @render()
+        @_render()
         return
 
     load: ->
+        @progressAnimation @init
         return
 
     _prepare: ->
-        @prepareScene()
+        @onPrepare()
         @load()
         return
 
@@ -168,6 +161,12 @@ class App
     log: ->
         if not @debug
             return
+        if arguments.length > 1
+            if arguments[0] in @log_types
+                console[@log_types[arguments[0]]] arguments[1]
+                return
+        console.log arguments[0]
+        return
 
     keyup: (e) ->
         return
