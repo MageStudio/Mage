@@ -1,5 +1,8 @@
 class Leap
-    setUp: ->
+    init: ->
+        return
+
+    addListeners: ->
         return
 
     onSocketConnected: ->

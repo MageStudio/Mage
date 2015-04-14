@@ -109,7 +109,7 @@ class App
         if @config.frameRate > 120
             @config.frameRate = 120
         #: init devices handlers
-        for key, val of @config.devices
+        for key, val of @config.handlers
             @devices[key] = new val()
         return
 
@@ -141,6 +141,9 @@ class App
         # TODO game
         #: init controls manager
         Wage.control = new Wage.Control @config.controllerOptions
+        for devname, device of @devices
+            device.init()
+            device.addListeners()
         #: finish init and render
         @onCreate()
         @_render()
@@ -176,6 +179,10 @@ class App
         return
 
     keydown: (e) ->
+        return
+
+    registerAsset: (type, name, path) ->
+        @assets[type+"s"][name] = path
         return
 
 env = self.Wage ?= {}

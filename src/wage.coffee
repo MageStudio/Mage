@@ -2,7 +2,7 @@ env = self.Wage ?= {}
 env.clock = new THREE.Clock()
 
 include = (srcs, callback, params) ->
-    if not src instanceof Array
+    if srcs.constructor isnt Array
         srcs = [srcs]
     scripts = []
     alreadyGot = (value) ->
@@ -19,7 +19,7 @@ include = (srcs, callback, params) ->
 
     _scripts = document.getElementsByTagName 'script'
     for el in _scripts
-        scripts.push element.src
+        scripts.push el.src
     for src in srcs
         if alreadyGot src
             continue

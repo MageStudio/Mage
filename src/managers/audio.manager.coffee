@@ -1,7 +1,7 @@
 class AudioManager extends Wage.AssetsManager
     constructor: ->
         super
-        @namespace = "audio"
+        @namespace = "sounds"
         @config =
             volume: 80
             delayFactor: 0.02

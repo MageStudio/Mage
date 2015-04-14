@@ -1,7 +1,7 @@
 class Assets
     constructor: ->
         @loaded =
-            audio: false
+            sounds: false
             #images: false
             shaders: false
             #video: false

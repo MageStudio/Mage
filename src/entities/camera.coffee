@@ -3,7 +3,9 @@ class Camera extends Wage.Entity
         super options
 
     create: ->
-        new THREE.PerspectiveCamera @options.fov, @options.ratio, @options.near, @options.far
+        rv = new THREE.PerspectiveCamera @options.fov, @options.ratio, @options.near, @options.far
+        rv.entity = this
+        rv
 
 env = self.Wage ?= {}
 env.Camera = Camera

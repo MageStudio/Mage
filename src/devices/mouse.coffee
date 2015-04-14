@@ -1,6 +1,15 @@
 class Mouse
-    constructor: ->
+    init: ->
         {@screen, @camera} = Wage
+        return
+
+    addListeners: ->
+        {control, bind} = Wage
+        dom = control.handler.domElement
+        dom.addEventListener 'mousemove', bind(this, this.onMove), false
+        dom.addEventListener 'mousewheel', bind(this, this.onWheel), false
+        dom.addEventListener 'touchstart', bind(this, this.onTouchStart), false
+        dom.addEventListener 'touchmove', bind(this, this.onTouchMove), false
         return
 
     onWheel: (e) ->

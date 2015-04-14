@@ -4,7 +4,7 @@ class Entity
         @script = null
         for key, val of @options
             # TODO: better injection of script
-            if val is "script"
+            if key is "script"
                 @script = val
                 @addScript val, @options.dir
             else
@@ -34,13 +34,13 @@ class Entity
 
     addScript: (name, dir) ->
         {game} = Wage
-        path = game.dir + (dir or "")
-        if path[path.length-1] isnt "/"
-            path += "/"
+        path = game.directory + (dir or "")
         game._includeScript this, name, path
         return
 
     _loadScript: (script) ->
+        console.log "Entity loading script"
+        console.log script
         for key, val of script
             this[key] = val
         try

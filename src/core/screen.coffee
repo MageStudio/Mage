@@ -1,5 +1,9 @@
 class Screen
     constructor: ->
+        @zoom = 0
+        @mouse =
+            x: 0
+            y: 0
         @set()
         return
 
@@ -10,5 +14,4 @@ class Screen
         return
 
 env = self.Wage ?= {}
-#env.Screen = Screen
 env.screen = new Screen()
