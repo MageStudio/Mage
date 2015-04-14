@@ -22,7 +22,7 @@ class AssetsManager
         if not @_loadStack.length
             @assets.notifyEnd @namespace
         for el in @_loadStack
-            _loadFile el.name, el.path
+            @_loadFile el.name, "app/"+el.path
         return
 
     _loadFile: (name, path) ->

@@ -38,11 +38,7 @@ class App
     onCreate: ->
         return
 
-    preload: (callback) ->
-        callback()
-        return
-
-    onPrepare: ->
+    onStart: ->
         return
 
     progressAnimation: (callback) ->
@@ -146,7 +142,7 @@ class App
             device.init()
             device.addListeners()
         #: finish init and render
-        @onCreate()
+        @onStart()
         @_render()
         return
 
@@ -155,15 +151,11 @@ class App
         @progressAnimation bind this, @init
         return
 
-    _prepare: ->
-        @onPrepare()
-        @load()
-        return
-
     start: ->
+        @onCreate()
         {bind} = Wage
         {assets} = Wage.managers
-        assets.load bind this, @_prepare
+        assets.load bind this, @load
         return
 
     log: ->

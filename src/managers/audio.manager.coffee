@@ -2,6 +2,7 @@ class AudioManager extends Wage.AssetsManager
     constructor: ->
         super
         @namespace = "sounds"
+        @sounds = []
         @config =
             volume: 80
             delayFactor: 0.02
@@ -24,10 +25,10 @@ class AudioManager extends Wage.AssetsManager
             scope.context.decodeAudioData(
                 @response
                 onSuccess = (buffer) ->
-                    @data[name] = buffer
+                    scope.data[name] = buffer
                     return
                 onFailure = ->
-                    @data[name] = null
+                    scope.data[name] = null
                     return
             )
             return
@@ -35,10 +36,14 @@ class AudioManager extends Wage.AssetsManager
         @_loadCallback name
         return
 
+    add: (sound) ->
+        @sounds.push(sound)
+        return
+
     update: ->
         {clock, camera} = Wage
         t = new Date()
-        for name, sound of @data
+        for sound in @sounds
             sound.update clock.getDelta()
             camera.updateMatrixWorld()
             position = new THREE.Vector3()
@@ -66,7 +71,7 @@ class AudioManager extends Wage.AssetsManager
             matrix.elements[14] = mz
             #: prevent loop to take > 50 msecs
             dt = new Date()
-            if dt - start > 50
+            if dt - t > 50
                 break
         return
 

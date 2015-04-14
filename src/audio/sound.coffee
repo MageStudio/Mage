@@ -6,6 +6,7 @@ class Sound
             onLoopStart: options.onLoopStart or new Function()
             onLoopEnd: options.onLoopEnd or new Function()
         @volume = @audio.context.createGain()
+        @source = @audio.context.createBufferSource()
         @reset()
         @panner = @audio.context.createPanner()
         @volume.connect @panner
@@ -26,7 +27,7 @@ class Sound
         else
             @panner.connect @audio.volume
         @_init options
-        #@audio.add this
+        @audio.add this
         autoplay = options.autoplay or false
         if autoplay
             @start()
@@ -36,10 +37,11 @@ class Sound
         return
 
     _setListeners: ->
+        {bind} = Wage
         @source._caller = this
-        @source.onended = @onEnd
-        @source.loopEnd = @onLoopEnd
-        @source.loopStart = @onLoopStart
+        @source.onended = bind this, @onEnd
+        @source.loopEnd = bind this, @onLoopEnd
+        @source.loopStart = bind this, @onLoopStart
         return
 
     onEnd: ->
