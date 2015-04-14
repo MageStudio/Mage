@@ -1,10 +1,10 @@
 class LightsManager
     constructor: ->
-        lights = []
+        @lights = []
         @delayFactor = 0.1
         @delayStep = 30
         @holderRadius = 0.01
-        holderSegments = 1
+        @holderSegments = 1
 
     add: (light) ->
         @lights.push(light)

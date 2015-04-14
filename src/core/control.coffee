@@ -6,7 +6,7 @@ class Control
 
     update: ->
         {clock} = Wage
-        handler.update clock.getDelta()
+        @handler.update clock.getDelta()
         return
 
 env = self.Wage ?= {}

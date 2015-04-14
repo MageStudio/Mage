@@ -4,10 +4,11 @@ class ShadersManager extends Wage.AssetsManager
         @namespace = "shaders"
 
     _loadFile: (name, path) ->
+        {include} = Wage
         scope = this
         type = path.split(".")[1]
         if type is "js"
-            Wage.include path.split(".js")[0] @_loadCallback, name
+            include path.split(".js")[0] @_loadCallback, name
         else
             request = new XMLHttpRequest()
             request.open "GET", path, true

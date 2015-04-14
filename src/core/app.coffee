@@ -66,7 +66,7 @@ class App
 
     _render: ->
         scope = this
-        {scene, camera, world, control, renderer} = Wage
+        {scene, camera, world, control, renderer, bind} = Wage
         {audio, lights} = Wage.managers
         #: call updates
         audio.update()
@@ -78,11 +78,12 @@ class App
         renderer.clear()
         @render()
         renderer.render scene, camera
+        rf = bind this, this._render
         #: set next call
         setTimeout( ->
             if scope._physiscs
                 scene.simulate()
-            requestAnimationFrame(scope._render)
+            requestAnimationFrame rf
             return
         1000 / @config.frameRate)
         return
@@ -146,7 +147,8 @@ class App
         return
 
     load: ->
-        @progressAnimation @init
+        {bind} = Wage
+        @progressAnimation bind this, @init
         return
 
     _prepare: ->
@@ -155,8 +157,9 @@ class App
         return
 
     start: ->
+        {bind} = Wage
         {assets} = Wage.managers
-        assets.load @_prepare
+        assets.load bind this, @_prepare
         return
 
     log: ->

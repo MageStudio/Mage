@@ -1,5 +1,5 @@
 class Screen
-    contructor: ->
+    constructor: ->
         @set()
         return
 

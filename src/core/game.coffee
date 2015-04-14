@@ -15,6 +15,7 @@ class Game
         obj
 
     _includeScript: (obj, name, path) ->
+        {include} = Wage
         scope = this
         script = path + "/" + name
         include(
@@ -25,5 +26,5 @@ class Game
         )
 
 env = self.Wage ?= {}
-env.Game = Game
+#env.Game = Game
 env.game = new Game()

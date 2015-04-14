@@ -19,6 +19,8 @@ class AssetsManager
         return
 
     _procStack: ->
+        if not @_loadStack.length
+            @assets.notifyEnd @namespace
         for el in @_loadStack
             _loadFile el.name, el.path
         return
@@ -33,8 +35,8 @@ class AssetsManager
             if @_loadStack[i].name is name
                 @_loadStack.splice(i, 1)
                 break
-        if not @_loadStack
-            @assets.notifyEnd(@namespace)
+        if not @_loadStack.length
+            @assets.notifyEnd @namespace
         return
 
 

@@ -144,7 +144,7 @@ class FreeController extends Wage.Controller
 
     mousemove: (e) ->
         if not @dragToLook or @mouseStatus > 0
-            {w, h, woffset, hoffset} = @getContainerDimensions
+            {w, h, woffset, hoffset} = @getContainerDimensions()
             @state.yawLeft = - (e.pageX - woffset - w/2) / (w/2) * 3
             @state.pitchDown = (e.pageY - hoffset - h/2) / (h/2) * 3
             @updateRotationVector()

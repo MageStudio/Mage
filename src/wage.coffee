@@ -35,7 +35,13 @@ include = (srcs, callback, params) ->
     _callOnEnd()
     return
 
+bind = (scope, fn) ->
+    ->
+        fn.apply scope, arguments
+        return
+
 env.include = include
+env.bind = bind
 
 self.requestAnimationFrame = (
     window.requestAnimationFrame       ||
@@ -45,7 +51,7 @@ self.requestAnimationFrame = (
     window.msRequestAnimationFrame)
 
 self.onload = ->
-    if app isnt undefined
+    if self.app isnt undefined
         Wage.app = app
     else
         Wage.app = new Wage.App()
