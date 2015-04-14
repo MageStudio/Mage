@@ -65,6 +65,6 @@ for key in order:
         out += f.read()
         out += "\n"
         f.close()
-f = open('app/libs/wage.js', 'w')
+f = open('libs/wage.js', 'w')
 f.write(out)
 f.close()
