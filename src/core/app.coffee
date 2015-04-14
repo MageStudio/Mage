@@ -128,6 +128,7 @@ class App
         if not @_physiscs
             Wage.scene = new THREE.Scene()
         #: init camera
+        @config.camera.ratio = screen.ratio
         Wage.camera = new Wage.Camera(@config.camera).object
         #: init renderer
         renderer = Wage.renderer = new THREE.WebGLRenderer
