@@ -14,6 +14,7 @@ modules = {
         'world',
         'assets',
         'control',
+        'scene',
         'game',
         'app'
     ],

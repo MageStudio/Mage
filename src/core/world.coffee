@@ -3,6 +3,14 @@ class World
         @entities = {}
         return
 
+    add: (id, obj) ->
+        @entities[id] = obj
+        return
+
+    del: (id) ->
+        delete @entities[id]
+        return
+
     update: ->
         {clock} = Wage
         keys = Object.keys(@entities)
@@ -18,5 +26,5 @@ class World
         return
 
 env = self.Wage ?= {}
-#env.World = World
-env.world = new World()
+env.World = World
+#env.world = new World()
