@@ -15,11 +15,16 @@ class Entity
         @object = @create()
         if @object isnt null
             {game} = Wage
-            game.add @object, this
+            game.add this
         return
 
     create: ->
         null
+
+    remove: ->
+        if @object isnt null
+            {game} = Wage
+            game.del this
 
     hasScript: ->
         @script isnt null

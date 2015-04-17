@@ -3,12 +3,16 @@ class World
         @entities = {}
         return
 
-    add: (id, obj) ->
-        @entities[id] = obj
+    add: (entity) ->
+        {scene} = Wage
+        @entities[entity.object.uuid] = entity
+        scene.add entity.object
         return
 
-    del: (id) ->
-        delete @entities[id]
+    del: (entity) ->
+        {scene} = Wage
+        delete @entities[entity.object.uuid]
+        scene.remove entity.object
         return
 
     update: ->

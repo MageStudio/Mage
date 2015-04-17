@@ -17,13 +17,11 @@ class Game
         scene.load()
         return
 
-    add: (mesh, entity) ->
-        @currentScene.env.add mesh
-        @currentScene.world.add mesh.uuid, entity
+    add: (entity) ->
+        @currentScene.world.add entity
         return
 
-    del: (mesh) ->
-        @currentScene.env.remove mesh
+    del: (entity) ->
         @currentScene.world.del mesh.uuid
         return
 

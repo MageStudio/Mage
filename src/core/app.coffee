@@ -26,7 +26,7 @@ class App
         #: configuration object (filled in with default and user options)
         @config = {}
         #: handle physics only if requested
-        @_physiscs = false
+        @_physics = false
         #: to store input devices handlers
         @devices = {}
         #: to store game assets
@@ -82,7 +82,7 @@ class App
         rf = bind this, this._render
         #: set next call
         setTimeout( ->
-            if scope._physiscs
+            if scope._physics
                 scene.simulate()
             requestAnimationFrame rf
             return
@@ -119,10 +119,12 @@ class App
         if @config.physics
             try
                 Physijs.scripts.worker = 'workers/physijs_worker.js'
-                temphy = new Physijs.Scene()
-                @_physiscs = true
+                Wage.scene = new Physijs.Scene()
+                @_physics = true
             catch e
                 @log(e)
+        if not @_physics
+            Wage.scene = new THREE.Scene()
         #: init camera
         @config.camera.ratio = screen.ratio
         #Wage.camera = new Wage.Camera(@config.camera).object
