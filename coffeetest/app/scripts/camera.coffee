@@ -1,4 +1,4 @@
-Wage.game.addScript "cameraScript",
+self.camerascript =
     update: ->
         #console.log "updating camera"
         {screen, scene} = Wage

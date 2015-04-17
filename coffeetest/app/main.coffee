@@ -12,12 +12,12 @@ class MyGame extends Wage.App
         cube = new Wage.Mesh(
             geometry
             material
-            script: "mybox", dir: "cube"
+            script: boxscript
         )
 
         console.log("Inside onCreate method")
 
-        Wage.camera.entity.addScript "cameraScript", "camera"
+        Wage.camera.entity.addScript camerascript
 
         rain = new Wage.BackgroundSound "rain",
             autoplay: true

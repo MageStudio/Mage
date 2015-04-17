@@ -32,10 +32,14 @@ class Entity
         #: implemented by subclassing
         return
 
-    addScript: (name, dir) ->
+    addScript: (script) ->
         {game} = Wage
-        path = game.directory + (dir or "")
-        game._includeScript this, name, path
+        obj =
+            start: new Function()
+            update: new Function()
+        for key, val of script
+            obj[key] = val
+        @_loadScript obj
         return
 
     _loadScript: (script) ->
