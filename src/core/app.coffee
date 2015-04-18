@@ -19,6 +19,7 @@ class App
             controller: Wage.FreeController
             controllerOptions: {}
             handlers:
+                keyboard: Wage.Keyboard
                 mouse: Wage.Mouse
                 leap: Wage.Leap
         #: configuration object (filled in with default and user options)
@@ -104,9 +105,6 @@ class App
         # max fps to 120!
         if @config.frameRate > 120
             @config.frameRate = 120
-        #: init devices handlers
-        for key, val of @config.handlers
-            @devices[key] = new val()
         return
 
     init: ->
@@ -135,12 +133,8 @@ class App
         renderer.autoClear = false
         renderer.setSize screen.w, screen.h
         document.getElementById('gameContainer').appendChild renderer.domElement
-        # TODO game
-        #: init controls manager
+        #: init controls manager and devices
         Wage.control = new Wage.Control @config.controllerOptions
-        for devname, device of @devices
-            device.init()
-            device.addListeners()
         #: finish init and render
         @onStart()
         @_render()

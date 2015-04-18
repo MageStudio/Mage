@@ -1,8 +1,14 @@
 class Control
     constructor: ->
         {app} = Wage
-        @handler = new app.config.controller()
-        return
+        @devices = {}
+        #: create control handler
+        @handler = new app.config.controller this
+        #: create device handlers
+        for key, val of app.config.handlers
+            @devices[key] = new val this
+        #: bind the listeners
+        @handler._bind()
 
     update: ->
         {clock} = Wage

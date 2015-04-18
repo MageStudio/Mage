@@ -23,6 +23,7 @@ modules = {
         'lock.controller'
     ],
     'devices': [
+        'keyboard',
         'mouse',
         'leap'
     ],

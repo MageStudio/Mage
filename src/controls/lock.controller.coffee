@@ -29,48 +29,43 @@ class LockController extends Wage.Controller
         @enabled = false
         return
 
-    keydown: (e) ->
-        if e.altKey
-            return
-        switch e.keyCode
-            # shift
-            when 16
-                @state.velocity = @config.crouch
-                @yaw.position.y = @config.height/2
-                @canJump = false
-                @shiftClicked = true
-            # w
-            when 87 or 38 then @state.forward = true
-            # s
-            when 83 or 40 then @state.backward = true
-            # a
-            when 65 or 37 then @state.left = true
-            # d
-            when 68 or 39 then @state.right = true
-            # space
-            when 32
-                if canJump
-                    @velocity.y += @config.jumpHeight
-                canJump = false
-        return
+    keydownW: ->
+        @state.forward = 1
 
-    keyup: (e) ->
-        switch e.keyCode
-            # shift
-            when 16
-                @state.velocity = @config.speed
-                @yaw.position.y = @config.height
-                @canJump = true
-                @shiftClicked = false
-            # w
-            when 87 or 38 then @state.forward = false
-            # s
-            when 83 or 40 then @state.backward = false
-            # a
-            when 65 or 37 then @state.left = false
-            # d
-            when 68 or 39 then @state.right = false
-        return
+    keyupW: ->
+        @state.forward = 0
+
+    keydownA: ->
+        @state.left = 1
+
+    keyupA: ->
+        @state.left = 0
+
+    keydownS: ->
+        @state.back = 1
+
+    keyupS: ->
+        @state.back = 0
+
+    keydownD: ->
+        @state.right = 1
+
+    keydownSpace: ->
+        if canJump
+            @velocity.y += @config.jumpHeight
+        canJump = false
+
+    keydownShift: ->
+        @state.velocity = @config.crouch
+        @yaw.position.y = @config.height/2
+        @canJump = false
+        @shiftClicked = true
+
+    keyupShift: ->
+        @state.velocity = @config.speed
+        @yaw.position.y = @config.height
+        @canJump = true
+        @shiftClicked = false
 
     mousemove: (e) ->
         if not @enabled

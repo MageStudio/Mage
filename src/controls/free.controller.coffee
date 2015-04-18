@@ -29,11 +29,6 @@ class FreeController extends Wage.Controller
             rotation: new THREE.Vector3 0, 0, 0
         return
 
-    #handleEvent: (e) ->
-    #    if typeof this[e.type] is 'function'
-    #        this[e.type](e)
-    #    return
-
     updateMovementVector: ->
         forward = if @state.forward or (@autoForward and not @state.back) then 1 else 0
         @vectors.move.x = - @state.left + @state.right
@@ -62,68 +57,82 @@ class FreeController extends Wage.Controller
                 hoffset: 0
         rv
 
-    keydown: (e) ->
-        if e.altKey
-            return
-        switch e.keyCode
-            # shift
-            when 16 then @movementSpeedMultiplier = 1
-            # w
-            when 87 then @state.forward = 1
-            # s
-            when 83 then @state.back = 1
-            # a
-            when 65 then @state.left = 1
-            # d
-            when 68 then @state.right = 1
-            # r
-            when 82 then @state.up = 1
-            # f
-            when 70 then @state.down = 1
-            # arrow up
-            when 38 then @state.pitchUp = 1
-            # arrow down
-            when 40 then @state.pitchDown = 1
-            # arrow left
-            when 37 then @state.yawLeft = 1
-            # arrow right
-            when 39 then @state.yawRight = 1
-            # q
-            when 81 then @state.rollLeft = 1
-            # e
-            when 69 then @state.rollRight = 1
-        @updateMovementVector()
-        @updateRotationVector()
-        return
+    keydownShift: ->
+        @movementSpeedMultiplier = 1
 
-    keyup: (e) ->
-        switch e.keyCode
-            # shift
-            when 16 then @movementSpeedMultiplier = 1
-            # w
-            when 87 then @state.forward = 0
-            # s
-            when 83 then @state.back = 0
-            # a
-            when 65 then @state.left = 0
-            # d
-            when 68 then @state.right = 0
-            # r
-            when 82 then @state.up = 0
-            # f
-            when 70 then @state.down = 0
-            # arrow up
-            when 38 then @state.pitchUp = 0
-            # arrow down
-            when 40 then @state.pitchDown = 0
-            # arrow left
-            when 37 then @state.yawLeft = 0
-            # arrow right
-            when 39 then @state.yawRight = 0
-            # q
-            when 81 then @state.rollLeft = 0
-            # e
-            when 69 then @state.rollRight = 0
+    keydownW: ->
+        @state.forward = 1
+
+    keyupW: ->
+        @state.forward = 0
+
+    keydownA: ->
+        @state.left = 1
+
+    keyupA: ->
+        @state.left = 0
+
+    keydownS: ->
+        @state.back = 1
+
+    keyupS: ->
+        @state.back = 0
+
+    keydownD: ->
+        @state.right = 1
+
+    keyupD: ->
+        @state.right = 0
+
+    keydownR: ->
+        @state.up = 1
+
+    keyupR: ->
+        @state.up = 0
+
+    keydownF: ->
+        @state.down = 1
+
+    keyupF: ->
+        @state.down = 0
+
+    keydownUp: ->
+        @state.pitchUp = 1
+
+    keyupUp: ->
+        @state.pitchUp = 0
+
+    keydownDown: ->
+        @state.pitchDown = 1
+
+    keyupDown: ->
+        @state.pitchDown = 0
+
+    keydownLeft: ->
+        @state.yawLeft = 1
+
+    keyupLeft: ->
+        @state.yawLeft = 0
+
+    keydownRight: ->
+        @state.yawRight = 1
+
+    keyupRight: ->
+        @state.yawRight = 0
+
+    keydownQ: ->
+        @state.rollLeft = 1
+
+    keyupQ: ->
+        @state.rollLeft = 0
+
+    keydownE: ->
+        @state.rollRight = 1
+
+    keyupE: ->
+        @satte.rollRight = 0
+
+    onKey: ->
         @updateMovementVector()
         @updateRotationVector()
         return
