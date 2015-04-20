@@ -13,5 +13,4 @@ compile:
 test:
 	cd coffeetest && python build.py
 	coffee -co coffeetest/app coffeetest/app/*.coffee
-	coffee -co coffeetest/app/scripts/camera coffeetest/app/scripts/camera/*.coffee
-	coffee -co coffeetest/app/scripts/cube coffeetest/app/scripts/cube/*.coffee
+	coffee -co coffeetest/app/scripts coffeetest/app/scripts/*.coffee
