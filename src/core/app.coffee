@@ -1,5 +1,5 @@
 class App
-    constructor: (@options={}) ->
+    constructor: (gameClass=Wage.Game, @options={}) ->
         @debug = true or @options.debug
         #: some log utils
         @log_types =
@@ -7,6 +7,7 @@ class App
             w: "warn"
             i: "info"
         #: default configuration
+        Wage.gameClass = gameClass
         @_defaults =
             physics: false
             camera:
@@ -25,7 +26,7 @@ class App
         #: configuration object (filled in with default and user options)
         @config = {}
         #: handle physics only if requested
-        @_physiscs = false
+        @_physics = false
         #: to store input devices handlers
         @devices = {}
         #: to store game assets
@@ -40,6 +41,8 @@ class App
         return
 
     onStart: ->
+        {game} = Wage
+        game.loadScene()
         return
 
     progressAnimation: (callback) ->
@@ -63,13 +66,14 @@ class App
 
     _render: ->
         scope = this
-        {scene, camera, world, control, renderer, bind} = Wage
+        {scene, camera, game, control, renderer, bind} = Wage
         {audio, lights} = Wage.managers
         #: call updates
         audio.update()
         lights.update()
         # [note] camera entity is updated by world
-        world.update()
+        #world.update()
+        game.update()
         control.update()
         #: update scene
         renderer.clear()
@@ -78,24 +82,24 @@ class App
         rf = bind this, this._render
         #: set next call
         setTimeout( ->
-            if scope._physiscs
+            if scope._physics
                 scene.simulate()
             requestAnimationFrame rf
             return
         1000 / @config.frameRate)
         return
 
-    add: (mesh, element) ->
-        {scene, world} = Wage
-        scene.add mesh
-        world.entities[mesh.uuid] = element
-        return
+    #add: (mesh, element) ->
+    #    {scene, world} = Wage
+    #    scene.add mesh
+    #    world.entities[mesh.uuid] = element
+    #    return
 
-    remove: (mesh) ->
-        {scene, world} = Wage
-        scene.remove mesh
-        delete world.entities[mesh.uuid]
-        return
+    #remove: (mesh) ->
+    #    {scene, world} = Wage
+    #    scene.remove mesh
+    #    delete world.entities[mesh.uuid]
+    #    return
 
     _loadConfig: ->
         for key, val of @_defaults
@@ -108,7 +112,7 @@ class App
         return
 
     init: ->
-        {screen, world} = Wage
+        {screen, world, gameClass} = Wage
         #: load configuration
         @_loadConfig()
         #: init physics (if requested) and scene
@@ -116,14 +120,14 @@ class App
             try
                 Physijs.scripts.worker = 'workers/physijs_worker.js'
                 Wage.scene = new Physijs.Scene()
-                @_physiscs = true
+                @_physics = true
             catch e
                 @log(e)
-        if not @_physiscs
+        if not @_physics
             Wage.scene = new THREE.Scene()
         #: init camera
         @config.camera.ratio = screen.ratio
-        Wage.camera = new Wage.Camera(@config.camera).object
+        #Wage.camera = new Wage.Camera(@config.camera).object
         #: init renderer
         renderer = Wage.renderer = new THREE.WebGLRenderer
             alpha: @config.alphaRender
@@ -135,6 +139,8 @@ class App
         document.getElementById('gameContainer').appendChild renderer.domElement
         #: init controls manager and devices
         Wage.control = new Wage.Control @config.controllerOptions
+        #: init the game
+        Wage.game = new gameClass()
         #: finish init and render
         @onStart()
         @_render()

@@ -1,6 +1,5 @@
 class Entity
     constructor: (@options={}) ->
-        {@app} = Wage
         @script = null
         for key, val of @options
             # TODO: better injection of script
@@ -15,11 +14,17 @@ class Entity
     _create: ->
         @object = @create()
         if @object isnt null
-            @app.add @object, this
+            {game} = Wage
+            game.add this
         return
 
     create: ->
         null
+
+    remove: ->
+        if @object isnt null
+            {game} = Wage
+            game.del this
 
     hasScript: ->
         @script isnt null
