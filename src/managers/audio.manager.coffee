@@ -63,7 +63,7 @@ class AudioManager extends Wage.AssetsManager
             down.normalize()
             up = new THREE.Vector3 0, -1, 0
             up.applyProjection matrix
-            up.normalize
+            up.normalize()
             #: set orientation vectors to the listener
             @context.listener.setOrientation down.x, down.y, down.z, up.x, up.y, up.z
             matrix.elements[12] = mx

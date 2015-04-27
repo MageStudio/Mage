@@ -1,32 +1,28 @@
 class World
     constructor: ->
         @entities = {}
+        @signalBindings = {}
+        @signal = new signals.Signal()
         return
 
     add: (entity) ->
-        {scene} = Wage
+        {scene, bind} = Wage
         @entities[entity.object.uuid] = entity
         scene.add entity.object
+        @signalBindings[entity.object.uuid] = @signal.add entity._update_call, entity
         return
 
     del: (entity) ->
-        {scene} = Wage
+        {scene, bind} = Wage
+        @signalBindings[entity.object.uuid].detach()
+        delete @signalBindings[entity.object.uuid]
         delete @entities[entity.object.uuid]
         scene.remove entity.object
         return
 
     update: ->
         {clock} = Wage
-        keys = Object.keys(@entities)
-        t = new Date()
-        while keys.length
-            obj = @entities[keys.shift()]
-            if obj.update
-                obj.update clock.getDelta()
-            #: prevent loop to take > 50 msecs
-            dt = new Date()
-            if dt - t > 50
-                break
+        @signal.dispatch clock.getDelta()
         return
 
 env = self.Wage ?= {}

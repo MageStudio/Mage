@@ -3,8 +3,9 @@ class Sound
         {@audio} = Wage.managers
         @callbacks =
             onEnd: options.onEnd or new Function()
-            onLoopStart: options.onLoopStart or new Function()
-            onLoopEnd: options.onLoopEnd or new Function()
+        @loopLimits =
+            start: options.loopStartAt or 0
+            end: options.loopEndAt or 0
         @volume = @audio.context.createGain()
         @source = @audio.context.createBufferSource()
         @reset()
@@ -40,8 +41,11 @@ class Sound
         {bind} = Wage
         @source._caller = this
         @source.onended = bind this, @onEnd
-        @source.loopEnd = bind this, @onLoopEnd
-        @source.loopStart = bind this, @onLoopStart
+        #@source.loopEnd = bind this, @onLoopEnd
+        #@source.loopStart = bind this, @onLoopStart
+        @source.loopStart = @loopLimits.start
+        @source.loopEnd = @loopLimits.end
+
         return
 
     onEnd: ->

@@ -33,6 +33,9 @@ class Entity
         # needed?
         return
 
+    _update_call: (dt) ->
+        @update dt
+
     update: ->
         #: implemented by subclassing
         return

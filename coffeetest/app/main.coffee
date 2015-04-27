@@ -13,6 +13,8 @@ class MainScene extends Wage.Scene
         #: load rain sound
         rain = new Wage.BackgroundSound "rain",
             autoplay: true
+            loopStartAt: 5
+            loopEndAt: 7
         return
 
 

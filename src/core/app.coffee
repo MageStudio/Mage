@@ -35,6 +35,8 @@ class App
             images: {}
             shaders: {}
             videos: {}
+        #: time var for renderer
+        @_lastTime = null
         return this
 
     onCreate: ->
@@ -64,29 +66,28 @@ class App
     render: ->
         return
 
-    _render: ->
+    _render: (time) ->
         scope = this
         {scene, camera, game, control, renderer, bind} = Wage
         {audio, lights} = Wage.managers
+        #: call next cycle
+        rf = bind this, this._render
+        requestAnimationFrame rf
         #: call updates
         audio.update()
         lights.update()
         # [note] camera entity is updated by world
-        #world.update()
         game.update()
         control.update()
         #: update scene
-        renderer.clear()
-        @render()
-        renderer.render scene, camera
-        rf = bind this, this._render
-        #: set next call
-        setTimeout( ->
+        dt = time - @_lastTime
+        if dt >= 15
+            renderer.clear()
+            @render()
             if scope._physics
                 scene.simulate()
-            requestAnimationFrame rf
-            return
-        1000 / @config.frameRate)
+            renderer.render scene, camera
+        @_lastTime = time
         return
 
     #add: (mesh, element) ->
@@ -112,7 +113,7 @@ class App
         return
 
     init: ->
-        {screen, world, gameClass} = Wage
+        {bind, screen, world, gameClass} = Wage
         #: load configuration
         @_loadConfig()
         #: init physics (if requested) and scene
@@ -143,7 +144,9 @@ class App
         Wage.game = new gameClass()
         #: finish init and render
         @onStart()
-        @_render()
+        rf = bind this, this._render
+        requestAnimationFrame rf
+        @_lastTime = performance.now()
         return
 
     load: ->
