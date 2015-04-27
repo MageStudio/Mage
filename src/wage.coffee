@@ -1,4 +1,5 @@
 env = self.Wage ?= {}
+env.autoload = true
 env.clock = new THREE.Clock()
 
 include = (srcs, callback, params) ->
@@ -50,7 +51,10 @@ self.requestAnimationFrame = (
     window.oRequestAnimationFrame      ||
     window.msRequestAnimationFrame)
 
-self.onload = ->
+document.addEventListener "DOMContentLoaded", (e) ->
+    {autoload} = Wage
+    if not autoload
+        return
     if self.app isnt undefined
         Wage.app = app
     else
