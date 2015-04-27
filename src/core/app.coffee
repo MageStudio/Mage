@@ -75,7 +75,7 @@ class App
         requestAnimationFrame rf
         #: call updates
         audio.update()
-        lights.update()
+        #lights.update()
         # [note] camera entity is updated by world
         game.update()
         control.update()

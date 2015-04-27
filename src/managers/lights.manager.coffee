@@ -7,19 +7,17 @@ class LightsManager
         @holderSegments = 1
 
     add: (light) ->
+        {game} = Wage
         @lights.push(light)
+        game.currentScene.refresh()
         return
 
-    update: ->
-        {clock} = Wage
-        t = new Date()
-        for light in @lights
-            light.update clock.getDelta()
-            #: prevent loop to take > 50 msecs
-            dt = new Date()
-            if dt - start > 50
-                break
-        return
+    #update: ->
+    #    {clock} = Wage
+    #    t = new Date()
+    #    for light in @lights
+    #        light.update clock.getDelta()
+    #    return
 
 env = self.Wage ?= {}
 env.LightsManager = LightsManager
