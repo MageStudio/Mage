@@ -693,7 +693,7 @@ Control = {
 
 				canJump = true;
 
-			} else { app.log(" vel " + velocity.y); app.log(" yawobject position y " + yawObject.position.y);}
+			} //else { app.log(" vel " + velocity.y); app.log(" yawobject position y " + yawObject.position.y);}
 
 		};
 

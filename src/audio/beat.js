@@ -20,9 +20,9 @@ Class("Beat", {
 	setListeners : function() {
 		//setting listeners
 		this.sound.source._caller = this;
-		this.sound.source.onended = this.onEnd;
-		this.sound.source.loopEnd = this.onLoopEnd;
-		this.sound.source.loopStart = this.onLoopstart; 
+		//this.sound.source.onended = this.onEnd;
+		//this.sound.source.loopEnd = this.onLoopEnd;
+		//this.sound.source.loopStart = this.onLoopstart; 
 	},
 
 	reset : function() {

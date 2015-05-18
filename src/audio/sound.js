@@ -43,9 +43,9 @@ Class("Sound", {
 			this.start();
 		}
 		//setting listeners if provided
-		this.onEndCallback = options.onEnd || new Function();
-		this.onLoopStartCallback = options.onLoopStart || new Function();
-		this.onLoopEndCallback = options.onLoopEnd || new Function();
+		//this.onEndCallback = options.onEnd || new Function();
+		//this.onLoopStartCallback = options.onLoopStart || new Function();
+		//this.onLoopEndCallback = options.onLoopEnd || new Function();
 
 		//adding this sound to AudioEngine
 		AudioEngine.add(this);
