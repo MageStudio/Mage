@@ -17451,10 +17451,14 @@ window.onload = function() {
         var a = window.subClasses.App;
         app = new window[a]();
     } else app = new App();
-    Util.start(), Util.check.start(app.onSuccededTest, app.onFailedTest) && app.preload(function() {
-        AssetsManager.load(function() {
-            app.prepareScene(), app.load();
+    Util.start(), Util.check.start(function() {
+        app.preload(function() {
+            AssetsManager.load(function() {
+                app.prepareScene(), app.load();
+            });
         });
+    }, function(a, b) {
+        app.onFailedTest(a, b), console.warn(a), console.warn(b);
     });
 }, window.onresize = function() {
     app.util.h = window.innerHeight, app.util.w = window.innerWidth, app.util.ratio = app.util.w / app.util.h, 
