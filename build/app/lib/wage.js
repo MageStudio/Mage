@@ -1,4 +1,4 @@
-/*! wage version: 0.0.37, 15-05-2015 */
+/*! wage version: 0.0.37, 23-05-2015 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -16892,8 +16892,8 @@ __class__ = function(a, b) {
             var c = Control.options.fps.velocity;
             e && (k.z = -c), f && (k.z = c), f || e || (k.z = 0), g && (k.x = -c), h && (k.x = c), 
             h || g || (k.x = 0), i === !0 && (k.y = Math.max(0, k.y)), d.translateX(k.x), d.translateY(k.y), 
-            d.translateZ(k.z), d.position.y < Control.options.fps.height ? (k.y = 0, d.position.y = m ? Control.options.fps.height / 2 : Control.options.fps.height, 
-            j = !0) : (app.log(" vel " + k.y), app.log(" yawobject position y " + d.position.y));
+            d.translateZ(k.z), d.position.y < Control.options.fps.height && (k.y = 0, d.position.y = m ? Control.options.fps.height / 2 : Control.options.fps.height, 
+            j = !0);
         };
     },
     update: function() {
@@ -17153,14 +17153,18 @@ Gui = {
         d && this.start(), AudioEngine.add(this);
     },
     update: function(a) {
-        var b = new THREE.Vector3();
-        b.setFromMatrixPosition(this.mesh.matrixWorld);
-        var c = b.x, d = b.y, e = b.z;
-        this.mesh.updateMatrixWorld();
-        var f = new THREE.Vector3();
-        f.setFromMatrixPosition(this.mesh.matrixWorld);
-        var g = f.x - c, h = f.y - d, i = f.z - e;
-        this.sound.panner.setPosition(f.x, f.y, f.z), this.sound.panner.setVelocity(g / a, h / a, i / a);
+        if (this.mesh) {
+            var b = new THREE.Vector3();
+            b.setFromMatrixPosition(this.mesh.matrixWorld);
+            var c = b.x, d = b.y, e = b.z;
+            this.mesh.updateMatrixWorld();
+            var f = new THREE.Vector3();
+            f.setFromMatrixPosition(this.mesh.matrixWorld);
+            var g = f.x - c, h = f.y - d, i = f.z - e;
+            try {
+                this.sound.panner.setPosition(f.x, f.y, f.z), this.sound.panner.setVelocity(g / a, h / a, i / a);
+            } catch (j) {}
+        }
     }
 })._extends("Beat"), Class("AmbientSound", {
     AmbientSound: function(a, b) {
