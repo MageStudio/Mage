@@ -83,10 +83,14 @@ module.exports = function(grunt) {
 			}
 		},
 		watch: {
-			files: ['<%= jshint.files %>'],
-			tasks: ['concat', 'uglify']
-			//tasks : ['concat_in_order', 'uglify']
-		}
+			scripts: {
+				files: ['**/*.js'],
+				tasks: ['build'],
+				options: {
+					spawn: false,
+				},
+			},
+		},
 	});
 
 	grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -95,7 +99,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks('grunt-contrib-concat');
 	//grunt.loadNpmTasks('grunt-concat-in-order');
 
-	grunt.registerTask('default', ['concat', 'uglify']);
+	grunt.registerTask('build', ['concat', 'uglify']);
+	grunt.registerTask('watch', ['watch'])
 	//grunt.registerTask('default', ['jshint', 'concat_in_order', 'uglify']);
 
 };

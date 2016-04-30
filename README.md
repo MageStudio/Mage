@@ -122,7 +122,7 @@ You simpleApp folder provides you a script called "run". You just have to launch
 
 and you're good to go. The "run" script uses the python module SimpleHTTPServer, so you will need to set up Python first. When you finally manage to launch your app, you can go [here](http://localhost:8000) to see it live.
 
-If you did everithing correctly, you will see something like [this](http://marcostagni.com/projects/simpleApp).
+If you did everything correctly, you will see something like [this](http://marcostagni.com/projects/simpleApp).
 
 ----
 ####Conclusion

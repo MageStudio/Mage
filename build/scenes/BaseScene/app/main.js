@@ -9,12 +9,24 @@ Class("MyGame", {
 
 	MyGame: function() {
 		App.call(this);
+		this.loader = new THREE.ObjectLoader();
 	},
 
 	onCreate: function() {
+
+		// ricezione del messaggio dal router
+		function eventListener(event) {
+			console.log("inside scene");
+			console.log(event);
+			//event.source.postMessage("Hi, router!", event.origin);
+		}
+		window.addEventListener("message", eventListener, false);
+		parent.postMessage("Hi router from child", "http://localhost:8080");
+
+
 		var geometry = new THREE.CubeGeometry(20, 20, 20);
 		var material = new THREE.MeshBasicMaterial({
-			color: 0x00ff00,
+			color: 0xff0000,
 			wireframe : true
 		});
 
@@ -27,8 +39,15 @@ Class("MyGame", {
 		document.addEventListener( 'touchmove', app.onDocumentTouchMove, false );
 		document.addEventListener( 'mousewheel', app.onDocumentMouseWheel, false);
 
-		//example for camera movement
 		app.camera.addScript("cameraScript", "camera");
+	},
+
+	preload: function(next) {
+		next();
+	},
+
+	prepareScene: function() {
+
 	}
 
 })._extends("App");

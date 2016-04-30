@@ -103,7 +103,7 @@ Class("App", {
 
         app.renderer.autoClear = false;
         app.renderer.clear();
-        app.customRender();
+        app._render();
         app.renderer.render(app.scene, app.camera.object);
 
         setTimeout(function() {
@@ -324,7 +324,7 @@ window.onload = function() {
 
     //before starting loading stuff, be sure to pass all tests
     Util.start();
-    
+
     if (Util.check.start(app.onSuccededTest, app.onFailedTest)) {
         //we passed every test, we can go
         app.preload(function() {
@@ -343,6 +343,7 @@ window.onresize = function() {
     app.util.w 	= window.innerWidth;
     app.util.ratio = app.util.w/app.util.h;
 
+    if (!app.camera || !app.renderer) return;
     app.camera.object.aspect = app.util.ratio;
     app.camera.object.updateProjectionMatrix();
     app.renderer.setSize(app.util.w, app.util.h);
