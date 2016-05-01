@@ -144,6 +144,10 @@ Class("App", {
         var c_util 	= app.util.camera; //camera util
         var util 	= app.util;
 
+        if (app.window.keypress) {
+            app._keylistener =  new window.keypress.Listener();
+        }
+
         //try{
             //configuring threejs and physijs
             if (config) {
@@ -248,6 +252,12 @@ Class("App", {
         if (origin !== location.origin)
             return;
 
+    },
+
+    onkey: function(key, callback) {
+        if (app._keylistener) {
+            app._keylistener.simple_combo(key, callback);
+        }
     },
 
     //utilities methods

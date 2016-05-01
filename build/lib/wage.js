@@ -17879,7 +17879,8 @@ Util.start = function() {
     init: function() {
         app.three = THREE;
         var a = app.util.camera, b = app.util;
-        if (config) if (app.log("config loaded"), config.physics_enabled) {
+        if (app.window.keypress && (app._keylistener = new window.keypress.Listener()), 
+        config) if (app.log("config loaded"), config.physics_enabled) {
             app.log("physics enabled.");
             try {
                 Physijs.scripts.worker = "workers/physijs_worker.js", Physijs.scripts.ammo = "ammo.js", 
@@ -17918,6 +17919,9 @@ Util.start = function() {
     onMessage: function() {
         var a = event.origin || event.originalEvent.origin;
         a !== location.origin;
+    },
+    onkey: function(a, b) {
+        app._keylistener && app._keylistener.simple_combo(a, b);
     },
     log: function() {
         this.debug && (arguments.length > 1 && arguments[1] in this.log_types ? console[this.log_types[arguments[1]]](arguments[0]) : console.log(arguments[0]));
