@@ -17839,7 +17839,8 @@ Util.start = function() {
         }, this.threeLib = void 0, this.camera = void 0, this.user = void 0, this.scene = void 0, 
         this.renderer = void 0, this.debug = !0, this.clock = new THREE.Clock(), this.mouseX = 0, 
         this.mouseY = 0, this.zoom = 0, this.windowHalfX = window.innerWidth / 2, this.windowHalfY = window.innerHeight / 2, 
-        this.CAMERA_MAX_Z = 1e3, this.CAMERA_MIN_Z = 250, window.addEventListener("onmessage", eventListener, !1);
+        this.CAMERA_MAX_Z = 1e3, this.CAMERA_MIN_Z = 250, window.addEventListener("onmessage", app.onMessage, !1), 
+        window.addEventListener("message", app.onMessage, !1);
     },
     onCreate: function() {},
     preload: function(a) {
