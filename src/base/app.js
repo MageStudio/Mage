@@ -145,7 +145,7 @@ Class("App", {
         var c_util 	= app.util.camera; //camera util
         var util 	= app.util;
 
-        if (app.window.keypress) {
+        if (window.keypress) {
             app._keylistener =  new window.keypress.Listener();
         }
 

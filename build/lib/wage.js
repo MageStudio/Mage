@@ -1,4 +1,4 @@
-/*! wage version: 0.0.37, 01-05-2016 */
+/*! wage version: 0.0.37, 02-05-2016 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -17880,8 +17880,8 @@ Util.start = function() {
     init: function() {
         app.three = THREE;
         var a = app.util.camera, b = app.util;
-        if (app.window.keypress && (app._keylistener = new window.keypress.Listener()), 
-        config) if (app.log("config loaded"), config.physics_enabled) {
+        if (window.keypress && (app._keylistener = new window.keypress.Listener()), config) if (app.log("config loaded"), 
+        config.physics_enabled) {
             app.log("physics enabled.");
             try {
                 Physijs.scripts.worker = "workers/physijs_worker.js", Physijs.scripts.ammo = "ammo.js", 
