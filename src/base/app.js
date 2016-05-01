@@ -48,6 +48,9 @@ Class("App", {
         this.CAMERA_MAX_Z = 1000;
         this.CAMERA_MIN_Z = 250;
 
+        // registering listener for events from parent
+        window.addEventListener("onmessage", eventListener, false);
+
     },
 
     //onCreate method, ovveride to start creating stuff
@@ -233,6 +236,17 @@ Class("App", {
             }
         }
         this.progressAnimation(app.init);
+
+    },
+
+    sendMessage: function(message) {
+		parent.postMessage(message, location.origin);
+    },
+
+    onMessage: function() {
+        var origin = event.origin || event.originalEvent.origin;
+        if (origin !== location.origin)
+            return;
 
     },
 

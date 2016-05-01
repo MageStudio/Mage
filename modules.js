@@ -17,6 +17,7 @@ module.exports = (function() {
 
 	modules.libs = [
 		LIB + "jquery.min.js",
+		LIB + "keypress.min.js",
 		LIB + "three.min.js",
 		LIB + "leap-0.4.3.min.js",
 		LIB + "leap-plugins-0.1.3.js",
@@ -81,7 +82,7 @@ module.exports = (function() {
 
 	modules.final = [
 		BASE + "util.js",
-		BASE + "core.js"
+		BASE + "app.js"
 	]
 
 	return {

@@ -56,7 +56,7 @@ module.exports = function(grunt) {
 			},
 			dist: {
 				src: getDependencies(),//['src/main.js', 'src/test.js'],
-				dest: 'build/app/lib/<%= pkg.name %>.min.js'
+				dest: 'build/lib/<%= pkg.name %>.min.js'
 			}
 		},
 		uglify: {
@@ -66,7 +66,7 @@ module.exports = function(grunt) {
 			},
 			dist: {
 				files: {
-					'build/app/lib/<%= pkg.name %>.js': ['build/app/lib/<%= pkg.name %>.min.js'] //prima era concat.dist.dest
+					'build/lib/<%= pkg.name %>.js': ['build/lib/<%= pkg.name %>.min.js'] //prima era concat.dist.dest
 				}
 			}
 		},

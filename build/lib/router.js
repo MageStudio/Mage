@@ -11,12 +11,14 @@ var Router = {
         Router.scenes = data.scenes;
         Router.current = data.firstScene;
 
+        Router.actions = ['changeScene'];
+
         window.addEventListener("message", Router._onMessage, false);
         window.addEventListener("onmessage", Router._onMessage, false);
     },
 
     _onMessage: function(message) {
-
+        console.log(message);
     },
 
     _checkScene: function(scene) {
