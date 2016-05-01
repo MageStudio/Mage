@@ -74,7 +74,7 @@ Class("App", {
     },
 
     //needed if user wants to add a customRender method
-    customRender: function() {},
+    _render: function() {},
 
     //setupleap motion device
     setUpLeap: function() {},

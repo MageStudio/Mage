@@ -17857,7 +17857,7 @@ Util.start = function() {
             }, 200, a);
         });
     },
-    customRender: function() {},
+    _render: function() {},
     setUpLeap: function() {},
     onLeapSocketConnected: function() {},
     onLeapDeviceConnected: function() {},
