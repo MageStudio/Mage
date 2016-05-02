@@ -17837,8 +17837,14 @@ Util.start = function() {
                 far: 100
             }
         }, this.threeLib = void 0, this.camera = void 0, this.user = void 0, this.scene = void 0, 
-        this.renderer = void 0, this.debug = !0, this.clock = new THREE.Clock(), this.mouseX = 0, 
-        this.mouseY = 0, this.zoom = 0, this.windowHalfX = window.innerWidth / 2, this.windowHalfY = window.innerHeight / 2, 
+        this.renderer = void 0, this.clearColor = 0, Object.defineProperty(this, "clearColor", {
+            set: function(a) {
+                try {
+                    this.renderer && (this.renderer.setClearColor(a), this.clearColor = a);
+                } catch (b) {}
+            }
+        }), this.debug = !0, this.clock = new THREE.Clock(), this.mouseX = 0, this.mouseY = 0, 
+        this.zoom = 0, this.windowHalfX = window.innerWidth / 2, this.windowHalfY = window.innerHeight / 2, 
         this.CAMERA_MAX_Z = 1e3, this.CAMERA_MIN_Z = 250, window.addEventListener("onmessage", this.onMessage, !1), 
         window.addEventListener("message", this.onMessage, !1);
     },
@@ -17865,8 +17871,8 @@ Util.start = function() {
     render: function() {
         User.handleUserInput(), Game.update(), AudioEngine.update(), LightEngine.update(), 
         Universe.update(), Control.update(), app.camera.update && app.camera.update(app.clock.getDelta()), 
-        app.renderer.autoClear = !1, app.renderer.clear(), app._render(), app.renderer.render(app.scene, app.camera.object), 
-        setTimeout(function() {
+        app.renderer.autoClear = !1, app.renderer.clear(app.clearColor), app._render(), 
+        app.renderer.render(app.scene, app.camera.object), setTimeout(function() {
             config.physics_enabled && Physijs._isLoaded && app.scene.simulate(), config.tween_enabled && TWEEN.update(), 
             requestAnimFrame(app.render);
         }, 1e3 / app.util.frameRate);

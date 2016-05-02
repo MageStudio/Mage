@@ -31,6 +31,17 @@ Class("App", {
         this.user = undefined;
         this.scene = undefined;
         this.renderer= undefined;
+        this.clearColor = 0x000000;
+        Object.defineProperty(this, 'clearColor', {
+            set: function(value) {
+                try {
+                    if (this.renderer) {
+                        this.renderer.setClearColor(value);
+                        this.clearColor = value;
+                    }
+                } catch (e) {}
+            }
+        })
 
     	//debug mode
         this.debug = true;
@@ -106,7 +117,7 @@ Class("App", {
         }
 
         app.renderer.autoClear = false;
-        app.renderer.clear();
+        app.renderer.clear(app.clearColor);
         app._render();
         app.renderer.render(app.scene, app.camera.object);
 
