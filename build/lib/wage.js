@@ -1,4 +1,4 @@
-/*! wage version: 0.0.37, 02-05-2016 */
+/*! wage version: 0.0.37, 03-05-2016 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }

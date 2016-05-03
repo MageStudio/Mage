@@ -1,11 +1,17 @@
 var Router = {
     init: function(data) {
-        Router.iframe = document.createElement("iframe");
-        document.body.appendChild(Router.iframe);
+        if (window && window.process && window.process.type) {
+            Router.element = document.createElement('webview');
+            Router.disablewebsecurity = true;
+        } else {
+            Router.element = document.createElement('iframe');
+        }
+
+        document.body.appendChild(Router.element);
 
         Router.baseFolder = "scenes/";
 
-        Router.iframe.src = Router.baseFolder + "" + (data.firstScene ? data.firstScene : data.scenes[0].name);
+        Router.element.src = Router.baseFolder + "" + (data.firstScene ? data.firstScene : data.scenes[0].name) + "/index.html";
 
         Router.firstScene = data.firstScene;
         Router.scenes = data.scenes;
@@ -46,12 +52,12 @@ var Router = {
     },
 
     changeScene: function(scene) {
-        if (!Router.iframe || !Router._checkScene(scene)) {
+        if (!Router.element || !Router._checkScene(scene)) {
             console.error("[ invalid scene ] The scene " + scene + " is not valid");
             return;
         }
         Router.loader.start();
-        Router.iframe.src = Router.baseFolder + scene;
+        Router.element.src = Router.baseFolder + scene;
         Router.current = scene;
         Router.loader.stop();
     }
