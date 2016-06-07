@@ -76,8 +76,9 @@ module.exports = (function() {
 		ENTITIES + "animatedMesh.js",
 		LIGHTS + "lightEngine.js",
 		LIGHTS + "light.js",
-		LIGHTS + "ambiendLight.js",
+		LIGHTS + "ambientLight.js",
 		LIGHTS + "pointLight.js",
+		LIGHTS + "directionalLight.js",
 	];
 
 	modules.final = [

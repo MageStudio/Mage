@@ -210,8 +210,8 @@ Class("App", {
             app.renderer = new app.three.WebGLRenderer({alpha:alphaRenderer});
             if (config) {
                 if (config.cast_shadow == true) {
-                    app.renderer.shadowMapEnabled = true;
-                    app.renderer.shadowMapType = THREE.PCFSoftShadowMap;
+                    app.renderer.shadowMap.enabled = true;
+                    app.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
                 }
             }
             app.renderer.setSize( util.w , util.h );

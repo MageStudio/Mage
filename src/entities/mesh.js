@@ -12,6 +12,10 @@ Class("Mesh", {
 		this.hasScript = false;
 
 		this.mesh = new THREE.Mesh(geometry, material);
+		if (config.cast_shadow) {
+			this.mesh.castShadow = true;
+			this.mesh.receiveShadow = true;
+		}
 		//adding to core
 		app.add(this.mesh, this);
 

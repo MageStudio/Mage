@@ -1,9 +1,9 @@
 	window.AssetsManager = {};
-	
+
 	AssetsManager.completed = {
 		sound : false,
 		video : true,
-		images : true,
+		images : false,
 		general : true,
 		shaders : false
 	};
