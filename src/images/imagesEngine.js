@@ -26,7 +26,7 @@
 		},
 
 		loadSingleFile : function(id, path) {
-			ImagesEngine.loader.load(path , {}, function(texture) {
+			ImagesEngine.loader.load(path, function(texture) {
 				ImagesEngine.map.put(id, texture);
 				ImagesEngine.imagesLoaded++;
 				ImagesEngine.checkLoad();

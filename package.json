@@ -33,6 +33,7 @@
     "node-prefix": "*"
   },
   "devDependencies": {
+    "bower": "^1.7.9",
     "grunt": "~0.4.5",
     "grunt-concat-in-order": "^0.1.6",
     "grunt-contrib-concat": "*",

@@ -1,4 +1,4 @@
-/*! wage version: 0.0.37, 07-06-2016 */
+/*! wage version: 0.0.37, 28-06-2016 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -20659,7 +20659,7 @@ Gui = {
             return ImagesEngine.map.get(a) || !1;
         },
         loadSingleFile: function(a, b) {
-            ImagesEngine.loader.load(b, {}, function(b) {
+            ImagesEngine.loader.load(b, function(b) {
                 ImagesEngine.map.put(a, b), ImagesEngine.imagesLoaded++, ImagesEngine.checkLoad();
             });
         },
