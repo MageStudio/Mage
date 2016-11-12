@@ -9,7 +9,7 @@ Class("App", {
     	};
 
         //util
-        this.util = config || {
+        this.util = _.extend({
     		h : window.innerHeight,
     		w : window.innerWidth,
     		ratio : (window.innerWidth/window.innerHeight),
@@ -21,7 +21,7 @@ Class("App", {
     			near : 0.1,
     			far : 100
     		}
-    	};
+    	}, config);
 
     	//importing libraries
     	this.threeLib = undefined;
