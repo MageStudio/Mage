@@ -9,7 +9,7 @@ Class("App", {
     	};
 
         //util
-        this.util = {
+        this.util = config || {
     		h : window.innerHeight,
     		w : window.innerWidth,
     		ratio : (window.innerWidth/window.innerHeight),

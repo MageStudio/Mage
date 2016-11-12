@@ -1,30 +1,22 @@
 var Router = {
     init: function(data) {
-        if (window && window.process && window.process.type) {
-            Router.element = document.createElement('webview');
-            Router.disablewebsecurity = true;
-        } else {
-            Router.element = document.createElement('iframe');
-        }
-
-        document.body.appendChild(Router.element);
+        Router.iframe = document.createElement("iframe");
+        document.body.appendChild(Router.iframe);
 
         Router.baseFolder = "scenes/";
 
-        Router.element.src = Router.baseFolder + "" + (data.firstScene ? data.firstScene : data.scenes[0].name) + "/index.html";
+        Router.iframe.src = Router.baseFolder + "" + (data.firstScene ? data.firstScene : data.scenes[0].name);
 
         Router.firstScene = data.firstScene;
         Router.scenes = data.scenes;
         Router.current = data.firstScene;
-
-        Router.actions = ['changeScene'];
 
         window.addEventListener("message", Router._onMessage, false);
         window.addEventListener("onmessage", Router._onMessage, false);
     },
 
     _onMessage: function(message) {
-        console.log(message);
+
     },
 
     _checkScene: function(scene) {
@@ -52,12 +44,12 @@ var Router = {
     },
 
     changeScene: function(scene) {
-        if (!Router.element || !Router._checkScene(scene)) {
+        if (!Router.iframe || !Router._checkScene(scene)) {
             console.error("[ invalid scene ] The scene " + scene + " is not valid");
             return;
         }
         Router.loader.start();
-        Router.element.src = Router.baseFolder + scene;
+        Router.iframe.src = Router.baseFolder + scene;
         Router.current = scene;
         Router.loader.stop();
     }
