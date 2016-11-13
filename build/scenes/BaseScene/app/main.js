@@ -96,6 +96,7 @@ Class("MyGame", {
             if (l.light.object.type == "DirectionalLight") {
 				l = new DirectionalLight(o.light.color, o.light.intensity, o.light.distance, o.light.position, o.target);
                 var size = 50;
+				/*
                 l.light.castShadow = true;
                 //l.light.shadowCameraVisible = true;
                 l.light.shadowMaSizeWidth = 512;
@@ -106,6 +107,19 @@ Class("MyGame", {
                 l.light.shadowCameraTop = d;
                 l.light.shadowCameraBottom = -d;
                 l.light.shadowCameraFar = 1000;
+				*/
+				l.light.castShadow = true;
+                //l.light.shadowCameraVisible = true;
+                l.light.shadow.mapSize.Width = 512;
+                l.light.shadow.mapSize.Height = 512;
+                var d = 200;
+                l.light.shadow.camera.left = -d;
+                l.light.shadow.camera.right = d;
+                l.light.shadow.camera.top = d;
+                l.light.shadow.camera.bottom = -d;
+                // #TODO be able to change shadow camera far
+                l.light.shadow.camera.far = app.util.camera.far;
+
                 //l.light.shadowDarkness = 0.2;
             } else if (l.light.object.type == "AmbientLight") {
                 l = new AmbientLight(l.light.color, l.light.intensity, l.light.position);
@@ -117,12 +131,12 @@ Class("MyGame", {
 				var position = l.holder ? l.holder.position : l.light.position;
 				l = new PointLight(l.light.color, l.light.intensity, d, position);
                 l.light.castShadow = true;
-                l.light.shadowCameraLeft = -d;
-                l.light.shadowCameraRight = d;
-                l.light.shadowCameraTop = d;
-                l.light.shadowCameraBottom = -d;
-                l.light.shadowCameraFar = 1000;
-                l.light.shadowDarkness = 0.2;
+                l.light.shadow.camera.left = -d;
+                l.light.shadow.camera.right = d;
+                l.light.shadow.camera.top = d;
+                l.light.shadow.camera.bottom = -d;
+                l.light.shadow.camera.far = app.util.camera.far;
+                l.light.shadow.darkness = 0.2;
             }
         }
         //restoring models
