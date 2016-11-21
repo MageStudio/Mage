@@ -24,10 +24,10 @@ Class("DirectionalLight", {
 
 		var d = 300;
 
-		this.light.shadow.camera.left = - d;
+		this.light.shadow.camera.left = -d;
 		this.light.shadow.camera.right = d;
 		this.light.shadow.camera.top = d;
-		this.light.shadow.camera.bottom = - d;
+		this.light.shadow.camera.bottom = -d;
 
 		this.light.shadow.camera.far = 1000;
         //this.mesh.mesh.add(this.light);

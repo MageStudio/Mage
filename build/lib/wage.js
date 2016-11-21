@@ -1,4 +1,4 @@
-/*! wage version: 0.0.37, 12-11-2016 */
+/*! wage version: 0.0.37, 21-11-2016 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -20860,8 +20860,10 @@ Util.start = function() {
         d.far = config.camera.far ? config.camera.far : d.far), app.camera = new Camera(d);
         var e = !1;
         config.alpha && (e = !0), app.renderer = new app.three.WebGLRenderer({
-            alpha: e
-        }), config && 1 == config.cast_shadow && (app.renderer.shadowMap.enabled = !0, app.renderer.shadowMap.type = THREE.PCFSoftShadowMap), 
+            alpha: e,
+            antialias: !0
+        }), app.util.cast_shadow && (app.renderer.shadowMap.enabled = !0, app.renderer.shadowMap.type = THREE.PCFSoftShadowMap, 
+        app.renderer.sortObjects = !1), app.renderer.setPixelRatio(window.devicePixelRatio), 
         app.renderer.setSize(b.w, b.h), document.getElementById("gameContainer").appendChild(app.renderer.domElement), 
         User.handleUserInput(), Game.update(), Universe.update(), Control.init(), app.render(), 
         app.onCreate instanceof Function ? app.onCreate() : console.log("Something wrong in your onCreate method");
