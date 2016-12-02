@@ -122,12 +122,12 @@ Class("App", {
         app.renderer.render(app.scene, app.camera.object);
 
         setTimeout(function() {
-            if (config.physics_enabled) {
+            if (app.util.physics_enabled) {
                 if (Physijs._isLoaded) {
                     app.scene.simulate();
                 }
             }
-            if (config.tween_enabled) {
+            if (app.util.tween_enabled) {
                 TWEEN.update();
             }
             requestAnimFrame(app.render);
@@ -164,7 +164,7 @@ Class("App", {
             //configuring threejs and physijs
             if (config) {
                 app.log("config loaded");
-                if (config.physics_enabled) {
+                if (app.util.physics_enabled) {
                     app.log("physics enabled.");
                     try {
                         Physijs.scripts.worker = 'workers/physijs_worker.js';
@@ -195,16 +195,16 @@ Class("App", {
                 far : c_util.far
             };
             if (config) {
-                if (config.camera) {
-                    cameraOptions.fov = config.camera.fov ? config.camera.fov : cameraOptions.fov;
-                    cameraOptions.ratio = config.camera.ratio ? config.camera.ratio : cameraOptions.ratio;
-                    cameraOptions.near = config.camera.near ? config.camera.near : cameraOptions.near;
-                    cameraOptions.far = config.camera.far ? config.camera.far : cameraOptions.far;
+                if (app.util.camera) {
+                    cameraOptions.fov = app.util.camera.fov ? app.util.camera.fov : cameraOptions.fov;
+                    cameraOptions.ratio = app.util.camera.ratio ? app.util.camera.ratio : cameraOptions.ratio;
+                    cameraOptions.near = app.util.camera.near ? app.util.camera.near : cameraOptions.near;
+                    cameraOptions.far = app.util.camera.far ? app.util.camera.far : cameraOptions.far;
                 }
             }
             app.camera = new Camera(cameraOptions);
             var alphaRenderer = false;
-            if (config.alpha) {
+            if (app.util.alpha) {
                 alphaRenderer = true;
             }
             app.renderer = new app.three.WebGLRenderer({alpha:alphaRenderer, antialias: true});

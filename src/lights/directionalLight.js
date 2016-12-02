@@ -19,8 +19,8 @@ Class("DirectionalLight", {
 
         this.light.castShadow = true;
 
-		this.light.shadow.mapSize.width = 1024;
-		this.light.shadow.mapSize.height = 1024;
+		this.light.shadow.mapSize.width = 512;
+		this.light.shadow.mapSize.height = 512;
 
 		var d = 300;
 

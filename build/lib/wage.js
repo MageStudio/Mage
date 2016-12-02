@@ -1,4 +1,4 @@
-/*! wage version: 0.0.37, 21-11-2016 */
+/*! wage version: 0.0.37, 01-12-2016 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -19766,7 +19766,7 @@ __class__ = function(a, b) {
 })._extends("Entity"), Class("Mesh", {
     Mesh: function(a, b, c) {
         if (Entity.call(this), this.geometry = a, this.material = b, this.script = {}, this.hasScript = !1, 
-        this.mesh = new THREE.Mesh(a, b), config.cast_shadow && (this.mesh.castShadow = !0, 
+        this.mesh = new THREE.Mesh(a, b), app.util.cast_shadow && (this.mesh.castShadow = !0, 
         this.mesh.receiveShadow = !0), app.add(this.mesh, this), c) for (var d in c) this[d] = c[d], 
         "script" == d && (this.hasScript = !0, this.addScript(c[d], c.dir));
     }
@@ -19935,8 +19935,8 @@ __class__ = function(a, b) {
 })._extends("Light"), Class("DirectionalLight", {
     DirectionalLight: function(a, b, c, d, e) {
         Light.call(this, a, b, d), this.light = new THREE.DirectionalLight(a, b), e && this.light.target.position.copy(e.position), 
-        this.light.position.set(d.x, d.y, d.z), this.light.castShadow = !0, this.light.shadow.mapSize.width = 1024, 
-        this.light.shadow.mapSize.height = 1024;
+        this.light.position.set(d.x, d.y, d.z), this.light.castShadow = !0, this.light.shadow.mapSize.width = 512, 
+        this.light.shadow.mapSize.height = 512;
         var f = 300;
         this.light.shadow.camera.left = -f, this.light.shadow.camera.right = f, this.light.shadow.camera.top = f, 
         this.light.shadow.camera.bottom = -f, this.light.shadow.camera.far = 1e3, app.add(this.light, this);
@@ -20736,7 +20736,7 @@ Util.start = function() {
     }();
 }, Util.check = {
     start: function(a, b) {
-        var c = config.tests || Util.tests;
+        var c = app.util.tests || Util.tests;
         -1 == c.indexOf("webgl") && c.push("webgl");
         for (var d in c) {
             if (-1 == Util.tests.indexOf(c[d])) return b("No Such Test", c[d]), !1;
@@ -20824,7 +20824,7 @@ Util.start = function() {
         Universe.update(), Control.update(), app.camera.update && app.camera.update(app.clock.getDelta()), 
         app.renderer.autoClear = !1, app.renderer.clear(app.clearColor), app._render(), 
         app.renderer.render(app.scene, app.camera.object), setTimeout(function() {
-            config.physics_enabled && Physijs._isLoaded && app.scene.simulate(), config.tween_enabled && TWEEN.update(), 
+            app.util.physics_enabled && Physijs._isLoaded && app.scene.simulate(), app.util.tween_enabled && TWEEN.update(), 
             requestAnimFrame(app.render);
         }, 1e3 / app.util.frameRate);
     },
@@ -20838,7 +20838,7 @@ Util.start = function() {
         app.three = THREE;
         var a = app.util.camera, b = app.util;
         if (window.keypress && (app._keylistener = new window.keypress.Listener()), config) if (app.log("config loaded"), 
-        config.physics_enabled) {
+        app.util.physics_enabled) {
             app.log("physics enabled.");
             try {
                 Physijs.scripts.worker = "workers/physijs_worker.js", Physijs.scripts.ammo = "ammo.js", 
@@ -20855,11 +20855,11 @@ Util.start = function() {
             near: a.near,
             far: a.far
         };
-        config && config.camera && (d.fov = config.camera.fov ? config.camera.fov : d.fov, 
-        d.ratio = config.camera.ratio ? config.camera.ratio : d.ratio, d.near = config.camera.near ? config.camera.near : d.near, 
-        d.far = config.camera.far ? config.camera.far : d.far), app.camera = new Camera(d);
+        config && app.util.camera && (d.fov = app.util.camera.fov ? app.util.camera.fov : d.fov, 
+        d.ratio = app.util.camera.ratio ? app.util.camera.ratio : d.ratio, d.near = app.util.camera.near ? app.util.camera.near : d.near, 
+        d.far = app.util.camera.far ? app.util.camera.far : d.far), app.camera = new Camera(d);
         var e = !1;
-        config.alpha && (e = !0), app.renderer = new app.three.WebGLRenderer({
+        app.util.alpha && (e = !0), app.renderer = new app.three.WebGLRenderer({
             alpha: e,
             antialias: !0
         }), app.util.cast_shadow && (app.renderer.shadowMap.enabled = !0, app.renderer.shadowMap.type = THREE.PCFSoftShadowMap, 

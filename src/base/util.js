@@ -19,7 +19,7 @@ Util.start = function() {
 Util.check = {
 
     start: function(onSuccess, onFailure) {
-        var tests = config.tests || Util.tests;
+        var tests = app.util.tests || Util.tests;
 
         if (tests.indexOf("webgl") == -1) {
             //we MUST pass the webgl test

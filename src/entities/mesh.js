@@ -12,7 +12,7 @@ Class("Mesh", {
 		this.hasScript = false;
 
 		this.mesh = new THREE.Mesh(geometry, material);
-		if (config.cast_shadow) {
+		if (app.util.cast_shadow) {
 			this.mesh.castShadow = true;
 			this.mesh.receiveShadow = true;
 		}
