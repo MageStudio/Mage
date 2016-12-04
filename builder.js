@@ -5,16 +5,12 @@ function Builder() {
 	this.global = require("node-prefix").global;
 
 	Builder.prototype.create = function ( projectName ) {
-		
-		/*
-			this must copy the whole build folder
-		*/
 
 		console.log("...".blue);
 		console.log("This script will create your ");
 		console.log("project in just a few (milli)seconds.");
-		
-		var PATH = this.global("wage")+"/build";
+
+		var PATH = this.global("mage")+"/build";
 
 		this.ncp(PATH, projectName, function (err) {
 			if (err) {

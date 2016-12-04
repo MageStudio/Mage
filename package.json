@@ -1,5 +1,5 @@
 {
-  "name": "wage",
+  "name": "Mage",
   "version": "0.0.37",
   "description": "A WebGL Javascript Game Engine, built on top of THREE.js and many other libraries.",
   "main": "builder.js",
@@ -9,11 +9,11 @@
     "email": "mrc.stagni@gmail.com"
   },
   "bin": {
-    "wage": "wage"
+    "mage": "mage"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/marco-ponds/Wage.git"
+    "url": "git://github.com/marco-ponds/Mage.git"
   },
   "license": "BSD-3-Clause",
   "keywords": [
