@@ -26,11 +26,20 @@
 		},
 
 		loadSingleFile : function(id, path) {
-			ImagesEngine.loader.load(path, function(texture) {
-				ImagesEngine.map.put(id, texture);
+			try {
 				ImagesEngine.imagesLoaded++;
-				ImagesEngine.checkLoad();
-			})
+				ImagesEngine.loader.load(path, function(texture) {
+					ImagesEngine.map.put(id, texture);
+					ImagesEngine.checkLoad();
+				}, function() {
+					// displaying progress
+				}, function() {
+					console.log('An error occurred while fetching texture.');
+					ImagesEngine.checkLoad();
+				});
+			} catch (e) {
+
+			}
 		},
 
 		checkLoad: function() {
