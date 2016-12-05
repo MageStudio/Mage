@@ -84,18 +84,18 @@ Class("MyGame", {
         }
         //restoring lights
         for (var j=0; j<lights.length; j++) {
-            var l = lights[j];
+            var currentLight = lights[j];
             //recreating light, holder, target, helper
             var o = {
-                holder: (l.holder) ? app.loader.parse(l.holder) : false,
-                //helper: (l.helper) ? app.loader.parse(l.helper) : false,
-                target: (l.target) ? app.loader.parse(l.target) : false,
-                light: (l.light) ? app.loader.parse(l.light) : false
+                holder: (currentLight.holder) ? app.loader.parse(currentLight.holder) : false,
+                //helper: (currentLight.helper) ? app.loader.parse(currentLight.helper) : false,
+                target: (currentLight.target) ? app.loader.parse(currentLight.target) : false,
+                light: (currentLight.light) ? app.loader.parse(currentLight.light) : false
             };
             //setting helpers ecc
-            if (l.light.object.type == "DirectionalLight") {
-				l = new DirectionalLight(o.light.color, o.light.intensity, o.light.distance, o.light.position, o.target);
-                var size = 50;
+            if (currentLight.light.object.type == "DirectionalLight") {
+				new DirectionalLight(o.light.color, o.light.intensity, o.light.distance, o.light.position, o.target);
+                //var size = 50;
 				/*
                 l.light.castShadow = true;
                 //l.light.shadowCameraVisible = true;
@@ -108,28 +108,28 @@ Class("MyGame", {
                 l.light.shadowCameraBottom = -d;
                 l.light.shadowCameraFar = 1000;
 				*/
-				l.light.castShadow = true;
+				//l.light.castShadow = o.light.castShadow;
                 //l.light.shadowCameraVisible = true;
-                l.light.shadow.mapSize.Width = 512;
-                l.light.shadow.mapSize.Height = 512;
-                var d = 200;
-                l.light.shadow.camera.left = -d;
-                l.light.shadow.camera.right = d;
-                l.light.shadow.camera.top = d;
-                l.light.shadow.camera.bottom = -d;
+                //l.light.shadow.mapSize.width = o.light.shadow.mapSize.width;
+                //l.light.shadow.mapSize.height = o.light.shadow.mapSize.height;
+                //var d = 200;
+                //l.light.shadow.camera.left = o.light.shadow.camera.left;
+                //l.light.shadow.camera.right = o.light.shadow.camera.right;
+                //l.light.shadow.camera.top = o.light.shadow.camera.top;
+                //l.light.shadow.camera.bottom = o.light.shadow.camera.bottom;
                 // #TODO be able to change shadow camera far
-                l.light.shadow.camera.far = app.util.camera.far;
+                //l.light.shadow.camera.far = l.light.shadow.camera.far;
 
                 //l.light.shadowDarkness = 0.2;
-            } else if (l.light.object.type == "AmbientLight") {
-                l = new AmbientLight(l.light.color, l.light.intensity, l.light.position);
-            } else if (l.light.object.type == "PointLight") {
+            } else if (currentLight.light.object.type == "AmbientLight") {
+                new AmbientLight(o.light.color, o.light.intensity, o.light.position);
+            } else if (currentLight.light.object.type == "PointLight") {
                 //var sphereSize = 50;
                 //o.helper = new THREE.PointLightHelper(o.light, sphereSize);
                 //every light must cast shadow
 				var d = 200;
-				var position = l.holder ? l.holder.position : l.light.position;
-				l = new PointLight(l.light.color, l.light.intensity, d, position);
+				var position = o.holder ? o.holder.position : o.light.position;
+				var l = new PointLight(o.light.color, o.light.intensity, d, position);
                 l.light.castShadow = true;
                 l.light.shadow.camera.left = -d;
                 l.light.shadow.camera.right = d;
@@ -165,6 +165,11 @@ Class("MyGame", {
 
 		//example for camera movement
 		//app.camera.addScript("cameraScript", "camera");
+		for (var i in app.scene.children) {
+			if (app.scene.children[i].material) {
+				app.scene.children[i].material.needsUpdate = true;
+			}
+		}
 	},
 
 	progressAnimation: function(next) {

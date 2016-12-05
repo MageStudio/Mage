@@ -1,8 +1,8 @@
 {
-  "name": "mage",
+  "name": "mage-engine",
   "version": "0.0.37",
   "description": "A WebGL Javascript Game Engine, built on top of THREE.js and many other libraries.",
-  "main": "builder.js",
+  "main": "mage",
   "preferGlobal": "true",
   "author": {
     "name": "Marco Stagni",
@@ -13,7 +13,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/marco-ponds/Mage.git"
+    "url": "git://github.com/marco-ponds/mage.git"
   },
   "license": "BSD-3-Clause",
   "keywords": [
