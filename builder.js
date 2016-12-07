@@ -16,18 +16,16 @@ function Builder() {
 
 		this.ncp(PATH, projectName, function (err) {
 			if (err) {
-				console.log("\n\nSomething went wrong.");
+				console.log("\n\nSomething went wrong.".red);
 				console.error(err);
 				if (callback) {
 					callback(false);
 				}
-				return console.log("...".blue);
 			} else {
-				console.log("Your project is ok, enjoy!");
+				console.log("Your project is ok, enjoy!".green);
 				if (callback) {
 					callback(true);
 				}
-				return console.log("...\n\n".blue);
 			}
 		});
 
