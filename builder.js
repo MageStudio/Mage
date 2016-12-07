@@ -10,7 +10,7 @@ function Builder() {
 		console.log("This script will create your ");
 		console.log("project in just a few (milli)seconds.");
 
-		var PATH = this.global("mage-engine")+"/build";
+		var PATH = require.resolve('mage-engine').slice(0, -5) + "/build";
 
 		console.log(PATH);
 
