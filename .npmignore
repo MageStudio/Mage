@@ -3,3 +3,7 @@ npm-debug.log
 Gruntfile.js
 src/**/*.js
 examples/**/*.*
+src
+examples
+bower.json
+modules.js
