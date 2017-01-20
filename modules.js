@@ -1,10 +1,11 @@
 module.exports = (function() {
 
 	var modules = {},
-		order = ["libs", "controls", "entities", "base", "assets", "final"]
+		order = ["libs", "controls", "entities", "base", "assets", "final", "loaders"],
 		DIR = "src/",
 		LIB = DIR + "lib/",
 		BASE = DIR + "base/",
+		LOADERS = DIR + "loaders/",
 		AUDIO = DIR + "audio/",
 		VIDEO = DIR + "video/",
 		LIGHTS = DIR + "lights/",
@@ -84,7 +85,12 @@ module.exports = (function() {
 	modules.final = [
 		BASE + "util.js",
 		BASE + "app.js"
-	]
+	];
+
+	modules.loaders = [
+		LOADERS + "lightLoader.js",
+		LOADERS + "meshLoader.js"
+	];
 
 	return {
 		"modules" : modules,
