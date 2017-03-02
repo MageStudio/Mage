@@ -1,77 +1,18 @@
-window.Universe = {};
-Universe =  {
-	/*------------------------------------------------------------------------------------------
+window.M = window.M || {};
 
-		we are going to use this object to store and properly udpate every single object in our
-		scene.
+M.universe =  {
 
-		we must collect informations about:
-			-	light
-			- 	animation
-			- 	user movements
-			- 	other users movements
-			- 	light animation
-			-   lod ( level of detail ) using trees
-
-
-	------------------------------------------------------------------------------------------*/
-
-	universe : undefined,
+	reality : undefined,
 
 	loaded : false,
 
 	worker : undefined,
 
-	init : function(){
+	bigbang : function(){
 		console.log("inside universe init");
-		/*------------------------------------------------------------------------------------------
 
-			this is an auto-call method. it will initialize our object map
-
-		------------------------------------------------------------------------------------------*/
-		//requirejs(["js/core/util/HashMap"], function() {
-			Universe.loaded = true;
-			Universe.universe = new HashMap();
-
-
-			//we now should recover our universe from data. how??
-			//Universe.worker = new Worker('js/lib/universe_worker.js');
-
-
-			//Universe.worker.onmessage = function(e) {
-			//  var data = e.data;
-			//  if (data.type === 'debug') {
-			//    console.log(data.value);
-			//  }
-			//  else if (data.type === 'result') {
-			//    // process results
-			//  }
-			//}
-
-
-		//});
-
-	},
-
-	cube : undefined,
-
-	addRandomCube : function() {
-
-		var geometry = new THREE.CubeGeometry(1,1,1);
-		var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 , wireframe : true } );
-		var cube = new THREE.Mesh( geometry, material );
-		cube.position.x = Math.random() *5;
-		cube.position.y = Math.random() *5;
-		cube.position.z = Math.random() *5;
-
-		//adding the render function.
-		cube.auto_render = function() {
-			this.rotation.x += 0.01;
-		}
-
-		//adding to the scene and to our map.
-		app.scene.add( cube );
-		Universe.universe.put(cube.uuid, cube);
+		M.universe.loaded = true;
+		M.universe.reality = new HashMap();
 	},
 
 	testingShaders : function() {
@@ -109,7 +50,7 @@ Universe =  {
 			this.material.uniforms[ 'time' ].value = .00025 * ( Date.now() - this.start_time);
 		}
 		app.scene.add( mesh );
-		Universe.universe.put(mesh.uuid, mesh);
+		M.universe.reality.put(mesh.uuid, mesh);
 
 	},
 
@@ -135,7 +76,7 @@ Universe =  {
 
 		//adding to the scene and to our map.
 		app.scene.add( planet );
-		Universe.universe.put(planet.uuid, planet);
+		M.universe.reality.put(planet.uuid, planet);
 
 		//stampiamo la geometry appena settata
 		l("PLANET GEOMETRY");
@@ -163,12 +104,11 @@ Universe =  {
 
 	update : function () {
 
-		//Universe update method
-		var keys_list = Universe.universe.keys.concat();   //create a clone of the original
+		var keys_list = M.universe.reality.keys.concat();
 		if (keys_list.length != 0) {
 			var start = +new Date();
 			do {
-				var o = Universe.universe.get(keys_list.shift());
+				var o = M.universe.reality.get(keys_list.shift());
 				if (o.update) {
 					o.update(app.clock.getDelta());
 				}
@@ -177,4 +117,5 @@ Universe =  {
 		
 	}
 };
-Universe.init();
+
+M.universe.bigbang();

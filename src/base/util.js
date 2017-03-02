@@ -1,8 +1,8 @@
-window.Util = window.Util || {};
+window.M = window.M || {};
 
-Util.tests = ["webgl", "webaudioapi", "webworker", "ajax"];
+M.util.tests = ["webgl", "webaudioapi", "webworker", "ajax"];
 
-Util.start = function() {
+M.util.start = function() {
     // @see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
     window.requestAnimFrame = (function(){
       return  window.requestAnimationFrame       ||
@@ -16,10 +16,10 @@ Util.start = function() {
     })();
 };
 
-Util.check = {
-
+M.util.check = {
+    // @todo use promises 
     start: function(onSuccess, onFailure) {
-        var tests = app.util.tests || Util.tests;
+        var tests = app.util.tests || M.util.tests;
 
         if (tests.indexOf("webgl") == -1) {
             //we MUST pass the webgl test
@@ -27,11 +27,11 @@ Util.check = {
         }
 
         for (var k in tests) {
-            if (Util.tests.indexOf(tests[k]) == -1) {
+            if (M.util.tests.indexOf(tests[k]) == -1) {
                 onFailure("No Such Test", tests[k]);
                 return false;
             }
-            if (!Util.check[tests[k]]()) {
+            if (!M.util.check[tests[k]]()) {
                 onFailure("Test failed", tests[k]);
                 return false;
             }
@@ -67,10 +67,10 @@ Util.check = {
 
 };
 
-Util.degToRad = function(angle) {
+M.util.degToRad = function(angle) {
     return angle * (Math.PI / 180);
 }
 
-Util.getProportion = function(max1, b, max2) {
+M.util.getProportion = function(max1, b, max2) {
     return (max1 * b)/max2;
 }

@@ -1,7 +1,7 @@
 module.exports = (function() {
 
 	var modules = {},
-		order = ["libs", "controls", "entities", "base", "assets", "final", "loaders"],
+		order = ["libs", "controls", "entities", "base", "assets", "app", "loaders"],
 		DIR = "src/",
 		LIB = DIR + "lib/",
 		BASE = DIR + "base/",
@@ -82,7 +82,7 @@ module.exports = (function() {
 		LIGHTS + "directionalLight.js",
 	];
 
-	modules.final = [
+	modules.app = [
 		BASE + "util.js",
 		BASE + "app.js"
 	];

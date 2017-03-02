@@ -13,7 +13,9 @@
   },
   "license": "BSD-3-Clause",
   "keywords": [
-    "wage",
+    "mage",
+    "marco",
+    "stagni",
     "three.js",
     "webgl",
     "game",
@@ -26,6 +28,7 @@
   "dependencies": {
     "ncp": "*",
     "colors": "*",
+    "vivifyjs": "*",
     "node-prefix": "*"
   },
   "devDependencies": {

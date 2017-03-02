@@ -1,5 +1,6 @@
-var Gui = {};
-Gui = {
+window.M = window.M || {};
+
+M.gui = {
 
 	miniMap : undefined,
 
@@ -7,5 +8,7 @@ Gui = {
 
 	init : function() {
 		
-	}(),
-}
+	}
+};
+
+M.gui.init();

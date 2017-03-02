@@ -1,39 +1,39 @@
-	window.AssetsManager = {};
+window.M = window.M || {};
 
-	AssetsManager.completed = {
-		sound : false,
-		video : true,
-		images : false,
-		general : true,
-		shaders : false
-	};
+M.assetsManager.completed = {
+	sound : false,
+	video : true,
+	images : false,
+	general : true,
+	shaders : false
+};
 
-	AssetsManager.load = function(callback) {
-		//first we load scripts
-		//console.log(include);
-		AssetsManager.callback = callback;
-		//over loading scripts
-		AudioEngine.load();
-		VideoEngine.load();
-		ImagesEngine.load();
-		GeneralAssetsEngine.load();
-		//effects
-		fx.ShadersEngine.load();
-		AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
-	};
+M.assetManager.load = function(callback) {
+	//first we load scripts
+	//console.log(include);
+	M.assetManager.callback = callback;
+	//over loading scripts
+	M.audioEngine.load();
+	M.videoEngine.load();
+	M.imagesEngine.load();
+	M.generalAssetsEngine.load();
+	//effects
+	M.fx.ShadersEngine.load();
+	M.assetManager.checkInterval = setInterval(M.assetManager.check, 100);
+};
 
-	AssetsManager.loadingMessage = function(loaded) {
-		//this method is up to you, developer!
-		//console.log(loaded);
+M.assetManager.loadingMessage = function(loaded) {
+	//this method is up to you, developer!
+	//console.log(loaded);
+}
+
+M.assetManager.check = function() {
+	if (M.assetManager.completed.sound && M.assetManager.completed.video && M.assetManager.completed.images && M.assetManager.completed.general) {
+		//we finished loading all assets, yay!
+		M.assetManager.loadingMessage(true);
+		clearInterval(M.assetManager.checkInterval);
+		M.assetManager.callback();
+	} else {
+		M.assetManager.loadingMessage(false);
 	}
-
-	AssetsManager.check = function() {
-		if (AssetsManager.completed.sound && AssetsManager.completed.video && AssetsManager.completed.images && AssetsManager.completed.general) {
-			//we finished loading all assets, yay!
-			AssetsManager.loadingMessage(true);
-			clearInterval(AssetsManager.checkInterval);
-			AssetsManager.callback();
-		} else {
-			AssetsManager.loadingMessage(false);
-		}
-	}
+}

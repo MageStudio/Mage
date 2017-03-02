@@ -102,14 +102,14 @@ Class("App", {
     render : function () {
 
         //handling user input
-        User.handleUserInput();
+        M.user.handleUserInput();
         //updating game and engines
-        Game.update();
-        AudioEngine.update();
-        LightEngine.update();
+        M.game.update();
+        M.audioEngine.update();
+        M.lightEngine.update();
         //updating universe
-        Universe.update();
-        Control.update();
+        M.universe.update();
+        M.control.update();
 
         //updating camera if we need to do so.
         if (app.camera.update) {
@@ -139,14 +139,14 @@ Class("App", {
 
 		//method to be called when creating a new element
 		this.scene.add(mesh);
-		Universe.universe.put(mesh.uuid, element);
+		M.universe.reality.put(mesh.uuid, element);
 
 	},
 
 	remove : function(mesh) {
 
 		this.scene.remove(mesh);
-		Universe.universe.remove(mesh.uuid);
+		M.universe.reality.remove(mesh.uuid);
 
 	},
 
@@ -219,14 +219,14 @@ Class("App", {
             //document.body.appendChild( app.renderer.domElement );
             document.getElementById("gameContainer").appendChild(app.renderer.domElement);
             //handling user input
-            User.handleUserInput();
+            M.user.handleUserInput();
             //updating game
-            Game.update();
+            M.game.update();
             //updating universe
-            Universe.update();
+            M.universe.update();
 
             //launch render method
-            Control.init();
+            M.control.init();
             app.render();
 
             //we are pretty sure we can add stuff to our universe
@@ -346,10 +346,10 @@ Class("App", {
 
 });
 
-var app;
+window.M = window.M || {},
+    app;
 
-window.onload = function() {
-
+M.start = function() {
     console.log("inside window onload");
     //creating app object
     if (window.subClasses["App"]) {
@@ -360,22 +360,20 @@ window.onload = function() {
     }
 
     //before starting loading stuff, be sure to pass all tests
-    Util.start();
+    M.util.start();
 
-    if (Util.check.start(app.onSuccededTest, app.onFailedTest)) {
+    if (M.util.check.start(app.onSuccededTest, app.onFailedTest)) {
         //we passed every test, we can go
         app.preload(function() {
-            AssetsManager.load(function() {
+            M.assetsManager.load(function() {
                 app.prepareScene();
                 app.load();
             });
         });
     }
-
 };
 
-window.onresize = function() {
-
+M.resize = function () {
     app.util.h 	= window.innerHeight;
     app.util.w 	= window.innerWidth;
     app.util.ratio = app.util.w/app.util.h;
@@ -384,5 +382,7 @@ window.onresize = function() {
     app.camera.object.aspect = app.util.ratio;
     app.camera.object.updateProjectionMatrix();
     app.renderer.setSize(app.util.w, app.util.h);
-
 };
+
+window.addEventListener('load', M.start);
+window.addEventListener('resize', M.resize);

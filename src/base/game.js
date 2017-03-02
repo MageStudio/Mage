@@ -1,11 +1,16 @@
-window.Game = {};
+window.M = window.M || {};
 
-Game.SCRIPTS_DIR = "app/scripts/";
+M.game = {
+	scripts = {}
+};
 
-Game.update = function() {
+M.game.SCRIPTS_DIR = "app/scripts/";
+
+M.game.update = function() {
 	//console.log("inside old updateGame");
 };
-Game.script = function(name, methods) {
+
+M.game.script = function(name, methods) {
 	//this will load our scripts
 	var obj = {};
 	obj.name = name;
@@ -13,21 +18,21 @@ Game.script = function(name, methods) {
 		obj[method] = methods[method];
 	}
 	if (!obj.start) {
-		obj.start = new Function("console.log('please, add a start method');");
+		obj.start = new Function("console.warn('You need a start method');");
 	}
 	if (!obj.update) {
-		obj.update = new Function("console.log('please, add a update method');");
+		obj.update = new Function("console.warn('You need an update method');");
 	}
 
-	if (!(name in Game.scripts)) {
+	if (!(name in M.game.scripts)) {
 		//we never created this script
-		Game.scripts[name] = obj;
+		M.game.scripts[name] = obj;
 	}
 };
-Game.attachScriptToObject = function(object, scriptname, dir) {
+
+M.game.attachScriptToObject = function(object, scriptname, dir) {
 	var path = dir + scriptname;
 	include(path, function() {
-		object.__loadScript(Game.scripts[scriptname]);
+		object.__loadScript(M.game.scripts[scriptname]);
 	});
-}
-Game.scripts = {};
+};
