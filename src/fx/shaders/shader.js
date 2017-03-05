@@ -1,6 +1,6 @@
 Class("Shader", {
     Shader: function( name, attributes, uniforms, options ) {
-        this.shader = fx.ShadersEngine.get( name );
+        this.shader = M.fx.shadersEngine.get( name );
         this.name = this.shader.name;
         this.vertex = this.shader.vertex;
         this.fragment = this.shader.fragment;

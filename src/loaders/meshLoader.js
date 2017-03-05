@@ -45,7 +45,7 @@ app.meshLoader = {
         }
     },
 
-    _loadMesh(parsedMesh script) {
+    _loadMesh(parsedMesh, script) {
         parsedMesh.castShadow = true;
         parsedMesh.receiveShadow = true;
         var mesh = new Mesh(parsedMesh.geometry, parsedMesh.material);
@@ -56,7 +56,7 @@ app.meshLoader = {
         mesh.mesh.receiveShadow = true;
         // setting texture
         if (current.textureKey) {
-            var texture = ImagesEngine.get(current.textureKey);
+            var texture = M.imagesEngine.get(current.textureKey);
             texture.wrapS = THREE.RepeatWrapping;
             texture.wrapT = THREE.RepeatWrapping;
             texture.repeat.set(1, 1);

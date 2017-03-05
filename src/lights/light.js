@@ -13,16 +13,16 @@ Class("Light", {
 		};
 		this.isLightOn = false;
 		this.mesh = undefined;
-		LightEngine.add(this);
+		M.lightEngine.add(this);
 	},
 
 	on: function() {
 		if (this.light) {
 			var self = this;
 			var _delay = function() {
-				self.light.intensity += LightEngine.delayFactor;
+				self.light.intensity += M.lightEngine.delayFactor;
 				if (self.light.intensity < self.intensity) {
-					setTimeout(_delay, LightEngine.delayStep);
+					setTimeout(_delay, M.lightEngine.delayStep);
 				} else {
 					self.isLightOn = true;
 				}
@@ -37,9 +37,9 @@ Class("Light", {
 		if (this.light) {
 			var self = this;
 			var _delay = function() {
-				self.light.intensity -= LightEngine.delayFactor;
+				self.light.intensity -= M.lightEngine.delayFactor;
 				if (self.light.intensity > 0) {
-					setTimeout(_delay, LightEngine.delayStep);
+					setTimeout(_delay, M.lightEngine.delayStep);
 				} else {
 					self.isLightOn = false;
 				}

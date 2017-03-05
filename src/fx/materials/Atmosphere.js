@@ -1,4 +1,4 @@
-fx.ShadersEngine.create("Atmosphere", {
+M.fx.shadersEngine.create("Atmosphere", {
 
 	vertex: [
 		'varying vec3 vNormal;',

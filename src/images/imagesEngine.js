@@ -1,41 +1,44 @@
 (function() {
-	window.ImagesEngine = {
+
+	window.M = window.M || {};
+
+	M.imagesEngine = {
 
 		numImages: 0,
 		imagesLoaded: 0,
 
 		load: function() {
 			//loading images
-			ImagesEngine.map = new HashMap();
-			ImagesEngine.images = [];
-			ImagesEngine.numImages = 0;
-			ImagesEngine.loader = new THREE.TextureLoader();
+			M.imagesEngine.map = new HashMap();
+			M.imagesEngine.images = [];
+			M.imagesEngine.numImages = 0;
+			M.imagesEngine.loader = new THREE.TextureLoader();
 
 			for (var image in Assets.Images) {
-				ImagesEngine.numImages++;
-				ImagesEngine.loadSingleFile(image, Assets.Images[image]);
+				M.imagesEngine.numImages++;
+				M.imagesEngine.loadSingleFile(image, Assets.Images[image]);
 			}
 
-			if (ImagesEngine.numImages == 0) {
+			if (M.imagesEngine.numImages == 0) {
 				AssetsManager.completed.images = true;
 			}
 		},
 
 		get: function(key) {
-			return ImagesEngine.map.get(key) || false;
+			return M.imagesEngine.map.get(key) || false;
 		},
 
 		loadSingleFile : function(id, path) {
 			try {
-				ImagesEngine.imagesLoaded++;
-				ImagesEngine.loader.load(path, function(texture) {
-					ImagesEngine.map.put(id, texture);
-					ImagesEngine.checkLoad();
+				M.imagesEngine.imagesLoaded++;
+				M.imagesEngine.loader.load(path, function(texture) {
+					M.imagesEngine.map.put(id, texture);
+					M.imagesEngine.checkLoad();
 				}, function() {
 					// displaying progress
 				}, function() {
 					console.log('An error occurred while fetching texture.');
-					ImagesEngine.checkLoad();
+					M.imagesEngine.checkLoad();
 				});
 			} catch (e) {
 
@@ -43,7 +46,7 @@
 		},
 
 		checkLoad: function() {
-			if (ImagesEngine.imagesLoaded == ImagesEngine.numImages) {
+			if (M.imagesEngine.imagesLoaded == M.imagesEngine.numImages) {
 				AssetsManager.completed.images = true;
 			}
 		},
@@ -51,7 +54,7 @@
 		//add method
 		add: function(id, image) {
 			if (id && image) {
-				ImagesEngine.map.put(id, image);
+				M.imagesEngine.map.put(id, image);
 			}
 		},
 	}

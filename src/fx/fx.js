@@ -1,1 +1,3 @@
-window.fx = {};
+window.M = window.M || {};
+
+M.fx = {};

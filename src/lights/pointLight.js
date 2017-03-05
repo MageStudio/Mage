@@ -4,7 +4,7 @@ Class("PointLight", {
 
         Light.call(this, color, intensity, position);
 
-        this.geometry = new THREE.SphereGeometry( LightEngine.holderRadius, LightEngine.holderSegment, LightEngine.holderSegment );
+        this.geometry = new THREE.SphereGeometry( M.lightEngine.holderRadius, M.lightEngine.holderSegment, M.lightEngine.holderSegment );
         this.material = new THREE.MeshPhongMaterial({color: this.color});
         this.mesh = new Mesh( this.geometry, this.material );
         this.light = new THREE.PointLight(color, intensity, distance);

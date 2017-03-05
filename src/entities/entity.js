@@ -13,11 +13,11 @@ Class("Entity", {
 	update : function() {},
 
 	addScript : function(scriptname, dir) {
-		var path = Game.SCRIPTS_DIR + (dir || "");
+		var path = M.game.SCRIPTS_DIR + (dir || "");
 		if (path[path.length - 1] != "/") {
 			path += "/"; //adding dir separator if we forgot it
 		}
-		Game.attachScriptToObject(this, scriptname, path);
+		M.game.attachScriptToObject(this, scriptname, path);
 	},
 
 	//__loadScript will be automatically called by Game object

@@ -1,4 +1,4 @@
-var license = 	"Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. "+
+var license = 	"Copyright (c) 2017 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. "+
 					"Redistribution and use in source and binary forms, with or without\n"+
 					"modification, are permitted provided that the following conditions are\n"+
 					"met:\n\n"+
