@@ -20,7 +20,7 @@ function getDependencies() {
 
 module.exports = function(grunt) {
 
-	var license = 	"Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. "+
+	var license = 	"Copyright (c) 2017 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. "+
 					"Redistribution and use in source and binary forms, with or without\n"+
 					"modification, are permitted provided that the following conditions are\n"+
 					"met:\n\n"+
@@ -44,7 +44,7 @@ module.exports = function(grunt) {
 					"THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n"+
 					"(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\n"+
 					"OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\n"+
-					"Wage contains third party software in the 'app/vendor' directory: each\n"+
+					"Mage contains third party software in the 'app/vendor' directory: each\n"+
 					"file/module in this directory is distributed under its original license.\n\n";
 
 

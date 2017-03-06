@@ -1,8 +1,9 @@
 /**
  * a barebones HTTP server in JS
- * to serve three.js and Wage project easily
+ * to serve Mage project easily
  *
  * @author zz85 https://github.com/zz85
+ * @author marco-ponds https://github.com/marco-ponds
  *
  * Usage: node simplehttpserver.js <port number>
  *
@@ -12,42 +13,58 @@
  * instead.
  */
 
+var fs = require('fs'),
+	urlParser = require('url'),
+	http = require('http'),
+	path = require('path');
+
 function bind(method, scope) {
     return method.bind(scope);
 }
 
 function Server() {
-    this.http = require('http');
-	this.urlParser = require('url');
-	this.fs = require('fs');
-	this.path = require('path');
+    //http = require('http');
+	//urlParser = require('url');
+	//fs = require('fs');
+	//path = require('path');
 	this.currentDir = process.cwd();
 }
 
-Server.prototype.start = function(port) {
+Server.prototype.start = function(port, location) {
     this.port = port;
-
-    this.http.createServer(this.handleRequest).listen(this.port);
-
+	this.location = location;
 
     require('dns').lookup(require('os').hostname(), function (err, addr, fam) {
-     	console.log('Running at http://' + addr  + ((port === 80) ? '' : ':') + port + '/');
+		var address = addr ? addr : 'localhost';
+     	console.log('Running at http://' + address  + ((port === 80) ? '' : ':') + port + '/');
     })
 
-    console.log('Wage server has started...'.green);
+    console.log('Mage server has started...'.green);
+	if (location.length > 0) {
+		var string = 'Mage is serving ' + this.location;
+		this.currentDir= path.join(this.currentDir, this.location);
+		console.log(string.green);
+	}
     console.log('Base directory at ' + this.currentDir);
+
+
+	http.createServer(bind(this.handleRequest, this)).listen(this.port);
+
 }
 
 Server.prototype.handleRequest = function(request, response) {
 
-	var urlObject = this.urlParser.parse(request.url, true);
+	var urlObject = urlParser.parse(request.url, true);
 	var pathname = decodeURIComponent(urlObject.pathname);
 
-	console.log('[' + (new Date()).toUTCString() + '] ' + '"' + request.method + ' ' + pathname + '"');
+	console.log('[' + (new Date()).toUTCString().green + '] ' + '"' + request.method.red + ' ' + pathname.red + '"');
 
-	var filePath = this.path.join(this.currentDir, pathname);
+	var filePath = path.join(this.currentDir, pathname);
+	console.log(filePath);
 
-	this.fs.stat(filePath, bind(function(err, stats) {
+	fs.stat(filePath, bind(function(err, stats) {
+
+		console.log(filePath);
 
 		if (err) {
 			response.writeHead(404, {});
@@ -55,9 +72,10 @@ Server.prototype.handleRequest = function(request, response) {
 			return;
 		}
 
-		if (this.stats.isFile()) {
 
-			this.fs.readFile(filePath, function(err, data) {
+		if (stats.isFile()) {
+
+			fs.readFile(filePath, function(err, data) {
 
 				if (err) {
 					response.writeHead(404, {});
@@ -70,9 +88,9 @@ Server.prototype.handleRequest = function(request, response) {
 				response.end();
 			});
 
-		} else if (this.stats.isDirectory()) {
+		} else if (stats.isDirectory()) {
 
-			this.fs.readdir(filePath, bind(function(error, files) {
+			fs.readdir(filePath, bind(function(error, files) {
 
 				if (error) {
 					response.writeHead(500, {});
@@ -83,25 +101,44 @@ Server.prototype.handleRequest = function(request, response) {
 				var l = pathname.length;
 				if (pathname.substring(l-1)!='/') pathname += '/';
 
-				response.writeHead(200, {'Content-Type': 'text/html'});
-				response.write('<!DOCTYPE html>\n<html><head><meta charset="UTF-8"><title>' + filePath + '</title></head><body>');
-				response.write('<h1>' + filePath + '</h1>');
-				response.write('<ul style="list-style:none;font-family:courier new;">');
-				files.unshift('.', '..');
-				files.forEach(function(item) {
+				// @todo horrible solution, if files contains index.html send that
+				if (files.indexOf('index.html') > -1) {
 
-					var urlpath = pathname + item,
-						itemStats = this.fs.statSync(this.currentDir + urlpath);
+					var index = this.currentDir + pathname + 'index.html';
+					
+					fs.readFile(index, function(err, data) {
 
-					if (itemStats.isDirectory()) {
-						urlpath += '/';
-						item += '/';
-					}
+						if (err) {
+							response.writeHead(404, {});
+							response.end('Opps. Resource not found');
+							return;
+						}
 
-					response.write('<li><a href="'+ urlpath + '">' + item + '</a></li>');
-				});
+						response.writeHead(200, {});
+						response.write(data);
+						response.end();
+					});
+				} else {
+					response.writeHead(200, {'Content-Type': 'text/html'});
+					response.write('<!DOCTYPE html>\n<html><head><meta charset="UTF-8"><title>' + filePath + '</title></head><body>');
+					response.write('<h1>' + filePath + '</h1>');
+					response.write('<ul style="list-style:none;font-family:courier new;">');
+					files.unshift('.', '..');
+					files.forEach(bind(function(item) {
 
-				response.end('</ul></body></html>');
+						var urlpath = pathname + item,
+							itemStats = fs.statSync(this.currentDir + urlpath);
+
+						if (itemStats.isDirectory()) {
+							urlpath += '/';
+							item += '/';
+						}
+
+						response.write('<li><a href="'+ urlpath + '">' + item + '</a></li>');
+					}, this));
+
+					response.end('</ul></body></html>');
+				}	
 			}, this));
 		}
 	}, this));
