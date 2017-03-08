@@ -42,7 +42,7 @@ if (process.argv.length) {
 			intro();
 
 			var port = process.argv[3] ? process.argv[3] : 8000,
-				location = process.argv[4] ? process.argv[4] : '';
+				location = process.argv[4] ? process.argv[4] : false;
 
 			server.start(port, location);
 		} else if (command == '--help') {
