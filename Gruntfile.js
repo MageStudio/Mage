@@ -56,17 +56,17 @@ module.exports = function(grunt) {
 			},
 			dist: {
 				src: getDependencies(),//['src/main.js', 'src/test.js'],
-				dest: 'build/lib/<%= pkg.name %>.min.js'
+				dest: 'build/lib/mage.min.js'
 			}
 		},
 		uglify: {
 			options: {
-				banner: '/*! <%= pkg.name %> version: <%= pkg.version %>, <%= grunt.template.today("dd-mm-yyyy") %> */\n',
+				banner: '/*! mage version: <%= pkg.version %>, <%= grunt.template.today("dd-mm-yyyy") %> */\n',
 				beautify : true
 			},
 			dist: {
 				files: {
-					'build/lib/<%= pkg.name %>.js': ['build/lib/<%= pkg.name %>.min.js'] //prima era concat.dist.dest
+					'build/lib/mage.js': ['build/lib/mage.min.js'] //prima era concat.dist.dest
 				}
 			}
 		},

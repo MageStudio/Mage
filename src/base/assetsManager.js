@@ -1,5 +1,7 @@
 window.M = window.M || {};
 
+M.assetsManager = {};
+
 M.assetsManager.completed = {
 	sound : false,
 	video : true,
@@ -8,32 +10,32 @@ M.assetsManager.completed = {
 	shaders : false
 };
 
-M.assetManager.load = function(callback) {
+M.assetsManager.load = function(callback) {
 	//first we load scripts
 	//console.log(include);
-	M.assetManager.callback = callback;
+	M.assetsManager.callback = callback;
 	//over loading scripts
 	M.audioEngine.load();
 	M.videoEngine.load();
 	M.imagesEngine.load();
 	M.generalAssetsEngine.load();
 	//effects
-	M.fx.ShadersEngine.load();
-	M.assetManager.checkInterval = setInterval(M.assetManager.check, 100);
+	M.fx.shadersEngine.load();
+	M.assetsManager.checkInterval = setInterval(M.assetsManager.check, 100);
 };
 
-M.assetManager.loadingMessage = function(loaded) {
+M.assetsManager.loadingMessage = function(loaded) {
 	//this method is up to you, developer!
 	//console.log(loaded);
 }
 
-M.assetManager.check = function() {
-	if (M.assetManager.completed.sound && M.assetManager.completed.video && M.assetManager.completed.images && M.assetManager.completed.general) {
+M.assetsManager.check = function() {
+	if (M.assetsManager.completed.sound && M.assetsManager.completed.video && M.assetsManager.completed.images && M.assetsManager.completed.general) {
 		//we finished loading all assets, yay!
-		M.assetManager.loadingMessage(true);
-		clearInterval(M.assetManager.checkInterval);
-		M.assetManager.callback();
+		M.assetsManager.loadingMessage(true);
+		clearInterval(M.assetsManager.checkInterval);
+		M.assetsManager.callback();
 	} else {
-		M.assetManager.loadingMessage(false);
+		M.assetsManager.loadingMessage(false);
 	}
 }

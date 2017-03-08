@@ -20,7 +20,7 @@
 			}
 
 			if (M.imagesEngine.numImages == 0) {
-				AssetsManager.completed.images = true;
+				M.assetsManager.completed.images = true;
 			}
 		},
 
@@ -47,7 +47,7 @@
 
 		checkLoad: function() {
 			if (M.imagesEngine.imagesLoaded == M.imagesEngine.numImages) {
-				AssetsManager.completed.images = true;
+				M.assetsManager.completed.images = true;
 			}
 		},
 

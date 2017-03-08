@@ -1,7 +1,7 @@
 window.M = window.M || {};
 
 M.game = {
-	scripts = {}
+	scripts: {}
 };
 
 M.game.SCRIPTS_DIR = "app/scripts/";

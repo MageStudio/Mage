@@ -1,4 +1,4 @@
-/*! mage version: 0.0.37, 04-12-2016 */
+/*! mage version: 0.0.42, 08-03-2017 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -65,24 +65,21 @@ function BEE() {
 
 function _preEach(a, b, c) {
     if (c) {
-        var d = b + 1;
-        a(c, d), _preEach(a, b, c.leftBranch), _preEach(a, b, c.rightBranch);
+        a(c, b + 1), _preEach(a, b, c.leftBranch), _preEach(a, b, c.rightBranch);
     }
 }
 
 function _postEach(a, b, c) {
     if (c) {
         console.log("inside _postEach"), _postEach(a, b, c.leftBranch), _postEach(a, b, c.rightBranch);
-        var d = b + 1;
-        a(c, d);
+        a(c, b + 1);
     }
 }
 
 function _defEach(a, b, c) {
     if (c) {
         _defEach(a, b, c.leftBranch);
-        var d = b + 1;
-        a(c, d), _defEach(a, b, c.rightBranch);
+        a(c, b + 1), _defEach(a, b, c.rightBranch);
     }
 }
 
@@ -192,7 +189,7 @@ function HashMap() {
     this.keys = new Array())), this.map = {};
 }
 
-var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. Redistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are\nmet:\n\n* Redistributions of source code must retain the above copyright\n  notice, this list of conditions and the following disclaimer.\n\n* Redistributions in binary form must reproduce the above\n  copyright notice, this list of conditions and the following\n  disclaimer in the documentation and/or other materials provided\n  with the distribution.\n\n* The names of the contributors may not be used to endorse or\n  promote products derived from this software without specific\n  prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\nLIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\nA PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\nOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\nSPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\nDATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\nTHEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\nMage contains third party software in the 'app/vendor' directory: each\nfile/module in this directory is distributed under its original license.\n\n";
+var license = "Copyright (c) 2017 by Marco Stagni < http://marcostagni.com mrc.stagni@gmail.com > and contributors.\n\nSome rights reserved. Redistribution and use in source and binary forms, with or without\nmodification, are permitted provided that the following conditions are\nmet:\n\n* Redistributions of source code must retain the above copyright\n  notice, this list of conditions and the following disclaimer.\n\n* Redistributions in binary form must reproduce the above\n  copyright notice, this list of conditions and the following\n  disclaimer in the documentation and/or other materials provided\n  with the distribution.\n\n* The names of the contributors may not be used to endorse or\n  promote products derived from this software without specific\n  prior written permission.\n\nTHIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS\n'AS IS' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT\nLIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR\nA PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT\nOWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,\nSPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT\nLIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,\nDATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY\nTHEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT\n(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE\nOF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.\n\nMage contains third party software in the 'app/vendor' directory: each\nfile/module in this directory is distributed under its original license.\n\n";
 
 !function(a, b) {
     "object" == typeof module && "object" == typeof module.exports ? module.exports = a.document ? b(a, !0) : function(a) {
@@ -224,8 +221,8 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         return a;
     }
     function f(a) {
-        var b = va[a] = {};
-        return fa.each(a.match(ua) || [], function(a, c) {
+        var b = ua[a] = {};
+        return fa.each(a.match(ta) || [], function(a, c) {
             b[c] = !0;
         }), b;
     }
@@ -239,10 +236,10 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }
     function i(a, b, c) {
         if (void 0 === c && 1 === a.nodeType) {
-            var d = "data-" + b.replace(Aa, "-$1").toLowerCase();
-            if (c = a.getAttribute(d), "string" == typeof c) {
+            var d = "data-" + b.replace(za, "-$1").toLowerCase();
+            if ("string" == typeof (c = a.getAttribute(d))) {
                 try {
-                    c = "true" === c || "false" !== c && ("null" === c ? null : +c + "" === c ? +c : za.test(c) ? fa.parseJSON(c) : c);
+                    c = "true" === c || "false" !== c && ("null" === c ? null : +c + "" === c ? +c : ya.test(c) ? fa.parseJSON(c) : c);
                 } catch (a) {}
                 fa.data(a, b, c);
             } else c = void 0;
@@ -262,8 +259,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 toJSON: fa.noop
             }), ("object" == typeof b || "function" == typeof b) && (d ? i[j] = fa.extend(i[j], b) : i[j].data = fa.extend(i[j].data, b)), 
             f = i[j], d || (f.data || (f.data = {}), f = f.data), void 0 !== c && (f[fa.camelCase(b)] = c), 
-            "string" == typeof b ? (e = f[b], null == e && (e = f[fa.camelCase(b)])) : e = f, 
-            e;
+            "string" == typeof b ? null == (e = f[b]) && (e = f[fa.camelCase(b)]) : e = f, e;
         }
     }
     function l(a, b, c) {
@@ -292,17 +288,17 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         } catch (a) {}
     }
     function p(a) {
-        var b = La.split("|"), c = a.createDocumentFragment();
+        var b = Ka.split("|"), c = a.createDocumentFragment();
         if (c.createElement) for (;b.length; ) c.createElement(b.pop());
         return c;
     }
     function q(a, b) {
-        var c, d, e = 0, f = typeof a.getElementsByTagName !== ya ? a.getElementsByTagName(b || "*") : typeof a.querySelectorAll !== ya ? a.querySelectorAll(b || "*") : void 0;
+        var c, d, e = 0, f = typeof a.getElementsByTagName !== xa ? a.getElementsByTagName(b || "*") : typeof a.querySelectorAll !== xa ? a.querySelectorAll(b || "*") : void 0;
         if (!f) for (f = [], c = a.childNodes || a; null != (d = c[e]); e++) !b || fa.nodeName(d, b) ? f.push(d) : fa.merge(f, q(d, b));
         return void 0 === b || b && fa.nodeName(a, b) ? fa.merge([ a ], f) : f;
     }
     function r(a) {
-        Fa.test(a.type) && (a.defaultChecked = a.checked);
+        Ea.test(a.type) && (a.defaultChecked = a.checked);
     }
     function s(a, b) {
         return fa.nodeName(a, "table") && fa.nodeName(11 !== b.nodeType ? b : b.firstChild, "tr") ? a.getElementsByTagName("tbody")[0] || a.appendChild(a.ownerDocument.createElement("tbody")) : a;
@@ -311,7 +307,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         return a.type = (null !== fa.find.attr(a, "type")) + "/" + a.type, a;
     }
     function u(a) {
-        var b = Wa.exec(a.type);
+        var b = Va.exec(a.type);
         return b ? a.type = b[1] : a.removeAttribute("type"), a;
     }
     function v(a, b) {
@@ -336,7 +332,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 b.removeAttribute(fa.expando);
             }
             "script" === c && b.text !== a.text ? (t(b).text = a.text, u(b)) : "object" === c ? (b.parentNode && (b.outerHTML = a.outerHTML), 
-            da.html5Clone && a.innerHTML && !fa.trim(b.innerHTML) && (b.innerHTML = a.innerHTML)) : "input" === c && Fa.test(a.type) ? (b.defaultChecked = b.checked = a.checked, 
+            da.html5Clone && a.innerHTML && !fa.trim(b.innerHTML) && (b.innerHTML = a.innerHTML)) : "input" === c && Ea.test(a.type) ? (b.defaultChecked = b.checked = a.checked, 
             b.value !== a.value && (b.value = a.value)) : "option" === c ? b.defaultSelected = b.selected = a.defaultSelected : ("input" === c || "textarea" === c) && (b.defaultValue = a.defaultValue);
         }
     }
@@ -345,10 +341,10 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         return d.detach(), e;
     }
     function z(a) {
-        var b = pa, c = ab[a];
-        return c || (c = y(a, b), "none" !== c && c || (_a = (_a || fa("<iframe frameborder='0' width='0' height='0'/>")).appendTo(b.documentElement), 
-        b = (_a[0].contentWindow || _a[0].contentDocument).document, b.write(), b.close(), 
-        c = y(a, b), _a.detach()), ab[a] = c), c;
+        var b = pa, c = _a[a];
+        return c || (c = y(a, b), "none" !== c && c || ($a = ($a || fa("<iframe frameborder='0' width='0' height='0'/>")).appendTo(b.documentElement), 
+        b = ($a[0].contentWindow || $a[0].contentDocument).document, b.write(), b.close(), 
+        c = y(a, b), $a.detach()), _a[a] = c), c;
     }
     function A(a, b) {
         return {
@@ -360,31 +356,30 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }
     function B(a, b) {
         if (b in a) return b;
-        for (var c = b.charAt(0).toUpperCase() + b.slice(1), d = b, e = nb.length; e--; ) if (b = nb[e] + c, 
-        b in a) return b;
+        for (var c = b.charAt(0).toUpperCase() + b.slice(1), d = b, e = mb.length; e--; ) if ((b = mb[e] + c) in a) return b;
         return d;
     }
     function C(a, b) {
         for (var c, d, e, f = [], g = 0, h = a.length; h > g; g++) d = a[g], d.style && (f[g] = fa._data(d, "olddisplay"), 
-        c = d.style.display, b ? (f[g] || "none" !== c || (d.style.display = ""), "" === d.style.display && Da(d) && (f[g] = fa._data(d, "olddisplay", z(d.nodeName)))) : f[g] || (e = Da(d), 
+        c = d.style.display, b ? (f[g] || "none" !== c || (d.style.display = ""), "" === d.style.display && Ca(d) && (f[g] = fa._data(d, "olddisplay", z(d.nodeName)))) : f[g] || (e = Ca(d), 
         (c && "none" !== c || !e) && fa._data(d, "olddisplay", e ? c : fa.css(d, "display"))));
         for (g = 0; h > g; g++) d = a[g], d.style && (b && "none" !== d.style.display && "" !== d.style.display || (d.style.display = b ? f[g] || "" : "none"));
         return a;
     }
     function D(a, b, c) {
-        var d = jb.exec(b);
+        var d = ib.exec(b);
         return d ? Math.max(0, d[1] - (c || 0)) + (d[2] || "px") : b;
     }
     function E(a, b, c, d, e) {
-        for (var f = c === (d ? "border" : "content") ? 4 : "width" === b ? 1 : 0, g = 0; 4 > f; f += 2) "margin" === c && (g += fa.css(a, c + Ca[f], !0, e)), 
-        d ? ("content" === c && (g -= fa.css(a, "padding" + Ca[f], !0, e)), "margin" !== c && (g -= fa.css(a, "border" + Ca[f] + "Width", !0, e))) : (g += fa.css(a, "padding" + Ca[f], !0, e), 
-        "padding" !== c && (g += fa.css(a, "border" + Ca[f] + "Width", !0, e)));
+        for (var f = c === (d ? "border" : "content") ? 4 : "width" === b ? 1 : 0, g = 0; 4 > f; f += 2) "margin" === c && (g += fa.css(a, c + Ba[f], !0, e)), 
+        d ? ("content" === c && (g -= fa.css(a, "padding" + Ba[f], !0, e)), "margin" !== c && (g -= fa.css(a, "border" + Ba[f] + "Width", !0, e))) : (g += fa.css(a, "padding" + Ba[f], !0, e), 
+        "padding" !== c && (g += fa.css(a, "border" + Ba[f] + "Width", !0, e)));
         return g;
     }
     function F(a, b, c) {
-        var d = !0, e = "width" === b ? a.offsetWidth : a.offsetHeight, f = bb(a), g = da.boxSizing() && "border-box" === fa.css(a, "boxSizing", !1, f);
+        var d = !0, e = "width" === b ? a.offsetWidth : a.offsetHeight, f = ab(a), g = da.boxSizing() && "border-box" === fa.css(a, "boxSizing", !1, f);
         if (0 >= e || null == e) {
-            if (e = cb(a, b, f), (0 > e || null == e) && (e = a.style[b]), eb.test(e)) return e;
+            if (e = bb(a, b, f), (0 > e || null == e) && (e = a.style[b]), db.test(e)) return e;
             d = g && (da.boxSizingReliable() || e === a.style[b]), e = parseFloat(e) || 0;
         }
         return e + E(a, b, c || (g ? "border" : "content"), d, f) + "px";
@@ -394,21 +389,21 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }
     function H() {
         return setTimeout(function() {
-            ob = void 0;
-        }), ob = fa.now();
+            nb = void 0;
+        }), nb = fa.now();
     }
     function I(a, b) {
         var c, d = {
             height: a
         }, e = 0;
-        for (b = b ? 1 : 0; 4 > e; e += 2 - b) c = Ca[e], d["margin" + c] = d["padding" + c] = a;
+        for (b = b ? 1 : 0; 4 > e; e += 2 - b) c = Ba[e], d["margin" + c] = d["padding" + c] = a;
         return b && (d.opacity = d.width = a), d;
     }
     function J(a, b, c) {
-        for (var d, e = (ub[b] || []).concat(ub["*"]), f = 0, g = e.length; g > f; f++) if (d = e[f].call(c, b, a)) return d;
+        for (var d, e = (tb[b] || []).concat(tb["*"]), f = 0, g = e.length; g > f; f++) if (d = e[f].call(c, b, a)) return d;
     }
     function K(a, b, c) {
-        var d, e, f, g, h, i, j, k, l = this, m = {}, n = a.style, o = a.nodeType && Da(a), p = fa._data(a, "fxshow");
+        var d, e, f, g, h, i, j, k, l = this, m = {}, n = a.style, o = a.nodeType && Ca(a), p = fa._data(a, "fxshow");
         c.queue || (h = fa._queueHooks(a, "fx"), null == h.unqueued && (h.unqueued = 0, 
         i = h.empty.fire, h.empty.fire = function() {
             h.unqueued || i();
@@ -421,7 +416,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         c.overflow && (n.overflow = "hidden", da.shrinkWrapBlocks() || l.always(function() {
             n.overflow = c.overflow[0], n.overflowX = c.overflow[1], n.overflowY = c.overflow[2];
         }));
-        for (d in b) if (e = b[d], qb.exec(e)) {
+        for (d in b) if (e = b[d], pb.exec(e)) {
             if (delete b[d], f = f || "toggle" === e, e === (o ? "hide" : "show")) {
                 if ("show" !== e || !p || void 0 === p[d]) continue;
                 o = !0;
@@ -444,17 +439,17 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     function L(a, b) {
         var c, d, e, f, g;
         for (c in a) if (d = fa.camelCase(c), e = b[d], f = a[c], fa.isArray(f) && (e = f[1], 
-        f = a[c] = f[0]), c !== d && (a[d] = f, delete a[c]), g = fa.cssHooks[d], g && "expand" in g) {
+        f = a[c] = f[0]), c !== d && (a[d] = f, delete a[c]), (g = fa.cssHooks[d]) && "expand" in g) {
             f = g.expand(f), delete a[d];
             for (c in f) c in a || (a[c] = f[c], b[c] = e);
         } else b[d] = e;
     }
     function M(a, b, c) {
-        var d, e, f = 0, g = tb.length, h = fa.Deferred().always(function() {
+        var d, e, f = 0, g = sb.length, h = fa.Deferred().always(function() {
             delete i.elem;
         }), i = function() {
             if (e) return !1;
-            for (var b = ob || H(), c = Math.max(0, j.startTime + j.duration - b), d = c / j.duration || 0, f = 1 - d, g = 0, i = j.tweens.length; i > g; g++) j.tweens[g].run(f);
+            for (var b = nb || H(), c = Math.max(0, j.startTime + j.duration - b), d = c / j.duration || 0, f = 1 - d, g = 0, i = j.tweens.length; i > g; g++) j.tweens[g].run(f);
             return h.notifyWith(a, [ j, f, c ]), 1 > f && i ? c : (h.resolveWith(a, [ j ]), 
             !1);
         }, j = h.promise({
@@ -465,7 +460,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             }, c),
             originalProperties: b,
             originalOptions: c,
-            startTime: ob || H(),
+            startTime: nb || H(),
             duration: c.duration,
             tweens: [],
             createTween: function(b, c) {
@@ -479,7 +474,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 return b ? h.resolveWith(a, [ j, b ]) : h.rejectWith(a, [ j, b ]), this;
             }
         }), k = j.props;
-        for (L(k, j.opts.specialEasing); g > f; f++) if (d = tb[f].call(j, a, k, j.opts)) return d;
+        for (L(k, j.opts.specialEasing); g > f; f++) if (d = sb[f].call(j, a, k, j.opts)) return d;
         return fa.map(k, J, j), fa.isFunction(j.opts.start) && j.opts.start.call(a, j), 
         fa.fx.timer(fa.extend(i, {
             elem: a,
@@ -490,7 +485,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     function N(a) {
         return function(b, c) {
             "string" != typeof b && (c = b, b = "*");
-            var d, e = 0, f = b.toLowerCase().match(ua) || [];
+            var d, e = 0, f = b.toLowerCase().match(ta) || [];
             if (fa.isFunction(c)) for (;d = f[e++]; ) "+" === d.charAt(0) ? (d = d.slice(1) || "*", 
             (a[d] = a[d] || []).unshift(c)) : (a[d] = a[d] || []).push(c);
         };
@@ -504,7 +499,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 e(j), !1);
             }), i;
         }
-        var f = {}, g = a === Sb;
+        var f = {}, g = a === Rb;
         return e(b.dataTypes[0]) || !f["*"] && e("*");
     }
     function P(a, b) {
@@ -536,7 +531,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         if (k[1]) for (g in a.converters) j[g.toLowerCase()] = a.converters[g];
         for (f = k.shift(); f; ) if (a.responseFields[f] && (c[a.responseFields[f]] = b), 
         !i && d && a.dataFilter && (b = a.dataFilter(b, a.dataType)), i = f, f = k.shift()) if ("*" === f) f = i; else if ("*" !== i && i !== f) {
-            if (g = j[i + " " + f] || j["* " + f], !g) for (e in j) if (h = e.split(" "), h[1] === f && (g = j[i + " " + h[0]] || j["* " + h[0]])) {
+            if (!(g = j[i + " " + f] || j["* " + f])) for (e in j) if (h = e.split(" "), h[1] === f && (g = j[i + " " + h[0]] || j["* " + h[0]])) {
                 g === !0 ? g = j[e] : j[e] !== !0 && (f = h[0], k.unshift(h[1]));
                 break;
             }
@@ -557,7 +552,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     function S(a, b, c, d) {
         var e;
         if (fa.isArray(b)) fa.each(b, function(b, e) {
-            c || Vb.test(a) ? d(a, e) : S(a + "[" + ("object" == typeof e ? b : "") + "]", e, c, d);
+            c || Ub.test(a) ? d(a, e) : S(a + "[" + ("object" == typeof e ? b : "") + "]", e, c, d);
         }); else if (c || "object" !== fa.type(b)) d(a, b); else for (e in b) S(a + "[" + e + "]", b[e], c, d);
     }
     function T() {
@@ -678,12 +673,10 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return a.nodeName && a.nodeName.toLowerCase() === b.toLowerCase();
         },
         each: function(a, b, d) {
-            var e, f = 0, g = a.length, h = c(a);
+            var e = 0, f = a.length, g = c(a);
             if (d) {
-                if (h) for (;g > f && (e = b.apply(a[f], d), e !== !1); f++) ; else for (f in a) if (e = b.apply(a[f], d), 
-                e === !1) break;
-            } else if (h) for (;g > f && (e = b.call(a[f], f, a[f]), e !== !1); f++) ; else for (f in a) if (e = b.call(a[f], f, a[f]), 
-            e === !1) break;
+                if (g) for (;f > e && b.apply(a[e], d) !== !1; e++) ; else for (e in a) if (b.apply(a[e], d) === !1) break;
+            } else if (g) for (;f > e && b.call(a[e], e, a[e]) !== !1; e++) ; else for (e in a) if (b.call(a[e], e, a[e]) === !1) break;
             return a;
         },
         trim: ca && !ca.call("\ufeff ") ? function(a) {
@@ -710,13 +703,12 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return a.length = e, a;
         },
         grep: function(a, b, c) {
-            for (var d, e = [], f = 0, g = a.length, h = !c; g > f; f++) d = !b(a[f], f), d !== h && e.push(a[f]);
-            return e;
+            for (var d = [], e = 0, f = a.length, g = !c; f > e; e++) !b(a[e], e) !== g && d.push(a[e]);
+            return d;
         },
         map: function(a, b, d) {
             var e, f = 0, g = a.length, h = c(a), i = [];
-            if (h) for (;g > f; f++) e = b(a[f], f, d), null != e && i.push(e); else for (f in a) e = b(a[f], f, d), 
-            null != e && i.push(e);
+            if (h) for (;g > f; f++) null != (e = b(a[f], f, d)) && i.push(e); else for (f in a) null != (e = b(a[f], f, d)) && i.push(e);
             return Y.apply([], i);
         },
         guid: 1,
@@ -742,7 +734,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             if (I && !d) {
                 if (e = sa.exec(a)) if (g = e[1]) {
                     if (9 === h) {
-                        if (f = b.getElementById(g), !f || !f.parentNode) return c;
+                        if (!(f = b.getElementById(g)) || !f.parentNode) return c;
                         if (f.id === g) return c.push(f), c;
                     } else if (b.ownerDocument && (f = b.ownerDocument.getElementById(g)) && M(b, f) && f.id === g) return c.push(f), 
                     c;
@@ -797,8 +789,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         }
         function h(a) {
             return function(b) {
-                var c = b.nodeName.toLowerCase();
-                return "input" === c && b.type === a;
+                return "input" === b.nodeName.toLowerCase() && b.type === a;
             };
         }
         function i(a) {
@@ -932,11 +923,11 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             var e, f, g, h, i, j = m(a);
             if (!d && 1 === j.length) {
                 if (f = j[0] = j[0].slice(0), f.length > 2 && "ID" === (g = f[0]).type && x.getById && 9 === b.nodeType && I && y.relative[f[1].type]) {
-                    if (b = (y.find.ID(g.matches[0].replace(va, wa), b) || [])[0], !b) return c;
+                    if (!(b = (y.find.ID(g.matches[0].replace(va, wa), b) || [])[0])) return c;
                     a = a.slice(f.shift().value.length);
                 }
                 for (e = oa.needsContext.test(a) ? 0 : f.length; e-- && (g = f[e], !y.relative[h = g.type]); ) if ((i = y.find[h]) && (d = i(g.matches[0].replace(va, wa), ta.test(f[0].type) && k(b.parentNode) || b))) {
-                    if (f.splice(e, 1), a = d.length && n(f), !a) return _.apply(c, d), c;
+                    if (f.splice(e, 1), !(a = d.length && n(f))) return _.apply(c, d), c;
                     break;
                 }
             }
@@ -1164,7 +1155,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                                 }
                             } else if (s && (j = (b[N] || (b[N] = {}))[a]) && j[0] === P) m = j[1]; else for (;(l = ++n && l && l[p] || (m = n = 0) || o.pop()) && ((h ? l.nodeName.toLowerCase() !== r : 1 !== l.nodeType) || !++m || (s && ((l[N] || (l[N] = {}))[a] = [ P, m ]), 
                             l !== b)); ) ;
-                            return m -= e, m === d || m % d === 0 && m / d >= 0;
+                            return (m -= e) === d || m % d == 0 && m / d >= 0;
                         }
                     };
                 },
@@ -1200,8 +1191,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                     return na.test(a || "") || b.error("unsupported lang: " + a), a = a.replace(va, wa).toLowerCase(), 
                     function(b) {
                         var c;
-                        do if (c = I ? b.lang : b.getAttribute("xml:lang") || b.getAttribute("lang")) return c = c.toLowerCase(), 
-                        c === a || 0 === c.indexOf(a + "-"); while ((b = b.parentNode) && 1 === b.nodeType);
+                        do if (c = I ? b.lang : b.getAttribute("xml:lang") || b.getAttribute("lang")) return (c = c.toLowerCase()) === a || 0 === c.indexOf(a + "-"); while ((b = b.parentNode) && 1 === b.nodeType);
                         return !1;
                     };
                 }),
@@ -1340,28 +1330,27 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return !!d(this, "string" == typeof a && la.test(a) ? fa(a) : a || [], !1).length;
         }
     });
-    var oa, pa = a.document, qa = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/, ra = fa.fn.init = function(a, b) {
+    var oa, pa = a.document, qa = /^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/;
+    (fa.fn.init = function(a, b) {
         var c, d;
         if (!a) return this;
         if ("string" == typeof a) {
-            if (c = "<" === a.charAt(0) && ">" === a.charAt(a.length - 1) && a.length >= 3 ? [ null, a, null ] : qa.exec(a), 
-            !c || !c[1] && b) return !b || b.jquery ? (b || oa).find(a) : this.constructor(b).find(a);
+            if (!(c = "<" === a.charAt(0) && ">" === a.charAt(a.length - 1) && a.length >= 3 ? [ null, a, null ] : qa.exec(a)) || !c[1] && b) return !b || b.jquery ? (b || oa).find(a) : this.constructor(b).find(a);
             if (c[1]) {
                 if (b = b instanceof fa ? b[0] : b, fa.merge(this, fa.parseHTML(c[1], b && b.nodeType ? b.ownerDocument || b : pa, !0)), 
                 ma.test(c[1]) && fa.isPlainObject(b)) for (c in b) fa.isFunction(this[c]) ? this[c](b[c]) : this.attr(c, b[c]);
                 return this;
             }
-            if (d = pa.getElementById(c[2]), d && d.parentNode) {
+            if ((d = pa.getElementById(c[2])) && d.parentNode) {
                 if (d.id !== c[2]) return oa.find(a);
                 this.length = 1, this[0] = d;
             }
             return this.context = pa, this.selector = a, this;
         }
-        return a.nodeType ? (this.context = this[0] = a, this.length = 1, this) : fa.isFunction(a) ? "undefined" != typeof oa.ready ? oa.ready(a) : a(fa) : (void 0 !== a.selector && (this.selector = a.selector, 
+        return a.nodeType ? (this.context = this[0] = a, this.length = 1, this) : fa.isFunction(a) ? void 0 !== oa.ready ? oa.ready(a) : a(fa) : (void 0 !== a.selector && (this.selector = a.selector, 
         this.context = a.context), fa.makeArray(a, this));
-    };
-    ra.prototype = fa.fn, oa = fa(pa);
-    var sa = /^(?:parents|prev(?:Until|All))/, ta = {
+    }).prototype = fa.fn, oa = fa(pa);
+    var ra = /^(?:parents|prev(?:Until|All))/, sa = {
         children: !0,
         contents: !0,
         next: !0,
@@ -1442,13 +1431,13 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         fa.fn[a] = function(c, d) {
             var e = fa.map(this, b, c);
             return "Until" !== a.slice(-5) && (d = c), d && "string" == typeof d && (e = fa.filter(d, e)), 
-            this.length > 1 && (ta[a] || (e = fa.unique(e)), sa.test(a) && (e = e.reverse())), 
+            this.length > 1 && (sa[a] || (e = fa.unique(e)), ra.test(a) && (e = e.reverse())), 
             this.pushStack(e);
         };
     });
-    var ua = /\S+/g, va = {};
+    var ta = /\S+/g, ua = {};
     fa.Callbacks = function(a) {
-        a = "string" == typeof a ? va[a] || f(a) : fa.extend({}, a);
+        a = "string" == typeof a ? ua[a] || f(a) : fa.extend({}, a);
         var b, c, d, e, g, h, i = [], j = !a.once && [], k = function(f) {
             for (c = a.memory && f, d = !0, g = h || 0, h = 0, e = i.length, b = !0; i && e > g; g++) if (i[g].apply(f[0], f[1]) === !1 && a.stopOnFalse) {
                 c = !1;
@@ -1548,7 +1537,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return h || i.resolveWith(d, f), i.promise();
         }
     });
-    var wa;
+    var va;
     fa.fn.ready = function(a) {
         return fa.ready.promise().done(a), this;
     }, fa.extend({
@@ -1560,19 +1549,19 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         ready: function(a) {
             if (a === !0 ? !--fa.readyWait : !fa.isReady) {
                 if (!pa.body) return setTimeout(fa.ready);
-                fa.isReady = !0, a !== !0 && --fa.readyWait > 0 || (wa.resolveWith(pa, [ fa ]), 
+                fa.isReady = !0, a !== !0 && --fa.readyWait > 0 || (va.resolveWith(pa, [ fa ]), 
                 fa.fn.trigger && fa(pa).trigger("ready").off("ready"));
             }
         }
     }), fa.ready.promise = function(b) {
-        if (!wa) if (wa = fa.Deferred(), "complete" === pa.readyState) setTimeout(fa.ready); else if (pa.addEventListener) pa.addEventListener("DOMContentLoaded", h, !1), 
+        if (!va) if (va = fa.Deferred(), "complete" === pa.readyState) setTimeout(fa.ready); else if (pa.addEventListener) pa.addEventListener("DOMContentLoaded", h, !1), 
         a.addEventListener("load", h, !1); else {
             pa.attachEvent("onreadystatechange", h), a.attachEvent("onload", h);
             var c = !1;
             try {
                 c = null == a.frameElement && pa.documentElement;
             } catch (a) {}
-            c && c.doScroll && !function a() {
+            c && c.doScroll && function a() {
                 if (!fa.isReady) {
                     try {
                         c.doScroll("left");
@@ -1583,14 +1572,14 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 }
             }();
         }
-        return wa.promise(b);
+        return va.promise(b);
     };
-    var xa, ya = "undefined";
-    for (xa in fa(da)) break;
-    da.ownLast = "0" !== xa, da.inlineBlockNeedsLayout = !1, fa(function() {
+    var wa, xa = "undefined";
+    for (wa in fa(da)) break;
+    da.ownLast = "0" !== wa, da.inlineBlockNeedsLayout = !1, fa(function() {
         var a, b, c = pa.getElementsByTagName("body")[0];
         c && (a = pa.createElement("div"), a.style.cssText = "border:0;width:0;height:0;position:absolute;top:0;left:-9999px;margin-top:1px", 
-        b = pa.createElement("div"), c.appendChild(a).appendChild(b), typeof b.style.zoom !== ya && (b.style.cssText = "border:0;margin:0;width:1px;padding:1px;display:inline;zoom:1", 
+        b = pa.createElement("div"), c.appendChild(a).appendChild(b), typeof b.style.zoom !== xa && (b.style.cssText = "border:0;margin:0;width:1px;padding:1px;display:inline;zoom:1", 
         (da.inlineBlockNeedsLayout = 3 === b.offsetWidth) && (c.style.zoom = 1)), c.removeChild(a), 
         a = b = null);
     }), function() {
@@ -1608,7 +1597,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         var b = fa.noData[(a.nodeName + " ").toLowerCase()], c = +a.nodeType || 1;
         return (1 === c || 9 === c) && (!b || b !== !0 && a.getAttribute("classid") === b);
     };
-    var za = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/, Aa = /([A-Z])/g;
+    var ya = /^(?:\{[\w\W]*\}|\[[\w\W]*\])$/, za = /([A-Z])/g;
     fa.extend({
         cache: {},
         noData: {
@@ -1617,7 +1606,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             "object ": "clsid:D27CDB6E-AE6D-11cf-96B8-444553540000"
         },
         hasData: function(a) {
-            return a = a.nodeType ? fa.cache[a[fa.expando]] : a[fa.expando], !!a && !j(a);
+            return !!(a = a.nodeType ? fa.cache[a[fa.expando]] : a[fa.expando]) && !j(a);
         },
         data: function(a, b, c) {
             return k(a, b, c);
@@ -1695,14 +1684,14 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             var c, d = 1, e = fa.Deferred(), f = this, g = this.length, h = function() {
                 --d || e.resolveWith(f, [ f ]);
             };
-            for ("string" != typeof a && (b = a, a = void 0), a = a || "fx"; g--; ) c = fa._data(f[g], a + "queueHooks"), 
-            c && c.empty && (d++, c.empty.add(h));
+            for ("string" != typeof a && (b = a, a = void 0), a = a || "fx"; g--; ) (c = fa._data(f[g], a + "queueHooks")) && c.empty && (d++, 
+            c.empty.add(h));
             return h(), e.promise(b);
         }
     });
-    var Ba = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source, Ca = [ "Top", "Right", "Bottom", "Left" ], Da = function(a, b) {
+    var Aa = /[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source, Ba = [ "Top", "Right", "Bottom", "Left" ], Ca = function(a, b) {
         return a = b || a, "none" === fa.css(a, "display") || !fa.contains(a.ownerDocument, a);
-    }, Ea = fa.access = function(a, b, c, d, e, f, g) {
+    }, Da = fa.access = function(a, b, c, d, e, f, g) {
         var h = 0, i = a.length, j = null == c;
         if ("object" === fa.type(c)) {
             e = !0;
@@ -1712,7 +1701,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return j.call(fa(a), c);
         })), b)) for (;i > h; h++) b(a[h], c, g ? d : d.call(a[h], h, b(a[h], c)));
         return e ? a : j ? b.call(a) : i ? b(a[0], c) : f;
-    }, Fa = /^(?:checkbox|radio)$/i;
+    }, Ea = /^(?:checkbox|radio)$/i;
     !function() {
         var a = pa.createDocumentFragment(), b = pa.createElement("div"), c = pa.createElement("input");
         if (b.setAttribute("className", "t"), b.innerHTML = "  <link/><table></table><a href='/a'>a</a>", 
@@ -1742,7 +1731,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         }) c = "on" + b, (da[b + "Bubbles"] = c in a) || (d.setAttribute(c, "t"), da[b + "Bubbles"] = d.attributes[c].expando === !1);
         d = null;
     }();
-    var Ga = /^(?:input|select|textarea)$/i, Ha = /^key/, Ia = /^(?:mouse|contextmenu)|click/, Ja = /^(?:focusinfocus|focusoutblur)$/, Ka = /^([^.]*)(?:\.(.+)|)$/;
+    var Fa = /^(?:input|select|textarea)$/i, Ga = /^key/, Ha = /^(?:mouse|contextmenu)|click/, Ia = /^(?:focusinfocus|focusoutblur)$/, Ja = /^([^.]*)(?:\.(.+)|)$/;
     fa.event = {
         global: {},
         add: function(a, b, c, d, e) {
@@ -1750,8 +1739,8 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             if (q) {
                 for (c.handler && (i = c, c = i.handler, e = i.selector), c.guid || (c.guid = fa.guid++), 
                 (g = q.events) || (g = q.events = {}), (k = q.handle) || (k = q.handle = function(a) {
-                    return typeof fa === ya || a && fa.event.triggered === a.type ? void 0 : fa.event.dispatch.apply(k.elem, arguments);
-                }, k.elem = a), b = (b || "").match(ua) || [ "" ], h = b.length; h--; ) f = Ka.exec(b[h]) || [], 
+                    return typeof fa === xa || a && fa.event.triggered === a.type ? void 0 : fa.event.dispatch.apply(k.elem, arguments);
+                }, k.elem = a), b = (b || "").match(ta) || [ "" ], h = b.length; h--; ) f = Ja.exec(b[h]) || [], 
                 n = p = f[1], o = (f[2] || "").split(".").sort(), n && (j = fa.event.special[n] || {}, 
                 n = (e ? j.delegateType : j.bindType) || n, j = fa.event.special[n] || {}, l = fa.extend({
                     type: n,
@@ -1771,7 +1760,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         remove: function(a, b, c, d, e) {
             var f, g, h, i, j, k, l, m, n, o, p, q = fa.hasData(a) && fa._data(a);
             if (q && (k = q.events)) {
-                for (b = (b || "").match(ua) || [ "" ], j = b.length; j--; ) if (h = Ka.exec(b[j]) || [], 
+                for (b = (b || "").match(ta) || [ "" ], j = b.length; j--; ) if (h = Ja.exec(b[j]) || [], 
                 n = p = h[1], o = (h[2] || "").split(".").sort(), n) {
                     for (l = fa.event.special[n] || {}, n = (d ? l.delegateType : l.bindType) || n, 
                     m = k[n] || [], h = h[2] && new RegExp("(^|\\.)" + o.join("\\.(?:.*\\.|)") + "(\\.|$)"), 
@@ -1785,19 +1774,19 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         },
         trigger: function(b, c, d, e) {
             var f, g, h, i, j, k, l, m = [ d || pa ], n = ba.call(b, "type") ? b.type : b, o = ba.call(b, "namespace") ? b.namespace.split(".") : [];
-            if (h = k = d = d || pa, 3 !== d.nodeType && 8 !== d.nodeType && !Ja.test(n + fa.event.triggered) && (n.indexOf(".") >= 0 && (o = n.split("."), 
+            if (h = k = d = d || pa, 3 !== d.nodeType && 8 !== d.nodeType && !Ia.test(n + fa.event.triggered) && (n.indexOf(".") >= 0 && (o = n.split("."), 
             n = o.shift(), o.sort()), g = n.indexOf(":") < 0 && "on" + n, b = b[fa.expando] ? b : new fa.Event(n, "object" == typeof b && b), 
             b.isTrigger = e ? 2 : 3, b.namespace = o.join("."), b.namespace_re = b.namespace ? new RegExp("(^|\\.)" + o.join("\\.(?:.*\\.|)") + "(\\.|$)") : null, 
             b.result = void 0, b.target || (b.target = d), c = null == c ? [ b ] : fa.makeArray(c, [ b ]), 
             j = fa.event.special[n] || {}, e || !j.trigger || j.trigger.apply(d, c) !== !1)) {
                 if (!e && !j.noBubble && !fa.isWindow(d)) {
-                    for (i = j.delegateType || n, Ja.test(i + n) || (h = h.parentNode); h; h = h.parentNode) m.push(h), 
+                    for (i = j.delegateType || n, Ia.test(i + n) || (h = h.parentNode); h; h = h.parentNode) m.push(h), 
                     k = h;
                     k === (d.ownerDocument || pa) && m.push(k.defaultView || k.parentWindow || a);
                 }
                 for (l = 0; (h = m[l++]) && !b.isPropagationStopped(); ) b.type = l > 1 ? i : j.bindType || n, 
                 f = (fa._data(h, "events") || {})[b.type] && fa._data(h, "handle"), f && f.apply(h, c), 
-                f = g && h[g], f && f.apply && fa.acceptData(h) && (b.result = f.apply(h, c), b.result === !1 && b.preventDefault());
+                (f = g && h[g]) && f.apply && fa.acceptData(h) && (b.result = f.apply(h, c), b.result === !1 && b.preventDefault());
                 if (b.type = n, !e && !b.isDefaultPrevented() && (!j._default || j._default.apply(m.pop(), c) === !1) && fa.acceptData(d) && g && d[n] && !fa.isWindow(d)) {
                     k = d[g], k && (d[g] = null), fa.event.triggered = n;
                     try {
@@ -1814,8 +1803,8 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             if (h[0] = a, a.delegateTarget = this, !j.preDispatch || j.preDispatch.call(this, a) !== !1) {
                 for (g = fa.event.handlers.call(this, a, i), b = 0; (e = g[b++]) && !a.isPropagationStopped(); ) for (a.currentTarget = e.elem, 
                 f = 0; (d = e.handlers[f++]) && !a.isImmediatePropagationStopped(); ) (!a.namespace_re || a.namespace_re.test(d.namespace)) && (a.handleObj = d, 
-                a.data = d.data, c = ((fa.event.special[d.origType] || {}).handle || d.handler).apply(e.elem, h), 
-                void 0 !== c && (a.result = c) === !1 && (a.preventDefault(), a.stopPropagation()));
+                a.data = d.data, void 0 !== (c = ((fa.event.special[d.origType] || {}).handle || d.handler).apply(e.elem, h)) && (a.result = c) === !1 && (a.preventDefault(), 
+                a.stopPropagation()));
                 return j.postDispatch && j.postDispatch.call(this, a), a.result;
             }
         },
@@ -1837,7 +1826,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         fix: function(a) {
             if (a[fa.expando]) return a;
             var b, c, d, e = a.type, f = a, g = this.fixHooks[e];
-            for (g || (this.fixHooks[e] = g = Ia.test(e) ? this.mouseHooks : Ha.test(e) ? this.keyHooks : {}), 
+            for (g || (this.fixHooks[e] = g = Ha.test(e) ? this.mouseHooks : Ga.test(e) ? this.keyHooks : {}), 
             d = g.props ? this.props.concat(g.props) : this.props, a = new fa.Event(f), b = d.length; b--; ) c = d[b], 
             a[c] = f[c];
             return a.target || (a.target = f.srcElement || pa), 3 === a.target.nodeType && (a.target = a.target.parentNode), 
@@ -1908,7 +1897,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         a.removeEventListener && a.removeEventListener(b, c, !1);
     } : function(a, b, c) {
         var d = "on" + b;
-        a.detachEvent && (typeof a[d] === ya && (a[d] = null), a.detachEvent(d, c));
+        a.detachEvent && (typeof a[d] === xa && (a[d] = null), a.detachEvent(d, c));
     }, fa.Event = function(a, b) {
         return this instanceof fa.Event ? (a && a.type ? (this.originalEvent = a, this.type = a.type, 
         this.isDefaultPrevented = a.defaultPrevented || void 0 === a.defaultPrevented && (a.returnValue === !1 || a.getPreventDefault && a.getPreventDefault()) ? m : n) : this.type = a, 
@@ -1958,13 +1947,13 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         }
     }), da.changeBubbles || (fa.event.special.change = {
         setup: function() {
-            return Ga.test(this.nodeName) ? (("checkbox" === this.type || "radio" === this.type) && (fa.event.add(this, "propertychange._change", function(a) {
+            return Fa.test(this.nodeName) ? (("checkbox" === this.type || "radio" === this.type) && (fa.event.add(this, "propertychange._change", function(a) {
                 "checked" === a.originalEvent.propertyName && (this._just_changed = !0);
             }), fa.event.add(this, "click._change", function(a) {
                 this._just_changed && !a.isTrigger && (this._just_changed = !1), fa.event.simulate("change", this, a, !0);
             })), !1) : void fa.event.add(this, "beforeactivate._change", function(a) {
                 var b = a.target;
-                Ga.test(b.nodeName) && !fa._data(b, "changeBubbles") && (fa.event.add(b, "change._change", function(a) {
+                Fa.test(b.nodeName) && !fa._data(b, "changeBubbles") && (fa.event.add(b, "change._change", function(a) {
                     !this.parentNode || a.isSimulated || a.isTrigger || fa.event.simulate("change", this.parentNode, a, !0);
                 }), fa._data(b, "changeBubbles", !0));
             });
@@ -1974,7 +1963,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return this !== b || a.isSimulated || a.isTrigger || "radio" !== b.type && "checkbox" !== b.type ? a.handleObj.handler.apply(this, arguments) : void 0;
         },
         teardown: function() {
-            return fa.event.remove(this, "._change"), !Ga.test(this.nodeName);
+            return fa.event.remove(this, "._change"), !Fa.test(this.nodeName);
         }
     }), da.focusinBubbles || fa.each({
         focus: "focusin",
@@ -2035,7 +2024,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return c ? fa.event.trigger(a, b, c, !0) : void 0;
         }
     });
-    var La = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video", Ma = / jQuery\d+="(?:null|\d+)"/g, Na = new RegExp("<(?:" + La + ")[\\s/>]", "i"), Oa = /^\s+/, Pa = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi, Qa = /<([\w:]+)/, Ra = /<tbody/i, Sa = /<|&#?\w+;/, Ta = /<(?:script|style|link)/i, Ua = /checked\s*(?:[^=]|=\s*.checked.)/i, Va = /^$|\/(?:java|ecma)script/i, Wa = /^true\/(.*)/, Xa = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g, Ya = {
+    var Ka = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video", La = / jQuery\d+="(?:null|\d+)"/g, Ma = new RegExp("<(?:" + Ka + ")[\\s/>]", "i"), Na = /^\s+/, Oa = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi, Pa = /<([\w:]+)/, Qa = /<tbody/i, Ra = /<|&#?\w+;/, Sa = /<(?:script|style|link)/i, Ta = /checked\s*(?:[^=]|=\s*.checked.)/i, Ua = /^$|\/(?:java|ecma)script/i, Va = /^true\/(.*)/, Wa = /^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g, Xa = {
         option: [ 1, "<select multiple='multiple'>", "</select>" ],
         legend: [ 1, "<fieldset>", "</fieldset>" ],
         area: [ 1, "<map>", "</map>" ],
@@ -2045,53 +2034,51 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         col: [ 2, "<table><tbody></tbody><colgroup>", "</colgroup></table>" ],
         td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
         _default: da.htmlSerialize ? [ 0, "", "" ] : [ 1, "X<div>", "</div>" ]
-    }, Za = p(pa), $a = Za.appendChild(pa.createElement("div"));
-    Ya.optgroup = Ya.option, Ya.tbody = Ya.tfoot = Ya.colgroup = Ya.caption = Ya.thead, 
-    Ya.th = Ya.td, fa.extend({
+    }, Ya = p(pa), Za = Ya.appendChild(pa.createElement("div"));
+    Xa.optgroup = Xa.option, Xa.tbody = Xa.tfoot = Xa.colgroup = Xa.caption = Xa.thead, 
+    Xa.th = Xa.td, fa.extend({
         clone: function(a, b, c) {
             var d, e, f, g, h, i = fa.contains(a.ownerDocument, a);
-            if (da.html5Clone || fa.isXMLDoc(a) || !Na.test("<" + a.nodeName + ">") ? f = a.cloneNode(!0) : ($a.innerHTML = a.outerHTML, 
-            $a.removeChild(f = $a.firstChild)), !(da.noCloneEvent && da.noCloneChecked || 1 !== a.nodeType && 11 !== a.nodeType || fa.isXMLDoc(a))) for (d = q(f), 
+            if (da.html5Clone || fa.isXMLDoc(a) || !Ma.test("<" + a.nodeName + ">") ? f = a.cloneNode(!0) : (Za.innerHTML = a.outerHTML, 
+            Za.removeChild(f = Za.firstChild)), !(da.noCloneEvent && da.noCloneChecked || 1 !== a.nodeType && 11 !== a.nodeType || fa.isXMLDoc(a))) for (d = q(f), 
             h = q(a), g = 0; null != (e = h[g]); ++g) d[g] && x(e, d[g]);
             if (b) if (c) for (h = h || q(a), d = d || q(f), g = 0; null != (e = h[g]); g++) w(e, d[g]); else w(a, f);
             return d = q(f, "script"), d.length > 0 && v(d, !i && q(a, "script")), d = h = e = null, 
             f;
         },
         buildFragment: function(a, b, c, d) {
-            for (var e, f, g, h, i, j, k, l = a.length, m = p(b), n = [], o = 0; l > o; o++) if (f = a[o], 
-            f || 0 === f) if ("object" === fa.type(f)) fa.merge(n, f.nodeType ? [ f ] : f); else if (Sa.test(f)) {
-                for (h = h || m.appendChild(b.createElement("div")), i = (Qa.exec(f) || [ "", "" ])[1].toLowerCase(), 
-                k = Ya[i] || Ya._default, h.innerHTML = k[1] + f.replace(Pa, "<$1></$2>") + k[2], 
+            for (var e, f, g, h, i, j, k, l = a.length, m = p(b), n = [], o = 0; l > o; o++) if ((f = a[o]) || 0 === f) if ("object" === fa.type(f)) fa.merge(n, f.nodeType ? [ f ] : f); else if (Ra.test(f)) {
+                for (h = h || m.appendChild(b.createElement("div")), i = (Pa.exec(f) || [ "", "" ])[1].toLowerCase(), 
+                k = Xa[i] || Xa._default, h.innerHTML = k[1] + f.replace(Oa, "<$1></$2>") + k[2], 
                 e = k[0]; e--; ) h = h.lastChild;
-                if (!da.leadingWhitespace && Oa.test(f) && n.push(b.createTextNode(Oa.exec(f)[0])), 
-                !da.tbody) for (f = "table" !== i || Ra.test(f) ? "<table>" !== k[1] || Ra.test(f) ? 0 : h : h.firstChild, 
+                if (!da.leadingWhitespace && Na.test(f) && n.push(b.createTextNode(Na.exec(f)[0])), 
+                !da.tbody) for (f = "table" !== i || Qa.test(f) ? "<table>" !== k[1] || Qa.test(f) ? 0 : h : h.firstChild, 
                 e = f && f.childNodes.length; e--; ) fa.nodeName(j = f.childNodes[e], "tbody") && !j.childNodes.length && f.removeChild(j);
                 for (fa.merge(n, h.childNodes), h.textContent = ""; h.firstChild; ) h.removeChild(h.firstChild);
                 h = m.lastChild;
             } else n.push(b.createTextNode(f));
             for (h && m.removeChild(h), da.appendChecked || fa.grep(q(n, "input"), r), o = 0; f = n[o++]; ) if ((!d || -1 === fa.inArray(f, d)) && (g = fa.contains(f.ownerDocument, f), 
-            h = q(m.appendChild(f), "script"), g && v(h), c)) for (e = 0; f = h[e++]; ) Va.test(f.type || "") && c.push(f);
+            h = q(m.appendChild(f), "script"), g && v(h), c)) for (e = 0; f = h[e++]; ) Ua.test(f.type || "") && c.push(f);
             return h = null, m;
         },
         cleanData: function(a, b) {
             for (var c, d, e, f, g = 0, h = fa.expando, i = fa.cache, j = da.deleteExpando, k = fa.event.special; null != (c = a[g]); g++) if ((b || fa.acceptData(c)) && (e = c[h], 
             f = e && i[e])) {
                 if (f.events) for (d in f.events) k[d] ? fa.event.remove(c, d) : fa.removeEvent(c, d, f.handle);
-                i[e] && (delete i[e], j ? delete c[h] : typeof c.removeAttribute !== ya ? c.removeAttribute(h) : c[h] = null, 
+                i[e] && (delete i[e], j ? delete c[h] : typeof c.removeAttribute !== xa ? c.removeAttribute(h) : c[h] = null, 
                 W.push(e));
             }
         }
     }), fa.fn.extend({
         text: function(a) {
-            return Ea(this, function(a) {
+            return Da(this, function(a) {
                 return void 0 === a ? fa.text(this) : this.empty().append((this[0] && this[0].ownerDocument || pa).createTextNode(a));
             }, null, a, arguments.length);
         },
         append: function() {
             return this.domManip(arguments, function(a) {
                 if (1 === this.nodeType || 11 === this.nodeType || 9 === this.nodeType) {
-                    var b = s(this, a);
-                    b.appendChild(a);
+                    s(this, a).appendChild(a);
                 }
             });
         },
@@ -2131,11 +2118,11 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             });
         },
         html: function(a) {
-            return Ea(this, function(a) {
+            return Da(this, function(a) {
                 var b = this[0] || {}, c = 0, d = this.length;
-                if (void 0 === a) return 1 === b.nodeType ? b.innerHTML.replace(Ma, "") : void 0;
-                if (!("string" != typeof a || Ta.test(a) || !da.htmlSerialize && Na.test(a) || !da.leadingWhitespace && Oa.test(a) || Ya[(Qa.exec(a) || [ "", "" ])[1].toLowerCase()])) {
-                    a = a.replace(Pa, "<$1></$2>");
+                if (void 0 === a) return 1 === b.nodeType ? b.innerHTML.replace(La, "") : void 0;
+                if (!("string" != typeof a || Sa.test(a) || !da.htmlSerialize && Ma.test(a) || !da.leadingWhitespace && Na.test(a) || Xa[(Pa.exec(a) || [ "", "" ])[1].toLowerCase()])) {
+                    a = a.replace(Oa, "<$1></$2>");
                     try {
                         for (;d > c; c++) b = this[c] || {}, 1 === b.nodeType && (fa.cleanData(q(b, !1)), 
                         b.innerHTML = a);
@@ -2157,7 +2144,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         domManip: function(a, b) {
             a = Y.apply([], a);
             var c, d, e, f, g, h, i = 0, j = this.length, k = this, l = j - 1, m = a[0], n = fa.isFunction(m);
-            if (n || j > 1 && "string" == typeof m && !da.checkClone && Ua.test(m)) return this.each(function(c) {
+            if (n || j > 1 && "string" == typeof m && !da.checkClone && Ta.test(m)) return this.each(function(c) {
                 var d = k.eq(c);
                 n && (a[0] = m.call(this, c, d.html())), d.domManip(a, b);
             });
@@ -2166,7 +2153,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 for (f = fa.map(q(h, "script"), t), e = f.length; j > i; i++) d = h, i !== l && (d = fa.clone(d, !0, !0), 
                 e && fa.merge(f, q(d, "script"))), b.call(this[i], d, i);
                 if (e) for (g = f[f.length - 1].ownerDocument, fa.map(f, u), i = 0; e > i; i++) d = f[i], 
-                Va.test(d.type || "") && !fa._data(d, "globalEval") && fa.contains(g, d) && (d.src ? fa._evalUrl && fa._evalUrl(d.src) : fa.globalEval((d.text || d.textContent || d.innerHTML || "").replace(Xa, "")));
+                Ua.test(d.type || "") && !fa._data(d, "globalEval") && fa.contains(g, d) && (d.src ? fa._evalUrl && fa._evalUrl(d.src) : fa.globalEval((d.text || d.textContent || d.innerHTML || "").replace(Wa, "")));
                 h = c = null;
             }
             return this;
@@ -2184,38 +2171,38 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return this.pushStack(e);
         };
     });
-    var _a, ab = {};
+    var $a, _a = {};
     !function() {
-        var a, b, c = pa.createElement("div"), d = "-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;display:block;padding:0;margin:0;border:0";
+        var a, b, c = pa.createElement("div");
         c.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>", 
         a = c.getElementsByTagName("a")[0], a.style.cssText = "float:left;opacity:.5", da.opacity = /^0.5/.test(a.style.opacity), 
         da.cssFloat = !!a.style.cssFloat, c.style.backgroundClip = "content-box", c.cloneNode(!0).style.backgroundClip = "", 
         da.clearCloneStyle = "content-box" === c.style.backgroundClip, a = c = null, da.shrinkWrapBlocks = function() {
-            var a, c, e, f;
+            var a, c, d;
             if (null == b) {
-                if (a = pa.getElementsByTagName("body")[0], !a) return;
-                f = "border:0;width:0;height:0;position:absolute;top:0;left:-9999px", c = pa.createElement("div"), 
-                e = pa.createElement("div"), a.appendChild(c).appendChild(e), b = !1, typeof e.style.zoom !== ya && (e.style.cssText = d + ";width:1px;padding:1px;zoom:1", 
-                e.innerHTML = "<div></div>", e.firstChild.style.width = "5px", b = 3 !== e.offsetWidth), 
-                a.removeChild(c), a = c = e = null;
+                if (!(a = pa.getElementsByTagName("body")[0])) return;
+                c = pa.createElement("div"), d = pa.createElement("div"), a.appendChild(c).appendChild(d), 
+                b = !1, typeof d.style.zoom !== xa && (d.style.cssText = "-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;display:block;padding:0;margin:0;border:0;width:1px;padding:1px;zoom:1", 
+                d.innerHTML = "<div></div>", d.firstChild.style.width = "5px", b = 3 !== d.offsetWidth), 
+                a.removeChild(c), a = c = d = null;
             }
             return b;
         };
     }();
-    var bb, cb, db = /^margin/, eb = new RegExp("^(" + Ba + ")(?!px)[a-z%]+$", "i"), fb = /^(top|right|bottom|left)$/;
-    a.getComputedStyle ? (bb = function(a) {
+    var ab, bb, cb = /^margin/, db = new RegExp("^(" + Aa + ")(?!px)[a-z%]+$", "i"), eb = /^(top|right|bottom|left)$/;
+    a.getComputedStyle ? (ab = function(a) {
         return a.ownerDocument.defaultView.getComputedStyle(a, null);
-    }, cb = function(a, b, c) {
+    }, bb = function(a, b, c) {
         var d, e, f, g, h = a.style;
-        return c = c || bb(a), g = c ? c.getPropertyValue(b) || c[b] : void 0, c && ("" !== g || fa.contains(a.ownerDocument, a) || (g = fa.style(a, b)), 
-        eb.test(g) && db.test(b) && (d = h.width, e = h.minWidth, f = h.maxWidth, h.minWidth = h.maxWidth = h.width = g, 
+        return c = c || ab(a), g = c ? c.getPropertyValue(b) || c[b] : void 0, c && ("" !== g || fa.contains(a.ownerDocument, a) || (g = fa.style(a, b)), 
+        db.test(g) && cb.test(b) && (d = h.width, e = h.minWidth, f = h.maxWidth, h.minWidth = h.maxWidth = h.width = g, 
         g = c.width, h.width = d, h.minWidth = e, h.maxWidth = f)), void 0 === g ? g : g + "";
-    }) : pa.documentElement.currentStyle && (bb = function(a) {
+    }) : pa.documentElement.currentStyle && (ab = function(a) {
         return a.currentStyle;
-    }, cb = function(a, b, c) {
+    }, bb = function(a, b, c) {
         var d, e, f, g, h = a.style;
-        return c = c || bb(a), g = c ? c[b] : void 0, null == g && h && h[b] && (g = h[b]), 
-        eb.test(g) && !fb.test(b) && (d = h.left, e = a.runtimeStyle, f = e && e.left, f && (e.left = a.currentStyle.left), 
+        return c = c || ab(a), g = c ? c[b] : void 0, null == g && h && h[b] && (g = h[b]), 
+        db.test(g) && !eb.test(b) && (d = h.left, e = a.runtimeStyle, f = e && e.left, f && (e.left = a.currentStyle.left), 
         h.left = "fontSize" === b ? "1em" : g, g = h.pixelLeft + "px", h.left = d, f && (e.left = f)), 
         void 0 === g ? g : g + "" || "auto";
     }), !function() {
@@ -2232,7 +2219,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 width: "4px"
             }).width), d.removeChild(b), c = d = null);
         }
-        var c, d, e, f, g, h, i = pa.createElement("div"), j = "border:0;width:0;height:0;position:absolute;top:0;left:-9999px", k = "-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;display:block;padding:0;margin:0;border:0";
+        var c, d, e, f, g, h, i = pa.createElement("div"), j = "border:0;width:0;height:0;position:absolute;top:0;left:-9999px";
         i.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>", 
         c = i.getElementsByTagName("a")[0], c.style.cssText = "float:left;opacity:.5", da.opacity = /^0.5/.test(c.style.opacity), 
         da.cssFloat = !!c.style.cssFloat, i.style.backgroundClip = "content-box", i.cloneNode(!0).style.backgroundClip = "", 
@@ -2259,9 +2246,9 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             reliableMarginRight: function() {
                 var b, c, d, e;
                 if (null == h && a.getComputedStyle) {
-                    if (b = pa.getElementsByTagName("body")[0], !b) return;
+                    if (!(b = pa.getElementsByTagName("body")[0])) return;
                     c = pa.createElement("div"), d = pa.createElement("div"), c.style.cssText = j, b.appendChild(c).appendChild(d), 
-                    e = d.appendChild(pa.createElement("div")), e.style.cssText = d.style.cssText = k, 
+                    e = d.appendChild(pa.createElement("div")), e.style.cssText = d.style.cssText = "-webkit-box-sizing:content-box;-moz-box-sizing:content-box;box-sizing:content-box;display:block;padding:0;margin:0;border:0", 
                     e.style.marginRight = e.style.width = "0", d.style.width = "1px", h = !parseFloat((a.getComputedStyle(e, null) || {}).marginRight), 
                     b.removeChild(c);
                 }
@@ -2275,20 +2262,20 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         for (f in b) a.style[f] = g[f];
         return e;
     };
-    var gb = /alpha\([^)]*\)/i, hb = /opacity\s*=\s*([^)]*)/, ib = /^(none|table(?!-c[ea]).+)/, jb = new RegExp("^(" + Ba + ")(.*)$", "i"), kb = new RegExp("^([+-])=(" + Ba + ")", "i"), lb = {
+    var fb = /alpha\([^)]*\)/i, gb = /opacity\s*=\s*([^)]*)/, hb = /^(none|table(?!-c[ea]).+)/, ib = new RegExp("^(" + Aa + ")(.*)$", "i"), jb = new RegExp("^([+-])=(" + Aa + ")", "i"), kb = {
         position: "absolute",
         visibility: "hidden",
         display: "block"
-    }, mb = {
+    }, lb = {
         letterSpacing: 0,
         fontWeight: 400
-    }, nb = [ "Webkit", "O", "Moz", "ms" ];
+    }, mb = [ "Webkit", "O", "Moz", "ms" ];
     fa.extend({
         cssHooks: {
             opacity: {
                 get: function(a, b) {
                     if (b) {
-                        var c = cb(a, "opacity");
+                        var c = bb(a, "opacity");
                         return "" === c ? "1" : c;
                     }
                 }
@@ -2314,7 +2301,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 var e, f, g, h = fa.camelCase(b), i = a.style;
                 if (b = fa.cssProps[h] || (fa.cssProps[h] = B(i, h)), g = fa.cssHooks[b] || fa.cssHooks[h], 
                 void 0 === c) return g && "get" in g && void 0 !== (e = g.get(a, !1, d)) ? e : i[b];
-                if (f = typeof c, "string" === f && (e = kb.exec(c)) && (c = (e[1] + 1) * e[2] + parseFloat(fa.css(a, b)), 
+                if (f = typeof c, "string" === f && (e = jb.exec(c)) && (c = (e[1] + 1) * e[2] + parseFloat(fa.css(a, b)), 
                 f = "number"), null != c && c === c && ("number" !== f || fa.cssNumber[h] || (c += "px"), 
                 da.clearCloneStyle || "" !== c || 0 !== b.indexOf("background") || (i[b] = "inherit"), 
                 !(g && "set" in g && void 0 === (c = g.set(a, c, d))))) try {
@@ -2325,34 +2312,34 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         css: function(a, b, c, d) {
             var e, f, g, h = fa.camelCase(b);
             return b = fa.cssProps[h] || (fa.cssProps[h] = B(a.style, h)), g = fa.cssHooks[b] || fa.cssHooks[h], 
-            g && "get" in g && (f = g.get(a, !0, c)), void 0 === f && (f = cb(a, b, d)), "normal" === f && b in mb && (f = mb[b]), 
+            g && "get" in g && (f = g.get(a, !0, c)), void 0 === f && (f = bb(a, b, d)), "normal" === f && b in lb && (f = lb[b]), 
             "" === c || c ? (e = parseFloat(f), c === !0 || fa.isNumeric(e) ? e || 0 : f) : f;
         }
     }), fa.each([ "height", "width" ], function(a, b) {
         fa.cssHooks[b] = {
             get: function(a, c, d) {
-                return c ? 0 === a.offsetWidth && ib.test(fa.css(a, "display")) ? fa.swap(a, lb, function() {
+                return c ? 0 === a.offsetWidth && hb.test(fa.css(a, "display")) ? fa.swap(a, kb, function() {
                     return F(a, b, d);
                 }) : F(a, b, d) : void 0;
             },
             set: function(a, c, d) {
-                var e = d && bb(a);
+                var e = d && ab(a);
                 return D(a, c, d ? E(a, b, d, da.boxSizing() && "border-box" === fa.css(a, "boxSizing", !1, e), e) : 0);
             }
         };
     }), da.opacity || (fa.cssHooks.opacity = {
         get: function(a, b) {
-            return hb.test((b && a.currentStyle ? a.currentStyle.filter : a.style.filter) || "") ? .01 * parseFloat(RegExp.$1) + "" : b ? "1" : "";
+            return gb.test((b && a.currentStyle ? a.currentStyle.filter : a.style.filter) || "") ? .01 * parseFloat(RegExp.$1) + "" : b ? "1" : "";
         },
         set: function(a, b) {
             var c = a.style, d = a.currentStyle, e = fa.isNumeric(b) ? "alpha(opacity=" + 100 * b + ")" : "", f = d && d.filter || c.filter || "";
-            c.zoom = 1, (b >= 1 || "" === b) && "" === fa.trim(f.replace(gb, "")) && c.removeAttribute && (c.removeAttribute("filter"), 
-            "" === b || d && !d.filter) || (c.filter = gb.test(f) ? f.replace(gb, e) : f + " " + e);
+            c.zoom = 1, (b >= 1 || "" === b) && "" === fa.trim(f.replace(fb, "")) && c.removeAttribute && (c.removeAttribute("filter"), 
+            "" === b || d && !d.filter) || (c.filter = fb.test(f) ? f.replace(fb, e) : f + " " + e);
         }
     }), fa.cssHooks.marginRight = A(da.reliableMarginRight, function(a, b) {
         return b ? fa.swap(a, {
             display: "inline-block"
-        }, cb, [ a, "marginRight" ]) : void 0;
+        }, bb, [ a, "marginRight" ]) : void 0;
     }), fa.each({
         margin: "",
         padding: "",
@@ -2360,16 +2347,16 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }, function(a, b) {
         fa.cssHooks[a + b] = {
             expand: function(c) {
-                for (var d = 0, e = {}, f = "string" == typeof c ? c.split(" ") : [ c ]; 4 > d; d++) e[a + Ca[d] + b] = f[d] || f[d - 2] || f[0];
+                for (var d = 0, e = {}, f = "string" == typeof c ? c.split(" ") : [ c ]; 4 > d; d++) e[a + Ba[d] + b] = f[d] || f[d - 2] || f[0];
                 return e;
             }
-        }, db.test(a) || (fa.cssHooks[a + b].set = D);
+        }, cb.test(a) || (fa.cssHooks[a + b].set = D);
     }), fa.fn.extend({
         css: function(a, b) {
-            return Ea(this, function(a, b, c) {
+            return Da(this, function(a, b, c) {
                 var d, e, f = {}, g = 0;
                 if (fa.isArray(b)) {
-                    for (d = bb(a), e = b.length; e > g; g++) f[b[g]] = fa.css(a, b[g], !1, d);
+                    for (d = ab(a), e = b.length; e > g; g++) f[b[g]] = fa.css(a, b[g], !1, d);
                     return f;
                 }
                 return void 0 !== c ? fa.style(a, b, c) : fa.css(a, b);
@@ -2383,7 +2370,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         },
         toggle: function(a) {
             return "boolean" == typeof a ? a ? this.show() : this.hide() : this.each(function() {
-                Da(this) ? fa(this).show() : fa(this).hide();
+                Ca(this) ? fa(this).show() : fa(this).hide();
             });
         }
     }), fa.Tween = G, G.prototype = {
@@ -2425,9 +2412,9 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return .5 - Math.cos(a * Math.PI) / 2;
         }
     }, fa.fx = G.prototype.init, fa.fx.step = {};
-    var ob, pb, qb = /^(?:toggle|show|hide)$/, rb = new RegExp("^(?:([+-])=|)(" + Ba + ")([a-z%]*)$", "i"), sb = /queueHooks$/, tb = [ K ], ub = {
+    var nb, ob, pb = /^(?:toggle|show|hide)$/, qb = new RegExp("^(?:([+-])=|)(" + Aa + ")([a-z%]*)$", "i"), rb = /queueHooks$/, sb = [ K ], tb = {
         "*": [ function(a, b) {
-            var c = this.createTween(a, b), d = c.cur(), e = rb.exec(b), f = e && e[3] || (fa.cssNumber[a] ? "" : "px"), g = (fa.cssNumber[a] || "px" !== f && +d) && rb.exec(fa.css(c.elem, a)), h = 1, i = 20;
+            var c = this.createTween(a, b), d = c.cur(), e = qb.exec(b), f = e && e[3] || (fa.cssNumber[a] ? "" : "px"), g = (fa.cssNumber[a] || "px" !== f && +d) && qb.exec(fa.css(c.elem, a)), h = 1, i = 20;
             if (g && g[3] !== f) {
                 f = f || g[3], e = e || [], g = +d || 1;
                 do h = h || ".5", g /= h, fa.style(c.elem, a, g + f); while (h !== (h = c.cur() / d) && 1 !== h && --i);
@@ -2439,10 +2426,10 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     fa.Animation = fa.extend(M, {
         tweener: function(a, b) {
             fa.isFunction(a) ? (b = a, a = [ "*" ]) : a = a.split(" ");
-            for (var c, d = 0, e = a.length; e > d; d++) c = a[d], ub[c] = ub[c] || [], ub[c].unshift(b);
+            for (var c, d = 0, e = a.length; e > d; d++) c = a[d], tb[c] = tb[c] || [], tb[c].unshift(b);
         },
         prefilter: function(a, b) {
-            b ? tb.unshift(a) : tb.push(a);
+            b ? sb.unshift(a) : sb.push(a);
         }
     }), fa.speed = function(a, b, c) {
         var d = a && "object" == typeof a ? fa.extend({}, a) : {
@@ -2456,7 +2443,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         }, d;
     }, fa.fn.extend({
         fadeTo: function(a, b, c, d) {
-            return this.filter(Da).css("opacity", 0).show().end().animate({
+            return this.filter(Ca).css("opacity", 0).show().end().animate({
                 opacity: b
             }, a, c, d);
         },
@@ -2475,7 +2462,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return "string" != typeof a && (c = b, b = a, a = void 0), b && a !== !1 && this.queue(a || "fx", []), 
             this.each(function() {
                 var b = !0, e = null != a && a + "queueHooks", f = fa.timers, g = fa._data(this);
-                if (e) g[e] && g[e].stop && d(g[e]); else for (e in g) g[e] && g[e].stop && sb.test(e) && d(g[e]);
+                if (e) g[e] && g[e].stop && d(g[e]); else for (e in g) g[e] && g[e].stop && rb.test(e) && d(g[e]);
                 for (e = f.length; e--; ) f[e].elem !== this || null != a && f[e].queue !== a || (f[e].anim.stop(c), 
                 b = !1, f.splice(e, 1));
                 (b || !c) && fa.dequeue(this, a);
@@ -2515,14 +2502,14 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         };
     }), fa.timers = [], fa.fx.tick = function() {
         var a, b = fa.timers, c = 0;
-        for (ob = fa.now(); c < b.length; c++) a = b[c], a() || b[c] !== a || b.splice(c--, 1);
-        b.length || fa.fx.stop(), ob = void 0;
+        for (nb = fa.now(); c < b.length; c++) (a = b[c])() || b[c] !== a || b.splice(c--, 1);
+        b.length || fa.fx.stop(), nb = void 0;
     }, fa.fx.timer = function(a) {
         fa.timers.push(a), a() ? fa.fx.start() : fa.timers.pop();
     }, fa.fx.interval = 13, fa.fx.start = function() {
-        pb || (pb = setInterval(fa.fx.tick, fa.fx.interval));
+        ob || (ob = setInterval(fa.fx.tick, fa.fx.interval));
     }, fa.fx.stop = function() {
-        clearInterval(pb), pb = null;
+        clearInterval(ob), ob = null;
     }, fa.fx.speeds = {
         slow: 600,
         fast: 200,
@@ -2545,7 +2532,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         da.input = "" === b.getAttribute("value"), b.value = "t", b.setAttribute("type", "radio"), 
         da.radioValue = "t" === b.value, a = b = c = d = e = null;
     }();
-    var vb = /\r/g;
+    var ub = /\r/g;
     fa.fn.extend({
         val: function(a) {
             var b, c, d, e = this[0];
@@ -2553,9 +2540,9 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 var e;
                 1 === this.nodeType && (e = d ? a.call(this, c, fa(this).val()) : a, null == e ? e = "" : "number" == typeof e ? e += "" : fa.isArray(e) && (e = fa.map(e, function(a) {
                     return null == a ? "" : a + "";
-                })), b = fa.valHooks[this.type] || fa.valHooks[this.nodeName.toLowerCase()], b && "set" in b && void 0 !== b.set(this, e, "value") || (this.value = e));
+                })), (b = fa.valHooks[this.type] || fa.valHooks[this.nodeName.toLowerCase()]) && "set" in b && void 0 !== b.set(this, e, "value") || (this.value = e));
             })) : e ? (b = fa.valHooks[e.type] || fa.valHooks[e.nodeName.toLowerCase()], b && "get" in b && void 0 !== (c = b.get(e, "value")) ? c : (c = e.value, 
-            "string" == typeof c ? c.replace(vb, "") : null == c ? "" : c)) : void 0;
+            "string" == typeof c ? c.replace(ub, "") : null == c ? "" : c)) : void 0;
         }
     }), fa.extend({
         valHooks: {
@@ -2594,10 +2581,10 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return null === a.getAttribute("value") ? "on" : a.value;
         });
     });
-    var wb, xb, yb = fa.expr.attrHandle, zb = /^(?:checked|selected)$/i, Ab = da.getSetAttribute, Bb = da.input;
+    var vb, wb, xb = fa.expr.attrHandle, yb = /^(?:checked|selected)$/i, zb = da.getSetAttribute, Ab = da.input;
     fa.fn.extend({
         attr: function(a, b) {
-            return Ea(this, fa.attr, a, b, arguments.length > 1);
+            return Da(this, fa.attr, a, b, arguments.length > 1);
         },
         removeAttr: function(a) {
             return this.each(function() {
@@ -2607,15 +2594,15 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }), fa.extend({
         attr: function(a, b, c) {
             var d, e, f = a.nodeType;
-            if (a && 3 !== f && 8 !== f && 2 !== f) return typeof a.getAttribute === ya ? fa.prop(a, b, c) : (1 === f && fa.isXMLDoc(a) || (b = b.toLowerCase(), 
-            d = fa.attrHooks[b] || (fa.expr.match.bool.test(b) ? xb : wb)), void 0 === c ? d && "get" in d && null !== (e = d.get(a, b)) ? e : (e = fa.find.attr(a, b), 
+            if (a && 3 !== f && 8 !== f && 2 !== f) return typeof a.getAttribute === xa ? fa.prop(a, b, c) : (1 === f && fa.isXMLDoc(a) || (b = b.toLowerCase(), 
+            d = fa.attrHooks[b] || (fa.expr.match.bool.test(b) ? wb : vb)), void 0 === c ? d && "get" in d && null !== (e = d.get(a, b)) ? e : (e = fa.find.attr(a, b), 
             null == e ? void 0 : e) : null !== c ? d && "set" in d && void 0 !== (e = d.set(a, c, b)) ? e : (a.setAttribute(b, c + ""), 
             c) : void fa.removeAttr(a, b));
         },
         removeAttr: function(a, b) {
-            var c, d, e = 0, f = b && b.match(ua);
-            if (f && 1 === a.nodeType) for (;c = f[e++]; ) d = fa.propFix[c] || c, fa.expr.match.bool.test(c) ? Bb && Ab || !zb.test(c) ? a[d] = !1 : a[fa.camelCase("default-" + c)] = a[d] = !1 : fa.attr(a, c, ""), 
-            a.removeAttribute(Ab ? c : d);
+            var c, d, e = 0, f = b && b.match(ta);
+            if (f && 1 === a.nodeType) for (;c = f[e++]; ) d = fa.propFix[c] || c, fa.expr.match.bool.test(c) ? Ab && zb || !yb.test(c) ? a[d] = !1 : a[fa.camelCase("default-" + c)] = a[d] = !1 : fa.attr(a, c, ""), 
+            a.removeAttribute(zb ? c : d);
         },
         attrHooks: {
             type: {
@@ -2627,31 +2614,31 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 }
             }
         }
-    }), xb = {
+    }), wb = {
         set: function(a, b, c) {
-            return b === !1 ? fa.removeAttr(a, c) : Bb && Ab || !zb.test(c) ? a.setAttribute(!Ab && fa.propFix[c] || c, c) : a[fa.camelCase("default-" + c)] = a[c] = !0, 
+            return b === !1 ? fa.removeAttr(a, c) : Ab && zb || !yb.test(c) ? a.setAttribute(!zb && fa.propFix[c] || c, c) : a[fa.camelCase("default-" + c)] = a[c] = !0, 
             c;
         }
     }, fa.each(fa.expr.match.bool.source.match(/\w+/g), function(a, b) {
-        var c = yb[b] || fa.find.attr;
-        yb[b] = Bb && Ab || !zb.test(b) ? function(a, b, d) {
+        var c = xb[b] || fa.find.attr;
+        xb[b] = Ab && zb || !yb.test(b) ? function(a, b, d) {
             var e, f;
-            return d || (f = yb[b], yb[b] = e, e = null != c(a, b, d) ? b.toLowerCase() : null, 
-            yb[b] = f), e;
+            return d || (f = xb[b], xb[b] = e, e = null != c(a, b, d) ? b.toLowerCase() : null, 
+            xb[b] = f), e;
         } : function(a, b, c) {
             return c ? void 0 : a[fa.camelCase("default-" + b)] ? b.toLowerCase() : null;
         };
-    }), Bb && Ab || (fa.attrHooks.value = {
+    }), Ab && zb || (fa.attrHooks.value = {
         set: function(a, b, c) {
-            return fa.nodeName(a, "input") ? void (a.defaultValue = b) : wb && wb.set(a, b, c);
+            return fa.nodeName(a, "input") ? void (a.defaultValue = b) : vb && vb.set(a, b, c);
         }
-    }), Ab || (wb = {
+    }), zb || (vb = {
         set: function(a, b, c) {
             var d = a.getAttributeNode(c);
             return d || a.setAttributeNode(d = a.ownerDocument.createAttribute(c)), d.value = b += "", 
             "value" === c || b === a.getAttribute(c) ? b : void 0;
         }
-    }, yb.id = yb.name = yb.coords = function(a, b, c) {
+    }, xb.id = xb.name = xb.coords = function(a, b, c) {
         var d;
         return c ? void 0 : (d = a.getAttributeNode(b)) && "" !== d.value ? d.value : null;
     }, fa.valHooks.button = {
@@ -2659,10 +2646,10 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             var c = a.getAttributeNode(b);
             return c && c.specified ? c.value : void 0;
         },
-        set: wb.set
+        set: vb.set
     }, fa.attrHooks.contenteditable = {
         set: function(a, b, c) {
-            wb.set(a, "" !== b && b, c);
+            vb.set(a, "" !== b && b, c);
         }
     }, fa.each([ "width", "height" ], function(a, b) {
         fa.attrHooks[b] = {
@@ -2678,10 +2665,10 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return a.style.cssText = b + "";
         }
     });
-    var Cb = /^(?:input|select|textarea|button|object)$/i, Db = /^(?:a|area)$/i;
+    var Bb = /^(?:input|select|textarea|button|object)$/i, Cb = /^(?:a|area)$/i;
     fa.fn.extend({
         prop: function(a, b) {
-            return Ea(this, fa.prop, a, b, arguments.length > 1);
+            return Da(this, fa.prop, a, b, arguments.length > 1);
         },
         removeProp: function(a) {
             return a = fa.propFix[a] || a, this.each(function() {
@@ -2704,7 +2691,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             tabIndex: {
                 get: function(a) {
                     var b = fa.find.attr(a, "tabindex");
-                    return b ? parseInt(b, 10) : Cb.test(a.nodeName) || Db.test(a.nodeName) && a.href ? 0 : -1;
+                    return b ? parseInt(b, 10) : Bb.test(a.nodeName) || Cb.test(a.nodeName) && a.href ? 0 : -1;
                 }
             }
         }
@@ -2722,14 +2709,14 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }), fa.each([ "tabIndex", "readOnly", "maxLength", "cellSpacing", "cellPadding", "rowSpan", "colSpan", "useMap", "frameBorder", "contentEditable" ], function() {
         fa.propFix[this.toLowerCase()] = this;
     }), da.enctype || (fa.propFix.enctype = "encoding");
-    var Eb = /[\t\r\n\f]/g;
+    var Db = /[\t\r\n\f]/g;
     fa.fn.extend({
         addClass: function(a) {
             var b, c, d, e, f, g, h = 0, i = this.length, j = "string" == typeof a && a;
             if (fa.isFunction(a)) return this.each(function(b) {
                 fa(this).addClass(a.call(this, b, this.className));
             });
-            if (j) for (b = (a || "").match(ua) || []; i > h; h++) if (c = this[h], d = 1 === c.nodeType && (c.className ? (" " + c.className + " ").replace(Eb, " ") : " ")) {
+            if (j) for (b = (a || "").match(ta) || []; i > h; h++) if (c = this[h], d = 1 === c.nodeType && (c.className ? (" " + c.className + " ").replace(Db, " ") : " ")) {
                 for (f = 0; e = b[f++]; ) d.indexOf(" " + e + " ") < 0 && (d += e + " ");
                 g = fa.trim(d), c.className !== g && (c.className = g);
             }
@@ -2740,7 +2727,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             if (fa.isFunction(a)) return this.each(function(b) {
                 fa(this).removeClass(a.call(this, b, this.className));
             });
-            if (j) for (b = (a || "").match(ua) || []; i > h; h++) if (c = this[h], d = 1 === c.nodeType && (c.className ? (" " + c.className + " ").replace(Eb, " ") : "")) {
+            if (j) for (b = (a || "").match(ta) || []; i > h; h++) if (c = this[h], d = 1 === c.nodeType && (c.className ? (" " + c.className + " ").replace(Db, " ") : "")) {
                 for (f = 0; e = b[f++]; ) for (;d.indexOf(" " + e + " ") >= 0; ) d = d.replace(" " + e + " ", " ");
                 g = a ? fa.trim(d) : "", c.className !== g && (c.className = g);
             }
@@ -2751,12 +2738,12 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return "boolean" == typeof b && "string" === c ? b ? this.addClass(a) : this.removeClass(a) : this.each(fa.isFunction(a) ? function(c) {
                 fa(this).toggleClass(a.call(this, c, this.className, b), b);
             } : function() {
-                if ("string" === c) for (var b, d = 0, e = fa(this), f = a.match(ua) || []; b = f[d++]; ) e.hasClass(b) ? e.removeClass(b) : e.addClass(b); else (c === ya || "boolean" === c) && (this.className && fa._data(this, "__className__", this.className), 
+                if ("string" === c) for (var b, d = 0, e = fa(this), f = a.match(ta) || []; b = f[d++]; ) e.hasClass(b) ? e.removeClass(b) : e.addClass(b); else (c === xa || "boolean" === c) && (this.className && fa._data(this, "__className__", this.className), 
                 this.className = this.className || a === !1 ? "" : fa._data(this, "__className__") || "");
             });
         },
         hasClass: function(a) {
-            for (var b = " " + a + " ", c = 0, d = this.length; d > c; c++) if (1 === this[c].nodeType && (" " + this[c].className + " ").replace(Eb, " ").indexOf(b) >= 0) return !0;
+            for (var b = " " + a + " ", c = 0, d = this.length; d > c; c++) if (1 === this[c].nodeType && (" " + this[c].className + " ").replace(Db, " ").indexOf(b) >= 0) return !0;
             return !1;
         }
     }), fa.each("blur focus focusin focusout load resize scroll unload click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit keydown keypress keyup error contextmenu".split(" "), function(a, b) {
@@ -2780,11 +2767,11 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return 1 === arguments.length ? this.off(a, "**") : this.off(b, a || "**", c);
         }
     });
-    var Fb = fa.now(), Gb = /\?/, Hb = /(,)|(\[|{)|(}|])|"(?:[^"\\\r\n]|\\["\\\/bfnrt]|\\u[\da-fA-F]{4})*"\s*:?|true|false|null|-?(?!0\d)\d+(?:\.\d+|)(?:[eE][+-]?\d+|)/g;
+    var Eb = fa.now(), Fb = /\?/, Gb = /(,)|(\[|{)|(}|])|"(?:[^"\\\r\n]|\\["\\\/bfnrt]|\\u[\da-fA-F]{4})*"\s*:?|true|false|null|-?(?!0\d)\d+(?:\.\d+|)(?:[eE][+-]?\d+|)/g;
     fa.parseJSON = function(b) {
         if (a.JSON && a.JSON.parse) return a.JSON.parse(b + "");
         var c, d = null, e = fa.trim(b + "");
-        return e && !fa.trim(e.replace(Hb, function(a, b, e, f) {
+        return e && !fa.trim(e.replace(Gb, function(a, b, e, f) {
             return c && b && (d = 0), 0 === d ? a : (c = e || b, d += !f - !e, "");
         })) ? Function("return " + e)() : fa.error("Invalid JSON: " + b);
     }, fa.parseXML = function(b) {
@@ -2799,26 +2786,26 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         return c && c.documentElement && !c.getElementsByTagName("parsererror").length || fa.error("Invalid XML: " + b), 
         c;
     };
-    var Ib, Jb, Kb = /#.*$/, Lb = /([?&])_=[^&]*/, Mb = /^(.*?):[ \t]*([^\r\n]*)\r?$/gm, Nb = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/, Ob = /^(?:GET|HEAD)$/, Pb = /^\/\//, Qb = /^([\w.+-]+:)(?:\/\/(?:[^\/?#]*@|)([^\/?#:]*)(?::(\d+)|)|)/, Rb = {}, Sb = {}, Tb = "*/".concat("*");
+    var Hb, Ib, Jb = /#.*$/, Kb = /([?&])_=[^&]*/, Lb = /^(.*?):[ \t]*([^\r\n]*)\r?$/gm, Mb = /^(?:about|app|app-storage|.+-extension|file|res|widget):$/, Nb = /^(?:GET|HEAD)$/, Ob = /^\/\//, Pb = /^([\w.+-]+:)(?:\/\/(?:[^\/?#]*@|)([^\/?#:]*)(?::(\d+)|)|)/, Qb = {}, Rb = {}, Sb = "*/".concat("*");
     try {
-        Jb = location.href;
+        Ib = location.href;
     } catch (a) {
-        Jb = pa.createElement("a"), Jb.href = "", Jb = Jb.href;
+        Ib = pa.createElement("a"), Ib.href = "", Ib = Ib.href;
     }
-    Ib = Qb.exec(Jb.toLowerCase()) || [], fa.extend({
+    Hb = Pb.exec(Ib.toLowerCase()) || [], fa.extend({
         active: 0,
         lastModified: {},
         etag: {},
         ajaxSettings: {
-            url: Jb,
+            url: Ib,
             type: "GET",
-            isLocal: Nb.test(Ib[1]),
+            isLocal: Mb.test(Hb[1]),
             global: !0,
             processData: !0,
             async: !0,
             contentType: "application/x-www-form-urlencoded; charset=UTF-8",
             accepts: {
-                "*": Tb,
+                "*": Sb,
                 text: "text/plain",
                 html: "text/html",
                 xml: "application/xml, text/xml",
@@ -2848,15 +2835,15 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         ajaxSetup: function(a, b) {
             return b ? P(P(a, fa.ajaxSettings), b) : P(fa.ajaxSettings, a);
         },
-        ajaxPrefilter: N(Rb),
-        ajaxTransport: N(Sb),
+        ajaxPrefilter: N(Qb),
+        ajaxTransport: N(Rb),
         ajax: function(a, b) {
             function c(a, b, c, d) {
                 var e, k, r, s, u, w = b;
                 2 !== t && (t = 2, h && clearTimeout(h), j = void 0, g = d || "", v.readyState = a > 0 ? 4 : 0, 
                 e = a >= 200 && 300 > a || 304 === a, c && (s = Q(l, v, c)), s = R(l, s, v, e), 
                 e ? (l.ifModified && (u = v.getResponseHeader("Last-Modified"), u && (fa.lastModified[f] = u), 
-                u = v.getResponseHeader("etag"), u && (fa.etag[f] = u)), 204 === a || "HEAD" === l.type ? w = "nocontent" : 304 === a ? w = "notmodified" : (w = s.state, 
+                (u = v.getResponseHeader("etag")) && (fa.etag[f] = u)), 204 === a || "HEAD" === l.type ? w = "nocontent" : 304 === a ? w = "notmodified" : (w = s.state, 
                 k = s.data, r = s.error, e = !r)) : (r = w, (a || !w) && (w = "error", 0 > a && (a = 0))), 
                 v.status = a, v.statusText = (b || w) + "", e ? o.resolveWith(m, [ k, w, v ]) : o.rejectWith(m, [ v, w, r ]), 
                 v.statusCode(q), q = void 0, i && n.trigger(e ? "ajaxSuccess" : "ajaxError", [ v, l, e ? k : r ]), 
@@ -2868,7 +2855,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 getResponseHeader: function(a) {
                     var b;
                     if (2 === t) {
-                        if (!k) for (k = {}; b = Mb.exec(g); ) k[b[1].toLowerCase()] = b[2];
+                        if (!k) for (k = {}; b = Lb.exec(g); ) k[b[1].toLowerCase()] = b[2];
                         b = k[a.toLowerCase()];
                     }
                     return null == b ? null : b;
@@ -2893,17 +2880,17 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                     return j && j.abort(b), c(0, b), this;
                 }
             };
-            if (o.promise(v).complete = p.add, v.success = v.done, v.error = v.fail, l.url = ((a || l.url || Jb) + "").replace(Kb, "").replace(Pb, Ib[1] + "//"), 
-            l.type = b.method || b.type || l.method || l.type, l.dataTypes = fa.trim(l.dataType || "*").toLowerCase().match(ua) || [ "" ], 
-            null == l.crossDomain && (d = Qb.exec(l.url.toLowerCase()), l.crossDomain = !(!d || d[1] === Ib[1] && d[2] === Ib[2] && (d[3] || ("http:" === d[1] ? "80" : "443")) === (Ib[3] || ("http:" === Ib[1] ? "80" : "443")))), 
+            if (o.promise(v).complete = p.add, v.success = v.done, v.error = v.fail, l.url = ((a || l.url || Ib) + "").replace(Jb, "").replace(Ob, Hb[1] + "//"), 
+            l.type = b.method || b.type || l.method || l.type, l.dataTypes = fa.trim(l.dataType || "*").toLowerCase().match(ta) || [ "" ], 
+            null == l.crossDomain && (d = Pb.exec(l.url.toLowerCase()), l.crossDomain = !(!d || d[1] === Hb[1] && d[2] === Hb[2] && (d[3] || ("http:" === d[1] ? "80" : "443")) === (Hb[3] || ("http:" === Hb[1] ? "80" : "443")))), 
             l.data && l.processData && "string" != typeof l.data && (l.data = fa.param(l.data, l.traditional)), 
-            O(Rb, l, b, v), 2 === t) return v;
-            i = l.global, i && 0 === fa.active++ && fa.event.trigger("ajaxStart"), l.type = l.type.toUpperCase(), 
-            l.hasContent = !Ob.test(l.type), f = l.url, l.hasContent || (l.data && (f = l.url += (Gb.test(f) ? "&" : "?") + l.data, 
-            delete l.data), l.cache === !1 && (l.url = Lb.test(f) ? f.replace(Lb, "$1_=" + Fb++) : f + (Gb.test(f) ? "&" : "?") + "_=" + Fb++)), 
+            O(Qb, l, b, v), 2 === t) return v;
+            i = l.global, i && 0 == fa.active++ && fa.event.trigger("ajaxStart"), l.type = l.type.toUpperCase(), 
+            l.hasContent = !Nb.test(l.type), f = l.url, l.hasContent || (l.data && (f = l.url += (Fb.test(f) ? "&" : "?") + l.data, 
+            delete l.data), l.cache === !1 && (l.url = Kb.test(f) ? f.replace(Kb, "$1_=" + Eb++) : f + (Fb.test(f) ? "&" : "?") + "_=" + Eb++)), 
             l.ifModified && (fa.lastModified[f] && v.setRequestHeader("If-Modified-Since", fa.lastModified[f]), 
             fa.etag[f] && v.setRequestHeader("If-None-Match", fa.etag[f])), (l.data && l.hasContent && l.contentType !== !1 || b.contentType) && v.setRequestHeader("Content-Type", l.contentType), 
-            v.setRequestHeader("Accept", l.dataTypes[0] && l.accepts[l.dataTypes[0]] ? l.accepts[l.dataTypes[0]] + ("*" !== l.dataTypes[0] ? ", " + Tb + "; q=0.01" : "") : l.accepts["*"]);
+            v.setRequestHeader("Accept", l.dataTypes[0] && l.accepts[l.dataTypes[0]] ? l.accepts[l.dataTypes[0]] + ("*" !== l.dataTypes[0] ? ", " + Sb + "; q=0.01" : "") : l.accepts["*"]);
             for (e in l.headers) v.setRequestHeader(e, l.headers[e]);
             if (l.beforeSend && (l.beforeSend.call(m, v, l) === !1 || 2 === t)) return v.abort();
             u = "abort";
@@ -2912,7 +2899,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 error: 1,
                 complete: 1
             }) v[e](l[e]);
-            if (j = O(Sb, l, b, v)) {
+            if (j = O(Rb, l, b, v)) {
                 v.readyState = 1, i && n.trigger("ajaxSend", [ v, l ]), l.async && l.timeout > 0 && (h = setTimeout(function() {
                     v.abort("timeout");
                 }, l.timeout));
@@ -2992,7 +2979,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }, fa.expr.filters.visible = function(a) {
         return !fa.expr.filters.hidden(a);
     };
-    var Ub = /%20/g, Vb = /\[\]$/, Wb = /\r?\n/g, Xb = /^(?:submit|button|image|reset|file)$/i, Yb = /^(?:input|select|textarea|keygen)/i;
+    var Tb = /%20/g, Ub = /\[\]$/, Vb = /\r?\n/g, Wb = /^(?:submit|button|image|reset|file)$/i, Xb = /^(?:input|select|textarea|keygen)/i;
     fa.param = function(a, b) {
         var c, d = [], e = function(a, b) {
             b = fa.isFunction(b) ? b() : null == b ? "" : b, d[d.length] = encodeURIComponent(a) + "=" + encodeURIComponent(b);
@@ -3000,7 +2987,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         if (void 0 === b && (b = fa.ajaxSettings && fa.ajaxSettings.traditional), fa.isArray(a) || a.jquery && !fa.isPlainObject(a)) fa.each(a, function() {
             e(this.name, this.value);
         }); else for (c in a) S(c, a[c], b, e);
-        return d.join("&").replace(Ub, "+");
+        return d.join("&").replace(Tb, "+");
     }, fa.fn.extend({
         serialize: function() {
             return fa.param(this.serializeArray());
@@ -3011,38 +2998,38 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 return a ? fa.makeArray(a) : this;
             }).filter(function() {
                 var a = this.type;
-                return this.name && !fa(this).is(":disabled") && Yb.test(this.nodeName) && !Xb.test(a) && (this.checked || !Fa.test(a));
+                return this.name && !fa(this).is(":disabled") && Xb.test(this.nodeName) && !Wb.test(a) && (this.checked || !Ea.test(a));
             }).map(function(a, b) {
                 var c = fa(this).val();
                 return null == c ? null : fa.isArray(c) ? fa.map(c, function(a) {
                     return {
                         name: b.name,
-                        value: a.replace(Wb, "\r\n")
+                        value: a.replace(Vb, "\r\n")
                     };
                 }) : {
                     name: b.name,
-                    value: c.replace(Wb, "\r\n")
+                    value: c.replace(Vb, "\r\n")
                 };
             }).get();
         }
     }), fa.ajaxSettings.xhr = void 0 !== a.ActiveXObject ? function() {
         return !this.isLocal && /^(get|post|head|put|delete|options)$/i.test(this.type) && T() || U();
     } : T;
-    var Zb = 0, $b = {}, _b = fa.ajaxSettings.xhr();
+    var Yb = 0, Zb = {}, $b = fa.ajaxSettings.xhr();
     a.ActiveXObject && fa(a).on("unload", function() {
-        for (var a in $b) $b[a](void 0, !0);
-    }), da.cors = !!_b && "withCredentials" in _b, _b = da.ajax = !!_b, _b && fa.ajaxTransport(function(a) {
+        for (var a in Zb) Zb[a](void 0, !0);
+    }), da.cors = !!$b && "withCredentials" in $b, ($b = da.ajax = !!$b) && fa.ajaxTransport(function(a) {
         if (!a.crossDomain || da.cors) {
             var b;
             return {
                 send: function(c, d) {
-                    var e, f = a.xhr(), g = ++Zb;
+                    var e, f = a.xhr(), g = ++Yb;
                     if (f.open(a.type, a.url, a.async, a.username, a.password), a.xhrFields) for (e in a.xhrFields) f[e] = a.xhrFields[e];
                     a.mimeType && f.overrideMimeType && f.overrideMimeType(a.mimeType), a.crossDomain || c["X-Requested-With"] || (c["X-Requested-With"] = "XMLHttpRequest");
                     for (e in c) void 0 !== c[e] && f.setRequestHeader(e, c[e] + "");
                     f.send(a.hasContent && a.data || null), b = function(c, e) {
                         var h, i, j;
-                        if (b && (e || 4 === f.readyState)) if (delete $b[g], b = void 0, f.onreadystatechange = fa.noop, 
+                        if (b && (e || 4 === f.readyState)) if (delete Zb[g], b = void 0, f.onreadystatechange = fa.noop, 
                         e) 4 !== f.readyState && f.abort(); else {
                             j = {}, h = f.status, "string" == typeof f.responseText && (j.text = f.responseText);
                             try {
@@ -3053,7 +3040,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                             h || !a.isLocal || a.crossDomain ? 1223 === h && (h = 204) : h = j.text ? 200 : 404;
                         }
                         j && d(h, i, j, f.getAllResponseHeaders());
-                    }, a.async ? 4 === f.readyState ? setTimeout(b) : f.onreadystatechange = $b[g] = b : b();
+                    }, a.async ? 4 === f.readyState ? setTimeout(b) : f.onreadystatechange = Zb[g] = b : b();
                 },
                 abort: function() {
                     b && b(void 0, !0);
@@ -3091,23 +3078,23 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             };
         }
     });
-    var ac = [], bc = /(=)\?(?=&|$)|\?\?/;
+    var _b = [], ac = /(=)\?(?=&|$)|\?\?/;
     fa.ajaxSetup({
         jsonp: "callback",
         jsonpCallback: function() {
-            var a = ac.pop() || fa.expando + "_" + Fb++;
+            var a = _b.pop() || fa.expando + "_" + Eb++;
             return this[a] = !0, a;
         }
     }), fa.ajaxPrefilter("json jsonp", function(b, c, d) {
-        var e, f, g, h = b.jsonp !== !1 && (bc.test(b.url) ? "url" : "string" == typeof b.data && !(b.contentType || "").indexOf("application/x-www-form-urlencoded") && bc.test(b.data) && "data");
+        var e, f, g, h = b.jsonp !== !1 && (ac.test(b.url) ? "url" : "string" == typeof b.data && !(b.contentType || "").indexOf("application/x-www-form-urlencoded") && ac.test(b.data) && "data");
         return h || "jsonp" === b.dataTypes[0] ? (e = b.jsonpCallback = fa.isFunction(b.jsonpCallback) ? b.jsonpCallback() : b.jsonpCallback, 
-        h ? b[h] = b[h].replace(bc, "$1" + e) : b.jsonp !== !1 && (b.url += (Gb.test(b.url) ? "&" : "?") + b.jsonp + "=" + e), 
+        h ? b[h] = b[h].replace(ac, "$1" + e) : b.jsonp !== !1 && (b.url += (Fb.test(b.url) ? "&" : "?") + b.jsonp + "=" + e), 
         b.converters["script json"] = function() {
             return g || fa.error(e + " was not called"), g[0];
         }, b.dataTypes[0] = "json", f = a[e], a[e] = function() {
             g = arguments;
         }, d.always(function() {
-            a[e] = f, b[e] && (b.jsonpCallback = c.jsonpCallback, ac.push(e)), g && fa.isFunction(f) && f(g[0]), 
+            a[e] = f, b[e] && (b.jsonpCallback = c.jsonpCallback, _b.push(e)), g && fa.isFunction(f) && f(g[0]), 
             g = f = void 0;
         }), "script") : void 0;
     }), fa.parseHTML = function(a, b, c) {
@@ -3117,9 +3104,9 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         return d ? [ b.createElement(d[1]) ] : (d = fa.buildFragment([ a ], b, e), e && e.length && fa(e).remove(), 
         fa.merge([], d.childNodes));
     };
-    var cc = fa.fn.load;
+    var bc = fa.fn.load;
     fa.fn.load = function(a, b, c) {
-        if ("string" != typeof a && cc) return cc.apply(this, arguments);
+        if ("string" != typeof a && bc) return bc.apply(this, arguments);
         var d, e, f, g = this, h = a.indexOf(" ");
         return h >= 0 && (d = a.slice(h, a.length), a = a.slice(0, h)), fa.isFunction(b) ? (c = b, 
         b = void 0) : b && "object" == typeof b && (f = "POST"), g.length > 0 && fa.ajax({
@@ -3137,7 +3124,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return a === b.elem;
         }).length;
     };
-    var dc = a.document.documentElement;
+    var cc = a.document.documentElement;
     fa.offset = {
         setOffset: function(a, b, c) {
             var d, e, f, g, h, i, j, k = fa.css(a, "position"), l = fa(a), m = {};
@@ -3156,7 +3143,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 top: 0,
                 left: 0
             }, e = this[0], f = e && e.ownerDocument;
-            return f ? (b = f.documentElement, fa.contains(b, e) ? (typeof e.getBoundingClientRect !== ya && (d = e.getBoundingClientRect()), 
+            return f ? (b = f.documentElement, fa.contains(b, e) ? (typeof e.getBoundingClientRect !== xa && (d = e.getBoundingClientRect()), 
             c = V(f), {
                 top: d.top + (c.pageYOffset || b.scrollTop) - (b.clientTop || 0),
                 left: d.left + (c.pageXOffset || b.scrollLeft) - (b.clientLeft || 0)
@@ -3178,8 +3165,8 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         },
         offsetParent: function() {
             return this.map(function() {
-                for (var a = this.offsetParent || dc; a && !fa.nodeName(a, "html") && "static" === fa.css(a, "position"); ) a = a.offsetParent;
-                return a || dc;
+                for (var a = this.offsetParent || cc; a && !fa.nodeName(a, "html") && "static" === fa.css(a, "position"); ) a = a.offsetParent;
+                return a || cc;
             });
         }
     }), fa.each({
@@ -3188,14 +3175,14 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }, function(a, b) {
         var c = /Y/.test(b);
         fa.fn[a] = function(d) {
-            return Ea(this, function(a, d, e) {
+            return Da(this, function(a, d, e) {
                 var f = V(a);
                 return void 0 === e ? f ? b in f ? f[b] : f.document.documentElement[d] : a[d] : void (f ? f.scrollTo(c ? fa(f).scrollLeft() : e, c ? e : fa(f).scrollTop()) : a[d] = e);
             }, a, d, arguments.length, null);
         };
     }), fa.each([ "top", "left" ], function(a, b) {
         fa.cssHooks[b] = A(da.pixelPosition, function(a, c) {
-            return c ? (c = cb(a, b), eb.test(c) ? fa(a).position()[b] + "px" : c) : void 0;
+            return c ? (c = bb(a, b), db.test(c) ? fa(a).position()[b] + "px" : c) : void 0;
         });
     }), fa.each({
         Height: "height",
@@ -3208,7 +3195,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         }, function(c, d) {
             fa.fn[d] = function(d, e) {
                 var f = arguments.length && (c || "boolean" != typeof d), g = c || (d === !0 || e === !0 ? "margin" : "border");
-                return Ea(this, function(b, c, d) {
+                return Da(this, function(b, c, d) {
                     var e;
                     return fa.isWindow(b) ? b.document.documentElement["client" + a] : 9 === b.nodeType ? (e = b.documentElement, 
                     Math.max(b.body["scroll" + a], e["scroll" + a], b.body["offset" + a], e["offset" + a], e["client" + a])) : void 0 === d ? fa.css(b, c, g) : fa.style(b, c, d, g);
@@ -3220,10 +3207,10 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }, fa.fn.andSelf = fa.fn.addBack, "function" == typeof define && define.amd && define("jquery", [], function() {
         return fa;
     });
-    var ec = a.jQuery, fc = a.$;
+    var dc = a.jQuery, ec = a.$;
     return fa.noConflict = function(b) {
-        return a.$ === fa && (a.$ = fc), b && a.jQuery === fa && (a.jQuery = ec), fa;
-    }, typeof b === ya && (a.jQuery = a.$ = fa), fa;
+        return a.$ === fa && (a.$ = ec), b && a.jQuery === fa && (a.jQuery = dc), fa;
+    }, typeof b === xa && (a.jQuery = a.$ = fa), fa;
 }), function() {
     var a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t = {}.hasOwnProperty, u = [].indexOf || function(a) {
         for (var b = 0, c = this.length; b < c; b++) if (b in this && this[b] === a) return b;
@@ -3241,7 +3228,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     };
     var v = function(a) {
         var b, c;
-        for (b in a) t.call(a, b) && (c = a[b], !1 !== c && (this[b] = c));
+        for (b in a) t.call(a, b) && !1 !== (c = a[b]) && (this[b] = c);
         this.keys = this.keys || [], this.count = this.count || 0;
     };
     v.prototype.allows_key_repeat = function() {
@@ -3321,15 +3308,14 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
                 f = !0;
                 break;
             }
-            g && (d ? (b = this._active_combos.splice(e, 1)[0], null != b && b.reset()) : (b = this._active_combos.splice(e, 1, a)[0], 
+            g && (d ? null != (b = this._active_combos.splice(e, 1)[0]) && b.reset() : (b = this._active_combos.splice(e, 1, a)[0], 
             null != b && b.reset(), d = !0), f = !1);
         }
         return f && this._active_combos.unshift(a), g || f;
     }, w.prototype._remove_from_active_combos = function(a) {
-        var b, c, d, e;
-        for (c = d = 0, e = this._active_combos.length; 0 <= e ? d < e : d > e; c = 0 <= e ? ++d : --d) if (b = this._active_combos[c], 
-        b === a) {
-            a = this._active_combos.splice(c, 1)[0], a.reset();
+        var b, c, d;
+        for (b = c = 0, d = this._active_combos.length; 0 <= d ? c < d : c > d; b = 0 <= d ? ++c : --c) if (this._active_combos[b] === a) {
+            a = this._active_combos.splice(b, 1)[0], a.reset();
             break;
         }
     }, w.prototype._get_possible_sequences = function() {
@@ -3428,8 +3414,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         for (d = this._active_combos.length, f = [], i = this._active_combos, g = 0, h = i.length; g < h; g++) c = i[g], 
         0 <= u.call(c.keys, a) && f.push(c);
         for (g = 0, h = f.length; g < h; g++) c = f[g], this._handle_combo_up(c, b, a);
-        if (1 < d) for (h = this._active_combos, d = 0, g = h.length; d < g; d++) c = h[d], 
-        void 0 === c || 0 <= u.call(f, c) || this._keys_remain(c) || this._remove_from_active_combos(c);
+        if (1 < d) for (h = this._active_combos, d = 0, g = h.length; d < g; d++) void 0 === (c = h[d]) || 0 <= u.call(f, c) || this._keys_remain(c) || this._remove_from_active_combos(c);
     }, w.prototype._handle_combo_up = function(a, c, d) {
         var e, f;
         this._prevent_default(c, a && a.prevent_default), f = this._keys_remain(a), a.keyup_fired || (e = this._keys_down.slice(), 
@@ -3479,7 +3464,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
             return e;
         }, a instanceof v) return e(a);
         for ("string" == typeof a && (a = a.split(" ")), h = this._registered_combos, i = [], 
-        f = 0, g = h.length; f < g; f++) d = h[f], null != d && (d.is_unordered && b(a, d.keys) || !d.is_unordered && c(a, d.keys) ? i.push(e(d)) : i.push(void 0));
+        f = 0, g = h.length; f < g; f++) null != (d = h[f]) && (d.is_unordered && b(a, d.keys) || !d.is_unordered && c(a, d.keys) ? i.push(e(d)) : i.push(void 0));
         return i;
     }, w.prototype.unregister_many = function(a) {
         var b, c, d, e;
@@ -3524,7 +3509,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
     }, j = function(a, b) {
         var c, d, e, f;
         for (e = d = 0, f = a.length; e < f; e++) {
-            if (c = a[e], c = h.call(b, c), !(c >= d)) return !1;
+            if (c = a[e], !((c = h.call(b, c)) >= d)) return !1;
             d = c;
         }
         return !0;
@@ -3558,7 +3543,7 @@ var license = "Copyright (c) 2015 by Marco Stagni < http://marcostagni.com mrc.s
         return g;
     }, e = function(a, b) {
         var c;
-        return !!b.shiftKey && (c = n[a], null != c && c);
+        return !!b.shiftKey && (null != (c = n[a]) && c);
     }, q = {
         cmd: "metaKey",
         ctrl: "ctrlKey",
@@ -3924,7 +3909,7 @@ void 0 === Number.EPSILON && (Number.EPSILON = Math.pow(2, -52)), void 0 === Mat
                 }
             }
         } else if (c = /^\#([A-Fa-f0-9]+)$/.exec(a)) {
-            if (c = c[1], d = c.length, 3 === d) return this.r = parseInt(c.charAt(0) + c.charAt(0), 16) / 255, 
+            if (c = c[1], 3 === (d = c.length)) return this.r = parseInt(c.charAt(0) + c.charAt(0), 16) / 255, 
             this.g = parseInt(c.charAt(1) + c.charAt(1), 16) / 255, this.b = parseInt(c.charAt(2) + c.charAt(2), 16) / 255, 
             this;
             if (6 === d) return this.r = parseInt(c.charAt(0) + c.charAt(1), 16) / 255, this.g = parseInt(c.charAt(2) + c.charAt(3), 16) / 255, 
@@ -5826,17 +5811,15 @@ THREE.Euler.prototype = {
     intersectTriangle: function() {
         var a = new THREE.Vector3(), b = new THREE.Vector3(), c = new THREE.Vector3(), d = new THREE.Vector3();
         return function(e, f, g, h, i) {
-            if (b.subVectors(f, e), c.subVectors(g, e), d.crossVectors(b, c), f = this.direction.dot(d), 
-            0 < f) {
+            if (b.subVectors(f, e), c.subVectors(g, e), d.crossVectors(b, c), 0 < (f = this.direction.dot(d))) {
                 if (h) return null;
                 h = 1;
             } else {
                 if (!(0 > f)) return null;
                 h = -1, f = -f;
             }
-            return a.subVectors(this.origin, e), e = h * this.direction.dot(c.crossVectors(a, c)), 
-            0 > e ? null : (g = h * this.direction.dot(b.cross(a)), 0 > g || e + g > f ? null : (e = -h * a.dot(d), 
-            0 > e ? null : this.at(e / f, i)));
+            return a.subVectors(this.origin, e), 0 > (e = h * this.direction.dot(c.crossVectors(a, c))) ? null : 0 > (g = h * this.direction.dot(b.cross(a))) || e + g > f ? null : (e = -h * a.dot(d), 
+            0 > e ? null : this.at(e / f, i));
         };
     }(),
     applyMatrix4: function(a) {
@@ -6091,10 +6074,10 @@ THREE.Euler.prototype = {
         return d + (a - b) * (e - d) / (c - b);
     },
     smoothstep: function(a, b, c) {
-        return a <= b ? 0 : a >= c ? 1 : (a = (a - b) / (c - b), a * a * (3 - 2 * a));
+        return a <= b ? 0 : a >= c ? 1 : (a = (a - b) / (c - b)) * a * (3 - 2 * a);
     },
     smootherstep: function(a, b, c) {
-        return a <= b ? 0 : a >= c ? 1 : (a = (a - b) / (c - b), a * a * a * (a * (6 * a - 15) + 10));
+        return a <= b ? 0 : a >= c ? 1 : (a = (a - b) / (c - b)) * a * a * (a * (6 * a - 15) + 10);
     },
     random16: function() {
         return console.warn("THREE.Math.random16() has been deprecated. Use Math.random() instead."), 
@@ -6116,14 +6099,13 @@ THREE.Euler.prototype = {
         return a * THREE.Math.RAD2DEG;
     },
     isPowerOfTwo: function(a) {
-        return 0 === (a & a - 1) && 0 !== a;
+        return 0 == (a & a - 1) && 0 !== a;
     },
     nearestPowerOfTwo: function(a) {
         return Math.pow(2, Math.round(Math.log(a) / Math.LN2));
     },
     nextPowerOfTwo: function(a) {
-        return a--, a |= a >> 1, a |= a >> 2, a |= a >> 4, a |= a >> 8, a |= a >> 16, a++, 
-        a;
+        return a--, a |= a >> 1, a |= a >> 2, a |= a >> 4, a |= a >> 8, a |= a >> 16, ++a;
     }
 }, THREE.Spline = function(a) {
     function b(a, b, c, d, e, f, g) {
@@ -6156,7 +6138,7 @@ THREE.Euler.prototype = {
         var b, c, d, e = b = b = 0, f = new THREE.Vector3(), g = new THREE.Vector3(), h = [], i = 0;
         for (h[0] = 0, a || (a = 100), c = this.points.length * a, f.copy(this.points[0]), 
         a = 1; a < c; a++) b = a / c, d = this.getPoint(b), g.copy(d), i += g.distanceTo(f), 
-        f.copy(d), b *= this.points.length - 1, b = Math.floor(b), b !== e && (h[b] = i, 
+        f.copy(d), b *= this.points.length - 1, (b = Math.floor(b)) !== e && (h[b] = i, 
         e = b);
         return h[h.length] = i, {
             chunks: h,
@@ -6283,7 +6265,7 @@ THREE.Euler.prototype = {
                     d = c, c = 0;
                 }
                 for (;c < d; ) e = c + d >>> 1, a < b[e] ? d = e : c = e + 1;
-                if (d = b[c], e = b[c - 1], void 0 === e) return this._cachedIndex = 0, this.beforeStart_(0, a, d);
+                if (d = b[c], void 0 === (e = b[c - 1])) return this._cachedIndex = 0, this.beforeStart_(0, a, d);
                 if (void 0 === d) return this._cachedIndex = c = b.length, this.afterEnd_(c - 1, e, a);
             }
             this._cachedIndex = c, this.intervalChanged_(c, e, d);
@@ -6449,7 +6431,7 @@ THREE.Euler.prototype = {
         this.mask &= ~(1 << a);
     },
     test: function(a) {
-        return 0 !== (this.mask & a.mask);
+        return 0 != (this.mask & a.mask);
     }
 }, function(a) {
     function b(a, b) {
@@ -6633,7 +6615,7 @@ Object.assign(THREE.Object3D.prototype, THREE.EventDispatcher.prototype, {
     },
     remove: function(a) {
         if (1 < arguments.length) for (var b = 0; b < arguments.length; b++) this.remove(arguments[b]);
-        b = this.children.indexOf(a), -1 !== b && (a.parent = null, a.dispatchEvent({
+        -1 !== (b = this.children.indexOf(a)) && (a.parent = null, a.dispatchEvent({
             type: "removed"
         }), this.children.splice(b, 1));
     },
@@ -7731,11 +7713,10 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
     _update: function(a, b, c, d) {
         var e = this._startTime;
         if (null !== e) {
-            if (b = (a - e) * c, 0 > b || 0 === c) return;
+            if (0 > (b = (a - e) * c) || 0 === c) return;
             this._startTime = null, b *= c;
         }
-        if (b *= this._updateTimeScale(a), c = this._updateTime(b), a = this._updateWeight(a), 
-        0 < a) {
+        if (b *= this._updateTimeScale(a), c = this._updateTime(b), 0 < (a = this._updateWeight(a))) {
             b = this._interpolants;
             for (var e = this._propertyBindings, f = 0, g = b.length; f !== g; ++f) b[f].evaluate(c), 
             e[f].accumulate(d, a);
@@ -7793,7 +7774,7 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
                     loopDelta: f
                 }));
             }
-            if (d && 1 === (1 & e)) return this.time = b, c - b;
+            if (d && 1 == (1 & e)) return this.time = b, c - b;
         }
         return this.time = b;
     },
@@ -7900,7 +7881,7 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
     clipAction: function(a, b) {
         var c = b || this._root, d = c.uuid, e = "string" == typeof a ? THREE.AnimationClip.findByName(c, a) : a, c = null !== e ? e.uuid : a, f = this._actionsByClip[c], g = null;
         if (void 0 !== f) {
-            if (g = f.actionByRoot[d], void 0 !== g) return g;
+            if (void 0 !== (g = f.actionByRoot[d])) return g;
             g = f.knownActions[0], null === e && (e = g._clip);
         }
         return null === e ? null : (e = new THREE.AnimationMixer._Action(this, e, b), this._bindAction(e, g), 
@@ -7949,7 +7930,7 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
             var d = c[b].actionByRoot[a];
             void 0 !== d && (this._deactivateAction(d), this._removeInactiveAction(d));
         }
-        if (b = this._bindingsByRootAndName[a], void 0 !== b) for (var e in b) a = b[e], 
+        if (void 0 !== (b = this._bindingsByRootAndName[a])) for (var e in b) a = b[e], 
         a.restoreOriginalState(), this._removeInactiveBinding(a);
     },
     uncacheAction: function(a, b) {
@@ -7962,7 +7943,7 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
         for (void 0 === j && (j = {}, i[h] = j), i = 0; i !== e; ++i) {
             var k = d[i], l = k.name, m = j[l];
             if (void 0 === m) {
-                if (m = f[i], void 0 !== m) {
+                if (void 0 !== (m = f[i])) {
                     null === m._cacheIndex && (++m.referenceCount, this._addInactiveBinding(m, h, l));
                     continue;
                 }
@@ -7980,7 +7961,7 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
             }
             for (b = a._propertyBindings, c = 0, d = b.length; c !== d; ++c) {
                 var e = b[c];
-                0 === e.useCount++ && (this._lendBinding(e), e.saveOriginalState());
+                0 == e.useCount++ && (this._lendBinding(e), e.saveOriginalState());
             }
             this._lendAction(a);
         }
@@ -7989,7 +7970,7 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
         if (this._isActiveAction(a)) {
             for (var b = a._propertyBindings, c = 0, d = b.length; c !== d; ++c) {
                 var e = b[c];
-                0 === --e.useCount && (e.restoreOriginalState(), this._takeBackBinding(e));
+                0 == --e.useCount && (e.restoreOriginalState(), this._takeBackBinding(e));
             }
             this._takeBackAction(a);
         }
@@ -8027,7 +8008,7 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
         };
     },
     _isActiveAction: function(a) {
-        return a = a._cacheIndex, null !== a && a < this._nActiveActions;
+        return null !== (a = a._cacheIndex) && a < this._nActiveActions;
     },
     _addInactiveAction: function(a, b, c) {
         var d = this._actions, e = this._actionsByClip, f = e[b];
@@ -8048,7 +8029,7 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
         a = a._propertyBindings;
         for (var b = 0, c = a.length; b !== c; ++b) {
             var d = a[b];
-            0 === --d.referenceCount && this._removeInactiveBinding(d);
+            0 == --d.referenceCount && this._removeInactiveBinding(d);
         }
     },
     _lendAction: function(a) {
@@ -8275,8 +8256,7 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
     },
     validate: function() {
         var a = !0, b = this.getValueSize();
-        0 !== b - Math.floor(b) && (console.error("invalid value size in track", this), 
-        a = !1);
+        0 != b - Math.floor(b) && (console.error("invalid value size in track", this), a = !1);
         var c = this.times, b = this.values, d = c.length;
         0 === d && (console.error("track is empty", this), a = !1);
         for (var e = null, f = 0; f !== d; f++) {
@@ -8668,12 +8648,14 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
         }
     },
     pause: function() {
-        return !1 !== this.hasPlaybackControl ? (this.source.stop(), this.startTime = this.context.currentTime, 
-        this) : void console.warn("THREE.Audio: this Audio has no playback control.");
+        if (!1 !== this.hasPlaybackControl) return this.source.stop(), this.startTime = this.context.currentTime, 
+        this;
+        console.warn("THREE.Audio: this Audio has no playback control.");
     },
     stop: function() {
-        return !1 !== this.hasPlaybackControl ? (this.source.stop(), this.startTime = 0, 
-        this) : void console.warn("THREE.Audio: this Audio has no playback control.");
+        if (!1 !== this.hasPlaybackControl) return this.source.stop(), this.startTime = 0, 
+        this;
+        console.warn("THREE.Audio: this Audio has no playback control.");
     },
     connect: function() {
         if (0 < this.filters.length) {
@@ -8705,8 +8687,9 @@ THREE.InstancedBufferGeometry.prototype.addGroup = function(a, b, c) {
         return this.setFilters(a ? [ a ] : []);
     },
     setPlaybackRate: function(a) {
-        return !1 !== this.hasPlaybackControl ? (this.playbackRate = a, !0 === this.isPlaying && (this.source.playbackRate.value = this.playbackRate), 
-        this) : void console.warn("THREE.Audio: this Audio has no playback control.");
+        if (!1 !== this.hasPlaybackControl) return this.playbackRate = a, !0 === this.isPlaying && (this.source.playbackRate.value = this.playbackRate), 
+        this;
+        console.warn("THREE.Audio: this Audio has no playback control.");
     },
     getPlaybackRate: function() {
         return this.playbackRate;
@@ -9285,9 +9268,7 @@ THREE.OrthographicCamera = function(a, b, c, d, e, f) {
 
 THREE.XHRLoader = function(a) {
     this.manager = void 0 !== a ? a : THREE.DefaultLoadingManager;
-};
-
-THREE.XHRLoader.prototype = {
+}, THREE.XHRLoader.prototype = {
     constructor: THREE.XHRLoader,
     load: function(a, b, c, d) {
         void 0 !== this.path && (a = this.path + a);
@@ -9376,7 +9357,7 @@ THREE.XHRLoader.prototype = {
         g.setWithCredentials(this.withCredentials), g.load(a, function(c) {
             c = JSON.parse(c);
             var d = c.metadata;
-            if (void 0 !== d && (d = d.type, void 0 !== d)) {
+            if (void 0 !== d && void 0 !== (d = d.type)) {
                 if ("object" === d.toLowerCase()) return void console.error("THREE.JSONLoader: " + a + " should be loaded with THREE.ObjectLoader instead.");
                 if ("scene" === d.toLowerCase()) return void console.error("THREE.JSONLoader: " + a + " should be loaded with THREE.SceneLoader instead.");
             }
@@ -9492,7 +9473,7 @@ THREE.XHRLoader.prototype = {
             var g = f[e], c = new d[g.type](g.array);
             b.addAttribute(e, new THREE.BufferAttribute(c, g.itemSize, g.normalized));
         }
-        if (d = a.data.groups || a.data.drawcalls || a.data.offsets, void 0 !== d) for (e = 0, 
+        if (void 0 !== (d = a.data.groups || a.data.drawcalls || a.data.offsets)) for (e = 0, 
         c = d.length; e !== c; ++e) f = d[e], b.addGroup(f.start, f.count, f.materialIndex);
         return a = a.data.boundingSphere, void 0 !== a && (d = new THREE.Vector3(), void 0 !== a.center && d.fromArray(a.center), 
         b.boundingSphere = new THREE.Sphere(d, a.radius)), b;
@@ -9821,7 +9802,7 @@ THREE.XHRLoader.prototype = {
     load: function(a, b, c, d) {
         function e(c) {
             g.load(a[c], function(a) {
-                f.images[c] = a, h++, 6 === h && (f.needsUpdate = !0, b && b(f));
+                f.images[c] = a, 6 === ++h && (f.needsUpdate = !0, b && b(f));
             }, void 0, d);
         }
         var f = new THREE.CubeTexture(), g = new THREE.ImageLoader(this.manager);
@@ -9864,7 +9845,7 @@ THREE.XHRLoader.prototype = {
                     height: a.height,
                     format: a.format,
                     mipmaps: a.mipmaps
-                }, j += 1, 6 === j && (1 === a.mipmapCount && (h.minFilter = THREE.LinearFilter), 
+                }, 6 === (j += 1) && (1 === a.mipmapCount && (h.minFilter = THREE.LinearFilter), 
                 h.format = a.format, h.needsUpdate = !0, b && b(h));
             }, c, d);
         }
@@ -10399,11 +10380,12 @@ THREE.Group = function() {
         return new this.constructor(this.geometry, this.material).copy(this);
     }
 }), THREE.Line = function(a, b, c) {
-    return 1 === c ? (console.warn("THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead."), 
-    new THREE.LineSegments(a, b)) : (THREE.Object3D.call(this), this.type = "Line", 
-    this.geometry = void 0 !== a ? a : new THREE.BufferGeometry(), void (this.material = void 0 !== b ? b : new THREE.LineBasicMaterial({
+    if (1 === c) return console.warn("THREE.Line: parameter THREE.LinePieces no longer supported. Created THREE.LineSegments instead."), 
+    new THREE.LineSegments(a, b);
+    THREE.Object3D.call(this), this.type = "Line", this.geometry = void 0 !== a ? a : new THREE.BufferGeometry(), 
+    this.material = void 0 !== b ? b : new THREE.LineBasicMaterial({
         color: 16777215 * Math.random()
-    })));
+    });
 }, THREE.Line.prototype = Object.assign(Object.create(THREE.Object3D.prototype), {
     constructor: THREE.Line,
     raycast: function() {
@@ -10419,7 +10401,7 @@ THREE.Group = function() {
                     if (null !== m) for (var m = m.array, g = 0, o = m.length - 1; g < o; g += l) {
                         var p = m[g + 1];
                         i.fromArray(n, 3 * m[g]), j.fromArray(n, 3 * p), p = b.distanceSqToSegment(i, j, k, h), 
-                        p > f || (k.applyMatrix4(this.matrixWorld), p = d.ray.origin.distanceTo(k), p < d.near || p > d.far || e.push({
+                        p > f || (k.applyMatrix4(this.matrixWorld), (p = d.ray.origin.distanceTo(k)) < d.near || p > d.far || e.push({
                             distance: p,
                             point: h.clone().applyMatrix4(this.matrixWorld),
                             index: g,
@@ -10428,8 +10410,8 @@ THREE.Group = function() {
                             object: this
                         }));
                     } else for (g = 0, o = n.length / 3 - 1; g < o; g += l) i.fromArray(n, 3 * g), j.fromArray(n, 3 * g + 3), 
-                    p = b.distanceSqToSegment(i, j, k, h), p > f || (k.applyMatrix4(this.matrixWorld), 
-                    p = d.ray.origin.distanceTo(k), p < d.near || p > d.far || e.push({
+                    (p = b.distanceSqToSegment(i, j, k, h)) > f || (k.applyMatrix4(this.matrixWorld), 
+                    (p = d.ray.origin.distanceTo(k)) < d.near || p > d.far || e.push({
                         distance: p,
                         point: h.clone().applyMatrix4(this.matrixWorld),
                         index: g,
@@ -10437,8 +10419,8 @@ THREE.Group = function() {
                         faceIndex: null,
                         object: this
                     }));
-                } else if (g instanceof THREE.Geometry) for (i = g.vertices, j = i.length, g = 0; g < j - 1; g += l) p = b.distanceSqToSegment(i[g], i[g + 1], k, h), 
-                p > f || (k.applyMatrix4(this.matrixWorld), p = d.ray.origin.distanceTo(k), p < d.near || p > d.far || e.push({
+                } else if (g instanceof THREE.Geometry) for (i = g.vertices, j = i.length, g = 0; g < j - 1; g += l) (p = b.distanceSqToSegment(i[g], i[g + 1], k, h)) > f || (k.applyMatrix4(this.matrixWorld), 
+                (p = d.ray.origin.distanceTo(k)) < d.near || p > d.far || e.push({
                     distance: p,
                     point: h.clone().applyMatrix4(this.matrixWorld),
                     index: g,
@@ -10514,7 +10496,7 @@ THREE.Group = function() {
                     x = s.faces, y = s.faceVertexUvs[0], 0 < y.length && (v = y);
                     for (var D = 0, E = x.length; D < E; D++) {
                         var F = x[D];
-                        if (w = !0 === u ? z[F.materialIndex] : t, void 0 !== w) {
+                        if (void 0 !== (w = !0 === u ? z[F.materialIndex] : t)) {
                             if (y = A[F.a], B = A[F.b], C = A[F.c], !0 === w.morphTargets) {
                                 w = s.morphTargets;
                                 var G = this.morphTargetInfluences;
@@ -10801,11 +10783,10 @@ THREE.ShaderChunk.normal_fragment = "#ifdef FLAT_SHADED\n\tvec3 fdx = vec3( dFdx
 THREE.ShaderChunk.normalmap_pars_fragment = "#ifdef USE_NORMALMAP\n\tuniform sampler2D normalMap;\n\tuniform vec2 normalScale;\n\tvec3 perturbNormal2Arb( vec3 eye_pos, vec3 surf_norm ) {\n\t\tvec3 q0 = dFdx( eye_pos.xyz );\n\t\tvec3 q1 = dFdy( eye_pos.xyz );\n\t\tvec2 st0 = dFdx( vUv.st );\n\t\tvec2 st1 = dFdy( vUv.st );\n\t\tvec3 S = normalize( q0 * st1.t - q1 * st0.t );\n\t\tvec3 T = normalize( -q0 * st1.s + q1 * st0.s );\n\t\tvec3 N = normalize( surf_norm );\n\t\tvec3 mapN = texture2D( normalMap, vUv ).xyz * 2.0 - 1.0;\n\t\tmapN.xy = normalScale * mapN.xy;\n\t\tmat3 tsn = mat3( S, T, N );\n\t\treturn normalize( tsn * mapN );\n\t}\n#endif\n", 
 THREE.ShaderChunk.packing = "vec3 packNormalToRGB( const in vec3 normal ) {\n  return normalize( normal ) * 0.5 + 0.5;\n}\nvec3 unpackRGBToNormal( const in vec3 rgb ) {\n  return 1.0 - 2.0 * rgb.xyz;\n}\nconst float PackUpscale = 256. / 255.;const float UnpackDownscale = 255. / 256.;\nconst vec3 PackFactors = vec3( 256. * 256. * 256., 256. * 256.,  256. );\nconst vec4 UnpackFactors = UnpackDownscale / vec4( PackFactors, 1. );\nconst float ShiftRight8 = 1. / 256.;\nvec4 packDepthToRGBA( const in float v ) {\n\tvec4 r = vec4( fract( v * PackFactors ), v );\n\tr.yzw -= r.xyz * ShiftRight8;\treturn r * PackUpscale;\n}\nfloat unpackRGBAToDepth( const in vec4 v ) {\n\treturn dot( v, UnpackFactors );\n}\nfloat viewZToOrthoDepth( const in float viewZ, const in float near, const in float far ) {\n  return ( viewZ + near ) / ( near - far );\n}\nfloat OrthoDepthToViewZ( const in float linearClipZ, const in float near, const in float far ) {\n  return linearClipZ * ( near - far ) - near;\n}\nfloat viewZToPerspectiveDepth( const in float viewZ, const in float near, const in float far ) {\n  return (( near + viewZ ) * far ) / (( far - near ) * viewZ );\n}\nfloat perspectiveDepthToViewZ( const in float invClipZ, const in float near, const in float far ) {\n  return ( near * far ) / ( ( far - near ) * invClipZ - far );\n}\n", 
 THREE.ShaderChunk.premultiplied_alpha_fragment = "#ifdef PREMULTIPLIED_ALPHA\n\tgl_FragColor.rgb *= gl_FragColor.a;\n#endif\n", 
-THREE.ShaderChunk.project_vertex = "#ifdef USE_SKINNING\n\tvec4 mvPosition = modelViewMatrix * skinned;\n#else\n\tvec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );\n#endif\ngl_Position = projectionMatrix * mvPosition;\n", 
-THREE.ShaderChunk.roughnessmap_fragment = "float roughnessFactor = roughness;\n#ifdef USE_ROUGHNESSMAP\n\tvec4 texelRoughness = texture2D( roughnessMap, vUv );\n\troughnessFactor *= texelRoughness.r;\n#endif\n";
+THREE.ShaderChunk.project_vertex = "#ifdef USE_SKINNING\n\tvec4 mvPosition = modelViewMatrix * skinned;\n#else\n\tvec4 mvPosition = modelViewMatrix * vec4( transformed, 1.0 );\n#endif\ngl_Position = projectionMatrix * mvPosition;\n";
 
-THREE.ShaderChunk.roughnessmap_pars_fragment = "#ifdef USE_ROUGHNESSMAP\n\tuniform sampler2D roughnessMap;\n#endif";
-
+THREE.ShaderChunk.roughnessmap_fragment = "float roughnessFactor = roughness;\n#ifdef USE_ROUGHNESSMAP\n\tvec4 texelRoughness = texture2D( roughnessMap, vUv );\n\troughnessFactor *= texelRoughness.r;\n#endif\n", 
+THREE.ShaderChunk.roughnessmap_pars_fragment = "#ifdef USE_ROUGHNESSMAP\n\tuniform sampler2D roughnessMap;\n#endif", 
 THREE.ShaderChunk.shadowmap_pars_fragment = "#ifdef USE_SHADOWMAP\n\t#if NUM_DIR_LIGHTS > 0\n\t\tuniform sampler2D directionalShadowMap[ NUM_DIR_LIGHTS ];\n\t\tvarying vec4 vDirectionalShadowCoord[ NUM_DIR_LIGHTS ];\n\t#endif\n\t#if NUM_SPOT_LIGHTS > 0\n\t\tuniform sampler2D spotShadowMap[ NUM_SPOT_LIGHTS ];\n\t\tvarying vec4 vSpotShadowCoord[ NUM_SPOT_LIGHTS ];\n\t#endif\n\t#if NUM_POINT_LIGHTS > 0\n\t\tuniform sampler2D pointShadowMap[ NUM_POINT_LIGHTS ];\n\t\tvarying vec4 vPointShadowCoord[ NUM_POINT_LIGHTS ];\n\t#endif\n\tfloat texture2DCompare( sampler2D depths, vec2 uv, float compare ) {\n\t\treturn step( compare, unpackRGBAToDepth( texture2D( depths, uv ) ) );\n\t}\n\tfloat texture2DShadowLerp( sampler2D depths, vec2 size, vec2 uv, float compare ) {\n\t\tconst vec2 offset = vec2( 0.0, 1.0 );\n\t\tvec2 texelSize = vec2( 1.0 ) / size;\n\t\tvec2 centroidUV = floor( uv * size + 0.5 ) / size;\n\t\tfloat lb = texture2DCompare( depths, centroidUV + texelSize * offset.xx, compare );\n\t\tfloat lt = texture2DCompare( depths, centroidUV + texelSize * offset.xy, compare );\n\t\tfloat rb = texture2DCompare( depths, centroidUV + texelSize * offset.yx, compare );\n\t\tfloat rt = texture2DCompare( depths, centroidUV + texelSize * offset.yy, compare );\n\t\tvec2 f = fract( uv * size + 0.5 );\n\t\tfloat a = mix( lb, lt, f.y );\n\t\tfloat b = mix( rb, rt, f.y );\n\t\tfloat c = mix( a, b, f.x );\n\t\treturn c;\n\t}\n\tfloat getShadow( sampler2D shadowMap, vec2 shadowMapSize, float shadowBias, float shadowRadius, vec4 shadowCoord ) {\n\t\tshadowCoord.xyz /= shadowCoord.w;\n\t\tshadowCoord.z += shadowBias;\n\t\tbvec4 inFrustumVec = bvec4 ( shadowCoord.x >= 0.0, shadowCoord.x <= 1.0, shadowCoord.y >= 0.0, shadowCoord.y <= 1.0 );\n\t\tbool inFrustum = all( inFrustumVec );\n\t\tbvec2 frustumTestVec = bvec2( inFrustum, shadowCoord.z <= 1.0 );\n\t\tbool frustumTest = all( frustumTestVec );\n\t\tif ( frustumTest ) {\n\t\t#if defined( SHADOWMAP_TYPE_PCF )\n\t\t\tvec2 texelSize = vec2( 1.0 ) / shadowMapSize;\n\t\t\tfloat dx0 = - texelSize.x * shadowRadius;\n\t\t\tfloat dy0 = - texelSize.y * shadowRadius;\n\t\t\tfloat dx1 = + texelSize.x * shadowRadius;\n\t\t\tfloat dy1 = + texelSize.y * shadowRadius;\n\t\t\treturn (\n\t\t\t\ttexture2DCompare( shadowMap, shadowCoord.xy + vec2( dx0, dy0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DCompare( shadowMap, shadowCoord.xy + vec2( 0.0, dy0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DCompare( shadowMap, shadowCoord.xy + vec2( dx1, dy0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DCompare( shadowMap, shadowCoord.xy + vec2( dx0, 0.0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DCompare( shadowMap, shadowCoord.xy, shadowCoord.z ) +\n\t\t\t\ttexture2DCompare( shadowMap, shadowCoord.xy + vec2( dx1, 0.0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DCompare( shadowMap, shadowCoord.xy + vec2( dx0, dy1 ), shadowCoord.z ) +\n\t\t\t\ttexture2DCompare( shadowMap, shadowCoord.xy + vec2( 0.0, dy1 ), shadowCoord.z ) +\n\t\t\t\ttexture2DCompare( shadowMap, shadowCoord.xy + vec2( dx1, dy1 ), shadowCoord.z )\n\t\t\t) * ( 1.0 / 9.0 );\n\t\t#elif defined( SHADOWMAP_TYPE_PCF_SOFT )\n\t\t\tvec2 texelSize = vec2( 1.0 ) / shadowMapSize;\n\t\t\tfloat dx0 = - texelSize.x * shadowRadius;\n\t\t\tfloat dy0 = - texelSize.y * shadowRadius;\n\t\t\tfloat dx1 = + texelSize.x * shadowRadius;\n\t\t\tfloat dy1 = + texelSize.y * shadowRadius;\n\t\t\treturn (\n\t\t\t\ttexture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy + vec2( dx0, dy0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy + vec2( 0.0, dy0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy + vec2( dx1, dy0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy + vec2( dx0, 0.0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy, shadowCoord.z ) +\n\t\t\t\ttexture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy + vec2( dx1, 0.0 ), shadowCoord.z ) +\n\t\t\t\ttexture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy + vec2( dx0, dy1 ), shadowCoord.z ) +\n\t\t\t\ttexture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy + vec2( 0.0, dy1 ), shadowCoord.z ) +\n\t\t\t\ttexture2DShadowLerp( shadowMap, shadowMapSize, shadowCoord.xy + vec2( dx1, dy1 ), shadowCoord.z )\n\t\t\t) * ( 1.0 / 9.0 );\n\t\t#else\n\t\t\treturn texture2DCompare( shadowMap, shadowCoord.xy, shadowCoord.z );\n\t\t#endif\n\t\t}\n\t\treturn 1.0;\n\t}\n\tvec2 cubeToUV( vec3 v, float texelSizeY ) {\n\t\tvec3 absV = abs( v );\n\t\tfloat scaleToCube = 1.0 / max( absV.x, max( absV.y, absV.z ) );\n\t\tabsV *= scaleToCube;\n\t\tv *= scaleToCube * ( 1.0 - 2.0 * texelSizeY );\n\t\tvec2 planar = v.xy;\n\t\tfloat almostATexel = 1.5 * texelSizeY;\n\t\tfloat almostOne = 1.0 - almostATexel;\n\t\tif ( absV.z >= almostOne ) {\n\t\t\tif ( v.z > 0.0 )\n\t\t\t\tplanar.x = 4.0 - v.x;\n\t\t} else if ( absV.x >= almostOne ) {\n\t\t\tfloat signX = sign( v.x );\n\t\t\tplanar.x = v.z * signX + 2.0 * signX;\n\t\t} else if ( absV.y >= almostOne ) {\n\t\t\tfloat signY = sign( v.y );\n\t\t\tplanar.x = v.x + 2.0 * signY + 2.0;\n\t\t\tplanar.y = v.z * signY - 2.0;\n\t\t}\n\t\treturn vec2( 0.125, 0.25 ) * planar + vec2( 0.375, 0.75 );\n\t}\n\tfloat getPointShadow( sampler2D shadowMap, vec2 shadowMapSize, float shadowBias, float shadowRadius, vec4 shadowCoord ) {\n\t\tvec2 texelSize = vec2( 1.0 ) / ( shadowMapSize * vec2( 4.0, 2.0 ) );\n\t\tvec3 lightToPosition = shadowCoord.xyz;\n\t\tvec3 bd3D = normalize( lightToPosition );\n\t\tfloat dp = ( length( lightToPosition ) - shadowBias ) / 1000.0;\n\t\t#if defined( SHADOWMAP_TYPE_PCF ) || defined( SHADOWMAP_TYPE_PCF_SOFT )\n\t\t\tvec2 offset = vec2( - 1, 1 ) * shadowRadius * texelSize.y;\n\t\t\treturn (\n\t\t\t\ttexture2DCompare( shadowMap, cubeToUV( bd3D + offset.xyy, texelSize.y ), dp ) +\n\t\t\t\ttexture2DCompare( shadowMap, cubeToUV( bd3D + offset.yyy, texelSize.y ), dp ) +\n\t\t\t\ttexture2DCompare( shadowMap, cubeToUV( bd3D + offset.xyx, texelSize.y ), dp ) +\n\t\t\t\ttexture2DCompare( shadowMap, cubeToUV( bd3D + offset.yyx, texelSize.y ), dp ) +\n\t\t\t\ttexture2DCompare( shadowMap, cubeToUV( bd3D, texelSize.y ), dp ) +\n\t\t\t\ttexture2DCompare( shadowMap, cubeToUV( bd3D + offset.xxy, texelSize.y ), dp ) +\n\t\t\t\ttexture2DCompare( shadowMap, cubeToUV( bd3D + offset.yxy, texelSize.y ), dp ) +\n\t\t\t\ttexture2DCompare( shadowMap, cubeToUV( bd3D + offset.xxx, texelSize.y ), dp ) +\n\t\t\t\ttexture2DCompare( shadowMap, cubeToUV( bd3D + offset.yxx, texelSize.y ), dp )\n\t\t\t) * ( 1.0 / 9.0 );\n\t\t#else\n\t\t\treturn texture2DCompare( shadowMap, cubeToUV( bd3D, texelSize.y ), dp );\n\t\t#endif\n\t}\n#endif\n", 
 THREE.ShaderChunk.shadowmap_pars_vertex = "#ifdef USE_SHADOWMAP\n\t#if NUM_DIR_LIGHTS > 0\n\t\tuniform mat4 directionalShadowMatrix[ NUM_DIR_LIGHTS ];\n\t\tvarying vec4 vDirectionalShadowCoord[ NUM_DIR_LIGHTS ];\n\t#endif\n\t#if NUM_SPOT_LIGHTS > 0\n\t\tuniform mat4 spotShadowMatrix[ NUM_SPOT_LIGHTS ];\n\t\tvarying vec4 vSpotShadowCoord[ NUM_SPOT_LIGHTS ];\n\t#endif\n\t#if NUM_POINT_LIGHTS > 0\n\t\tuniform mat4 pointShadowMatrix[ NUM_POINT_LIGHTS ];\n\t\tvarying vec4 vPointShadowCoord[ NUM_POINT_LIGHTS ];\n\t#endif\n#endif\n", 
 THREE.ShaderChunk.shadowmap_vertex = "#ifdef USE_SHADOWMAP\n\t#if NUM_DIR_LIGHTS > 0\n\tfor ( int i = 0; i < NUM_DIR_LIGHTS; i ++ ) {\n\t\tvDirectionalShadowCoord[ i ] = directionalShadowMatrix[ i ] * worldPosition;\n\t}\n\t#endif\n\t#if NUM_SPOT_LIGHTS > 0\n\tfor ( int i = 0; i < NUM_SPOT_LIGHTS; i ++ ) {\n\t\tvSpotShadowCoord[ i ] = spotShadowMatrix[ i ] * worldPosition;\n\t}\n\t#endif\n\t#if NUM_POINT_LIGHTS > 0\n\tfor ( int i = 0; i < NUM_POINT_LIGHTS; i ++ ) {\n\t\tvPointShadowCoord[ i ] = pointShadowMatrix[ i ] * worldPosition;\n\t}\n\t#endif\n#endif\n", 
@@ -11456,8 +11437,8 @@ THREE.ShaderLib = {
         var m = !1, l = k = !1, f = e.program, j = f.getUniforms(), g = e.__webglShader.uniforms;
         if (f.id !== R && (ra.useProgram(f.program), R = f.id, l = k = m = !0), c.id !== U && (U = c.id, 
         k = !0), (m || a !== W) && (j.set(ra, a, "projectionMatrix"), ua.logarithmicDepthBuffer && j.setValue(ra, "logDepthBufFC", 2 / (Math.log(a.far + 1) / Math.LN2)), 
-        a !== W && (W = a, l = k = !0), (c instanceof THREE.ShaderMaterial || c instanceof THREE.MeshPhongMaterial || c instanceof THREE.MeshStandardMaterial || c.envMap) && (m = j.map.cameraPosition, 
-        void 0 !== m && m.setValue(ra, na.setFromMatrixPosition(a.matrixWorld))), (c instanceof THREE.MeshPhongMaterial || c instanceof THREE.MeshLambertMaterial || c instanceof THREE.MeshBasicMaterial || c instanceof THREE.MeshStandardMaterial || c instanceof THREE.ShaderMaterial || c.skinning) && j.setValue(ra, "viewMatrix", a.matrixWorldInverse), 
+        a !== W && (W = a, l = k = !0), (c instanceof THREE.ShaderMaterial || c instanceof THREE.MeshPhongMaterial || c instanceof THREE.MeshStandardMaterial || c.envMap) && void 0 !== (m = j.map.cameraPosition) && m.setValue(ra, na.setFromMatrixPosition(a.matrixWorld)), 
+        (c instanceof THREE.MeshPhongMaterial || c instanceof THREE.MeshLambertMaterial || c instanceof THREE.MeshBasicMaterial || c instanceof THREE.MeshStandardMaterial || c instanceof THREE.ShaderMaterial || c.skinning) && j.setValue(ra, "viewMatrix", a.matrixWorldInverse), 
         j.set(ra, Q, "toneMappingExposure"), j.set(ra, Q, "toneMappingWhitePoint")), c.skinning && (j.setOptional(ra, d, "bindMatrix"), 
         j.setOptional(ra, d, "bindMatrixInverse"), m = d.skeleton) && (ua.floatVertexTextures && m.useVertexTexture ? (j.set(ra, m, "boneTexture"), 
         j.set(ra, m, "boneTextureWidth"), j.set(ra, m, "boneTextureHeight")) : j.setOptional(ra, m, "boneMatrices")), 
@@ -11561,7 +11542,7 @@ THREE.ShaderLib = {
         if (a === THREE.IntType) return ra.INT;
         if (a === THREE.UnsignedIntType) return ra.UNSIGNED_INT;
         if (a === THREE.FloatType) return ra.FLOAT;
-        if (b = ta.get("OES_texture_half_float"), null !== b && a === THREE.HalfFloatType) return b.HALF_FLOAT_OES;
+        if (null !== (b = ta.get("OES_texture_half_float")) && a === THREE.HalfFloatType) return b.HALF_FLOAT_OES;
         if (a === THREE.AlphaFormat) return ra.ALPHA;
         if (a === THREE.RGBFormat) return ra.RGB;
         if (a === THREE.RGBAFormat) return ra.RGBA;
@@ -11582,20 +11563,20 @@ THREE.ShaderLib = {
         if (a === THREE.DstColorFactor) return ra.DST_COLOR;
         if (a === THREE.OneMinusDstColorFactor) return ra.ONE_MINUS_DST_COLOR;
         if (a === THREE.SrcAlphaSaturateFactor) return ra.SRC_ALPHA_SATURATE;
-        if (b = ta.get("WEBGL_compressed_texture_s3tc"), null !== b) {
+        if (null !== (b = ta.get("WEBGL_compressed_texture_s3tc"))) {
             if (a === THREE.RGB_S3TC_DXT1_Format) return b.COMPRESSED_RGB_S3TC_DXT1_EXT;
             if (a === THREE.RGBA_S3TC_DXT1_Format) return b.COMPRESSED_RGBA_S3TC_DXT1_EXT;
             if (a === THREE.RGBA_S3TC_DXT3_Format) return b.COMPRESSED_RGBA_S3TC_DXT3_EXT;
             if (a === THREE.RGBA_S3TC_DXT5_Format) return b.COMPRESSED_RGBA_S3TC_DXT5_EXT;
         }
-        if (b = ta.get("WEBGL_compressed_texture_pvrtc"), null !== b) {
+        if (null !== (b = ta.get("WEBGL_compressed_texture_pvrtc"))) {
             if (a === THREE.RGB_PVRTC_4BPPV1_Format) return b.COMPRESSED_RGB_PVRTC_4BPPV1_IMG;
             if (a === THREE.RGB_PVRTC_2BPPV1_Format) return b.COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
             if (a === THREE.RGBA_PVRTC_4BPPV1_Format) return b.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG;
             if (a === THREE.RGBA_PVRTC_2BPPV1_Format) return b.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
         }
-        if (b = ta.get("WEBGL_compressed_texture_etc1"), null !== b && a === THREE.RGB_ETC1_Format) return b.COMPRESSED_RGB_ETC1_WEBGL;
-        if (b = ta.get("EXT_blend_minmax"), null !== b) {
+        if (null !== (b = ta.get("WEBGL_compressed_texture_etc1")) && a === THREE.RGB_ETC1_Format) return b.COMPRESSED_RGB_ETC1_WEBGL;
+        if (null !== (b = ta.get("EXT_blend_minmax"))) {
             if (a === THREE.MinEquation) return b.MIN_EXT;
             if (a === THREE.MaxEquation) return b.MAX_EXT;
         }
@@ -11645,8 +11626,7 @@ THREE.ShaderLib = {
             antialias: F,
             premultipliedAlpha: G,
             preserveDrawingBuffer: H
-        }, ra = B || A.getContext("webgl", C) || A.getContext("experimental-webgl", C), 
-        null === ra) {
+        }, null === (ra = B || A.getContext("webgl", C) || A.getContext("experimental-webgl", C))) {
             if (null !== A.getContext("webgl")) throw "Error creating WebGL context with your selected attributes.";
             throw "Error creating WebGL context.";
         }
@@ -11752,8 +11732,7 @@ THREE.ShaderLib = {
     }, this.renderBufferDirect = function(a, b, c, d, e, f) {
         q(d);
         var g = r(a, b, d, e), h = !1;
-        if (a = c.id + "_" + g.id + "_" + d.wireframe, a !== V && (V = a, h = !0), b = e.morphTargetInfluences, 
-        void 0 !== b) {
+        if (a = c.id + "_" + g.id + "_" + d.wireframe, a !== V && (V = a, h = !0), void 0 !== (b = e.morphTargetInfluences)) {
             a = [];
             for (var i = 0, h = b.length; i < h; i++) {
                 var k = b[i];
@@ -11769,8 +11748,7 @@ THREE.ShaderLib = {
         if (b = c.index, i = c.attributes.position, !0 === d.wireframe && (b = xa.getWireframeAttribute(c)), 
         null !== b ? (a = Ba, a.setIndex(b)) : a = Aa, h) {
             var m, h = void 0;
-            if (c instanceof THREE.InstancedBufferGeometry && (m = ta.get("ANGLE_instanced_arrays"), 
-            null === m)) console.error("THREE.WebGLRenderer.setupVertexAttributes: using THREE.InstancedBufferGeometry but hardware does not support extension ANGLE_instanced_arrays."); else {
+            if (c instanceof THREE.InstancedBufferGeometry && null === (m = ta.get("ANGLE_instanced_arrays"))) console.error("THREE.WebGLRenderer.setupVertexAttributes: using THREE.InstancedBufferGeometry but hardware does not support extension ANGLE_instanced_arrays."); else {
                 void 0 === h && (h = 0), va.initAttributes();
                 var n, k = c.attributes, g = g.getAttributes(), l = d.defaultAttributeValues;
                 for (n in g) {
@@ -11789,7 +11767,7 @@ THREE.ShaderLib = {
                             } else p instanceof THREE.InstancedBufferAttribute ? (va.enableAttributeAndDivisor(o, p.meshPerAttribute, m), 
                             void 0 === c.maxInstancedCount && (c.maxInstancedCount = p.meshPerAttribute * p.count)) : va.enableAttribute(o), 
                             ra.bindBuffer(ra.ARRAY_BUFFER, v), ra.vertexAttribPointer(o, t, s, u, 0, h * t * p.array.BYTES_PER_ELEMENT);
-                        } else if (void 0 !== l && (s = l[n], void 0 !== s)) switch (s.length) {
+                        } else if (void 0 !== l && void 0 !== (s = l[n])) switch (s.length) {
                           case 2:
                             ra.vertexAttrib2fv(o, s);
                             break;
@@ -11896,8 +11874,7 @@ THREE.ShaderLib = {
                     va.bindTexture(ra.TEXTURE_2D, e.__webglTexture), ra.pixelStorei(ra.UNPACK_FLIP_Y_WEBGL, d.flipY), 
                     ra.pixelStorei(ra.UNPACK_PREMULTIPLY_ALPHA_WEBGL, d.premultiplyAlpha), ra.pixelStorei(ra.UNPACK_ALIGNMENT, d.unpackAlignment);
                     var h = u(d.image, ua.maxTextureSize);
-                    if ((d.wrapS !== THREE.ClampToEdgeWrapping || d.wrapT !== THREE.ClampToEdgeWrapping || d.minFilter !== THREE.NearestFilter && d.minFilter !== THREE.LinearFilter) && !1 === v(h)) if (g = h, 
-                    g instanceof HTMLImageElement || g instanceof HTMLCanvasElement) {
+                    if ((d.wrapS !== THREE.ClampToEdgeWrapping || d.wrapT !== THREE.ClampToEdgeWrapping || d.minFilter !== THREE.NearestFilter && d.minFilter !== THREE.LinearFilter) && !1 === v(h)) if ((g = h) instanceof HTMLImageElement || g instanceof HTMLCanvasElement) {
                         var i = document.createElement("canvas");
                         i.width = THREE.Math.nearestPowerOfTwo(g.width), i.height = THREE.Math.nearestPowerOfTwo(g.height), 
                         i.getContext("2d").drawImage(g, 0, 0, i.width, i.height), console.warn("THREE.WebGLRenderer: image is not power of two (" + g.width + "x" + g.height + "). Resized to " + i.width + "x" + i.height, g), 
@@ -12153,8 +12130,8 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
     }
     function e(c) {
         var d;
-        d = c instanceof THREE.InterleavedBufferAttribute ? b.get(c.data).__webglBuffer : b.get(c).__webglBuffer, 
-        void 0 !== d && (a.deleteBuffer(d), c instanceof THREE.InterleavedBufferAttribute ? b.delete(c.data) : b.delete(c));
+        void 0 !== (d = c instanceof THREE.InterleavedBufferAttribute ? b.get(c.data).__webglBuffer : b.get(c).__webglBuffer) && (a.deleteBuffer(d), 
+        c instanceof THREE.InterleavedBufferAttribute ? b.delete(c.data) : b.delete(c));
     }
     var f = {};
     this.get = function(a) {
@@ -12467,10 +12444,9 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
     this.getParameters = function(d, f, g, h, i) {
         var j, k = e[d.type];
         b.floatVertexTextures && i && i.skeleton && i.skeleton.useVertexTexture ? j = 1024 : (j = Math.floor((b.maxVertexUniforms - 20) / 4), 
-        void 0 !== i && i instanceof THREE.SkinnedMesh && (j = Math.min(i.skeleton.bones.length, j), 
-        j < i.skeleton.bones.length && console.warn("WebGLRenderer: too many bones - " + i.skeleton.bones.length + ", this GPU supports just " + j + " (try OpenGL instead of ANGLE)")));
+        void 0 !== i && i instanceof THREE.SkinnedMesh && (j = Math.min(i.skeleton.bones.length, j)) < i.skeleton.bones.length && console.warn("WebGLRenderer: too many bones - " + i.skeleton.bones.length + ", this GPU supports just " + j + " (try OpenGL instead of ANGLE)"));
         var l = a.getPrecision();
-        null !== d.precision && (l = b.getMaxPrecision(d.precision), l !== d.precision && console.warn("THREE.WebGLProgram.getParameters:", d.precision, "not supported, using", l, "instead."));
+        null !== d.precision && (l = b.getMaxPrecision(d.precision)) !== d.precision && console.warn("THREE.WebGLProgram.getParameters:", d.precision, "not supported, using", l, "instead.");
         var m = a.getCurrentRenderTarget();
         return {
             shaderID: k,
@@ -12540,9 +12516,8 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
         }
         return void 0 === f && (f = new THREE.WebGLProgram(a, e, b, c), d.push(f)), f;
     }, this.releaseProgram = function(a) {
-        if (0 === --a.usedTimes) {
-            var b = d.indexOf(a);
-            d[b] = d[d.length - 1], d.pop(), a.destroy();
+        if (0 == --a.usedTimes) {
+            d[d.indexOf(a)] = d[d.length - 1], d.pop(), a.destroy();
         }
     }, this.programs = d;
 }, THREE.WebGLProperties = function() {
@@ -12591,7 +12566,7 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
     var f = a.context, g = a.state, h = new THREE.Frustum(), i = new THREE.Matrix4(), j = b.shadows, k = new THREE.Vector2(), l = new THREE.Vector3(), m = new THREE.Vector3(), n = [], o = Array(4), p = Array(4), q = {}, r = [ new THREE.Vector3(1, 0, 0), new THREE.Vector3(-1, 0, 0), new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, -1, 0) ], s = [ new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 1, 0), new THREE.Vector3(0, 0, 1), new THREE.Vector3(0, 0, -1) ], t = [ new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4(), new THREE.Vector4() ];
     b = new THREE.MeshDepthMaterial(), b.depthPacking = THREE.RGBADepthPacking, b.clipping = !0;
     for (var u = THREE.ShaderLib.distanceRGBA, v = THREE.UniformsUtils.clone(u.uniforms), w = 0; 4 !== w; ++w) {
-        var x = 0 !== (1 & w), y = 0 !== (2 & w), z = b.clone();
+        var x = 0 != (1 & w), y = 0 != (2 & w), z = b.clone();
         z.morphTargets = x, z.skinning = y, o[w] = z, x = new THREE.ShaderMaterial({
             defines: {
                 USE_SHADOWMAP: ""
@@ -13032,12 +13007,12 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
         }
     };
     return H.prototype.setValue = function(a, b, c) {
-        b = this.map[b], void 0 !== b && b.setValue(a, c, this.renderer);
+        void 0 !== (b = this.map[b]) && b.setValue(a, c, this.renderer);
     }, H.prototype.set = function(a, b, c) {
         var d = this.map[c];
         void 0 !== d && d.setValue(a, b[c], this.renderer);
     }, H.prototype.setOptional = function(a, b, c) {
-        b = b[c], void 0 !== b && this.setValue(a, c, b);
+        void 0 !== (b = b[c]) && this.setValue(a, c, b);
     }, H.upload = function(a, b, c, d) {
         for (var e = 0, f = b.length; e !== f; ++e) {
             var g = b[e], h = c[g.id];
@@ -13811,10 +13786,10 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
             if (Math.abs(m) > Number.EPSILON) {
                 if (0 < m) {
                     if (0 > n || n > m) return [];
-                    if (i = j * k - i * l, 0 > i || i > m) return [];
+                    if (0 > (i = j * k - i * l) || i > m) return [];
                 } else {
                     if (0 < n || n < m) return [];
-                    if (i = j * k - i * l, 0 < i || i < m) return [];
+                    if (0 < (i = j * k - i * l) || i < m) return [];
                 }
                 return 0 === i ? !f || 0 !== n && n !== m ? [ a ] : [] : i === m ? !f || 0 !== n && n !== m ? [ b ] : [] : 0 === n ? [ d ] : n === m ? [ e ] : (f = i / m, 
                 [ {
@@ -13822,7 +13797,7 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
                     y: a.y + f * h
                 } ]);
             }
-            return 0 !== n || j * k !== i * l ? [] : (h = 0 === g && 0 === h, i = 0 === i && 0 === j, 
+            return 0 !== n || j * k != i * l ? [] : (h = 0 === g && 0 === h, i = 0 === i && 0 === j, 
             h && i ? a.x !== d.x || a.y !== d.y ? [] : [ a ] : h ? c(d, e, a) ? [ a ] : [] : i ? c(a, b, d) ? [ d ] : [] : (0 !== g ? (a.x < b.x ? (g = a, 
             i = a.x, h = b, a = b.x) : (g = b, i = b.x, h = a, a = a.x), d.x < e.x ? (b = d, 
             m = d.x, j = e, d = e.x) : (b = e, m = e.x, j = d, d = d.x)) : (a.y < b.y ? (g = a, 
@@ -13864,7 +13839,7 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
             for (i = b.length; t < i; t++) r.push(t);
             n = 0;
             for (var u = 2 * r.length; 0 < r.length; ) {
-                if (u--, 0 > u) {
+                if (0 > --u) {
                     console.log("Infinite Loop! Holes left:" + r.length + ", Probably Hole outside Shape!");
                     break;
                 }
@@ -13886,7 +13861,7 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
         }(a, b);
         var l = THREE.ShapeUtils.triangulate(f, !1);
         for (f = 0, g = l.length; f < g; f++) for (i = l[f], h = 0; 3 > h; h++) j = i[h].x + ":" + i[h].y, 
-        j = k[j], void 0 !== j && (i[h] = j);
+        void 0 !== (j = k[j]) && (i[h] = j);
         return l.concat();
     },
     isClockWise: function(a) {
@@ -13942,8 +13917,7 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
     getUtoTmapping: function(a, b) {
         var c, d = this.getLengths(), e = 0, f = d.length;
         c = b ? b : a * d[f - 1];
-        for (var g, h = 0, i = f - 1; h <= i; ) if (e = Math.floor(h + (i - h) / 2), g = d[e] - c, 
-        0 > g) h = e + 1; else {
+        for (var g, h = 0, i = f - 1; h <= i; ) if (e = Math.floor(h + (i - h) / 2), 0 > (g = d[e] - c)) h = e + 1; else {
             if (!(0 < g)) {
                 i = e;
                 break;
@@ -14187,7 +14161,7 @@ THREE.WebGLBufferRenderer = function(a, b, c) {
                     if (0 > j && (g = b[f], i = -i, h = b[e], j = -j), !(a.y < g.y || a.y > h.y)) if (a.y === g.y) {
                         if (a.x === g.x) return !0;
                     } else {
-                        if (e = j * (a.x - g.x) - i * (a.y - g.y), 0 === e) return !0;
+                        if (0 === (e = j * (a.x - g.x) - i * (a.y - g.y))) return !0;
                         0 > e || (d = !d);
                     }
                 } else if (a.y === g.y && (h.x <= a.x && a.x <= g.x || g.x <= a.x && a.x <= h.x)) return !0;
@@ -14412,7 +14386,7 @@ THREE.CubeGeometry = THREE.BoxGeometry, THREE.BoxBufferGeometry = function(a, b,
     var i = function(a, b, c) {
         return a = 0 + (a + 1) * (b + 1) * 2 + (a + 1) * (c + 1) * 2, a += (c + 1) * (b + 1) * 2;
     }(d, e, f), j = function(a, b, c) {
-        return a = 0 + a * b * 2 + a * c * 2, a += c * b * 2, 6 * a;
+        return a = 0 + a * b * 2 + a * c * 2, 6 * (a += c * b * 2);
     }(d, e, f), k = new (65535 < j ? Uint32Array : Uint16Array)(j), l = new Float32Array(3 * i), m = new Float32Array(3 * i), n = new Float32Array(2 * i), o = 0, p = 0, q = 0, r = 0, s = 0;
     g("z", "y", "x", -1, -1, c, b, a, f, e, 0), g("z", "y", "x", 1, -1, c, b, -a, f, e, 1), 
     g("x", "z", "y", 1, 1, a, c, b, d, f, 2), g("x", "z", "y", 1, -1, a, c, -b, d, f, 3), 
@@ -14569,8 +14543,8 @@ THREE.ConeGeometry.prototype.constructor = THREE.ConeGeometry, THREE.EdgesGeomet
     this.addAttribute("position", new THREE.BufferAttribute(new Float32Array(f), 3));
 }, THREE.EdgesGeometry.prototype = Object.create(THREE.BufferGeometry.prototype), 
 THREE.EdgesGeometry.prototype.constructor = THREE.EdgesGeometry, THREE.ExtrudeGeometry = function(a, b) {
-    "undefined" != typeof a && (THREE.Geometry.call(this), this.type = "ExtrudeGeometry", 
-    a = Array.isArray(a) ? a : [ a ], this.addShapeList(a, b), this.computeFaceNormals());
+    void 0 !== a && (THREE.Geometry.call(this), this.type = "ExtrudeGeometry", a = Array.isArray(a) ? a : [ a ], 
+    this.addShapeList(a, b), this.computeFaceNormals());
 }, THREE.ExtrudeGeometry.prototype = Object.create(THREE.Geometry.prototype), THREE.ExtrudeGeometry.prototype.constructor = THREE.ExtrudeGeometry, 
 THREE.ExtrudeGeometry.prototype.addShapeList = function(a, b) {
     for (var c = a.length, d = 0; d < c; d++) this.addShape(a[d], b);
@@ -14583,7 +14557,7 @@ THREE.ExtrudeGeometry.prototype.addShapeList = function(a, b) {
         if (Math.abs(d * g - e * f) > Number.EPSILON) {
             var i = Math.sqrt(h), j = Math.sqrt(f * f + g * g), h = b.x - e / i;
             if (b = b.y + d / i, f = ((c.x - g / j - h) * g - (c.y + f / j - b) * f) / (d * g - e * f), 
-            c = h + d * f - a.x, a = b + e * f - a.y, d = c * c + a * a, 2 >= d) return new THREE.Vector2(c, a);
+            c = h + d * f - a.x, a = b + e * f - a.y, 2 >= (d = c * c + a * a)) return new THREE.Vector2(c, a);
             d = Math.sqrt(d / 2);
         } else a = !1, d > Number.EPSILON ? f > Number.EPSILON && (a = !0) : d < -Number.EPSILON ? f < -Number.EPSILON && (a = !0) : Math.sign(e) === Math.sign(g) && (a = !0), 
         a ? (c = -e, a = d, d = Math.sqrt(h)) : (c = d, a = e, d = Math.sqrt(h / 2));
@@ -14719,8 +14693,9 @@ THREE.PlaneGeometry = function(a, b, c, d) {
         widthSegments: c,
         heightSegments: d
     }, this.fromBufferGeometry(new THREE.PlaneBufferGeometry(a, b, c, d));
-}, THREE.PlaneGeometry.prototype = Object.create(THREE.Geometry.prototype), THREE.PlaneGeometry.prototype.constructor = THREE.PlaneGeometry;
+};
 
+THREE.PlaneGeometry.prototype = Object.create(THREE.Geometry.prototype), THREE.PlaneGeometry.prototype.constructor = THREE.PlaneGeometry, 
 THREE.PlaneBufferGeometry = function(a, b, c, d) {
     THREE.BufferGeometry.call(this), this.type = "PlaneBufferGeometry", this.parameters = {
         width: a,
@@ -14740,9 +14715,7 @@ THREE.PlaneBufferGeometry = function(a, b, c, d) {
     e[l + 5] = i, l += 6;
     this.setIndex(new THREE.BufferAttribute(e, 1)), this.addAttribute("position", new THREE.BufferAttribute(b, 3)), 
     this.addAttribute("normal", new THREE.BufferAttribute(a, 3)), this.addAttribute("uv", new THREE.BufferAttribute(k, 2));
-};
-
-THREE.PlaneBufferGeometry.prototype = Object.create(THREE.BufferGeometry.prototype), 
+}, THREE.PlaneBufferGeometry.prototype = Object.create(THREE.BufferGeometry.prototype), 
 THREE.PlaneBufferGeometry.prototype.constructor = THREE.PlaneBufferGeometry, THREE.RingBufferGeometry = function(a, b, c, d, e, f) {
     THREE.BufferGeometry.call(this), this.type = "RingBufferGeometry", this.parameters = {
         innerRadius: a,
@@ -14816,11 +14789,12 @@ THREE.SphereBufferGeometry = function(a, b, c, d, e, f, g) {
 THREE.SphereBufferGeometry.prototype.constructor = THREE.SphereBufferGeometry, THREE.TextGeometry = function(a, b) {
     b = b || {};
     var c = b.font;
-    return !1 == c instanceof THREE.Font ? (console.error("THREE.TextGeometry: font parameter is not an instance of THREE.Font."), 
-    new THREE.Geometry()) : (c = c.generateShapes(a, b.size, b.curveSegments), b.amount = void 0 !== b.height ? b.height : 50, 
+    if (!1 == c instanceof THREE.Font) return console.error("THREE.TextGeometry: font parameter is not an instance of THREE.Font."), 
+    new THREE.Geometry();
+    c = c.generateShapes(a, b.size, b.curveSegments), b.amount = void 0 !== b.height ? b.height : 50, 
     void 0 === b.bevelThickness && (b.bevelThickness = 10), void 0 === b.bevelSize && (b.bevelSize = 8), 
     void 0 === b.bevelEnabled && (b.bevelEnabled = !1), THREE.ExtrudeGeometry.call(this, c, b), 
-    void (this.type = "TextGeometry"));
+    this.type = "TextGeometry";
 }, THREE.TextGeometry.prototype = Object.create(THREE.ExtrudeGeometry.prototype), 
 THREE.TextGeometry.prototype.constructor = THREE.TextGeometry, THREE.TorusBufferGeometry = function(a, b, c, d, e) {
     THREE.BufferGeometry.call(this), this.type = "TorusBufferGeometry", this.parameters = {
@@ -14957,7 +14931,7 @@ THREE.TubeGeometry.NoTaper = function(a) {
             for (var m = e(d.clone().lerp(h, l / c)), n = e(g.clone().lerp(h, l / c)), o = c - l, p = 0; p <= o; p++) j[l][p] = 0 === p && l === c ? m : e(m.clone().lerp(n, p / o));
         }
         for (l = 0; l < c; l++) for (p = 0; p < 2 * (c - l) - 1; p++) d = Math.floor(p / 2), 
-        0 === p % 2 ? f(j[l][d + 1], j[l + 1][d], j[l][d], k) : f(j[l][d + 1], j[l + 1][d + 1], j[l + 1][d], k);
+        0 == p % 2 ? f(j[l][d + 1], j[l + 1][d], j[l][d], k) : f(j[l][d + 1], j[l + 1][d + 1], j[l + 1][d], k);
     }
     function h(a, b, c) {
         return 0 > c && 1 === a.x && (a = new THREE.Vector2(a.x - 1, a.y)), 0 === b.x && 0 === b.z && (a = new THREE.Vector2(c / 2 / Math.PI + .5, a.y)), 
@@ -15151,7 +15125,7 @@ THREE.BoundingBoxHelper.prototype.update = function() {
 }, THREE.CameraHelper.prototype = Object.create(THREE.LineSegments.prototype), THREE.CameraHelper.prototype.constructor = THREE.CameraHelper, 
 THREE.CameraHelper.prototype.update = function() {
     function a(a, f, g, h) {
-        if (d.set(f, g, h).unproject(e), a = c[a], void 0 !== a) for (f = 0, g = a.length; f < g; f++) b.vertices[a[f]].copy(d);
+        if (d.set(f, g, h).unproject(e), void 0 !== (a = c[a])) for (f = 0, g = a.length; f < g; f++) b.vertices[a[f]].copy(d);
     }
     var b, c, d = new THREE.Vector3(), e = new THREE.Camera();
     return function() {
@@ -15417,7 +15391,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
             this.morphTargetInfluences[d.lastFrame] = (1 - e) * g) : this.morphTargetInfluences[d.currentFrame] = g;
         }
     }
-}, !function(a, b, c) {
+}, function(a, b, c) {
     function d(c, f) {
         if (!b[c]) {
             if (!a[c]) {
@@ -15437,7 +15411,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
         return b[c].exports;
     }
     for (var e = "function" == typeof require && require, f = 0; f < c.length; f++) d(c[f]);
-    return d;
+    d;
 }({
     1: [ function(a, b, c) {}, {} ],
     2: [ function(a, b, c) {
@@ -15527,7 +15501,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
         }, f.prototype.startFocusLoop = function() {
             if (!this.focusDetectorTimer) {
                 var a = this, b = null;
-                b = "undefined" != typeof document.hidden ? "hidden" : "undefined" != typeof document.mozHidden ? "mozHidden" : "undefined" != typeof document.msHidden ? "msHidden" : "undefined" != typeof document.webkitHidden ? "webkitHidden" : void 0, 
+                b = void 0 !== document.hidden ? "hidden" : void 0 !== document.mozHidden ? "mozHidden" : void 0 !== document.msHidden ? "msHidden" : void 0 !== document.webkitHidden ? "webkitHidden" : void 0, 
                 void 0 === a.windowVisible && (a.windowVisible = void 0 === b || document[b] === !1);
                 var c = window.addEventListener("focus", function(b) {
                     a.windowVisible = !0, e();
@@ -15552,7 +15526,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
     } ],
     5: [ function(a, b, c) {
         var d = a("__browserify_process"), e = a("./frame"), f = a("./hand"), g = a("./pointable"), h = a("./circular_buffer"), i = a("./pipeline"), j = a("events").EventEmitter, k = a("./gesture").gestureListener, l = a("underscore"), m = b.exports = function(b) {
-            var c = "undefined" != typeof d && d.versions && d.versions.node, f = this;
+            var c = void 0 !== d && d.versions && d.versions.node, f = this;
             b = l.defaults(b || {}, {
                 inNode: c
             }), this.inNode = b.inNode, b = l.defaults(b || {}, {
@@ -15616,7 +15590,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                 a.gestures = this.accumulatedGestures, this.accumulatedGestures = [];
                 for (var b = 0; b != a.gestures.length; b++) this.emit("gesture", a.gestures[b], a);
             }
-            this.pipeline && (a = this.pipeline.run(a), a || (a = e.Invalid)), this.emit("frame", a);
+            this.pipeline && ((a = this.pipeline.run(a)) || (a = e.Invalid)), this.emit("frame", a);
         }, m.prototype.setupConnectionEvents = function() {
             var a = this;
             this.connection.on("frame", function(b) {
@@ -15645,10 +15619,10 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
             return l.keys(this._pluginFactories);
         }, m.prototype.use = function(a, b) {
             var c, d, h, j, k;
-            if (d = "function" == typeof a ? a : m._pluginFactories[a], !d) throw "Leap Plugin " + a + " not found.";
+            if (!(d = "function" == typeof a ? a : m._pluginFactories[a])) throw "Leap Plugin " + a + " not found.";
             if (b || (b = {}), this.plugins[a]) return l.extend(this.plugins[a], b), this;
             this.plugins[a] = b, j = d.call(this, b);
-            for (h in j) if (c = j[h], "function" == typeof c) this.pipeline || (this.pipeline = new i(this)), 
+            for (h in j) if ("function" == typeof (c = j[h])) this.pipeline || (this.pipeline = new i(this)), 
             this._pluginPipelineSteps[a] || (this._pluginPipelineSteps[a] = []), this._pluginPipelineSteps[a].push(this.pipeline.addWrappedStep(h, c)); else {
                 switch (this._pluginExtendedMethods[a] || (this._pluginExtendedMethods[a] = []), 
                 h) {
@@ -15910,14 +15884,13 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
             return b && b.handId == this.id ? b : d.Invalid;
         }, i.prototype.rotationAngle = function(a, b) {
             if (!this.valid || !a.valid) return 0;
-            var c = a.hand(this.id);
-            if (!c.valid) return 0;
-            var d = this.rotationMatrix(a), e = .5 * (d[0] + d[4] + d[8] - 1), f = Math.acos(e);
-            if (f = isNaN(f) ? 0 : f, void 0 !== b) {
-                var h = this.rotationAxis(a);
-                f *= g.dot(h, g.normalize(g.create(), b));
+            if (!a.hand(this.id).valid) return 0;
+            var c = this.rotationMatrix(a), d = .5 * (c[0] + c[4] + c[8] - 1), e = Math.acos(d);
+            if (e = isNaN(e) ? 0 : e, void 0 !== b) {
+                var f = this.rotationAxis(a);
+                e *= g.dot(f, g.normalize(g.create(), b));
             }
-            return f;
+            return e;
         }, i.prototype.rotationAxis = function(a) {
             if (!this.valid || !a.valid) return g.create();
             var b = a.hand(this.id);
@@ -15926,8 +15899,8 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
             if (!this.valid || !a.valid) return f.create();
             var b = a.hand(this.id);
             if (!b.valid) return f.create();
-            var c = f.transpose(f.create(), this._rotation), d = f.multiply(f.create(), b._rotation, c);
-            return d;
+            var c = f.transpose(f.create(), this._rotation);
+            return f.multiply(f.create(), b._rotation, c);
         }, i.prototype.scaleFactor = function(a) {
             if (!this.valid || !a.valid) return 1;
             var b = a.hand(this.id);
@@ -16194,7 +16167,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
         e.EventEmitter || (e.EventEmitter = function() {});
         var f = c.EventEmitter = e.EventEmitter, g = "function" == typeof Array.isArray ? Array.isArray : function(a) {
             return "[object Array]" === Object.prototype.toString.call(a);
-        }, h = 10;
+        };
         f.prototype.setMaxListeners = function(a) {
             this._events || (this._events = {}), this._events.maxListeners = a;
         }, f.prototype.emit = function(a) {
@@ -16232,7 +16205,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
             if (this._events || (this._events = {}), this.emit("newListener", a, b), this._events[a]) if (g(this._events[a])) {
                 if (!this._events[a].warned) {
                     var c;
-                    c = void 0 !== this._events.maxListeners ? this._events.maxListeners : h, c && c > 0 && this._events[a].length > c && (this._events[a].warned = !0, 
+                    (c = void 0 !== this._events.maxListeners ? this._events.maxListeners : 10) && c > 0 && this._events[a].length > c && (this._events[a].warned = !0, 
                     console.error("(node) warning: possible EventEmitter memory leak detected. %d listeners added. Use emitter.setMaxListeners() to increase limit.", this._events[a].length), 
                     console.trace());
                 }
@@ -16261,8 +16234,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
             return this._events || (this._events = {}), this._events[a] || (this._events[a] = []), 
             g(this._events[a]) || (this._events[a] = [ this._events[a] ]), this._events[a];
         }, f.listenerCount = function(a, b) {
-            var c;
-            return c = a._events && a._events[b] ? "function" == typeof a._events[b] ? 1 : a._events[b].length : 0;
+            return a._events && a._events[b] ? "function" == typeof a._events[b] ? 1 : a._events[b].length : 0;
         };
     }, {
         __browserify_process: 20
@@ -16278,8 +16250,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                 var c = [];
                 return window.addEventListener("message", function(a) {
                     if (a.source === window && "process-tick" === a.data && (a.stopPropagation(), c.length > 0)) {
-                        var b = c.shift();
-                        b();
+                        c.shift()();
                     }
                 }, !0), function(a) {
                     c.push(a), window.postMessage("process-tick", "*");
@@ -16300,10 +16271,10 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
         !function() {
             "use strict";
             var a = {};
-            "undefined" == typeof c ? "function" == typeof define && "object" == typeof define.amd && define.amd ? (a.exports = {}, 
+            void 0 === c ? "function" == typeof define && "object" == typeof define.amd && define.amd ? (a.exports = {}, 
             define(function() {
                 return a.exports;
-            })) : a.exports = window : a.exports = c, !function(a) {
+            })) : a.exports = window : a.exports = c, function(a) {
                 var b = {};
                 if (!c) var c = 1e-6;
                 b.create = function() {
@@ -16370,7 +16341,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                     };
                 }(), b.str = function(a) {
                     return "vec2(" + a[0] + ", " + a[1] + ")";
-                }, "undefined" != typeof a && (a.vec2 = b);
+                }, void 0 !== a && (a.vec2 = b);
                 var d = {};
                 if (!c) var c = 1e-6;
                 d.create = function() {
@@ -16447,7 +16418,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                     };
                 }(), d.str = function(a) {
                     return "vec3(" + a[0] + ", " + a[1] + ", " + a[2] + ")";
-                }, "undefined" != typeof a && (a.vec3 = d);
+                }, void 0 !== a && (a.vec3 = d);
                 var e = {};
                 if (!c) var c = 1e-6;
                 e.create = function() {
@@ -16526,7 +16497,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                     };
                 }(), e.str = function(a) {
                     return "vec4(" + a[0] + ", " + a[1] + ", " + a[2] + ", " + a[3] + ")";
-                }, "undefined" != typeof a && (a.vec4 = e);
+                }, void 0 !== a && (a.vec4 = e);
                 var f = {}, g = new Float32Array([ 1, 0, 0, 1 ]);
                 if (!c) var c = 1e-6;
                 f.create = function() {
@@ -16566,7 +16537,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                     return a[0] = d * h, a[1] = e * i, a[2] = f * h, a[3] = g * i, a;
                 }, f.str = function(a) {
                     return "mat2(" + a[0] + ", " + a[1] + ", " + a[2] + ", " + a[3] + ")";
-                }, "undefined" != typeof a && (a.mat2 = f);
+                }, void 0 !== a && (a.mat2 = f);
                 var h = {}, i = new Float32Array([ 1, 0, 0, 0, 1, 0, 0, 0, 1 ]);
                 if (!c) var c = 1e-6;
                 h.create = function() {
@@ -16609,7 +16580,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                     a;
                 }, h.str = function(a) {
                     return "mat3(" + a[0] + ", " + a[1] + ", " + a[2] + ", " + a[3] + ", " + a[4] + ", " + a[5] + ", " + a[6] + ", " + a[7] + ", " + a[8] + ")";
-                }, "undefined" != typeof a && (a.mat3 = h);
+                }, void 0 !== a && (a.mat3 = h);
                 var j = {}, k = new Float32Array([ 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1 ]);
                 if (!c) var c = 1e-6;
                 j.create = function() {
@@ -16656,8 +16627,8 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                     a[14] = -(c * (h * q - i * p) - g * (d * q - e * p) + o * (d * i - e * h)), a[15] = c * (h * m - i * l) - g * (d * m - e * l) + k * (d * i - e * h), 
                     a;
                 }, j.determinant = function(a) {
-                    var b = a[0], c = a[1], d = a[2], e = a[3], f = a[4], g = a[5], h = a[6], i = a[7], j = a[8], k = a[9], l = a[10], m = a[11], n = a[12], o = a[13], p = a[14], q = a[15], r = b * g - c * f, s = b * h - d * f, t = b * i - e * f, u = c * h - d * g, v = c * i - e * g, w = d * i - e * h, x = j * o - k * n, y = j * p - l * n, z = j * q - m * n, A = k * p - l * o, B = k * q - m * o, C = l * q - m * p;
-                    return r * C - s * B + t * A + u * z - v * y + w * x;
+                    var b = a[0], c = a[1], d = a[2], e = a[3], f = a[4], g = a[5], h = a[6], i = a[7], j = a[8], k = a[9], l = a[10], m = a[11], n = a[12], o = a[13], p = a[14], q = a[15];
+                    return (b * g - c * f) * (l * q - m * p) - (b * h - d * f) * (k * q - m * o) + (b * i - e * f) * (k * p - l * o) + (c * h - d * g) * (j * q - m * n) - (c * i - e * g) * (j * p - l * n) + (d * i - e * h) * (j * o - k * n);
                 }, j.mul = j.multiply = function(a, b, c) {
                     var d = b[0], e = b[1], f = b[2], g = b[3], h = b[4], i = b[5], j = b[6], k = b[7], l = b[8], m = b[9], n = b[10], o = b[11], p = b[12], q = b[13], r = b[14], s = b[15], t = c[0], u = c[1], v = c[2], w = c[3];
                     return a[0] = t * d + u * h + v * l + w * p, a[1] = t * e + u * i + v * m + w * q, 
@@ -16746,7 +16717,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                     a[15] = 1, a);
                 }, j.str = function(a) {
                     return "mat4(" + a[0] + ", " + a[1] + ", " + a[2] + ", " + a[3] + ", " + a[4] + ", " + a[5] + ", " + a[6] + ", " + a[7] + ", " + a[8] + ", " + a[9] + ", " + a[10] + ", " + a[11] + ", " + a[12] + ", " + a[13] + ", " + a[14] + ", " + a[15] + ")";
-                }, "undefined" != typeof a && (a.mat4 = j);
+                }, void 0 !== a && (a.mat4 = j);
                 var l = {}, m = new Float32Array([ 0, 0, 0, 1 ]);
                 if (!c) var c = 1e-6;
                 l.create = function() {
@@ -16796,17 +16767,17 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                 }, l.len = l.length = e.length, l.sqrLen = l.squaredLength = e.squaredLength, l.normalize = e.normalize, 
                 l.str = function(a) {
                     return "quat(" + a[0] + ", " + a[1] + ", " + a[2] + ", " + a[3] + ")";
-                }, "undefined" != typeof a && (a.quat = l);
+                }, void 0 !== a && (a.quat = l);
             }(a.exports);
         }();
     }, {} ],
     22: [ function(a, b, c) {
-        !function() {
+        (function() {
             var a = this, d = a._, e = {}, f = Array.prototype, g = Object.prototype, h = Function.prototype, i = f.push, j = f.slice, k = f.concat, l = g.toString, m = g.hasOwnProperty, n = f.forEach, o = f.map, p = f.reduce, q = f.reduceRight, r = f.filter, s = f.every, t = f.some, u = f.indexOf, v = f.lastIndexOf, w = Array.isArray, x = Object.keys, y = h.bind, z = function(a) {
                 return a instanceof z ? a : this instanceof z ? void (this._wrapped = a) : new z(a);
             };
-            "undefined" != typeof c ? ("undefined" != typeof b && b.exports && (c = b.exports = z), 
-            c._ = z) : a._ = z, z.VERSION = "1.4.4";
+            void 0 !== c ? (void 0 !== b && b.exports && (c = b.exports = z), c._ = z) : a._ = z, 
+            z.VERSION = "1.4.4";
             var A = z.each = z.forEach = function(a, b, c) {
                 if (null != a) if (n && a.forEach === n) a.forEach(b, c); else if (a.length === +a.length) {
                     for (var d = 0, f = a.length; d < f; d++) if (b.call(c, a[d], d, a) === e) return;
@@ -16947,8 +16918,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
             var E = function(a, b, c, d) {
                 var e = {}, f = D(b || z.identity);
                 return A(a, function(b, g) {
-                    var h = f.call(c, b, g, a);
-                    d(e, h, b);
+                    d(e, f.call(c, b, g, a), b);
                 }), e;
             };
             z.groupBy = function(a, b, c) {
@@ -17130,8 +17100,8 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                     if (b) for (var c in b) a[c] = b[c];
                 }), a;
             }, z.pick = function(a) {
-                var b = {}, c = k.apply(f, j.call(arguments, 1));
-                return A(c, function(c) {
+                var b = {};
+                return A(k.apply(f, j.call(arguments, 1)), function(c) {
                     c in a && (b[c] = a[c]);
                 }), b;
             }, z.omit = function(a) {
@@ -17325,7 +17295,7 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
                     return this._wrapped;
                 }
             });
-        }.call(this);
+        }).call(this);
     }, {} ],
     23: [ function(a, b, c) {
         "undefined" != typeof window && "function" != typeof window.requestAnimationFrame && (window.requestAnimationFrame = window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(a) {
@@ -17447,10 +17417,10 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
             return new THREE.Face3(a, b, c, d);
         }
         function e(a, b, c, e) {
-            void 0 === e ? h.faces.push(d(parseInt(a) - (l + 1), parseInt(b) - (l + 1), parseInt(c) - (l + 1))) : h.faces.push(d(parseInt(a) - (l + 1), parseInt(b) - (l + 1), parseInt(c) - (l + 1), [ n[parseInt(e[0]) - 1].clone(), n[parseInt(e[1]) - 1].clone(), n[parseInt(e[2]) - 1].clone() ]));
+            void 0 === e ? h.faces.push(d(parseInt(a) - (l + 1), parseInt(b) - (l + 1), parseInt(c) - (l + 1))) : h.faces.push(d(parseInt(a) - (l + 1), parseInt(b) - (l + 1), parseInt(c) - (l + 1), [ m[parseInt(e[0]) - 1].clone(), m[parseInt(e[1]) - 1].clone(), m[parseInt(e[2]) - 1].clone() ]));
         }
         function f(a, b, c) {
-            h.faceVertexUvs[0].push([ o[parseInt(a) - 1].clone(), o[parseInt(b) - 1].clone(), o[parseInt(c) - 1].clone() ]);
+            h.faceVertexUvs[0].push([ n[parseInt(a) - 1].clone(), n[parseInt(b) - 1].clone(), n[parseInt(c) - 1].clone() ]);
         }
         function g(a, b, c) {
             void 0 === a[3] ? (e(a[0], a[1], a[2], c), void 0 !== b && b.length > 0 && f(b[0], b[1], b[2])) : (void 0 !== c && c.length > 0 ? (e(a[0], a[1], a[3], [ c[0], c[1], c[3] ]), 
@@ -17460,16 +17430,16 @@ THREE.MorphBlendMesh.prototype.createAnimation = function(a, b, c, d) {
         var h, i, j, k = new THREE.Object3D(), l = 0;
         /^o /gm.test(a) === !1 && (h = new THREE.Geometry(), i = new THREE.MeshLambertMaterial(), 
         j = new THREE.Mesh(h, i), k.add(j));
-        for (var m = 0, n = [], o = [], p = /v( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/, q = /vn( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/, r = /vt( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/, s = /f( +\d+)( +\d+)( +\d+)( +\d+)?/, t = /f( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))?/, u = /f( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))?/, v = /f( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))?/, w = a.split("\n"), x = 0; x < w.length; x++) {
-            var y = w[x];
-            y = y.trim();
-            var z;
-            0 !== y.length && "#" !== y.charAt(0) && (null !== (z = p.exec(y)) ? h.vertices.push(b(parseFloat(z[1]), parseFloat(z[2]), parseFloat(z[3]))) : null !== (z = q.exec(y)) ? n.push(b(parseFloat(z[1]), parseFloat(z[2]), parseFloat(z[3]))) : null !== (z = r.exec(y)) ? o.push(c(parseFloat(z[1]), parseFloat(z[2]))) : null !== (z = s.exec(y)) ? g([ z[1], z[2], z[3], z[4] ]) : null !== (z = t.exec(y)) ? g([ z[2], z[5], z[8], z[11] ], [ z[3], z[6], z[9], z[12] ]) : null !== (z = u.exec(y)) ? g([ z[2], z[6], z[10], z[14] ], [ z[3], z[7], z[11], z[15] ], [ z[4], z[8], z[12], z[16] ]) : null !== (z = v.exec(y)) ? g([ z[2], z[5], z[8], z[11] ], [], [ z[3], z[6], z[9], z[12] ]) : /^o /.test(y) ? (void 0 !== h && (l += h.vertices.length), 
+        for (var m = [], n = [], o = /v( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/, p = /vn( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/, q = /vt( +[\d|\.|\+|\-|e]+)( +[\d|\.|\+|\-|e]+)/, r = /f( +\d+)( +\d+)( +\d+)( +\d+)?/, s = /f( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))( +(\d+)\/(\d+))?/, t = /f( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))( +(\d+)\/(\d+)\/(\d+))?/, u = /f( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))( +(\d+)\/\/(\d+))?/, v = a.split("\n"), w = 0; w < v.length; w++) {
+            var x = v[w];
+            x = x.trim();
+            var y;
+            0 !== x.length && "#" !== x.charAt(0) && (null !== (y = o.exec(x)) ? h.vertices.push(b(parseFloat(y[1]), parseFloat(y[2]), parseFloat(y[3]))) : null !== (y = p.exec(x)) ? m.push(b(parseFloat(y[1]), parseFloat(y[2]), parseFloat(y[3]))) : null !== (y = q.exec(x)) ? n.push(c(parseFloat(y[1]), parseFloat(y[2]))) : null !== (y = r.exec(x)) ? g([ y[1], y[2], y[3], y[4] ]) : null !== (y = s.exec(x)) ? g([ y[2], y[5], y[8], y[11] ], [ y[3], y[6], y[9], y[12] ]) : null !== (y = t.exec(x)) ? g([ y[2], y[6], y[10], y[14] ], [ y[3], y[7], y[11], y[15] ], [ y[4], y[8], y[12], y[16] ]) : null !== (y = u.exec(x)) ? g([ y[2], y[5], y[8], y[11] ], [], [ y[3], y[6], y[9], y[12] ]) : /^o /.test(x) ? (void 0 !== h && (l += h.vertices.length), 
             h = new THREE.Geometry(), i = new THREE.MeshLambertMaterial(), j = new THREE.Mesh(h, i), 
-            j.name = y.substring(2).trim(), k.add(j), m = 0) : /^g /.test(y) || (/^usemtl /.test(y) ? i.name = y.substring(7).trim() : /^mtllib /.test(y) || /^s /.test(y)));
+            j.name = x.substring(2).trim(), k.add(j), 0) : /^g /.test(x) || (/^usemtl /.test(x) ? i.name = x.substring(7).trim() : /^mtllib /.test(x) || /^s /.test(x)));
         }
-        for (var x = 0, A = k.children.length; x < A; x++) {
-            var h = k.children[x].geometry;
+        for (var w = 0, z = k.children.length; w < z; w++) {
+            var h = k.children[w].geometry;
             h.computeCentroids(), h.computeFaceNormals(), h.computeBoundingSphere();
         }
         return k;
@@ -17805,20 +17775,20 @@ ParticleEngineModels = {
     }
 }, window.Physijs = function() {
     "use strict";
-    var a, b, c, d, e, f, g, h, i, j = !1, k = l, l = {}, m = new THREE.Vector3(), n = new THREE.Vector3(), o = new THREE.Matrix4(), p = new THREE.Quaternion(), q = {
+    var a, b, c, d, e, f, g, h = !1, i = j, j = {}, k = new THREE.Vector3(), l = new THREE.Vector3(), m = new THREE.Matrix4(), n = new THREE.Quaternion(), o = {
         WORLDREPORT: 0,
         COLLISIONREPORT: 1,
         VEHICLEREPORT: 2,
         CONSTRAINTREPORT: 3
-    }, r = 14, s = 5, t = 9, u = 6;
-    return l.scripts = {}, b = function() {
+    }, p = 9, q = 6;
+    return j.scripts = {}, b = function() {
         this._eventListeners = {};
     }, b.prototype.addEventListener = function(a, b) {
         this._eventListeners.hasOwnProperty(a) || (this._eventListeners[a] = []), this._eventListeners[a].push(b);
     }, b.prototype.removeEventListener = function(a, b) {
         var c;
-        return !!this._eventListeners.hasOwnProperty(a) && ((c = this._eventListeners[a].indexOf(b)) >= 0 && (this._eventListeners[a].splice(c, 1), 
-        !0));
+        return !!this._eventListeners.hasOwnProperty(a) && (c = this._eventListeners[a].indexOf(b)) >= 0 && (this._eventListeners[a].splice(c, 1), 
+        !0);
     }, b.prototype.dispatchEvent = function(a) {
         var b, c = Array.prototype.splice.call(arguments, 1);
         if (this._eventListeners.hasOwnProperty(a)) for (b = 0; b < this._eventListeners[a].length; b++) this._eventListeners[a][b].apply(this, c);
@@ -17830,34 +17800,23 @@ ParticleEngineModels = {
         return function() {
             return a++;
         };
-    }(), d = function(a, b, c, d) {
-        return new THREE.Vector3(Math.atan2(2 * (a * d - b * c), d * d - a * a - b * b + c * c), Math.asin(2 * (a * c + b * d)), Math.atan2(2 * (c * d - a * b), d * d + a * a - b * b - c * c));
-    }, e = function(a, b, c) {
-        var d, e, f, g, h, i, j, k;
-        return d = Math.cos(b), e = Math.sin(b), f = Math.cos(-c), g = Math.sin(-c), h = Math.cos(a), 
-        i = Math.sin(a), j = d * f, k = e * g, {
-            w: j * h - k * i,
-            x: j * i + k * h,
-            y: e * f * h + d * g * i,
-            z: d * g * h - e * f * i
-        };
-    }, f = function(a, b) {
-        return o.identity(), o.identity().makeRotationFromQuaternion(b.quaternion), o.getInverse(o), 
-        m.copy(a), n.copy(b.position), m.sub(n).applyMatrix4(o);
-    }, l.noConflict = function() {
-        return window.Physijs = k, l;
-    }, l.createMaterial = function(a, b, c) {
+    }(), d = function(a, b) {
+        return m.identity(), m.identity().makeRotationFromQuaternion(b.quaternion), m.getInverse(m), 
+        k.copy(a), l.copy(b.position), k.sub(l).applyMatrix4(m);
+    }, j.noConflict = function() {
+        return window.Physijs = i, j;
+    }, j.createMaterial = function(a, b, c) {
         var d = function() {};
         return d.prototype = a, d = new d(), d._physijs = {
             id: a.id,
             friction: void 0 === b ? .8 : b,
             restitution: void 0 === c ? .2 : c
         }, d;
-    }, l.PointConstraint = function(a, b, d) {
-        void 0 === d && (d = b, b = void 0), this.type = "point", this.appliedImpulse = 0, 
-        this.id = c(), this.objecta = a._physijs.id, this.positiona = f(d, a).clone(), b && (this.objectb = b._physijs.id, 
-        this.positionb = f(d, b).clone());
-    }, l.PointConstraint.prototype.getDefinition = function() {
+    }, j.PointConstraint = function(a, b, e) {
+        void 0 === e && (e = b, b = void 0), this.type = "point", this.appliedImpulse = 0, 
+        this.id = c(), this.objecta = a._physijs.id, this.positiona = d(e, a).clone(), b && (this.objectb = b._physijs.id, 
+        this.positionb = d(e, b).clone());
+    }, j.PointConstraint.prototype.getDefinition = function() {
         return {
             type: this.type,
             id: this.id,
@@ -17866,11 +17825,11 @@ ParticleEngineModels = {
             positiona: this.positiona,
             positionb: this.positionb
         };
-    }, l.HingeConstraint = function(a, b, d, e) {
-        void 0 === e && (e = d, d = b, b = void 0), this.type = "hinge", this.appliedImpulse = 0, 
-        this.id = c(), this.scene = a.parent, this.objecta = a._physijs.id, this.positiona = f(d, a).clone(), 
-        this.position = d.clone(), this.axis = e, b && (this.objectb = b._physijs.id, this.positionb = f(d, b).clone());
-    }, l.HingeConstraint.prototype.getDefinition = function() {
+    }, j.HingeConstraint = function(a, b, e, f) {
+        void 0 === f && (f = e, e = b, b = void 0), this.type = "hinge", this.appliedImpulse = 0, 
+        this.id = c(), this.scene = a.parent, this.objecta = a._physijs.id, this.positiona = d(e, a).clone(), 
+        this.position = e.clone(), this.axis = f, b && (this.objectb = b._physijs.id, this.positionb = d(e, b).clone());
+    }, j.HingeConstraint.prototype.getDefinition = function() {
         return {
             type: this.type,
             id: this.id,
@@ -17880,7 +17839,7 @@ ParticleEngineModels = {
             positionb: this.positionb,
             axis: this.axis
         };
-    }, l.HingeConstraint.prototype.setLimits = function(a, b, c, d) {
+    }, j.HingeConstraint.prototype.setLimits = function(a, b, c, d) {
         this.scene.execute("hinge_setLimits", {
             constraint: this.id,
             low: a,
@@ -17888,21 +17847,21 @@ ParticleEngineModels = {
             bias_factor: c,
             relaxation_factor: d
         });
-    }, l.HingeConstraint.prototype.enableAngularMotor = function(a, b) {
+    }, j.HingeConstraint.prototype.enableAngularMotor = function(a, b) {
         this.scene.execute("hinge_enableAngularMotor", {
             constraint: this.id,
             velocity: a,
             acceleration: b
         });
-    }, l.HingeConstraint.prototype.disableMotor = function(a, b) {
+    }, j.HingeConstraint.prototype.disableMotor = function(a, b) {
         this.scene.execute("hinge_disableMotor", {
             constraint: this.id
         });
-    }, l.SliderConstraint = function(a, b, d, e) {
-        void 0 === e && (e = d, d = b, b = void 0), this.type = "slider", this.appliedImpulse = 0, 
-        this.id = c(), this.scene = a.parent, this.objecta = a._physijs.id, this.positiona = f(d, a).clone(), 
-        this.axis = e, b && (this.objectb = b._physijs.id, this.positionb = f(d, b).clone());
-    }, l.SliderConstraint.prototype.getDefinition = function() {
+    }, j.SliderConstraint = function(a, b, e, f) {
+        void 0 === f && (f = e, e = b, b = void 0), this.type = "slider", this.appliedImpulse = 0, 
+        this.id = c(), this.scene = a.parent, this.objecta = a._physijs.id, this.positiona = d(e, a).clone(), 
+        this.axis = f, b && (this.objectb = b._physijs.id, this.positionb = d(e, b).clone());
+    }, j.SliderConstraint.prototype.getDefinition = function() {
         return {
             type: this.type,
             id: this.id,
@@ -17912,7 +17871,7 @@ ParticleEngineModels = {
             positionb: this.positionb,
             axis: this.axis
         };
-    }, l.SliderConstraint.prototype.setLimits = function(a, b, c, d) {
+    }, j.SliderConstraint.prototype.setLimits = function(a, b, c, d) {
         this.scene.execute("slider_setLimits", {
             constraint: this.id,
             lin_lower: a,
@@ -17920,37 +17879,37 @@ ParticleEngineModels = {
             ang_lower: c,
             ang_upper: d
         });
-    }, l.SliderConstraint.prototype.setRestitution = function(a, b) {
+    }, j.SliderConstraint.prototype.setRestitution = function(a, b) {
         this.scene.execute("slider_setRestitution", {
             constraint: this.id,
             linear: a,
             angular: b
         });
-    }, l.SliderConstraint.prototype.enableLinearMotor = function(a, b) {
+    }, j.SliderConstraint.prototype.enableLinearMotor = function(a, b) {
         this.scene.execute("slider_enableLinearMotor", {
             constraint: this.id,
             velocity: a,
             acceleration: b
         });
-    }, l.SliderConstraint.prototype.disableLinearMotor = function() {
+    }, j.SliderConstraint.prototype.disableLinearMotor = function() {
         this.scene.execute("slider_disableLinearMotor", {
             constraint: this.id
         });
-    }, l.SliderConstraint.prototype.enableAngularMotor = function(a, b) {
+    }, j.SliderConstraint.prototype.enableAngularMotor = function(a, b) {
         this.scene.execute("slider_enableAngularMotor", {
             constraint: this.id,
             velocity: a,
             acceleration: b
         });
-    }, l.SliderConstraint.prototype.disableAngularMotor = function() {
+    }, j.SliderConstraint.prototype.disableAngularMotor = function() {
         this.scene.execute("slider_disableAngularMotor", {
             constraint: this.id
         });
-    }, l.ConeTwistConstraint = function(a, b, d) {
-        if (void 0 === d) throw "Both objects must be defined in a ConeTwistConstraint.";
+    }, j.ConeTwistConstraint = function(a, b, e) {
+        if (void 0 === e) throw "Both objects must be defined in a ConeTwistConstraint.";
         this.type = "conetwist", this.appliedImpulse = 0, this.id = c(), this.scene = a.parent, 
-        this.objecta = a._physijs.id, this.positiona = f(d, a).clone(), this.objectb = b._physijs.id, 
-        this.positionb = f(d, b).clone(), this.axisa = {
+        this.objecta = a._physijs.id, this.positiona = d(e, a).clone(), this.objectb = b._physijs.id, 
+        this.positionb = d(e, b).clone(), this.axisa = {
             x: a.rotation.x,
             y: a.rotation.y,
             z: a.rotation.z
@@ -17959,7 +17918,7 @@ ParticleEngineModels = {
             y: b.rotation.y,
             z: b.rotation.z
         };
-    }, l.ConeTwistConstraint.prototype.getDefinition = function() {
+    }, j.ConeTwistConstraint.prototype.getDefinition = function() {
         return {
             type: this.type,
             id: this.id,
@@ -17970,23 +17929,23 @@ ParticleEngineModels = {
             axisa: this.axisa,
             axisb: this.axisb
         };
-    }, l.ConeTwistConstraint.prototype.setLimit = function(a, b, c) {
+    }, j.ConeTwistConstraint.prototype.setLimit = function(a, b, c) {
         this.scene.execute("conetwist_setLimit", {
             constraint: this.id,
             x: a,
             y: b,
             z: c
         });
-    }, l.ConeTwistConstraint.prototype.enableMotor = function() {
+    }, j.ConeTwistConstraint.prototype.enableMotor = function() {
         this.scene.execute("conetwist_enableMotor", {
             constraint: this.id
         });
-    }, l.ConeTwistConstraint.prototype.setMaxMotorImpulse = function(a) {
+    }, j.ConeTwistConstraint.prototype.setMaxMotorImpulse = function(a) {
         this.scene.execute("conetwist_setMaxMotorImpulse", {
             constraint: this.id,
             max_impulse: a
         });
-    }, l.ConeTwistConstraint.prototype.setMotorTarget = function(a) {
+    }, j.ConeTwistConstraint.prototype.setMotorTarget = function(a) {
         a instanceof THREE.Vector3 ? a = new THREE.Quaternion().setFromEuler(new THREE.Euler(a.x, a.y, a.z)) : a instanceof THREE.Euler ? a = new THREE.Quaternion().setFromEuler(a) : a instanceof THREE.Matrix4 && (a = new THREE.Quaternion().setFromRotationMatrix(a)), 
         this.scene.execute("conetwist_setMotorTarget", {
             constraint: this.id,
@@ -17995,23 +17954,23 @@ ParticleEngineModels = {
             z: a.z,
             w: a.w
         });
-    }, l.ConeTwistConstraint.prototype.disableMotor = function() {
+    }, j.ConeTwistConstraint.prototype.disableMotor = function() {
         this.scene.execute("conetwist_disableMotor", {
             constraint: this.id
         });
-    }, l.DOFConstraint = function(a, b, d) {
-        void 0 === d && (d = b, b = void 0), this.type = "dof", this.appliedImpulse = 0, 
-        this.id = c(), this.scene = a.parent, this.objecta = a._physijs.id, this.positiona = f(d, a).clone(), 
+    }, j.DOFConstraint = function(a, b, e) {
+        void 0 === e && (e = b, b = void 0), this.type = "dof", this.appliedImpulse = 0, 
+        this.id = c(), this.scene = a.parent, this.objecta = a._physijs.id, this.positiona = d(e, a).clone(), 
         this.axisa = {
             x: a.rotation.x,
             y: a.rotation.y,
             z: a.rotation.z
-        }, b && (this.objectb = b._physijs.id, this.positionb = f(d, b).clone(), this.axisb = {
+        }, b && (this.objectb = b._physijs.id, this.positionb = d(e, b).clone(), this.axisb = {
             x: b.rotation.x,
             y: b.rotation.y,
             z: b.rotation.z
         });
-    }, l.DOFConstraint.prototype.getDefinition = function() {
+    }, j.DOFConstraint.prototype.getDefinition = function() {
         return {
             type: this.type,
             id: this.id,
@@ -18022,40 +17981,40 @@ ParticleEngineModels = {
             axisa: this.axisa,
             axisb: this.axisb
         };
-    }, l.DOFConstraint.prototype.setLinearLowerLimit = function(a) {
+    }, j.DOFConstraint.prototype.setLinearLowerLimit = function(a) {
         this.scene.execute("dof_setLinearLowerLimit", {
             constraint: this.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.DOFConstraint.prototype.setLinearUpperLimit = function(a) {
+    }, j.DOFConstraint.prototype.setLinearUpperLimit = function(a) {
         this.scene.execute("dof_setLinearUpperLimit", {
             constraint: this.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.DOFConstraint.prototype.setAngularLowerLimit = function(a) {
+    }, j.DOFConstraint.prototype.setAngularLowerLimit = function(a) {
         this.scene.execute("dof_setAngularLowerLimit", {
             constraint: this.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.DOFConstraint.prototype.setAngularUpperLimit = function(a) {
+    }, j.DOFConstraint.prototype.setAngularUpperLimit = function(a) {
         this.scene.execute("dof_setAngularUpperLimit", {
             constraint: this.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.DOFConstraint.prototype.enableAngularMotor = function(a) {
+    }, j.DOFConstraint.prototype.enableAngularMotor = function(a) {
         this.scene.execute("dof_enableAngularMotor", {
             constraint: this.id,
             which: a
         });
-    }, l.DOFConstraint.prototype.configureAngularMotor = function(a, b, c, d, e) {
+    }, j.DOFConstraint.prototype.configureAngularMotor = function(a, b, c, d, e) {
         this.scene.execute("dof_configureAngularMotor", {
             constraint: this.id,
             which: a,
@@ -18064,14 +18023,14 @@ ParticleEngineModels = {
             velocity: d,
             max_force: e
         });
-    }, l.DOFConstraint.prototype.disableAngularMotor = function(a) {
+    }, j.DOFConstraint.prototype.disableAngularMotor = function(a) {
         this.scene.execute("dof_disableAngularMotor", {
             constraint: this.id,
             which: a
         });
-    }, l.Scene = function(c) {
+    }, j.Scene = function(c) {
         var d = this;
-        b.call(this), THREE.Scene.call(this), this._worker = new Worker(l.scripts.worker || "physijs_worker.js"), 
+        b.call(this), THREE.Scene.call(this), this._worker = new Worker(j.scripts.worker || "physijs_worker.js"), 
         this._worker.transferableMessage = this._worker.webkitPostMessage || this._worker.postMessage, 
         this._materials_ref_counts = {}, this._objects = {}, this._vehicles = {}, this._constraints = {};
         var e = new ArrayBuffer(1);
@@ -18079,19 +18038,19 @@ ParticleEngineModels = {
             var b, c = a.data;
             if (c instanceof ArrayBuffer && 1 !== c.byteLength && (c = new Float32Array(c)), 
             c instanceof Float32Array) switch (c[0]) {
-              case q.WORLDREPORT:
+              case o.WORLDREPORT:
                 d._updateScene(c);
                 break;
 
-              case q.COLLISIONREPORT:
+              case o.COLLISIONREPORT:
                 d._updateCollisions(c);
                 break;
 
-              case q.VEHICLEREPORT:
+              case o.VEHICLEREPORT:
                 d._updateVehicles(c);
                 break;
 
-              case q.CONSTRAINTREPORT:
+              case o.CONSTRAINTREPORT:
                 d._updateConstraints(c);
             } else if (c.cmd) switch (c.cmd) {
               case "objectReady":
@@ -18109,61 +18068,60 @@ ParticleEngineModels = {
               default:
                 console.debug("Received: " + c.cmd), console.dir(c.params);
             } else switch (c[0]) {
-              case q.WORLDREPORT:
+              case o.WORLDREPORT:
                 d._updateScene(c);
                 break;
 
-              case q.COLLISIONREPORT:
+              case o.COLLISIONREPORT:
                 d._updateCollisions(c);
                 break;
 
-              case q.VEHICLEREPORT:
+              case o.VEHICLEREPORT:
                 d._updateVehicles(c);
                 break;
 
-              case q.CONSTRAINTREPORT:
+              case o.CONSTRAINTREPORT:
                 d._updateConstraints(c);
             }
-        }, c = c || {}, c.ammo = l.scripts.ammo || "ammo.js", c.fixedTimeStep = c.fixedTimeStep || 1 / 60, 
+        }, c = c || {}, c.ammo = j.scripts.ammo || "ammo.js", c.fixedTimeStep = c.fixedTimeStep || 1 / 60, 
         c.rateLimit = c.rateLimit || !0, this.execute("init", c);
-    }, l.Scene.prototype = new THREE.Scene(), l.Scene.prototype.constructor = l.Scene, 
-    b.make(l.Scene), l.Scene.prototype._updateScene = function(b) {
+    }, j.Scene.prototype = new THREE.Scene(), j.Scene.prototype.constructor = j.Scene, 
+    b.make(j.Scene), j.Scene.prototype._updateScene = function(b) {
         var c, d, e, f = b[1];
-        for (d = 0; d < f; d++) e = 2 + d * r, c = this._objects[b[e]], void 0 !== c && (c.__dirtyPosition === !1 && c.position.set(b[e + 1], b[e + 2], b[e + 3]), 
+        for (d = 0; d < f; d++) e = 2 + 14 * d, void 0 !== (c = this._objects[b[e]]) && (c.__dirtyPosition === !1 && c.position.set(b[e + 1], b[e + 2], b[e + 3]), 
         c.__dirtyRotation === !1 && c.quaternion.set(b[e + 4], b[e + 5], b[e + 6], b[e + 7]), 
         c._physijs.linearVelocity.set(b[e + 8], b[e + 9], b[e + 10]), c._physijs.angularVelocity.set(b[e + 11], b[e + 12], b[e + 13]));
-        a && this._worker.transferableMessage(b.buffer, [ b.buffer ]), j = !1, this.dispatchEvent("update");
-    }, l.Scene.prototype._updateVehicles = function(b) {
+        a && this._worker.transferableMessage(b.buffer, [ b.buffer ]), h = !1, this.dispatchEvent("update");
+    }, j.Scene.prototype._updateVehicles = function(b) {
         var c, d, e, f;
-        for (e = 0; e < (b.length - 1) / t; e++) f = 1 + e * t, c = this._vehicles[b[f]], 
-        void 0 !== c && (d = c.wheels[b[f + 1]], d.position.set(b[f + 2], b[f + 3], b[f + 4]), 
-        d.quaternion.set(b[f + 5], b[f + 6], b[f + 7], b[f + 8]));
+        for (e = 0; e < (b.length - 1) / p; e++) f = 1 + e * p, void 0 !== (c = this._vehicles[b[f]]) && (d = c.wheels[b[f + 1]], 
+        d.position.set(b[f + 2], b[f + 3], b[f + 4]), d.quaternion.set(b[f + 5], b[f + 6], b[f + 7], b[f + 8]));
         a && this._worker.transferableMessage(b.buffer, [ b.buffer ]);
-    }, l.Scene.prototype._updateConstraints = function(b) {
+    }, j.Scene.prototype._updateConstraints = function(b) {
         var c, d, e, f;
-        for (e = 0; e < (b.length - 1) / u; e++) f = 1 + e * u, c = this._constraints[b[f]], 
-        d = this._objects[b[f + 1]], void 0 !== c && void 0 !== d && (m.set(b[f + 2], b[f + 3], b[f + 4]), 
-        o.extractRotation(d.matrix), m.applyMatrix4(o), c.positiona.addVectors(d.position, m), 
+        for (e = 0; e < (b.length - 1) / q; e++) f = 1 + e * q, c = this._constraints[b[f]], 
+        d = this._objects[b[f + 1]], void 0 !== c && void 0 !== d && (k.set(b[f + 2], b[f + 3], b[f + 4]), 
+        m.extractRotation(d.matrix), k.applyMatrix4(m), c.positiona.addVectors(d.position, k), 
         c.appliedImpulse = b[f + 5]);
         a && this._worker.transferableMessage(b.buffer, [ b.buffer ]);
-    }, l.Scene.prototype._updateCollisions = function(b) {
-        var c, d, e, f, g, j, k, l = {}, n = {};
-        for (c = 0; c < b[1]; c++) e = 2 + c * s, f = b[e], g = b[e + 1], n[f + "-" + g] = e + 2, 
-        n[g + "-" + f] = -1 * (e + 2), l[f] || (l[f] = []), l[f].push(g), l[g] || (l[g] = []), 
-        l[g].push(f);
-        for (j in this._objects) if (this._objects.hasOwnProperty(j)) if (f = this._objects[j], 
-        l[j]) {
-            for (d = 0; d < f._physijs.touches.length; d++) l[j].indexOf(f._physijs.touches[d]) === -1 && f._physijs.touches.splice(d--, 1);
-            for (d = 0; d < l[j].length; d++) if (k = l[j][d], g = this._objects[k], g && f._physijs.touches.indexOf(k) === -1) {
-                f._physijs.touches.push(k), m.subVectors(f.getLinearVelocity(), g.getLinearVelocity()), 
-                h = m.clone(), m.subVectors(f.getAngularVelocity(), g.getAngularVelocity()), i = m.clone();
-                var o = n[f._physijs.id + "-" + g._physijs.id];
-                o > 0 ? m.set(-b[o], -b[o + 1], -b[o + 2]) : (o *= -1, m.set(b[o], b[o + 1], b[o + 2])), 
-                f.dispatchEvent("collision", g, h, i, m);
+    }, j.Scene.prototype._updateCollisions = function(b) {
+        var c, d, e, h, i, j, l, m = {}, n = {};
+        for (c = 0; c < b[1]; c++) e = 2 + 5 * c, h = b[e], i = b[e + 1], n[h + "-" + i] = e + 2, 
+        n[i + "-" + h] = -1 * (e + 2), m[h] || (m[h] = []), m[h].push(i), m[i] || (m[i] = []), 
+        m[i].push(h);
+        for (j in this._objects) if (this._objects.hasOwnProperty(j)) if (h = this._objects[j], 
+        m[j]) {
+            for (d = 0; d < h._physijs.touches.length; d++) m[j].indexOf(h._physijs.touches[d]) === -1 && h._physijs.touches.splice(d--, 1);
+            for (d = 0; d < m[j].length; d++) if (l = m[j][d], (i = this._objects[l]) && h._physijs.touches.indexOf(l) === -1) {
+                h._physijs.touches.push(l), k.subVectors(h.getLinearVelocity(), i.getLinearVelocity()), 
+                f = k.clone(), k.subVectors(h.getAngularVelocity(), i.getAngularVelocity()), g = k.clone();
+                var o = n[h._physijs.id + "-" + i._physijs.id];
+                o > 0 ? k.set(-b[o], -b[o + 1], -b[o + 2]) : (o *= -1, k.set(b[o], b[o + 1], b[o + 2])), 
+                h.dispatchEvent("collision", i, f, g, k);
             }
-        } else f._physijs.touches.length = 0;
-        this.collisions = l, a && this._worker.transferableMessage(b.buffer, [ b.buffer ]);
-    }, l.Scene.prototype.addConstraint = function(a, b) {
+        } else h._physijs.touches.length = 0;
+        this.collisions = m, a && this._worker.transferableMessage(b.buffer, [ b.buffer ]);
+    }, j.Scene.prototype.addConstraint = function(a, b) {
         if (this._constraints[a.id] = a, this.execute("addConstraint", a.getDefinition()), 
         b) {
             var c;
@@ -18194,51 +18152,49 @@ ParticleEngineModels = {
             }
         }
         return a;
-    }, l.Scene.prototype.removeConstraint = function(a) {
+    }, j.Scene.prototype.removeConstraint = function(a) {
         void 0 !== this._constraints[a.id] && (this.execute("removeConstraint", {
             id: a.id
         }), delete this._constraints[a.id]);
-    }, l.Scene.prototype.execute = function(a, b) {
+    }, j.Scene.prototype.execute = function(a, b) {
         this._worker.postMessage({
             cmd: a,
             params: b
         });
-    }, g = function(a, b) {
+    }, e = function(a, b) {
         var c;
         for (c = 0; c < b.children.length; c++) b.children[c]._physijs && (b.children[c].updateMatrix(), 
-        b.children[c].updateMatrixWorld(), m.getPositionFromMatrix(b.children[c].matrixWorld), 
-        p.setFromRotationMatrix(b.children[c].matrixWorld), b.children[c]._physijs.position_offset = {
-            x: m.x,
-            y: m.y,
-            z: m.z
+        b.children[c].updateMatrixWorld(), k.getPositionFromMatrix(b.children[c].matrixWorld), 
+        n.setFromRotationMatrix(b.children[c].matrixWorld), b.children[c]._physijs.position_offset = {
+            x: k.x,
+            y: k.y,
+            z: k.z
         }, b.children[c]._physijs.rotation = {
-            x: p.x,
-            y: p.y,
-            z: p.z,
-            w: p.w
-        }, a._physijs.children.push(b.children[c]._physijs)), g(a, b.children[c]);
-    }, l.Scene.prototype.add = function(a) {
-        if (THREE.Mesh.prototype.add.call(this, a), a._physijs) if (a.world = this, a instanceof l.Vehicle) this.add(a.mesh), 
-        this._vehicles[a._physijs.id] = a, this.execute("addVehicle", a._physijs); else {
-            a.__dirtyPosition = !1, a.__dirtyRotation = !1, this._objects[a._physijs.id] = a, 
-            a.children.length && (a._physijs.children = [], g(a, a)), a.material._physijs && (this._materials_ref_counts.hasOwnProperty(a.material._physijs.id) ? this._materials_ref_counts[a.material._physijs.id]++ : (this.execute("registerMaterial", a.material._physijs), 
-            a._physijs.materialId = a.material._physijs.id, this._materials_ref_counts[a.material._physijs.id] = 1)), 
-            a._physijs.position = {
-                x: a.position.x,
-                y: a.position.y,
-                z: a.position.z
-            }, a._physijs.rotation = {
-                x: a.quaternion.x,
-                y: a.quaternion.y,
-                z: a.quaternion.z,
-                w: a.quaternion.w
-            };
-            new THREE.Vector3(1, 1, 1);
-            a._physijs.width && (a._physijs.width *= a.scale.x), a._physijs.height && (a._physijs.height *= a.scale.y), 
-            a._physijs.depth && (a._physijs.depth *= a.scale.z), this.execute("addObject", a._physijs);
-        }
-    }, l.Scene.prototype.remove = function(a) {
-        if (a instanceof l.Vehicle) {
+            x: n.x,
+            y: n.y,
+            z: n.z,
+            w: n.w
+        }, a._physijs.children.push(b.children[c]._physijs)), e(a, b.children[c]);
+    }, j.Scene.prototype.add = function(a) {
+        THREE.Mesh.prototype.add.call(this, a), a._physijs && (a.world = this, a instanceof j.Vehicle ? (this.add(a.mesh), 
+        this._vehicles[a._physijs.id] = a, this.execute("addVehicle", a._physijs)) : (a.__dirtyPosition = !1, 
+        a.__dirtyRotation = !1, this._objects[a._physijs.id] = a, a.children.length && (a._physijs.children = [], 
+        e(a, a)), a.material._physijs && (this._materials_ref_counts.hasOwnProperty(a.material._physijs.id) ? this._materials_ref_counts[a.material._physijs.id]++ : (this.execute("registerMaterial", a.material._physijs), 
+        a._physijs.materialId = a.material._physijs.id, this._materials_ref_counts[a.material._physijs.id] = 1)), 
+        a._physijs.position = {
+            x: a.position.x,
+            y: a.position.y,
+            z: a.position.z
+        }, a._physijs.rotation = {
+            x: a.quaternion.x,
+            y: a.quaternion.y,
+            z: a.quaternion.z,
+            w: a.quaternion.w
+        }, new THREE.Vector3(1, 1, 1), a._physijs.width && (a._physijs.width *= a.scale.x), 
+        a._physijs.height && (a._physijs.height *= a.scale.y), a._physijs.depth && (a._physijs.depth *= a.scale.z), 
+        this.execute("addObject", a._physijs)));
+    }, j.Scene.prototype.remove = function(a) {
+        if (a instanceof j.Vehicle) {
             for (this.execute("removeVehicle", {
                 id: a._physijs.id
             }); a.wheels.length; ) this.remove(a.wheels.pop());
@@ -18247,17 +18203,16 @@ ParticleEngineModels = {
         this.execute("removeObject", {
             id: a._physijs.id
         }));
-        a.material && a.material._physijs && this._materials_ref_counts.hasOwnProperty(a.material._physijs.id) && (this._materials_ref_counts[a.material._physijs.id]--, 
-        0 == this._materials_ref_counts[a.material._physijs.id] && (this.execute("unRegisterMaterial", a.material._physijs), 
-        delete this._materials_ref_counts[a.material._physijs.id]));
-    }, l.Scene.prototype.setFixedTimeStep = function(a) {
+        a.material && a.material._physijs && this._materials_ref_counts.hasOwnProperty(a.material._physijs.id) && 0 == --this._materials_ref_counts[a.material._physijs.id] && (this.execute("unRegisterMaterial", a.material._physijs), 
+        delete this._materials_ref_counts[a.material._physijs.id]);
+    }, j.Scene.prototype.setFixedTimeStep = function(a) {
         a && this.execute("setFixedTimeStep", a);
-    }, l.Scene.prototype.setGravity = function(a) {
+    }, j.Scene.prototype.setGravity = function(a) {
         a && this.execute("setGravity", a);
-    }, l.Scene.prototype.simulate = function(a, b) {
+    }, j.Scene.prototype.simulate = function(a, b) {
         var c, d, e;
-        if (j) return !1;
-        j = !0;
+        if (h) return !1;
+        h = !0;
         for (c in this._objects) this._objects.hasOwnProperty(c) && (d = this._objects[c], 
         (d.__dirtyPosition || d.__dirtyRotation) && (e = {
             id: d._physijs.id
@@ -18275,7 +18230,7 @@ ParticleEngineModels = {
             timeStep: a,
             maxSubSteps: b
         }), !0;
-    }, l.Mesh = function(a, d, e) {
+    }, j.Mesh = function(a, d, e) {
         a && (b.call(this), THREE.Mesh.call(this, a, d), a.boundingBox || a.computeBoundingBox(), 
         this._physijs = {
             type: null,
@@ -18285,22 +18240,22 @@ ParticleEngineModels = {
             linearVelocity: new THREE.Vector3(),
             angularVelocity: new THREE.Vector3()
         });
-    }, l.Mesh.prototype = new THREE.Mesh(), l.Mesh.prototype.constructor = l.Mesh, b.make(l.Mesh), 
-    l.Mesh.prototype.__defineGetter__("mass", function() {
+    }, j.Mesh.prototype = new THREE.Mesh(), j.Mesh.prototype.constructor = j.Mesh, b.make(j.Mesh), 
+    j.Mesh.prototype.__defineGetter__("mass", function() {
         return this._physijs.mass;
-    }), l.Mesh.prototype.__defineSetter__("mass", function(a) {
+    }), j.Mesh.prototype.__defineSetter__("mass", function(a) {
         this._physijs.mass = a, this.world && this.world.execute("updateMass", {
             id: this._physijs.id,
             mass: a
         });
-    }), l.Mesh.prototype.applyCentralImpulse = function(a) {
+    }), j.Mesh.prototype.applyCentralImpulse = function(a) {
         this.world && this.world.execute("applyCentralImpulse", {
             id: this._physijs.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.Mesh.prototype.applyImpulse = function(a, b) {
+    }, j.Mesh.prototype.applyImpulse = function(a, b) {
         this.world && this.world.execute("applyImpulse", {
             id: this._physijs.id,
             impulse_x: a.x,
@@ -18310,14 +18265,14 @@ ParticleEngineModels = {
             y: b.y,
             z: b.z
         });
-    }, l.Mesh.prototype.applyCentralForce = function(a) {
+    }, j.Mesh.prototype.applyCentralForce = function(a) {
         this.world && this.world.execute("applyCentralForce", {
             id: this._physijs.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.Mesh.prototype.applyForce = function(a, b) {
+    }, j.Mesh.prototype.applyForce = function(a, b) {
         this.world && this.world.execute("applyForce", {
             id: this._physijs.id,
             force_x: a.x,
@@ -18327,105 +18282,104 @@ ParticleEngineModels = {
             y: b.y,
             z: b.z
         });
-    }, l.Mesh.prototype.getAngularVelocity = function() {
+    }, j.Mesh.prototype.getAngularVelocity = function() {
         return this._physijs.angularVelocity;
-    }, l.Mesh.prototype.setAngularVelocity = function(a) {
+    }, j.Mesh.prototype.setAngularVelocity = function(a) {
         this.world && this.world.execute("setAngularVelocity", {
             id: this._physijs.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.Mesh.prototype.getLinearVelocity = function() {
+    }, j.Mesh.prototype.getLinearVelocity = function() {
         return this._physijs.linearVelocity;
-    }, l.Mesh.prototype.setLinearVelocity = function(a) {
+    }, j.Mesh.prototype.setLinearVelocity = function(a) {
         this.world && this.world.execute("setLinearVelocity", {
             id: this._physijs.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.Mesh.prototype.setAngularFactor = function(a) {
+    }, j.Mesh.prototype.setAngularFactor = function(a) {
         this.world && this.world.execute("setAngularFactor", {
             id: this._physijs.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.Mesh.prototype.setLinearFactor = function(a) {
+    }, j.Mesh.prototype.setLinearFactor = function(a) {
         this.world && this.world.execute("setLinearFactor", {
             id: this._physijs.id,
             x: a.x,
             y: a.y,
             z: a.z
         });
-    }, l.Mesh.prototype.setDamping = function(a, b) {
+    }, j.Mesh.prototype.setDamping = function(a, b) {
         this.world && this.world.execute("setDamping", {
             id: this._physijs.id,
             linear: a,
             angular: b
         });
-    }, l.Mesh.prototype.setCcdMotionThreshold = function(a) {
+    }, j.Mesh.prototype.setCcdMotionThreshold = function(a) {
         this.world && this.world.execute("setCcdMotionThreshold", {
             id: this._physijs.id,
             threshold: a
         });
-    }, l.Mesh.prototype.setCcdSweptSphereRadius = function(a) {
+    }, j.Mesh.prototype.setCcdSweptSphereRadius = function(a) {
         this.world && this.world.execute("setCcdSweptSphereRadius", {
             id: this._physijs.id,
             radius: a
         });
-    }, l.PlaneMesh = function(a, b, c) {
+    }, j.PlaneMesh = function(a, b, c) {
         var d, e;
-        l.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
+        j.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
         e = a.boundingBox.max.y - a.boundingBox.min.y, this._physijs.type = "plane", this._physijs.normal = a.faces[0].normal.clone(), 
-        this._physijs.mass = "undefined" == typeof c ? d * e : c;
-    }, l.PlaneMesh.prototype = new l.Mesh(), l.PlaneMesh.prototype.constructor = l.PlaneMesh, 
-    l.HeightfieldMesh = function(a, b, c, d, e) {
-        l.Mesh.call(this, a, b, c), this._physijs.type = "heightfield", this._physijs.xsize = a.boundingBox.max.x - a.boundingBox.min.x, 
-        this._physijs.ysize = a.boundingBox.max.y - a.boundingBox.min.y, this._physijs.xpts = "undefined" == typeof d ? Math.sqrt(a.vertices.length) : d + 1, 
-        this._physijs.ypts = "undefined" == typeof e ? Math.sqrt(a.vertices.length) : e + 1, 
-        this._physijs.absMaxHeight = Math.max(a.boundingBox.max.z, Math.abs(a.boundingBox.min.z));
+        this._physijs.mass = void 0 === c ? d * e : c;
+    }, j.PlaneMesh.prototype = new j.Mesh(), j.PlaneMesh.prototype.constructor = j.PlaneMesh, 
+    j.HeightfieldMesh = function(a, b, c, d, e) {
+        j.Mesh.call(this, a, b, c), this._physijs.type = "heightfield", this._physijs.xsize = a.boundingBox.max.x - a.boundingBox.min.x, 
+        this._physijs.ysize = a.boundingBox.max.y - a.boundingBox.min.y, this._physijs.xpts = void 0 === d ? Math.sqrt(a.vertices.length) : d + 1, 
+        this._physijs.ypts = void 0 === e ? Math.sqrt(a.vertices.length) : e + 1, this._physijs.absMaxHeight = Math.max(a.boundingBox.max.z, Math.abs(a.boundingBox.min.z));
         for (var f, g, h = [], i = 0; i < a.vertices.length; i++) f = i % this._physijs.xpts, 
         g = Math.round(i / this._physijs.xpts - i % this._physijs.xpts / this._physijs.xpts), 
         h[i] = a.vertices[f + (this._physijs.ypts - g - 1) * this._physijs.ypts].z;
         this._physijs.points = h;
-    }, l.HeightfieldMesh.prototype = new l.Mesh(), l.HeightfieldMesh.prototype.constructor = l.HeightfieldMesh, 
-    l.BoxMesh = function(a, b, c) {
+    }, j.HeightfieldMesh.prototype = new j.Mesh(), j.HeightfieldMesh.prototype.constructor = j.HeightfieldMesh, 
+    j.BoxMesh = function(a, b, c) {
         var d, e, f;
-        l.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
+        j.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
         e = a.boundingBox.max.y - a.boundingBox.min.y, f = a.boundingBox.max.z - a.boundingBox.min.z, 
         this._physijs.type = "box", this._physijs.width = d, this._physijs.height = e, this._physijs.depth = f, 
-        this._physijs.mass = "undefined" == typeof c ? d * e * f : c;
-    }, l.BoxMesh.prototype = new l.Mesh(), l.BoxMesh.prototype.constructor = l.BoxMesh, 
-    l.SphereMesh = function(a, b, c) {
-        l.Mesh.call(this, a, b, c), a.boundingSphere || a.computeBoundingSphere(), this._physijs.type = "sphere", 
-        this._physijs.radius = a.boundingSphere.radius, this._physijs.mass = "undefined" == typeof c ? 4 / 3 * Math.PI * Math.pow(this._physijs.radius, 3) : c;
-    }, l.SphereMesh.prototype = new l.Mesh(), l.SphereMesh.prototype.constructor = l.SphereMesh, 
-    l.CylinderMesh = function(a, b, c) {
+        this._physijs.mass = void 0 === c ? d * e * f : c;
+    }, j.BoxMesh.prototype = new j.Mesh(), j.BoxMesh.prototype.constructor = j.BoxMesh, 
+    j.SphereMesh = function(a, b, c) {
+        j.Mesh.call(this, a, b, c), a.boundingSphere || a.computeBoundingSphere(), this._physijs.type = "sphere", 
+        this._physijs.radius = a.boundingSphere.radius, this._physijs.mass = void 0 === c ? 4 / 3 * Math.PI * Math.pow(this._physijs.radius, 3) : c;
+    }, j.SphereMesh.prototype = new j.Mesh(), j.SphereMesh.prototype.constructor = j.SphereMesh, 
+    j.CylinderMesh = function(a, b, c) {
         var d, e, f;
-        l.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
+        j.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
         e = a.boundingBox.max.y - a.boundingBox.min.y, f = a.boundingBox.max.z - a.boundingBox.min.z, 
         this._physijs.type = "cylinder", this._physijs.width = d, this._physijs.height = e, 
-        this._physijs.depth = f, this._physijs.mass = "undefined" == typeof c ? d * e * f : c;
-    }, l.CylinderMesh.prototype = new l.Mesh(), l.CylinderMesh.prototype.constructor = l.CylinderMesh, 
-    l.CapsuleMesh = function(a, b, c) {
+        this._physijs.depth = f, this._physijs.mass = void 0 === c ? d * e * f : c;
+    }, j.CylinderMesh.prototype = new j.Mesh(), j.CylinderMesh.prototype.constructor = j.CylinderMesh, 
+    j.CapsuleMesh = function(a, b, c) {
         var d, e, f;
-        l.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
+        j.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
         e = a.boundingBox.max.y - a.boundingBox.min.y, f = a.boundingBox.max.z - a.boundingBox.min.z, 
         this._physijs.type = "capsule", this._physijs.radius = Math.max(d / 2, f / 2), this._physijs.height = e, 
-        this._physijs.mass = "undefined" == typeof c ? d * e * f : c;
-    }, l.CapsuleMesh.prototype = new l.Mesh(), l.CapsuleMesh.prototype.constructor = l.CapsuleMesh, 
-    l.ConeMesh = function(a, b, c) {
+        this._physijs.mass = void 0 === c ? d * e * f : c;
+    }, j.CapsuleMesh.prototype = new j.Mesh(), j.CapsuleMesh.prototype.constructor = j.CapsuleMesh, 
+    j.ConeMesh = function(a, b, c) {
         var d, e;
-        l.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
+        j.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = a.boundingBox.max.x - a.boundingBox.min.x, 
         e = a.boundingBox.max.y - a.boundingBox.min.y, this._physijs.type = "cone", this._physijs.radius = d / 2, 
-        this._physijs.height = e, this._physijs.mass = "undefined" == typeof c ? d * e : c;
-    }, l.ConeMesh.prototype = new l.Mesh(), l.ConeMesh.prototype.constructor = l.ConeMesh, 
-    l.ConcaveMesh = function(a, b, c) {
-        var d, e, f, g, h, i, j = [];
-        for (l.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), h = a.vertices, 
-        d = 0; d < a.faces.length; d++) i = a.faces[d], i instanceof THREE.Face3 ? j.push([ {
+        this._physijs.height = e, this._physijs.mass = void 0 === c ? d * e : c;
+    }, j.ConeMesh.prototype = new j.Mesh(), j.ConeMesh.prototype.constructor = j.ConeMesh, 
+    j.ConcaveMesh = function(a, b, c) {
+        var d, e, f, g, h, i, k = [];
+        for (j.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), h = a.vertices, 
+        d = 0; d < a.faces.length; d++) i = a.faces[d], i instanceof THREE.Face3 ? k.push([ {
             x: h[i.a].x,
             y: h[i.a].y,
             z: h[i.a].z
@@ -18437,7 +18391,7 @@ ParticleEngineModels = {
             x: h[i.c].x,
             y: h[i.c].y,
             z: h[i.c].z
-        } ]) : i instanceof THREE.Face4 && (j.push([ {
+        } ]) : i instanceof THREE.Face4 && (k.push([ {
             x: h[i.a].x,
             y: h[i.a].y,
             z: h[i.a].z
@@ -18449,7 +18403,7 @@ ParticleEngineModels = {
             x: h[i.d].x,
             y: h[i.d].y,
             z: h[i.d].z
-        } ]), j.push([ {
+        } ]), k.push([ {
             x: h[i.b].x,
             y: h[i.b].y,
             z: h[i.b].z
@@ -18463,22 +18417,22 @@ ParticleEngineModels = {
             z: h[i.d].z
         } ]));
         e = a.boundingBox.max.x - a.boundingBox.min.x, f = a.boundingBox.max.y - a.boundingBox.min.y, 
-        g = a.boundingBox.max.z - a.boundingBox.min.z, this._physijs.type = "concave", this._physijs.triangles = j, 
-        this._physijs.mass = "undefined" == typeof c ? e * f * g : c;
-    }, l.ConcaveMesh.prototype = new l.Mesh(), l.ConcaveMesh.prototype.constructor = l.ConcaveMesh, 
-    l.ConvexMesh = function(a, b, c) {
+        g = a.boundingBox.max.z - a.boundingBox.min.z, this._physijs.type = "concave", this._physijs.triangles = k, 
+        this._physijs.mass = void 0 === c ? e * f * g : c;
+    }, j.ConcaveMesh.prototype = new j.Mesh(), j.ConcaveMesh.prototype.constructor = j.ConcaveMesh, 
+    j.ConvexMesh = function(a, b, c) {
         var d, e, f, g, h = [];
-        for (l.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = 0; d < a.vertices.length; d++) h.push({
+        for (j.Mesh.call(this, a, b, c), a.boundingBox || a.computeBoundingBox(), d = 0; d < a.vertices.length; d++) h.push({
             x: a.vertices[d].x,
             y: a.vertices[d].y,
             z: a.vertices[d].z
         });
         e = a.boundingBox.max.x - a.boundingBox.min.x, f = a.boundingBox.max.y - a.boundingBox.min.y, 
         g = a.boundingBox.max.z - a.boundingBox.min.z, this._physijs.type = "convex", this._physijs.points = h, 
-        this._physijs.mass = "undefined" == typeof c ? e * f * g : c;
-    }, l.ConvexMesh.prototype = new l.Mesh(), l.ConvexMesh.prototype.constructor = l.ConvexMesh, 
-    l.Vehicle = function(a, b) {
-        b = b || new l.VehicleTuning(), this.mesh = a, this.wheels = [], this._physijs = {
+        this._physijs.mass = void 0 === c ? e * f * g : c;
+    }, j.ConvexMesh.prototype = new j.Mesh(), j.ConvexMesh.prototype.constructor = j.ConvexMesh, 
+    j.Vehicle = function(a, b) {
+        b = b || new j.VehicleTuning(), this.mesh = a, this.wheels = [], this._physijs = {
             id: c(),
             rigidBody: a._physijs.id,
             suspension_stiffness: b.suspension_stiffness,
@@ -18488,7 +18442,7 @@ ParticleEngineModels = {
             friction_slip: b.friction_slip,
             max_suspension_force: b.max_suspension_force
         };
-    }, l.Vehicle.prototype.addWheel = function(a, b, c, d, e, f, g, h, i) {
+    }, j.Vehicle.prototype.addWheel = function(a, b, c, d, e, f, g, h, i) {
         var j = new THREE.Mesh(a, b);
         j.castShadow = j.receiveShadow = !0, j.position.copy(d).multiplyScalar(f / 100).add(c), 
         this.world.add(j), this.wheels.push(j), this.world.execute("addWheel", {
@@ -18513,7 +18467,7 @@ ParticleEngineModels = {
             is_front_wheel: h,
             tuning: i
         });
-    }, l.Vehicle.prototype.setSteering = function(a, b) {
+    }, j.Vehicle.prototype.setSteering = function(a, b) {
         if (void 0 !== b && void 0 !== this.wheels[b]) this.world.execute("setSteering", {
             id: this._physijs.id,
             wheel: b,
@@ -18523,7 +18477,7 @@ ParticleEngineModels = {
             wheel: c,
             steering: a
         });
-    }, l.Vehicle.prototype.setBrake = function(a, b) {
+    }, j.Vehicle.prototype.setBrake = function(a, b) {
         if (void 0 !== b && void 0 !== this.wheels[b]) this.world.execute("setBrake", {
             id: this._physijs.id,
             wheel: b,
@@ -18533,7 +18487,7 @@ ParticleEngineModels = {
             wheel: c,
             brake: a
         });
-    }, l.Vehicle.prototype.applyEngineForce = function(a, b) {
+    }, j.Vehicle.prototype.applyEngineForce = function(a, b) {
         if (void 0 !== b && void 0 !== this.wheels[b]) this.world.execute("applyEngineForce", {
             id: this._physijs.id,
             wheel: b,
@@ -18543,11 +18497,11 @@ ParticleEngineModels = {
             wheel: c,
             force: a
         });
-    }, l.VehicleTuning = function(a, b, c, d, e, f) {
+    }, j.VehicleTuning = function(a, b, c, d, e, f) {
         this.suspension_stiffness = void 0 !== a ? a : 5.88, this.suspension_compression = void 0 !== b ? b : .83, 
         this.suspension_damping = void 0 !== c ? c : .88, this.max_suspension_travel = void 0 !== d ? d : 500, 
         this.friction_slip = void 0 !== e ? e : 10.5, this.max_suspension_force = void 0 !== f ? f : 6e3;
-    }, l;
+    }, j;
 }();
 
 var TWEEN = TWEEN || function() {
@@ -18569,7 +18523,7 @@ var TWEEN = TWEEN || function() {
             e = [];
         },
         remove: function(b) {
-            a = e.indexOf(b), a !== -1 && e.splice(a, 1);
+            (a = e.indexOf(b)) !== -1 && e.splice(a, 1);
         },
         update: function() {
             for (a = 0, b = e.length, d = new Date().getTime(); a < b; ) e[a].update(d) ? a++ : (e.splice(a, 1), 
@@ -18647,7 +18601,7 @@ TWEEN.Tween = function(a) {
 }, TWEEN.Easing.Quintic.EaseInOut = function(a) {
     return (a *= 2) < 1 ? .5 * a * a * a * a * a : .5 * ((a -= 2) * a * a * a * a + 2);
 }, TWEEN.Easing.Sinusoidal.EaseIn = function(a) {
-    return -Math.cos(a * Math.PI / 2) + 1;
+    return 1 - Math.cos(a * Math.PI / 2);
 }, TWEEN.Easing.Sinusoidal.EaseOut = function(a) {
     return Math.sin(a * Math.PI / 2);
 }, TWEEN.Easing.Sinusoidal.EaseInOut = function(a) {
@@ -18655,9 +18609,9 @@ TWEEN.Tween = function(a) {
 }, TWEEN.Easing.Exponential.EaseIn = function(a) {
     return 0 == a ? 0 : Math.pow(2, 10 * (a - 1));
 }, TWEEN.Easing.Exponential.EaseOut = function(a) {
-    return 1 == a ? 1 : -Math.pow(2, -10 * a) + 1;
+    return 1 == a ? 1 : 1 - Math.pow(2, -10 * a);
 }, TWEEN.Easing.Exponential.EaseInOut = function(a) {
-    return 0 == a ? 0 : 1 == a ? 1 : (a *= 2) < 1 ? .5 * Math.pow(2, 10 * (a - 1)) : .5 * (-Math.pow(2, -10 * (a - 1)) + 2);
+    return 0 == a ? 0 : 1 == a ? 1 : (a *= 2) < 1 ? .5 * Math.pow(2, 10 * (a - 1)) : .5 * (2 - Math.pow(2, -10 * (a - 1)));
 }, TWEEN.Easing.Circular.EaseIn = function(a) {
     return -(Math.sqrt(1 - a * a) - 1);
 }, TWEEN.Easing.Circular.EaseOut = function(a) {
@@ -18799,9 +18753,9 @@ TWEEN.Tween = function(a) {
         var d, e, f = -1 / 0, g = -1 / 0;
         if (null == b && null != a) {
             a = a.length === +a.length ? a : n.values(a);
-            for (var h = 0, i = a.length; i > h; h++) d = a[h], d > f && (f = d);
+            for (var h = 0, i = a.length; i > h; h++) (d = a[h]) > f && (f = d);
         } else b = n.iteratee(b, c), n.each(a, function(a, c, d) {
-            e = b(a, c, d), (e > g || e === -1 / 0 && f === -1 / 0) && (f = a, g = e);
+            ((e = b(a, c, d)) > g || e === -1 / 0 && f === -1 / 0) && (f = a, g = e);
         });
         return f;
     }, n.min = function(a, b, c) {
@@ -18839,8 +18793,7 @@ TWEEN.Tween = function(a) {
         return function(b, c, d) {
             var e = {};
             return c = n.iteratee(c, d), n.each(b, function(d, f) {
-                var g = c(d, f, b);
-                a(e, d, g);
+                a(e, d, c(d, f, b));
             }), e;
         };
     };
@@ -19068,7 +19021,7 @@ TWEEN.Tween = function(a) {
         } else {
             var i = h.apply([], g.call(arguments, 1));
             a = new Object(a);
-            for (var j = 0, k = i.length; k > j; j++) d = i[j], d in a && (e[d] = a[d]);
+            for (var j = 0, k = i.length; k > j; j++) (d = i[j]) in a && (e[d] = a[d]);
         }
         return e;
     }, n.omit = function(a, b, c) {
@@ -19092,7 +19045,7 @@ TWEEN.Tween = function(a) {
         return b(a), a;
     };
     var t = function(a, b, c, d) {
-        if (a === b) return 0 !== a || 1 / a === 1 / b;
+        if (a === b) return 0 !== a || 1 / a == 1 / b;
         if (null == a || null == b) return a === b;
         a instanceof n && (a = a._wrapped), b instanceof n && (b = b._wrapped);
         var e = i.call(a);
@@ -19103,11 +19056,11 @@ TWEEN.Tween = function(a) {
             return "" + a == "" + b;
 
           case "[object Number]":
-            return +a !== +a ? +b !== +b : 0 === +a ? 1 / +a === 1 / b : +a === +b;
+            return +a != +a ? +b != +b : 0 == +a ? 1 / +a == 1 / b : +a == +b;
 
           case "[object Date]":
           case "[object Boolean]":
-            return +a === +b;
+            return +a == +b;
         }
         if ("object" != typeof a || "object" != typeof b) return !1;
         for (var f = c.length; f--; ) if (c[f] === a) return d[f] === b;
@@ -19289,11 +19242,10 @@ BEE.ERROR_NO_PARENTS = "Sorry, something wrong in your BEE. There are no leaves 
 BEE.ERROR_STRANGE_ROOTS = "Sorry, something wrong in your BEE. Strange number of root nodes", 
 BEE.ERROR_ALREADY_LEFT = "Sorry, this node already have a left branch.", BEE.ERROR_ALREADY_RIGHT = "Sorry, this node already have a right branch.", 
 BEE.BAD_ARGUMENTS = "BAD ARGUMENTS, please check them.", BEE.prototype.createNode = function(a) {
-    var b = new Node({
+    return new Node({
         tree: this,
         data: a
     });
-    return b;
 }, BEE.prototype.getAllLeaves = function() {
     var a = [];
     for (var b in this.nodes) this.nodes[b]._isLeaf && a.push(this.nodes[b]);
@@ -19337,8 +19289,7 @@ BEE.BAD_ARGUMENTS = "BAD ARGUMENTS, please check them.", BEE.prototype.createNod
 }, BEE.prototype.orderedHas = function(a, b) {
     return _orderedIns(a, this.getRootNode(), b);
 }, BEE.prototype.height = function() {
-    var a = _height(this.getRootNode());
-    return a;
+    return _height(this.getRootNode());
 }, BEE.prototype.orderedIns = function(a, b) {
     try {
         _orderedIns(a, this.getRootNode(), b);
@@ -19712,8 +19663,8 @@ __class__ = function(a, b) {
     start: function() {},
     update: function() {},
     addScript: function(a, b) {
-        var c = Game.SCRIPTS_DIR + (b || "");
-        "/" != c[c.length - 1] && (c += "/"), Game.attachScriptToObject(this, a, c);
+        var c = M.game.SCRIPTS_DIR + (b || "");
+        "/" != c[c.length - 1] && (c += "/"), M.game.attachScriptToObject(this, a, c);
     },
     __loadScript: function(a) {
         for (var b in a) this[b] = a[b];
@@ -19882,39 +19833,36 @@ __class__ = function(a, b) {
             a;
         };
     }
-})._extends("Entity"), function() {
-    window.LightEngine = {
-        delayFactor: .1,
-        delayStep: 30,
-        holderRadius: .01,
-        holderSegments: 1,
-        init: function() {
-            LightEngine.map = new HashMap(), LightEngine.lights = [];
-        },
-        numLights: 0,
-        add: function(a) {
-            LightEngine.lights.push(a);
-        },
-        update: function() {
-            var a = new Date();
-            for (var b in LightEngine.lights) {
-                var c = LightEngine.lights[b];
-                if (c.update(app.clock.getDelta()), +new Date() - a > 50) return;
-            }
+})._extends("Entity"), window.M = window.M || {}, M.lightEngine = {
+    delayFactor: .1,
+    delayStep: 30,
+    holderRadius: .01,
+    holderSegments: 1,
+    init: function() {
+        M.lightEngine.map = new HashMap(), M.lightEngine.lights = [];
+    },
+    numLights: 0,
+    add: function(a) {
+        M.lightEngine.lights.push(a);
+    },
+    update: function() {
+        var a = new Date();
+        for (var b in M.lightEngine.lights) {
+            if (M.lightEngine.lights[b].update(app.clock.getDelta()), +new Date() - a > 50) return;
         }
-    }, LightEngine.init();
-}(), Class("Light", {
+    }
+}, M.lightEngine.init(), Class("Light", {
     Light: function(a, b, c) {
         Entity.call(this), this.color = a, this.intensity = b, this.position = c || {
             x: 0,
             y: 0,
             z: 0
-        }, this.isLightOn = !1, this.mesh = void 0, LightEngine.add(this);
+        }, this.isLightOn = !1, this.mesh = void 0, M.lightEngine.add(this);
     },
     on: function() {
         if (this.light) {
             var a = this, b = function() {
-                a.light.intensity += LightEngine.delayFactor, a.light.intensity < a.intensity ? setTimeout(b, LightEngine.delayStep) : a.isLightOn = !0;
+                a.light.intensity += M.lightEngine.delayFactor, a.light.intensity < a.intensity ? setTimeout(b, M.lightEngine.delayStep) : a.isLightOn = !0;
             };
             b();
         } else console.log("You should create your light, first");
@@ -19922,7 +19870,7 @@ __class__ = function(a, b) {
     off: function() {
         if (this.light) {
             var a = this, b = function() {
-                a.light.intensity -= LightEngine.delayFactor, a.light.intensity > 0 ? setTimeout(b, LightEngine.delayStep) : a.isLightOn = !1;
+                a.light.intensity -= M.lightEngine.delayFactor, a.light.intensity > 0 ? setTimeout(b, M.lightEngine.delayStep) : a.isLightOn = !1;
             };
             b();
         } else console.log("You should create your light, first");
@@ -19934,7 +19882,7 @@ __class__ = function(a, b) {
     }
 })._extends("Light"), Class("PointLight", {
     PointLight: function(a, b, c, d) {
-        Light.call(this, a, b, d), this.geometry = new THREE.SphereGeometry(LightEngine.holderRadius, LightEngine.holderSegment, LightEngine.holderSegment), 
+        Light.call(this, a, b, d), this.geometry = new THREE.SphereGeometry(M.lightEngine.holderRadius, M.lightEngine.holderSegment, M.lightEngine.holderSegment), 
         this.material = new THREE.MeshPhongMaterial({
             color: this.color
         }), this.mesh = new Mesh(this.geometry, this.material), this.light = new THREE.PointLight(a, b, c), 
@@ -19950,7 +19898,7 @@ __class__ = function(a, b) {
         this.light.shadow.camera.left = -f, this.light.shadow.camera.right = f, this.light.shadow.camera.top = f, 
         this.light.shadow.camera.bottom = -f, this.light.shadow.camera.far = 1e3, app.add(this.light, this);
     }
-})._extends("Light"), window.Control = {}, Control = {
+})._extends("Light"), window.M = window.M || {}, M.control = {
     type: void 0,
     allowedTypes: [ "fly", "fps", "custom" ],
     oldType: void 0,
@@ -19969,31 +19917,32 @@ __class__ = function(a, b) {
         fly: {}
     },
     set: function(a) {
-        var b = "" + a, c = Control.allowedTypes.indexOf(b);
+        var b = "" + a, c = M.control.allowedTypes.indexOf(b);
         if (c != -1) switch (c) {
           case 0:
-            1 == Control.oldType && (document.removeEventListener("pointerlockchange", Control.internal_pointerlockchange, !1), 
-            document.removeEventListener("mozpointerlockchange", Control.internal_pointerlockchange, !1), 
-            document.removeEventListener("webkitpointerlockchange", Control.internal_pointerlockchange, !1), 
-            document.removeEventListener("pointerlockerror", Control.internal_pointerlockerror, !1), 
-            document.removeEventListener("mozpointerlockerror", Control.internal_pointerlockerror, !1), 
-            document.removeEventListener("webkitpointerlockerror", Control.internal_pointerlockerror, !1), 
-            document.removeEventListener("fullscreenchange", Control.internal_fullscreenchange, !1), 
-            document.removeEventListener("mozfullscreenchange", Control.internal_fullscreenchange, !1), 
-            document.removeEventListener("mousemove", Control.handler.onMouseMove, !1), document.removeEventListener("keydown", Control.handler.onKeyDown, !1), 
-            document.removeEventListener("keyup", Control.handler.onKeyUp, !1), document.removeEventListener("click", Control.internal_pointerlockonclick, !1), 
-            Control.handler.enabled = !1, Control.handler = {}), Control.fly(app.camera.object), 
-            Control.type = "fly", Control.oldType = 0;
+            1 == M.control.oldType && (document.removeEventListener("pointerlockchange", M.control.internal_pointerlockchange, !1), 
+            document.removeEventListener("mozpointerlockchange", M.control.internal_pointerlockchange, !1), 
+            document.removeEventListener("webkitpointerlockchange", M.control.internal_pointerlockchange, !1), 
+            document.removeEventListener("pointerlockerror", M.control.internal_pointerlockerror, !1), 
+            document.removeEventListener("mozpointerlockerror", M.control.internal_pointerlockerror, !1), 
+            document.removeEventListener("webkitpointerlockerror", M.control.internal_pointerlockerror, !1), 
+            document.removeEventListener("fullscreenchange", M.control.internal_fullscreenchange, !1), 
+            document.removeEventListener("mozfullscreenchange", M.control.internal_fullscreenchange, !1), 
+            document.removeEventListener("mousemove", M.control.handler.onMouseMove, !1), document.removeEventListener("keydown", M.control.handler.onKeyDown, !1), 
+            document.removeEventListener("keyup", M.control.handler.onKeyUp, !1), document.removeEventListener("click", M.control.internal_pointerlockonclick, !1), 
+            M.control.handler.enabled = !1, M.control.handler = {}), M.control.fly(app.camera.object), 
+            M.control.type = "fly", M.control.oldType = 0;
             break;
 
           case 1:
-            0 == Control.oldType && (document.removeEventListener("contextmenu", function(a) {
+            0 == M.control.oldType && (document.removeEventListener("contextmenu", function(a) {
                 a.preventDefault();
-            }, !1), document.removeEventListener("mousemove", Control.handler.mousemove, !1), 
-            document.removeEventListener("mousedown", Control.handler.mousedown, !1), document.removeEventListener("mouseup", Control.handler.mouseup, !1), 
-            document.removeEventListener("keydown", Control.handler.keydown, !1), document.removeEventListener("keyup", Control.handler.keyup, !1)), 
-            Control.fps(app.camera.object), app.add(Control.handler.getObject(), Control.handler), 
-            Control.fps_uuid = Control.handler.getObject().uuid, Control.type = "fps", Control.oldType = 1;
+            }, !1), document.removeEventListener("mousemove", M.control.handler.mousemove, !1), 
+            document.removeEventListener("mousedown", M.control.handler.mousedown, !1), document.removeEventListener("mouseup", M.control.handler.mouseup, !1), 
+            document.removeEventListener("keydown", M.control.handler.keydown, !1), document.removeEventListener("keyup", M.control.handler.keyup, !1)), 
+            M.control.fps(app.camera.object), app.add(M.control.handler.getObject(), M.control.handler), 
+            M.control.fps_uuid = M.control.handler.getObject().uuid, M.control.type = "fps", 
+            M.control.oldType = 1;
         }
     },
     internal_fly: function(a, b) {
@@ -20193,18 +20142,18 @@ __class__ = function(a, b) {
     fly: function() {
         $("body").css({
             cursor: "url(img/pointer_cross.png), auto"
-        }), Control.handler = new Control.internal_fly(app.camera.object), Control.handler.movementSpeed = 3, 
-        Control.handler.domElement = document, Control.handler.rollSpeed = .05, Control.handler.autoForward = !1, 
-        Control.handler.dragToLook = !1;
+        }), M.control.handler = new M.control.internal_fly(app.camera.object), M.control.handler.movementSpeed = 3, 
+        M.control.handler.domElement = document, M.control.handler.rollSpeed = .05, M.control.handler.autoForward = !1, 
+        M.control.handler.dragToLook = !1;
     },
     internal_pointerlockchange: function(a) {
-        Control.handler.enabled = !0;
+        M.control.handler.enabled = !0;
     },
     internal_pointerlockonclick: function(a) {
         var b = document.body;
         b.requestPointerLock = b.requestPointerLock || b.mozRequestPointerLock || b.webkitRequestPointerLock, 
-        /Firefox/i.test(navigator.userAgent) ? (document.addEventListener("fullscreenchange", Control.internal_fullscreenchange, !1), 
-        document.addEventListener("mozfullscreenchange", Control.internal_fullscreenchange, !1), 
+        /Firefox/i.test(navigator.userAgent) ? (document.addEventListener("fullscreenchange", M.control.internal_fullscreenchange, !1), 
+        document.addEventListener("mozfullscreenchange", M.control.internal_fullscreenchange, !1), 
         b.requestFullscreen = b.requestFullscreen || b.mozRequestFullscreen || b.mozRequestFullScreen || b.webkitRequestFullscreen, 
         b.requestFullscreen()) : b.requestPointerLock();
     },
@@ -20212,21 +20161,20 @@ __class__ = function(a, b) {
         app.log("POINTER LOCK ERROR");
     },
     internal_fullscreenchange: function(a) {
-        document.fullscreenElement !== document && document.mozFullscreenElement !== document && document.mozFullScreenElement !== document || (document.removeEventListener("fullscreenchange", Control.internal_fullscreenchange), 
-        document.removeEventListener("mozfullscreenchange", Control.internal_fullscreenchange), 
+        document.fullscreenElement !== document && document.mozFullscreenElement !== document && document.mozFullScreenElement !== document || (document.removeEventListener("fullscreenchange", M.control.internal_fullscreenchange), 
+        document.removeEventListener("mozfullscreenchange", M.control.internal_fullscreenchange), 
         document.requestPointerLock());
     },
     fps_uuid: void 0,
     fps: function(a) {
-        Control.handler = new Control.internal_fps(app.camera.object);
-        var b = "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document;
-        b ? (app.log("we have pointer lock ability"), Control.handler.enabled = !0, document.addEventListener("pointerlockchange", Control.internal_pointerlockchange, !1), 
-        document.addEventListener("mozpointerlockchange", Control.internal_pointerlockchange, !1), 
-        document.addEventListener("webkitpointerlockchange", Control.internal_pointerlockchange, !1), 
-        document.addEventListener("pointerlockerror", Control.internal_pointerlockerror, !1), 
-        document.addEventListener("mozpointerlockerror", Control.internal_pointerlockerror, !1), 
-        document.addEventListener("webkitpointerlockerror", Control.internal_pointerlockerror, !1), 
-        document.addEventListener("click", Control.internal_pointerlockonclick, !1)) : app.log("BROWSER DOESN'T SUPPORT POINTER LOCK API.");
+        M.control.handler = new M.control.internal_fps(app.camera.object), "pointerLockElement" in document || "mozPointerLockElement" in document || "webkitPointerLockElement" in document ? (app.log("we have pointer lock ability"), 
+        M.control.handler.enabled = !0, document.addEventListener("pointerlockchange", M.control.internal_pointerlockchange, !1), 
+        document.addEventListener("mozpointerlockchange", M.control.internal_pointerlockchange, !1), 
+        document.addEventListener("webkitpointerlockchange", M.control.internal_pointerlockchange, !1), 
+        document.addEventListener("pointerlockerror", M.control.internal_pointerlockerror, !1), 
+        document.addEventListener("mozpointerlockerror", M.control.internal_pointerlockerror, !1), 
+        document.addEventListener("webkitpointerlockerror", M.control.internal_pointerlockerror, !1), 
+        document.addEventListener("click", M.control.internal_pointerlockonclick, !1)) : app.log("BROWSER DOESN'T SUPPORT POINTER LOCK API.");
     },
     internal_fps: function(a) {
         var b = this;
@@ -20234,7 +20182,7 @@ __class__ = function(a, b) {
         var c = new THREE.Object3D();
         c.add(a);
         var d = new THREE.Object3D();
-        d.position.y = Control.options.fps.height, d.add(c);
+        d.position.y = M.control.options.fps.height, d.add(c);
         var e = !1, f = !1, g = !1, h = !1, i = !1, j = !1, k = new THREE.Vector3(), l = Math.PI / 2, m = !1;
         this._onKeyDown = function(a) {}, this.setKeyDownListener = function(a) {
             this._onKeyDown = a;
@@ -20245,8 +20193,8 @@ __class__ = function(a, b) {
         }, this.onMouseMove = function(a) {
             if (b.enabled !== !1) {
                 var e = a.movementX || a.mozMovementX || a.webkitMovementX || 0, f = a.movementY || a.mozMovementY || a.webkitMovementY || 0;
-                d.rotation.y -= e * Control.options.fps.mouseFactor, c.rotation.x -= f * Control.options.fps.mouseFactor, 
-                c.rotation.x = Math.max(-l, Math.min(l, c.rotation.x)), Control.handler._onMouseMove(a);
+                d.rotation.y -= e * M.control.options.fps.mouseFactor, c.rotation.x -= f * M.control.options.fps.mouseFactor, 
+                c.rotation.x = Math.max(-l, Math.min(l, c.rotation.x)), M.control.handler._onMouseMove(a);
             }
         }, this.onKeyDown = function(a) {
             switch (a.keyCode) {
@@ -20271,14 +20219,14 @@ __class__ = function(a, b) {
                 break;
 
               case 32:
-                j === !0 && (k.y += Control.options.fps.jumpHeight), j = !1;
+                j === !0 && (k.y += M.control.options.fps.jumpHeight), j = !1;
                 break;
 
               case 16:
-                Control.options.fps._oldV = Control.options.fps.velocity, Control.options.fps.velocity = Control.options.fps.crouch, 
-                d.position.y = Control.options.fps.height / 2, j = !1, m = !0;
+                M.control.options.fps._oldV = M.control.options.fps.velocity, M.control.options.fps.velocity = M.control.options.fps.crouch, 
+                d.position.y = M.control.options.fps.height / 2, j = !1, m = !0;
             }
-            Control.handler._onKeyDown(a);
+            M.control.handler._onKeyDown(a);
         }, this.onKeyUp = function(a) {
             switch (a.keyCode) {
               case 38:
@@ -20302,10 +20250,10 @@ __class__ = function(a, b) {
                 break;
 
               case 16:
-                Control.options.fps.velocity = Control.options.fps._oldV, d.position.y = Control.options.fps.height, 
+                M.control.options.fps.velocity = M.control.options.fps._oldV, d.position.y = M.control.options.fps.height, 
                 j = !0, m = !1;
             }
-            Control.handler._onKeyUp(a);
+            M.control.handler._onKeyUp(a);
         }, document.addEventListener("mousemove", this.onMouseMove, !1), document.addEventListener("keydown", this.onKeyDown, !1), 
         document.addEventListener("keyup", this.onKeyUp, !1), this.enabled = !1, this.getObject = function() {
             return d;
@@ -20318,72 +20266,57 @@ __class__ = function(a, b) {
             };
         }(), this.update = function(a) {
             if (b.enabled === !1) return void app.log("pointerlock not enabled. please enable it.");
-            a *= Control.options.fps.delta, k.y -= Control.options.fps.fallFactor * a;
-            var c = Control.options.fps.velocity;
+            a *= M.control.options.fps.delta, k.y -= M.control.options.fps.fallFactor * a;
+            var c = M.control.options.fps.velocity;
             e && (k.z = -c), f && (k.z = c), f || e || (k.z = 0), g && (k.x = -c), h && (k.x = c), 
             h || g || (k.x = 0), i === !0 && (k.y = Math.max(0, k.y)), d.translateX(k.x), d.translateY(k.y), 
-            d.translateZ(k.z), d.position.y < Control.options.fps.height && (k.y = 0, d.position.y = m ? Control.options.fps.height / 2 : Control.options.fps.height, 
+            d.translateZ(k.z), d.position.y < M.control.options.fps.height && (k.y = 0, d.position.y = m ? M.control.options.fps.height / 2 : M.control.options.fps.height, 
             j = !0);
         };
     },
     update: function() {
-        if (Control.handler) {
-            Control.clock.getDelta();
+        if (M.control.handler) {
+            M.control.clock.getDelta();
             try {
-                Control.handler.update(app.clock.getDelta());
+                M.control.handler.update(app.clock.getDelta());
             } catch (a) {
                 console.error(a), console.trace();
             }
         }
     },
     init: function() {
-        Control.clock = new THREE.Clock();
+        M.control.clock = new THREE.Clock();
         try {
-            app.keydown && app.keyup ? (Control.type = "custom", Control.oldType = 2, window.addEventListener("keydown", app.keydown), 
-            window.addEventListener("keyup", app.keyup)) : (Control.type = "fly", Control.fly(app.camera.object), 
-            Control.oldType = 0);
+            app.keydown && app.keyup ? (M.control.type = "custom", M.control.oldType = 2, window.addEventListener("keydown", app.keydown), 
+            window.addEventListener("keyup", app.keyup)) : (M.control.type = "fly", M.control.fly(app.camera.object), 
+            M.control.oldType = 0);
         } catch (a) {
-            Control.type = "fly", Control.fly(app.camera.object), Control.oldType = 0;
+            M.control.type = "fly", M.control.fly(app.camera.object), M.control.oldType = 0;
         }
     }
-}, window.Game = {}, Game.SCRIPTS_DIR = "app/scripts/", Game.update = function() {}, 
-Game.script = function(a, b) {
+}, window.M = window.M || {}, M.game = {
+    scripts: {}
+}, M.game.SCRIPTS_DIR = "app/scripts/", M.game.update = function() {}, M.game.script = function(a, b) {
     var c = {};
     c.name = a;
     for (var d in b) c[d] = b[d];
-    c.start || (c.start = new Function("console.log('please, add a start method');")), 
-    c.update || (c.update = new Function("console.log('please, add a update method');")), 
-    a in Game.scripts || (Game.scripts[a] = c);
-}, Game.attachScriptToObject = function(a, b, c) {
-    var d = c + b;
-    include(d, function() {
-        a.__loadScript(Game.scripts[b]);
+    c.start || (c.start = new Function("console.warn('You need a start method');")), 
+    c.update || (c.update = new Function("console.warn('You need an update method');")), 
+    a in M.game.scripts || (M.game.scripts[a] = c);
+}, M.game.attachScriptToObject = function(a, b, c) {
+    include(c + b, function() {
+        a.__loadScript(M.game.scripts[b]);
     });
-}, Game.scripts = {};
-
-var Gui = {};
-
-Gui = {
+}, window.M = window.M || {}, M.gui = {
     miniMap: void 0,
     menu: void 0,
-    init: void 0
-}, window.Universe = {}, Universe = {
-    universe: void 0,
+    init: function() {}
+}, M.gui.init(), window.M = window.M || {}, M.universe = {
+    reality: void 0,
     loaded: !1,
     worker: void 0,
-    init: function() {
-        console.log("inside universe init"), Universe.loaded = !0, Universe.universe = new HashMap();
-    },
-    cube: void 0,
-    addRandomCube: function() {
-        var a = new THREE.CubeGeometry(1, 1, 1), b = new THREE.MeshBasicMaterial({
-            color: 65280,
-            wireframe: !0
-        }), c = new THREE.Mesh(a, b);
-        c.position.x = 5 * Math.random(), c.position.y = 5 * Math.random(), c.position.z = 5 * Math.random(), 
-        c.auto_render = function() {
-            this.rotation.x += .01;
-        }, app.scene.add(c), Universe.universe.put(c.uuid, c);
+    bigbang: function() {
+        console.log("inside universe init"), M.universe.loaded = !0, M.universe.reality = new HashMap();
     },
     testingShaders: function() {
         var a = new THREE.ShaderMaterial({
@@ -20404,7 +20337,7 @@ Gui = {
         }), b = new THREE.Mesh(new THREE.IcosahedronGeometry(20, 4), a);
         b.start_time = Date.now(), b.auto_render = function() {
             this.material.uniforms.time.value = 25e-5 * (Date.now() - this.start_time);
-        }, app.scene.add(b), Universe.universe.put(b.uuid, b);
+        }, app.scene.add(b), M.universe.reality.put(b.uuid, b);
     },
     addPlanetAndSatellite: function() {
         var a = new THREE.MeshBasicMaterial({
@@ -20415,7 +20348,7 @@ Gui = {
         var c = new THREE.Mesh(b, a);
         c.position.x = 0, c.position.y = 0, c.position.z = 0, c.auto_render = function() {
             this.rotation.y += 1e-4;
-        }, app.scene.add(c), Universe.universe.put(c.uuid, c), l("PLANET GEOMETRY"), l(c.geometry.dynamic + " - " + c.geometry.verticesNeedUpdate + " - " + c.geometry.normalsNeedUpdate);
+        }, app.scene.add(c), M.universe.reality.put(c.uuid, c), l("PLANET GEOMETRY"), l(c.geometry.dynamic + " - " + c.geometry.verticesNeedUpdate + " - " + c.geometry.normalsNeedUpdate);
         var a = new THREE.MeshBasicMaterial({
             color: 16777215,
             wireframe: !0
@@ -20425,16 +20358,16 @@ Gui = {
         };
     },
     update: function() {
-        var a = Universe.universe.keys.concat();
+        var a = M.universe.reality.keys.concat();
         if (0 != a.length) {
             var b = +new Date();
             do {
-                var c = Universe.universe.get(a.shift());
+                var c = M.universe.reality.get(a.shift());
                 c.update && c.update(app.clock.getDelta());
             } while (a.length > 0 && +new Date() - b < 50);
         }
     }
-}, Universe.init(), window.User = {}, User = {
+}, M.universe.bigbang(), window.User = {}, User = {
     real_name: void 0,
     real_surname: void 0,
     username: void 0,
@@ -20451,108 +20384,105 @@ Gui = {
         z: void 0
     },
     handleUserInput: function() {}
-}, window.AssetsManager = {}, AssetsManager.completed = {
+}, window.M = window.M || {}, M.assetsManager = {}, M.assetsManager.completed = {
     sound: !1,
     video: !0,
     images: !1,
     general: !0,
     shaders: !1
-}, AssetsManager.load = function(a) {
-    AssetsManager.callback = a, AudioEngine.load(), VideoEngine.load(), ImagesEngine.load(), 
-    GeneralAssetsEngine.load(), fx.ShadersEngine.load(), AssetsManager.checkInterval = setInterval(AssetsManager.check, 100);
-}, AssetsManager.loadingMessage = function(a) {}, AssetsManager.check = function() {
-    AssetsManager.completed.sound && AssetsManager.completed.video && AssetsManager.completed.images && AssetsManager.completed.general ? (AssetsManager.loadingMessage(!0), 
-    clearInterval(AssetsManager.checkInterval), AssetsManager.callback()) : AssetsManager.loadingMessage(!1);
-}, window.fx = {}, function() {
-    window.AudioEngine = {
-        DELAY_FACTOR: .02,
-        DELAY_STEP: 1,
-        DELAY_MIN_VALUE: .2,
-        DELAY_NORMAL_VALUE: 40,
-        VOLUME: 80,
-        _volume: 80,
-        soundPath: "js/core/sound/",
-        soundModules: [ "js/core/audio/beat", "js/core/audio/sound", "js/core/audio/ambientSound" ],
-        numSound: 0,
-        soundLoaded: 0,
-        load: function() {
-            AudioEngine.map = new HashMap(), AudioEngine.sounds = [], AudioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null, 
-            AudioEngine.AudioContext ? (AudioEngine.context = new AudioEngine.AudioContext(), 
-            AudioEngine.volume = AudioEngine.context.createGain(), AudioEngine.volume.gain.value = AudioEngine.VOLUME, 
-            AudioEngine.volume.connect(AudioEngine.context.destination)) : console.error("No Audio Context available, sorry.");
-            for (var a in Assets.Audio) AudioEngine.numSound++, AudioEngine.loadSingleFile(a, Assets.Audio[a]);
-            0 == AudioEngine.numSound && (AssetsManager.completed.sound = !0);
-        },
-        get: function(a) {
-            return AudioEngine.map.get(a) || !1;
-        },
-        loadSingleFile: function(a, b) {
-            var c = new XMLHttpRequest();
-            c.open("GET", b, !0), c.responseType = "arraybuffer", c.onload = function(b) {
-                AudioEngine.context.decodeAudioData(this.response, function(b) {
-                    AudioEngine.map.put(a, b), AudioEngine.soundLoaded++, AudioEngine.checkLoad();
-                }, function() {
-                    AudioEngine.map.put(a, null), AudioEngine.soundLoaded++, console.error("Decoding the audio buffer failed");
-                });
-            }, c.send();
-        },
-        checkLoad: function() {
-            AudioEngine.soundLoaded == AudioEngine.numSound && (AssetsManager.completed.sound = !0);
-        },
-        add: function(a) {
-            AudioEngine.sounds.push(a);
-        },
-        update: function() {
-            var a = new Date();
-            for (var b in AudioEngine.sounds) {
-                var c = AudioEngine.sounds[b];
-                c.update(app.clock.getDelta()), app.camera.object.updateMatrixWorld();
-                var d = new THREE.Vector3();
-                d.setFromMatrixPosition(app.camera.object.matrixWorld), AudioEngine.context.listener.setPosition(d.x, d.y, d.z);
-                var e = app.camera.object.matrix;
-                mx = e.elements[12], my = e.elements[13], mz = e.elements[14], e.elements[12] = e.elements[13] = e.elements[14] = 0;
-                var f = new THREE.Vector3(0, 0, 1);
-                f.applyProjection(e), f.normalize();
-                var g = new THREE.Vector3(0, -1, 0);
-                if (g.applyProjection(e), g.normalize(), AudioEngine.context.listener.setOrientation(f.x, f.y, f.z, g.x, g.y, g.z), 
-                e.elements[12] = mx, e.elements[13] = my, e.elements[14] = mz, +new Date() - a > 50) return;
-            }
+}, M.assetsManager.load = function(a) {
+    M.assetsManager.callback = a, M.audioEngine.load(), M.videoEngine.load(), M.imagesEngine.load(), 
+    M.generalAssetsEngine.load(), M.fx.shadersEngine.load(), M.assetsManager.checkInterval = setInterval(M.assetsManager.check, 100);
+}, M.assetsManager.loadingMessage = function(a) {}, M.assetsManager.check = function() {
+    M.assetsManager.completed.sound && M.assetsManager.completed.video && M.assetsManager.completed.images && M.assetsManager.completed.general ? (M.assetsManager.loadingMessage(!0), 
+    clearInterval(M.assetsManager.checkInterval), M.assetsManager.callback()) : M.assetsManager.loadingMessage(!1);
+}, window.M = window.M || {}, M.fx = {}, window.M = window.M || {}, M.audioEngine = {
+    DELAY_FACTOR: .02,
+    DELAY_STEP: 1,
+    DELAY_MIN_VALUE: .2,
+    DELAY_NORMAL_VALUE: 40,
+    VOLUME: 80,
+    _volume: 80,
+    soundPath: "js/core/sound/",
+    soundModules: [ "js/core/audio/beat", "js/core/audio/sound", "js/core/audio/ambientSound" ],
+    numSound: 0,
+    soundLoaded: 0,
+    load: function() {
+        M.audioEngine.map = new HashMap(), M.audioEngine.sounds = [], M.audioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null, 
+        M.audioEngine.AudioContext ? (M.audioEngine.context = new M.audioEngine.AudioContext(), 
+        M.audioEngine.volume = M.audioEngine.context.createGain(), M.audioEngine.volume.gain.value = M.audioEngine.VOLUME, 
+        M.audioEngine.volume.connect(M.audioEngine.context.destination)) : console.error("No Audio Context available, sorry.");
+        for (var a in Assets.Audio) M.audioEngine.numSound++, M.audioEngine.loadSingleFile(a, Assets.Audio[a]);
+        0 == M.audioEngine.numSound && (M.assetsManager.completed.sound = !0);
+    },
+    get: function(a) {
+        return M.audioEngine.map.get(a) || !1;
+    },
+    loadSingleFile: function(a, b) {
+        var c = new XMLHttpRequest();
+        c.open("GET", b, !0), c.responseType = "arraybuffer", c.onload = function(b) {
+            M.audioEngine.context.decodeAudioData(this.response, function(b) {
+                M.audioEngine.map.put(a, b), M.audioEngine.soundLoaded++, M.audioEngine.checkLoad();
+            }, function() {
+                M.audioEngine.map.put(a, null), M.audioEngine.soundLoaded++, console.error("Decoding the audio buffer failed");
+            });
+        }, c.send();
+    },
+    checkLoad: function() {
+        M.audioEngine.soundLoaded == M.audioEngine.numSound && (M.assetsManager.completed.sound = !0);
+    },
+    add: function(a) {
+        M.audioEngine.sounds.push(a);
+    },
+    update: function() {
+        var a = new Date();
+        for (var b in M.audioEngine.sounds) {
+            M.audioEngine.sounds[b].update(app.clock.getDelta()), app.camera.object.updateMatrixWorld();
+            var c = new THREE.Vector3();
+            c.setFromMatrixPosition(app.camera.object.matrixWorld), M.audioEngine.context.listener.setPosition(c.x, c.y, c.z);
+            var d = app.camera.object.matrix;
+            mx = d.elements[12], my = d.elements[13], mz = d.elements[14], d.elements[12] = d.elements[13] = d.elements[14] = 0;
+            var e = new THREE.Vector3(0, 0, 1);
+            e.applyProjection(d), e.normalize();
+            var f = new THREE.Vector3(0, -1, 0);
+            if (f.applyProjection(d), f.normalize(), M.audioEngine.context.listener.setOrientation(e.x, e.y, e.z, f.x, f.y, f.z), 
+            d.elements[12] = mx, d.elements[13] = my, d.elements[14] = mz, +new Date() - a > 50) return;
         }
-    }, Object.defineProperty(AudioEngine, "VOLUME", {
-        set: function(a) {
-            AudioEngine._volume = a, AudioEngine.volume.gain.value = AudioEngine._volume;
-        },
-        get: function() {
-            if (AudioEngine._volume) return AudioEngine._volume;
-        }
-    });
-}(), Class("Beat", {
+    }
+}, Object.defineProperty(M.audioEngine, "VOLUME", {
+    set: function(a) {
+        M.audioEngine._volume = a, M.audioEngine.volume.gain.value = M.audioEngine._volume;
+    },
+    get: function() {
+        if (M.audioEngine._volume) return M.audioEngine._volume;
+    }
+}), Class("Beat", {
     Beat: function(a) {
-        this.name = a, this.sound = {}, this.sound.source = AudioEngine.context.createBufferSource(), 
-        this.sound.volume = AudioEngine.context.createGain(), this.sound.volume.gain.value = AudioEngine.VOLUME, 
-        this.setListeners(), this.sound.source.connect(this.sound.volume), this.sound.volume.connect(AudioEngine.volume);
+        this.name = a, this.sound = {}, this.sound.source = M.audioEngine.context.createBufferSource(), 
+        this.sound.volume = M.audioEngine.context.createGain(), this.sound.volume.gain.value = M.audioEngine.VOLUME, 
+        this.setListeners(), this.sound.source.connect(this.sound.volume), this.sound.volume.connect(M.audioEngine.volume);
     },
     setListeners: function() {
         this.sound.source._caller = this;
     },
     reset: function() {
-        this.sound.source.disconnect(), this.sound.source = AudioEngine.context.createBufferSource(), 
+        this.sound.source.disconnect(), this.sound.source = M.audioEngine.context.createBufferSource(), 
         this.sound.source.connect(this.sound.volume), this.setListeners();
     },
     start: function() {
-        var a = AudioEngine.get(this.name);
+        var a = M.audioEngine.get(this.name);
         if (!a) return void console.error("Unable to load sound, sorry.");
-        this.sound.source.buffer = a, this.sound.volume.gain.value = 0, this.sound.source.start(AudioEngine.context.currentTime);
+        this.sound.source.buffer = a, this.sound.volume.gain.value = 0, this.sound.source.start(M.audioEngine.context.currentTime);
         var b = this, c = function() {
-            b.sound.volume.gain.value = b.sound.volume.gain.value + AudioEngine.DELAY_FACTOR, 
-            b.sound.volume.gain.value < AudioEngine.DELAY_NORMAL_VALUE && setTimeout(c, AudioEngine.DELAY_STEP);
+            b.sound.volume.gain.value = b.sound.volume.gain.value + M.audioEngine.DELAY_FACTOR, 
+            b.sound.volume.gain.value < M.audioEngine.DELAY_NORMAL_VALUE && setTimeout(c, M.audioEngine.DELAY_STEP);
         };
         c();
     },
     stop: function() {
         var a = this, b = function() {
-            a.sound.volume.gain.value = a.sound.volume.gain.value - AudioEngine.DELAY_FACTOR, 
-            a.sound.volume.gain.value > AudioEngine.DELAY_MIN_VALUE ? setTimeout(b, AudioEngine.DELAY_STEP) : a.sound.source.stop();
+            a.sound.volume.gain.value = a.sound.volume.gain.value - M.audioEngine.DELAY_FACTOR, 
+            a.sound.volume.gain.value > M.audioEngine.DELAY_MIN_VALUE ? setTimeout(b, M.audioEngine.DELAY_STEP) : a.sound.source.stop();
         };
         b();
     },
@@ -20569,16 +20499,15 @@ Gui = {
     Sound: function(a, b) {
         Beat.call(this, a);
         var c = b || {};
-        this.sound.panner = AudioEngine.context.createPanner(), this.sound.volume.disconnect(), 
-        this.sound.volume.connect(this.sound.panner), this.sound.panner.connect(AudioEngine.volume), 
-        c.mesh ? this.mesh = c.mesh : this.update = function() {}, c.effect && (this.convolver = AudioEngine.context.createConvolver(), 
-        this.mixer = AudioEngine.createGain(), this.sound.panner.disconnect(), this.sound.panner.connect(this.mixer), 
-        this.plainGain = AudioEngine.context.createGain(), this.convolverGain = AudioEngine.context.createGain(), 
-        this.mixer.connect(plainGain), this.mixer.connect(convolverGain), this.plainGain.connect(AudioEngine.volume), 
-        this.convolverGain.connect(AudioEngine.volume), this.convolver.buffer = AudioEngine.get(c.effect), 
-        this.convolverGain.gain.value = .7, this.plainGain.gain.value = .3);
-        var d = c.autoplay || !1;
-        d && this.start(), AudioEngine.add(this);
+        this.sound.panner = M.audioEngine.context.createPanner(), this.sound.volume.disconnect(), 
+        this.sound.volume.connect(this.sound.panner), this.sound.panner.connect(M.audioEngine.volume), 
+        c.mesh ? this.mesh = c.mesh : this.update = function() {}, c.effect && (this.convolver = M.audioEngine.context.createConvolver(), 
+        this.mixer = M.audioEngine.createGain(), this.sound.panner.disconnect(), this.sound.panner.connect(this.mixer), 
+        this.plainGain = M.audioEngine.context.createGain(), this.convolverGain = M.audioEngine.context.createGain(), 
+        this.mixer.connect(plainGain), this.mixer.connect(convolverGain), this.plainGain.connect(M.audioEngine.volume), 
+        this.convolverGain.connect(M.audioEngine.volume), this.convolver.buffer = M.audioEngine.get(c.effect), 
+        this.convolverGain.gain.value = .7, this.plainGain.gain.value = .3), (c.autoplay || !1) && this.start(), 
+        M.audioEngine.add(this);
     },
     update: function(a) {
         if (this.mesh) {
@@ -20596,16 +20525,16 @@ Gui = {
     }
 })._extends("Beat"), Class("AmbientSound", {
     AmbientSound: function(a, b) {
-        Beat.call(this, a), this.sound.source.loop = b.loop || !1, this.sound.panner = AudioEngine.context.createPanner(), 
-        this.sound.volume.disconnect(), this.sound.volume.connect(this.sound.panner), this.sound.panner.connect(AudioEngine.volume), 
-        this.mesh = b.mesh, b.effect && (this.convolver = AudioEngine.context.createConvolver(), 
-        this.mixer = AudioEngine.createGain(), this.sound.panner.disconnect(), this.sound.panner.connect(this.mixer), 
-        this.plainGain = AudioEngine.context.createGain(), this.convolverGain = AudioEngine.context.createGain(), 
-        this.mixer.connect(plainGain), this.mixer.connect(convolverGain), this.plainGain.connect(AudioEngine.volume), 
-        this.convolverGain.connect(AudioEngine.volume), this.convolver.buffer = AudioEngine.get(b.effect), 
-        this.convolverGain.gain.value = .7, this.plainGain.gain.value = .3);
-        var c = b.autoplay || !1;
-        c && this.start(), AudioEngine.add(this);
+        Beat.call(this, a), this.sound.source.loop = b.loop || !1, this.sound.panner = M.audioEngine.context.createPanner(), 
+        this.sound.volume.disconnect(), this.sound.volume.connect(this.sound.panner), this.sound.panner.connect(M.audioEngine.volume), 
+        this.mesh = b.mesh, b.effect && (this.convolver = M.audioEngine.context.createConvolver(), 
+        this.mixer = M.audioEngine.context.createGain(), this.sound.panner.disconnect(), 
+        this.sound.panner.connect(this.mixer), this.plainGain = M.audioEngine.context.createGain(), 
+        this.convolverGain = AudioEngine.context.createGain(), this.mixer.connect(plainGain), 
+        this.mixer.connect(convolverGain), this.plainGain.connect(M.audioEngine.volume), 
+        this.convolverGain.connect(M.audioEngine.volume), this.convolver.buffer = M.audioEngine.get(b.effect), 
+        this.convolverGain.gain.value = .7, this.plainGain.gain.value = .3), (b.autoplay || !1) && this.start(), 
+        M.audioEngine.add(this);
     },
     update: function(a) {
         this.mesh.updateMatrixWorld();
@@ -20614,17 +20543,16 @@ Gui = {
     }
 })._extends("Beat"), Class("DirectionalSound", {
     DirectionalSound: function(a, b, c) {
-        Beat.call(this, a), this.sound.panner = AudioEngine.context.createPanner(), this.sound.volume.disconnect(), 
-        this.sound.volume.connect(this.sound.panner), this.sound.panner.connect(AudioEngine.volume), 
+        Beat.call(this, a), this.sound.panner = M.audioEngine.context.createPanner(), this.sound.volume.disconnect(), 
+        this.sound.volume.connect(this.sound.panner), this.sound.panner.connect(M.audioEngine.volume), 
         this.mesh = c.mesh, this.sound.panner.coneInnerAngle = b.innerAngleInDegrees, this.sound.panner.coneOuterAngle = b.outerAngleInDegrees, 
-        this.sound.panner.coneOuterGain = b.outerGainFactor, c.effect && (this.convolver = AudioEngine.context.createConvolver(), 
-        this.mixer = AudioEngine.createGain(), this.sound.panner.disconnect(), this.sound.panner.connect(this.mixer), 
-        this.plainGain = AudioEngine.context.createGain(), this.convolverGain = AudioEngine.context.createGain(), 
-        this.mixer.connect(plainGain), this.mixer.connect(convolverGain), this.plainGain.connect(AudioEngine.volume), 
-        this.convolverGain.connect(AudioEngine.volume), this.convolver.buffer = AudioEngine.get(c.effect), 
-        this.convolverGain.gain.value = .7, this.plainGain.gain.value = .3);
-        var d = c.autoplay || !1;
-        d && this.start(), AudioEngine.add(this);
+        this.sound.panner.coneOuterGain = b.outerGainFactor, c.effect && (this.convolver = M.audioEngine.context.createConvolver(), 
+        this.mixer = M.audioEngine.createGain(), this.sound.panner.disconnect(), this.sound.panner.connect(this.mixer), 
+        this.plainGain = M.audioEngine.context.createGain(), this.convolverGain = M.audioEngine.context.createGain(), 
+        this.mixer.connect(plainGain), this.mixer.connect(convolverGain), this.plainGain.connect(M.audioEngine.volume), 
+        this.convolverGain.connect(M.audioEngine.volume), this.convolver.buffer = M.audioEngine.get(c.effect), 
+        this.convolverGain.gain.value = .7, this.plainGain.gain.value = .3), (c.autoplay || !1) && this.start(), 
+        M.audioEngine.add(this);
     },
     update: function(a) {
         var b = new THREE.Vector3();
@@ -20642,71 +20570,69 @@ Gui = {
     }
 })._extends("Beat"), Class("BackgroundSound", {
     BackgroundSound: function(a, b) {
-        Beat.call(this, a), this.sound.source.loop = b.loop || !0, this.mesh = b.mesh, b.effect && (this.convolver = AudioEngine.context.createConvolver(), 
-        this.mixer = AudioEngine.context.createGain(), this.sound.panner.disconnect(), this.sound.panner.connect(this.mixer), 
-        this.plainGain = AudioEngine.context.createGain(), this.convolverGain = AudioEngine.context.createGain(), 
-        this.mixer.connect(plainGain), this.mixer.connect(convolverGain), this.plainGain.connect(AudioEngine.volume), 
-        this.convolverGain.connect(AudioEngine.volume), this.convolver.buffer = AudioEngine.get(b.effect), 
-        this.convolverGain.gain.value = .7, this.plainGain.gain.value = .3);
-        var c = b.autoplay || !0;
-        c && this.start(), AudioEngine.add(this);
+        Beat.call(this, a), this.sound.source.loop = b.loop || !0, this.mesh = b.mesh, b.effect && (this.convolver = M.audioEngine.context.createConvolver(), 
+        this.mixer = M.audioEngine.context.createGain(), this.sound.panner.disconnect(), 
+        this.sound.panner.connect(this.mixer), this.plainGain = M.audioEngine.context.createGain(), 
+        this.convolverGain = M.audioEngine.context.createGain(), this.mixer.connect(plainGain), 
+        this.mixer.connect(convolverGain), this.plainGain.connect(M.audioEngine.volume), 
+        this.convolverGain.connect(M.audioEngine.volume), this.convolver.buffer = M.audioEngine.get(b.effect), 
+        this.convolverGain.gain.value = .7, this.plainGain.gain.value = .3), (b.autoplay || !0) && this.start(), 
+        M.audioEngine.add(this);
     },
     update: function(a) {}
-})._extends("Beat"), function() {
-    window.VideoEngine = {}, VideoEngine.load = function() {};
-}(), function() {
-    window.ImagesEngine = {
+})._extends("Beat"), window.M = window.M || {}, M.videoEngine = {}, M.videoEngine.load = function() {}, 
+function() {
+    window.M = window.M || {}, M.imagesEngine = {
         numImages: 0,
         imagesLoaded: 0,
         load: function() {
-            ImagesEngine.map = new HashMap(), ImagesEngine.images = [], ImagesEngine.numImages = 0, 
-            ImagesEngine.loader = new THREE.TextureLoader();
-            for (var a in Assets.Images) ImagesEngine.numImages++, ImagesEngine.loadSingleFile(a, Assets.Images[a]);
-            0 == ImagesEngine.numImages && (AssetsManager.completed.images = !0);
+            M.imagesEngine.map = new HashMap(), M.imagesEngine.images = [], M.imagesEngine.numImages = 0, 
+            M.imagesEngine.loader = new THREE.TextureLoader();
+            for (var a in Assets.Images) M.imagesEngine.numImages++, M.imagesEngine.loadSingleFile(a, Assets.Images[a]);
+            0 == M.imagesEngine.numImages && (M.assetsManager.completed.images = !0);
         },
         get: function(a) {
-            return ImagesEngine.map.get(a) || !1;
+            return M.imagesEngine.map.get(a) || !1;
         },
         loadSingleFile: function(a, b) {
             try {
-                ImagesEngine.imagesLoaded++, ImagesEngine.loader.load(b, function(b) {
-                    ImagesEngine.map.put(a, b), ImagesEngine.checkLoad();
+                M.imagesEngine.imagesLoaded++, M.imagesEngine.loader.load(b, function(b) {
+                    M.imagesEngine.map.put(a, b), M.imagesEngine.checkLoad();
                 }, function() {}, function() {
-                    console.log("An error occurred while fetching texture."), ImagesEngine.checkLoad();
+                    console.log("An error occurred while fetching texture."), M.imagesEngine.checkLoad();
                 });
             } catch (a) {}
         },
         checkLoad: function() {
-            ImagesEngine.imagesLoaded == ImagesEngine.numImages && (AssetsManager.completed.images = !0);
+            M.imagesEngine.imagesLoaded == M.imagesEngine.numImages && (M.assetsManager.completed.images = !0);
         },
         add: function(a, b) {
-            a && b && ImagesEngine.map.put(a, b);
+            a && b && M.imagesEngine.map.put(a, b);
         }
     };
 }(), function() {
-    window.GeneralAssetsEngine = {}, GeneralAssetsEngine.load = function() {};
-}(), window.fx.ShadersEngine = {
+    window.M = window.M || {}, M.generalAssetsEngine = {}, M.generalAssetsEngine.load = function() {};
+}(), window.M = window.M || {}, M.fx = M.fx || {}, M.fx.shadersEngine = {
     SHADERS_DIR: "app/shaders/",
     shaders: {},
     numShaders: 0,
     shadersLoaded: 0,
     update: function() {},
     load: function() {
-        if (fx.ShadersEngine.map = new HashMap(), fx.ShadersEngine.shaders = [], Assets.Shaders) for (var a in Assets.Shaders) fx.ShadersEngine.numShaders++, 
-        fx.ShadersEngine.loadSingleFile(a, Assets.Shaders[a]);
-        0 == fx.ShadersEngine.numShaders && (AssetsManager.completed.shaders = !0);
+        if (M.fx.shadersEngine.map = new HashMap(), M.fx.shadersEngine.shaders = [], Assets.Shaders) for (var a in Assets.Shaders) M.fx.shadersEngine.numShaders++, 
+        M.fx.shadersEngine.loadSingleFile(a, Assets.Shaders[a]);
+        0 == M.fx.shadersEngine.numShaders && (M.assetsManager.completed.shaders = !0);
     },
     get: function(a) {
-        return fx.ShadersEngine.map.get(a) || !1;
+        return M.fx.shadersEngine.map.get(a) || !1;
     },
     loadSingleFile: function(a, b) {
-        var c = b.split(".")[1];
-        if ("js" == c) include(b.split(".js")[0], this.checkLoad); else {
-            var d = new XMLHttpRequest();
-            d.open("GET", b, !0), d.responseType = "text", d.onload = function(b) {
-                var c = fx.ShadersEngine._parseShader(this.responseText);
-                fx.ShadersEngine.map.put(a, c), fx.ShadersEngine.shadersLoaded++, fx.ShadersEngine.checkLoad();
-            }, d.send();
+        if ("js" == b.split(".")[1]) include(b.split(".js")[0], this.checkLoad); else {
+            var c = new XMLHttpRequest();
+            c.open("GET", b, !0), c.responseType = "text", c.onload = function(b) {
+                var c = M.fx.shadersEngine._parseShader(this.responseText);
+                M.fx.shadersEngine.map.put(a, c), M.fx.shadersEngine.shadersLoaded++, M.fx.shadersEngine.checkLoad();
+            }, c.send();
         }
     },
     _parseShader: function(a) {
@@ -20718,17 +20644,17 @@ Gui = {
     create: function(a, b) {
         var c = {};
         c.name = a, c.vertex = b.vertex || "", c.fragment = b.fragment || "", c.options = b.options || {}, 
-        c.attributes = b.attributes || {}, c.uniforms = b.uniforms || {}, fx.ShadersEngine.map.put(a, c);
+        c.attributes = b.attributes || {}, c.uniforms = b.uniforms || {}, M.fx.shadersEngine.map.put(a, c);
     },
     checkLoad: function() {
-        fx.ShadersEngine.shadersLoaded == fx.ShadersEngine.numShaders && (AssetsManager.completed.shaders = !0);
+        M.fx.shadersEngine.shadersLoaded == M.fx.shadersEngine.numShaders && (M.assetsManager.completed.shaders = !0);
     },
     add: function(a) {
-        fx.ShadersEngine.shaders.push(a);
+        M.fx.shadersEngine.shaders.push(a);
     }
 }, Class("Shader", {
     Shader: function(a, b, c, d) {
-        this.shader = fx.ShadersEngine.get(a), this.name = this.shader.name, this.vertex = this.shader.vertex, 
+        this.shader = M.fx.shadersEngine.get(a), this.name = this.shader.name, this.vertex = this.shader.vertex, 
         this.fragment = this.shader.fragment, this.attributes = b ? b : this.shader.attributes, 
         this.uniforms = c ? c : this.shader.uniforms;
         var e = {
@@ -20740,26 +20666,26 @@ Gui = {
         for (o in f) e[o] = f[o];
         this.material = new THREE.ShaderMaterial(e);
     }
-}), window.Util = window.Util || {}, Util.tests = [ "webgl", "webaudioapi", "webworker", "ajax" ], 
-Util.start = function() {
+}), window.M = window.M || {}, M.util = M.util || {}, M.util.tests = [ "webgl", "webaudioapi", "webworker", "ajax" ], 
+M.util.start = function() {
     window.requestAnimFrame = function() {
         return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(a, b) {
             window.setTimeout(a, 1e3 / 60);
         };
     }();
-}, Util.check = {
+}, M.util.check = {
     start: function(a, b) {
-        var c = app.util.tests || Util.tests;
+        var c = app.util.tests || M.util.tests;
         c.indexOf("webgl") == -1 && c.push("webgl");
         for (var d in c) {
-            if (Util.tests.indexOf(c[d]) == -1) return b("No Such Test", c[d]), !1;
-            if (!Util.check[c[d]]()) return b("Test failed", c[d]), !1;
+            if (M.util.tests.indexOf(c[d]) == -1) return b("No Such Test", c[d]), !1;
+            if (!M.util.check[c[d]]()) return b("Test failed", c[d]), !1;
         }
         return a("All systems are go!"), !0;
     },
     webgl: function() {
-        var a = document.createElement("canvas"), b = a.getContext("webgl") || a.getContext("experimental-webgl");
-        return !!b;
+        var a = document.createElement("canvas");
+        return !(!a.getContext("webgl") && !a.getContext("experimental-webgl"));
     },
     webaudioapi: function() {
         return !(!window.webkitAudioContext && !window.AudioContext);
@@ -20780,9 +20706,9 @@ Util.start = function() {
         } catch (a) {}
         return null != a;
     }
-}, Util.degToRad = function(a) {
+}, M.util.degToRad = function(a) {
     return a * (Math.PI / 180);
-}, Util.getProportion = function(a, b, c) {
+}, M.util.getProportion = function(a, b, c) {
     return a * b / c;
 }, Class("App", {
     App: function() {
@@ -20833,8 +20759,8 @@ Util.start = function() {
     onLeapDeviceConnected: function() {},
     onLeapDeviceDisconnected: function() {},
     render: function() {
-        User.handleUserInput(), Game.update(), AudioEngine.update(), LightEngine.update(), 
-        Universe.update(), Control.update(), app.camera.update && app.camera.update(app.clock.getDelta()), 
+        M.game.update(), M.audioEngine.update(), M.lightEngine.update(), M.universe.update(), 
+        M.control.update(), app.camera.update && app.camera.update(app.clock.getDelta()), 
         app.renderer.autoClear = !1, app.renderer.clear(app.clearColor), app._render(), 
         app.renderer.render(app.scene, app.camera.object), setTimeout(function() {
             app.util.physics_enabled && Physijs._isLoaded && app.scene.simulate(), app.util.tween_enabled && TWEEN.update(), 
@@ -20842,10 +20768,10 @@ Util.start = function() {
         }, 1e3 / app.util.frameRate);
     },
     add: function(a, b) {
-        this.scene.add(a), Universe.universe.put(a.uuid, b);
+        this.scene.add(a), M.universe.reality.put(a.uuid, b);
     },
     remove: function(a) {
-        this.scene.remove(a), Universe.universe.remove(a.uuid);
+        this.scene.remove(a), M.universe.reality.remove(a.uuid);
     },
     init: function() {
         app.three = THREE;
@@ -20878,8 +20804,7 @@ Util.start = function() {
         }), app.util.cast_shadow && (app.renderer.shadowMap.enabled = !0, app.renderer.shadowMap.type = THREE.PCFSoftShadowMap, 
         app.renderer.sortObjects = !1), app.renderer.setPixelRatio(window.devicePixelRatio), 
         app.renderer.setSize(b.w, b.h), document.getElementById("gameContainer").appendChild(app.renderer.domElement), 
-        User.handleUserInput(), Game.update(), Universe.update(), Control.init(), app.render(), 
-        app.onCreate instanceof Function ? app.onCreate() : console.log("Something wrong in your onCreate method");
+        M.game.update(), M.universe.update(), M.control.init(), app.render(), app.onCreate instanceof Function ? app.onCreate() : console.log("Something wrong in your onCreate method");
     },
     load: function() {
         console.log("inside load"), "function" != typeof this.progressAnimation && (this.progressAnimation = function(a) {
@@ -20890,8 +20815,7 @@ Util.start = function() {
         parent.postMessage(a, location.origin);
     },
     onMessage: function() {
-        var a = event.origin || event.originalEvent.origin;
-        a !== location.origin;
+        event.origin || event.originalEvent.origin, location.origin;
     },
     onkey: function(a, b) {
         app._keylistener && app._keylistener.simple_combo(a, b);
@@ -20917,22 +20841,89 @@ Util.start = function() {
     keydown: function(a) {},
     onFailedTest: function(a, b) {},
     onSuccededTest: function(a) {}
-});
+}), window.M = window.M || {};
 
 var app;
 
-window.onload = function() {
+M.start = function() {
     if (console.log("inside window onload"), window.subClasses.App) {
         var a = window.subClasses.App;
         app = new window[a]();
     } else app = new App();
-    Util.start(), Util.check.start(app.onSuccededTest, app.onFailedTest) && app.preload(function() {
-        AssetsManager.load(function() {
+    M.util.start(), M.util.check.start(app.onSuccededTest, app.onFailedTest) && app.preload(function() {
+        M.assetsManager.load(function() {
             app.prepareScene(), app.load();
         });
     });
-}, window.onresize = function() {
+}, M.resize = function() {
     app.util.h = window.innerHeight, app.util.w = window.innerWidth, app.util.ratio = app.util.w / app.util.h, 
     app.camera && app.renderer && (app.camera.object.aspect = app.util.ratio, app.camera.object.updateProjectionMatrix(), 
     app.renderer.setSize(app.util.w, app.util.h));
+}, window.addEventListener("load", M.start), window.addEventListener("resize", M.resize), 
+window.M = window.M || {}, M.loader = M.loader = {}, M.loader.lights = {
+    load: function(a) {
+        for (var b = 0; b < a.length; b++) {
+            var c = a[b];
+            parsedLight = M.loader.lights._parseLight(c), "DirectionalLight" == c.light.object.type ? M.loader.lights._loadDirectionalLight(parsedLight) : "AmbientLight" == c.light.object.type ? M.loader.lights._loadAmbientLight(parsedLight) : "PointLight" == c.light.object.type && M.loader.lights._loadPointLight(parsedLight);
+        }
+    },
+    _parseLight: function(a) {
+        return {
+            holder: !!a.holder && app.loader.parse(a.holder),
+            target: !!a.target && app.loader.parse(a.target),
+            light: !!a.light && app.loader.parse(a.light)
+        };
+    },
+    _loadDirectionalLight: function(a) {
+        new DirectionalLight(a.light.color, a.light.intensity, a.light.distance, a.light.position, a.target);
+    },
+    _loadAmbientLight: function(a) {
+        new AmbientLight(a.light.color, a.light.intensity, a.light.position);
+    },
+    _loadPointLight: function(a) {
+        var b = 200, c = a.holder ? a.holder.position : a.light.position, d = new PointLight(a.light.color, a.light.intensity, b, c);
+        d.light.castShadow = !0, d.light.shadow.camera.left = -b, d.light.shadow.camera.right = b, 
+        d.light.shadow.camera.top = b, d.light.shadow.camera.bottom = -b, d.light.shadow.camera.far = app.util.camera.far, 
+        d.light.shadow.darkness = .2;
+    }
+}, window.M = window.M || {}, M.loader = M.loader = {}, M.loader.meshes = {
+    load: function(a) {
+        for (var b = 0; b < a.length; b++) {
+            var c = a[b], d = M.loader.meshes._parseScript(c), e = M.loader.meshes._parseMesh(c);
+            e.name.indexOf("_camera") > -1 ? M.loader.meshes._loadCamera(e, d) : M.loader.meshes._loadMesh(e, d);
+        }
+    },
+    _parseMesh: function(a) {
+        return this.loader.parse(a);
+    },
+    _parseScript: function(a) {
+        var b = !!a.object.userData && a.object.userData.script, c = !1, d = !1;
+        return b && (b = b.slice(b.lastIndexOf("scripts/") + 8), c = b.slice(0, b.indexOf("/")), 
+        d = b.slice(b.indexOf("/") + 1)), {
+            script: b,
+            dir: c,
+            file: d
+        };
+    },
+    _loadCamera: function(a, b) {
+        var c = a.name.replace("_", "").toLowerCase();
+        app.camera.object.type.toLowerCase() === c && (app.camera.object.position.set(a.position.x, a.position.y, a.position.z), 
+        app.camera.object.rotation.set(a.rotation.x, a.rotation.y, a.rotation.z), app.camera.object.scale.set(a.scale.x, a.scale.y, a.scale.z), 
+        M.loader.meshes._attachScript(app.camera, b));
+    },
+    _loadMesh: function(a, b) {
+        a.castShadow = !0, a.receiveShadow = !0;
+        var c = new Mesh(a.geometry, a.material);
+        if (c.mesh.position.set(a.position.x, a.position.y, a.position.z), c.mesh.rotation.set(a.rotation.x, a.rotation.y, a.rotation.z), 
+        c.mesh.scale.set(a.scale.x, a.scale.y, a.scale.z), c.mesh.castShadow = !0, c.mesh.receiveShadow = !0, 
+        current.textureKey) {
+            var d = M.imagesEngine.get(current.textureKey);
+            d.wrapS = THREE.RepeatWrapping, d.wrapT = THREE.RepeatWrapping, d.repeat.set(1, 1), 
+            c.mesh.material.map = d;
+        }
+        M.loader.meshes._attachScript(c, b);
+    },
+    _attachScript: function(a, b) {
+        b.dir && b.file && a.addScript(b.file.replace(".js", ""), b.dir);
+    }
 };

@@ -102,7 +102,7 @@ Class("App", {
     render : function () {
 
         //handling user input
-        M.user.handleUserInput();
+        //M.user.handleUserInput();
         //updating game and engines
         M.game.update();
         M.audioEngine.update();
@@ -219,7 +219,7 @@ Class("App", {
             //document.body.appendChild( app.renderer.domElement );
             document.getElementById("gameContainer").appendChild(app.renderer.domElement);
             //handling user input
-            M.user.handleUserInput();
+            //M.user.handleUserInput();
             //updating game
             M.game.update();
             //updating universe
@@ -346,8 +346,9 @@ Class("App", {
 
 });
 
-window.M = window.M || {},
-    app;
+window.M = window.M || {};
+
+var app;
 
 M.start = function() {
     console.log("inside window onload");
@@ -386,3 +387,11 @@ M.resize = function () {
 
 window.addEventListener('load', M.start);
 window.addEventListener('resize', M.resize);
+
+
+M.version = '';
+M.author = {
+    name: 'Marco Stagni',
+    email: 'mrc.stagni@gmail.com',
+    website: 'http://mage.studio'
+};

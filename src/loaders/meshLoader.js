@@ -1,23 +1,27 @@
-app.meshLoader = {
+window.M = window.M || {};
+
+M.loader = M.loader = {}; 
+
+M.loader.meshes = {
     load: function(meshes) {
         for (var i=0; i<meshes.length; i++) {
 			var current = meshes[i],
-                script = app.meshLoader._parseScript(current),
-                parsedMesh = app.meshLoader._parseMesh(current);
+                script = M.loader.meshes._parseScript(current),
+                parsedMesh = M.loader.meshes._parseMesh(current);
 
 			if (parsedMesh.name.indexOf('_camera') > -1) {
-				app.meshLoader._loadCamera(parsedMesh, script);
+				M.loader.meshes._loadCamera(parsedMesh, script);
 			} else {
-                app.meshLoader._loadMesh(parsedMesh, script);
+                M.loader.meshes._loadMesh(parsedMesh, script);
 			}
         }
     },
 
-    _parseMesh(mesh) {
+    _parseMesh: function(mesh) {
         return this.loader.parse(mesh);
     },
 
-    _parseScript(mesh) {
+    _parseScript: function(mesh) {
         var script = mesh.object.userData ? mesh.object.userData['script'] : false,
             dir = false,
             file = false;
@@ -34,18 +38,18 @@ app.meshLoader = {
         };
     },
 
-    _loadCamera(mesh, script) {
+    _loadCamera: function(mesh, script) {
         var camType = mesh.name.replace('_', '').toLowerCase();
         if (app.camera.object.type.toLowerCase() === camType) {
             app.camera.object.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
             app.camera.object.rotation.set(mesh.rotation.x, mesh.rotation.y, mesh.rotation.z);
             app.camera.object.scale.set(mesh.scale.x, mesh.scale.y, mesh.scale.z);
 
-            app.meshLoader._attachScript(app.camera, script);
+            M.loader.meshes._attachScript(app.camera, script);
         }
     },
 
-    _loadMesh(parsedMesh, script) {
+    _loadMesh: function(parsedMesh, script) {
         parsedMesh.castShadow = true;
         parsedMesh.receiveShadow = true;
         var mesh = new Mesh(parsedMesh.geometry, parsedMesh.material);
@@ -63,10 +67,10 @@ app.meshLoader = {
             mesh.mesh.material.map = texture;
         }
 
-        app.meshLoader._attachScript(mesh, script);
+        M.loader.meshes._attachScript(mesh, script);
     },
 
-    _attachScript(mesh, script) {
+    _attachScript: function(mesh, script) {
         if (script.dir && script.file) {
             mesh.addScript(script.file.replace('.js', ''), script.dir);
         }

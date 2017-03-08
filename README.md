@@ -1,5 +1,5 @@
 
-#Wage
+#Mage
 
 -----
 ##Intro

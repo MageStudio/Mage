@@ -1,5 +1,7 @@
 window.M = window.M || {};
 
+M.util = M.util || {};
+
 M.util.tests = ["webgl", "webaudioapi", "webworker", "ajax"];
 
 M.util.start = function() {

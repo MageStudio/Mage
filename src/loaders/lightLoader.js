@@ -1,18 +1,22 @@
-app.lightLoader = {
+window.M = window.M || {};
+
+M.loader = M.loader = {}; 
+
+M.loader.lights = {
     load: function(lights) {
         for (var j=0; j<lights.length; j++) {
             var current = lights[j]
-                parsedLight = app.lightLoader._parseLight(current);
+                parsedLight = M.loader.lights._parseLight(current);
 
             if (current.light.object.type == "DirectionalLight") {
-                app.lightLoader._loadDirectionalLight(parsedLight);
+                M.loader.lights._loadDirectionalLight(parsedLight);
             } else if (current.light.object.type == "AmbientLight") {
-                app.lightLoader._loadAmbientLight(parsedLight);
+                M.loader.lights._loadAmbientLight(parsedLight);
             } else if (current.light.object.type == "PointLight") {
-                app.lightLoader._loadPointLight(parsedLight);
+                M.loader.lights._loadPointLight(parsedLight);
             }
         }
-    }
+    },
 
     _parseLight: function(light) {
         return {
