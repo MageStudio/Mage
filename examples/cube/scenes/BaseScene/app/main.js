@@ -29,6 +29,15 @@ Class("MyGame", {
 
 		//example for camera movement
 		app.camera.addScript("cameraScript", "camera");
-	}
+	},
+
+	progressAnimation: function(next) {
+		// you can provide your own version
+		new Vivus("mage", {type: 'oneByOne', duration: 1000, onReady: function() {
+			$('#mage').css('visibility', 'visible');
+		}});
+		$('#loader').delay(5000).fadeOut(1000);
+		next();
+	},
 
 })._extends("App");

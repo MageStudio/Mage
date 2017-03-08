@@ -389,7 +389,7 @@ window.addEventListener('load', M.start);
 window.addEventListener('resize', M.resize);
 
 
-M.version = '';
+M.version = '0.0.42';
 M.author = {
     name: 'Marco Stagni',
     email: 'mrc.stagni@gmail.com',

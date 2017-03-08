@@ -41,6 +41,7 @@ Class("MyGame", {
 	},
 
 	progressAnimation: function(next) {
+		// you can provide your own version
 		new Vivus("mage", {type: 'oneByOne', duration: 1000, onReady: function() {
 			$('#mage').css('visibility', 'visible');
 		}});

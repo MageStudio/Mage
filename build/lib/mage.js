@@ -20860,7 +20860,11 @@ M.start = function() {
     app.camera && app.renderer && (app.camera.object.aspect = app.util.ratio, app.camera.object.updateProjectionMatrix(), 
     app.renderer.setSize(app.util.w, app.util.h));
 }, window.addEventListener("load", M.start), window.addEventListener("resize", M.resize), 
-window.M = window.M || {}, M.loader = M.loader = {}, M.loader.lights = {
+M.version = "0.0.42", M.author = {
+    name: "Marco Stagni",
+    email: "mrc.stagni@gmail.com",
+    website: "http://mage.studio"
+}, window.M = window.M || {}, M.loader = M.loader = {}, M.loader.lights = {
     load: function(a) {
         for (var b = 0; b < a.length; b++) {
             var c = a[b];

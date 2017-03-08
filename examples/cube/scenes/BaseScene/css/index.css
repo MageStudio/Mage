@@ -87,6 +87,6 @@ canvas {
 
 #loader #container svg {
     position: absolute;
-    left: -40px;
+    left: -25px;
     visibility: hidden;
 }
