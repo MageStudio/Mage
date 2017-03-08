@@ -19,7 +19,7 @@ if (process.argv.length) {
 	}
 
 	function usage() {
-		console.log("USAGE: mage create <projectName>".green);
+		console.log("USAGE: mage create <project>".green);
 		console.log("USAGE: mage serve <port> <project>".green);
 		console.log("\n\n");
 	}
