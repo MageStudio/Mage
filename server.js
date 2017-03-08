@@ -30,6 +30,7 @@ Server.prototype.start = function(port, location) {
 
     if (this.project) {
         dir = path.join(dir, this.project);
+        this.project = '/';
     }
     this.app = connect().use(serveStatic(dir));
     this.server = http.createServer(this.app);
