@@ -10,9 +10,14 @@ function Builder() {
 		console.log("This script will create your ");
 		console.log("project in just a few (milli)seconds.");
 
-		var PATH = require.resolve('mage-engine').slice(0, -8) + "/build";
+		var PATH = '';
+		try {
+			PATH = require.resolve('mage-engine').slice(0, -8) + "/build";
+		} catch(ex) {
+			PATH = process.cwd() + '/build';
+		}
 
-		console.log(PATH);
+		console.log(PATH.blue);
 
 		this.ncp(PATH, projectName, function (err) {
 			if (err) {
