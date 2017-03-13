@@ -23,13 +23,6 @@ M.fx.shadersEngine.create("Atmosphere", {
 		'}',
 	].join('\n'),
 
-	options: {
-		side: THREE.FrontSide,
-		blending: THREE.AdditiveBlending,
-		transparent: true,
-		depthWrite: false,
-	},
-
 	uniforms: {
 		coeficient	: {
 			type	: "f",
@@ -43,6 +36,13 @@ M.fx.shadersEngine.create("Atmosphere", {
 			type	: "c",
 			value	: new THREE.Color('pink')
 		},
+	},
+
+	options: {
+		side: THREE.FrontSide,
+		blending: THREE.AdditiveBlending,
+		transparent: true,
+		depthWrite: false,
 	},
 
 	attributes: {

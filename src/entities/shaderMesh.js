@@ -6,17 +6,22 @@ Class("ShaderMesh", {
         this.attributes = attributes;
         this.uniforms = uniforms;
         this.shaderName = name;
-        var shader = new Shader(this.shaderName, this.attributes, this.uniforms);
-        if ( !attributes ) {
-          this.attributes = shader.attributes;
-        }
-        if ( !uniforms ) {
-          this.uniforms = shader.uniforms;
-        }
-        this.script = {};
-        this.hasScript = false;
+        var shader = new Shader(this.shaderName, this.attributes, this.uniforms, options);
+        if (!shader.instance) {
+            if ( !attributes ) {
+                this.attributes = shader.attributes;
+            }
+            if ( !uniforms ) {
+                this.uniforms = shader.uniforms;
+            }
+            this.script = {};
+            this.hasScript = false;
 
-        this.mesh = new THREE.Mesh(geometry, shader.material);
+            this.mesh = new THREE.Mesh(geometry, shader.material);
+        } else {
+            this.mesh = new shader.instance(app.renderer, app.camera.object, app.scene, options);
+        }
+        
         //adding to core
         app.add(this.mesh, this);
 

@@ -5,6 +5,8 @@ M.fx.shadersEngine = {
 
 	SHADERS_DIR : "app/shaders/",
 
+	SHADERS: ['Atmoshpere', 'Mirror', 'Water'],
+
 	shaders: {},
 	numShaders : 0,
 	shadersLoaded : 0,
@@ -63,14 +65,18 @@ M.fx.shadersEngine = {
 		return obj;
 	},
 
-	create: function( name, params) {
+	create: function( name, params ) {
 		var obj = {};
+
 		obj.name = name;
 		obj.vertex = params.vertex || "";
 		obj.fragment = params.fragment || "";
 		obj.options = params.options || {};
 		obj.attributes = params.attributes || {};
 		obj.uniforms = params.uniforms || {};
+		obj.instance = params.instance || false;
+
+		M.fx.shadersEngine.SHADERS.push(name);
 		M.fx.shadersEngine.map.put( name, obj );
 	},
 
