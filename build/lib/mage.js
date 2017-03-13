@@ -1,4 +1,4 @@
-/*! mage version: 0.0.42, 08-03-2017 */
+/*! mage version: 0.0.44, 13-03-2017 */
 function ParticleTween(a, b) {
     this.times = a || [], this.values = b || [];
 }
@@ -19733,10 +19733,11 @@ __class__ = function(a, b) {
 })._extends("Entity"), Class("ShaderMesh", {
     ShaderMesh: function(a, b, c, d, e) {
         Entity.call(this), this.geometry = a, this.attributes = c, this.uniforms = d, this.shaderName = b;
-        var f = new Shader(this.shaderName, this.attributes, this.uniforms);
-        if (c || (this.attributes = f.attributes), d || (this.uniforms = f.uniforms), this.script = {}, 
-        this.hasScript = !1, this.mesh = new THREE.Mesh(a, f.material), app.add(this.mesh, this), 
-        e) for (var g in e) this[g] = e[g], "script" == g && (this.hasScript = !0, this.addScript(e[g], e.dir));
+        var f = new Shader(this.shaderName, this.attributes, this.uniforms, e);
+        if (f.instance ? this.mesh = new f.instance(app.renderer, app.camera.object, app.scene, e) : (c || (this.attributes = f.attributes), 
+        d || (this.uniforms = f.uniforms), this.script = {}, this.hasScript = !1, this.mesh = new THREE.Mesh(a, f.material)), 
+        app.add(this.mesh, this), e) for (var g in e) this[g] = e[g], "script" == g && (this.hasScript = !0, 
+        this.addScript(e[g], e.dir));
     }
 })._extends("Entity"), Class("AnimatedMesh", {
     AnimatedMesh: function(a, b, c) {
@@ -20614,6 +20615,7 @@ function() {
     window.M = window.M || {}, M.generalAssetsEngine = {}, M.generalAssetsEngine.load = function() {};
 }(), window.M = window.M || {}, M.fx = M.fx || {}, M.fx.shadersEngine = {
     SHADERS_DIR: "app/shaders/",
+    SHADERS: [ "Atmoshpere", "Mirror", "Water" ],
     shaders: {},
     numShaders: 0,
     shadersLoaded: 0,
@@ -20644,7 +20646,8 @@ function() {
     create: function(a, b) {
         var c = {};
         c.name = a, c.vertex = b.vertex || "", c.fragment = b.fragment || "", c.options = b.options || {}, 
-        c.attributes = b.attributes || {}, c.uniforms = b.uniforms || {}, M.fx.shadersEngine.map.put(a, c);
+        c.attributes = b.attributes || {}, c.uniforms = b.uniforms || {}, c.instance = b.instance || !1, 
+        M.fx.shadersEngine.SHADERS.push(a), M.fx.shadersEngine.map.put(a, c);
     },
     checkLoad: function() {
         M.fx.shadersEngine.shadersLoaded == M.fx.shadersEngine.numShaders && (M.assetsManager.completed.shaders = !0);
@@ -20654,17 +20657,18 @@ function() {
     }
 }, Class("Shader", {
     Shader: function(a, b, c, d) {
-        this.shader = M.fx.shadersEngine.get(a), this.name = this.shader.name, this.vertex = this.shader.vertex, 
-        this.fragment = this.shader.fragment, this.attributes = b ? b : this.shader.attributes, 
-        this.uniforms = c ? c : this.shader.uniforms;
-        var e = {
-            attributes: this.attributes,
-            uniforms: this.uniforms,
-            vertexShader: this.shader.vertex,
-            fragmentShader: this.shader.fragment
-        }, f = d ? d : this.shader.options;
-        for (o in f) e[o] = f[o];
-        this.material = new THREE.ShaderMaterial(e);
+        if (this.shader = M.fx.shadersEngine.get(a), !this.shader.instance) {
+            this.name = this.shader.name, this.vertex = this.shader.vertex, this.fragment = this.shader.fragment, 
+            this.attributes = b ? b : this.shader.attributes, this.uniforms = c ? c : this.shader.uniforms;
+            var e = {
+                attributes: this.attributes,
+                uniforms: this.uniforms,
+                vertexShader: this.shader.vertex,
+                fragmentShader: this.shader.fragment
+            }, f = d ? d : this.shader.options;
+            for (o in f) e[o] = f[o];
+            this.material = new THREE.ShaderMaterial(e);
+        }
     }
 }), window.M = window.M || {}, M.util = M.util || {}, M.util.tests = [ "webgl", "webaudioapi", "webworker", "ajax" ], 
 M.util.start = function() {
