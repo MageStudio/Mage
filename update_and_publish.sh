@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# building everything
+sh update.sh
+
 # login in npm
 npm login
 
