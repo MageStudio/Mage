@@ -3,11 +3,13 @@
 
 var builder = require("./builder.js"),
 	server = require('./server.js'),
-	colors = require('colors');
+	colors = require('colors'),
+	engine = require('./build/lib/mage-core.js');
 
 module.exports = {
-		builder: builder,
-		server: server
+	builder: builder,
+	server: server,
+	engine: engine
 };
 
 if (process.argv.length) {

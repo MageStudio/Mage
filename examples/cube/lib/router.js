@@ -1,18 +1,24 @@
 var Router = {
+
+    started : false,
+
     init: function(data) {
-        Router.iframe = document.createElement("iframe");
-        document.body.appendChild(Router.iframe);
+        if (!Router.started) {
+            Router.started = true;
+            Router.iframe = document.createElement("iframe");
+            document.body.appendChild(Router.iframe);
 
-        Router.baseFolder = "scenes/";
+            Router.baseFolder = "scenes/";
 
-        Router.iframe.src = Router.baseFolder + "" + (data.firstScene ? data.firstScene : data.scenes[0].name);
+            Router.iframe.src = Router.baseFolder + "" + (data.firstScene ? data.firstScene : data.scenes[0].name);
 
-        Router.firstScene = data.firstScene;
-        Router.scenes = data.scenes;
-        Router.current = data.firstScene;
+            Router.firstScene = data.firstScene;
+            Router.scenes = data.scenes;
+            Router.current = data.firstScene;
 
-        window.addEventListener("message", Router._onMessage, false);
-        window.addEventListener("onmessage", Router._onMessage, false);
+            window.addEventListener("message", Router._onMessage, false);
+            window.addEventListener("onmessage", Router._onMessage, false);
+        }
     },
 
     _onMessage: function(message) {

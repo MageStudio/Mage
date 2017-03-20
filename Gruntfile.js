@@ -1,19 +1,14 @@
-function getDependencies() {
-	/*
-		qusta funzione dovrebbe recuperare per ogni modulo un file chiamato
-		sources.js e leggerne il contenuto. usando come ordine l'ordine dei moduli
-		contenuto nel file modules.js, che ha module.exports
-	*/
+function getModules(what) {
+
 	var toCompile = require("./modules"),
 		modules = [];
 
 	modules.push("src/license.js");
-
-	for (var i=0; i<toCompile.order.length; i++) {
-		for (var j=0; j<toCompile.modules[toCompile.order[i]].length; j++) {
-			modules.push(toCompile.modules[toCompile.order[i]][j]);
-		}
+	
+	if (toCompile.available.indexOf(what) > -1) {
+		modules = modules.concat(toCompile.modules[what]);
 	}
+
 	console.log(modules);
 	return modules;
 }
@@ -54,9 +49,21 @@ module.exports = function(grunt) {
 			options: {
 				separator: ';\n'
 			},
-			dist: {
-				src: getDependencies(),//['src/main.js', 'src/test.js'],
-				dest: 'build/lib/mage.min.js'
+			libs: {
+				src: getModules('libs'),
+				dest: 'build/lib/mage-libs.js'
+			},
+			core: {
+				src: getModules('core'),
+				dest: 'build/lib/mage-core.js'
+			},
+			all: {
+				src: getModules('game')
+					.concat(getModules('assets'))
+					.concat(getModules('controls'))
+					.concat(getModules('entities'))
+					.concat(getModules('loaders')),
+				dest: 'build/lib/mage.js'
 			}
 		},
 		uglify: {
@@ -66,7 +73,9 @@ module.exports = function(grunt) {
 			},
 			dist: {
 				files: {
-					'build/lib/mage.js': ['build/lib/mage.min.js'] //prima era concat.dist.dest
+					'build/lib/mage.min.js': 'build/lib/mage.js',
+					'build/lib/mage-libs.min.js': 'build/lib/mage-libs.js',
+					'build/lib/mage-core.min.js': 'build/lib/mage-core.js'
 				}
 			}
 		},

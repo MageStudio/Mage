@@ -7,6 +7,9 @@
     "name": "Marco Stagni",
     "email": "mrc.stagni@gmail.com"
   },
+  "scripts": {
+    "build": "sh update.sh"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/marco-ponds/mage.git"

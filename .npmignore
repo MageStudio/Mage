@@ -7,3 +7,4 @@ src
 examples
 bower.json
 modules.js
+*.sh

@@ -13,7 +13,7 @@ function Class(name, methods) {
 	return __pool__[upper];
 }
 
-__class__ = function(name, methods) {
+function __class__ (name, methods) {
 	this.name = name;
 	this.methods = methods;
 }

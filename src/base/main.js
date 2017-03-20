@@ -346,52 +346,65 @@ Class("App", {
 
 });
 
-window.M = window.M || {};
+// retrieving M object
+if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    console.log(window);
+    module.exports = M;
 
-var app;
+    delete window['M'];
+} else {
+    // we're inside our favourite browser
+    window.app = {};
+    M.started = false;
+    M.start = function() {
+        if (M.started) {
+            console.log('app already started');
+            return;
+        }
+        M.started = true;
+        console.log("inside window onload");
+        //creating app object
+        if (window.subClasses["App"]) {
+            var subName = window.subClasses["App"];
+            app = new window[subName]();
+        } else {
+            app = new App();
+        }
 
-M.start = function() {
-    console.log("inside window onload");
-    //creating app object
-    if (window.subClasses["App"]) {
-        var subName = window.subClasses["App"];
-        app = new window[subName]();
-    } else {
-        app = new App();
-    }
+        //before starting loading stuff, be sure to pass all tests
+        M.util.start();
 
-    //before starting loading stuff, be sure to pass all tests
-    M.util.start();
-
-    if (M.util.check.start(app.onSuccededTest, app.onFailedTest)) {
-        //we passed every test, we can go
-        app.preload(function() {
-            M.assetsManager.load(function() {
-                app.prepareScene();
-                app.load();
+        if (M.util.check.start(app.onSuccededTest, app.onFailedTest)) {
+            //we passed every test, we can go
+            app.preload(function() {
+                M.assetsManager.load(function() {
+                    app.prepareScene();
+                    app.load();
+                });
             });
-        });
-    }
-};
+        }
+    };
 
-M.resize = function () {
-    app.util.h 	= window.innerHeight;
-    app.util.w 	= window.innerWidth;
-    app.util.ratio = app.util.w/app.util.h;
+    M.resize = function () {
+        app.util.h 	= window.innerHeight;
+        app.util.w 	= window.innerWidth;
+        app.util.ratio = app.util.w/app.util.h;
 
-    if (!app.camera || !app.renderer) return;
-    app.camera.object.aspect = app.util.ratio;
-    app.camera.object.updateProjectionMatrix();
-    app.renderer.setSize(app.util.w, app.util.h);
-};
+        if (!app.camera || !app.renderer) return;
+        app.camera.object.aspect = app.util.ratio;
+        app.camera.object.updateProjectionMatrix();
+        app.renderer.setSize(app.util.w, app.util.h);
+    };
 
-window.addEventListener('load', M.start);
-window.addEventListener('resize', M.resize);
+    window.addEventListener('load', M.start);
+    window.addEventListener('resize', M.resize);
 
 
-M.version = '0.0.42';
-M.author = {
-    name: 'Marco Stagni',
-    email: 'mrc.stagni@gmail.com',
-    website: 'http://mage.studio'
-};
+    M.version = '0.0.46';
+    M.author = {
+        name: 'Marco Stagni',
+        email: 'mrc.stagni@gmail.com',
+        website: 'http://mage.studio'
+    };
+}
+

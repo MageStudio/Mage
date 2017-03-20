@@ -1,3 +1,4 @@
+/*
 module.exports = (function() {
 
 	var modules = {},
@@ -95,6 +96,146 @@ module.exports = (function() {
 	return {
 		"modules" : modules,
 		"order" : order
+	}
+
+})();
+
+
+libs
+CORE
+	ALL THE ENGINES
+	UTIL
+	APP	
+
+AUDIO
+	classes and shit
+
+loaders
+
+video
+
+lights
+
+
+
+
+
+
+*/
+
+module.exports = (function() {
+
+	var modules = {},
+		//order = ["libs", "controls", "entities", "base", "assets", "app", "loaders"],
+		available = ['libs', 'core', 'game', 'assets', 'controls', 'entities', 'loaders'],
+		DIR = "src/",
+		LIB = DIR + "lib/",
+		BASE = DIR + "base/",
+		LOADERS = DIR + "loaders/",
+		AUDIO = DIR + "audio/",
+		VIDEO = DIR + "video/",
+		LIGHTS = DIR + "lights/",
+		IMAGES = DIR + "images/",
+		ENTITIES = DIR + "entities/"
+		GENERALASSETS = DIR + "generalAssets/",
+		FX = DIR + "fx/",
+		SHADERS = FX + "shaders/",
+		CONTROLS = DIR + "controls/";
+
+	// 1
+	modules.libs = [
+		LIB + "jquery.min.js",
+		LIB + "keypress.min.js",
+		LIB + "leap-0.4.3.min.js",
+		LIB + "leap-plugins-0.1.3.js",
+		LIB + "three.min.js",
+		LIB + "OBJLoader.js",
+		LIB + "physi.js",
+		LIB + "tween.js",
+
+		LIB + "ParticleEngine.js",
+		LIB + "ParticleEngineExamples.js",
+		LIB + "underscore.js",
+	];
+
+	// 2
+	modules.core = [
+
+		BASE + 'detector.js',
+		BASE + "classy.js",
+
+		
+
+		// libraries always needed
+		LIB + "bee.min.js",
+		BASE + "colors.js",
+		BASE + "HashMap.js",
+
+		
+		// engines
+		BASE + "assetsManager.js",
+		//loading effects
+		FX + "fx.js",
+		AUDIO + "soundEngine.js",
+		VIDEO + "videoEngine.js",
+		IMAGES + "imagesEngine.js",
+		LIGHTS + "lightEngine.js",
+		GENERALASSETS + "generalAssetsEngine.js",
+		SHADERS + "shadersEngine.js",
+
+		BASE + "main.js",
+	];
+
+	// 3
+	modules.game = [
+		
+		BASE + "util.js",
+		BASE + "control.js",
+		BASE + "game.js",
+		BASE + "gui.js",
+		BASE + "universe.js",
+		BASE + "user.js"
+	];
+
+	// 4
+	modules.assets = [
+		//audio
+		AUDIO + "beat.js",
+		AUDIO + "sound.js",
+		AUDIO + "ambientSound.js",
+		AUDIO + "directionalSound.js",
+		AUDIO + "backgroundSound.js",
+		SHADERS + "shader.js"
+	];
+
+	// 4
+	modules.controls = [
+		CONTROLS + "FlyControl.js",
+		CONTROLS + "PointerLockControls.js"
+	];
+
+	// 5
+	modules.entities = [
+		ENTITIES + "entity.js",
+		ENTITIES + "camera.js",
+		ENTITIES + "mesh.js",
+		ENTITIES + "shaderMesh.js",
+		ENTITIES + "animatedMesh.js",
+		LIGHTS + "light.js",
+		LIGHTS + "ambientLight.js",
+		LIGHTS + "pointLight.js",
+		LIGHTS + "directionalLight.js",
+	];
+
+	// 6
+	modules.loaders = [
+		LOADERS + "lightLoader.js",
+		LOADERS + "meshLoader.js"
+	];
+
+	return {
+		"modules" : modules,
+		"available" : available
 	}
 
 })();

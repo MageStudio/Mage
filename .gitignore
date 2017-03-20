@@ -2,6 +2,3 @@ node_modules/*
 npm-debug.log
 Editor/build.sh
 Editor/node_modules/*
-
- */*.sh
-*.sh
