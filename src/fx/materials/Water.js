@@ -109,7 +109,7 @@ M.fx.shadersEngine.create('Water', {
 		'}'
 	].join( '\n' ),
 
-    instance: (function(renderer, camera) {
+    instance: function(renderer, camera, scene, options) {
 
         var Water = function ( renderer, camera, scene, options ) {
 
@@ -168,7 +168,7 @@ M.fx.shadersEngine.create('Water', {
             this.renderTarget = new THREE.WebGLRenderTarget( width, height );
             this.renderTarget2 = new THREE.WebGLRenderTarget( width, height );
 
-            var mirrorShader = M.fx.shadersEngine.get('Water');
+            var mirrorShader = M.fx.shadersEngine.get('Mirror');
             var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms );
 
             this.material = new THREE.ShaderMaterial( {
@@ -295,6 +295,74 @@ M.fx.shadersEngine.create('Water', {
 
         };
 
-        return Water;
-    })()
+        var waterNormals = M.imagesEngine.get(options.textureNormal);
+        waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+        var water = new Water(renderer, camera, scene, {
+            textureWidth: options.textureWidth,
+            textureHeight: options.textureHeight,
+            waterNormals: waterNormals,
+            alpha: 	options.alpha,
+            sunDirection: options.light.position.clone().normalize(),
+            sunColor: options.sunColor,
+            waterColor: options.waterColor,
+            distortionScale: options.distortionScale,
+        });
+
+        mirrorMesh = new THREE.Mesh(
+            new THREE.PlaneBufferGeometry( options.width * 500, options.height * 500 ),
+            water.material
+        );
+        mirrorMesh.add(water);
+        mirrorMesh.rotation.x = - Math.PI * 0.5;
+        
+        return mirrorMesh;
+    },
+
+    options: {
+        textureWidth: {
+            type: 'number',
+            default: 512,
+            mandatory: true
+        },
+        textureHeight: {
+            type: 'number',
+            default: 512,
+            mandatory: true
+        },
+        textureNormal: {
+            type: 'string',
+            default: 'waterNormal',
+            mandatory: false
+        },
+        sunColor: {
+            type: 'color',
+            default: '0xffffff',
+            mandatory: true
+        },
+        waterColor: {
+            type: 'color',
+            default: '0x001e0',
+            mandatory: true
+        },
+        distortionScale: {
+            type: 'color',
+            default: 50.0,
+            mandatory: true
+        },
+        alpha: {
+            type: 'number',
+            default: 1.0,
+            mandatory: true
+        },
+        width: {
+            type: 'number',
+            default: 2000,
+            mandatory: true
+        },
+        height: {
+            type: 'number',
+            default: 2000,
+            mandatory: true
+        }
+    }
 });
