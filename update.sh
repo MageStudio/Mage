@@ -20,4 +20,10 @@ do
 	echo "..done."
 done
 
+echo "pushing to github"
+
+git add -A
+git commit -m '[MAGE BUILD] building mage'
+git push origin master
+
 echo "\nupdate completed."
