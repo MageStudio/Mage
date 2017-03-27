@@ -320,46 +320,55 @@ M.fx.shadersEngine.create('Water', {
 
     options: {
         textureWidth: {
+            name: 'texture width',
             type: 'number',
             default: 512,
             mandatory: true
         },
         textureHeight: {
+            name: 'texture height',
             type: 'number',
             default: 512,
             mandatory: true
         },
         textureNormal: {
+            name: 'texture normal',
             type: 'string',
             default: 'waterNormal',
             mandatory: false
         },
         sunColor: {
+            name: 'sun color',
             type: 'color',
             default: '0xffffff',
             mandatory: true
         },
         waterColor: {
+            name: 'water color',
             type: 'color',
             default: '0x001e0',
             mandatory: true
         },
         distortionScale: {
+            name: 'distortion scale',
             type: 'color',
             default: 50.0,
             mandatory: true
         },
         alpha: {
+            name: 'alpha',
             type: 'number',
             default: 1.0,
             mandatory: true
         },
         width: {
+            name: 'width',
             type: 'number',
             default: 2000,
             mandatory: true
         },
         height: {
+            name: 'height',
             type: 'number',
             default: 2000,
             mandatory: true
