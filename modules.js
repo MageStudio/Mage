@@ -140,6 +140,7 @@ module.exports = (function() {
 		GENERALASSETS = DIR + "generalAssets/",
 		FX = DIR + "fx/",
 		SHADERS = FX + "shaders/",
+		SHADERS_MATERIALS = FX + '/materials';
 		CONTROLS = DIR + "controls/";
 
 	// 1
@@ -182,6 +183,10 @@ module.exports = (function() {
 		LIGHTS + "lightEngine.js",
 		GENERALASSETS + "generalAssetsEngine.js",
 		SHADERS + "shadersEngine.js",
+
+		SHADERS_MATERIALS + 'Mirror.js',
+		SHADERS_MATERIALS + 'Atmosphere.js',
+		SHADERS_MATERIALS + 'Water.js',
 
 		BASE + "main.js",
 	];

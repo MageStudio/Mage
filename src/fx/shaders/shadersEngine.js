@@ -5,7 +5,10 @@ M.fx.shadersEngine = {
 
 	SHADERS_DIR : "app/shaders/",
 
-	SHADERS: ['Atmoshpere', 'Mirror', 'Water'],
+	SHADERS: [],
+
+	map: new HashMap(),
+	shaders: [],
 
 	shaders: {},
 	numShaders : 0,
@@ -16,8 +19,6 @@ M.fx.shadersEngine = {
 
 	load: function() {
 
-		M.fx.shadersEngine.map = new HashMap();
-		M.fx.shadersEngine.shaders = [];
 		if (Assets.Shaders) {
 			for (var shader in Assets.Shaders) {
 				M.fx.shadersEngine.numShaders++;
