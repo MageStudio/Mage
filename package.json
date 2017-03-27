@@ -1,6 +1,6 @@
 {
   "name": "mage-engine",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "description": "A WebGL Javascript Game Engine, built on top of THREE.js and many other libraries.",
   "main": "mage.js",
   "author": {
