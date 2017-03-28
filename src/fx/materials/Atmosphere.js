@@ -1,3 +1,5 @@
+window.M = window.M || {};
+console.log('im inside atmosphere');
 M.fx.shadersEngine.create("Atmosphere", {
 
 	vertex: [

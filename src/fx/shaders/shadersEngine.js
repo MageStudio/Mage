@@ -92,3 +92,5 @@ M.fx.shadersEngine = {
 		M.fx.shadersEngine.shaders.push(shader);
 	},
 };
+
+console.log('ciao');

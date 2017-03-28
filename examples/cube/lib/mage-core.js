@@ -774,7 +774,8 @@ M.fx.shadersEngine = {
 		M.fx.shadersEngine.shaders.push(shader);
 	},
 };
-;
+
+console.log('ciao');;
 Class("App", {
 
     App: function() {
