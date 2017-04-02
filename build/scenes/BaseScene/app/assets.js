@@ -10,7 +10,7 @@ var Assets = {
 	},
 
 	Images : {
-
+		
 	},
 
 	General : {

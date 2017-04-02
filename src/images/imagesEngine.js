@@ -7,12 +7,20 @@
 		numImages: 0,
 		imagesLoaded: 0,
 
+		defaults: {
+			"waterNormal": "assets/images/waternormals.jpg",
+			"water": "assets/images/waterr.jpg"
+		},
+
 		load: function() {
 			//loading images
 			M.imagesEngine.map = new HashMap();
 			M.imagesEngine.images = [];
 			M.imagesEngine.numImages = 0;
 			M.imagesEngine.loader = new THREE.TextureLoader();
+
+			// extending assets images with our defaults
+			Object.assign(Assets.Images, M.imagesEngine.defaults);
 
 			for (var image in Assets.Images) {
 				M.imagesEngine.numImages++;
