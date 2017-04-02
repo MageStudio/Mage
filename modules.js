@@ -140,7 +140,7 @@ module.exports = (function() {
 		GENERALASSETS = DIR + "generalAssets/",
 		FX = DIR + "fx/",
 		SHADERS = FX + "shaders/",
-		SHADERS_MATERIALS = FX + 'materials/';
+		SHADERS_MATERIALS = FX + 'materials/',
 		CONTROLS = DIR + "controls/";
 
 	// 1
@@ -149,14 +149,13 @@ module.exports = (function() {
 		LIB + "keypress.min.js",
 		LIB + "leap-0.4.3.min.js",
 		LIB + "leap-plugins-0.1.3.js",
-		LIB + "physi.js",
-		LIB + "tween.js",
-		
 		LIB + "three.min.js",
 		LIB + "OBJLoader.js",
+		LIB + "physi.js",
+		LIB + "tween.js",
+
 		LIB + "ParticleEngine.js",
 		LIB + "ParticleEngineExamples.js",
-		
 		LIB + "underscore.js",
 	];
 
@@ -165,6 +164,8 @@ module.exports = (function() {
 
 		BASE + 'detector.js',
 		BASE + "classy.js",
+
+		
 
 		// libraries always needed
 		LIB + "bee.min.js",
@@ -183,9 +184,9 @@ module.exports = (function() {
 		GENERALASSETS + "generalAssetsEngine.js",
 		SHADERS + "shadersEngine.js",
 
-		SHADERS_MATERIALS + 'Mirror.js',
-		SHADERS_MATERIALS + 'Atmosphere.js',
-		SHADERS_MATERIALS + 'Water.js',
+		SHADERS_MATERIALS + "Atmosphere.js",
+		SHADERS_MATERIALS + "Mirror.js",
+		SHADERS_MATERIALS + "Water.js",
 
 		BASE + "main.js",
 	];
