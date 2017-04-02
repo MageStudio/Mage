@@ -2681,13 +2681,14 @@ M.loader.meshes = {
     load: function(meshes) {
         for (var i=0; i<meshes.length; i++) {
 			var current = meshes[i],
+                shader = M.loader.meshes._parseShader(current),
                 script = M.loader.meshes._parseScript(current),
                 parsedMesh = M.loader.meshes._parseMesh(current);
 
 			if (parsedMesh.name.indexOf('_camera') > -1) {
 				M.loader.meshes._loadCamera(parsedMesh, script);
 			} else {
-                M.loader.meshes._loadMesh(parsedMesh, script);
+                M.loader.meshes._loadMesh(parsedMesh, script, shader);
 			}
         }
     },
@@ -2713,6 +2714,25 @@ M.loader.meshes = {
         };
     },
 
+    _parseShader: function(mesh) {
+        var name = mesh.object.userData ? mesh.object.userData['shader_name'] : false,
+            options = mesh.object.userData ? JSON.parse(mesh.object.userData['shader_options']) : false;
+
+        if (name) {
+            var opts = {};
+            for (var i in options) {
+                Object.assign(opts, options[i]);
+            }
+        }
+
+        return {
+            name: name,
+            options: options
+        };
+    },
+
+    // giro tenere senso derby collaboratore
+
     _loadCamera: function(mesh, script) {
         var camType = mesh.name.replace('_', '').toLowerCase();
         if (app.camera.object.type.toLowerCase() === camType) {
@@ -2724,22 +2744,26 @@ M.loader.meshes = {
         }
     },
 
-    _loadMesh: function(parsedMesh, script) {
-        parsedMesh.castShadow = true;
-        parsedMesh.receiveShadow = true;
-        var mesh = new Mesh(parsedMesh.geometry, parsedMesh.material);
-        mesh.mesh.position.set(parsedMesh.position.x, parsedMesh.position.y, parsedMesh.position.z);
-        mesh.mesh.rotation.set(parsedMesh.rotation.x, parsedMesh.rotation.y, parsedMesh.rotation.z);
-        mesh.mesh.scale.set(parsedMesh.scale.x, parsedMesh.scale.y, parsedMesh.scale.z);
-        mesh.mesh.castShadow = true;
-        mesh.mesh.receiveShadow = true;
-        // setting texture
-        if (current.textureKey) {
-            var texture = M.imagesEngine.get(current.textureKey);
-            texture.wrapS = THREE.RepeatWrapping;
-            texture.wrapT = THREE.RepeatWrapping;
-            texture.repeat.set(1, 1);
-            mesh.mesh.material.map = texture;
+    _loadMesh: function(parsedMesh, script, shader) {
+        if (shader && shader.name && shader.options) {
+            var mesh = new ShaderMesh({}, shader.name, {}, {}, shader.options);
+        } else {
+            parsedMesh.castShadow = true;
+            parsedMesh.receiveShadow = true;
+            var mesh = new Mesh(parsedMesh.geometry, parsedMesh.material);
+            mesh.mesh.position.set(parsedMesh.position.x, parsedMesh.position.y, parsedMesh.position.z);
+            mesh.mesh.rotation.set(parsedMesh.rotation.x, parsedMesh.rotation.y, parsedMesh.rotation.z);
+            mesh.mesh.scale.set(parsedMesh.scale.x, parsedMesh.scale.y, parsedMesh.scale.z);
+            mesh.mesh.castShadow = true;
+            mesh.mesh.receiveShadow = true;
+            // setting texture
+            if (current.textureKey) {
+                var texture = M.imagesEngine.get(current.textureKey);
+                texture.wrapS = THREE.RepeatWrapping;
+                texture.wrapT = THREE.RepeatWrapping;
+                texture.repeat.set(1, 1);
+                mesh.mesh.material.map = texture;
+            }
         }
 
         M.loader.meshes._attachScript(mesh, script);

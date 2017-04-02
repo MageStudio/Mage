@@ -1458,12 +1458,12 @@ M.fx.shadersEngine.create('Water', {
             distortionScale: options.distortionScale,
         });
 
-        mirrorMesh = new THREE.Mesh(
+        mirrorMesh = new Mesh(
             new THREE.PlaneBufferGeometry( options.width * 500, options.height * 500 ),
             water.material
         );
-        mirrorMesh.add(water);
-        mirrorMesh.rotation.x = - Math.PI * 0.5;
+        mirrorMesh.addMesh(water);
+        mirrorMesh.mesh.rotation.x = - Math.PI * 0.5;
         
         return mirrorMesh;
     },
