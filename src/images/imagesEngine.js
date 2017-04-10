@@ -9,7 +9,7 @@
 
 		defaults: {
 			"waterNormal": "assets/images/waternormals.jpg",
-			"water": "assets/images/waterr.jpg"
+			"water": "assets/images/water.jpg"
 		},
 
 		load: function() {
