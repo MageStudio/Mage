@@ -1,6 +1,6 @@
 window.M = window.M || {};
 
-M.loader = M.loader = {}; 
+M.loader = M.loader || {};
 
 M.loader.meshes = {
     load: function(meshes) {
@@ -19,7 +19,7 @@ M.loader.meshes = {
     },
 
     _parseMesh: function(mesh) {
-        return this.loader.parse(mesh);
+        return app.loader.parse(mesh);
     },
 
     _parseScript: function(mesh) {
@@ -28,7 +28,7 @@ M.loader.meshes = {
             file = false;
         if (script) {
             script = script.slice(script.lastIndexOf('scripts/') + 8);
-            dir = script.slice(0, script.indexOf('/')),
+            dir = script.slice(0, script.indexOf('/'));
             file = script.slice(script.indexOf('/') + 1);
         }
 

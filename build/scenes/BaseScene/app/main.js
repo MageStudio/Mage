@@ -30,8 +30,8 @@ Class("MyGame", {
 		}
 		var lights = JSON.parse(app._scene.lights);
 
-		app.meshLoader.load(meshes);
-        app.lightLoader.load(lights);
+		M.loader.meshes.load(meshes);
+        M.loader.lights.load(lights);
 
 		for (var i in app.scene.children) {
 			if (app.scene.children[i].material) {

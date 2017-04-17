@@ -1,6 +1,6 @@
 window.M = window.M || {};
 
-M.loader = M.loader = {}; 
+M.loader = M.loader || {};
 
 M.loader.lights = {
     load: function(lights) {

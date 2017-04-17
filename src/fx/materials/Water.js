@@ -306,27 +306,30 @@ M.fx.shadersEngine.create('Water', {
 
         };
 
-        var waterNormals = M.imagesEngine.get(options.textureNormal);
-        waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
-        var water = new Water(renderer, camera, scene, {
-            textureWidth: options.textureWidth,
-            textureHeight: options.textureHeight,
-            waterNormals: waterNormals,
-            alpha: 	options.alpha,
-            sunDirection: options.light.position.clone().normalize(),
-            sunColor: options.sunColor,
-            waterColor: options.waterColor,
-            distortionScale: options.distortionScale,
-        });
+        return function(renderer, camera, scene, options) {
+            var waterNormals = M.imagesEngine.get(options.textureNormal);
+            waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+            var water = new Water(renderer, camera, scene, {
+                textureWidth: options.textureWidth,
+                textureHeight: options.textureHeight,
+                waterNormals: waterNormals,
+                alpha: options.alpha,
+                sunDirection: options.light.position.clone().normalize(),
+                sunColor: options.sunColor,
+                waterColor: options.waterColor,
+                distortionScale: options.distortionScale
+            });
 
-        mirrorMesh = new Mesh(
-            new THREE.PlaneBufferGeometry( options.width * 500, options.height * 500 ),
-            water.material
-        );
-        mirrorMesh.addMesh(water);
-        mirrorMesh.mesh.rotation.x = - Math.PI * 0.5;
-        
-        return mirrorMesh;
+            var mirrorMesh = new Mesh(
+                new THREE.PlaneBufferGeometry( options.width * 500, options.height * 500 ),
+                water.material
+            );
+            mirrorMesh.addMesh(water);
+            mirrorMesh.mesh.rotation.x = - Math.PI * 0.5;
+
+            return mirrorMesh;
+        }
+
     },
 
     options: {

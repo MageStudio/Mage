@@ -156,7 +156,7 @@ module.exports = (function() {
 
 		LIB + "ParticleEngine.js",
 		LIB + "ParticleEngineExamples.js",
-		LIB + "underscore.js",
+		LIB + "underscore.js"
 	];
 
 	// 2
@@ -188,7 +188,7 @@ module.exports = (function() {
 		SHADERS_MATERIALS + "Mirror.js",
 		SHADERS_MATERIALS + "Water.js",
 
-		BASE + "main.js",
+		BASE + "main.js"
 	];
 
 	// 3
