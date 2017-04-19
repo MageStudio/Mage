@@ -2106,7 +2106,7 @@ Class("ShaderMesh", {
         this.uniforms = uniforms;
         this.shaderName = name;
         var shader = new Shader(this.shaderName, this.attributes, this.uniforms, options);
-        if (!shader.instance) {
+        if (shader.shader && !shader.shader.instance) {
             if ( !attributes ) {
                 this.attributes = shader.attributes;
             }
@@ -2118,7 +2118,7 @@ Class("ShaderMesh", {
 
             this.mesh = new THREE.Mesh(geometry, shader.material);
         } else {
-            this.mesh = shader.instance(app.renderer, app.camera.object, app.scene, options);
+            this.mesh = shader.shader.instance(app.renderer, app.camera.object, app.scene, options);
         }
         
         //adding to core

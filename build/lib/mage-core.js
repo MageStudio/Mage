@@ -1265,7 +1265,7 @@ M.fx.shadersEngine.create('Water', {
         ].join( '\n' );
     },
 
-    instance: function(renderer, camera, scene, options) {
+    instance: (function(renderer, camera, scene, options) {
 
         if (window.asModule) {return false;}
 
@@ -1327,11 +1327,11 @@ M.fx.shadersEngine.create('Water', {
             this.renderTarget2 = new THREE.WebGLRenderTarget( width, height );
 
             var mirrorShader = M.fx.shadersEngine.get('Mirror');
-            var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms );
+            var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms() );
 
             this.material = new THREE.ShaderMaterial( {
-                fragmentShader: mirrorShader.fragment,
-                vertexShader: mirrorShader.vertex,
+                fragmentShader: mirrorShader.fragment(),
+                vertexShader: mirrorShader.vertex(),
                 uniforms: mirrorUniforms,
                 transparent: true,
                 side: this.side,
@@ -1461,7 +1461,7 @@ M.fx.shadersEngine.create('Water', {
                 textureHeight: options.textureHeight,
                 waterNormals: waterNormals,
                 alpha: options.alpha,
-                sunDirection: options.light.position.clone().normalize(),
+                sunDirection: options.light ? options.light.position.clone().normalize() : new THREE.Vector3(0, 0, 0).normalize(),
                 sunColor: options.sunColor,
                 waterColor: options.waterColor,
                 distortionScale: options.distortionScale
@@ -1477,7 +1477,7 @@ M.fx.shadersEngine.create('Water', {
             return mirrorMesh;
         }
 
-    },
+    })(),
 
     options: {
         textureWidth: {
