@@ -121,6 +121,7 @@ Class("App", {
         app._render();
         app.renderer.render(app.scene, app.camera.object);
 
+        /*
         setTimeout(function() {
             if (app.util.physics_enabled) {
                 if (Physijs._isLoaded) {
@@ -132,6 +133,14 @@ Class("App", {
             }
             requestAnimFrame(app.render);
         }, 1000 / app.util.frameRate);
+        */
+        if (app.util.physics_enabled && Physijs._isLoaded) {
+            app.scene.simulate();
+        }
+        if (app.util.tween_enabled) {
+            TWEEN.update();
+        }
+        requestAnimFrame(app.render);
 
     },
 

@@ -1326,7 +1326,7 @@ M.fx.shadersEngine.create('Water', {
             this.renderTarget = new THREE.WebGLRenderTarget( width, height );
             this.renderTarget2 = new THREE.WebGLRenderTarget( width, height );
 
-            var mirrorShader = M.fx.shadersEngine.get('Mirror');
+            var mirrorShader = M.fx.shadersEngine.get('Water');
             var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms() );
 
             this.material = new THREE.ShaderMaterial( {
@@ -1467,12 +1467,18 @@ M.fx.shadersEngine.create('Water', {
                 distortionScale: options.distortionScale
             });
 
-            var mirrorMesh = new Mesh(
+            var mirrorMesh = new THREE.Mesh(
                 new THREE.PlaneBufferGeometry( options.width * 500, options.height * 500 ),
                 water.material
             );
-            mirrorMesh.addMesh(water);
-            mirrorMesh.mesh.rotation.x = - Math.PI * 0.5;
+
+            mirrorMesh.add(water);
+            mirrorMesh.rotation.x = - Math.PI * 0.5;
+
+            mirrorMesh.render = function() {
+                water.material.uniforms.time.value += 1.0 / 60.0;
+                water.render();
+            };
 
             return mirrorMesh;
         }
@@ -1659,6 +1665,7 @@ Class("App", {
         app._render();
         app.renderer.render(app.scene, app.camera.object);
 
+        /*
         setTimeout(function() {
             if (app.util.physics_enabled) {
                 if (Physijs._isLoaded) {
@@ -1670,6 +1677,14 @@ Class("App", {
             }
             requestAnimFrame(app.render);
         }, 1000 / app.util.frameRate);
+        */
+        if (app.util.physics_enabled && Physijs._isLoaded) {
+            app.scene.simulate();
+        }
+        if (app.util.tween_enabled) {
+            TWEEN.update();
+        }
+        requestAnimFrame(app.render);
 
     },
 

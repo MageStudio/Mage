@@ -21,6 +21,8 @@ Class("Shader", {
           }
           //creating the actual material
           this.material = new THREE.ShaderMaterial( object );
+        } else {
+          this.instance = this.shader.instance;
         }
     }
 });

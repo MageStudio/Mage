@@ -1031,9 +1031,10 @@ M.universe =  {
 			var start = +new Date();
 			do {
 				var o = M.universe.reality.get(keys_list.shift());
-				if (o.update) {
+				if (o && o.update) {
 					o.update(app.clock.getDelta());
 				}
+				o.render();
 			} while (keys_list.length > 0 && (+new Date() - start < 50));
 		}
 		
@@ -1483,6 +1484,8 @@ Class("Shader", {
           }
           //creating the actual material
           this.material = new THREE.ShaderMaterial( object );
+        } else {
+          this.instance = this.shader.instance;
         }
     }
 });
@@ -1961,6 +1964,12 @@ Class("Entity", {
 
 	update : function() {},
 
+	render: function() {
+		if (this.mesh && this.mesh.render) {
+			 this.mesh.render();
+		}
+	},
+
 	addScript : function(scriptname, dir) {
 		var path = M.game.SCRIPTS_DIR + (dir || "");
 		if (path[path.length - 1] != "/") {
@@ -2118,7 +2127,7 @@ Class("ShaderMesh", {
 
             this.mesh = new THREE.Mesh(geometry, shader.material);
         } else {
-            this.mesh = shader.shader.instance(app.renderer, app.camera.object, app.scene, options);
+            this.mesh = shader.instance(app.renderer, app.camera.object, app.scene, options);
         }
         
         //adding to core
@@ -2688,7 +2697,7 @@ M.loader.meshes = {
 			if (parsedMesh.name.indexOf('_camera') > -1) {
 				M.loader.meshes._loadCamera(parsedMesh, script);
 			} else {
-                M.loader.meshes._loadMesh(parsedMesh, script, shader);
+                M.loader.meshes._loadMesh(current, parsedMesh, script, shader);
 			}
         }
     },
@@ -2727,7 +2736,7 @@ M.loader.meshes = {
 
         return {
             name: name,
-            options: options
+            options: opts
         };
     },
 
@@ -2744,7 +2753,7 @@ M.loader.meshes = {
         }
     },
 
-    _loadMesh: function(parsedMesh, script, shader) {
+    _loadMesh: function(current, parsedMesh, script, shader) {
         if (shader && shader.name && shader.options) {
             var mesh = new ShaderMesh({}, shader.name, {}, {}, shader.options);
         } else {

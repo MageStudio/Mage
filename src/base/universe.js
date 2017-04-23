@@ -109,9 +109,10 @@ M.universe =  {
 			var start = +new Date();
 			do {
 				var o = M.universe.reality.get(keys_list.shift());
-				if (o.update) {
+				if (o && o.update) {
 					o.update(app.clock.getDelta());
 				}
+				o.render();
 			} while (keys_list.length > 0 && (+new Date() - start < 50));
 		}
 		

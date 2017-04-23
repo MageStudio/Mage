@@ -13,7 +13,7 @@ M.loader.meshes = {
 			if (parsedMesh.name.indexOf('_camera') > -1) {
 				M.loader.meshes._loadCamera(parsedMesh, script);
 			} else {
-                M.loader.meshes._loadMesh(parsedMesh, script, shader);
+                M.loader.meshes._loadMesh(current, parsedMesh, script, shader);
 			}
         }
     },
@@ -52,7 +52,7 @@ M.loader.meshes = {
 
         return {
             name: name,
-            options: options
+            options: opts
         };
     },
 
@@ -69,7 +69,7 @@ M.loader.meshes = {
         }
     },
 
-    _loadMesh: function(parsedMesh, script, shader) {
+    _loadMesh: function(current, parsedMesh, script, shader) {
         if (shader && shader.name && shader.options) {
             var mesh = new ShaderMesh({}, shader.name, {}, {}, shader.options);
         } else {

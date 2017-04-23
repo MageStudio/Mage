@@ -12,6 +12,12 @@ Class("Entity", {
 
 	update : function() {},
 
+	render: function() {
+		if (this.mesh && this.mesh.render) {
+			 this.mesh.render();
+		}
+	},
+
 	addScript : function(scriptname, dir) {
 		var path = M.game.SCRIPTS_DIR + (dir || "");
 		if (path[path.length - 1] != "/") {
