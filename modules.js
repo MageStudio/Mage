@@ -141,6 +141,7 @@ module.exports = (function() {
 		FX = DIR + "fx/",
 		SHADERS = FX + "shaders/",
 		SHADERS_MATERIALS = FX + 'materials/',
+		SHADERS_SCENERY = FX + 'scenery/',
 		CONTROLS = DIR + "controls/";
 
 	// 1
@@ -183,6 +184,8 @@ module.exports = (function() {
 		LIGHTS + "lightEngine.js",
 		GENERALASSETS + "generalAssetsEngine.js",
 		SHADERS + "shadersEngine.js",
+
+		SHADERS_SCENERY + "Skybox.js",
 
 		SHADERS_MATERIALS + "Atmosphere.js",
 		SHADERS_MATERIALS + "Mirror.js",
