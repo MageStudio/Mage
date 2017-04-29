@@ -314,7 +314,7 @@ M.fx.shadersEngine.create('Water', {
                 textureHeight: options.textureHeight,
                 waterNormals: waterNormals,
                 alpha: options.alpha,
-                sunDirection: options.light ? options.light.position.clone().normalize() : new THREE.Vector3(0, 0, 0).normalize(),
+                sunDirection: options.light ? options.light.position.clone().normalize() : new THREE.Vector3(0, 0, 20).normalize(),
                 sunColor: options.sunColor,
                 waterColor: options.waterColor,
                 distortionScale: options.distortionScale

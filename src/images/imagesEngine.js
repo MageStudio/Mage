@@ -9,7 +9,8 @@
 
 		defaults: {
 			"waterNormal": "assets/images/waternormals.jpg",
-			"water": "assets/images/water.jpg"
+			"water": "assets/images/water.jpg",
+			"skybox": "assets/images/skybox.jpg"
 		},
 
 		load: function() {
