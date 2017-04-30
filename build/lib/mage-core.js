@@ -813,7 +813,7 @@ M.fx.shadersEngine.create("Skybox", {
             cubeMap.needsUpdate = true;
         }
 
-        if (option.texture) {
+        if (options.texture) {
             _buildCube(options.texture);
         } else {
             var textureName = options.textureName || 'skybox';
@@ -842,7 +842,7 @@ M.fx.shadersEngine.create("Skybox", {
     },
 
     options: {
-        texture: {
+        textureName: {
             name: 'texture',
             type: 'string',
             default: 'skybox',
