@@ -44,7 +44,7 @@ M.fx.shadersEngine.create("Skybox", {
         } );
 
         var skyBox = new THREE.Mesh(
-            new THREE.BoxGeometry( 1000000, 1000000, 1000000 ),
+            new THREE.BoxGeometry( 10000, 10000, 10000 ),
             skyBoxMaterial
         );
     
