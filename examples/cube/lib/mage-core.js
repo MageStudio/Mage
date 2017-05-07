@@ -946,7 +946,6 @@ M.fx.shadersEngine.create("Atmosphere", {
 M.fx.shadersEngine.create('Mirror', {
 
 	uniforms: function() {
-        if (window.asModule) {return {};}
         return { 
             "mirrorColor": { type: "c", value: new THREE.Color( 0x7F7F7F ) },
 			"mirrorSampler": { type: "t", value: null },
@@ -955,7 +954,6 @@ M.fx.shadersEngine.create('Mirror', {
 	},
 
 	vertex: function() {
-        if (window.asModule) {return '';}
         return [
 
             "uniform mat4 textureMatrix;",
@@ -976,7 +974,6 @@ M.fx.shadersEngine.create('Mirror', {
     },
 
 	fragment: function() {
-        if (window.asModule) {return '';}
         return [
 
             "uniform vec3 mirrorColor;",
@@ -1001,7 +998,7 @@ M.fx.shadersEngine.create('Mirror', {
     },
 
     instance: (function() {
-        if (window.asModule) {return false;}
+
         var Mirror = function ( renderer, camera, scene, options ) {
 
             THREE.Object3D.call( this );
@@ -1247,7 +1244,6 @@ M.fx.shadersEngine.create('Mirror', {
 M.fx.shadersEngine.create('Water', {
 
 	uniforms: function() {
-        if (window.asModule) {return {};}
         return THREE.UniformsUtils.merge( [
             THREE.UniformsLib[ "fog" ], {
                 "normalSampler":    { type: "t", value: null },
@@ -1266,7 +1262,6 @@ M.fx.shadersEngine.create('Water', {
     },
 
 	vertex: function() {
-        if (window.asModule) {return '';}
         return [
             'uniform mat4 textureMatrix;',
             'uniform float time;',
@@ -1285,7 +1280,6 @@ M.fx.shadersEngine.create('Water', {
     },
 
 	fragment: function() {
-        if (window.asModule) {return '';}
         return [
             'precision highp float;',
 
@@ -1356,8 +1350,6 @@ M.fx.shadersEngine.create('Water', {
     },
 
     instance: (function(renderer, camera, scene, options) {
-
-        if (window.asModule) {return false;}
 
         var Water = function ( renderer, camera, scene, options ) {
 
@@ -1567,7 +1559,7 @@ M.fx.shadersEngine.create('Water', {
         };
 
         return function(renderer, camera, scene, options) {
-            var waterNormals = M.imagesEngine.get(options.textureNormal || 'waterNormal');
+            var waterNormals = options.texture || M.imagesEngine.get(options.textureNormalName || 'waterNormal');
             waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
 
 
@@ -1612,7 +1604,7 @@ M.fx.shadersEngine.create('Water', {
             default: 512,
             mandatory: true
         },
-        textureNormal: {
+        textureNormalName: {
             name: 'texture normal',
             type: 'string',
             default: 'waterNormal',

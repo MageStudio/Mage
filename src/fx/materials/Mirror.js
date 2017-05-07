@@ -57,6 +57,7 @@ M.fx.shadersEngine.create('Mirror', {
     },
 
     instance: (function() {
+
         var Mirror = function ( renderer, camera, scene, options ) {
 
             THREE.Object3D.call( this );
