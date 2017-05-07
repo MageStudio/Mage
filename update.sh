@@ -20,6 +20,4 @@ do
 	echo "..done."
 done
 
-echo "pushing to github"
-
 echo "\nupdate completed."

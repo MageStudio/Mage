@@ -46,6 +46,7 @@
     "grunt-contrib-concat": "*",
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-contrib-uglify": "~0.5.0",
-    "grunt-contrib-watch": "*"
+    "grunt-contrib-watch": "*",
+    "npm-cli-login": "0.0.10"
   }
 }

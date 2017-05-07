@@ -1,19 +1,23 @@
 #!/bin/bash
 
-# building everything
+echo "1 - updating examples."
 sh update.sh
 
-# sending to github
+
+echo "2 - creating new version with npm."
+VERSION=$(npm version patch)
+VERSION=$(echo $VERSION | cut -c 2-)
+
+echo "3 - pushing changes to github."
 git add -A
-git commit -m '[MAGE BUILD] building mage'
+COMMIT_MESSAGE = "[MAGE BUILD] building mage $VERSION"
+git commit -m $COMMIT_MESSAGE
 git push origin master
 
-# login in npm
+echo "4 - creating new tag opn github"
+git tag $VERSION && git push --tags
+
+echo "5 - publising mage engine to npm."
 npm login
-
-# updating version
-npm version patch
-
-# publish this version
 npm publish
 
