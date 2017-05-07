@@ -2127,7 +2127,7 @@ Class("ShaderMesh", {
 
             this.mesh = new THREE.Mesh(geometry, shader.material);
         } else {
-            this.mesh = shader.instance(app.renderer, app.camera.object, app.scene, options);
+            this.mesh = shader.shader.instance(app.renderer, app.camera.object, app.scene, options);
         }
         
         //adding to core
