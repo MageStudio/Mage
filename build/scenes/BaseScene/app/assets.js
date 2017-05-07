@@ -13,6 +13,10 @@ var Assets = {
 		
 	},
 
+	Textures: {
+
+	},
+
 	General : {
 		//whatever file you need to load
 	}

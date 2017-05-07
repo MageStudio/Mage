@@ -592,8 +592,11 @@ M.videoEngine.load = function() {
 
 		defaults: {
 			"waterNormal": "assets/images/waternormals.jpg",
-			"water": "assets/images/water.jpg",
-			"skybox": "assets/images/skybox.jpg"
+			"water": "assets/images/water.jpg"
+		},
+
+		imagesDefault: {
+			"skybox": "assets/images/skybox_1.png"
 		},
 
 		load: function() {
@@ -602,13 +605,20 @@ M.videoEngine.load = function() {
 			M.imagesEngine.images = [];
 			M.imagesEngine.numImages = 0;
 			M.imagesEngine.loader = new THREE.TextureLoader();
+			M.imagesEngine.imageLoader = new THREE.ImageLoader();
 
 			// extending assets images with our defaults
-			Object.assign(Assets.Images, M.imagesEngine.defaults);
+			Object.assign(Assets.Textures, M.imagesEngine.defaults);
+			Object.assign(Assets.Images, M.imagesEngine.imagesDefault);
+
+			for (var image in Assets.Textures) {
+				M.imagesEngine.numImages++;
+				M.imagesEngine.loadSingleFile(image, Assets.Textures[image]);
+			}
 
 			for (var image in Assets.Images) {
 				M.imagesEngine.numImages++;
-				M.imagesEngine.loadSingleFile(image, Assets.Images[image]);
+				M.imagesEngine.loadSingleImage(image, Assets.Images[image]);
 			}
 
 			if (M.imagesEngine.numImages == 0) {
@@ -618,6 +628,23 @@ M.videoEngine.load = function() {
 
 		get: function(key) {
 			return M.imagesEngine.map.get(key) || false;
+		},
+
+		loadSingleImage: function(id, path) {
+				try {
+				M.imagesEngine.imagesLoaded++;
+				M.imagesEngine.imageLoader.load(path, function(image) {
+					M.imagesEngine.map.put(id, image);
+					M.imagesEngine.checkLoad();
+				}, function() {
+					// displaying progress
+				}, function() {
+					console.log('An error occurred while fetching texture.');
+					M.imagesEngine.checkLoad();
+				});
+			} catch (e) {
+				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
+			}
 		},
 
 		loadSingleFile : function(id, path) {
@@ -834,7 +861,7 @@ M.fx.shadersEngine.create("Skybox", {
         } );
 
         var skyBox = new THREE.Mesh(
-            new THREE.BoxGeometry( 10000, 10000, 10000 ),
+            new THREE.BoxGeometry( 1000000, 1000000, 1000000 ),
             skyBoxMaterial
         );
     
@@ -1042,12 +1069,12 @@ M.fx.shadersEngine.create('Mirror', {
             this.renderTarget2 = new THREE.WebGLRenderTarget( width, height, parameters );
 
             var mirrorShader = M.fx.shadersEngine.get('Mirror');
-            var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms );
+            var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms() );
 
             this.material = new THREE.ShaderMaterial( {
 
-                fragmentShader: mirrorShader.fragment,
-                vertexShader: mirrorShader.vertex,
+                fragmentShader: mirrorShader.fragment(),
+                vertexShader: mirrorShader.vertex(),
                 uniforms: mirrorUniforms
 
             } );
@@ -1428,7 +1455,36 @@ M.fx.shadersEngine.create('Water', {
         };
 
         Water.prototype = Object.create(M.fx.shadersEngine.get('Mirror').instance.prototype);
+        //Water.prototype = Object.create(THREE.Object3D.prototype);
         Water.prototype.constructor = Water;
+
+        Water.prototype.render = function () {
+
+            if ( this.matrixNeedsUpdate ) this.updateTextureMatrix();
+
+            this.matrixNeedsUpdate = true;
+
+            // Render the mirrored view of the current scene into the target texture
+            var scene = this;
+
+            while ( scene.parent !== null ) {
+
+                scene = scene.parent;
+
+            }
+
+            if ( scene !== undefined && scene instanceof THREE.Scene ) {
+                // We can't render ourself to ourself
+                var visible = this.material.visible;
+                this.material.visible = false;
+
+                this.renderer.render( scene, this.mirrorCamera, this.renderTarget, true );
+
+                this.material.visible = visible;
+
+            }
+
+        };
 
         Water.prototype.updateTextureMatrix = function () {
 
@@ -1470,7 +1526,6 @@ M.fx.shadersEngine.create('Water', {
             this.mirrorCamera.position.copy( view );
             this.mirrorCamera.up = this.up;
             this.mirrorCamera.lookAt( target );
-            this.mirrorCamera.aspect = this.camera.aspect;
 
             this.mirrorCamera.updateProjectionMatrix();
             this.mirrorCamera.updateMatrixWorld();
@@ -1494,8 +1549,8 @@ M.fx.shadersEngine.create('Water', {
             var q = new THREE.Vector4();
             var projectionMatrix = this.mirrorCamera.projectionMatrix;
 
-            q.x = ( sign( this.clipPlane.x ) + projectionMatrix.elements[ 8 ] ) / projectionMatrix.elements[ 0 ];
-            q.y = ( sign( this.clipPlane.y ) + projectionMatrix.elements[ 9 ] ) / projectionMatrix.elements[ 5 ];
+            q.x = ( Math.sign( this.clipPlane.x ) + projectionMatrix.elements[ 8 ] ) / projectionMatrix.elements[ 0 ];
+            q.y = ( Math.sign( this.clipPlane.y ) + projectionMatrix.elements[ 9 ] ) / projectionMatrix.elements[ 5 ];
             q.z = - 1.0;
             q.w = ( 1.0 + projectionMatrix.elements[ 10 ] ) / projectionMatrix.elements[ 14 ];
 
@@ -1509,25 +1564,22 @@ M.fx.shadersEngine.create('Water', {
             projectionMatrix.elements[ 10 ] = c.z + 1.0 - this.clipBias;
             projectionMatrix.elements[ 14 ] = c.w;
 
-            var worldCoordinates = new THREE.Vector3();
-            worldCoordinates.setFromMatrixPosition( this.camera.matrixWorld );
-            this.eye = worldCoordinates;
-            this.material.uniforms.eye.value = this.eye;
-
         };
 
         return function(renderer, camera, scene, options) {
-            var waterNormals = M.imagesEngine.get(options.textureNormal);
+            var waterNormals = M.imagesEngine.get(options.textureNormal || 'waterNormal');
             waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+
+
             var water = new Water(renderer, camera, scene, {
-                textureWidth: options.textureWidth,
-                textureHeight: options.textureHeight,
+                textureWidth: 512,//options.textureWidth || 512,
+                textureHeight: 512, //options.textureHeight || 512,
                 waterNormals: waterNormals,
-                alpha: options.alpha,
-                sunDirection: options.light ? options.light.position.clone().normalize() : new THREE.Vector3(0, 0, 20).normalize(),
-                sunColor: options.sunColor,
-                waterColor: options.waterColor,
-                distortionScale: options.distortionScale
+                alpha: 1.0, //options.alpha || 1.0,
+                sunDirection: new THREE.Vector3(-0.5773502691896258,0.5773502691896258, -0.5773502691896258),//options.light ? options.light.position.clone().normalize() : new THREE.Vector3( - 1, 1, - 1).normalize(),
+                sunColor: 0xffffff,//options.sunColor || 0xffffff,
+                waterColor: 0x001e0f, //options.waterColor || 0x001e0f,
+                distortionScale: 50.0 //options.distortionScale || 50.0
             });
 
             var mirrorMesh = new THREE.Mesh(
@@ -1545,7 +1597,6 @@ M.fx.shadersEngine.create('Water', {
 
             return mirrorMesh;
         }
-
     })(),
 
     options: {

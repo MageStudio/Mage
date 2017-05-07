@@ -218,7 +218,36 @@ M.fx.shadersEngine.create('Water', {
         };
 
         Water.prototype = Object.create(M.fx.shadersEngine.get('Mirror').instance.prototype);
+        //Water.prototype = Object.create(THREE.Object3D.prototype);
         Water.prototype.constructor = Water;
+
+        Water.prototype.render = function () {
+
+            if ( this.matrixNeedsUpdate ) this.updateTextureMatrix();
+
+            this.matrixNeedsUpdate = true;
+
+            // Render the mirrored view of the current scene into the target texture
+            var scene = this;
+
+            while ( scene.parent !== null ) {
+
+                scene = scene.parent;
+
+            }
+
+            if ( scene !== undefined && scene instanceof THREE.Scene ) {
+                // We can't render ourself to ourself
+                var visible = this.material.visible;
+                this.material.visible = false;
+
+                this.renderer.render( scene, this.mirrorCamera, this.renderTarget, true );
+
+                this.material.visible = visible;
+
+            }
+
+        };
 
         Water.prototype.updateTextureMatrix = function () {
 
@@ -260,7 +289,6 @@ M.fx.shadersEngine.create('Water', {
             this.mirrorCamera.position.copy( view );
             this.mirrorCamera.up = this.up;
             this.mirrorCamera.lookAt( target );
-            this.mirrorCamera.aspect = this.camera.aspect;
 
             this.mirrorCamera.updateProjectionMatrix();
             this.mirrorCamera.updateMatrixWorld();
@@ -284,8 +312,8 @@ M.fx.shadersEngine.create('Water', {
             var q = new THREE.Vector4();
             var projectionMatrix = this.mirrorCamera.projectionMatrix;
 
-            q.x = ( sign( this.clipPlane.x ) + projectionMatrix.elements[ 8 ] ) / projectionMatrix.elements[ 0 ];
-            q.y = ( sign( this.clipPlane.y ) + projectionMatrix.elements[ 9 ] ) / projectionMatrix.elements[ 5 ];
+            q.x = ( Math.sign( this.clipPlane.x ) + projectionMatrix.elements[ 8 ] ) / projectionMatrix.elements[ 0 ];
+            q.y = ( Math.sign( this.clipPlane.y ) + projectionMatrix.elements[ 9 ] ) / projectionMatrix.elements[ 5 ];
             q.z = - 1.0;
             q.w = ( 1.0 + projectionMatrix.elements[ 10 ] ) / projectionMatrix.elements[ 14 ];
 
@@ -299,25 +327,22 @@ M.fx.shadersEngine.create('Water', {
             projectionMatrix.elements[ 10 ] = c.z + 1.0 - this.clipBias;
             projectionMatrix.elements[ 14 ] = c.w;
 
-            var worldCoordinates = new THREE.Vector3();
-            worldCoordinates.setFromMatrixPosition( this.camera.matrixWorld );
-            this.eye = worldCoordinates;
-            this.material.uniforms.eye.value = this.eye;
-
         };
 
         return function(renderer, camera, scene, options) {
-            var waterNormals = M.imagesEngine.get(options.textureNormal);
+            var waterNormals = M.imagesEngine.get(options.textureNormal || 'waterNormal');
             waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
+
+
             var water = new Water(renderer, camera, scene, {
-                textureWidth: options.textureWidth,
-                textureHeight: options.textureHeight,
+                textureWidth: 512,//options.textureWidth || 512,
+                textureHeight: 512, //options.textureHeight || 512,
                 waterNormals: waterNormals,
-                alpha: options.alpha,
-                sunDirection: options.light ? options.light.position.clone().normalize() : new THREE.Vector3(0, 0, 20).normalize(),
-                sunColor: options.sunColor,
-                waterColor: options.waterColor,
-                distortionScale: options.distortionScale
+                alpha: 1.0, //options.alpha || 1.0,
+                sunDirection: new THREE.Vector3(-0.5773502691896258,0.5773502691896258, -0.5773502691896258),//options.light ? options.light.position.clone().normalize() : new THREE.Vector3( - 1, 1, - 1).normalize(),
+                sunColor: 0xffffff,//options.sunColor || 0xffffff,
+                waterColor: 0x001e0f, //options.waterColor || 0x001e0f,
+                distortionScale: 50.0 //options.distortionScale || 50.0
             });
 
             var mirrorMesh = new THREE.Mesh(
@@ -335,7 +360,6 @@ M.fx.shadersEngine.create('Water', {
 
             return mirrorMesh;
         }
-
     })(),
 
     options: {

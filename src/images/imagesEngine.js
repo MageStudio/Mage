@@ -9,8 +9,11 @@
 
 		defaults: {
 			"waterNormal": "assets/images/waternormals.jpg",
-			"water": "assets/images/water.jpg",
-			"skybox": "assets/images/skybox.jpg"
+			"water": "assets/images/water.jpg"
+		},
+
+		imagesDefault: {
+			"skybox": "assets/images/skybox_1.png"
 		},
 
 		load: function() {
@@ -19,13 +22,20 @@
 			M.imagesEngine.images = [];
 			M.imagesEngine.numImages = 0;
 			M.imagesEngine.loader = new THREE.TextureLoader();
+			M.imagesEngine.imageLoader = new THREE.ImageLoader();
 
 			// extending assets images with our defaults
-			Object.assign(Assets.Images, M.imagesEngine.defaults);
+			Object.assign(Assets.Textures, M.imagesEngine.defaults);
+			Object.assign(Assets.Images, M.imagesEngine.imagesDefault);
+
+			for (var image in Assets.Textures) {
+				M.imagesEngine.numImages++;
+				M.imagesEngine.loadSingleFile(image, Assets.Textures[image]);
+			}
 
 			for (var image in Assets.Images) {
 				M.imagesEngine.numImages++;
-				M.imagesEngine.loadSingleFile(image, Assets.Images[image]);
+				M.imagesEngine.loadSingleImage(image, Assets.Images[image]);
 			}
 
 			if (M.imagesEngine.numImages == 0) {
@@ -35,6 +45,23 @@
 
 		get: function(key) {
 			return M.imagesEngine.map.get(key) || false;
+		},
+
+		loadSingleImage: function(id, path) {
+				try {
+				M.imagesEngine.imagesLoaded++;
+				M.imagesEngine.imageLoader.load(path, function(image) {
+					M.imagesEngine.map.put(id, image);
+					M.imagesEngine.checkLoad();
+				}, function() {
+					// displaying progress
+				}, function() {
+					console.log('An error occurred while fetching texture.');
+					M.imagesEngine.checkLoad();
+				});
+			} catch (e) {
+				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
+			}
 		},
 
 		loadSingleFile : function(id, path) {

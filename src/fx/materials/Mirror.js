@@ -128,12 +128,12 @@ M.fx.shadersEngine.create('Mirror', {
             this.renderTarget2 = new THREE.WebGLRenderTarget( width, height, parameters );
 
             var mirrorShader = M.fx.shadersEngine.get('Mirror');
-            var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms );
+            var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms() );
 
             this.material = new THREE.ShaderMaterial( {
 
-                fragmentShader: mirrorShader.fragment,
-                vertexShader: mirrorShader.vertex,
+                fragmentShader: mirrorShader.fragment(),
+                vertexShader: mirrorShader.vertex(),
                 uniforms: mirrorUniforms
 
             } );
