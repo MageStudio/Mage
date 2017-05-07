@@ -5,7 +5,6 @@
 M.fx.shadersEngine.create('Mirror', {
 
 	uniforms: function() {
-        if (window.asModule) {return {};}
         return { 
             "mirrorColor": { type: "c", value: new THREE.Color( 0x7F7F7F ) },
 			"mirrorSampler": { type: "t", value: null },
@@ -14,7 +13,6 @@ M.fx.shadersEngine.create('Mirror', {
 	},
 
 	vertex: function() {
-        if (window.asModule) {return '';}
         return [
 
             "uniform mat4 textureMatrix;",
@@ -35,7 +33,6 @@ M.fx.shadersEngine.create('Mirror', {
     },
 
 	fragment: function() {
-        if (window.asModule) {return '';}
         return [
 
             "uniform vec3 mirrorColor;",
@@ -60,7 +57,6 @@ M.fx.shadersEngine.create('Mirror', {
     },
 
     instance: (function() {
-        if (window.asModule) {return false;}
         var Mirror = function ( renderer, camera, scene, options ) {
 
             THREE.Object3D.call( this );
