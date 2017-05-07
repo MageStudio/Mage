@@ -330,7 +330,7 @@ M.fx.shadersEngine.create('Water', {
         };
 
         return function(renderer, camera, scene, options) {
-            var waterNormals = M.imagesEngine.get(options.textureNormal || 'waterNormal');
+            var waterNormals = options.texture || M.imagesEngine.get(options.textureNormalName || 'waterNormal');
             waterNormals.wrapS = waterNormals.wrapT = THREE.RepeatWrapping;
 
 
@@ -375,7 +375,7 @@ M.fx.shadersEngine.create('Water', {
             default: 512,
             mandatory: true
         },
-        textureNormal: {
+        textureNormalName: {
             name: 'texture normal',
             type: 'string',
             default: 'waterNormal',
