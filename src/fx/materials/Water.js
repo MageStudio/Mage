@@ -10,7 +10,6 @@
 M.fx.shadersEngine.create('Water', {
 
 	uniforms: function() {
-        if (window.asModule) {return {};}
         return THREE.UniformsUtils.merge( [
             THREE.UniformsLib[ "fog" ], {
                 "normalSampler":    { type: "t", value: null },
@@ -29,7 +28,6 @@ M.fx.shadersEngine.create('Water', {
     },
 
 	vertex: function() {
-        if (window.asModule) {return '';}
         return [
             'uniform mat4 textureMatrix;',
             'uniform float time;',
@@ -48,7 +46,6 @@ M.fx.shadersEngine.create('Water', {
     },
 
 	fragment: function() {
-        if (window.asModule) {return '';}
         return [
             'precision highp float;',
 
