@@ -120,8 +120,6 @@ M.fx.shadersEngine.create('Water', {
 
     instance: (function(renderer, camera, scene, options) {
 
-        if (window.asModule) {return false;}
-
         var Water = function ( renderer, camera, scene, options ) {
 
             THREE.Object3D.call( this );
