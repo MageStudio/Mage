@@ -57,6 +57,6 @@ var toExport = {
 }
 if (process.versions.electron) {
 	// we're runnin inside electron, is safe to add engine here
-	toExport['engine'] = engine;
+	toExport['engine'] = require('./build/lib/mage-core.js');
 }
 module.exports = toExport;
