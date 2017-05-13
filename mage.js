@@ -3,14 +3,7 @@
 
 var builder = require("./builder.js"),
 	server = require('./server.js'),
-	colors = require('colors'),
-	engine = require('./build/lib/mage-core.js');
-
-module.exports = {
-	builder: builder,
-	server: server,
-	engine: engine
-};
+	colors = require('colors');
 
 if (process.argv.length) {
 
@@ -57,3 +50,13 @@ if (process.argv.length) {
 		usage();
 	}
 }
+
+var toExport = {
+	builder: builder,
+	serger: server
+}
+if (process.versions.electron) {
+	// we're runnin inside electron, is safe to add engine here
+	toExport['engine'] = engine;
+}
+module.exports = toExport;

@@ -190,6 +190,8 @@ module.exports = (function() {
 		SHADERS_MATERIALS + "Atmosphere.js",
 		SHADERS_MATERIALS + "Mirror.js",
 		SHADERS_MATERIALS + "Water.js",
+		SHADERS_MATERIALS + 'OceanShaders.js',
+		SHADERS_MATERIALS + 'Ocean.js',
 
 		BASE + "main.js"
 	];
