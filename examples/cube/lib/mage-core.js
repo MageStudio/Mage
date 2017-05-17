@@ -2428,7 +2428,7 @@ M.fx.shadersEngine.create('Ocean', {
                 res = 1024,
                 gres = res / 2,
                 origx = -gsize / 2,
-                origz = -gsize / 2;
+                origz = -gsize / 2; 
 
             ocean = new Ocean(renderer, camera, scene, {
                 USE_HALF_FLOAT : true,
@@ -2445,14 +2445,15 @@ M.fx.shadersEngine.create('Ocean', {
                 GEOMETRY_SIZE : gsize,
                 RESOLUTION : res
             });
+            ocean.lastTime = (new Date()).getTime();
             ocean.materialOcean.uniforms.u_projectionMatrix = { type: "m4", value: camera.projectionMatrix };
             ocean.materialOcean.uniforms.u_viewMatrix = { type: "m4", value: camera.matrixWorldInverse };
             ocean.materialOcean.uniforms.u_cameraPosition = { type: "v3", value: camera.position };
 
             ocean.render = function() {
                 var currentTime = new Date().getTime();
-                ocean.deltaTime = (currentTime - lastTime) / 1000 || 0.0;
-                lastTime = currentTime;
+                ocean.deltaTime = (currentTime - ocean.lastTime) / 1000 || 0.0;
+                ocean.lastTime = currentTime;
                 ocean.update(ocean.deltaTime);
                 ocean.overrideMaterial = ocean.materialOcean;
                 if (ocean.changed) {
@@ -2463,14 +2464,13 @@ M.fx.shadersEngine.create('Ocean', {
                 }
                 ocean.materialOcean.uniforms.u_normalMap.value = ocean.normalMapFramebuffer.texture;
                 ocean.materialOcean.uniforms.u_displacementMap.value = ocean.displacementMapFramebuffer.texture;
-                ocean.materialOcean.uniforms.u_projectionMatrix.value = this.ms_Camera.projectionMatrix;
-                ocean.materialOcean.uniforms.u_viewMatrix.value = this.ms_Camera.matrixWorldInverse;
-                ocean.materialOcean.uniforms.u_cameraPosition.value = this.ms_Camera.position;
+                ocean.materialOcean.uniforms.u_projectionMatrix.value = camera.projectionMatrix;
+                ocean.materialOcean.uniforms.u_viewMatrix.value = camera.matrixWorldInverse;
+                ocean.materialOcean.uniforms.u_cameraPosition.value = camera.position;
                 ocean.materialOcean.depthTest = true;
             }
             
             return ocean;
-            //this.ms_Scene.__lights[1].position.x = this.ms_Scene.__lights[1].position.x + 0.01;
         }
     })()
 });;
