@@ -230,7 +230,7 @@ function ParticleEngine()
 		blending: THREE.NormalBlending, depthTest: true,
 
 	});
-	this.particleMesh = new THREE.Mesh();
+	this.mesh = new THREE.Mesh();
 }
 
 ParticleEngine.prototype.setValues = function( parameters )
@@ -276,7 +276,7 @@ ParticleEngine.prototype.setValues = function( parameters )
 		transparent: true,  alphaTest: 0.5, // if having transparency issues, try including: alphaTest: 0.5,
 		blending: THREE.NormalBlending, depthTest: true
 	});
-	this.particleMesh = new THREE.PointCloud();
+	this.mesh = new THREE.PointCloud();
 }
 
 // helper functions for randomization
@@ -355,10 +355,10 @@ ParticleEngine.prototype.initialize = function()
 	if ( this.blendStyle != THREE.NormalBlending)
 		this.particleMaterial.depthTest = false;
 
-	this.particleMesh = new THREE.PointCloud( this.particleGeometry, this.particleMaterial );
-	this.particleMesh.dynamic = true;
-	this.particleMesh.sortParticles = true;
-	app.add( this.particleMesh, this );
+	this.mesh = new THREE.PointCloud( this.particleGeometry, this.particleMaterial );
+	this.mesh.dynamic = true;
+	this.mesh.sortParticles = true;
+	app.add( this.mesh, this );
 }
 
 ParticleEngine.prototype.update = function(dt)
@@ -422,6 +422,6 @@ ParticleEngine.prototype.update = function(dt)
 
 ParticleEngine.prototype.destroy = function()
 {
-    app.remove( this.particleMesh );
+    app.remove( this.mesh );
 }
 ///////////////////////////////////////////////////////////////////////////////
