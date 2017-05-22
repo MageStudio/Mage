@@ -140,6 +140,7 @@ module.exports = (function() {
 		GENERALASSETS = DIR + "generalAssets/",
 		FX = DIR + "fx/",
 		SHADERS = FX + "shaders/",
+		PARTICLES = FX + 'particles/',
 		SHADERS_MATERIALS = FX + 'materials/',
 		SHADERS_SCENERY = FX + 'scenery/',
 		CONTROLS = DIR + "controls/";
@@ -154,9 +155,6 @@ module.exports = (function() {
 		LIB + "OBJLoader.js",
 		LIB + "physi.js",
 		LIB + "tween.js",
-
-		LIB + "ParticleEngine.js",
-		LIB + "ParticleEngineExamples.js",
 		LIB + "underscore.js"
 	];
 
@@ -184,6 +182,10 @@ module.exports = (function() {
 		LIGHTS + "lightEngine.js",
 		GENERALASSETS + "generalAssetsEngine.js",
 		SHADERS + "shadersEngine.js",
+
+		PARTICLES + 'particlesEngine.js',
+		PARTICLES + 'ParticleSystem.js',
+		PARTICLES + 'Rain.js',
 
 		SHADERS_SCENERY + "Skybox.js",
 
