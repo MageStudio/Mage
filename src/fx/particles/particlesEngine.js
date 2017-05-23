@@ -77,7 +77,7 @@ M.fx.particlesEngine = {
 		obj.uniforms = params.uniforms || {};
 		obj.instance = params.instance || false;
 
-		M.fx.particlesEngine.particles.push(name);
+		M.fx.particlesEngine.PARTICLES.push(name);
 		M.fx.particlesEngine.map.put( name, obj );
 	},
 
@@ -89,6 +89,6 @@ M.fx.particlesEngine = {
 
 	//add method
 	add: function(particle) {
-		M.fx.particlesEngine.particles.push(particle);
+		M.fx.particlesEngine.PARTICLES.push(particle);
 	},
 };
