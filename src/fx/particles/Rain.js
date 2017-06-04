@@ -1,4 +1,5 @@
 M.fx.particlesEngine.create('Rain', {
+    /*
     instance: function(options) {
         var opts = {
             positionStyle    : Type.CUBE,
@@ -30,5 +31,44 @@ M.fx.particlesEngine.create('Rain', {
 	    system.initialize();
 
         return system;
+    },*/
+
+    instance: function(options) {
+        particleGroup = new SPE.Group({
+            texture: {
+                value: M.imagesEngine.get(options.texture)
+            }
+        });
+        emitter = new SPE.Emitter({
+            maxAge: {
+                value: 2
+            },
+            position: {
+                value: new THREE.Vector3(0, 0, -50),
+                spread: new THREE.Vector3( 0, 0, 0 )
+            },
+            acceleration: {
+                value: new THREE.Vector3(0, -10, 0),
+                spread: new THREE.Vector3( 10, 0, 10 )
+            },
+            velocity: {
+                value: new THREE.Vector3(0, 25, 0),
+                spread: new THREE.Vector3(10, 7.5, 10)
+            },
+            color: {
+                value: [ new THREE.Color('white'), new THREE.Color('red') ]
+            },
+            size: {
+                value: 1
+            },
+            particleCount: 2000
+        });
+        particleGroup.addEmitter( emitter );
+
+        particleGroup.render = function() {
+            particleGroup.tick(app.clock.getDelta());
+        }
+
+        return particleGroup;
     }
 });

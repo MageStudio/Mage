@@ -168,6 +168,7 @@ module.exports = (function() {
 
 		// libraries always needed
 		LIB + "bee.min.js",
+		LIB + 'SPE.min.js',
 		BASE + "colors.js",
 		BASE + "HashMap.js",
 
@@ -184,7 +185,6 @@ module.exports = (function() {
 		SHADERS + "shadersEngine.js",
 
 		PARTICLES + 'particlesEngine.js',
-		PARTICLES + 'ParticleSystem.js',
 		PARTICLES + 'Rain.js',
 
 		SHADERS_SCENERY + "Skybox.js",
