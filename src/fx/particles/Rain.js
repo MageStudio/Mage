@@ -34,12 +34,12 @@ M.fx.particlesEngine.create('Rain', {
     },*/
 
     instance: function(options) {
-        particleGroup = new SPE.Group({
+        var particleGroup = new SPE.Group({
             texture: {
                 value: options.texture
             }
         });
-        emitter = new SPE.Emitter({
+        var emitter = new SPE.Emitter({
             maxAge: {
                 value: 2
             },
@@ -64,9 +64,10 @@ M.fx.particlesEngine.create('Rain', {
             particleCount: 2000
         });
         particleGroup.addEmitter( emitter );
+        particleGroup.clock = new THREE.Clock();
 
         particleGroup.render = function() {
-            particleGroup.tick(app.clock.getDelta());
+            particleGroup.tick(particleGroup.clock.getDelta());
         }
 
         return particleGroup;
