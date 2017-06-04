@@ -9,7 +9,8 @@
 
 		defaults: {
 			"waterNormal": "assets/images/waternormals.jpg",
-			"water": "assets/images/water.jpg"
+			"water": "assets/images/water.jpg",
+			'smokeparticle': 'assets/images/smokeparticle.png'
 		},
 
 		imagesDefault: {

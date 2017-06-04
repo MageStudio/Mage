@@ -36,7 +36,7 @@ M.fx.particlesEngine.create('Rain', {
     instance: function(options) {
         particleGroup = new SPE.Group({
             texture: {
-                value: M.imagesEngine.get(options.texture)
+                value: options.texture
             }
         });
         emitter = new SPE.Emitter({
