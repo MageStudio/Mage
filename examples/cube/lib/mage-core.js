@@ -637,7 +637,8 @@ M.videoEngine.load = function() {
 
 		defaults: {
 			"waterNormal": "assets/images/waternormals.jpg",
-			"water": "assets/images/water.jpg"
+			"water": "assets/images/water.jpg",
+			'smokeparticle': 'assets/images/smokeparticle.png'
 		},
 
 		imagesDefault: {
@@ -992,7 +993,7 @@ M.fx.particlesEngine.create('Rain', {
     instance: function(options) {
         particleGroup = new SPE.Group({
             texture: {
-                value: M.imagesEngine.get(options.texture)
+                value: options.texture
             }
         });
         emitter = new SPE.Emitter({
