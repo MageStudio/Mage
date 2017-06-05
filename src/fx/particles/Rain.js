@@ -26,7 +26,7 @@ M.fx.particlesEngine.create('Rain', {
                 value: options.colors || [ new THREE.Color('white'), new THREE.Color('red') ]
             },
             size: {
-                value: options.szie || 10
+                value: options.size || 10
             },
             particleCount: options.particleCount || 2000
         });
