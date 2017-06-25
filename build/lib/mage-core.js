@@ -983,7 +983,7 @@ M.fx.particlesEngine.create('Rain', {
                 value: options.colors || [ new THREE.Color('white'), new THREE.Color('red') ]
             },
             size: {
-                value: options.szie || 10
+                value: options.size || 10
             },
             particleCount: options.particleCount || 2000
         });
@@ -1746,18 +1746,21 @@ M.fx.shadersEngine.create('Water', {
 
 
             var water = new Water(renderer, camera, scene, {
-                textureWidth: 512,//options.textureWidth || 512,
-                textureHeight: 512, //options.textureHeight || 512,
+                textureWidth: options.textureWidth || 512,
+                textureHeight: options.textureHeight || 512,
                 waterNormals: waterNormals,
                 alpha: 1.0, //options.alpha || 1.0,
                 sunDirection: new THREE.Vector3(-0.5773502691896258,0.5773502691896258, -0.5773502691896258),//options.light ? options.light.position.clone().normalize() : new THREE.Vector3( - 1, 1, - 1).normalize(),
                 sunColor: 0xffffff,//options.sunColor || 0xffffff,
                 waterColor: 0x001e0f, //options.waterColor || 0x001e0f,
-                distortionScale: 50.0 //options.distortionScale || 50.0
+                distortionScale: options.distortionScale || 50.0
             });
 
+            var width = options.width || 512,
+                height = options.height || 512;
+
             var mirrorMesh = new THREE.Mesh(
-                new THREE.PlaneBufferGeometry( options.width * 500, options.height * 500 ),
+                new THREE.PlaneBufferGeometry(width * 500, height * 500 ),
                 water.material
             );
 

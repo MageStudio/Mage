@@ -361,23 +361,23 @@ M.fx.shadersEngine.create('Ocean', {
         };
 
         return function(renderer, camera, scene, options) {
-            var gsize = 512,
-                res = 1024,
+            var gsize = options.geometrySize || 512,
+                res = options.resolution || 1024,
                 gres = res / 2,
                 origx = -gsize / 2,
                 origz = -gsize / 2; 
 
             ocean = new Ocean(renderer, camera, scene, {
                 USE_HALF_FLOAT : true,
-                INITIAL_SIZE : 256.0,
-                INITIAL_WIND : [10.0, 10.0],
-                INITIAL_CHOPPINESS : 1.5,
-                CLEAR_COLOR : [1.0, 1.0, 1.0, 0.0],
+                INITIAL_SIZE : options.initial.size || 256.0,
+                INITIAL_WIND : options.initial.wind || [10.0, 10.0],
+                INITIAL_CHOPPINESS : options.initial.choppiness || 1.5,
+                CLEAR_COLOR : options.clearColor || [1.0, 1.0, 1.0, 0.0],
                 GEOMETRY_ORIGIN : [origx, origz],
-                SUN_DIRECTION : [-1.0, 1.0, 1.0],
-                OCEAN_COLOR: new THREE.Vector3(0.004, 0.016, 0.047),
-                SKY_COLOR: new THREE.Vector3(3.2, 9.6, 12.8),
-                EXPOSURE : 0.35,
+                SUN_DIRECTION : options.sunDirection || [-1.0, 1.0, 1.0],
+                OCEAN_COLOR: options.oceanColor || new THREE.Vector3(0.004, 0.016, 0.047),
+                SKY_COLOR: options.skyColor || new THREE.Vector3(3.2, 9.6, 12.8),
+                EXPOSURE : options.exposure || 0.35,
                 GEOMETRY_RESOLUTION: gres,
                 GEOMETRY_SIZE : gsize,
                 RESOLUTION : res
