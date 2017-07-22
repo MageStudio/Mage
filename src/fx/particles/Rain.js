@@ -23,10 +23,10 @@ M.fx.particlesEngine.create('Rain', {
                 spread: options.velocitySpread || new THREE.Vector3(10, 7.5, 10)
             },
             color: {
-                value: options.colors || [ new THREE.Color('white'), new THREE.Color('red') ]
+                value: options.colorValue || [ new THREE.Color('white'), new THREE.Color('red') ]
             },
             size: {
-                value: options.size || 10
+                value: options.sizeValue || 10
             },
             particleCount: options.particleCount || 2000
         });

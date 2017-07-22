@@ -436,7 +436,7 @@ M.assetsManager.completed = {
 	sound : false,
 	video : true,
 	images : false,
-	general : true,
+	models : false,
 	shaders : false
 };
 
@@ -448,7 +448,7 @@ M.assetsManager.load = function(callback) {
 	M.audioEngine.load();
 	M.videoEngine.load();
 	M.imagesEngine.load();
-	M.generalAssetsEngine.load();
+	M.modelsEngine.load();
 	//effects
 	M.fx.shadersEngine.load();
 	M.assetsManager.checkInterval = setInterval(M.assetsManager.check, 100);
@@ -460,7 +460,7 @@ M.assetsManager.loadingMessage = function(loaded) {
 }
 
 M.assetsManager.check = function() {
-	if (M.assetsManager.completed.sound && M.assetsManager.completed.video && M.assetsManager.completed.images && M.assetsManager.completed.general) {
+	if (M.assetsManager.completed.sound && M.assetsManager.completed.video && M.assetsManager.completed.images && M.assetsManager.completed.models) {
 		//we finished loading all assets, yay!
 		M.assetsManager.loadingMessage(true);
 		clearInterval(M.assetsManager.checkInterval);
@@ -758,15 +758,65 @@ M.lightEngine = {
 };
 
 M.lightEngine.init();;
-(function() {
-	window.M = window.M || {};
+window.M = window.M || {};
 
-	M.generalAssetsEngine = {};
-	
-	M.generalAssetsEngine.load = function() {
-		//loading general assets, man!
-	};
-})();;
+M.modelsEngine = {
+
+	loader: new THREE.JSONLoader(),
+	numModels : 0,
+	modelsLoaded : 0,
+	load : function() {
+
+		M.modelsEngine.map = new HashMap();
+		M.modelsEngine.models = [];
+
+		for (var model in Assets.Models) {
+			M.modelsEngine.numModels++;
+			M.modelsEngine.loadSingleFile(model, Assets.Models[model]);
+		}
+
+		if (M.modelsEngine.numModels == 0) {
+			M.assetsManager.completed.models = true;
+		}
+	},
+
+	get : function(id) {
+		return M.modelsEngine.map.get(id) || false;
+	},
+
+	loadSingleFile : function(id, path) {
+		// Load a sound file using an ArrayBuffer XMLHttpRequest.
+		M.modelsEngine.loader.load(path, function(geometry, materials) {
+            var faceMaterial;
+            if (materials && materials.length > 0) {
+                var material = materials[0];
+                material.morphTargets = true;
+                faceMaterial = new THREE.MultiMaterial(materials);
+            } else {
+                faceMaterial = new THREE.MeshLambertMaterial({wireframe: true});
+            }
+
+            var model = {
+				geometry: geometry,
+				material: faceMaterial
+			}
+
+			M.modelsEngine.map.put(id, model);
+			M.modelsEngine.modelsLoaded++;
+			M.modelsEngine.checkLoad();
+        });
+	},
+
+	checkLoad: function() {
+		if (M.modelsEngine.modelsLoaded == M.modelsEngine.numModels) {
+			M.assetsManager.completed.models = true;
+		}
+	},
+
+	add: function(model) {
+		M.modelsEngine.models.push(model);
+	}
+};;
 window.M = window.M || {};
 M.fx = M.fx || {},
 
@@ -980,10 +1030,10 @@ M.fx.particlesEngine.create('Rain', {
                 spread: options.velocitySpread || new THREE.Vector3(10, 7.5, 10)
             },
             color: {
-                value: options.colors || [ new THREE.Color('white'), new THREE.Color('red') ]
+                value: options.colorValue || [ new THREE.Color('white'), new THREE.Color('red') ]
             },
             size: {
-                value: options.size || 10
+                value: options.sizeValue || 10
             },
             particleCount: options.particleCount || 2000
         });
@@ -995,6 +1045,58 @@ M.fx.particlesEngine.create('Rain', {
         }
 
         return particleGroup;
+    }
+});;
+M.fx.particlesEngine.create('Clouds', {
+
+    instance: function(options) {
+        var particleGroup = new SPE.Group({
+            texture: {
+                value: options.texture
+            },
+            blending: THREE.NormalBlending,
+            fog: true
+        });
+        var emitter = new SPE.Emitter({
+            particleCount: options.particleCount || 750,
+            maxAge: {
+                value: options.maxAge || 3,
+            },
+            position: {
+                value: options.positionValue || new THREE.Vector3(0, -15, -50),
+                spread: options.positionSpread || new THREE.Vector3(100, 30, 100 )
+            },
+            velocity: {
+               value: options.velocityValue || new THREE.Vector3(0, 0, 30),
+            },
+            wiggle: {
+                spread: options.wiggle || 10
+            },
+            size: {
+                value: options.sizeValue || 75,
+                spread: options.sizeSpread || 50
+            },
+            opacity: {
+                value: options.opacityValue || [ 0, 1, 0 ]
+            },
+            color: {
+                value: options.colorValue || new THREE.Color( 1, 1, 1 ),
+                spread: options.colorSpread || new THREE.Color( 0.1, 0.1, 0.1 )
+            },
+            angle: {
+                value: options.angleValue || [ 0, Math.PI * 0.125 ]
+            }
+        });
+
+        particleGroup.addEmitter( emitter );
+        particleGroup.clock = new THREE.Clock();
+
+        particleGroup.render = function() {
+            particleGroup.tick(particleGroup.clock.getDelta());
+        }
+
+        return particleGroup;
+
     }
 });;
 M.fx.shadersEngine.create("Skybox", {
@@ -2609,23 +2711,23 @@ M.fx.shadersEngine.create('Ocean', {
         };
 
         return function(renderer, camera, scene, options) {
-            var gsize = 512,
-                res = 1024,
+            var gsize = options.geometrySize || 512,
+                res = options.resolution || 1024,
                 gres = res / 2,
                 origx = -gsize / 2,
                 origz = -gsize / 2; 
 
             ocean = new Ocean(renderer, camera, scene, {
                 USE_HALF_FLOAT : true,
-                INITIAL_SIZE : 256.0,
-                INITIAL_WIND : [10.0, 10.0],
-                INITIAL_CHOPPINESS : 1.5,
-                CLEAR_COLOR : [1.0, 1.0, 1.0, 0.0],
+                INITIAL_SIZE : options.initial.size || 256.0,
+                INITIAL_WIND : options.initial.wind || [10.0, 10.0],
+                INITIAL_CHOPPINESS : options.initial.choppiness || 1.5,
+                CLEAR_COLOR : options.clearColor || [1.0, 1.0, 1.0, 0.0],
                 GEOMETRY_ORIGIN : [origx, origz],
-                SUN_DIRECTION : [-1.0, 1.0, 1.0],
-                OCEAN_COLOR: new THREE.Vector3(0.004, 0.016, 0.047),
-                SKY_COLOR: new THREE.Vector3(3.2, 9.6, 12.8),
-                EXPOSURE : 0.35,
+                SUN_DIRECTION : options.sunDirection || [-1.0, 1.0, 1.0],
+                OCEAN_COLOR: options.oceanColor || new THREE.Vector3(0.004, 0.016, 0.047),
+                SKY_COLOR: options.skyColor || new THREE.Vector3(3.2, 9.6, 12.8),
+                EXPOSURE : options.exposure || 0.35,
                 GEOMETRY_RESOLUTION: gres,
                 GEOMETRY_SIZE : gsize,
                 RESOLUTION : res

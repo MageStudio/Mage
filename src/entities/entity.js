@@ -97,9 +97,42 @@ Class("Entity", {
 
 	},
 
-	scale: function(x, y, z) {
+	scale: function(options) {
+
+		var _x = options.x || 1,
+			_y = options.y || 1,
+			_z = options.z || 1;
+
 		if (this.mesh) {
-			this.mesh.scale.set(x, y, z);
+			this.mesh.scale.set(_x, _y, _z);
+		}
+	},
+
+	position: function(options) {
+
+		var _x = options.x || this.mesh.position.x,
+			_y = options.y || this.mesh.position.y,
+			_z = options.z || this.mesh.position.z;
+
+		if (this.mesh) {
+			this.mesh.position.set(_x, _y, _z);
+		}
+	},
+
+	rotation: function(options) {
+
+		var _x = options.x || this.mesh.rotation.x,
+			_y = options.y || this.mesh.rotation.y,
+			_z = options.z || this.mesh.rotation.z;
+
+		if (this.mesh) {
+			this.mesh.rotation.set(_x, _y, _z);
+		}
+	},
+
+	add: function(mesh) {
+		if (mesh.mesh && this.mesh) {
+			this.mesh.add(mesh.mesh);
 		}
 	}
 

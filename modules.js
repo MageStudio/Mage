@@ -137,7 +137,7 @@ module.exports = (function() {
 		LIGHTS = DIR + "lights/",
 		IMAGES = DIR + "images/",
 		ENTITIES = DIR + "entities/"
-		GENERALASSETS = DIR + "generalAssets/",
+		MODELS	 = DIR + "models/",
 		FX = DIR + "fx/",
 		SHADERS = FX + "shaders/",
 		PARTICLES = FX + 'particles/',
@@ -181,11 +181,12 @@ module.exports = (function() {
 		VIDEO + "videoEngine.js",
 		IMAGES + "imagesEngine.js",
 		LIGHTS + "lightEngine.js",
-		GENERALASSETS + "generalAssetsEngine.js",
+		MODELS + "modelsEngine.js",
 		SHADERS + "shadersEngine.js",
 
 		PARTICLES + 'particlesEngine.js',
 		PARTICLES + 'Rain.js',
+		PARTICLES + 'Clouds.js',
 
 		SHADERS_SCENERY + "Skybox.js",
 
