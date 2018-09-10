@@ -2009,12 +2009,6 @@ Class("Entity", {
 		this.sound = new AmbientSound(name, {mesh : this.mesh , autoplay : _autoplay, loop : _loop , effect : options.effect});
 	},
 
-	addMesh: function( mesh ) {
-
-		this.mesh.add( mesh );
-
-	},
-
 	addLight: function( color, intensity, distance ) {
 
 		var position = {
@@ -2049,9 +2043,42 @@ Class("Entity", {
 
 	},
 
-	scale: function(x, y, z) {
+	scale: function(options) {
+
+		var _x = options.x || 1,
+			_y = options.y || 1,
+			_z = options.z || 1;
+
 		if (this.mesh) {
-			this.mesh.scale.set(x, y, z);
+			this.mesh.scale.set(_x, _y, _z);
+		}
+	},
+
+	position: function(options) {
+
+		var _x = options.x || this.mesh.position.x,
+			_y = options.y || this.mesh.position.y,
+			_z = options.z || this.mesh.position.z;
+
+		if (this.mesh) {
+			this.mesh.position.set(_x, _y, _z);
+		}
+	},
+
+	rotation: function(options) {
+
+		var _x = options.x || this.mesh.rotation.x,
+			_y = options.y || this.mesh.rotation.y,
+			_z = options.z || this.mesh.rotation.z;
+
+		if (this.mesh) {
+			this.mesh.rotation.set(_x, _y, _z);
+		}
+	},
+
+	add: function(mesh) {
+		if (mesh.mesh && this.mesh) {
+			this.mesh.add(mesh.mesh);
 		}
 	}
 
@@ -2070,7 +2097,8 @@ Class("Camera", {
 		//adding to core
 	},
 
-})._extends("Entity");;
+})._extends("Entity");
+;
 /**************************************************
 		MESH CLASS
 **************************************************/
@@ -2101,6 +2129,16 @@ Class("Mesh", {
 					this.addScript(options[o], options.dir);
 				}
 			}
+		}
+	},
+
+	texture: function(texture) {
+		if (texture && this.mesh && this.mesh.material) {
+			texture.wrapS = THREE.RepeatWrapping;
+			texture.wrapT = THREE.RepeatWrapping;
+
+			texture.repeat.set(1, 1);
+			this.mesh.material.map = texture;
 		}
 	}
 

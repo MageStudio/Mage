@@ -780,8 +780,13 @@ M.modelsEngine = {
 		}
 	},
 
-	get : function(id) {
-		return M.modelsEngine.map.get(id) || false;
+	get: function(id) {
+		var model = M.modelsEngine.map.get(id) || false;
+		if (model) {
+			model.material.wireframe = false;
+			return new Mesh(model.geometry, model.material);
+		}
+		return false;
 	},
 
 	loadSingleFile : function(id, path) {
@@ -816,7 +821,8 @@ M.modelsEngine = {
 	add: function(model) {
 		M.modelsEngine.models.push(model);
 	}
-};;
+};
+;
 window.M = window.M || {};
 M.fx = M.fx || {},
 
@@ -3179,4 +3185,3 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         website: 'http://mage.studio'
     };
 }
-

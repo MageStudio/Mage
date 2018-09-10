@@ -57,12 +57,6 @@ Class("Entity", {
 		this.sound = new AmbientSound(name, {mesh : this.mesh , autoplay : _autoplay, loop : _loop , effect : options.effect});
 	},
 
-	addMesh: function( mesh ) {
-
-		this.mesh.add( mesh );
-
-	},
-
 	addLight: function( color, intensity, distance ) {
 
 		var position = {

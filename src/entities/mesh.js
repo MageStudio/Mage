@@ -29,6 +29,16 @@ Class("Mesh", {
 				}
 			}
 		}
+	},
+
+	texture: function(texture) {
+		if (texture && this.mesh && this.mesh.material) {
+			texture.wrapS = THREE.RepeatWrapping;
+			texture.wrapT = THREE.RepeatWrapping;
+
+			texture.repeat.set(1, 1);
+			this.mesh.material.map = texture;
+		}
 	}
 
 })._extends("Entity");
