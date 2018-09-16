@@ -75,14 +75,15 @@ Class("AnimatedMesh", {
 
 })._extends("Entity");
 */
+import Entity from './entity';
 /**
  * @author Michael Guerrero / http://realitymeltdown.com
  */
-Class("AnimatedMesh",  {
+export default class AnimatedMesh extends Entity {
 
-    AnimatedMesh: function(geometry, materials, options) {
+    constructor(geometry, materials, options) {
 
-        Entity.call(this);
+        super();
 
         this.animations = {};
         this.weightSchedule = [];
@@ -122,73 +123,60 @@ Class("AnimatedMesh",  {
 				}
 			}
 		}
+    }
 
-    },
-
-    toggleSkeleton: function() {
-
+    toggleSkeleton() {
         this.skeletonVisible = !this.skeletonVisible;
         this.skeleton.visible = this.skeletonVisible;
-    },
+    }
 
-
-	toggleModel: function() {
-
+	toggleModel() {
         this.meshVisible = !this.meshVisible;
         this.mesh.visible = this.meshVisible;
+	}
 
-	},
-
-    setWeights: function(weights) {
-
+    setWeights(weights) {
         for (name in weights) {
             if (this.animations[name]) {
                 this.animations[name].weight = weights[name];
             }
         }
-    },
+    }
 
-    update: function(dt) {
+    update(dt) {
         this.animate(dt);
-    },
+    }
 
-    animate: function(dt) {
+    animate(dt) {
 
-        for ( var i = this.weightSchedule.length - 1; i >= 0; --i ) {
+        for ( let i = this.weightSchedule.length - 1; i >= 0; --i ) {
 
 			var data = this.weightSchedule[ i ];
 			data.timeElapsed += dt;
 
 			// If the transition is complete, remove it from the schedule
 			if ( data.timeElapsed > data.duration ) {
-
 				data.anim.weight = data.endWeight;
 				this.weightSchedule.splice( i, 1 );
 
 				// If we've faded out completely, stop the animation
 
 				if ( data.anim.weight == 0 ) {
-
 					data.anim.stop( 0 );
-
 				}
 
 			} else {
-
 				// interpolate the weight for the current time
 				data.anim.weight = data.startWeight + (data.endWeight - data.startWeight) * data.timeElapsed / data.duration;
-
 			}
-
 		}
 
-		this.updateWarps( dt );
+		this.updateWarps(dt);
 		this.skeleton.update();
         THREE.AnimationHandler.update(dt);
+    }
 
-    },
-
-    updateWarps: function(dt) {
+    updateWarps(dt) {
         // Warping modifies the time scale over time to make 2 animations of different
 		// lengths match. This is useful for smoothing out transitions that get out of
 		// phase such as between a walk and run cycle
@@ -230,46 +218,40 @@ Class("AnimatedMesh",  {
 
 		}
 
-    },
+    }
 
-    play: function(animName) {
-
+    play(animName) {
         var weight = this.animations[animName].weight === undefined ? this.animations[animName] : 1;
 		this.animations[animName].play(0, weight);
+	}
 
-	},
-
-	crossfade: function(fromAnimName, toAnimName, duration) {
-
+	crossfade(fromAnimName, toAnimName, duration) {
 		var fromAnim = this.animations[fromAnimName];
 		var toAnim = this.animations[toAnimName];
 
 		fromAnim.play( 0, 1 );
 		toAnim.play( 0, 0 );
 
-		this.weightSchedule.push( {
-
+		this.weightSchedule.push({
 			anim: fromAnim,
 			startWeight: 1,
 			endWeight: 0,
 			timeElapsed: 0,
 			duration: duration
 
-		} );
+		});
 
-		this.weightSchedule.push( {
-
+		this.weightSchedule.push({
 			anim: toAnim,
 			startWeight: 0,
 			endWeight: 1,
 			timeElapsed: 0,
 			duration: duration
 
-		} );
-
+		});
 	},
 
-	warp: function( fromAnimName, toAnimName, duration ) {
+	warp(fromAnimName, toAnimName, duration) {
 
 		var fromAnim = this.animations[fromAnimName];
 		var toAnim = this.animations[toAnimName];
@@ -277,53 +259,37 @@ Class("AnimatedMesh",  {
 		fromAnim.play( 0, 1 );
 		toAnim.play( 0, 0 );
 
-		this.warpSchedule.push( {
-
+		this.warpSchedule.push({
 			from: fromAnim,
 			to: toAnim,
 			timeElapsed: 0,
 			duration: duration
+		});
 
-		} );
+	}
 
-	},
-
-	applyWeight: function(animName, weight) {
-
+	applyWeight(animName, weight) {
 		this.animations[ animName ].weight = weight;
+	}
 
-	},
-
-	pauseAll: function() {
-
-		for ( var a in this.animations ) {
-
-			if ( this.animations[ a ].isPlaying ) {
-
-				this.animations[ a ].stop();
-
+	pauseAll() {
+		for (var a in this.animations) {
+			if (this.animations[a].isPlaying) {
+				this.animations[a].stop();
 			}
-
 		}
+	}
 
-	},
-
-	unPauseAll: function() {
-
-    	for ( var a in this.animations ) {
-
-    	  if ( this.animations[ a ].isPlaying && this.animations[ a ].isPaused ) {
-
-    		this.animations[ a ].pause();
-
-    	  }
-
-    	}
-
-    },
+	unPauseAll() {
+        for ( var a in this.animations ) {
+            if ( this.animations[ a ].isPlaying && this.animations[ a ].isPaused ) {
+                this.animations[ a ].pause();
+            }
+        }
+    }
 
 
-    stopAll: function() {
+    stopAll() {
 
 		for ( a in this.animations ) {
 
@@ -338,13 +304,13 @@ Class("AnimatedMesh",  {
 		this.weightSchedule.length = 0;
 		this.warpSchedule.length = 0;
 
-	},
+	}
 
-    getForward: function() {
+    getForward() {
 
         var forward = new THREE.Vector3();
 
-        return function() {
+        return () => {
 
             // pull the character's forward basis vector out of the matrix
             forward.set(
@@ -355,7 +321,5 @@ Class("AnimatedMesh",  {
 
             return forward;
         }
-
     }
-
-})._extends("Entity");
+}

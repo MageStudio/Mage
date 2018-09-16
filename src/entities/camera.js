@@ -1,14 +1,11 @@
-/**************************************************
-		Camera CLASS
-**************************************************/
+import Entity from './entity';
 
-Class("Camera", {
+export default class Camera extends Entity {
 
-	Camera : function(options) {
-		Entity.call(this);
+	constructor(options) {
+		super();
 		this.options = options;
 		this.object = new THREE.PerspectiveCamera(options.fov, options.ratio , options.near, options.far );
 		//adding to core
-	},
-
-})._extends("Entity");
+	}
+}

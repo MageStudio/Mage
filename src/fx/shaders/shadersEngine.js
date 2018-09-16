@@ -7,7 +7,7 @@ M.fx.shadersEngine = {
 
 	SHADERS: [],
 
-	map: new HashMap(),
+	map: {},
 	shaders: [],
 
 	shaders: {},
@@ -33,7 +33,7 @@ M.fx.shadersEngine = {
 
 	get: function(id) {
 		//returning stored shader;
-		return M.fx.shadersEngine.map.get(id) || false;
+		return M.fx.shadersEngine.map[id] || false;
 	},
 
 	loadSingleFile: function(id, path) {
@@ -47,7 +47,7 @@ M.fx.shadersEngine = {
 			request.responseType = "text";
 			request.onload = function(e) {
 				var shader = M.fx.shadersEngine._parseShader(this.responseText);
-				M.fx.shadersEngine.map.put(id, shader);
+				M.fx.shadersEngine.map[id] = shader;
 				M.fx.shadersEngine.shadersLoaded++;
 				M.fx.shadersEngine.checkLoad();
 			};

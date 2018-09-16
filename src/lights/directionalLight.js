@@ -1,8 +1,10 @@
-Class("DirectionalLight", {
+import Light from './light';
 
-    DirectionalLight: function(color, intensity, distance, position, target) {
+export default class DirectionalLight extends Light {
 
-        Light.call(this, color, intensity, position);
+    constructor(color, intensity, distance, position, target) {
+
+        super(color, intensity, position);
 
         //this.geometry = new THREE.SphereGeometry( LightEngine.holderRadius, LightEngine.holderSegment, LightEngine.holderSegment );
         //this.material = new THREE.MeshPhongMaterial({color: this.color});
@@ -35,4 +37,4 @@ Class("DirectionalLight", {
 
     }
 
-})._extends("Light");
+}

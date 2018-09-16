@@ -2,22 +2,18 @@ window.M = window.M || {};
 
 M.control = {
 
-	type : undefined,
+	type: undefined,
 
-	allowedTypes : [
-						"fly",
-						"fps",
-						"custom"
-					],
+	allowedTypes: ["fly", "fps", "custom" ],
 
-	oldType : undefined,
+	oldType: undefined,
 
-	handler : undefined,
+	handler: undefined,
 
-	clock : undefined,
+	clock: undefined,
 
-	options : {
-		fps : {
+	options: {
+		fps: {
 			height : 5,
 			mouseFactor : 0.002,
 			jumpHeight : 5,
@@ -27,9 +23,7 @@ M.control = {
 			crouch : 0.25
 		},
 
-		fly : {
-
-		}
+		fly: {}
 	},
 
 	//----------------------------------------------------------------------------------------------------

@@ -1,14 +1,15 @@
 M.fx.particlesEngine.create('Clouds', {
 
     instance: function(options) {
-        var particleGroup = new SPE.Group({
+        const particleGroup = new SPE.Group({
             texture: {
                 value: options.texture
             },
             blending: THREE.NormalBlending,
             fog: true
         });
-        var emitter = new SPE.Emitter({
+
+        const emitter = new SPE.Emitter({
             particleCount: options.particleCount || 750,
             maxAge: {
                 value: options.maxAge || 3,

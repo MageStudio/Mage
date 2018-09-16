@@ -7,7 +7,7 @@ M.fx.particlesEngine = {
 
 	PARTICLES: [],
 
-	map: new HashMap(),
+	map: {},
 	particles: [],
 
 	particles: {},
@@ -33,7 +33,7 @@ M.fx.particlesEngine = {
 
 	get: function(id) {
 		//returning stored particle;
-		return M.fx.particlesEngine.map.get(id) || false;
+		return M.fx.particlesEngine.map[id] || false;
 	},
 
 	loadSingleFile: function(id, path) {
@@ -47,7 +47,7 @@ M.fx.particlesEngine = {
 			request.responseType = "text";
 			request.onload = function(e) {
 				var particle = M.fx.particlesEngine._parseParticle(this.responseText);
-				M.fx.particlesEngine.map.put(id, particle);
+				M.fx.particlesEngine.map[id] = particle;
 				M.fx.particlesEngine.particlesLoaded++;
 				M.fx.particlesEngine.checkLoad();
 			};
@@ -78,7 +78,7 @@ M.fx.particlesEngine = {
 		obj.instance = params.instance || false;
 
 		M.fx.particlesEngine.PARTICLES.push(name);
-		M.fx.particlesEngine.map.put( name, obj );
+		M.fx.particlesEngine.map[name] = obj;
 	},
 
 	checkLoad: function() {

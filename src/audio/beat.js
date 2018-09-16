@@ -1,6 +1,6 @@
-Class("Beat", {
+export default class Beat {
 
-	Beat : function(name) {
+	constructor(name) {
 		this.name = name;
 		//this sound name should already be loaded by our engine
 		this.sound = {};
@@ -15,26 +15,26 @@ Class("Beat", {
 		this.sound.source.connect(this.sound.volume);
 		// Hook up the sound volume control to the main volume.
 		this.sound.volume.connect(M.audioEngine.volume);
-	},
+	}
 
-	setListeners : function() {
+	setListeners() {
 		//setting listeners
 		this.sound.source._caller = this;
 		//this.sound.source.onended = this.onEnd;
 		//this.sound.source.loopEnd = this.onLoopEnd;
-		//this.sound.source.loopStart = this.onLoopstart; 
-	},
+		//this.sound.source.loopStart = this.onLoopstart;
+	}
 
-	reset : function() {
+	reset() {
 		this.sound.source.disconnect();
 		this.sound.source = M.audioEngine.context.createBufferSource();
 		this.sound.source.connect(this.sound.volume);
 		//setting listeners
 		this.setListeners();
-	},
+	}
 
-	start : function() {
-		var buffer = M.audioEngine.get(this.name);
+	start() {
+		const buffer = M.audioEngine.get(this.name);
 		if (!buffer) {
 			console.error("Unable to load sound, sorry.");
 			return;
@@ -42,46 +42,45 @@ Class("Beat", {
 		this.sound.source.buffer = buffer;
 		this.sound.volume.gain.value = 0;
 		this.sound.source.start(M.audioEngine.context.currentTime);
-		var self = this;
-		var _delay = function() {
-			self.sound.volume.gain.value = self.sound.volume.gain.value + M.audioEngine.DELAY_FACTOR;
-			if (self.sound.volume.gain.value < M.audioEngine.DELAY_NORMAL_VALUE) {
-				setTimeout(_delay, M.audioEngine.DELAY_STEP);
+
+		const delay = () => {
+			this.sound.volume.gain.value = this.sound.volume.gain.value + M.audioEngine.DELAY_FACTOR;
+			if (this.sound.volume.gain.value < M.audioEngine.DELAY_NORMAL_VALUE) {
+				setTimeout(delay, M.audioEngine.DELAY_STEP);
 			}
 		}
-		_delay();
-	},
+		delay();
+	}
 
-	stop : function() {
-		var self = this;
-		var _delay = function() {
-			self.sound.volume.gain.value = self.sound.volume.gain.value - M.audioEngine.DELAY_FACTOR;
-			if (self.sound.volume.gain.value > M.audioEngine.DELAY_MIN_VALUE) {
-				setTimeout(_delay, M.audioEngine.DELAY_STEP);
+	stop() {
+		const delay = () => {
+			this.sound.volume.gain.value = this.sound.volume.gain.value - M.audioEngine.DELAY_FACTOR;
+			if (this.sound.volume.gain.value > M.audioEngine.DELAY_MIN_VALUE) {
+				setTimeout(delay, M.audioEngine.DELAY_STEP);
 			} else {
-				self.sound.source.stop();
+				this.sound.source.stop();
 			}
 		}
-		_delay();
-	},
+		delay();
+	}
 
-	onEnd : function() {
+	onEnd() {
 		if (this._caller.onEndCallback) {
 			this._caller.onEndCallback();
 		}
 		this._caller.reset();
-	},
+	}
 
-	onLoopEnd : function() {
+	onLoopEnd() {
 		if (this._caller.onLoopEndCallback) {
 			this._caller.onLoopEndCallback();
 		}
-	},
+	}
 
-	onLoopStart : function() {
+	onLoopStart() {
 		if (this._caller.onLoopStartCallback) {
 			this._caller.onLoopStartCallback();
 		}
 	}
-	
-});
+
+}

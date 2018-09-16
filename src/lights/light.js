@@ -1,9 +1,11 @@
-Class("Light", {
+import Entity from '../entities/entity';
 
-	Light : function(color, intensity, position) {
+export default class Light extends Entity {
+
+	constructor(color, intensity, position) {
 		//this.mesh = new THREE.AmbientLight(color);
 		//app.add(this.mesh, this);
-		Entity.call(this);
+		super();
 		this.color = color;
 		this.intensity = intensity;
 		this.position = position || {
@@ -14,40 +16,37 @@ Class("Light", {
 		this.isLightOn = false;
 		this.mesh = undefined;
 		M.lightEngine.add(this);
-	},
+	}
 
-	on: function() {
+	on() {
 		if (this.light) {
-			var self = this;
-			var _delay = function() {
-				self.light.intensity += M.lightEngine.delayFactor;
-				if (self.light.intensity < self.intensity) {
+			const delay = () => {
+				this.light.intensity += M.lightEngine.delayFactor;
+				if (this.light.intensity < this.intensity) {
 					setTimeout(_delay, M.lightEngine.delayStep);
 				} else {
-					self.isLightOn = true;
+					this.isLightOn = true;
 				}
 			}
-			_delay();
-		} else {
-			console.log("You should create your light, first");
-		}
-	},
-
-	off: function() {
-		if (this.light) {
-			var self = this;
-			var _delay = function() {
-				self.light.intensity -= M.lightEngine.delayFactor;
-				if (self.light.intensity > 0) {
-					setTimeout(_delay, M.lightEngine.delayStep);
-				} else {
-					self.isLightOn = false;
-				}
-			}
-			_delay();
+			delay();
 		} else {
 			console.log("You should create your light, first");
 		}
 	}
 
-})._extends("Entity");
+	off() {
+		if (this.light) {
+			const delay = () => {
+				this.light.intensity -= M.lightEngine.delayFactor;
+				if (this.light.intensity > 0) {
+					setTimeout(_delay, M.lightEngine.delayStep);
+				} else {
+					this.isLightOn = false;
+				}
+			}
+			delay();
+		} else {
+			console.log("You should create your light, first");
+		}
+	}
+}

@@ -3,11 +3,11 @@ window.M = window.M || {};
 M.modelsEngine = {
 
 	loader: new THREE.JSONLoader(),
-	numModels : 0,
-	modelsLoaded : 0,
-	load : function() {
+	numModels: 0,
+	modelsLoaded: 0,
+	load: function() {
 
-		M.modelsEngine.map = new HashMap();
+		M.modelsEngine.map = {};
 		M.modelsEngine.models = [];
 
 		for (var model in Assets.Models) {
@@ -21,7 +21,7 @@ M.modelsEngine = {
 	},
 
 	get: function(id) {
-		var model = M.modelsEngine.map.get(id) || false;
+		var model = M.modelsEngine.map[id] || false;
 		if (model) {
 			model.material.wireframe = false;
 			return new Mesh(model.geometry, model.material);
@@ -46,7 +46,7 @@ M.modelsEngine = {
 				material: faceMaterial
 			}
 
-			M.modelsEngine.map.put(id, model);
+			M.modelsEngine.map[id] = model;
 			M.modelsEngine.modelsLoaded++;
 			M.modelsEngine.checkLoad();
         });

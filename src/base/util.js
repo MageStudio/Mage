@@ -19,54 +19,79 @@ M.util.start = function() {
 };
 
 M.util.check = {
-    // @todo use promises 
+    // @todo use promises
     start: function(onSuccess, onFailure) {
-        var tests = app.util.tests || M.util.tests;
+        const tests = (app &&
+            app.util &&
+            app.util.tests) ||
+            M.util.tests;
 
         if (tests.indexOf("webgl") == -1) {
             //we MUST pass the webgl test
             tests.push("webgl");
         }
 
-        for (var k in tests) {
-            if (M.util.tests.indexOf(tests[k]) == -1) {
-                onFailure("No Such Test", tests[k]);
-                return false;
-            }
-            if (!M.util.check[tests[k]]()) {
-                onFailure("Test failed", tests[k]);
-                return false;
-            }
-        }
-        onSuccess("All systems are go!");
-        return true;
+        const promises = tests
+            .map(test => M.util.check[test] || Promise.reject('No such test'));
+
+        console.log(promises);
+
+        return Promise
+            .all(promises)
+            .then(onSuccess)
+            .catch(onFailure)
     },
 
     webgl: function() {
-        var canvas = document.createElement("canvas");
-        var context = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-        if (!context) {
-            return false;
-        }
-        return true;
+        return new Promise((resolve, reject) => {
+            var canvas = document.createElement("canvas");
+            var context = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+            if (!context) {
+                reject();
+            } else {
+                resolve();
+            }
+        });
     },
 
     webaudioapi: function() {
-        return !!(window.webkitAudioContext || window.AudioContext);
+        return new Promise((resolve, reject) => {
+            const hasWebAudioApi = !!(window.webkitAudioContext || window.AudioContext);
+
+            if (hasWebAudioApi) {
+                resolve();
+            } else {
+                reject();
+            }
+        });
     },
 
     webworker: function() {
-        return !!window.Worker;
+        return new Promise((resolve, reject) => {
+            const hasWorkers = !!(window.Worker);
+
+            if (hasWorkers) {
+                resolve();
+            } else {
+                reject();
+            }
+        });
     },
 
     ajax: function() {
-        var xhr = null;
-        try { xhr = new XMLHttpRequest(); } catch (e) {}
-        try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) {}
-        try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
-        return (xhr!=null);
-    }
+        return new Promise((resolve, reject) => {
+            var xhr = null;
+            try { xhr = new XMLHttpRequest(); } catch (e) {}
+            try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) {}
+            try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
 
+            if (xhr) {
+                resolve();
+            } else {
+                reject();
+            }
+        });
+    }
 };
 
 M.util.degToRad = function(angle) {

@@ -2,8 +2,8 @@ M.fx.shadersEngine.create("Skybox", {
     instance: function(options) {
         var cubeMap = new THREE.CubeTexture( [] );
         cubeMap.format = THREE.RGBFormat;
-        
-        var _buildCube = function(image) {
+
+        const buildCube = (image) => {
             var getSide = function ( x, y ) {
                 var size = 1024;
                 var canvas = document.createElement( 'canvas' );
@@ -24,12 +24,12 @@ M.fx.shadersEngine.create("Skybox", {
         }
 
         if (options.texture) {
-            _buildCube(options.texture);
+            buildCube(options.texture);
         } else {
             var textureName = options.textureName || 'skybox';
-            _buildCube(M.imagesEngine.get(textureName));
+            buildCube(M.imagesEngine.get(textureName));
         }
-        
+
 
         var cubeShader = THREE.ShaderLib[ 'cube' ];
         cubeShader.uniforms[ 'tCube' ].value = cubeMap;
@@ -41,13 +41,13 @@ M.fx.shadersEngine.create("Skybox", {
             uniforms: cubeShader.uniforms,
             depthWrite: false,
             side: THREE.BackSide
-        } );
+        });
 
         var skyBox = new THREE.Mesh(
             new THREE.BoxGeometry( 1000000, 1000000, 1000000 ),
             skyBoxMaterial
         );
-    
+
         return skyBox;
     },
 

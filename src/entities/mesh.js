@@ -1,11 +1,9 @@
-/**************************************************
-		MESH CLASS
-**************************************************/
+import Entity from './entity';
 
-Class("Mesh", {
+export default class Mesh extends Entity {
 
-	Mesh : function(geometry, material, options) {
-		Entity.call(this);
+	constructor(geometry, material, options) {
+		super();
 		this.geometry = geometry;
 		this.material = material;
 		this.script = {};
@@ -29,9 +27,9 @@ Class("Mesh", {
 				}
 			}
 		}
-	},
+	}
 
-	texture: function(texture) {
+	texture(texture) {
 		if (texture && this.mesh && this.mesh.material) {
 			texture.wrapS = THREE.RepeatWrapping;
 			texture.wrapT = THREE.RepeatWrapping;
@@ -40,5 +38,4 @@ Class("Mesh", {
 			this.mesh.material.map = texture;
 		}
 	}
-
-})._extends("Entity");
+}

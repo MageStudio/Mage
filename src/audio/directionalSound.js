@@ -1,7 +1,7 @@
-Class("DirectionalSound", {
+export default class DirectionalSound extends Beat {
 
-	DirectionalSound : function(name, angles, options) {
-		Beat.call(this, name);
+	constructor(name, angles, options) {
+		super(name);
 
 		//creating panner, we need to update on object movements.
 		this.sound.panner = M.audioEngine.context.createPanner();
@@ -16,7 +16,7 @@ Class("DirectionalSound", {
 		this.sound.panner.coneInnerAngle = angles.innerAngleInDegrees;
 		this.sound.panner.coneOuterAngle = angles.outerAngleInDegrees;
 		this.sound.panner.coneOuterGain = angles.outerGainFactor;
-		
+
 		if (options.effect) {
 
 			this.convolver = M.audioEngine.context.createConvolver();
@@ -45,9 +45,9 @@ Class("DirectionalSound", {
 		}
 		//adding this sound to AudioEngine
 		M.audioEngine.add(this);
-	},
+	}
 
-	update : function(dt) {
+	update(dt) {
 
 		var p = new THREE.Vector3();
 		p.setFromMatrixPosition(this.mesh.matrixWorld);
@@ -83,4 +83,4 @@ Class("DirectionalSound", {
 
 	}
 
-})._extends("Beat");
+}

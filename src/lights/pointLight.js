@@ -1,8 +1,10 @@
-Class("PointLight", {
+import Light from './light';
 
-    PointLight: function(color, intensity, distance, position) {
+export default class PointLight extends Light {
 
-        Light.call(this, color, intensity, position);
+    constructor(color, intensity, distance, position) {
+
+        super(color, intensity, position);
 
         this.geometry = new THREE.SphereGeometry( M.lightEngine.holderRadius, M.lightEngine.holderSegment, M.lightEngine.holderSegment );
         this.material = new THREE.MeshPhongMaterial({color: this.color});
@@ -13,5 +15,4 @@ Class("PointLight", {
         this.mesh.mesh.add(this.light);
 
     }
-
-})._extends("Light");
+}

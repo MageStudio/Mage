@@ -3,11 +3,11 @@ window.M = window.M || {};
 M.assetsManager = {};
 
 M.assetsManager.completed = {
-	sound : false,
-	video : true,
-	images : false,
-	models : false,
-	shaders : false
+	sound: false,
+	video: true,
+	images: false,
+	models: false,
+	shaders: false
 };
 
 M.assetsManager.load = function(callback) {

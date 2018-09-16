@@ -20,7 +20,7 @@ M.audioEngine = {
 	soundLoaded : 0,
 	load : function() {
 
-		M.audioEngine.map = new HashMap();
+		M.audioEngine.map = {};
 		M.audioEngine.sounds = [];
 
 		M.audioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null;
@@ -49,12 +49,12 @@ M.audioEngine = {
 
 	get : function(id) {
 		//returning stored buffer;
-		return M.audioEngine.map.get(id) || false;
+		return M.audioEngine.map[id] || false;
 	},
 
 	loadSingleFile : function(id, path) {
 		// Load a sound file using an ArrayBuffer XMLHttpRequest.
-		var request = new XMLHttpRequest();
+		const request = new XMLHttpRequest();
 		request.open("GET", path, true);
 		request.responseType = "arraybuffer";
 		request.onload = function(e) {
@@ -62,11 +62,11 @@ M.audioEngine = {
 			// Create a buffer from the response ArrayBuffer.
 			M.audioEngine.context.decodeAudioData(this.response, function onSuccess(buffer) {
 				//storing audio buffer inside map
-				M.audioEngine.map.put(id, buffer);
+				M.audioEngine.map[id] = buffer;
 				M.audioEngine.soundLoaded++;
 				M.audioEngine.checkLoad();
 			}, function onFailure() {
-				M.audioEngine.map.put(id, null);
+				M.audioEngine.map.put[id] = null;
 				M.audioEngine.soundLoaded++;
 				console.error("Decoding the audio buffer failed");
 			});

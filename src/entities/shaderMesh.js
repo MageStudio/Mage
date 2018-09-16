@@ -1,12 +1,15 @@
-Class("ShaderMesh", {
+import Entity from './entity';
 
-    ShaderMesh : function(geometry, name, attributes, uniforms, options) {
-        Entity.call(this);
+export default class ShaderMesh extends Entity {
+
+    constructor(geometry, name, attributes, uniforms, options) {
+        super();
         this.geometry = geometry;
         this.attributes = attributes;
         this.uniforms = uniforms;
         this.shaderName = name;
-        var shader = new Shader(this.shaderName, this.attributes, this.uniforms, options);
+
+        const shader = new Shader(this.shaderName, this.attributes, this.uniforms, options);
         if (shader.shader && !shader.shader.instance) {
             if ( !attributes ) {
                 this.attributes = shader.attributes;
@@ -21,7 +24,7 @@ Class("ShaderMesh", {
         } else {
             this.mesh = shader.shader.instance(app.renderer, app.camera.object, app.scene, options);
         }
-        
+
         //adding to core
         app.add(this.mesh, this);
 
@@ -36,5 +39,4 @@ Class("ShaderMesh", {
             }
         }
     }
-
-})._extends("Entity");
+}

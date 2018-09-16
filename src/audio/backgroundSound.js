@@ -1,10 +1,10 @@
-Class("BackgroundSound", {
-    
-    BackgroundSound : function(name, options) {
-        Beat.call(this, name);
+export default class BackgroundSound extends Beat {
+
+    constructor(name, options) {
+        super(name);
         //use options to choose whether have a loop or not.
         this.sound.source.loop = options.loop || true;
-        
+
         //no need to create panner, nor to disconnect volume.
 
         //storing mesh
@@ -33,14 +33,14 @@ Class("BackgroundSound", {
 
         }
         //autoplay option
-        var autoplay = options.autoplay || true;
+        const autoplay = options.autoplay || true;
         if (autoplay) {
             this.start();
         }
         //adding this sound to AudioEngine
         M.audioEngine.add(this);
-    },
+    }
 
-    update : function(dt) {}
+    update(dt) {}
 
-})._extends("Beat");
+}

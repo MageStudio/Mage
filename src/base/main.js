@@ -162,8 +162,8 @@ Class("App", {
     init: function() {
 
         app.three = THREE;
-        var c_util 	= app.util.camera; //camera util
-        var util 	= app.util;
+        var c_util = app.util.camera; //camera util
+        var util = app.util;
 
         if (window.keypress) {
             app._keylistener =  new window.keypress.Listener();
@@ -383,15 +383,15 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         //before starting loading stuff, be sure to pass all tests
         M.util.start();
 
-        if (M.util.check.start(app.onSuccededTest, app.onFailedTest)) {
-            //we passed every test, we can go
-            app.preload(function() {
-                M.assetsManager.load(function() {
-                    app.prepareScene();
-                    app.load();
+        M.util.check.start(app.onSuccededTest, app.onFailedTest)
+            .then(() => {
+                app.preload(function() {
+                    M.assetsManager.load(function() {
+                        app.prepareScene();
+                        app.load();
+                    });
                 });
-            });
-        }
+            })
     };
 
     M.resize = function () {

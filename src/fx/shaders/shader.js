@@ -1,5 +1,6 @@
-Class("Shader", {
-    Shader: function( name, attributes, uniforms, options ) {
+export default class Shader {
+
+    constructor( name, attributes, uniforms, options ) {
         this.shader = M.fx.shadersEngine.get( name );
         if (!this.shader.instance) {
           this.name = this.shader.name;

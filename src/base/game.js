@@ -11,8 +11,7 @@ M.game.update = function() {
 };
 
 M.game.script = function(name, methods) {
-	//this will load our scripts
-	var obj = {};
+	const obj = {};
 	obj.name = name;
 	for (var method in methods) {
 		obj[method] = methods[method];
@@ -31,7 +30,7 @@ M.game.script = function(name, methods) {
 };
 
 M.game.attachScriptToObject = function(object, scriptname, dir) {
-	var path = dir + scriptname;
+	const path = dir + scriptname;
 	include(path, function() {
 		object.__loadScript(M.game.scripts[scriptname]);
 	});

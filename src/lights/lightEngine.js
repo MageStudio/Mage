@@ -9,7 +9,7 @@ M.lightEngine = {
     holderSegments: 1,
 
     init: function() {
-        M.lightEngine.map = new HashMap();
+        M.lightEngine.map = {};
         M.lightEngine.lights = [];
     },
 

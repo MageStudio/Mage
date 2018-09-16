@@ -1,10 +1,10 @@
-Class("AmbientSound", {
-	
-	AmbientSound : function(name, options) {
-		Beat.call(this, name);
+export default class AmbientSound extends Beat {
+
+	constructor(name, options) {
+		super(name);
 		//use options to choose whether have a loop or not.
 		this.sound.source.loop = options.loop || false;
-		
+
 		//creating panner, we need to update on object movements.
 		this.sound.panner = M.audioEngine.context.createPanner();
 		//disconnecting from main volume, then connecting to panner and main volume again
@@ -38,23 +38,23 @@ Class("AmbientSound", {
 
 		}
 		//autoplay option
-		var autoplay = options.autoplay || false;
+		const autoplay = options.autoplay || false;
 		if (autoplay) {
 			this.start();
 		}
 		//adding this sound to AudioEngine
 		M.audioEngine.add(this);
-	},
+	}
 
-	update : function(dt) {
+	update(dt) {
 
 		// In the frame handler function, get the object's position.
 		this.mesh.updateMatrixWorld();
-		var p = new THREE.Vector3();
+		const p = new THREE.Vector3();
 		p.setFromMatrixPosition(this.mesh.matrixWorld);
 
 		// And copy the position over to the sound of the object.
 		this.sound.panner.setPosition(p.x, p.y, p.z);
 	}
 
-})._extends("Beat");
+}

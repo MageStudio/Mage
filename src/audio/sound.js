@@ -1,7 +1,10 @@
-Class("Sound", {
+import Beat from './beat';
 
-	Sound : function(name, opt) {
-		Beat.call(this, name);
+export default class Sound extends Beat {
+
+	constructor(name, opt) {
+		super(name);
+
 		var options = opt || {};
 		//creating panner, we need to update on object movements.
 		this.sound.panner = M.audioEngine.context.createPanner();
@@ -49,9 +52,9 @@ Class("Sound", {
 
 		//adding this sound to AudioEngine
 		M.audioEngine.add(this);
-	},
+	}
 
-	update : function(dt) {
+	update(dt) {
 
 		if (this.mesh) {
 			var p = new THREE.Vector3();
@@ -73,4 +76,4 @@ Class("Sound", {
 		}
 	}
 
-})._extends("Beat");
+}
