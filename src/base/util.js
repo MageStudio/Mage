@@ -2,6 +2,81 @@ window.M = window.M || {};
 
 M.util = M.util || {};
 
+M.include(src, callback) {
+
+	var s, r, t, scripts = [];
+	var _scripts = document.getElementsByTagName("script");
+	for (var i=0; i<_scripts.length; i++) {
+		//collecting all script names.
+		scripts.push(_scripts[i].src);
+	}
+	var alreadyGot = function( value ) {
+		for (var i=0; i<scripts.length; i++) {
+			if (scripts[i].indexOf(value) != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	//check if src is array or not,
+	//split function in two separate parts
+	if (src instanceof Array) {
+		//for each element import, than call callback
+		var got = 0;
+		if (src.length == 0) {
+			console.log("Why are you triyng to include 0 scripts? This makes me sad.")
+			return;
+		}
+		//console.log(src);
+		//console.log(src.length);
+		var check = function() {
+			if (got == src.length) callback();
+		}
+		for (var j=0; j<src.length; j++) {
+			if (!alreadyGot(src[j])) {
+				s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.src = src[j] + ".js";
+				if (callback) {
+					s.onload = s.onreadystatechange = function() {
+						if (!this.readyState || this.readyState == 'complete') {
+							got++;
+							check();
+						}
+					};
+				}
+				t = document.getElementsByTagName('script')[0];
+				t.parentNode.insertBefore(s, t);
+			} else {
+				if (callback) {
+					check();
+				}
+			}
+		}
+	} else if (typeof src == "string") {
+		if (!alreadyGot(src)) {
+			r = false;
+			s = document.createElement('script');
+			s.type = 'text/javascript';
+			s.src = src + ".js";
+			if (callback) {
+				s.onload = s.onreadystatechange = function() {
+					if ( !r && (!this.readyState || this.readyState == 'complete') ) {
+						r = true;
+						callback();
+					}
+				};
+			}
+			t = document.getElementsByTagName('script')[0];
+			t.parentNode.insertBefore(s, t);
+		} else {
+			if (callback) {
+				callback();
+			}
+		}
+	}
+}
+
 M.util.tests = ["webgl", "webaudioapi", "webworker", "ajax"];
 
 M.util.start = function() {

@@ -3,15 +3,15 @@
 	copyright© 2014 Marco Stagni. http://marcostagni.com
 ********************************************************************************/
 
-include("app/scripts/cube/mybox")
+M.include("app/scripts/cube/mybox");
 
-Class("MyGame", {
+class Game extends App {
 
-	MyGame: function() {
-		App.call(this);
-	},
+	constructor() {
+		super();
+	}
 
-	onCreate: function() {
+	onCreate() {
 		var geometry = new THREE.CubeGeometry(20, 20, 20);
 		var material = new THREE.MeshBasicMaterial({
 			color: 0x00ff00,
@@ -28,10 +28,10 @@ Class("MyGame", {
 		document.addEventListener( 'mousewheel', app.onDocumentMouseWheel, false);
 
 		//example for camera movement
-		app.camera.addScript("cameraScript", "camera");
-	},
+		this.camera.addScript("cameraScript", "camera");
+	}
 
-	progressAnimation: function(next) {
+	progressAnimation(next) {
 		// you can provide your own version
 		new Vivus("mage", {type: 'oneByOne', duration: 1000, onReady: function() {
 			$('#mage').css('visibility', 'visible');
@@ -40,4 +40,6 @@ Class("MyGame", {
 		next();
 	},
 
-})._extends("App");
+}
+
+M.start(new Game());

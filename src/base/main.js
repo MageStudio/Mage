@@ -1,6 +1,6 @@
-Class("App", {
+export default class App {
 
-    App: function() {
+    constructor() {
 
         this.log_types = {
     		"e" : "error",
@@ -63,43 +63,43 @@ Class("App", {
         window.addEventListener("onmessage", this.onMessage, false);
         window.addEventListener("message", this.onMessage, false);
 
-    },
+    }
 
     //onCreate method, ovveride to start creating stuff
-    onCreate: function() {},
+    onCreate() {}
 
     //this methods helps you loading heavy stuff
-    preload: function(callback) {
+    preload(callback) {
         callback();
-    },
+    }
 
     //do stuff before onCreate method( prepare meshes, whatever )
-    prepareScene: function() {},
+    prepareScene() {}
 
     //this is what happens during game loading, the progress animation
-    progressAnimation: function(callback) {
+    progressAnimation(callback) {
         $('#loader').animate({"opacity" : "0", "margin-top" : "250px"}, 1000 , function () {
     		$('#loader').remove();
     		$('body').animate({backgroundColor : "#fff"}, 200 , callback);
     	});
-    },
+    }
 
     //needed if user wants to add a customRender method
-    _render: function() {},
+    _render() {}
 
     //setupleap motion device
-    setUpLeap: function() {},
+    setUpLeap() {}
 
     //leap motion socket connected
-    onLeapSocketConnected: function() {},
+    onLeapSocketConnected() {}
 
     //leap motion device connected
-    onLeapDeviceConnected: function() {},
+    onLeapDeviceConnected() {}
 
     //leap motion device disconnected
-    onLeapDeviceDisconnected: function() {},
+    onLeapDeviceDisconnected() {}
 
-    render : function () {
+    render() {
 
         //handling user input
         //M.user.handleUserInput();
@@ -112,14 +112,14 @@ Class("App", {
         M.control.update();
 
         //updating camera if we need to do so.
-        if (app.camera.update) {
-            app.camera.update(app.clock.getDelta());
+        if (this.camera.update) {
+            this.camera.update(this.clock.getDelta());
         }
 
-        app.renderer.autoClear = false;
-        app.renderer.clear(app.clearColor);
-        app._render();
-        app.renderer.render(app.scene, app.camera.object);
+        this.renderer.autoClear = false;
+        this.renderer.clear(this.clearColor);
+        this._render();
+        this.renderer.render(this.scene, this.camera.object);
 
         /*
         setTimeout(function() {
@@ -134,67 +134,62 @@ Class("App", {
             requestAnimFrame(app.render);
         }, 1000 / app.util.frameRate);
         */
-        if (app.util.physics_enabled && Physijs._isLoaded) {
-            app.scene.simulate();
+        if (this.util.physics_enabled && Physijs._isLoaded) {
+            this.scene.simulate();
         }
-        if (app.util.tween_enabled) {
+        if (this.util.tween_enabled) {
             TWEEN.update();
         }
-        requestAnimFrame(app.render);
+        requestAnimFrame(this.render.bind(this));
 
-    },
+    }
 
-    add : function(mesh, element) {
-
-		//method to be called when creating a new element
+    add(mesh, element) {
 		this.scene.add(mesh);
 		M.universe.reality.put(mesh.uuid, element);
+	}
 
-	},
-
-	remove : function(mesh) {
-
+	remove(mesh) {
 		this.scene.remove(mesh);
 		M.universe.reality.remove(mesh.uuid);
+	}
 
-	},
+    init() {
 
-    init: function() {
-
-        app.three = THREE;
-        var c_util = app.util.camera; //camera util
-        var util = app.util;
+        this.three = THREE;
+        var c_util = this.util.camera; //camera util
+        var util = this.util;
 
         if (window.keypress) {
-            app._keylistener =  new window.keypress.Listener();
+            this._keylistener =  new window.keypress.Listener();
         }
 
         //try{
             //configuring threejs and physijs
             if (config) {
-                app.log("config loaded");
-                if (app.util.physics_enabled) {
-                    app.log("physics enabled.");
+                this.log("config loaded");
+                if (this.util.physics_enabled) {
+                    this.log("physics enabled.");
                     try {
                         Physijs.scripts.worker = 'workers/physijs_worker.js';
                         Physijs.scripts.ammo = 'ammo.js';
-                        app.scene = new Physijs.Scene();
+                        this.scene = new Physijs.Scene();
                         Physijs._isLoaded = true;
                     } catch (ex) {
-                        app.log("something bad trying to create physijs scene", "e");
-                        app.log(ex);
+                        this.log("something bad trying to create physijs scene", "e");
+                        this.log(ex);
                         Physijs._isLoaded = false;
-                        app.scene = new app.three.Scene();
+                        this.scene = new this.three.Scene();
                     }
                 } else {
-                    app.log("physics not enabled.");
+                    this.log("physics not enabled.");
                     Physijs._isLoaded = false;
-                    app.scene = new app.three.Scene();
+                    this.scene = new this.three.Scene();
                 }
             } else {
-                app.log("config not loaded, switching to three.js");
+                this.log("config not loaded, switching to three.js");
                 Physijs._isLoaded = false;
-                app.scene = new app.three.Scene();
+                this.scene = new this.three.Scene();
             }
             //setting up camera
             var cameraOptions = {
@@ -204,29 +199,29 @@ Class("App", {
                 far : c_util.far
             };
             if (config) {
-                if (app.util.camera) {
-                    cameraOptions.fov = app.util.camera.fov ? app.util.camera.fov : cameraOptions.fov;
-                    cameraOptions.ratio = app.util.camera.ratio ? app.util.camera.ratio : cameraOptions.ratio;
-                    cameraOptions.near = app.util.camera.near ? app.util.camera.near : cameraOptions.near;
-                    cameraOptions.far = app.util.camera.far ? app.util.camera.far : cameraOptions.far;
+                if (this.util.camera) {
+                    cameraOptions.fov = this.util.camera.fov ? this.util.camera.fov : cameraOptions.fov;
+                    cameraOptions.ratio = this.util.camera.ratio ? this.util.camera.ratio : cameraOptions.ratio;
+                    cameraOptions.near = this.util.camera.near ? this.util.camera.near : cameraOptions.near;
+                    cameraOptions.far = this.util.camera.far ? this.util.camera.far : cameraOptions.far;
                 }
             }
-            app.camera = new Camera(cameraOptions);
+            this.camera = new Camera(cameraOptions);
             var alphaRenderer = false;
-            if (app.util.alpha) {
+            if (this.util.alpha) {
                 alphaRenderer = true;
             }
-            app.renderer = new app.three.WebGLRenderer({alpha:alphaRenderer, antialias: true});
-            if (app.util.cast_shadow) {
-                app.renderer.shadowMap.enabled = true;
-                app.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-                app.renderer.sortObjects = false;
+            this.renderer = new this.three.WebGLRenderer({alpha:alphaRenderer, antialias: true});
+            if (this.util.cast_shadow) {
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.sortObjects = false;
             }
             //this.renderer.setClearColor(new THREE.Color('#000000'));
-            app.renderer.setPixelRatio( window.devicePixelRatio );
-            app.renderer.setSize( util.w , util.h );
-            //document.body.appendChild( app.renderer.domElement );
-            document.getElementById("gameContainer").appendChild(app.renderer.domElement);
+            this.renderer.setPixelRatio( window.devicePixelRatio );
+            this.renderer.setSize( util.w , util.h );
+            //document.body.appendChild( this.renderer.domElement );
+            document.getElementById("gameContainer").appendChild(this.renderer.domElement);
             //handling user input
             //M.user.handleUserInput();
             //updating game
@@ -236,11 +231,11 @@ Class("App", {
 
             //launch render method
             M.control.init();
-            app.render();
+            this.render();
 
             //we are pretty sure we can add stuff to our universe
-            if (app.onCreate instanceof Function) {
-                app.onCreate();
+            if (this.onCreate instanceof Function) {
+                this.onCreate();
             } else {
                 console.log("Something wrong in your onCreate method");
             }
@@ -250,9 +245,9 @@ Class("App", {
         //	console.trace();
         //}
 
-    },
+    }
 
-    load: function() {
+    load() {
 
         console.log("inside load");
         if (!(typeof this.progressAnimation == "function")) {
@@ -261,29 +256,29 @@ Class("App", {
                 callback();
             }
         }
-        this.progressAnimation(app.init);
+        this.progressAnimation(this.init);
 
-    },
+    }
 
-    sendMessage: function(message) {
+    sendMessage(message) {
 		parent.postMessage(message, location.origin);
-    },
+    }
 
-    onMessage: function() {
-        var origin = event.origin || event.originalEvent.origin;
+    onMessage() {
+        const origin = event.origin || event.originalEvent.origin;
         if (origin !== location.origin)
             return;
 
-    },
+    }
 
-    onkey: function(key, callback) {
-        if (app._keylistener) {
-            app._keylistener.simple_combo(key, callback);
+    onkey(key, callback) {
+        if (this._keylistener) {
+            this._keylistener.simple_combo(key, callback);
         }
-    },
+    }
 
     //utilities methods
-    log: function() {
+    log() {
 
     	if (this.debug) {
     		if (arguments.length>1) {
@@ -297,63 +292,61 @@ Class("App", {
     		}
     	}
 
-    },
+    }
 
-    //document input method
-    onDocumentMouseWheel: function(event) {
+    onDocumentMouseWheel(event) {
 
     	event.preventDefault();
-    	app.zoom = event.wheelDelta * 0.05;
-    	app.camera.object.position.z += app.zoom;
+    	this.zoom = event.wheelDelta * 0.05;
+    	this.camera.object.position.z += this.zoom;
 
-    },
+    }
 
-    onDocumentMouseMove: function(event) {
+    onDocumentMouseMove(event) {
 
-    	app.mouseX = event.clientX - app.windowHalfX;
-    	app.mouseY = event.clientY - app.windowHalfY;
+    	this.mouseX = event.clientX - this.windowHalfX;
+    	this.mouseY = event.clientY - this.windowHalfY;
 
-    },
+    }
 
-    onDocumentTouchStart: function(event) {
+    onDocumentTouchStart(event) {
 
-    	if ( event.touches.length === 1 ) {
-
-    		event.preventDefault();
-
-    		app.mouseX = event.touches[ 0 ].pageX - app.windowHalfX;
-    		app.mouseY = event.touches[ 0 ].pageY - app.windowHalfY;
-
-    	}
-
-    },
-
-    onDocumentTouchMove: function(event) {
-
-    	if ( event.touches.length === 1 ) {
+    	if (event.touches.length === 1) {
 
     		event.preventDefault();
 
-    		app.mouseX = event.touches[ 0 ].pageX - app.windowHalfX;
-    		app.mouseY = event.touches[ 0 ].pageY - app.windowHalfY;
+    		this.mouseX = event.touches[ 0 ].pageX - this.windowHalfX;
+    		this.mouseY = event.touches[ 0 ].pageY - this.windowHalfY;
+
+    	}
+    }
+
+    onDocumentTouchMove(event) {
+
+    	if (event.touches.length === 1) {
+
+    		event.preventDefault();
+
+    		this.mouseX = event.touches[ 0 ].pageX - this.windowHalfX;
+    		this.mouseY = event.touches[ 0 ].pageY - this.windowHalfY;
 
     	}
 
-    },
+    }
 
     //keyup event
-    keyup: function(event) {},
+    keyup(event) {}
 
     //keydown event
-    keydown: function(event) {},
+    keydown(event) {}
 
     //handling failed tests
-    onFailedTest: function(message, test) {},
+    onFailedTest(message, test) {}
 
     //handling succesful tests
-    onSuccededTest: function(message) {}
+    onSuccededTest(message) {}
 
-});
+}
 
 // retrieving M object
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
@@ -365,7 +358,7 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     // we're inside our favourite browser
     window.app = {};
     M.started = false;
-    M.start = function() {
+    M.start = function(_app) {
         if (M.started) {
             console.log('app already started');
             return;
@@ -373,9 +366,8 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         M.started = true;
         console.log("inside window onload");
         //creating app object
-        if (window.subClasses["App"]) {
-            var subName = window.subClasses["App"];
-            app = new window[subName]();
+        if (_app)
+            app = _app;
         } else {
             app = new App();
         }
@@ -405,7 +397,7 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         app.renderer.setSize(app.util.w, app.util.h);
     };
 
-    window.addEventListener('load', M.start);
+    //window.addEventListener('load', M.start);
     window.addEventListener('resize', M.resize);
 
 

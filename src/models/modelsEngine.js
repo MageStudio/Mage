@@ -1,37 +1,40 @@
-window.M = window.M || {};
+import AssetsManager from '../base/assetsManager';
+import Mesh from '../entities/Mesh';
 
-M.modelsEngine = {
+export default class ModelsEngine {
 
-	loader: new THREE.JSONLoader(),
-	numModels: 0,
-	modelsLoaded: 0,
-	load: function() {
+	constructor() {
+		this.loaders = THREE.JSONLoader(),
+		this.numModels = 0;
+		this.modelsLoaded = 0;
+	}
 
-		M.modelsEngine.map = {};
-		M.modelsEngine.models = [];
+	load() {
+		this.map = {};
+		this.models = [];
 
 		for (var model in Assets.Models) {
-			M.modelsEngine.numModels++;
-			M.modelsEngine.loadSingleFile(model, Assets.Models[model]);
+			this.numModels++;
+			this.loadSingleFile(model, Assets.Models[model]);
 		}
 
-		if (M.modelsEngine.numModels == 0) {
-			M.assetsManager.completed.models = true;
+		if (this.numModels == 0) {
+			assetsManager.completed.models = true;
 		}
-	},
+	}
 
-	get: function(id) {
-		var model = M.modelsEngine.map[id] || false;
+	get(id) {
+		var model = this.map[id] || false;
 		if (model) {
 			model.material.wireframe = false;
 			return new Mesh(model.geometry, model.material);
 		}
 		return false;
-	},
+	}
 
-	loadSingleFile : function(id, path) {
+	loadSingleFile(id, path) {
 		// Load a sound file using an ArrayBuffer XMLHttpRequest.
-		M.modelsEngine.loader.load(path, function(geometry, materials) {
+		this.loader.load(path, function(geometry, materials) {
             var faceMaterial;
             if (materials && materials.length > 0) {
                 var material = materials[0];
@@ -46,19 +49,19 @@ M.modelsEngine = {
 				material: faceMaterial
 			}
 
-			M.modelsEngine.map[id] = model;
-			M.modelsEngine.modelsLoaded++;
-			M.modelsEngine.checkLoad();
+			this.map[id] = model;
+			this.modelsLoaded++;
+			this.checkLoad();
         });
-	},
-
-	checkLoad: function() {
-		if (M.modelsEngine.modelsLoaded == M.modelsEngine.numModels) {
-			M.assetsManager.completed.models = true;
-		}
-	},
-
-	add: function(model) {
-		M.modelsEngine.models.push(model);
 	}
-};
+
+	checkLoad() {
+		if (this.modelsLoaded == this.numModels) {
+			assetsManager.completed.models = true;
+		}
+	}
+
+	add(model) {
+		this.models.push(model);
+	}
+}
