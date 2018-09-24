@@ -1,12 +1,12 @@
-import AssetsManager from '../base/assetsManager';
 import Mesh from '../entities/Mesh';
 
 export default class ModelsEngine {
 
-	constructor() {
+	constructor(assetsManager) {
 		this.loaders = THREE.JSONLoader(),
 		this.numModels = 0;
 		this.modelsLoaded = 0;
+		this.assetsManager = assetsManager;
 	}
 
 	load() {
@@ -19,7 +19,7 @@ export default class ModelsEngine {
 		}
 
 		if (this.numModels == 0) {
-			assetsManager.completed.models = true;
+			this.assetsManager.completed.models = true;
 		}
 	}
 
@@ -57,7 +57,7 @@ export default class ModelsEngine {
 
 	checkLoad() {
 		if (this.modelsLoaded == this.numModels) {
-			assetsManager.completed.models = true;
+			this.assetsManager.completed.models = true;
 		}
 	}
 

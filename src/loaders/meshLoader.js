@@ -1,26 +1,28 @@
-window.M = window.M || {};
+import Mesh from '../entities/Mesh';
+import ShaderMesh from '../entities/ShaderMesh';
+import imagesEngine from '../images/imagesEngine'
+import Loader from './Loader';
 
-M.loader = M.loader || {};
+class MeshLoader extends Loader {
 
-M.loader.meshes = {
-    load: function(meshes) {
+    load(meshes) {
         for (var i=0; i<meshes.length; i++) {
 			var current = meshes[i],
-                shader = M.loader.meshes._parseShader(current),
-                script = M.loader.meshes._parseScript(current),
-                parsedMesh = M.loader.meshes._parseMesh(current);
+                shader = this._parseShader(current),
+                script = this._parseScript(current),
+                parsedMesh = this._parseMesh(current);
 
 			if (parsedMesh.name.indexOf('_camera') > -1) {
-				M.loader.meshes._loadCamera(parsedMesh, script);
+				this._loadCamera(parsedMesh, script);
 			} else {
-                M.loader.meshes._loadMesh(current, parsedMesh, script, shader);
+                this._loadMesh(current, parsedMesh, script, shader);
 			}
         }
-    },
+    }
 
     _parseMesh: function(mesh) {
         return app.loader.parse(mesh);
-    },
+    }
 
     _parseScript: function(mesh) {
         var script = mesh.object.userData ? mesh.object.userData['script'] : false,
@@ -37,7 +39,7 @@ M.loader.meshes = {
             dir: dir,
             file: file
         };
-    },
+    }
 
     _parseShader: function(mesh) {
         var name = mesh.object.userData ? mesh.object.userData['shader_name'] : false,
@@ -54,9 +56,7 @@ M.loader.meshes = {
             name: name,
             options: opts
         };
-    },
-
-    // giro tenere senso derby collaboratore
+    }
 
     _loadCamera: function(mesh, script) {
         var camType = mesh.name.replace('_', '').toLowerCase();
@@ -65,7 +65,7 @@ M.loader.meshes = {
             app.camera.object.rotation.set(mesh.rotation.x, mesh.rotation.y, mesh.rotation.z);
             app.camera.object.scale.set(mesh.scale.x, mesh.scale.y, mesh.scale.z);
 
-            M.loader.meshes._attachScript(app.camera, script);
+            this._attachScript(app.camera, script);
         }
     },
 
@@ -83,7 +83,7 @@ M.loader.meshes = {
             mesh.mesh.receiveShadow = true;
             // setting texture
             if (current.textureKey) {
-                var texture = M.imagesEngine.get(current.textureKey);
+                var texture = imagesEngine.get(current.textureKey);
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
@@ -91,7 +91,7 @@ M.loader.meshes = {
             }
         }
 
-        M.loader.meshes._attachScript(mesh, script);
+        this._attachScript(mesh, script);
     },
 
     _attachScript: function(mesh, script) {
@@ -99,4 +99,14 @@ M.loader.meshes = {
             mesh.addScript(script.file.replace('.js', ''), script.dir);
         }
     }
+}
+
+this = {
+
+
+
+
+    // giro tenere senso derby collaboratore
+
+
 }

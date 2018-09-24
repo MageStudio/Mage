@@ -1,94 +1,85 @@
-window.M = window.M || {};
-M.fx = M.fx || {},
+export default class ShadersEngine {
 
-M.fx.shadersEngine = {
+	constructor(assetsManager) {
+		this.SHADERS_DIR = "app/shaders/";
+		this.SHADERS = [];
 
-	SHADERS_DIR : "app/shaders/",
+		this.map = {};
+		this.shaders = [];
 
-	SHADERS: [],
+		this.numShaders = 0;
+		this.shadersLoaded = 0;
+	}
 
-	map: {},
-	shaders: [],
+	update() {}
 
-	shaders: {},
-	numShaders : 0,
-	shadersLoaded : 0,
-	update: function() {
-		//console.log("inside old update ShadersEngine");
-	},
-
-	load: function() {
-
+	load() {
 		if (Assets.Shaders) {
 			for (var shader in Assets.Shaders) {
-				M.fx.shadersEngine.numShaders++;
-				M.fx.shadersEngine.loadSingleFile(shader, Assets.Shaders[shader]);
+				this.numShaders++;
+				this.loadSingleFile(shader, Assets.Shaders[shader]);
 			}
 		}
 
-		if (M.fx.shadersEngine.numShaders == 0) {
-			M.assetsManager.completed.shaders = true;
+		if (this.numShaders == 0) {
+			this.assetsManager.completed.shaders = true;
 		}
-	},
+	}
 
-	get: function(id) {
-		//returning stored shader;
-		return M.fx.shadersEngine.map[id] || false;
-	},
+	get(id) {
+		return this.map[id] || false;
+	}
 
-	loadSingleFile: function(id, path) {
-		// @todo this has to be changed. We can load a M.fx.createShader file, a custom shader or a threejs shader/material.
-		var type = path.split(".")[1];
+	loadSingleFile(id, path) {
+		const type = path.split(".")[1];
+
 		if ( type == "js" ) {
 			include(path.split(".js")[0], this.checkLoad);
 		} else {
-			var request = new XMLHttpRequest();
+			const request = new XMLHttpRequest();
 			request.open("GET", path, true);
 			request.responseType = "text";
-			request.onload = function(e) {
-				var shader = M.fx.shadersEngine._parseShader(this.responseText);
-				M.fx.shadersEngine.map[id] = shader;
-				M.fx.shadersEngine.shadersLoaded++;
-				M.fx.shadersEngine.checkLoad();
+			request.onload = (e) => {
+				const shader = this.parseShader(request.responseText);
+				this.map[id] = shader;
+				this.shadersLoaded++;
+				this.checkLoad();
 			};
 			request.send();
 		}
-	},
+	}
 
-	_parseShader: function(text) {
-		var obj = {};
-		obj.name = text.substring(text.indexOf("<name>")+6, text.indexOf("</name>"));
-		obj.vertex = text.substring(text.indexOf("<vertex>")+8, text.indexOf("</vertex>"));
-		obj.fragment = text.substring(text.indexOf("<fragment>")+10, text.indexOf("</fragment>"));
-		obj.options = {};
-		obj.attributes = {};
-		obj.uniforms = {};
-		return obj;
-	},
-
-	create: function( name, params ) {
-		var obj = {};
-
-		obj.name = name;
-		obj.vertex = params.vertex || "";
-		obj.fragment = params.fragment || "";
-		obj.options = params.options || {};
-		obj.attributes = params.attributes || {};
-		obj.uniforms = params.uniforms || {};
-		obj.instance = params.instance || false;
-
-		M.fx.shadersEngine.SHADERS.push(name);
-		M.fx.shadersEngine.map.put( name, obj );
-	},
-
-	checkLoad: function() {
-		if (M.fx.shadersEngine.shadersLoaded == M.fx.shadersEngine.numShaders) {
-			M.assetsManager.completed.shaders = true;
+	parseShader(text) {
+		return {
+			name: text.substring(text.indexOf("<name>") + 6, text.indexOf("</name>")),
+			vertex: text.substring(text.indexOf("<vertex>") + 8, text.indexOf("</vertex>")),
+			fragment: text.substring(text.indexOf("<fragment>") + 10, text.indexOf("</fragment>")),
+			options: {},
+			attributes: {},
+			uniforms: {}
 		}
-	},
+	}
 
-	//add method
-	add: function(shader) {
-		M.fx.shadersEngine.shaders.push(shader);
-	},
-};
+	create(name, params) {
+		this.SHADERS.push(name);
+		this.map.put(name, {
+			name,
+			vertex: params.vertex || "",
+			fragment: params.fragment || "",
+			options: params.options || {},
+			attributes: params.attributes || {},
+			uniforms: params.uniforms || {},
+			instance: params.instance || false
+		});
+	}
+
+	checkLoad() {
+		if (this.shadersLoaded == this.numShaders) {
+			this.assetsManager.completed.shaders = true;
+		}
+	}
+
+	add(shader) {
+		this.shaders.push(shader);
+	}
+}

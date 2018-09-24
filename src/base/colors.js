@@ -1,4 +1,4 @@
-function randomColor() {
+export function randomColor() {
 	const letters = '0123456789ABCDEF'.split('');
 	let color = '#';
 	for (let i = 0; i < 6; i++ ) {
@@ -7,15 +7,15 @@ function randomColor() {
 	return color;
 }
 
-function componentToHex(c) {
+export function componentToHex(c) {
 	const hex = c.toString(16);
 	return hex.length == 1 ? "0" + hex : hex;
 }
 
-function rgbToHex(r, g, b) {
+export function rgbToHex(r, g, b) {
 	return "0x" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-function getIntValueFromHex(hex) {
+export function getIntValueFromHex(hex) {
 	return parseInt(hex, 16);
 }

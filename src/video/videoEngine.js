@@ -1,7 +1,6 @@
-window.M = window.M || {};
+export default class VideoEngine {
 
-M.videoEngine = {};
+    constructor() {}
 
-M.videoEngine.load = function() {
-	//loading videos
-};
+    load() {}
+}

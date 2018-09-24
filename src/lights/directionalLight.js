@@ -1,4 +1,4 @@
-import Light from './light';
+import Light from './Light';
 
 export default class DirectionalLight extends Light {
 

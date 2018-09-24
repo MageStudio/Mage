@@ -1,40 +1,51 @@
-window.M = window.M || {};
+import Loader from './Loader';
+import DirectionalLight from '../lights/DirectionalLight';
+import AmbientLight from '../lights/AmbientLight';
 
-M.loader = M.loader || {};
+class LightLoader extends Loader {
 
-M.loader.lights = {
-    load: function(lights) {
+    load(lights) {
         for (var j=0; j<lights.length; j++) {
             var current = lights[j]
-                parsedLight = M.loader.lights._parseLight(current);
+                parsedLight = this._parseLight(current);
 
             if (current.light.object.type == "DirectionalLight") {
-                M.loader.lights._loadDirectionalLight(parsedLight);
+                this._loadDirectionalLight(parsedLight);
             } else if (current.light.object.type == "AmbientLight") {
-                M.loader.lights._loadAmbientLight(parsedLight);
+                this._loadAmbientLight(parsedLight);
             } else if (current.light.object.type == "PointLight") {
-                M.loader.lights._loadPointLight(parsedLight);
+                this._loadPointLight(parsedLight);
             }
         }
-    },
+    }
 
-    _parseLight: function(light) {
+    _parseLight(light) {
         return {
             holder: (light.holder) ? app.loader.parse(light.holder) : false,
             target: (light.target) ? app.loader.parse(light.target) : false,
             light: (light.light) ? app.loader.parse(light.light) : false
         };
-    },
+    }
 
-    _loadDirectionalLight: function(light) {
-        new DirectionalLight(light.light.color, light.light.intensity, light.light.distance, light.light.position, light.target);
-    },
+    _loadDirectionalLight(light) {
+        new DirectionalLight(
+            light.light.color,
+            light.light.intensity,
+            light.light.distance,
+            light.light.position,
+            light.target
+        );
+    }
 
-    _loadAmbientLight: function(light) {
-        new AmbientLight(light.light.color, light.light.intensity, light.light.position);
-    },
+    _loadAmbientLight(light) {
+        new AmbientLight(
+            light.light.color,
+            light.light.intensity,
+            light.light.position
+        );
+    }
 
-    _loadPointLight: function(light) {
+    _loadPointLight(light) {
         var d = 200;
         var position = light.holder ? light.holder.position : light.light.position;
         var pointlight = new PointLight(light.light.color, light.light.intensity, d, position);
