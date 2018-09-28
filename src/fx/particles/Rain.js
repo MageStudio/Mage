@@ -1,13 +1,13 @@
-M.fx.particlesEngine.create('Rain', {
+export default class Rain {
 
-    instance: function(options) {
-        const particleGroup = new SPE.Group({
+    constructor(options) {
+        this.particleGroup = new SPE.Group({
             texture: {
                 value: options.texture
             }
         });
 
-        const emitter = new SPE.Emitter({
+        this.emitter = new SPE.Emitter({
             maxAge: {
                 value: options.maxAge || 2
             },
@@ -31,14 +31,12 @@ M.fx.particlesEngine.create('Rain', {
             },
             particleCount: options.particleCount || 2000
         });
-        
-        particleGroup.addEmitter( emitter );
-        particleGroup.clock = new THREE.Clock();
 
-        particleGroup.render = function() {
-            particleGroup.tick(particleGroup.clock.getDelta());
-        }
-
-        return particleGroup;
+        this.particleGroup.addEmitter(this.emitter);
+        this.particleGroup.clock = new THREE.Clock();
     }
-});
+
+    render() {
+        this.particleGroup.tick(this.particleGroup.clock.getDelta());
+    }
+}

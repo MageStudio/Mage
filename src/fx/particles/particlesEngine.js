@@ -1,61 +1,65 @@
-window.M = window.M || {};
-M.fx = M.fx || {},
+//M.fx.particlesEngine = {
+import { include } from '../../base/util';
+import Rain from './Rain';
+import Clouds from './Clouds';
 
-M.fx.particlesEngine = {
+export default class ParticleEngine {
 
-	PARTICLES_DIR : "app/particles/",
+	constructor(assetsManager) {
+		this.PARTICLES_DIR = 'app/particles/';
+		this.PARTICLES = [];
 
-	PARTICLES: [],
+		this.map = {};
+		this.particles = [];
 
-	map: {},
-	particles: [],
+		this.particles = {};
+		this.numParticles  = 0;
+		this.particlesLoaded  = 0;
 
-	particles: {},
-	numParticles : 0,
-	particlesLoaded : 0,
-	update: function() {
-		//console.log("inside old update particlesEngine");
-	},
+		this.assetsManager = assetsManager;
+	}
 
-	load: function() {
+	update() {}
+
+	load() {
 
 		if (Assets.Particles) {
 			for (var particle in Assets.Particles) {
-				M.fx.particlesEngine.numParticles++;
-				M.fx.particlesEngine.loadSingleFile(particle, Assets.particles[particle]);
+				this.numParticles++;
+				this.loadSingleFile(particle, Assets.particles[particle]);
 			}
 		}
 
-		if (M.fx.particlesEngine.numParticles == 0) {
-			M.assetsManager.completed.particles = true;
+		if (this.numParticles == 0) {
+			this.assetsManager.completed.particles = true;
 		}
-	},
+	}
 
-	get: function(id) {
+	get(id) {
 		//returning stored particle;
-		return M.fx.particlesEngine.map[id] || false;
-	},
+		return this.map[id] || false;
+	}
 
-	loadSingleFile: function(id, path) {
+	loadSingleFile(id, path) {
 		// @todo this has to be changed. We can load a M.fx.createparticle file, a custom particle or a threejs particle/material.
-		var type = path.split(".")[1];
+		const type = path.split(".")[1];
 		if ( type == "js" ) {
 			include(path.split(".js")[0], this.checkLoad);
 		} else {
-			var request = new XMLHttpRequest();
+			const request = new XMLHttpRequest();
 			request.open("GET", path, true);
 			request.responseType = "text";
-			request.onload = function(e) {
-				var particle = M.fx.particlesEngine._parseParticle(this.responseText);
-				M.fx.particlesEngine.map[id] = particle;
-				M.fx.particlesEngine.particlesLoaded++;
-				M.fx.particlesEngine.checkLoad();
+			request.onload = (e) => {
+				var particle = this.parseParticle(request.responseText);
+				this.map[id] = particle;
+				this.particlesLoaded++;
+				this.checkLoad();
 			};
 			request.send();
 		}
-	},
+	}
 
-	_parseParticle: function(text) {
+	parseParticle(text) {
 		var obj = {};
 		obj.name = text.substring(text.indexOf("<name>")+6, text.indexOf("</name>"));
 		obj.vertex = text.substring(text.indexOf("<vertex>")+8, text.indexOf("</vertex>"));
@@ -64,10 +68,10 @@ M.fx.particlesEngine = {
 		obj.attributes = {};
 		obj.uniforms = {};
 		return obj;
-	},
+	}
 
-	create: function( name, params ) {
-		var obj = {};
+	create( name, params ) {
+		const obj = {};
 
 		obj.name = name;
 		obj.vertex = params.vertex || "";
@@ -77,18 +81,17 @@ M.fx.particlesEngine = {
 		obj.uniforms = params.uniforms || {};
 		obj.instance = params.instance || false;
 
-		M.fx.particlesEngine.PARTICLES.push(name);
-		M.fx.particlesEngine.map[name] = obj;
-	},
+		this.PARTICLES.push(name);
+		this.map[name] = obj;
+	}
 
-	checkLoad: function() {
-		if (M.fx.particlesEngine.particlesLoaded == M.fx.particlesEngine.numParticles) {
-			M.assetsManager.completed.particles = true;
+	checkLoad() {
+		if (this.particlesLoaded == this.numParticles) {
+			this.assetsManager.completed.particles = true;
 		}
-	},
+	}
 
-	//add method
-	add: function(particle) {
-		M.fx.particlesEngine.PARTICLES.push(particle);
-	},
-};
+	add(particle) {
+		this.PARTICLES.push(particle);
+	}
+}

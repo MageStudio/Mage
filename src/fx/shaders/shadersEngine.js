@@ -9,6 +9,7 @@ export default class ShadersEngine {
 
 		this.numShaders = 0;
 		this.shadersLoaded = 0;
+		this.assetsManager = assetsManager;
 	}
 
 	update() {}

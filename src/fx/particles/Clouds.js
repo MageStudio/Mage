@@ -1,7 +1,7 @@
-M.fx.particlesEngine.create('Clouds', {
+export default Clouds {
 
-    instance: function(options) {
-        const particleGroup = new SPE.Group({
+    constructor(options) {
+        this.particleGroup = new SPE.Group({
             texture: {
                 value: options.texture
             },
@@ -9,7 +9,7 @@ M.fx.particlesEngine.create('Clouds', {
             fog: true
         });
 
-        const emitter = new SPE.Emitter({
+        this.emitter = new SPE.Emitter({
             particleCount: options.particleCount || 750,
             maxAge: {
                 value: options.maxAge || 3,
@@ -40,14 +40,11 @@ M.fx.particlesEngine.create('Clouds', {
             }
         });
 
-        particleGroup.addEmitter( emitter );
-        particleGroup.clock = new THREE.Clock();
-
-        particleGroup.render = function() {
-            particleGroup.tick(particleGroup.clock.getDelta());
-        }
-
-        return particleGroup;
-
+        this.particleGroup.addEmitter( emitter );
+        this.particleGroup.clock = new THREE.Clock();
     }
-});
+
+    render() {
+        this.particleGroup.tick(this.particleGroup.clock.getDelta());
+    }
+}
