@@ -9,7 +9,10 @@ export default class ParticleEngine {
 		this.PARTICLES_DIR = 'app/particles/';
 		this.PARTICLES = [];
 
-		this.map = {};
+		this.map = {
+			'Rain': Rain,
+			'Clouds': Clouds
+		};
 		this.particles = [];
 
 		this.particles = {};
@@ -18,8 +21,6 @@ export default class ParticleEngine {
 
 		this.assetsManager = assetsManager;
 	}
-
-	update() {}
 
 	load() {
 
@@ -70,7 +71,7 @@ export default class ParticleEngine {
 		return obj;
 	}
 
-	create( name, params ) {
+	create(name, params) {
 		const obj = {};
 
 		obj.name = name;
@@ -84,6 +85,8 @@ export default class ParticleEngine {
 		this.PARTICLES.push(name);
 		this.map[name] = obj;
 	}
+
+
 
 	checkLoad() {
 		if (this.particlesLoaded == this.numParticles) {

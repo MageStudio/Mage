@@ -26,6 +26,6 @@ export default class Shader {
           this.instance = this.shader.instance;
         }
     }
-});
+}
 
 // todo: fix also this one.

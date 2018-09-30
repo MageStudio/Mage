@@ -12,8 +12,6 @@ export default class ShadersEngine {
 		this.assetsManager = assetsManager;
 	}
 
-	update() {}
-
 	load() {
 		if (Assets.Shaders) {
 			for (var shader in Assets.Shaders) {

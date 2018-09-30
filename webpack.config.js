@@ -3,8 +3,8 @@ const MODE = process.env.MODE;
 
 const config = {
     entry: {
-        'mage.lib': './src/index.lib.js',
-        //'mage': './src/index.js',
+        //'mage.lib': './src/index.lib.js',
+        'mage': './src/index.js'
         //'mage.core': './src/index.core.js';
     },
     output: {

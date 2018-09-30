@@ -63,7 +63,7 @@ export default class ImagesEngine {
 		}
 	}
 
-	loadSingleFile : function(id, path) {
+	loadSingleFile(id, path) {
 		try {
 			this.imagesLoaded++;
 			this.loader.load(path, function(texture) {

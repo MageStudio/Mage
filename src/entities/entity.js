@@ -1,9 +1,9 @@
 export default class Entity {
 	constructor() {}
 
-	start() {},
+	start() {}
 
-	update() {},
+	update() {}
 
 	render() {
 		if (this.mesh && this.mesh.render) {
@@ -12,12 +12,12 @@ export default class Entity {
 	}
 
 	addScript(scriptname, dir) {
-		const path = M.game.SCRIPTS_DIR + (dir || "");
+		let path = M.game.SCRIPTS_DIR + (dir || "");
 		if (path[path.length - 1] != "/") {
 			path += "/"; //adding dir separator if we forgot it
 		}
 		M.game.attachScriptToObject(this, scriptname, path);
-	},
+	}
 
 	//__loadScript will be automatically called by Game object
 	__loadScript(script) {
@@ -41,14 +41,14 @@ export default class Entity {
 		const _autoplay = options.autoplay || false;
 		this.isPlayingSound = _autoplay;
 		this.sound = new DirectionalSound(name, {mesh: this.mesh, autoplay: _autoplay, effect: options.effect});
-	},
+	}
 
 	addAmbientSound(name, options) {
 		const _autoplay = options.autoplay || false;
 		const _loop = options.loop || false;
 		this.isPlayingSound = _autoplay;
 		this.sound = new AmbientSound(name, {mesh: this.mesh, autoplay: _autoplay, loop: _loop, effect: options.effect});
-	},
+	}
 
 	addLight( color, intensity, distance ) {
 

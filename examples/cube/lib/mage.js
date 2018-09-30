@@ -25,105 +25,233 @@ var license = 	"Copyright (c) 2017 by Marco Stagni < http://marcostagni.com mrc.
 					"Mage contains third party software in the 'app/vendor' directory: each\n"+
 					"file/module in this directory is distributed under its original license.\n\n";
 ;
-window.M = window.M || {};
+export const include = (src, callback) => {
 
-M.util = M.util || {};
+	var s, r, t, scripts = [];
+	var _scripts = document.getElementsByTagName("script");
+	for (var i=0; i<_scripts.length; i++) {
+		//collecting all script names.
+		scripts.push(_scripts[i].src);
+	}
+	var alreadyGot = function( value ) {
+		for (var i=0; i<scripts.length; i++) {
+			if (scripts[i].indexOf(value) != -1) {
+				return true;
+			}
+		}
+		return false;
+	}
+	//check if src is array or not,
+	//split function in two separate parts
+	if (src instanceof Array) {
+		//for each element import, than call callback
+		var got = 0;
+		if (src.length == 0) {
+			console.log("Why are you triyng to include 0 scripts? This makes me sad.")
+			return;
+		}
+		//console.log(src);
+		//console.log(src.length);
+		var check = function() {
+			if (got == src.length) callback();
+		}
+		for (var j=0; j<src.length; j++) {
+			if (!alreadyGot(src[j])) {
+				s = document.createElement('script');
+				s.type = 'text/javascript';
+				s.src = src[j] + ".js";
+				if (callback) {
+					s.onload = s.onreadystatechange = function() {
+						if (!this.readyState || this.readyState == 'complete') {
+							got++;
+							check();
+						}
+					};
+				}
+				t = document.getElementsByTagName('script')[0];
+				t.parentNode.insertBefore(s, t);
+			} else {
+				if (callback) {
+					check();
+				}
+			}
+		}
+	} else if (typeof src == "string") {
+		if (!alreadyGot(src)) {
+			r = false;
+			s = document.createElement('script');
+			s.type = 'text/javascript';
+			s.src = src + ".js";
+			if (callback) {
+				s.onload = s.onreadystatechange = function() {
+					if ( !r && (!this.readyState || this.readyState == 'complete') ) {
+						r = true;
+						callback();
+					}
+				};
+			}
+			t = document.getElementsByTagName('script')[0];
+			t.parentNode.insertBefore(s, t);
+		} else {
+			if (callback) {
+				callback();
+			}
+		}
+	}
+}
 
-M.util.tests = ["webgl", "webaudioapi", "webworker", "ajax"];
+export const degToRad = (angle) => {
+    return angle * (Math.PI / 180);
+}
 
-M.util.start = function() {
-    // @see http://paulirish.com/2011/requestanimationframe-for-smart-animating/
-    window.requestAnimFrame = (function(){
-      return  window.requestAnimationFrame       ||
-              window.webkitRequestAnimationFrame ||
-              window.mozRequestAnimationFrame    ||
-              window.oRequestAnimationFrame      ||
-              window.msRequestAnimationFrame     ||
-              function(/* function */ callback, /* DOMElement */ element){
-                window.setTimeout(callback, 1000 / 60);
-              };
-    })();
-};
+export const getProportion = (max1, b, max2) => {
+    return (max1 * b)/max2;
+}
 
-M.util.check = {
-    // @todo use promises 
-    start: function(onSuccess, onFailure) {
-        var tests = app.util.tests || M.util.tests;
+export class Checker {
 
-        if (tests.indexOf("webgl") == -1) {
+	constructor() {
+		this.tests = [
+			'webgl',
+			'webaudioapi',
+			'webworker',
+			'ajax'
+		];
+	}
+
+	check(onSuccess, onFailure) {
+		const tests = (app &&
+            app.util &&
+            app.util.tests) ||
+            this.tests;
+
+        	if (tests.indexOf("webgl") == -1) {
             //we MUST pass the webgl test
             tests.push("webgl");
         }
 
-        for (var k in tests) {
-            if (M.util.tests.indexOf(tests[k]) == -1) {
-                onFailure("No Such Test", tests[k]);
-                return false;
-            }
-            if (!M.util.check[tests[k]]()) {
-                onFailure("Test failed", tests[k]);
-                return false;
-            }
-        }
-        onSuccess("All systems are go!");
-        return true;
-    },
+        const promises = tests
+            .map(test => this[test] || Promise.reject('No such test'));
 
-    webgl: function() {
-        var canvas = document.createElement("canvas");
-        var context = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
-        if (!context) {
-            return false;
-        }
-        return true;
-    },
+        console.log(promises);
 
-    webaudioapi: function() {
-        return !!(window.webkitAudioContext || window.AudioContext);
-    },
+        return Promise
+            .all(promises)
+            .then(onSuccess)
+            .catch(onFailure)
+	}
 
-    webworker: function() {
-        return !!window.Worker;
-    },
+	webgl() {
+        return new Promise((resolve, reject) => {
+			try {
+				const canvas = document.createElement("canvas");
+	            const context = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+	            if (!context) {
+	                reject();
+	            } else {
+	                resolve();
+	            }
+			} catch(e) {
+				reject(e);
+			}
 
-    ajax: function() {
-        var xhr = null;
-        try { xhr = new XMLHttpRequest(); } catch (e) {}
-        try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) {}
-        try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
-        return (xhr!=null);
+        });
     }
 
-};
+    webaudioapi() {
+        return new Promise((resolve, reject) => {
+			try {
+				const hasWebAudioApi = !!(window.webkitAudioContext || window.AudioContext);
 
-M.util.degToRad = function(angle) {
-    return angle * (Math.PI / 180);
+	            if (hasWebAudioApi) {
+	                resolve();
+	            } else {
+	                reject();
+	            }
+			} catch(e) {
+				reject(e);
+			}
+
+        });
+    }
+
+    webworker() {
+        return new Promise((resolve, reject) => {
+			try {
+				const hasWorkers = !!(window.Worker);
+
+	            if (hasWorkers) {
+	                resolve();
+	            } else {
+	                reject();
+	            }
+			} catch(e) {
+				reject(e);
+			}
+        });
+    },
+
+    ajax() {
+        return new Promise((resolve, reject) => {
+			try {
+				const xhr = null;
+	            try { xhr = new XMLHttpRequest(); } catch (e) {}
+	            try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) {}
+	            try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
+
+	            if (xhr) {
+	                resolve();
+	            } else {
+	                reject();
+	            }
+			} catch(e) {
+				reject(e);
+			}
+
+        });
+    }
 }
 
-M.util.getProportion = function(max1, b, max2) {
-    return (max1 * b)/max2;
+export class Util {
+
+	constructor() {
+		this.checker = new Checker();
+	}
+
+	start() {
+		window.requestAnimFrame = (
+			function(){
+				return  window.requestAnimationFrame       ||
+						window.webkitRequestAnimationFrame ||
+						window.mozRequestAnimationFrame    ||
+						window.oRequestAnimationFrame      ||
+						window.msRequestAnimationFrame     ||
+						function(callback, element){
+							window.setTimeout(callback, 1000 / 60);
+						};
+	    	}
+		)();
+	}
 }
+
+export default new Util();
 ;
 window.M = window.M || {};
 
 M.control = {
 
-	type : undefined,
+	type: undefined,
 
-	allowedTypes : [
-						"fly",
-						"fps",
-						"custom"
-					],
+	allowedTypes: ["fly", "fps", "custom" ],
 
-	oldType : undefined,
+	oldType: undefined,
 
-	handler : undefined,
+	handler: undefined,
 
-	clock : undefined,
+	clock: undefined,
 
-	options : {
-		fps : {
+	options: {
+		fps: {
 			height : 5,
 			mouseFactor : 0.002,
 			jumpHeight : 5,
@@ -133,9 +261,7 @@ M.control = {
 			crouch : 0.25
 		},
 
-		fly : {
-
-		}
+		fly: {}
 	},
 
 	//----------------------------------------------------------------------------------------------------
@@ -881,8 +1007,7 @@ M.game.update = function() {
 };
 
 M.game.script = function(name, methods) {
-	//this will load our scripts
-	var obj = {};
+	const obj = {};
 	obj.name = name;
 	for (var method in methods) {
 		obj[method] = methods[method];
@@ -901,11 +1026,12 @@ M.game.script = function(name, methods) {
 };
 
 M.game.attachScriptToObject = function(object, scriptname, dir) {
-	var path = dir + scriptname;
+	const path = dir + scriptname;
 	include(path, function() {
 		object.__loadScript(M.game.scripts[scriptname]);
 	});
-};;
+};
+;
 window.M = window.M || {};
 
 M.gui = {
@@ -924,120 +1050,32 @@ window.M = window.M || {};
 
 M.universe =  {
 
-	reality : undefined,
+	reality: undefined,
 
-	loaded : false,
+	loaded: false,
 
-	worker : undefined,
+	worker: undefined,
 
-	bigbang : function(){
+	bigbang: function(){
 		console.log("inside universe init");
 
 		M.universe.loaded = true;
-		M.universe.reality = new HashMap();
+		M.universe.reality = {};
 	},
 
-	testingShaders : function() {
-		// create a wireframe material
-		//shader ha bisogno di uniforms
+	update: function() {
 
-
-		var material = new THREE.ShaderMaterial( {
-			uniforms: {
-				tExplosion: {
-				  type: "t",
-				  value: THREE.ImageUtils.loadTexture( 'img/explosion.png' , {}, function(t) {
-					console.log(t);
-				  })
-				},
-				time: {
-				  type: "f",
-				  value: 0.0
-				}
-			},
-			vertexShader: document.getElementById( 'vertexShader' ).textContent,
-			fragmentShader: document.getElementById( 'fragmentShader' ).textContent
-		} );
-
-		// create a sphere and assign the material
-		var mesh = new THREE.Mesh(
-			new THREE.IcosahedronGeometry( 20, 4 ),
-			material
-		);
-
-		mesh.start_time = Date.now();
-
-		mesh.auto_render = function() {
-
-			this.material.uniforms[ 'time' ].value = .00025 * ( Date.now() - this.start_time);
-		}
-		app.scene.add( mesh );
-		M.universe.reality.put(mesh.uuid, mesh);
-
-	},
-
-	addPlanetAndSatellite : function () {
-
-		var material = new THREE.MeshBasicMaterial( { color: 0xffffff , wireframe : true } );
-		var geometry = new THREE.SphereGeometry(15, 40, 40);
-		geometry.dynamic = true;
-
-
-		var planet = new THREE.Mesh(geometry, material);
-
-		planet.position.x = 0;
-		planet.position.y = 0;
-		planet.position.z = 0;
-
-
-
-		//addding render function
-		planet.auto_render = function () {
-			this.rotation.y += 0.0001;
-		}
-
-		//adding to the scene and to our map.
-		app.scene.add( planet );
-		M.universe.reality.put(planet.uuid, planet);
-
-		//stampiamo la geometry appena settata
-		l("PLANET GEOMETRY");
-		l(planet.geometry.dynamic + " - " + planet.geometry.verticesNeedUpdate + " - " + planet.geometry.normalsNeedUpdate);
-
-		//satellite
-		var material = new THREE.MeshBasicMaterial( { color: 0xffffff , wireframe : true } );
-		var satellite = new THREE.Mesh(new THREE.SphereGeometry(30, 40, 40), material);
-
-		satellite.position.x = 0;
-		satellite.position.y = 400;
-		satellite.position.z = 0;
-
-		//addding render function
-		satellite.auto_render = function () {
-
-			this.position.x +=
-			this.position.z +=
-
-			this.rotation.y += 0.0001;
-		}
-
-
-	},
-
-	update : function () {
-
-		var keys_list = M.universe.reality.keys.concat();
-		if (keys_list.length != 0) {
+		const keys = Object.keys(M.universe.reality);
+		if (keys.length != 0) {
 			var start = +new Date();
 			do {
-				var o = M.universe.reality.get(keys_list.shift());
+				const o = M.universe.reality[keys_list.shift()];
 				if (o && o.update) {
 					o.update(app.clock.getDelta());
 				}
 				o.render();
-			} while (keys_list.length > 0 && (+new Date() - start < 50));
+			} while (keys.length > 0 && (+new Date() - start < 50));
 		}
-		
 	}
 };
 
@@ -1045,15 +1083,6 @@ M.universe.bigbang();
 ;
 	window.User = {};
 	User = {
-		/*------------------------------------------------------------------------------------------
-
-			this object will contain almost every information about our user game state
-			it will also contain every method necessary to retrieve user input and to know which
-			of controller is being user.
-
-			this object will override native window user input handling.
-
-		------------------------------------------------------------------------------------------*/
 
 		real_name : undefined,
 		real_surname : undefined,
@@ -1079,36 +1108,22 @@ M.universe.bigbang();
 
 			User.fpsControl = new THREE.PointerLockControls( app.camera );
 			app.scene.add(User.fpsControl.getObject());
-
-
-
 		},
 
 		//storing current position in the universe.
 		position : {
-
 			x : undefined,
 			y : undefined,
 			z : undefined,
 
 		},
 
-
-
-		handleUserInput : function () {
-			/*------------------------------------------------------------------------------------------
-
-				right here, we are going to user data stored with onkeypress event and onmousemove event
-				to update camera position and to move our player. render will move our player according
-				to our data.
-
-			------------------------------------------------------------------------------------------*/
-		}
+		handleUserInput : function () {}
 	};
 ;
-Class("Beat", {
+export default class Beat {
 
-	Beat : function(name) {
+	constructor(name) {
 		this.name = name;
 		//this sound name should already be loaded by our engine
 		this.sound = {};
@@ -1123,26 +1138,26 @@ Class("Beat", {
 		this.sound.source.connect(this.sound.volume);
 		// Hook up the sound volume control to the main volume.
 		this.sound.volume.connect(M.audioEngine.volume);
-	},
+	}
 
-	setListeners : function() {
+	setListeners() {
 		//setting listeners
 		this.sound.source._caller = this;
 		//this.sound.source.onended = this.onEnd;
 		//this.sound.source.loopEnd = this.onLoopEnd;
-		//this.sound.source.loopStart = this.onLoopstart; 
-	},
+		//this.sound.source.loopStart = this.onLoopstart;
+	}
 
-	reset : function() {
+	reset() {
 		this.sound.source.disconnect();
 		this.sound.source = M.audioEngine.context.createBufferSource();
 		this.sound.source.connect(this.sound.volume);
 		//setting listeners
 		this.setListeners();
-	},
+	}
 
-	start : function() {
-		var buffer = M.audioEngine.get(this.name);
+	start() {
+		const buffer = M.audioEngine.get(this.name);
 		if (!buffer) {
 			console.error("Unable to load sound, sorry.");
 			return;
@@ -1150,53 +1165,56 @@ Class("Beat", {
 		this.sound.source.buffer = buffer;
 		this.sound.volume.gain.value = 0;
 		this.sound.source.start(M.audioEngine.context.currentTime);
-		var self = this;
-		var _delay = function() {
-			self.sound.volume.gain.value = self.sound.volume.gain.value + M.audioEngine.DELAY_FACTOR;
-			if (self.sound.volume.gain.value < M.audioEngine.DELAY_NORMAL_VALUE) {
-				setTimeout(_delay, M.audioEngine.DELAY_STEP);
+
+		const delay = () => {
+			this.sound.volume.gain.value = this.sound.volume.gain.value + M.audioEngine.DELAY_FACTOR;
+			if (this.sound.volume.gain.value < M.audioEngine.DELAY_NORMAL_VALUE) {
+				setTimeout(delay, M.audioEngine.DELAY_STEP);
 			}
 		}
-		_delay();
-	},
+		delay();
+	}
 
-	stop : function() {
-		var self = this;
-		var _delay = function() {
-			self.sound.volume.gain.value = self.sound.volume.gain.value - M.audioEngine.DELAY_FACTOR;
-			if (self.sound.volume.gain.value > M.audioEngine.DELAY_MIN_VALUE) {
-				setTimeout(_delay, M.audioEngine.DELAY_STEP);
+	stop() {
+		const delay = () => {
+			this.sound.volume.gain.value = this.sound.volume.gain.value - M.audioEngine.DELAY_FACTOR;
+			if (this.sound.volume.gain.value > M.audioEngine.DELAY_MIN_VALUE) {
+				setTimeout(delay, M.audioEngine.DELAY_STEP);
 			} else {
-				self.sound.source.stop();
+				this.sound.source.stop();
 			}
 		}
-		_delay();
-	},
+		delay();
+	}
 
-	onEnd : function() {
+	onEnd() {
 		if (this._caller.onEndCallback) {
 			this._caller.onEndCallback();
 		}
 		this._caller.reset();
-	},
+	}
 
-	onLoopEnd : function() {
+	onLoopEnd() {
 		if (this._caller.onLoopEndCallback) {
 			this._caller.onLoopEndCallback();
 		}
-	},
+	}
 
-	onLoopStart : function() {
+	onLoopStart() {
 		if (this._caller.onLoopStartCallback) {
 			this._caller.onLoopStartCallback();
 		}
 	}
-	
-});;
-Class("Sound", {
 
-	Sound : function(name, opt) {
-		Beat.call(this, name);
+}
+;
+import Beat from './beat';
+
+export default class Sound extends Beat {
+
+	constructor(name, opt) {
+		super(name);
+
 		var options = opt || {};
 		//creating panner, we need to update on object movements.
 		this.sound.panner = M.audioEngine.context.createPanner();
@@ -1244,9 +1262,9 @@ Class("Sound", {
 
 		//adding this sound to AudioEngine
 		M.audioEngine.add(this);
-	},
+	}
 
-	update : function(dt) {
+	update(dt) {
 
 		if (this.mesh) {
 			var p = new THREE.Vector3();
@@ -1268,14 +1286,15 @@ Class("Sound", {
 		}
 	}
 
-})._extends("Beat");;
-Class("AmbientSound", {
-	
-	AmbientSound : function(name, options) {
-		Beat.call(this, name);
+}
+;
+export default class AmbientSound extends Beat {
+
+	constructor(name, options) {
+		super(name);
 		//use options to choose whether have a loop or not.
 		this.sound.source.loop = options.loop || false;
-		
+
 		//creating panner, we need to update on object movements.
 		this.sound.panner = M.audioEngine.context.createPanner();
 		//disconnecting from main volume, then connecting to panner and main volume again
@@ -1309,30 +1328,31 @@ Class("AmbientSound", {
 
 		}
 		//autoplay option
-		var autoplay = options.autoplay || false;
+		const autoplay = options.autoplay || false;
 		if (autoplay) {
 			this.start();
 		}
 		//adding this sound to AudioEngine
 		M.audioEngine.add(this);
-	},
+	}
 
-	update : function(dt) {
+	update(dt) {
 
 		// In the frame handler function, get the object's position.
 		this.mesh.updateMatrixWorld();
-		var p = new THREE.Vector3();
+		const p = new THREE.Vector3();
 		p.setFromMatrixPosition(this.mesh.matrixWorld);
 
 		// And copy the position over to the sound of the object.
 		this.sound.panner.setPosition(p.x, p.y, p.z);
 	}
 
-})._extends("Beat");;
-Class("DirectionalSound", {
+}
+;
+export default class DirectionalSound extends Beat {
 
-	DirectionalSound : function(name, angles, options) {
-		Beat.call(this, name);
+	constructor(name, angles, options) {
+		super(name);
 
 		//creating panner, we need to update on object movements.
 		this.sound.panner = M.audioEngine.context.createPanner();
@@ -1347,7 +1367,7 @@ Class("DirectionalSound", {
 		this.sound.panner.coneInnerAngle = angles.innerAngleInDegrees;
 		this.sound.panner.coneOuterAngle = angles.outerAngleInDegrees;
 		this.sound.panner.coneOuterGain = angles.outerGainFactor;
-		
+
 		if (options.effect) {
 
 			this.convolver = M.audioEngine.context.createConvolver();
@@ -1376,9 +1396,9 @@ Class("DirectionalSound", {
 		}
 		//adding this sound to AudioEngine
 		M.audioEngine.add(this);
-	},
+	}
 
-	update : function(dt) {
+	update(dt) {
 
 		var p = new THREE.Vector3();
 		p.setFromMatrixPosition(this.mesh.matrixWorld);
@@ -1414,14 +1434,15 @@ Class("DirectionalSound", {
 
 	}
 
-})._extends("Beat");;
-Class("BackgroundSound", {
-    
-    BackgroundSound : function(name, options) {
-        Beat.call(this, name);
+}
+;
+export default class BackgroundSound extends Beat {
+
+    constructor(name, options) {
+        super(name);
         //use options to choose whether have a loop or not.
         this.sound.source.loop = options.loop || true;
-        
+
         //no need to create panner, nor to disconnect volume.
 
         //storing mesh
@@ -1450,19 +1471,21 @@ Class("BackgroundSound", {
 
         }
         //autoplay option
-        var autoplay = options.autoplay || true;
+        const autoplay = options.autoplay || true;
         if (autoplay) {
             this.start();
         }
         //adding this sound to AudioEngine
         M.audioEngine.add(this);
-    },
+    }
 
-    update : function(dt) {}
+    update(dt) {}
 
-})._extends("Beat");;
-Class("Shader", {
-    Shader: function( name, attributes, uniforms, options ) {
+}
+;
+export default class Shader {
+
+    constructor( name, attributes, uniforms, options ) {
         this.shader = M.fx.shadersEngine.get( name );
         if (!this.shader.instance) {
           this.name = this.shader.name;
@@ -1488,7 +1511,7 @@ Class("Shader", {
           this.instance = this.shader.instance;
         }
     }
-});
+}
 
 // todo: fix also this one.
 ;
@@ -1950,163 +1973,138 @@ THREE.PointerLockControls = function ( camera ) {
 
 };
 ;
-/**************************************************
-	ENTITY Class
-**************************************************/
+export default class Entity {
+	constructor() {}
 
-Class("Entity", {
+	start() {}
 
-	Entity : function() {
+	update() {}
 
-	},
-
-	start : function() {},
-
-	update : function() {},
-
-	render: function() {
+	render() {
 		if (this.mesh && this.mesh.render) {
-			 this.mesh.render();
+			this.mesh.render();
 		}
-	},
+	}
 
-	addScript : function(scriptname, dir) {
-		var path = M.game.SCRIPTS_DIR + (dir || "");
+	addScript(scriptname, dir) {
+		let path = M.game.SCRIPTS_DIR + (dir || "");
 		if (path[path.length - 1] != "/") {
 			path += "/"; //adding dir separator if we forgot it
 		}
 		M.game.attachScriptToObject(this, scriptname, path);
-	},
+	}
 
 	//__loadScript will be automatically called by Game object
-	__loadScript : function(script) {
-		for (var method in script) {
+	__loadScript(script) {
+		for (let method in script) {
 			this[method] = script[method];
 		}
 		try {
-			this.start()
+			this.start();
 		} catch(e) {
 			console.log("I told you, man. Check your start method inside your " + script.name + ".js script");
 		}
-	},
+	}
 
-	addSound : function(name, options) {
-		var _autoplay = options.autoplay || false;
+	addSound(name, options) {
+		const _autoplay = options.autoplay || false;
 		this.isPlayingSound = _autoplay;
-		this.sound = new Sound(name, {mesh : this.mesh , autoplay : _autoplay , effect : options.effect });
-	},
+		this.sound = new Sound(name, {mesh: this.mesh, autoplay: _autoplay, effect: options.effect });
+	}
 
-	addDirectionalSound : function(name, options) {
-		var _autoplay = options.autoplay || false;
+	addDirectionalSound(name, options) {
+		const _autoplay = options.autoplay || false;
 		this.isPlayingSound = _autoplay;
-		this.sound = new DirectionalSound(name, {mesh : this.mesh , autoplay : _autoplay , effect : options.effect});
-	},
+		this.sound = new DirectionalSound(name, {mesh: this.mesh, autoplay: _autoplay, effect: options.effect});
+	}
 
-	addAmbientSound : function(name, options) {
-		var _autoplay = options.autoplay || false;
-		var _loop = options.loop || false;
+	addAmbientSound(name, options) {
+		const _autoplay = options.autoplay || false;
+		const _loop = options.loop || false;
 		this.isPlayingSound = _autoplay;
-		this.sound = new AmbientSound(name, {mesh : this.mesh , autoplay : _autoplay, loop : _loop , effect : options.effect});
-	},
+		this.sound = new AmbientSound(name, {mesh: this.mesh, autoplay: _autoplay, loop: _loop, effect: options.effect});
+	}
 
-	addLight: function( color, intensity, distance ) {
+	addLight( color, intensity, distance ) {
 
-		var position = {
+		const position = {
 			x: this.mesh.position.x,
 			y: this.mesh.position.y,
 			z: this.mesh.position.z
 		}
 		this.light = new PointLight( color, intensity, distance, position );
 		this.addMesh( this.light.mesh.mesh );
+	}
 
-	},
-
-	playSound : function() {
-
-		if ( this.sound ) {
-			if (!this.isPlayingSound){
-				this.sound.start();
-				this.isPlayingSound = true;
-			}
+	playSound() {
+		if (this.sound && !this.isPlayingSound) {
+			this.sound.start();
+			this.isPlayingSound = true;
 		}
+	}
 
-	},
-
-	stopSound : function() {
-
-		if ( this.sound ) {
-			if (this.isPlayingSound){
-				this.sound.stop();
-				this.isPlayingSound = false;
-			}
+	stopSound() {
+		if (this.sound && this.isPlayingSound ) {
+			this.sound.stop();
+			this.isPlayingSound = false;
 		}
+	}
 
-	},
-
-	scale: function(options) {
-
-		var _x = options.x || 1,
+	scale(options) {
+		const _x = options.x || 1,
 			_y = options.y || 1,
 			_z = options.z || 1;
 
 		if (this.mesh) {
 			this.mesh.scale.set(_x, _y, _z);
 		}
-	},
+	}
 
-	position: function(options) {
-
-		var _x = options.x || this.mesh.position.x,
+	position(options) {
+		const _x = options.x || this.mesh.position.x,
 			_y = options.y || this.mesh.position.y,
 			_z = options.z || this.mesh.position.z;
 
 		if (this.mesh) {
 			this.mesh.position.set(_x, _y, _z);
 		}
-	},
+	}
 
-	rotation: function(options) {
-
-		var _x = options.x || this.mesh.rotation.x,
+	rotation(options) {
+		const _x = options.x || this.mesh.rotation.x,
 			_y = options.y || this.mesh.rotation.y,
 			_z = options.z || this.mesh.rotation.z;
 
 		if (this.mesh) {
 			this.mesh.rotation.set(_x, _y, _z);
 		}
-	},
+	}
 
-	add: function(mesh) {
+	add(mesh) {
 		if (mesh.mesh && this.mesh) {
 			this.mesh.add(mesh.mesh);
 		}
 	}
-
-});
+}
 ;
-/**************************************************
-		Camera CLASS
-**************************************************/
+import Entity from './entity';
 
-Class("Camera", {
+export default class Camera extends Entity {
 
-	Camera : function(options) {
-		Entity.call(this);
+	constructor(options) {
+		super();
 		this.options = options;
 		this.object = new THREE.PerspectiveCamera(options.fov, options.ratio , options.near, options.far );
 		//adding to core
-	},
-
-})._extends("Entity");
+	}
+}
 ;
-/**************************************************
-		MESH CLASS
-**************************************************/
+import Entity from './entity';
 
-Class("Mesh", {
+export default class Mesh extends Entity {
 
-	Mesh : function(geometry, material, options) {
-		Entity.call(this);
+	constructor(geometry, material, options) {
+		super();
 		this.geometry = geometry;
 		this.material = material;
 		this.script = {};
@@ -2130,9 +2128,9 @@ Class("Mesh", {
 				}
 			}
 		}
-	},
+	}
 
-	texture: function(texture) {
+	texture(texture) {
 		if (texture && this.mesh && this.mesh.material) {
 			texture.wrapS = THREE.RepeatWrapping;
 			texture.wrapT = THREE.RepeatWrapping;
@@ -2141,18 +2139,20 @@ Class("Mesh", {
 			this.mesh.material.map = texture;
 		}
 	}
-
-})._extends("Entity");
+}
 ;
-Class("ShaderMesh", {
+import Entity from './entity';
 
-    ShaderMesh : function(geometry, name, attributes, uniforms, options) {
-        Entity.call(this);
+export default class ShaderMesh extends Entity {
+
+    constructor(geometry, name, attributes, uniforms, options) {
+        super();
         this.geometry = geometry;
         this.attributes = attributes;
         this.uniforms = uniforms;
         this.shaderName = name;
-        var shader = new Shader(this.shaderName, this.attributes, this.uniforms, options);
+
+        const shader = new Shader(this.shaderName, this.attributes, this.uniforms, options);
         if (shader.shader && !shader.shader.instance) {
             if ( !attributes ) {
                 this.attributes = shader.attributes;
@@ -2167,7 +2167,7 @@ Class("ShaderMesh", {
         } else {
             this.mesh = shader.shader.instance(app.renderer, app.camera.object, app.scene, options);
         }
-        
+
         //adding to core
         app.add(this.mesh, this);
 
@@ -2182,8 +2182,7 @@ Class("ShaderMesh", {
             }
         }
     }
-
-})._extends("Entity");
+}
 ;
 /**************************************************
 		Animated MESH CLASS
@@ -2262,14 +2261,15 @@ Class("AnimatedMesh", {
 
 })._extends("Entity");
 */
+import Entity from './entity';
 /**
  * @author Michael Guerrero / http://realitymeltdown.com
  */
-Class("AnimatedMesh",  {
+export default class AnimatedMesh extends Entity {
 
-    AnimatedMesh: function(geometry, materials, options) {
+    constructor(geometry, materials, options) {
 
-        Entity.call(this);
+        super();
 
         this.animations = {};
         this.weightSchedule = [];
@@ -2309,73 +2309,60 @@ Class("AnimatedMesh",  {
 				}
 			}
 		}
+    }
 
-    },
-
-    toggleSkeleton: function() {
-
+    toggleSkeleton() {
         this.skeletonVisible = !this.skeletonVisible;
         this.skeleton.visible = this.skeletonVisible;
-    },
+    }
 
-
-	toggleModel: function() {
-
+	toggleModel() {
         this.meshVisible = !this.meshVisible;
         this.mesh.visible = this.meshVisible;
+	}
 
-	},
-
-    setWeights: function(weights) {
-
+    setWeights(weights) {
         for (name in weights) {
             if (this.animations[name]) {
                 this.animations[name].weight = weights[name];
             }
         }
-    },
+    }
 
-    update: function(dt) {
+    update(dt) {
         this.animate(dt);
-    },
+    }
 
-    animate: function(dt) {
+    animate(dt) {
 
-        for ( var i = this.weightSchedule.length - 1; i >= 0; --i ) {
+        for ( let i = this.weightSchedule.length - 1; i >= 0; --i ) {
 
 			var data = this.weightSchedule[ i ];
 			data.timeElapsed += dt;
 
 			// If the transition is complete, remove it from the schedule
 			if ( data.timeElapsed > data.duration ) {
-
 				data.anim.weight = data.endWeight;
 				this.weightSchedule.splice( i, 1 );
 
 				// If we've faded out completely, stop the animation
 
 				if ( data.anim.weight == 0 ) {
-
 					data.anim.stop( 0 );
-
 				}
 
 			} else {
-
 				// interpolate the weight for the current time
 				data.anim.weight = data.startWeight + (data.endWeight - data.startWeight) * data.timeElapsed / data.duration;
-
 			}
-
 		}
 
-		this.updateWarps( dt );
+		this.updateWarps(dt);
 		this.skeleton.update();
         THREE.AnimationHandler.update(dt);
+    }
 
-    },
-
-    updateWarps: function(dt) {
+    updateWarps(dt) {
         // Warping modifies the time scale over time to make 2 animations of different
 		// lengths match. This is useful for smoothing out transitions that get out of
 		// phase such as between a walk and run cycle
@@ -2417,46 +2404,40 @@ Class("AnimatedMesh",  {
 
 		}
 
-    },
+    }
 
-    play: function(animName) {
-
+    play(animName) {
         var weight = this.animations[animName].weight === undefined ? this.animations[animName] : 1;
 		this.animations[animName].play(0, weight);
+	}
 
-	},
-
-	crossfade: function(fromAnimName, toAnimName, duration) {
-
+	crossfade(fromAnimName, toAnimName, duration) {
 		var fromAnim = this.animations[fromAnimName];
 		var toAnim = this.animations[toAnimName];
 
 		fromAnim.play( 0, 1 );
 		toAnim.play( 0, 0 );
 
-		this.weightSchedule.push( {
-
+		this.weightSchedule.push({
 			anim: fromAnim,
 			startWeight: 1,
 			endWeight: 0,
 			timeElapsed: 0,
 			duration: duration
 
-		} );
+		});
 
-		this.weightSchedule.push( {
-
+		this.weightSchedule.push({
 			anim: toAnim,
 			startWeight: 0,
 			endWeight: 1,
 			timeElapsed: 0,
 			duration: duration
 
-		} );
-
+		});
 	},
 
-	warp: function( fromAnimName, toAnimName, duration ) {
+	warp(fromAnimName, toAnimName, duration) {
 
 		var fromAnim = this.animations[fromAnimName];
 		var toAnim = this.animations[toAnimName];
@@ -2464,53 +2445,37 @@ Class("AnimatedMesh",  {
 		fromAnim.play( 0, 1 );
 		toAnim.play( 0, 0 );
 
-		this.warpSchedule.push( {
-
+		this.warpSchedule.push({
 			from: fromAnim,
 			to: toAnim,
 			timeElapsed: 0,
 			duration: duration
+		});
 
-		} );
+	}
 
-	},
-
-	applyWeight: function(animName, weight) {
-
+	applyWeight(animName, weight) {
 		this.animations[ animName ].weight = weight;
+	}
 
-	},
-
-	pauseAll: function() {
-
-		for ( var a in this.animations ) {
-
-			if ( this.animations[ a ].isPlaying ) {
-
-				this.animations[ a ].stop();
-
+	pauseAll() {
+		for (var a in this.animations) {
+			if (this.animations[a].isPlaying) {
+				this.animations[a].stop();
 			}
-
 		}
+	}
 
-	},
-
-	unPauseAll: function() {
-
-    	for ( var a in this.animations ) {
-
-    	  if ( this.animations[ a ].isPlaying && this.animations[ a ].isPaused ) {
-
-    		this.animations[ a ].pause();
-
-    	  }
-
-    	}
-
-    },
+	unPauseAll() {
+        for ( var a in this.animations ) {
+            if ( this.animations[ a ].isPlaying && this.animations[ a ].isPaused ) {
+                this.animations[ a ].pause();
+            }
+        }
+    }
 
 
-    stopAll: function() {
+    stopAll() {
 
 		for ( a in this.animations ) {
 
@@ -2525,13 +2490,13 @@ Class("AnimatedMesh",  {
 		this.weightSchedule.length = 0;
 		this.warpSchedule.length = 0;
 
-	},
+	}
 
-    getForward: function() {
+    getForward() {
 
         var forward = new THREE.Vector3();
 
-        return function() {
+        return () => {
 
             // pull the character's forward basis vector out of the matrix
             forward.set(
@@ -2542,17 +2507,17 @@ Class("AnimatedMesh",  {
 
             return forward;
         }
-
     }
-
-})._extends("Entity");
+}
 ;
-Class("Light", {
+import Entity from '../entities/entity';
 
-	Light : function(color, intensity, position) {
+export default class Light extends Entity {
+
+	constructor(color, intensity, position) {
 		//this.mesh = new THREE.AmbientLight(color);
 		//app.add(this.mesh, this);
-		Entity.call(this);
+		super();
 		this.color = color;
 		this.intensity = intensity;
 		this.position = position || {
@@ -2563,61 +2528,62 @@ Class("Light", {
 		this.isLightOn = false;
 		this.mesh = undefined;
 		M.lightEngine.add(this);
-	},
+	}
 
-	on: function() {
+	on() {
 		if (this.light) {
-			var self = this;
-			var _delay = function() {
-				self.light.intensity += M.lightEngine.delayFactor;
-				if (self.light.intensity < self.intensity) {
+			const delay = () => {
+				this.light.intensity += M.lightEngine.delayFactor;
+				if (this.light.intensity < this.intensity) {
 					setTimeout(_delay, M.lightEngine.delayStep);
 				} else {
-					self.isLightOn = true;
+					this.isLightOn = true;
 				}
 			}
-			_delay();
-		} else {
-			console.log("You should create your light, first");
-		}
-	},
-
-	off: function() {
-		if (this.light) {
-			var self = this;
-			var _delay = function() {
-				self.light.intensity -= M.lightEngine.delayFactor;
-				if (self.light.intensity > 0) {
-					setTimeout(_delay, M.lightEngine.delayStep);
-				} else {
-					self.isLightOn = false;
-				}
-			}
-			_delay();
+			delay();
 		} else {
 			console.log("You should create your light, first");
 		}
 	}
 
-})._extends("Entity");
+	off() {
+		if (this.light) {
+			const delay = () => {
+				this.light.intensity -= M.lightEngine.delayFactor;
+				if (this.light.intensity > 0) {
+					setTimeout(_delay, M.lightEngine.delayStep);
+				} else {
+					this.isLightOn = false;
+				}
+			}
+			delay();
+		} else {
+			console.log("You should create your light, first");
+		}
+	}
+}
 ;
-Class("AmbientLight", {
+import Light from './Light';
 
-    AmbientLight : function(color, _intensity, _position) {
+export default class AmbientLight extends Light {
+
+    constructor(color, _intensity, _position) {
         var intensity = _intensity ? _intensity : 1,
             position = _position ? _position : new THREE.Vector3(0, 0, 0);
-        Light.call(this, color, intensity, position);
+        super(color, intensity, position);
         this.light = new THREE.AmbientLight(color);
         app.add(this.light, this);
     }
 
-})._extends("Light");
+}
 ;
-Class("PointLight", {
+import Light from './light';
 
-    PointLight: function(color, intensity, distance, position) {
+export default class PointLight extends Light {
 
-        Light.call(this, color, intensity, position);
+    constructor(color, intensity, distance, position) {
+
+        super(color, intensity, position);
 
         this.geometry = new THREE.SphereGeometry( M.lightEngine.holderRadius, M.lightEngine.holderSegment, M.lightEngine.holderSegment );
         this.material = new THREE.MeshPhongMaterial({color: this.color});
@@ -2628,14 +2594,15 @@ Class("PointLight", {
         this.mesh.mesh.add(this.light);
 
     }
-
-})._extends("Light");
+}
 ;
-Class("DirectionalLight", {
+import Light from './Light';
 
-    DirectionalLight: function(color, intensity, distance, position, target) {
+export default class DirectionalLight extends Light {
 
-        Light.call(this, color, intensity, position);
+    constructor(color, intensity, distance, position, target) {
+
+        super(color, intensity, position);
 
         //this.geometry = new THREE.SphereGeometry( LightEngine.holderRadius, LightEngine.holderSegment, LightEngine.holderSegment );
         //this.material = new THREE.MeshPhongMaterial({color: this.color});
@@ -2668,45 +2635,56 @@ Class("DirectionalLight", {
 
     }
 
-})._extends("Light");
+}
 ;
-window.M = window.M || {};
+import Loader from './Loader';
+import DirectionalLight from '../lights/DirectionalLight';
+import AmbientLight from '../lights/AmbientLight';
 
-M.loader = M.loader || {};
+class LightLoader extends Loader {
 
-M.loader.lights = {
-    load: function(lights) {
+    load(lights) {
         for (var j=0; j<lights.length; j++) {
             var current = lights[j]
-                parsedLight = M.loader.lights._parseLight(current);
+                parsedLight = this._parseLight(current);
 
             if (current.light.object.type == "DirectionalLight") {
-                M.loader.lights._loadDirectionalLight(parsedLight);
+                this._loadDirectionalLight(parsedLight);
             } else if (current.light.object.type == "AmbientLight") {
-                M.loader.lights._loadAmbientLight(parsedLight);
+                this._loadAmbientLight(parsedLight);
             } else if (current.light.object.type == "PointLight") {
-                M.loader.lights._loadPointLight(parsedLight);
+                this._loadPointLight(parsedLight);
             }
         }
-    },
+    }
 
-    _parseLight: function(light) {
+    _parseLight(light) {
         return {
             holder: (light.holder) ? app.loader.parse(light.holder) : false,
             target: (light.target) ? app.loader.parse(light.target) : false,
             light: (light.light) ? app.loader.parse(light.light) : false
         };
-    },
+    }
 
-    _loadDirectionalLight: function(light) {
-        new DirectionalLight(light.light.color, light.light.intensity, light.light.distance, light.light.position, light.target);
-    },
+    _loadDirectionalLight(light) {
+        new DirectionalLight(
+            light.light.color,
+            light.light.intensity,
+            light.light.distance,
+            light.light.position,
+            light.target
+        );
+    }
 
-    _loadAmbientLight: function(light) {
-        new AmbientLight(light.light.color, light.light.intensity, light.light.position);
-    },
+    _loadAmbientLight(light) {
+        new AmbientLight(
+            light.light.color,
+            light.light.intensity,
+            light.light.position
+        );
+    }
 
-    _loadPointLight: function(light) {
+    _loadPointLight(light) {
         var d = 200;
         var position = light.holder ? light.holder.position : light.light.position;
         var pointlight = new PointLight(light.light.color, light.light.intensity, d, position);
@@ -2720,29 +2698,31 @@ M.loader.lights = {
     }
 }
 ;
-window.M = window.M || {};
+import Mesh from '../entities/Mesh';
+import ShaderMesh from '../entities/ShaderMesh';
+import imagesEngine from '../images/imagesEngine'
+import Loader from './Loader';
 
-M.loader = M.loader || {};
+class MeshLoader extends Loader {
 
-M.loader.meshes = {
-    load: function(meshes) {
+    load(meshes) {
         for (var i=0; i<meshes.length; i++) {
 			var current = meshes[i],
-                shader = M.loader.meshes._parseShader(current),
-                script = M.loader.meshes._parseScript(current),
-                parsedMesh = M.loader.meshes._parseMesh(current);
+                shader = this._parseShader(current),
+                script = this._parseScript(current),
+                parsedMesh = this._parseMesh(current);
 
 			if (parsedMesh.name.indexOf('_camera') > -1) {
-				M.loader.meshes._loadCamera(parsedMesh, script);
+				this._loadCamera(parsedMesh, script);
 			} else {
-                M.loader.meshes._loadMesh(current, parsedMesh, script, shader);
+                this._loadMesh(current, parsedMesh, script, shader);
 			}
         }
-    },
+    }
 
     _parseMesh: function(mesh) {
         return app.loader.parse(mesh);
-    },
+    }
 
     _parseScript: function(mesh) {
         var script = mesh.object.userData ? mesh.object.userData['script'] : false,
@@ -2759,7 +2739,7 @@ M.loader.meshes = {
             dir: dir,
             file: file
         };
-    },
+    }
 
     _parseShader: function(mesh) {
         var name = mesh.object.userData ? mesh.object.userData['shader_name'] : false,
@@ -2776,9 +2756,7 @@ M.loader.meshes = {
             name: name,
             options: opts
         };
-    },
-
-    // giro tenere senso derby collaboratore
+    }
 
     _loadCamera: function(mesh, script) {
         var camType = mesh.name.replace('_', '').toLowerCase();
@@ -2787,7 +2765,7 @@ M.loader.meshes = {
             app.camera.object.rotation.set(mesh.rotation.x, mesh.rotation.y, mesh.rotation.z);
             app.camera.object.scale.set(mesh.scale.x, mesh.scale.y, mesh.scale.z);
 
-            M.loader.meshes._attachScript(app.camera, script);
+            this._attachScript(app.camera, script);
         }
     },
 
@@ -2805,7 +2783,7 @@ M.loader.meshes = {
             mesh.mesh.receiveShadow = true;
             // setting texture
             if (current.textureKey) {
-                var texture = M.imagesEngine.get(current.textureKey);
+                var texture = imagesEngine.get(current.textureKey);
                 texture.wrapS = THREE.RepeatWrapping;
                 texture.wrapT = THREE.RepeatWrapping;
                 texture.repeat.set(1, 1);
@@ -2813,7 +2791,7 @@ M.loader.meshes = {
             }
         }
 
-        M.loader.meshes._attachScript(mesh, script);
+        this._attachScript(mesh, script);
     },
 
     _attachScript: function(mesh, script) {
@@ -2821,4 +2799,14 @@ M.loader.meshes = {
             mesh.addScript(script.file.replace('.js', ''), script.dir);
         }
     }
+}
+
+this = {
+
+
+
+
+    // giro tenere senso derby collaboratore
+
+
 }

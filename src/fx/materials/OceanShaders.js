@@ -1,6 +1,6 @@
 export class OceanMain {
 
-    uniforms() {
+    static uniforms() {
         return {
             "u_displacementMap": { type: "t", value: null },
             "u_normalMap": { type: "t", value: null },
@@ -16,14 +16,14 @@ export class OceanMain {
         }
     }
 
-	varying() {
+	static varying() {
        return {
             "vPos": { type: "v3" },
             "vUV": { type: "v2" }
         }
     }
 
-	vertex() {
+	static vertex() {
         return [
             'precision highp float;',
 
@@ -45,7 +45,7 @@ export class OceanMain {
         ].join( '\n' )
     }
 
-	fragment() {
+	static fragment() {
         return [
             'precision highp float;',
 
@@ -84,7 +84,7 @@ export class OceanMain {
 
 export class OceanNormals {
 
-	uniforms() {
+	static uniforms() {
         return {
             "u_displacementMap": { type: "t", value: null },
             "u_resolution": { type: "f", value: null },
@@ -92,13 +92,13 @@ export class OceanNormals {
         }
     }
 
-	varying() {
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
     }
 
-	fragment() {
+	static fragment() {
         return [
             'precision highp float;',
 
@@ -131,7 +131,7 @@ export class OceanNormals {
 
 export class OceanSpectrum {
 
-	uniforms() {
+	static uniforms() {
         return {
             "u_size": { type: "f", value: null },
             "u_resolution": { type: "f", value: null },
@@ -141,13 +141,13 @@ export class OceanSpectrum {
         }
     },
 
-	varying() {
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
     }
 
-	fragment()  {
+	static fragment()  {
         return [
             'precision highp float;',
             '#include <common>',
@@ -208,7 +208,7 @@ export class OceanSpectrum {
 
 export class OceanPhase {
 
-    uniforms() {
+    static uniforms() {
         return {
             "u_phases": { type: "t", value: null },
             "u_deltaTime": { type: "f", value: null },
@@ -217,13 +217,13 @@ export class OceanPhase {
         }
     }
 
-	varying() {
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
     }
 
-	fragment() {
+	static fragment() {
         return [
             'precision highp float;',
             '#include <common>',
@@ -261,7 +261,7 @@ export class OceanPhase {
 
 export class OceanInitialSpectrum {
 
-    uniforms() {
+    static uniforms() {
         return {
             "u_wind": { type: "v2", value: new THREE.Vector2( 10.0, 10.0 ) },
             "u_resolution": { type: "f", value: 512.0 },
@@ -269,7 +269,7 @@ export class OceanInitialSpectrum {
         }
     }
 
-	fragment() {
+	static fragment() {
         return [
             'precision highp float;',
             '#include <common>',
@@ -342,9 +342,9 @@ export class OceanInitialSpectrum {
     }
 }
 
-export class OceanSubtransform {
+export class OceanSubTransform {
 
-    uniforms() {
+    static uniforms() {
         return {
             "u_input": { type: "t", value: null },
             "u_transformSize": { type: "f", value: 512.0 },
@@ -352,13 +352,13 @@ export class OceanSubtransform {
         }
     }
 
-	varying() {
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
     }
 
-	fragment() {
+	static fragment() {
         return [
             //GPU FFT using a Stockham formulation
 
@@ -407,13 +407,13 @@ export class OceanSubtransform {
 
 export class OceanSimVertex {
 
-    varying() {
+    static varying() {
         return {
             "vUV": { type: "v2" }
         }
     }
 
-	vertex() {
+	static vertex() {
         return [
             'varying vec2 vUV;',
 
