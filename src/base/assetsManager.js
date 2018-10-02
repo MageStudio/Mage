@@ -3,6 +3,7 @@ import VideoEngine from '../video/VideoEngine';
 import ImagesEngine from '../images/ImagesEngine';
 import ModelsEngine from '../models/ModelsEngine';
 import ShadersEngine from '../fx/shaders/ShadersEngine';
+import ParticleEngine from '../fx/particles/ParticleEngine';
 
 export default class AssetsManager {
 
@@ -20,6 +21,7 @@ export default class AssetsManager {
 		this.imagesEngine = new ImagesEngine(this);
 		this.modelsEngine = new ModelsEngine(this);
 		this.shadersEngine = new ShadersEngine(this);
+		this.particlesEngine = new ParticleEngine(this);
 	}
 
 	load(callback) {
@@ -29,7 +31,8 @@ export default class AssetsManager {
 			this.videoEngine.load(),
 			this.imagesEngine.load(),
 			this.modelsEngine.load(),
-			this.shadersEngine.load()
+			this.shadersEngine.load(),
+			this.particlesEngine.load()
 		]).then(() => {
 			callback();
 			this.loadingMessage(true);

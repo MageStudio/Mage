@@ -1,3 +1,5 @@
+import { include } from '../../base/util';
+
 export default class ShadersEngine {
 
 	constructor(assetsManager) {
@@ -5,6 +7,7 @@ export default class ShadersEngine {
 		this.SHADERS = [];
 
 		this.map = {};
+		@todo missing shaders here, import and add to map
 		this.shaders = [];
 
 		this.numShaders = 0;
@@ -13,39 +16,45 @@ export default class ShadersEngine {
 	}
 
 	load() {
+
 		if (Assets.Shaders) {
-			for (var shader in Assets.Shaders) {
-				this.numShaders++;
-				this.loadSingleFile(shader, Assets.Shaders[shader]);
+
+			const keys = Object.keys(Assets.Shaders);
+
+			if (!keys.length) {
+				return Promise.resolve('shaders');
 			}
+
+			return Promise.all(keys.map(this.loadSingleFile));
 		}
 
-		if (this.numShaders == 0) {
-			this.assetsManager.completed.shaders = true;
-		}
+		return Promise.resolve('shaders');
 	}
 
 	get(id) {
 		return this.map[id] || false;
 	}
 
-	loadSingleFile(id, path) {
+	loadSingleFile(id) {
+		const path = Assets.Shaders[id];
 		const type = path.split(".")[1];
 
-		if ( type == "js" ) {
-			include(path.split(".js")[0], this.checkLoad);
-		} else {
-			const request = new XMLHttpRequest();
-			request.open("GET", path, true);
-			request.responseType = "text";
-			request.onload = (e) => {
-				const shader = this.parseShader(request.responseText);
-				this.map[id] = shader;
-				this.shadersLoaded++;
-				this.checkLoad();
-			};
-			request.send();
-		}
+		return new Promise(resolve => {
+			if ( type == "js" ) {
+				include(path.split(".js")[0], resolve);
+			} else {
+				const request = new XMLHttpRequest();
+				request.open("GET", path, true);
+				request.responseType = "text";
+				request.onload = (e) => {
+					const shader = this.parseShader(request.responseText);
+					this.map[id] = shader;
+					this.shadersLoaded++;
+					resolve();
+				};
+				request.send();
+			}
+		});
 	}
 
 	parseShader(text) {
@@ -70,12 +79,6 @@ export default class ShadersEngine {
 			uniforms: params.uniforms || {},
 			instance: params.instance || false
 		});
-	}
-
-	checkLoad() {
-		if (this.shadersLoaded == this.numShaders) {
-			this.assetsManager.completed.shaders = true;
-		}
 	}
 
 	add(shader) {

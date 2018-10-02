@@ -25,15 +25,17 @@ export default class ParticleEngine {
 	load() {
 
 		if (Assets.Particles) {
-			for (var particle in Assets.Particles) {
-				this.numParticles++;
-				this.loadSingleFile(particle, Assets.particles[particle]);
+
+			const keys = Object.keys(Assets.Particles);
+
+			if (!keys.length) {
+				return Promise.resolve('particles');
 			}
+
+			return Promise.all(keys.map(this.loadSingleFile));
 		}
 
-		if (this.numParticles == 0) {
-			this.assetsManager.completed.particles = true;
-		}
+		return Promise.resolve('particles');
 	}
 
 	get(id) {
@@ -41,23 +43,27 @@ export default class ParticleEngine {
 		return this.map[id] || false;
 	}
 
-	loadSingleFile(id, path) {
+	loadSingleFile(id) {
+		const path = Assets.Particles[id];
 		// @todo this has to be changed. We can load a M.fx.createparticle file, a custom particle or a threejs particle/material.
 		const type = path.split(".")[1];
-		if ( type == "js" ) {
-			include(path.split(".js")[0], this.checkLoad);
-		} else {
-			const request = new XMLHttpRequest();
-			request.open("GET", path, true);
-			request.responseType = "text";
-			request.onload = (e) => {
-				var particle = this.parseParticle(request.responseText);
-				this.map[id] = particle;
-				this.particlesLoaded++;
-				this.checkLoad();
-			};
-			request.send();
-		}
+
+		return new Promise(resolve => {
+			if ( type == "js" ) {
+				include(path.split(".js")[0], resolve);
+			} else {
+				const request = new XMLHttpRequest();
+				request.open("GET", path, true);
+				request.responseType = "text";
+				request.onload = (e) => {
+					var particle = this.parseParticle(request.responseText);
+					this.map[id] = particle;
+					this.particlesLoaded++;
+					resolve();
+				};
+				request.send();
+			}
+		});
 	}
 
 	parseParticle(text) {

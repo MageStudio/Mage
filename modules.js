@@ -105,7 +105,7 @@ libs
 CORE
 	ALL THE ENGINES
 	UTIL
-	APP	
+	APP
 
 AUDIO
 	classes and shit
@@ -151,7 +151,6 @@ module.exports = (function() {
 		LIB + "keypress.min.js",
 		LIB + "leap-0.4.3.min.js",
 		LIB + "leap-plugins-0.1.3.js",
-		LIB + "three.min.js",
 		LIB + "OBJLoader.js",
 		LIB + "physi.js",
 		LIB + "tween.js",
@@ -162,9 +161,8 @@ module.exports = (function() {
 	modules.core = [
 
 		BASE + 'detector.js',
-		BASE + "classy.js",
 
-		
+
 
 		// libraries always needed
 		LIB + "bee.min.js",
@@ -172,7 +170,7 @@ module.exports = (function() {
 		BASE + "colors.js",
 		BASE + "HashMap.js",
 
-		
+
 		// engines
 		BASE + "assetsManager.js",
 		//loading effects
@@ -201,7 +199,7 @@ module.exports = (function() {
 
 	// 3
 	modules.game = [
-		
+
 		BASE + "util.js",
 		BASE + "control.js",
 		BASE + "game.js",

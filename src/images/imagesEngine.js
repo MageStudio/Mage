@@ -1,8 +1,6 @@
 export default class ImagesEngine {
 
 	constructor(assetsManager) {
-		this.numImages = 0;
-		this.imagesLoaded = 0;
 		this.defaults = {
 			"waterNormal": "assets/images/waternormals.jpg",
 			"water": "assets/images/water.jpg",
@@ -27,63 +25,61 @@ export default class ImagesEngine {
 		Object.assign(Assets.Textures, this.defaults);
 		Object.assign(Assets.Images, this.imagesDefault);
 
-		for (var image in Assets.Textures) {
-			this.numImages++;
-			this.loadSingleFile(image, Assets.Textures[image]);
+		if (!(Object.keys(Assets.Textures).length + Object.keys(Assets.Images).length)) {
+			return Promise.resolve('images');
 		}
 
-		for (var image in Assets.Images) {
-			this.numImages++;
-			this.loadSingleImage(image, Assets.Images[image]);
-		}
+		const promises = Object
+			.keys(Assets.Textures)
+			.map(this.loadSingleFile)
+			.concat(Object.keys(Assets.Images)
+			.map(this.loadSingleImage));
 
-		if (this.numImages == 0) {
-			this.assetsManager.completed.images = true;
-		}
+		return Promise.all(promises);
 	}
 
 	get(key) {
 		return this.map[key] || false;
 	}
 
-	loadSingleImage(id, path) {
-		try {
-			this.imagesLoaded++;
-			this.imageLoader.load(path, function(image) {
-				this.map[id] = image;
-				this.checkLoad();
-			}, function() {
-				// displaying progress
-			}, function() {
-				console.log('An error occurred while fetching texture.');
-				this.checkLoad();
-			});
-		} catch (e) {
-			console.log('[MAGE] error loading image ' + id + ' at path ' + path);
-		}
+	loadSingleImage(id) {
+		const path = Assets.Images[id];
+		return new Promise(resolve => {
+			try {
+				this.imageLoader.load(path, function(image) {
+					this.map[id] = image;
+					resolve();
+				},
+				function() {},  // displaying progress
+				function() {
+					console.log('An error occurred while fetching texture.');
+					resolve();
+				});
+			} catch (e) {
+				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
+				resolve();
+			}
+		})
 	}
 
-	loadSingleFile(id, path) {
-		try {
-			this.imagesLoaded++;
-			this.loader.load(path, function(texture) {
-				this.map.put(id, texture);
-				this.checkLoad();
-			}, function() {
-				// displaying progress
-			}, function() {
-				console.log('An error occurred while fetching texture.');
-				this.checkLoad();
-			});
-		} catch (e) {
-
-		}
-	}
-
-	checkLoad() {
-		if (this.imagesLoaded == this.numImages) {
-			this.assetsManager.completed.images = true;
-		}
+	loadSingleFile(id) {
+		const path = Assets.Textures[id];
+		return new Promise(resolve => {
+			try {
+				this.loader.load(path, function(texture) {
+					this.map.put(id, texture);
+					resolve();
+				},
+				function() {},  // displaying progress
+				function() {
+					console.log('An error occurred while fetching texture.');
+					resolve();
+				});
+			} catch (e) {
+				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
+				resolve();
+			}
+		});
 	}
 
 	add(id, image) {

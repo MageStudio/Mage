@@ -1,4 +1,8 @@
 import Mesh from '../entities/Mesh';
+import {
+	MultiMaterial,
+	MeshLambertMaterial
+} from 'three';
 
 export default class ModelsEngine {
 
@@ -12,15 +16,13 @@ export default class ModelsEngine {
 	load() {
 		this.map = {};
 		this.models = [];
+		const keys = Object.keys(Assets.Models);
 
-		for (var model in Assets.Models) {
-			this.numModels++;
-			this.loadSingleFile(model, Assets.Models[model]);
+		if (!keys.length) {
+			return Promise.resolve('models');
 		}
 
-		if (this.numModels == 0) {
-			this.assetsManager.completed.models = true;
-		}
+		return Promise.all(keys.map(this.loadSingleFile));
 	}
 
 	get(id) {
@@ -32,33 +34,30 @@ export default class ModelsEngine {
 		return false;
 	}
 
-	loadSingleFile(id, path) {
+	loadSingleFile(id) {
+		const path = Assets.Models[id];
+		return new Promise(resolve => {
+			this.loader.load(path, (geometry, materials) => {
+	            var faceMaterial;
+	            if (materials && materials.length > 0) {
+	                var material = materials[0];
+	                material.morphTargets = true;
+	                faceMaterial = new MultiMaterial(materials);
+	            } else {
+	                faceMaterial = new MeshLambertMaterial({wireframe: true});
+	            }
+
+	            var model = {
+					geometry: geometry,
+					material: faceMaterial
+				}
+
+				this.map[id] = model;
+				resolve();
+	        });
+		});
 		// Load a sound file using an ArrayBuffer XMLHttpRequest.
-		this.loader.load(path, function(geometry, materials) {
-            var faceMaterial;
-            if (materials && materials.length > 0) {
-                var material = materials[0];
-                material.morphTargets = true;
-                faceMaterial = new THREE.MultiMaterial(materials);
-            } else {
-                faceMaterial = new THREE.MeshLambertMaterial({wireframe: true});
-            }
 
-            var model = {
-				geometry: geometry,
-				material: faceMaterial
-			}
-
-			this.map[id] = model;
-			this.modelsLoaded++;
-			this.checkLoad();
-        });
-	}
-
-	checkLoad() {
-		if (this.modelsLoaded == this.numModels) {
-			this.assetsManager.completed.models = true;
-		}
 	}
 
 	add(model) {

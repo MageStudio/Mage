@@ -50,14 +50,15 @@ export default class AudioEngine {
 			console.error("No Audio Context available, sorry.");
 		}
 
-		for (var audio in Assets.Audio) {
-			this.numSound++;
-			this.loadSingleFile(audio, Assets.Audio[audio]);
+		if (Object.keys(Assets.Audio).length == 0) {
+			return Promise.resolve('audio');
 		}
 
-		if (this.numSound == 0) {
-			this.assetsManager.completed.sound = true;
-		}
+		return Promise
+			.all(Object
+				.keys(Assets.Audio)
+				.map(this.loadSingleFile)
+			);
 	}
 
 	get(id) {
@@ -65,32 +66,29 @@ export default class AudioEngine {
 		return M.audioEngine.map[id] || false;
 	}
 
-	loadSingleFile(id, path) {
+	loadSingleFile(id) {
+		const path = Assets.Audio[id];
 		// Load a sound file using an ArrayBuffer XMLHttpRequest.
 		const request = new XMLHttpRequest();
-		request.open("GET", path, true);
-		request.responseType = "arraybuffer";
-		request.onload = (e) => {
-			this.context.decodeAudioData(this.response,
-				(buffer) => {
-					this.map[id] = buffer;
-					this.soundLoaded++;
-					this.checkLoad();
-				},
-				() => {
-					this.map.put[id] = null;
-					this.soundLoaded++;
-					console.error("Decoding the audio buffer failed");
-				});
+		return new Promise(resolve => {
+			request.open("GET", path, true);
+			request.responseType = "arraybuffer";
+			request.onload = (e) => {
+				this.context.decodeAudioData(this.response,
+					(buffer) => {
+						this.map[id] = buffer;
+						resolve();
+						this.checkLoad();
+					},
+					() => {
+						this.map.put[id] = null;
+						resolve();
+						console.error("Decoding the audio buffer failed");
+					});
 
-		};
-		request.send();
-	}
-
-	checkLoad() {
-		if (this.soundLoaded == this.numSound) {
-			this.assetsManager.completed.sound = true;
-		}
+			};
+			request.send();
+		})
 	}
 
 	add(sound) {
