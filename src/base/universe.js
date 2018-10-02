@@ -1,34 +1,31 @@
-window.M = window.M || {};
+export default class Universe {
 
-M.universe =  {
+	constructor() {
+		this.reality = {};
+		this.worker = undefined;
+	}
 
-	reality: undefined,
+	set(id, value) {
+		this.reality[id] = value;
+	}
 
-	loaded: false,
+	remove(id) {
+		delete this.reality[id];
+	}
 
-	worker: undefined,
-
-	bigbang: function(){
-		console.log("inside universe init");
-
-		M.universe.loaded = true;
-		M.universe.reality = {};
-	},
-
-	update: function() {
+	update(delta) {
 
 		const keys = Object.keys(M.universe.reality);
 		if (keys.length != 0) {
 			var start = +new Date();
 			do {
-				const o = M.universe.reality[keys_list.shift()];
+				const o = this.reality[keys_list.shift()];
 				if (o && o.update) {
-					o.update(app.clock.getDelta());
+					o.update(delta);
 				}
 				o.render();
 			} while (keys.length > 0 && (+new Date() - start < 50));
 		}
 	}
-};
 
-M.universe.bigbang();
+}

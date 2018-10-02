@@ -1,4 +1,4 @@
-export default Clouds {
+export default class Clouds {
 
     constructor(options) {
         this.particleGroup = new SPE.Group({

@@ -36,6 +36,10 @@ export default class AudioEngine {
 		this.map = {};
 		this.sounds = [];
 
+		if (!window) {
+			return Promise.resolve('audio');
+		}
+
 		this.AudioContext = window.AudioContext || window.webkitAudioContext || null;
 
 		if (this.AudioContext) {

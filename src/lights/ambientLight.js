@@ -1,4 +1,5 @@
 import Light from './Light';
+import app from '../base/App';
 
 export default class AmbientLight extends Light {
 

@@ -162,12 +162,12 @@ export class Checker {
 				reject(e);
 			}
         });
-    },
+    }
 
     ajax() {
         return new Promise((resolve, reject) => {
 			try {
-				const xhr = null;
+				let xhr = null;
 	            try { xhr = new XMLHttpRequest(); } catch (e) {}
 	            try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) {}
 	            try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}

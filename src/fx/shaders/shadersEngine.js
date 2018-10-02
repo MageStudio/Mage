@@ -7,7 +7,7 @@ export default class ShadersEngine {
 		this.SHADERS = [];
 
 		this.map = {};
-		@todo missing shaders here, import and add to map
+		// @todo missing shaders here, import and add to map
 		this.shaders = [];
 
 		this.numShaders = 0;
