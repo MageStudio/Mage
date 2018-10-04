@@ -1,4 +1,4 @@
-class LigthEngine {
+export class LigthEngine {
 
     constructor() {
         this.delayFactor = 0.1;

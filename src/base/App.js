@@ -1,5 +1,6 @@
 import Manager from './Manager';
 import Universe from './Universe';
+import SceneManager from './SceneManager';
 import Camera from '../entities/Camera';
 import util from './util';
 import {
@@ -73,24 +74,16 @@ export class App {
 
         // creating manager
         this.manager = new Manager();
-        this.universe = new Universe();
+        SceneManager.setConfig(this.config);
 
         // registering listener for events from parent
         window.addEventListener("onmessage", this.onMessage, false);
         window.addEventListener("message", this.onMessage, false);
-        //window.addEventListener('load', M.start);
         window.addEventListener('resize', this.onResize);
-
-
     }
 
     set clearColor(value) {
-        try {
-            if (this.renderer) {
-                this.renderer.setClearColor(value);
-                //this.clearColor = value;
-            }
-        } catch (e) {}
+        SceneManager.setClearColor(value);
     }
 
     //onCreate method, ovveride to start creating stuff
@@ -138,111 +131,17 @@ export class App {
         this.config.w = window.innerWidth;
         this.config.ratio = this.config.w / this.config.h;
 
-        if (!this.camera || !this.renderer) return;
-
-        this.camera.object.aspect = this.config.ratio;
-        this.camera.object.updateProjectionMatrix();
-        this.renderer.setSize(this.config.w, this.config.h);
+        SceneManager.onResize(this.config);
     };
 
     render() {
-
-        //handling user input
-        //M.user.handleUserInput();
-        //updating game and engines
-        // M.game.update();
-        // M.audioEngine.update();
-        // M.lightEngine.update();
-        this.engine.update();
-        //updating universe
-        this.universe.update(this.clock.getDelta()));
-        M.control.update();
-
-        //updating camera if we need to do so.
-        if (this.camera.update) {
-            this.camera.update(this.clock.getDelta());
-        }
-
-        this.renderer.autoClear = false;
-        this.renderer.clear(this.clearColor);
+        this.manager.update();
+        // M.control.update();
         this._render();
-        this.renderer.render(this.scene, this.camera.object);
+        SceneManager.update();
 
-        /*
-        setTimeout(function() {
-            if (app.util.physics_enabled) {
-                if (Physijs._isLoaded) {
-                    app.scene.simulate();
-                }
-            }
-            if (app.util.tween_enabled) {
-                TWEEN.update();
-            }
-            requestAnimFrame(app.render);
-        }, 1000 / app.util.frameRate);
-        */
-        if (this.config.physics_enabled && Physijs._isLoaded) {
-            this.scene.simulate();
-        }
-        if (this.config.tween_enabled) {
-            TWEEN.update();
-        }
         requestAnimFrame(this.render.bind(this));
 
-    }
-
-    add(mesh, element) {
-		this.scene.add(mesh);
-		this.universe.set(mesh.uuid, element);
-	}
-
-	remove(mesh) {
-		this.scene.remove(mesh);
-		this.universe.remove(mesh.uuid);
-	}
-
-    createScene() {
-        const { physics_enabled = false } = this.config;
-        const ammo = 'ammo.js';
-        const worker = 'workers/physijs_worker.js';
-
-        if (physics_enabled && Physijs) {
-            Physijs.scripts.worker = worker;
-            Physijs.scripts.ammo = ammo;
-            this.scene = new Physijs.Scene();
-            Physijs._isLoaded = true;
-        } else {
-            Physijs._isLoaded = false;
-            this.scene = new Scene();
-        }
-    }
-
-    createCamera() {
-        const cameraOptions = {
-            fov : this.config.camera.fov,
-            ratio : this.config.ratio,
-            near : this.config.camera.near,
-            far : this.config.camera.far
-        };
-
-        this.camera = new Camera(cameraOptions);
-    }
-
-    createRenderer() {
-        const alphaRenderer = !!this.config.alpha;
-
-        this.renderer = new WebGLRenderer({alpha: alphaRenderer, antialias: true});
-
-        if (this.config.cast_shadow) {
-            this.renderer.shadowMap.enabled = true;
-            this.renderer.shadowMap.type = PCFSoftShadowMap;
-            this.renderer.sortObjects = false;
-        }
-
-        this.renderer.setPixelRatio( window.devicePixelRatio );
-        this.renderer.setSize( this.config.w , this.config.h );
-
-        document.getElementById("gameContainer").appendChild(this.renderer.domElement);
     }
 
     init() {
@@ -250,22 +149,10 @@ export class App {
             this._keylistener =  new window.keypress.Listener();
         }
 
-        this.createScene();
-        this.createCamera();
-        this.createRenderer();
-
-        //handling user input
-        //M.user.handleUserInput();
-        //updating game
-        M.game.update();
-        //updating universe
-        this.universe.update();
-
-        //launch render method
-        M.control.init();
+        SceneManager.create();
+        // M.control.init();
         this.render();
 
-        //we are pretty sure we can add stuff to our universe
         if (this.onCreate instanceof Function) {
             this.onCreate();
         } else {
@@ -274,7 +161,6 @@ export class App {
     }
 
     load() {
-
         console.log("inside load");
         if (!(typeof this.progressAnimation == "function")) {
             this.progressAnimation = function(callback) {
@@ -283,7 +169,6 @@ export class App {
             }
         }
         this.progressAnimation(this.init);
-
     }
 
     sendMessage(message) {
@@ -305,7 +190,6 @@ export class App {
 
     //utilities methods
     log() {
-
     	if (this.debug) {
     		if (arguments.length>1) {
     			if (arguments[1] in this.log_types) {
@@ -379,6 +263,8 @@ export default App;
 export const start(className) {
     if (typeof className === 'function') {
         window.app = new className();
+    } else {
+        window.app = new App();
     }
 
     util.start();
@@ -392,5 +278,5 @@ export const start(className) {
                 app.prepareScene();
                 app.load();
             })
-    }))
+    }));
 }

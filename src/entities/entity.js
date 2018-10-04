@@ -1,3 +1,10 @@
+import ScriptManager from '../base/ScriptManager';
+import Sound from '../audio/Sound';
+import DirectionalSound from '../audio/DirectionalSound';
+import AmbientSound from '../audio/AmbientSound';
+import PointLight from '../lights/PointLight';
+import SceneManager from '../base/SceneManager';
+
 export default class Entity {
 	constructor() {}
 
@@ -12,11 +19,11 @@ export default class Entity {
 	}
 
 	addScript(scriptname, dir) {
-		let path = M.game.SCRIPTS_DIR + (dir || "");
+		let path = ScriptManager.SCRIPTS_DIR + (dir || "");
 		if (path[path.length - 1] != "/") {
 			path += "/"; //adding dir separator if we forgot it
 		}
-		M.game.attachScriptToObject(this, scriptname, path);
+		ScriptManager.attachScript(this, scriptname, path);
 	}
 
 	//__loadScript will be automatically called by Game object
@@ -27,7 +34,7 @@ export default class Entity {
 		try {
 			this.start();
 		} catch(e) {
-			console.log("I told you, man. Check your start method inside your " + script.name + ".js script");
+			console.log("Check your start method inside your " + script.name + ".js script");
 		}
 	}
 

@@ -1,6 +1,8 @@
-export default class AudioEngine {
+import { Vector3 } from 'three';
 
-	constructor(assetsManager) {
+export class AudioEngine {
+
+	constructor() {
 		this.DELAY_FACTOR = 0.02;
 		this.DELAY_STEP = 1; //millis
 		this.DELAY_MIN_VALUE = 0.2;
@@ -17,26 +19,25 @@ export default class AudioEngine {
 
 		this.numSound = 0;
 		this.soundLoaded = 0;
-
-		this.assetsManager = assetsManager;
 	}
 
-	get VOLUME() {
+	getVolume() {
 		if (this._volume) {
 			return this._volume;
 		}
 	}
 
-	set VOLUME(value) {
+	setVolume(value) {
 		this._volume = value;
 		this.volume.gain.value = this._volume;
 	}
 
-	load() {
+	load(manager) {
+		this.assetsManager = manager;
 		this.map = {};
 		this.sounds = [];
 
-		if (!window) {
+		if (!window || !this.assetsManager) {
 			return Promise.resolve('audio');
 		}
 
@@ -107,7 +108,7 @@ export default class AudioEngine {
 
 			//now handling listener
 			app.camera.object.updateMatrixWorld();
-			var p = new THREE.Vector3();
+			var p = new Vector3();
 			p.setFromMatrixPosition(app.camera.object.matrixWorld);
 
 			//setting audio engine context listener position on camera position
@@ -122,12 +123,12 @@ export default class AudioEngine {
 			m.elements[12] = m.elements[13] = m.elements[14] = 0;
 
 			// Multiply the orientation vector by the world matrix of the camera.
-			var vec = new THREE.Vector3(0,0,1);
+			var vec = new Vector3(0,0,1);
 			vec.applyProjection(m);
 			vec.normalize();
 
 			// Multiply the up vector by the world matrix.
-			var up = new THREE.Vector3(0,-1,0);
+			var up = new Vector3(0,-1,0);
 			up.applyProjection(m);
 			up.normalize();
 
@@ -142,3 +143,5 @@ export default class AudioEngine {
 		}
 	}
 }
+
+export default new AudioEngine();

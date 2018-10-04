@@ -1,3 +1,7 @@
+import AudioEngine from './AudioEngine';
+import { Vector3 } from 'three';
+import Beat from './Beat';
+
 export default class AmbientSound extends Beat {
 
 	constructor(name, options) {
@@ -6,11 +10,11 @@ export default class AmbientSound extends Beat {
 		this.sound.source.loop = options.loop || false;
 
 		//creating panner, we need to update on object movements.
-		this.sound.panner = M.audioEngine.context.createPanner();
+		this.sound.panner = AudioManager.context.createPanner();
 		//disconnecting from main volume, then connecting to panner and main volume again
 		this.sound.volume.disconnect();
 		this.sound.volume.connect(this.sound.panner);
-		this.sound.panner.connect(M.audioEngine.volume);
+		this.sound.panner.connect(AudioManager.volume);
 
 		//storing mesh
 		this.mesh = options.mesh;
@@ -18,21 +22,21 @@ export default class AmbientSound extends Beat {
 		//if we set up an effect in our options, we need to create a convolver node
 		if (options.effect) {
 
-			this.convolver = M.audioEngine.context.createConvolver();
-			this.mixer = M.audioEngine.context.createGain();
+			this.convolver = AudioManager.context.createConvolver();
+			this.mixer = AudioManager.context.createGain();
 			this.sound.panner.disconnect();
 			this.sound.panner.connect(this.mixer);
 			//creating gains
-			this.plainGain = M.audioEngine.context.createGain();
-			this.convolverGain = AudioEngine.context.createGain();
+			this.plainGain = AudioManager.context.createGain();
+			this.convolverGain = AudioManager.context.createGain();
 			//connect mixer to new gains
 			this.mixer.connect(plainGain);
 			this.mixer.connect(convolverGain);
 
-			this.plainGain.connect(M.audioEngine.volume);
-			this.convolverGain.connect(M.audioEngine.volume);
+			this.plainGain.connect(AudioManager.volume);
+			this.convolverGain.connect(AudioManager.volume);
 
-			this.convolver.buffer = M.audioEngine.get(options.effect);
+			this.convolver.buffer = AudioManager.get(options.effect);
 			this.convolverGain.gain.value = 0.7;
 			this.plainGain.gain.value = 0.3;
 
@@ -50,7 +54,7 @@ export default class AmbientSound extends Beat {
 
 		// In the frame handler function, get the object's position.
 		this.mesh.updateMatrixWorld();
-		const p = new THREE.Vector3();
+		const p = new Vector3();
 		p.setFromMatrixPosition(this.mesh.matrixWorld);
 
 		// And copy the position over to the sound of the object.

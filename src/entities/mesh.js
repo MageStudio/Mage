@@ -1,4 +1,5 @@
-import Entity from './entity';
+import Entity from './Entity';
+import Universe from '../base/Universe';
 
 export default class Mesh extends Entity {
 
@@ -15,7 +16,7 @@ export default class Mesh extends Entity {
 			this.mesh.receiveShadow = true;
 		}
 		//adding to core
-		app.add(this.mesh, this);
+		Universe.add(this.mesh, this);
 
 		if (options) {
 			//do something with options

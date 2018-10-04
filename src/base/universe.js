@@ -1,4 +1,4 @@
-export default class Universe {
+export class Universe {
 
 	constructor() {
 		this.reality = {};
@@ -15,7 +15,7 @@ export default class Universe {
 
 	update(delta) {
 
-		const keys = Object.keys(M.universe.reality);
+		const keys = Object.keys(this.reality);
 		if (keys.length != 0) {
 			var start = +new Date();
 			do {
@@ -27,5 +27,6 @@ export default class Universe {
 			} while (keys.length > 0 && (+new Date() - start < 50));
 		}
 	}
-
 }
+
+export default new Universe();

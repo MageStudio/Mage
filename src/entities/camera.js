@@ -1,11 +1,16 @@
-import Entity from './entity';
+import Entity from './Entity';
+import { PerspectiveCamera } from 'three';
 
 export default class Camera extends Entity {
 
 	constructor(options) {
 		super();
 		this.options = options;
-		this.object = new THREE.PerspectiveCamera(options.fov, options.ratio , options.near, options.far );
-		//adding to core
+		this.object = new PerspectiveCamera(
+			options.fov,
+			options.ratio,
+			options.near,
+			options.far
+		);
 	}
 }
