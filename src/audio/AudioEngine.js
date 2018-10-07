@@ -35,12 +35,11 @@ export class AudioEngine {
 		this.volume.gain.value = this._volume;
 	}
 
-	load(manager) {
-		this.assetsManager = manager;
+	load() {
 		this.map = {};
 		this.sounds = [];
 
-		if (!window || !this.assetsManager) {
+		if (!window) {
 			return Promise.resolve('audio');
 		}
 

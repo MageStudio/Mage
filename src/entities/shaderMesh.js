@@ -13,11 +13,11 @@ export default class ShaderMesh extends Entity {
         this.shaderName = name;
 
         const shader = new Shader(this.shaderName, this.attributes, this.uniforms, options);
-        if (shader.shader && !shader.shader.instance) {
-            if ( !attributes ) {
+        if (shader.instance && !(typeof shader.instance === 'function')) {
+            if (!attributes) {
                 this.attributes = shader.attributes;
             }
-            if ( !uniforms ) {
+            if (!uniforms) {
                 this.uniforms = shader.uniforms;
             }
             this.script = {};
@@ -25,7 +25,12 @@ export default class ShaderMesh extends Entity {
 
             this.mesh = new Mesh(geometry, shader.material);
         } else {
-            this.mesh = shader.shader.instance(app.renderer, app.camera.object, app.scene, options);
+            this.mesh = new shader.instance(
+                app.renderer,
+                app.camera.object,
+                app.scene,
+                options
+            );
         }
 
         //adding to core

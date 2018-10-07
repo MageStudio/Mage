@@ -223,35 +223,26 @@ export default class AnimatedMesh extends Entity {
 
 
     stopAll() {
-
 		for ( a in this.animations ) {
-
 			if ( this.animations[ a ].isPlaying ) {
 				this.animations[ a ].stop(0);
 			}
-
 			this.animations[ a ].weight = 0;
-
 		}
-
 		this.weightSchedule.length = 0;
 		this.warpSchedule.length = 0;
 
 	}
 
     getForward() {
-
         var forward = new Vector3();
-
         return () => {
-
             // pull the character's forward basis vector out of the matrix
             forward.set(
                 -this.matrix.elements[ 8 ],
                 -this.matrix.elements[ 9 ],
                 -this.matrix.elements[ 10 ]
             );
-
             return forward;
         }
     }

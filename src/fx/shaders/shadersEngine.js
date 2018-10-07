@@ -1,13 +1,27 @@
 import { include } from '../../base/util';
 
+import Atmosphere from '../materials/Atmosphere';
+import Mirror from '../materials/Mirror';
+import Ocean from '../materials/Ocean';
+import OceanShaders from '../materials/OceanShaders';
+import Water from '../materials/Water';
+import Skybox from '../scenery/Skybox';
+
 export class ShadersEngine {
 
 	constructor() {
 		this.SHADERS_DIR = "app/shaders/";
 		this.SHADERS = [];
 
-		this.map = {};
-		// @todo missing shaders here, import and add to map
+		this.map = {
+			Atmosphere,
+			Mirror,
+			Ocean,
+			OceanShaders,
+			Water,
+			Skybox
+		};
+
 		this.shaders = [];
 
 		this.numShaders = 0;
@@ -15,18 +29,13 @@ export class ShadersEngine {
 	}
 
 	load() {
-
 		if (Assets.Shaders) {
-
 			const keys = Object.keys(Assets.Shaders);
-
 			if (!keys.length) {
 				return Promise.resolve('shaders');
 			}
-
 			return Promise.all(keys.map(this.loadSingleFile));
 		}
-
 		return Promise.resolve('shaders');
 	}
 

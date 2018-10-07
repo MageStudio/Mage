@@ -8,8 +8,6 @@ export default class BackgroundSound extends Beat {
         //use options to choose whether have a loop or not.
         this.sound.source.loop = options.loop || true;
 
-        //no need to create panner, nor to disconnect volume.
-
         //storing mesh
         this.mesh = options.mesh;
 

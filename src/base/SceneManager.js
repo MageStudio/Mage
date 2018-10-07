@@ -4,7 +4,6 @@ import { Clock } from 'three';
 export class SceneManager {
 
     constructor() {
-        this.universe = new Universe();
         this.clock = new Clock();
     }
 
@@ -30,12 +29,12 @@ export class SceneManager {
 
     add(mesh, element) {
 		this.scene.add(mesh);
-		this.universe.set(mesh.uuid, element);
+		Universe.set(mesh.uuid, element);
 	}
 
 	remove(mesh) {
 		this.scene.remove(mesh);
-		this.universe.remove(mesh.uuid);
+		Universe.remove(mesh.uuid);
 	}
 
     setClearColor(value) {
@@ -88,7 +87,7 @@ export class SceneManager {
 
     update() {
 
-        this.universe.update(this.clock.getDelta()));
+        Universe.update(this.clock.getDelta()));
 
         this.renderer.autoClear = false;
         this.renderer.clear(this.clearColor);

@@ -139,7 +139,7 @@ export class App {
 
     init() {
         if (window && window.keypress) {
-            this._keylistener =  new window.keypress.Listener();
+            this._keylistener = new window.keypress.Listener();
         }
 
         SceneManager.create();
@@ -198,43 +198,30 @@ export class App {
     }
 
     onDocumentMouseWheel(event) {
-
     	event.preventDefault();
     	this.zoom = event.wheelDelta * 0.05;
     	this.camera.object.position.z += this.zoom;
-
     }
 
     onDocumentMouseMove(event) {
-
     	this.mouseX = event.clientX - this.windowHalfX;
     	this.mouseY = event.clientY - this.windowHalfY;
-
     }
 
     onDocumentTouchStart(event) {
-
     	if (event.touches.length === 1) {
-
     		event.preventDefault();
-
     		this.mouseX = event.touches[ 0 ].pageX - this.windowHalfX;
     		this.mouseY = event.touches[ 0 ].pageY - this.windowHalfY;
-
     	}
     }
 
     onDocumentTouchMove(event) {
-
     	if (event.touches.length === 1) {
-
     		event.preventDefault();
-
     		this.mouseX = event.touches[ 0 ].pageX - this.windowHalfX;
     		this.mouseY = event.touches[ 0 ].pageY - this.windowHalfY;
-
     	}
-
     }
 
     //keyup event

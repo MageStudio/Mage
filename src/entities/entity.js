@@ -41,20 +41,33 @@ export default class Entity {
 	addSound(name, options) {
 		const _autoplay = options.autoplay || false;
 		this.isPlayingSound = _autoplay;
-		this.sound = new Sound(name, {mesh: this.mesh, autoplay: _autoplay, effect: options.effect });
+		this.sound = new Sound(name, {
+			mesh: this.mesh,
+			autoplay: _autoplay,
+			effect: options.effect
+		});
 	}
 
 	addDirectionalSound(name, options) {
 		const _autoplay = options.autoplay || false;
 		this.isPlayingSound = _autoplay;
-		this.sound = new DirectionalSound(name, {mesh: this.mesh, autoplay: _autoplay, effect: options.effect});
+		this.sound = new DirectionalSound(name, {
+			mesh: this.mesh,
+			autoplay: _autoplay,
+			effect: options.effect
+		});
 	}
 
 	addAmbientSound(name, options) {
 		const _autoplay = options.autoplay || false;
 		const _loop = options.loop || false;
 		this.isPlayingSound = _autoplay;
-		this.sound = new AmbientSound(name, {mesh: this.mesh, autoplay: _autoplay, loop: _loop, effect: options.effect});
+		this.sound = new AmbientSound(name, {
+			mesh: this.mesh,
+			autoplay: _autoplay,
+			loop: _loop,
+			effect: options.effect
+		});
 	}
 
 	addLight( color, intensity, distance ) {
@@ -64,8 +77,8 @@ export default class Entity {
 			y: this.mesh.position.y,
 			z: this.mesh.position.z
 		}
-		this.light = new PointLight( color, intensity, distance, position );
-		this.addMesh( this.light.mesh.mesh );
+		this.light = new PointLight(color, intensity, distance, position);
+		this.addMesh(this.light.mesh.mesh);
 	}
 
 	playSound() {
