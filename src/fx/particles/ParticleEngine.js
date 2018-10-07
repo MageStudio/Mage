@@ -1,4 +1,3 @@
-//M.fx.particlesEngine = {
 import { include } from '../../base/util';
 import Rain from './Rain';
 import Clouds from './Clouds';

@@ -1,17 +1,27 @@
-window.M = window.M || {};
-M.fx = M.fx || {},
+import {
+    NodeFrame,
+    NodePostProcessing
+} from 'three';
 
-M.fx.postProcessingEngine = {
+import SceneManager from '../../base/SceneManager';
 
-    frame: new THREE.NodeFrame(),
-    nodepost: new THREE.NodePostProcessing(app.renderer),
+export class PostProcessingEngine {
 
-    // define post processing units outside like particles and others
+    constructor() {
+        this.frame = new NodeFrame();
+        this.nodepost = new NodePostProcessing(SceneManager.renderer);
+    }
 
-    update: function() {
+    update() {
         // multiple post processing elements
         // each one acting on the nodePost = new THREE.NodePostProcessing(renderer);
-        frame.update( delta );
-		nodepost.render( scene, camera, frame );
+        frame.update(delta);
+		nodepost.render(
+            SceneManager.scene,
+            SceneManager.camera,
+            this.frame
+        );
     }
-};
+}
+
+export default new PostProcessingEngine();
