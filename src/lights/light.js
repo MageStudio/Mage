@@ -1,4 +1,5 @@
 import Entity from '../entities/entity';
+import LightEngine from './LightEngine';
 
 export default class Light extends Entity {
 
@@ -15,7 +16,7 @@ export default class Light extends Entity {
 		};
 		this.isLightOn = false;
 		this.mesh = undefined;
-		M.lightEngine.add(this);
+		LightEngine.add(this);
 	}
 
 	on() {

@@ -32,11 +32,11 @@ export default class Manager {
 		return new Promise((resolve, reject) => {
 			Promise.all([
 				AudioEngine.load(),
-				this.video.load(),
-				this.images.load(),
-				this.models.load(),
-				this.shaders.load(),
-				this.particles.load()
+				VideoEngine.load(),
+				ImagesEngine.load(),
+				ModelsEngine.load(),
+				ShadersEngine.load(),
+				ParticleEngine.load()
 			]).then(() => {
 				resolve();
 				this.loadingMessage(true);
@@ -48,7 +48,7 @@ export default class Manager {
 	}
 
 	update() {
-		this.audio.update();
+		AudioEngine.update();
 		this.lights.update();
 	}
 

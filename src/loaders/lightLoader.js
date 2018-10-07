@@ -4,6 +4,10 @@ import AmbientLight from '../lights/AmbientLight';
 
 class LightLoader extends Loader {
 
+    constructor() {
+        super();
+    }
+
     load(lights) {
         for (var j=0; j<lights.length; j++) {
             var current = lights[j]
@@ -21,9 +25,9 @@ class LightLoader extends Loader {
 
     _parseLight(light) {
         return {
-            holder: (light.holder) ? app.loader.parse(light.holder) : false,
-            target: (light.target) ? app.loader.parse(light.target) : false,
-            light: (light.light) ? app.loader.parse(light.light) : false
+            holder: (light.holder) ? this.loader.parse(light.holder) : false,
+            target: (light.target) ? this.loader.parse(light.target) : false,
+            light: (light.light) ? this.loader.parse(light.light) : false
         };
     }
 

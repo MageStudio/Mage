@@ -3,9 +3,9 @@ import { include } from '../../base/util';
 import Rain from './Rain';
 import Clouds from './Clouds';
 
-export default class ParticleEngine {
+export class ParticleEngine {
 
-	constructor(assetsManager) {
+	constructor() {
 		this.PARTICLES_DIR = 'app/particles/';
 		this.PARTICLES = [];
 
@@ -18,8 +18,6 @@ export default class ParticleEngine {
 		this.particles = {};
 		this.numParticles  = 0;
 		this.particlesLoaded  = 0;
-
-		this.assetsManager = assetsManager;
 	}
 
 	load() {
@@ -104,3 +102,5 @@ export default class ParticleEngine {
 		this.PARTICLES.push(particle);
 	}
 }
+
+export default new ParticleEngine();

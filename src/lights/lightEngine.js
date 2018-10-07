@@ -1,3 +1,5 @@
+import SceneManager from '../base/SceneManager';
+
 export class LigthEngine {
 
     constructor() {
@@ -19,7 +21,7 @@ export class LigthEngine {
         var start = new Date();
         for (var index in this.lights) {
             var light = this.lights[index];
-            light.update(app.clock.getDelta());
+            light.update(SceneManager.clock.getDelta());
             if ((+new Date() - start) > 50) return;
         }
     }

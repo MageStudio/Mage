@@ -2,8 +2,15 @@ import Mesh from '../entities/Mesh';
 import ShaderMesh from '../entities/ShaderMesh';
 import imagesEngine from '../images/imagesEngine'
 import Loader from './Loader';
+import {
+    RepeatWrapping
+} from 'three';
 
 class MeshLoader extends Loader {
+
+    constructor() {
+        super();
+    }
 
     load(meshes) {
         for (var i=0; i<meshes.length; i++) {
@@ -21,7 +28,7 @@ class MeshLoader extends Loader {
     }
 
     _parseMesh: function(mesh) {
-        return app.loader.parse(mesh);
+        return this.loader.parse(mesh);
     }
 
     _parseScript: function(mesh) {
@@ -84,8 +91,8 @@ class MeshLoader extends Loader {
             // setting texture
             if (current.textureKey) {
                 var texture = imagesEngine.get(current.textureKey);
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
+                texture.wrapS = RepeatWrapping;
+                texture.wrapT = RepeatWrapping;
                 texture.repeat.set(1, 1);
                 mesh.mesh.material.map = texture;
             }

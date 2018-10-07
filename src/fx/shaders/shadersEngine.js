@@ -1,8 +1,8 @@
 import { include } from '../../base/util';
 
-export default class ShadersEngine {
+export class ShadersEngine {
 
-	constructor(assetsManager) {
+	constructor() {
 		this.SHADERS_DIR = "app/shaders/";
 		this.SHADERS = [];
 
@@ -12,7 +12,6 @@ export default class ShadersEngine {
 
 		this.numShaders = 0;
 		this.shadersLoaded = 0;
-		this.assetsManager = assetsManager;
 	}
 
 	load() {
@@ -85,3 +84,5 @@ export default class ShadersEngine {
 		this.shaders.push(shader);
 	}
 }
+
+export default new ShadersEngine();

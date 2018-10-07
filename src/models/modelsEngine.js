@@ -1,13 +1,14 @@
 import Mesh from '../entities/Mesh';
 import {
 	MultiMaterial,
-	MeshLambertMaterial
+	MeshLambertMaterial,
+	JSONLoader
 } from 'three';
 
-export default class ModelsEngine {
+export class ModelsEngine {
 
 	constructor(assetsManager) {
-		this.loaders = THREE.JSONLoader(),
+		this.loaders = JSONLoader(),
 		this.numModels = 0;
 		this.modelsLoaded = 0;
 		this.assetsManager = assetsManager;
@@ -48,7 +49,7 @@ export default class ModelsEngine {
 	            }
 
 	            var model = {
-					geometry: geometry,
+					geometry,
 					material: faceMaterial
 				}
 
@@ -64,3 +65,5 @@ export default class ModelsEngine {
 		this.models.push(model);
 	}
 }
+
+export default new ModelsEngine();

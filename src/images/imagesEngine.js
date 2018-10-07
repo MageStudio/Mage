@@ -3,9 +3,9 @@ import {
 	ImageLoader
 } from 'three';
 
-export default class ImagesEngine {
+export class ImagesEngine {
 
-	constructor(assetsManager) {
+	constructor() {
 		this.defaults = {
 			"waterNormal": "assets/images/waternormals.jpg",
 			"water": "assets/images/water.jpg",
@@ -22,7 +22,6 @@ export default class ImagesEngine {
 		this.loader = new TextureLoader();
 		this.imageLoader = new ImageLoader();
 
-		this.assetsManager = assetsManager;
 	}
 
 	load() {
@@ -93,3 +92,5 @@ export default class ImagesEngine {
 		}
 	}
 }
+
+export default new ImagesEngine();

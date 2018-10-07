@@ -46,21 +46,14 @@ export class App {
     		}
     	}, config);
 
-    	//importing libraries
-    	this.threeLib = undefined;
 
     	//scnee parameters
-        this.camera = undefined;
         this.user = undefined;
-        this.scene = undefined;
-        this.renderer= undefined;
         this.clearColor = 0x000000;
 
     	//debug mode
         this.debug = true;
 
-        //CLOCK!
-        this.clock = new Clock();
 
         //window and mouse variables
         this.mouseX = 0;
