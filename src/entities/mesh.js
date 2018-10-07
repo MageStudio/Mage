@@ -1,5 +1,6 @@
 import Entity from './Entity';
-import Universe from '../base/Universe';
+import SceneManager from '../base/SceneManager';
+import { Mesh as THREEMesh, RepeatWrapping } from 'three';
 
 export default class Mesh extends Entity {
 
@@ -10,13 +11,13 @@ export default class Mesh extends Entity {
 		this.script = {};
 		this.hasScript = false;
 
-		this.mesh = new THREE.Mesh(geometry, material);
+		this.mesh = new THREEMesh(geometry, material);
 		if (app.util.cast_shadow) {
 			this.mesh.castShadow = true;
 			this.mesh.receiveShadow = true;
 		}
 		//adding to core
-		Universe.add(this.mesh, this);
+		SceneManager.add(this.mesh, this);
 
 		if (options) {
 			//do something with options
@@ -32,8 +33,8 @@ export default class Mesh extends Entity {
 
 	texture(texture) {
 		if (texture && this.mesh && this.mesh.material) {
-			texture.wrapS = THREE.RepeatWrapping;
-			texture.wrapT = THREE.RepeatWrapping;
+			texture.wrapS = RepeatWrapping;
+			texture.wrapT = RepeatWrapping;
 
 			texture.repeat.set(1, 1);
 			this.mesh.material.map = texture;

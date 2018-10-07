@@ -1,3 +1,4 @@
+import { ShaderMaterial } from 'three';
 export default class Shader {
 
     constructor( name, attributes, uniforms, options ) {

@@ -8,6 +8,23 @@ import {
     OceanSpectrum
 } from './OceanShaders';
 
+import {
+    OrthographicCamera,
+    Scene,
+    HalfFloatType,
+    LinearFilter,
+    ClampToEdgeWrapping,
+    RGBAFormat,
+    NearestFilter,
+    WebGLRenderTarget,
+    ShaderMaterial,
+    UniformsUtils,
+    Vector2,
+    Mesh as THREEMesh,
+    PlaneBufferGeometry,
+    DataTexture
+} from 'three';
+
 class OceanShader {
 
     constructor(renderer, camera, scene, options) {
@@ -17,12 +34,12 @@ class OceanShader {
         this.initial = true;
 
         // Assign required parameters as object properties
-        this.oceanCamera = new THREE.OrthographicCamera(); //camera.clone();
+        this.oceanCamera = new OrthographicCamera(); //camera.clone();
         this.oceanCamera.position.z = 1;
         this.renderer = renderer;
         this.renderer.clearColor(0xffffff);
 
-        this.scene = new THREE.Scene();
+        this.scene = new Scene();
 
         // Assign optional parameters as variables and object properties
         function optionalParameter(value, defaultValue) {
@@ -36,8 +53,8 @@ class OceanShader {
         this.sunDirectionX = optionalParameter(options.SUN_DIRECTION[ 0 ], - 1.0);
         this.sunDirectionY = optionalParameter(options.SUN_DIRECTION[ 1 ], 1.0);
         this.sunDirectionZ = optionalParameter(options.SUN_DIRECTION[ 2 ], 1.0);
-        this.oceanColor = optionalParameter(options.OCEAN_COLOR, new THREE.Vector3(0.004, 0.016, 0.047));
-        this.skyColor = optionalParameter(options.SKY_COLOR, new THREE.Vector3(3.2, 9.6, 12.8));
+        this.oceanColor = optionalParameter(options.OCEAN_COLOR, new Vector3(0.004, 0.016, 0.047));
+        this.skyColor = optionalParameter(options.SKY_COLOR, new Vector3(3.2, 9.6, 12.8));
         this.exposure = optionalParameter(options.EXPOSURE, 0.35);
         this.geometryResolution = optionalParameter(options.GEOMETRY_RESOLUTION, 32);
         this.geometrySize = optionalParameter(options.GEOMETRY_SIZE, 2000);
@@ -52,56 +69,56 @@ class OceanShader {
         this.matrixNeedsUpdate = false;
 
         // Setup framebuffer pipeline
-        const renderTargetType = optionalParameter(options.USE_HALF_FLOAT, false) ? THREE.HalfFloatType : THREE.FloatType;
+        const renderTargetType = optionalParameter(options.USE_HALF_FLOAT, false) ? HalfFloatType : THREE.FloatType;
         const LinearClampParams = {
-            minFilter: THREE.LinearFilter,
-            magFilter: THREE.LinearFilter,
-            wrapS: THREE.ClampToEdgeWrapping,
-            wrapT: THREE.ClampToEdgeWrapping,
-            format: THREE.RGBAFormat,
+            minFilter: LinearFilter,
+            magFilter: LinearFilter,
+            wrapS: ClampToEdgeWrapping,
+            wrapT: ClampToEdgeWrapping,
+            format: RGBAFormat,
             stencilBuffer: false,
             depthBuffer: false,
             premultiplyAlpha: false,
             type: renderTargetType
         };
         const NearestClampParams = {
-            minFilter: THREE.NearestFilter,
-            magFilter: THREE.NearestFilter,
-            wrapS: THREE.ClampToEdgeWrapping,
-            wrapT: THREE.ClampToEdgeWrapping,
-            format: THREE.RGBAFormat,
+            minFilter: NearestFilter,
+            magFilter: NearestFilter,
+            wrapS: ClampToEdgeWrapping,
+            wrapT: ClampToEdgeWrapping,
+            format: RGBAFormat,
             stencilBuffer: false,
             depthBuffer: false,
             premultiplyAlpha: false,
             type: renderTargetType
         };
         const NearestRepeatParams = {
-            minFilter: THREE.NearestFilter,
-            magFilter: THREE.NearestFilter,
-            wrapS: THREE.RepeatWrapping,
-            wrapT: THREE.RepeatWrapping,
-            format: THREE.RGBAFormat,
+            minFilter: NearestFilter,
+            magFilter: NearestFilter,
+            wrapS: RepeatWrapping,
+            wrapT: RepeatWrapping,
+            format: RGBAFormat,
             stencilBuffer: false,
             depthBuffer: false,
             premultiplyAlpha: false,
             type: renderTargetType
         };
-        this.initialSpectrumFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestRepeatParams);
-        this.spectrumFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
-        this.pingPhaseFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
-        this.pongPhaseFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
-        this.pingTransformFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
-        this.pongTransformFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
-        this.displacementMapFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, LinearClampParams);
-        this.normalMapFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, LinearClampParams);
+        this.initialSpectrumFramebuffer = new WebGLRenderTarget(this.resolution, this.resolution, NearestRepeatParams);
+        this.spectrumFramebuffer = new WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.pingPhaseFramebuffer = new WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.pongPhaseFramebuffer = new WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.pingTransformFramebuffer = new WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.pongTransformFramebuffer = new WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.displacementMapFramebuffer = new WebGLRenderTarget(this.resolution, this.resolution, LinearClampParams);
+        this.normalMapFramebuffer = new WebGLRenderTarget(this.resolution, this.resolution, LinearClampParams);
 
         // Define shaders and constant uniforms
         ////////////////////////////////////////
 
 
         // 1 - Horizontal wave vertices used for FFT
-        this.materialOceanHorizontal = new THREE.ShaderMaterial({
-            uniforms: THREE.UniformsUtils.clone(OceanSubTransform.uniforms()),
+        this.materialOceanHorizontal = new ShaderMaterial({
+            uniforms: UniformsUtils.clone(OceanSubTransform.uniforms()),
             vertexShader: OceanSimVertex.vertex(),
             fragmentShader: "#define HORIZONTAL \n" + OceanSubTransform.fragment()
         });
@@ -112,8 +129,8 @@ class OceanShader {
         this.materialOceanHorizontal.depthTest = false;
 
         // 2 - Vertical wave vertices used for FFT
-        this.materialOceanVertical = new THREE.ShaderMaterial({
-            uniforms: THREE.UniformsUtils.clone(OceanSubTransform.uniforms()),
+        this.materialOceanVertical = new ShaderMaterial({
+            uniforms: UniformsUtils.clone(OceanSubTransform.uniforms()),
             vertexShader: OceanSimVertex.vertex(),
             fragmentShader: OceanSubTransform.fragment()
         });
@@ -123,18 +140,18 @@ class OceanShader {
         this.materialOceanVertical.depthTest = false;
 
         // 3 - Initial spectrum used to generate height map
-        this.materialInitialSpectrum = new THREE.ShaderMaterial({
-            uniforms: THREE.UniformsUtils.clone(OceanInitialSpectrum.uniforms());,
+        this.materialInitialSpectrum = new ShaderMaterial({
+            uniforms: UniformsUtils.clone(OceanInitialSpectrum.uniforms());,
             vertexShader: OceanSimVertex.vertex(),
             fragmentShader: OceanInitialSpectrum.fragment()
         });
-        this.materialInitialSpectrum.uniforms.u_wind = { type: "v2", value: new THREE.Vector2() };
+        this.materialInitialSpectrum.uniforms.u_wind = { type: "v2", value: new Vector2() };
         this.materialInitialSpectrum.uniforms.u_resolution = { type: "f", value: this.resolution };
         this.materialInitialSpectrum.depthTest = false;
 
         // 4 - Phases used to animate heightmap
-        this.materialPhase = new THREE.ShaderMaterial({
-            uniforms: THREE.UniformsUtils.clone(OceanPhase.uniforms());,
+        this.materialPhase = new ShaderMaterial({
+            uniforms: UniformsUtils.clone(OceanPhase.uniforms());,
             vertexShader: OceanSimVertex.vertex(),
             fragmentShader: OceanPhase.fragment()
         });
@@ -142,8 +159,8 @@ class OceanShader {
         this.materialPhase.depthTest = false;
 
         // 5 - Shader used to update spectrum
-        this.materialSpectrum = new THREE.ShaderMaterial({
-            uniforms: THREE.UniformsUtils.clone(OceanSpectrum.uniforms()),
+        this.materialSpectrum = new ShaderMaterial({
+            uniforms: UniformsUtils.clone(OceanSpectrum.uniforms()),
             vertexShader: OceanSimVertex.vertex(),
             fragmentShader: OceanSpectrum.fragment()
         });
@@ -152,8 +169,8 @@ class OceanShader {
         this.materialSpectrum.depthTest = false;
 
         // 6 - Shader used to update spectrum normals
-        this.materialNormal = new THREE.ShaderMaterial({
-            uniforms: THREE.UniformsUtils.clone(OceanNormals.uniforms()),
+        this.materialNormal = new ShaderMaterial({
+            uniforms: UniformsUtils.clone(OceanNormals.uniforms()),
             vertexShader: OceanSimVertex.vertex(),
             fragmentShader: OceanNormals.fragment()
         });
@@ -162,8 +179,8 @@ class OceanShader {
         this.materialNormal.depthTest = false;
 
         // 7 - Shader used to update normals
-        this.materialOcean = new THREE.ShaderMaterial({
-            uniforms: THREE.UniformsUtils.clone(OceanMain.uniforms()),
+        this.materialOcean = new ShaderMaterial({
+            uniforms: UniformsUtils.clone(OceanMain.uniforms()),
             vertexShader: OceanMain.vertex(),
             fragmentShader: OceanMain.fragment()
         });
@@ -173,7 +190,7 @@ class OceanShader {
         this.materialOcean.uniforms.u_normalMap = { type: "t", value: this.normalMapFramebuffer.texture };
         this.materialOcean.uniforms.u_oceanColor = { type: "v3", value: this.oceanColor };
         this.materialOcean.uniforms.u_skyColor = { type: "v3", value: this.skyColor };
-        this.materialOcean.uniforms.u_sunDirection = { type: "v3", value: new THREE.Vector3(this.sunDirectionX, this.sunDirectionY, this.sunDirectionZ) };
+        this.materialOcean.uniforms.u_sunDirection = { type: "v3", value: new Vector3(this.sunDirectionX, this.sunDirectionY, this.sunDirectionZ) };
         this.materialOcean.uniforms.u_exposure = { type: "f", value: this.exposure };
 
         // Disable blending to prevent default premultiplied alpha values
@@ -186,7 +203,7 @@ class OceanShader {
         this.materialOcean.blending = 0;
 
         // Create the simulation plane
-        this.screenQuad = new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2));
+        this.screenQuad = new THREEMesh(new PlaneBufferGeometry(2, 2));
         this.scene.add(this.screenQuad);
 
         // Initialise spectrum data
@@ -199,11 +216,11 @@ class OceanShader {
 
     generateMesh() {
 
-        const geometry = new THREE.PlaneBufferGeometry(this.geometrySize, this.geometrySize, this.geometryResolution, this.geometryResolution);
+        const geometry = new PlaneBufferGeometry(this.geometrySize, this.geometrySize, this.geometryResolution, this.geometryResolution);
 
         geometry.rotateX(- Math.PI / 2);
 
-        this.oceanMesh = new THREE.Mesh(geometry, this.materialOcean);
+        this.oceanMesh = new THREEMesh(geometry, this.materialOcean);
 
     }
 
@@ -240,10 +257,10 @@ class OceanShader {
 
         }
 
-        this.pingPhaseTexture = new THREE.DataTexture(phaseArray, this.resolution, this.resolution, THREE.RGBAFormat);
-        this.pingPhaseTexture.wrapS = THREE.ClampToEdgeWrapping;
-        this.pingPhaseTexture.wrapT = THREE.ClampToEdgeWrapping;
-        this.pingPhaseTexture.type = THREE.FloatType;
+        this.pingPhaseTexture = new DataTexture(phaseArray, this.resolution, this.resolution, THREE.RGBAFormat);
+        this.pingPhaseTexture.wrapS = ClampToEdgeWrapping;
+        this.pingPhaseTexture.wrapT = ClampToEdgeWrapping;
+        this.pingPhaseTexture.type = FloatType;
         this.pingPhaseTexture.needsUpdate = true;
 
     }
@@ -372,8 +389,8 @@ export default class Ocean {
             CLEAR_COLOR : options.clearColor || [1.0, 1.0, 1.0, 0.0],
             GEOMETRY_ORIGIN : [origx, origz],
             SUN_DIRECTION : options.sunDirection || [-1.0, 1.0, 1.0],
-            OCEAN_COLOR: options.oceanColor || new THREE.Vector3(0.004, 0.016, 0.047),
-            SKY_COLOR: options.skyColor || new THREE.Vector3(3.2, 9.6, 12.8),
+            OCEAN_COLOR: options.oceanColor || new Vector3(0.004, 0.016, 0.047),
+            SKY_COLOR: options.skyColor || new Vector3(3.2, 9.6, 12.8),
             EXPOSURE : options.exposure || 0.35,
             GEOMETRY_RESOLUTION: gres,
             GEOMETRY_SIZE : gsize,

@@ -1,9 +1,15 @@
+import {
+	FrontSide,
+	AdditiveBlending,
+	Color
+} from 'three';
+
 export default class Atmosphere {
 
 	constructor() {
 		this.options = {
-			side: THREE.FrontSide,
-			blending: THREE.AdditiveBlending,
+			side: FrontSide,
+			blending: AdditiveBlending,
 			transparent: true,
 			depthWrite: false,
 		};
@@ -50,7 +56,7 @@ export default class Atmosphere {
 			},
 			glowColor: {
 				type: "c",
-				value: new THREE.Color('pink')
+				value: new Color('pink')
 			},
 		};
 	}

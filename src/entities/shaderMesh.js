@@ -1,3 +1,6 @@
+import { Mesh } from 'three';
+import Shader from '../fx/shaders/Shader';
+import SceneManager from '../base/SceneManager';
 import Entity from './entity';
 
 export default class ShaderMesh extends Entity {
@@ -20,13 +23,13 @@ export default class ShaderMesh extends Entity {
             this.script = {};
             this.hasScript = false;
 
-            this.mesh = new THREE.Mesh(geometry, shader.material);
+            this.mesh = new Mesh(geometry, shader.material);
         } else {
             this.mesh = shader.shader.instance(app.renderer, app.camera.object, app.scene, options);
         }
 
         //adding to core
-        app.add(this.mesh, this);
+        SceneManager.add(this.mesh, this);
 
         if (options) {
             //do something with options

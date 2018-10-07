@@ -1,3 +1,7 @@
+import {
+    Vector2
+} from 'three';
+
 export class OceanMain {
 
     static uniforms() {
@@ -263,7 +267,7 @@ export class OceanInitialSpectrum {
 
     static uniforms() {
         return {
-            "u_wind": { type: "v2", value: new THREE.Vector2( 10.0, 10.0 ) },
+            "u_wind": { type: "v2", value: new Vector2( 10.0, 10.0 ) },
             "u_resolution": { type: "f", value: 512.0 },
             "u_size": { type: "f", value: 250.0 },
         }
