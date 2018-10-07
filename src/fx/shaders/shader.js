@@ -22,7 +22,7 @@ export default class Shader {
             object[o] = opt[o];
           }
           //creating the actual material
-          this.material = new THREE.ShaderMaterial( object );
+          this.material = new ShaderMaterial( object );
         } else {
           this.instance = this.shader.instance;
         }

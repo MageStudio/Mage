@@ -1,4 +1,8 @@
 import Light from './Light';
+import {
+    DirectionalLight
+} from 'three';
+import SceneManager from '../base/SceneManager';
 
 export default class DirectionalLight extends Light {
 
@@ -9,7 +13,7 @@ export default class DirectionalLight extends Light {
         //this.geometry = new THREE.SphereGeometry( LightEngine.holderRadius, LightEngine.holderSegment, LightEngine.holderSegment );
         //this.material = new THREE.MeshPhongMaterial({color: this.color});
         //this.mesh = new Mesh( this.geometry, this.material );
-        this.light = new THREE.DirectionalLight(color, intensity);
+        this.light = new DirectionalLight(color, intensity);
 
         //this.mesh.mesh.position.set(this.position.x, this.position.y, this.position.z);
 
@@ -33,7 +37,7 @@ export default class DirectionalLight extends Light {
 
 		this.light.shadow.camera.far = 1000;
         //this.mesh.mesh.add(this.light);
-        app.add(this.light, this);
+        SceneManager.add(this.light, this);
 
     }
 

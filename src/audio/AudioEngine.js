@@ -1,4 +1,7 @@
-import { Vector3 } from 'three';
+import {
+	Vector3
+} from 'three';
+import SceneManager from '../base/SceneManager';
 
 export class AudioEngine {
 
@@ -104,12 +107,12 @@ export class AudioEngine {
 		const start = new Date();
 		for (var index in this.sounds) {
 			var sound = this.sounds[index];
-			sound.update(app.clock.getDelta());
+			sound.update(SceneManager.clock.getDelta());
 
 			//now handling listener
-			app.camera.object.updateMatrixWorld();
+			SceneManager.camera.object.updateMatrixWorld();
 			var p = new Vector3();
-			p.setFromMatrixPosition(app.camera.object.matrixWorld);
+			p.setFromMatrixPosition(SceneManager.camera.object.matrixWorld);
 
 			//setting audio engine context listener position on camera position
 			this.context.listener.setPosition(p.x, p.y, p.z);
@@ -117,7 +120,7 @@ export class AudioEngine {
 
 			//this is to add up and down vector to our camera
 			// The camera's world matrix is named "matrix".
-			var m = app.camera.object.matrix;
+			var m = SceneManager.camera.object.matrix;
 
 			mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
 			m.elements[12] = m.elements[13] = m.elements[14] = 0;

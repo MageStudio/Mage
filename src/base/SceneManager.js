@@ -1,9 +1,11 @@
 import Universe from './Universe';
+import { Clock } from 'three';
 
 export class SceneManager {
 
     constructor() {
         this.universe = new Universe();
+        this.clock = new Clock();
     }
 
     setConfig(config) {

@@ -1,3 +1,8 @@
+import {
+	TextureLoader,
+	ImageLoader
+} from 'three';
+
 export default class ImagesEngine {
 
 	constructor(assetsManager) {
@@ -14,8 +19,8 @@ export default class ImagesEngine {
 		this.map = {};
 		this.images = [];
 		this.numImages = 0;
-		this.loader = new THREE.TextureLoader();
-		this.imageLoader = new THREE.ImageLoader();
+		this.loader = new TextureLoader();
+		this.imageLoader = new ImageLoader();
 
 		this.assetsManager = assetsManager;
 	}

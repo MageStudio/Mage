@@ -1,3 +1,14 @@
+import {
+    CubeTexture,
+    ShaderLib,
+    RGBFormat,
+    ShaderMaterial,
+    Mesh,
+    BoxGeometry,
+    BackSide,
+    RGBFormat
+} from 'three';
+
 export default class Skybox {
 
     static get options() {
@@ -12,8 +23,8 @@ export default class Skybox {
     }
 
     constructor(imagesEngine, options) {
-        this.cubeMap = new THREE.CubeTexture( [] );
-        this.cubeMap.format = THREE.RGBFormat;
+        this.cubeMap = new CubeTexture( [] );
+        this.cubeMap.format = RGBFormat;
 
         if (options.texture) {
             this.buildCube(options.texture);
@@ -22,20 +33,20 @@ export default class Skybox {
             this.buildCube(imagesEngine.get(textureName));
         }
 
-        const cubeShader = THREE.ShaderLib[ 'cube' ];
+        const cubeShader = ShaderLib[ 'cube' ];
         cubeShader.uniforms[ 'tCube' ].value = this.cubeMap;
 
 
-        const skyBoxMaterial = new THREE.ShaderMaterial( {
+        const skyBoxMaterial = new ShaderMaterial( {
             fragmentShader: cubeShader.fragmentShader,
             vertexShader: cubeShader.vertexShader,
             uniforms: cubeShader.uniforms,
             depthWrite: false,
-            side: THREE.BackSide
+            side: BackSide
         });
 
-        this.mesh = new THREE.Mesh(
-            new THREE.BoxGeometry( 1000000, 1000000, 1000000 ),
+        this.mesh = new Mesh(
+            new BoxGeometry( 1000000, 1000000, 1000000 ),
             skyBoxMaterial
         );
     }
