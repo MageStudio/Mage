@@ -4,6 +4,8 @@ import AmbientSound from './audio/AmbientSound';
 import BackgroundSound from './audio/BackgroundSound';
 import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
+import App from './base/App';
+import * as colors from './base/colors';
 
 export {
     // AssetsManager,
@@ -11,5 +13,7 @@ export {
     AmbientSound,
     BackgroundSound,
     DirectionalSound,
-    Sound
+    Sound,
+    colors
+
 };

@@ -1,4 +1,4 @@
-import Entity from '../entities/entity';
+import Entity from '../entities/Entity';
 import LightEngine from './LightEngine';
 
 export default class Light extends Entity {
@@ -22,9 +22,9 @@ export default class Light extends Entity {
 	on() {
 		if (this.light) {
 			const delay = () => {
-				this.light.intensity += M.lightEngine.delayFactor;
+				this.light.intensity += LightEngine.delayFactor;
 				if (this.light.intensity < this.intensity) {
-					setTimeout(_delay, M.lightEngine.delayStep);
+					setTimeout(_delay, LightEngine.delayStep);
 				} else {
 					this.isLightOn = true;
 				}
@@ -38,9 +38,9 @@ export default class Light extends Entity {
 	off() {
 		if (this.light) {
 			const delay = () => {
-				this.light.intensity -= M.lightEngine.delayFactor;
+				this.light.intensity -= LightEngine.delayFactor;
 				if (this.light.intensity > 0) {
-					setTimeout(_delay, M.lightEngine.delayStep);
+					setTimeout(_delay, LightEngine.delayStep);
 				} else {
 					this.isLightOn = false;
 				}

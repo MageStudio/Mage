@@ -1,6 +1,6 @@
 import SceneManager from '../base/SceneManager';
 
-export class LigthEngine {
+export class LightEngine {
 
     constructor() {
         this.delayFactor = 0.1;

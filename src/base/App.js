@@ -240,7 +240,7 @@ export class App {
 
 export default App;
 
-export const start(className) {
+export const start = (className) => {
     if (typeof className === 'function') {
         window.app = new className();
     } else {

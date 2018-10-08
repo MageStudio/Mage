@@ -87,7 +87,7 @@ export class SceneManager {
 
     update() {
 
-        Universe.update(this.clock.getDelta()));
+        Universe.update(this.clock.getDelta());
 
         this.renderer.autoClear = false;
         this.renderer.clear(this.clearColor);

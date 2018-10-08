@@ -22,7 +22,7 @@ import {
 	Plane
 } from 'three';
 
-export deafult class MirrorShader extends Object3D {
+export default class MirrorShader extends Object3D {
 
 	uniforms() {
         return {

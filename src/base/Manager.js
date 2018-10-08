@@ -5,7 +5,7 @@ import ModelsEngine from '../models/ModelsEngine';
 import ShadersEngine from '../fx/shaders/ShadersEngine';
 import ParticleEngine from '../fx/particles/ParticleEngine';
 
-import LightEngine from '../lights/LigthEngine';
+import LightEngine from '../lights/LightEngine';
 
 export default class Manager {
 

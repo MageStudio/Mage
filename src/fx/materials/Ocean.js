@@ -141,7 +141,7 @@ class OceanShader {
 
         // 3 - Initial spectrum used to generate height map
         this.materialInitialSpectrum = new ShaderMaterial({
-            uniforms: UniformsUtils.clone(OceanInitialSpectrum.uniforms());,
+            uniforms: UniformsUtils.clone(OceanInitialSpectrum.uniforms()),
             vertexShader: OceanSimVertex.vertex(),
             fragmentShader: OceanInitialSpectrum.fragment()
         });
@@ -151,7 +151,7 @@ class OceanShader {
 
         // 4 - Phases used to animate heightmap
         this.materialPhase = new ShaderMaterial({
-            uniforms: UniformsUtils.clone(OceanPhase.uniforms());,
+            uniforms: UniformsUtils.clone(OceanPhase.uniforms()),
             vertexShader: OceanSimVertex.vertex(),
             fragmentShader: OceanPhase.fragment()
         });

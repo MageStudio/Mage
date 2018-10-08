@@ -1,9 +1,11 @@
 import Light from './light';
 import LightEngine from './LightEngine';
+import SceneManager from '../base/SceneManager';
+
 import {
     SphereGeometry,
     MeshPhongMaterial,
-    PointLight
+    PointLight as THREEPointLight
 } from 'three';
 
 export default class PointLight extends Light {
@@ -19,7 +21,7 @@ export default class PointLight extends Light {
         );
         this.material = new MeshPhongMaterial({color: this.color});
         this.mesh = new Mesh(this.geometry, this.material);
-        this.light = new PointLight(color, intensity, distance);
+        this.light = new THREEPointLight(color, intensity, distance);
         this.mesh.mesh.position.set(this.position.x, this.position.y, this.position.z);
         this.light.position = this.mesh.mesh.position;
         this.mesh.mesh.add(this.light);

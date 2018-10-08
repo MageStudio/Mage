@@ -5,8 +5,7 @@ import {
     ShaderMaterial,
     Mesh,
     BoxGeometry,
-    BackSide,
-    RGBFormat
+    BackSide
 } from 'three';
 
 export default class Skybox {

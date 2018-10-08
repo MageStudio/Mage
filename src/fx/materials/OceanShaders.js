@@ -143,7 +143,7 @@ export class OceanSpectrum {
             "u_phases": { type: "t", value: null },
             "u_initialSpectrum": { type: "t", value: null },
         }
-    },
+    }
 
 	static varying() {
         return {

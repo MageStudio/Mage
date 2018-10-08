@@ -4,7 +4,6 @@ import Atmosphere from '../materials/Atmosphere';
 import Mirror from '../materials/Mirror';
 import Ocean from '../materials/Ocean';
 import OceanShaders from '../materials/OceanShaders';
-import Water from '../materials/Water';
 import Skybox from '../scenery/Skybox';
 
 export class ShadersEngine {
@@ -18,7 +17,6 @@ export class ShadersEngine {
 			Mirror,
 			Ocean,
 			OceanShaders,
-			Water,
 			Skybox
 		};
 
