@@ -1,22 +1,33 @@
 import Entity from '../entities/Entity';
 import LightEngine from './LightEngine';
+import { Vector3 } from 'three';
+
+console.log('logging entity', Entity);
 
 export default class Light extends Entity {
 
-	constructor(color, intensity, position) {
+	constructor(color, intensity) {
 		//this.mesh = new THREE.AmbientLight(color);
 		//app.add(this.mesh, this);
 		super();
 		this.color = color;
 		this.intensity = intensity;
-		this.position = position || {
-			x: 0,
-			y: 0,
-			z: 0
-		};
 		this.isLightOn = false;
 		this.mesh = undefined;
 		LightEngine.add(this);
+	}
+
+	setPosition(position = {}) {
+		const { x = 0, y = 0, z = 0 } = position;
+		this.position = {
+			x,
+			y,
+			z
+		};
+		if (this.mesh && this.light) {
+			this.mesh.mesh.position.set(x, y, z);
+	        this.light.position.set(x, y, z);
+		}
 	}
 
 	on() {
@@ -50,4 +61,4 @@ export default class Light extends Entity {
 			console.log("You should create your light, first");
 		}
 	}
-}
+};

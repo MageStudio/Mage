@@ -2,10 +2,11 @@ import ScriptManager from '../base/ScriptManager';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
-import PointLight from '../lights/PointLight';
+// import { LightPoint } from '../lights/LightPoint';
 import SceneManager from '../base/SceneManager';
 
 export default class Entity {
+
 	constructor() {}
 
 	start() {}
@@ -70,14 +71,13 @@ export default class Entity {
 		});
 	}
 
-	addLight( color, intensity, distance ) {
-
+	addLight(light) {
 		const position = {
 			x: this.mesh.position.x,
 			y: this.mesh.position.y,
 			z: this.mesh.position.z
 		}
-		this.light = new PointLight(color, intensity, distance, position);
+		this.light.setPosition(position);
 		this.addMesh(this.light.mesh.mesh);
 	}
 

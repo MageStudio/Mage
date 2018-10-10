@@ -182,7 +182,7 @@ export default class AnimatedMesh extends Entity {
 			duration: duration
 
 		});
-	},
+	}
 
 	warp(fromAnimName, toAnimName, duration) {
 

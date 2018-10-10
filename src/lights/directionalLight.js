@@ -1,19 +1,21 @@
 import Light from './Light';
 import {
-    DirectionalLight
+    DirectionalLight as THREEDirectionalLight
 } from 'three';
 import SceneManager from '../base/SceneManager';
 
 export default class DirectionalLight extends Light {
 
-    constructor(color, intensity, distance, position, target) {
+    constructor(color, intensity, distance, target) {
 
-        super(color, intensity, position);
+        super(color, intensity);
+
+        // @TODO we need to restore mesh, since it's used by entity when adding new lights
 
         //this.geometry = new THREE.SphereGeometry( LightEngine.holderRadius, LightEngine.holderSegment, LightEngine.holderSegment );
         //this.material = new THREE.MeshPhongMaterial({color: this.color});
         //this.mesh = new Mesh( this.geometry, this.material );
-        this.light = new DirectionalLight(color, intensity);
+        this.light = new THREEDirectionalLight(color, intensity);
 
         //this.mesh.mesh.position.set(this.position.x, this.position.y, this.position.z);
 
@@ -21,7 +23,7 @@ export default class DirectionalLight extends Light {
             this.light.target.position.copy(target.position);
         }
 
-        this.light.position.set(position.x, position.y, position.z);
+        // this.light.position.set(position.x, position.y, position.z);
 
         this.light.castShadow = true;
 

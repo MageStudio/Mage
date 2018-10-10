@@ -2,7 +2,7 @@ import Loader from './Loader';
 import DirectionalLight from '../lights/DirectionalLight';
 import AmbientLight from '../lights/AmbientLight';
 
-class LightLoader extends Loader {
+export default class LightLoader extends Loader {
 
     constructor() {
         super();

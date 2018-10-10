@@ -2,17 +2,23 @@ import Mesh from '../entities/Mesh';
 import {
 	MultiMaterial,
 	MeshLambertMaterial,
-	JSONLoader
+	JSONLoader,
+	LoadingManager
 } from 'three';
 
 export class ModelsEngine {
 
-	constructor(assetsManager) {
-		this.loaders = JSONLoader(),
+	constructor() {
+		console.log(LoadingManager);
+		// this.loadingManager = new LoadingManager(this.onLoad, this.onProgress, this.onError);
+		this.loaders = new JSONLoader(false),
 		this.numModels = 0;
 		this.modelsLoaded = 0;
-		this.assetsManager = assetsManager;
 	}
+
+	onLoad() {}
+	onProgress() {}
+	onError() {}
 
 	load() {
 		this.map = {};

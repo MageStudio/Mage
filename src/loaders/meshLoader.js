@@ -1,12 +1,12 @@
 import Mesh from '../entities/Mesh';
 import ShaderMesh from '../entities/ShaderMesh';
-import imagesEngine from '../images/imagesEngine'
+import ImagesEngine from '../images/ImagesEngine'
 import Loader from './Loader';
 import {
     RepeatWrapping
 } from 'three';
 
-class MeshLoader extends Loader {
+export default class MeshLoader extends Loader {
 
     constructor() {
         super();
@@ -27,11 +27,11 @@ class MeshLoader extends Loader {
         }
     }
 
-    _parseMesh: function(mesh) {
+    _parseMesh(mesh) {
         return this.loader.parse(mesh);
     }
 
-    _parseScript: function(mesh) {
+    _parseScript(mesh) {
         var script = mesh.object.userData ? mesh.object.userData['script'] : false,
             dir = false,
             file = false;
@@ -48,7 +48,7 @@ class MeshLoader extends Loader {
         };
     }
 
-    _parseShader: function(mesh) {
+    _parseShader(mesh) {
         var name = mesh.object.userData ? mesh.object.userData['shader_name'] : false,
             options = mesh.object.userData ? JSON.parse(mesh.object.userData['shader_options']) : false;
 
@@ -65,7 +65,7 @@ class MeshLoader extends Loader {
         };
     }
 
-    _loadCamera: function(mesh, script) {
+    _loadCamera(mesh, script) {
         var camType = mesh.name.replace('_', '').toLowerCase();
         if (app.camera.object.type.toLowerCase() === camType) {
             app.camera.object.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
@@ -74,9 +74,9 @@ class MeshLoader extends Loader {
 
             this._attachScript(app.camera, script);
         }
-    },
+    }
 
-    _loadMesh: function(current, parsedMesh, script, shader) {
+    _loadMesh(current, parsedMesh, script, shader) {
         if (shader && shader.name && shader.options) {
             var mesh = new ShaderMesh({}, shader.name, {}, {}, shader.options);
         } else {
@@ -99,21 +99,11 @@ class MeshLoader extends Loader {
         }
 
         this._attachScript(mesh, script);
-    },
+    }
 
-    _attachScript: function(mesh, script) {
+    _attachScript(mesh, script) {
         if (script.dir && script.file) {
             mesh.addScript(script.file.replace('.js', ''), script.dir);
         }
     }
-}
-
-this = {
-
-
-
-
-    // giro tenere senso derby collaboratore
-
-
 }
