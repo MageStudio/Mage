@@ -4,9 +4,12 @@ import AmbientSound from './audio/AmbientSound';
 import BackgroundSound from './audio/BackgroundSound';
 import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
+
 import App, { start, version, author } from './base/App';
 import * as colors from './base/colors';
 import * as util from './base/util';
+import Router from './router/Router';
+
 
 import Entity from './entities/Entity';
 import Mesh from './entities/Mesh';

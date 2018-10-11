@@ -14,7 +14,7 @@ window.addEventListener("load", function() {
             "firstScene": data.firstScene
         });
     }
-    
+
     var oReq = new XMLHttpRequest();
     oReq.addEventListener("load", loadData);
     oReq.open("GET", "game.json");
