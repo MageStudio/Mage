@@ -6,6 +6,8 @@ import util from './util';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 
+import * as Vivus from 'vivus';
+
 import {
     Clock,
     Scene,
@@ -117,19 +119,6 @@ export class App {
     //do stuff before onCreate method( prepare meshes, whatever )
     prepareScene() {}
 
-    //this is what happens during game loading, the progress animation
-    progressAnimation(callback) {
-        if ($) {
-            $('#loader').animate({"opacity" : "0", "margin-top" : "250px"}, 1000 , function () {
-                $('#loader').remove();
-                $('body').animate({backgroundColor : "#fff"}, 200 , callback);
-            });
-        } else {
-            callback();
-        }
-
-    }
-
     //needed if user wants to add a customRender method
     _render() {}
 
@@ -182,7 +171,20 @@ export class App {
 
     load() {
         if (!(typeof this.progressAnimation == "function")) {
-            this.progressAnimation = (callback) => callback();
+            this.progressAnimation = (callback) => {
+        		new Vivus("mage", {
+                    type: 'oneByOne',
+                    duration: 1000,
+                    onReady: function() {
+            			document.getElementById('mage').classList.add('visible');
+            		}
+                });
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('fadeout');
+                }, 5000)
+        		callback();
+        	}
+
         }
         this.progressAnimation(this.init);
     }

@@ -13,6 +13,22 @@
     src: url('../fonts/AmaticSC-Regular.ttf');
 }
 
+@keyframes fadeOut {
+    0%{
+        opacity: 1;
+        transform: : rotateX(90deg);
+    }
+    50%{
+        opacity: 0.5;
+        transform: : rotateX(0deg);
+    }
+    100%{
+        display: none;
+        opacity: 0;
+        transform: rotateX(90deg);
+    }
+}
+
 body {
     overflow: hidden;
     background-color: #333;
@@ -35,6 +51,10 @@ body {
     top: 0;
     -webkit-transition: opacity 250ms;
     transition: opacity 250ms;
+}
+
+.visible {
+    visibility: visible;
 }
 
 #console {
@@ -76,7 +96,14 @@ canvas {
     padding: 0;
     margin: 0;
     background: #333;
+
 }
+
+#loader.fadeout {
+    animation: fadeOut;
+    animation-duration: 1000;
+}
+
 
 #loader #container{
     height: 104px;
