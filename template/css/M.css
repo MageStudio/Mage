@@ -1,16 +1,6 @@
 @font-face {
-    font-family: 'LeckerliOne';
-    src: url('../fonts/LeckerliOne-Regular.otf');
-}
-
-@font-face {
     font-family: 'OstrichBlack';
     src: url('../fonts/OstrichSans-Black.otf');
-}
-
-@font-face {
-    font-family: 'AmaticSC';
-    src: url('../fonts/AmaticSC-Regular.ttf');
 }
 
 @keyframes fadeOut {
