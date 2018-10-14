@@ -88,7 +88,7 @@ export class App {
     }
 
     //onCreate method, ovveride to start creating stuff
-    onCreate()
+    onCreate() {
         if (this._scene) {
             const { meshes, models, lights } = this._scene;
 
@@ -286,6 +286,6 @@ export const start = (className, config, assets) => {
                         app.load();
                     })
                 })
-        });
-    }
+        }
+    );
 }
