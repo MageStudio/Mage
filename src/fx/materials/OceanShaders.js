@@ -1,6 +1,10 @@
-M.fx.shadersEngine.create('OceanMain', {
-	
-    uniforms: function() { 
+import {
+    Vector2
+} from 'three';
+
+export class OceanMain {
+
+    static uniforms() {
         return {
             "u_displacementMap": { type: "t", value: null },
             "u_normalMap": { type: "t", value: null },
@@ -14,14 +18,16 @@ M.fx.shadersEngine.create('OceanMain', {
             "u_sunDirection": { type: "v3", value: null },
             "u_exposure": { type: "f", value: null },
         }
-    },
-	varying: function() {
+    }
+
+	static varying() {
        return {
             "vPos": { type: "v3" },
             "vUV": { type: "v2" }
         }
-    },
-	vertex: function() {
+    }
+
+	static vertex() {
         return [
             'precision highp float;',
 
@@ -41,9 +47,9 @@ M.fx.shadersEngine.create('OceanMain', {
                 'gl_Position = u_projectionMatrix * u_viewMatrix * vec4(newPos, 1.0);',
             '}'
         ].join( '\n' )
-    },
+    }
 
-	fragment: function() {
+	static fragment() {
         return [
             'precision highp float;',
 
@@ -78,24 +84,25 @@ M.fx.shadersEngine.create('OceanMain', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanNormals', {
-	uniforms: function() { 
+export class OceanNormals {
+
+	static uniforms() {
         return {
             "u_displacementMap": { type: "t", value: null },
             "u_resolution": { type: "f", value: null },
             "u_size": { type: "f", value: null },
         }
-    },
+    }
 
-	varying: function() {
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
+    }
 
-	fragment: function() {
+	static fragment() {
         return [
             'precision highp float;',
 
@@ -124,10 +131,11 @@ M.fx.shadersEngine.create('OceanNormals', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanSpectrum', {
-	uniforms: function() {
+export class OceanSpectrum {
+
+	static uniforms() {
         return {
             "u_size": { type: "f", value: null },
             "u_resolution": { type: "f", value: null },
@@ -135,15 +143,15 @@ M.fx.shadersEngine.create('OceanSpectrum', {
             "u_phases": { type: "t", value: null },
             "u_initialSpectrum": { type: "t", value: null },
         }
-    },
+    }
 
-	varying: function() { 
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
+    }
 
-	fragment: function()  {
+	static fragment()  {
         return [
             'precision highp float;',
             '#include <common>',
@@ -200,23 +208,26 @@ M.fx.shadersEngine.create('OceanSpectrum', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanPhase', {
-    uniforms: function() {
+export class OceanPhase {
+
+    static uniforms() {
         return {
             "u_phases": { type: "t", value: null },
             "u_deltaTime": { type: "f", value: null },
             "u_resolution": { type: "f", value: null },
             "u_size": { type: "f", value: null },
         }
-    },
-	varying: function() {
+    }
+
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
-	fragment: function() {
+    }
+
+	static fragment() {
         return [
             'precision highp float;',
             '#include <common>',
@@ -250,18 +261,19 @@ M.fx.shadersEngine.create('OceanPhase', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanInitialSpectrum', {
-    uniforms: function() {
+export class OceanInitialSpectrum {
+
+    static uniforms() {
         return {
-            "u_wind": { type: "v2", value: new THREE.Vector2( 10.0, 10.0 ) },
+            "u_wind": { type: "v2", value: new Vector2( 10.0, 10.0 ) },
             "u_resolution": { type: "f", value: 512.0 },
             "u_size": { type: "f", value: 250.0 },
         }
-    },
+    }
 
-	fragment: function() {
+	static fragment() {
         return [
             'precision highp float;',
             '#include <common>',
@@ -332,22 +344,25 @@ M.fx.shadersEngine.create('OceanInitialSpectrum', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanSubtransform', {
-    uniforms: function() {
+export class OceanSubTransform {
+
+    static uniforms() {
         return {
             "u_input": { type: "t", value: null },
             "u_transformSize": { type: "f", value: 512.0 },
             "u_subtransformSize": { type: "f", value: 250.0 }
         }
-    },
-	varying: function() {
+    }
+
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
-	fragment: function() {
+    }
+
+	static fragment() {
         return [
             //GPU FFT using a Stockham formulation
 
@@ -392,15 +407,17 @@ M.fx.shadersEngine.create('OceanSubtransform', {
             '}'
         ].join( '\n' )
     }
-})
+}
 
-M.fx.shadersEngine.create('OceanSimVertex', {
-    varying: function() {
+export class OceanSimVertex {
+
+    static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
-	vertex: function() {
+    }
+
+	static vertex() {
         return [
             'varying vec2 vUV;',
 
@@ -410,4 +427,4 @@ M.fx.shadersEngine.create('OceanSimVertex', {
             '}'
         ].join( '\n' )
     }
-});
+}

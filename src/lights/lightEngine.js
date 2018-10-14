@@ -1,33 +1,30 @@
+import SceneManager from '../base/SceneManager';
 
-window.M = window.M || {};
+export class LightEngine {
 
-M.lightEngine = {
+    constructor() {
+        this.delayFactor = 0.1;
+        this.delayStep = 30;
+        this.holderRadius = 0.01;
+        this.holderSegments = 1;
+        this.numLights = 0;
 
-    delayFactor: 0.1,
-    delayStep: 30,
-    holderRadius: 0.01,
-    holderSegments: 1,
+        this.map = {};
+        this.lights = [];
+    }
 
-    init: function() {
-        M.lightEngine.map = new HashMap();
-        M.lightEngine.lights = [];
-    },
+    add(light) {
+        this.lights.push(light);
+    }
 
-    numLights : 0,
-
-    //add method
-    add: function(light) {
-        M.lightEngine.lights.push(light);
-    },
-
-    update: function() {
+    update() {
         var start = new Date();
-        for (var index in M.lightEngine.lights) {
-            var light = M.lightEngine.lights[index];
-            light.update(app.clock.getDelta());
+        for (var index in this.lights) {
+            var light = this.lights[index];
+            light.update(SceneManager.clock.getDelta());
             if ((+new Date() - start) > 50) return;
         }
     }
-};
+}
 
-M.lightEngine.init();
+export default new LightEngine();

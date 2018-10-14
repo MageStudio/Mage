@@ -1,0 +1,37 @@
+{
+  "name": "mage-engine",
+  "version": "0.0.1",
+  "description": "A WebGL Javascript Game Engine, built on top of THREE.js and many other libraries.",
+  "author": {
+    "name": "<Your Name Here>",
+    "email": "<Your Email Here>"
+  },
+  "scripts": {
+    "dev": "npm run build && npm run start",
+    "build": "webpack --config webpack.config.js",
+    "start": "http-server ./ -p 8080"
+  },
+  "license": "<Your License Here>",
+  "dependencies": {
+    "colors": "*",
+    "connect": "^3.6.0",
+    "http": "0.0.0",
+    "ncp": "*",
+    "node-prefix": "*",
+    "open": "0.0.5",
+    "path": "0.12.7",
+    "serve-static": "1.12.1",
+    "three": "0.97.0",
+    "url": "0.11.0",
+    "vivifyjs": "*",
+    "vivus": "^0.4.4",
+    "http-server": "0.11.1",
+  },
+  "devDependencies": {
+    "npm-cli-login": "0.0.10",
+    "babel-loader": "7.1.4",
+    "babel-preset-stage-0": "6.24.1",
+    "webpack": "4.1.0",
+    "webpack-cli": "2.0.10"
+  }
+}

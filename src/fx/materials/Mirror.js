@@ -1,18 +1,38 @@
 /**
  * @author Slayvin / http://slayvin.net
  */
+import {
+	Object3D,
+	Color,
+	Matrix4,
+	Vector3,
+	Vector4,
+	ArrowHelper,
+	Geometry,
+	Line,
+	LineBasicMaterial,
+	PerspectiveCamera,
+	ShaderMaterial,
+	WebGLRenderTarget,
+	UniformsUtils,
+	Math,
+	Scene,
+	LinearFilter,
+	RGBFormat,
+	Plane
+} from 'three';
 
-M.fx.shadersEngine.create('Mirror', {
+export default class MirrorShader extends Object3D {
 
-	uniforms: function() {
-        return { 
-            "mirrorColor": { type: "c", value: new THREE.Color( 0x7F7F7F ) },
+	uniforms() {
+        return {
+            "mirrorColor": { type: "c", value: new Color(0x7F7F7F) },
 			"mirrorSampler": { type: "t", value: null },
-			"textureMatrix" : { type: "m4", value: new THREE.Matrix4() }
+			"textureMatrix" : { type: "m4", value: new Matrix4() }
         };
-	},
+	}
 
-	vertex: function() {
+	vertex() {
         return [
 
             "uniform mat4 textureMatrix;",
@@ -21,18 +41,18 @@ M.fx.shadersEngine.create('Mirror', {
 
             "void main() {",
 
-                "vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );",
-                "vec4 worldPosition = modelMatrix * vec4( position, 1.0 );",
+                "vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);",
+                "vec4 worldPosition = modelMatrix * vec4(position, 1.0);",
                 "mirrorCoord = textureMatrix * worldPosition;",
 
                 "gl_Position = projectionMatrix * mvPosition;",
 
             "}"
 
-        ].join( "\n" );
-    },
+        ].join("\n");
+    }
 
-	fragment: function() {
+	fragment() {
         return [
 
             "uniform vec3 mirrorColor;",
@@ -41,7 +61,7 @@ M.fx.shadersEngine.create('Mirror', {
             "varying vec4 mirrorCoord;",
 
             "float blendOverlay(float base, float blend) {",
-                "return( base < 0.5 ? ( 2.0 * base * blend ) : (1.0 - 2.0 * ( 1.0 - base ) * ( 1.0 - blend ) ) );",
+                "return(base < 0.5 ? (2.0 * base * blend) : (1.0 - 2.0 * (1.0 - base) * (1.0 - blend)));",
             "}",
 
             "void main() {",
@@ -53,240 +73,253 @@ M.fx.shadersEngine.create('Mirror', {
 
             "}"
 
-        ].join( "\n" );
-    },
+        ].join("\n");
+    }
 
-    instance: (function() {
+	constructor(renderer, camera, scene, options) {
+		super();
 
-        var Mirror = function ( renderer, camera, scene, options ) {
+		this.name = 'mirror_' + this.id;
 
-            THREE.Object3D.call( this );
+		options = options || {};
 
-            this.name = 'mirror_' + this.id;
+		this.matrixNeedsUpdate = true;
 
-            options = options || {};
+		var width = options.textureWidth !== undefined ? options.textureWidth : 512;
+		var height = options.textureHeight !== undefined ? options.textureHeight : 512;
 
-            this.matrixNeedsUpdate = true;
+		this.clipBias = options.clipBias !== undefined ? options.clipBias : 0.0;
 
-            var width = options.textureWidth !== undefined ? options.textureWidth : 512;
-            var height = options.textureHeight !== undefined ? options.textureHeight : 512;
+		var mirrorColor = options.color !== undefined ? new Color(options.color) : new Color(0x7F7F7F);
 
-            this.clipBias = options.clipBias !== undefined ? options.clipBias : 0.0;
+		this.renderer = renderer;
+		this.mirrorPlane = new Plane();
+		this.normal = new Vector3(0, 0, 1);
+		this.mirrorWorldPosition = new Vector3();
+		this.cameraWorldPosition = new Vector3();
+		this.rotationMatrix = new Matrix4();
+		this.lookAtPosition = new Vector3(0, 0, - 1);
+		this.clipPlane = new Vector4();
 
-            var mirrorColor = options.color !== undefined ? new THREE.Color( options.color ) : new THREE.Color( 0x7F7F7F );
+		// For debug only, show the normal and plane of the mirror
+		var debugMode = options.debugMode !== undefined ? options.debugMode : false;
 
-            this.renderer = renderer;
-            this.mirrorPlane = new THREE.Plane();
-            this.normal = new THREE.Vector3( 0, 0, 1 );
-            this.mirrorWorldPosition = new THREE.Vector3();
-            this.cameraWorldPosition = new THREE.Vector3();
-            this.rotationMatrix = new THREE.Matrix4();
-            this.lookAtPosition = new THREE.Vector3( 0, 0, - 1 );
-            this.clipPlane = new THREE.Vector4();
+		if (debugMode) {
 
-            // For debug only, show the normal and plane of the mirror
-            var debugMode = options.debugMode !== undefined ? options.debugMode : false;
+			var arrow = new ArrowHelper(new Vector3(0, 0, 1), new Vector3(0, 0, 0), 10, 0xffff80);
+			var planeGeometry = new Geometry();
+			planeGeometry.vertices.push(new Vector3(- 10, - 10, 0));
+			planeGeometry.vertices.push(new Vector3(10, - 10, 0));
+			planeGeometry.vertices.push(new Vector3(10, 10, 0));
+			planeGeometry.vertices.push(new Vector3(- 10, 10, 0));
+			planeGeometry.vertices.push(planeGeometry.vertices[ 0 ]);
+			var plane = new Line(planeGeometry, new LineBasicMaterial({ color: 0xffff80 }));
 
-            if ( debugMode ) {
+			this.add(arrow);
+			this.add(plane);
 
-                var arrow = new THREE.ArrowHelper( new THREE.Vector3( 0, 0, 1 ), new THREE.Vector3( 0, 0, 0 ), 10, 0xffff80 );
-                var planeGeometry = new THREE.Geometry();
-                planeGeometry.vertices.push( new THREE.Vector3( - 10, - 10, 0 ) );
-                planeGeometry.vertices.push( new THREE.Vector3( 10, - 10, 0 ) );
-                planeGeometry.vertices.push( new THREE.Vector3( 10, 10, 0 ) );
-                planeGeometry.vertices.push( new THREE.Vector3( - 10, 10, 0 ) );
-                planeGeometry.vertices.push( planeGeometry.vertices[ 0 ] );
-                var plane = new THREE.Line( planeGeometry, new THREE.LineBasicMaterial( { color: 0xffff80 } ) );
+		}
 
-                this.add( arrow );
-                this.add( plane );
+		if (camera instanceof PerspectiveCamera) {
 
-            }
+			this.camera = camera;
 
-            if ( camera instanceof THREE.PerspectiveCamera ) {
+		} else {
 
-                this.camera = camera;
+			this.camera = new PerspectiveCamera();
+			console.log(this.name + ': camera is not a Perspective Camera!');
 
-            } else {
+		}
 
-                this.camera = new THREE.PerspectiveCamera();
-                console.log( this.name + ': camera is not a Perspective Camera!' );
+		this.textureMatrix = new Matrix4();
 
-            }
+		this.mirrorCamera = this.camera.clone();
+		this.mirrorCamera.matrixAutoUpdate = true;
 
-            this.textureMatrix = new THREE.Matrix4();
+		var parameters = { minFilter: LinearFilter, magFilter: LinearFilter, format: RGBFormat, stencilBuffer: false };
 
-            this.mirrorCamera = this.camera.clone();
-            this.mirrorCamera.matrixAutoUpdate = true;
+		this.renderTarget = new WebGLRenderTarget(width, height, parameters);
+		this.renderTarget2 = new WebGLRenderTarget(width, height, parameters);
 
-            var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: false };
+		var mirrorUniforms = UniformsUtils.clone(MirrorShader.uniforms());
 
-            this.renderTarget = new THREE.WebGLRenderTarget( width, height, parameters );
-            this.renderTarget2 = new THREE.WebGLRenderTarget( width, height, parameters );
+		this.material = new ShaderMaterial({
 
-            var mirrorShader = M.fx.shadersEngine.get('Mirror');
-            var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms() );
+			fragmentShader: MirrorShader.fragment(),
+			vertexShader: MirrorShader.vertex(),
+			uniforms: mirrorUniforms
 
-            this.material = new THREE.ShaderMaterial( {
+		});
 
-                fragmentShader: mirrorShader.fragment(),
-                vertexShader: mirrorShader.vertex(),
-                uniforms: mirrorUniforms
+		this.material.uniforms.mirrorSampler.value = this.renderTarget.texture;
+		this.material.uniforms.mirrorColor.value = mirrorColor;
+		this.material.uniforms.textureMatrix.value = this.textureMatrix;
 
-            } );
+		if (! Math.isPowerOfTwo(width) || ! Math.isPowerOfTwo(height)) {
 
-            this.material.uniforms.mirrorSampler.value = this.renderTarget.texture;
-            this.material.uniforms.mirrorColor.value = mirrorColor;
-            this.material.uniforms.textureMatrix.value = this.textureMatrix;
+			this.renderTarget.texture.generateMipmaps = false;
+			this.renderTarget2.texture.generateMipmaps = false;
 
-            if ( ! THREE.Math.isPowerOfTwo( width ) || ! THREE.Math.isPowerOfTwo( height ) ) {
+		}
 
-                this.renderTarget.texture.generateMipmaps = false;
-                this.renderTarget2.texture.generateMipmaps = false;
+		this.updateTextureMatrix();
+		this.render();
+	}
 
-            }
+	renderWithMirror(otherMirror) {
 
-            this.updateTextureMatrix();
-            this.render();
+		// update the mirror matrix to mirror the current view
+		this.updateTextureMatrix();
+		this.matrixNeedsUpdate = false;
 
-        };
+		// set the camera of the other mirror so the mirrored view is the reference view
+		var tempCamera = otherMirror.camera;
+		otherMirror.camera = this.mirrorCamera;
 
-        Mirror.prototype = Object.create(THREE.Object3D.prototype);
-        Mirror.prototype.constructor = Mirror;
+		// render the other mirror in temp texture
+		otherMirror.renderTemp();
+		otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget2.texture;
 
-        Mirror.prototype.renderWithMirror = function(otherMirror) {
+		// render the current mirror
+		this.render();
+		this.matrixNeedsUpdate = true;
 
-            // update the mirror matrix to mirror the current view
-            this.updateTextureMatrix();
-            this.matrixNeedsUpdate = false;
+		// restore material and camera of other mirror
+		otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget.texture;
+		otherMirror.camera = tempCamera;
 
-            // set the camera of the other mirror so the mirrored view is the reference view
-            var tempCamera = otherMirror.camera;
-            otherMirror.camera = this.mirrorCamera;
+		// restore texture matrix of other mirror
+		otherMirror.updateTextureMatrix();
 
-            // render the other mirror in temp texture
-            otherMirror.renderTemp();
-            otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget2.texture;
+	}
 
-            // render the current mirror
-            this.render();
-            this.matrixNeedsUpdate = true;
+	renderWithMirror(otherMirror) {
 
-            // restore material and camera of other mirror
-            otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget.texture;
-            otherMirror.camera = tempCamera;
+		// update the mirror matrix to mirror the current view
+		this.updateTextureMatrix();
+		this.matrixNeedsUpdate = false;
 
-            // restore texture matrix of other mirror
-            otherMirror.updateTextureMatrix();
+		// set the camera of the other mirror so the mirrored view is the reference view
+		const tempCamera = otherMirror.camera;
+		otherMirror.camera = this.mirrorCamera;
 
-        };
+		// render the other mirror in temp texture
+		otherMirror.renderTemp();
+		otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget2.texture;
 
-        Mirror.prototype.updateTextureMatrix = function () {
+		// render the current mirror
+		this.render();
+		this.matrixNeedsUpdate = true;
 
-            this.updateMatrixWorld();
-            this.camera.updateMatrixWorld();
+		// restore material and camera of other mirror
+		otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget.texture;
+		otherMirror.camera = tempCamera;
 
-            this.mirrorWorldPosition.setFromMatrixPosition( this.matrixWorld );
-            this.cameraWorldPosition.setFromMatrixPosition( this.camera.matrixWorld );
+		// restore texture matrix of other mirror
+		otherMirror.updateTextureMatrix();
 
-            this.rotationMatrix.extractRotation( this.matrixWorld );
+	}
 
-            this.normal.set( 0, 0, 1 );
-            this.normal.applyMatrix4( this.rotationMatrix );
+	updateTextureMatrix() {
 
-            var view = this.mirrorWorldPosition.clone().sub( this.cameraWorldPosition );
-            view.reflect( this.normal ).negate();
-            view.add( this.mirrorWorldPosition );
+		this.updateMatrixWorld();
+		this.camera.updateMatrixWorld();
 
-            this.rotationMatrix.extractRotation( this.camera.matrixWorld );
+		this.mirrorWorldPosition.setFromMatrixPosition(this.matrixWorld);
+		this.cameraWorldPosition.setFromMatrixPosition(this.camera.matrixWorld);
 
-            this.lookAtPosition.set( 0, 0, - 1 );
-            this.lookAtPosition.applyMatrix4( this.rotationMatrix );
-            this.lookAtPosition.add( this.cameraWorldPosition );
+		this.rotationMatrix.extractRotation(this.matrixWorld);
 
-            var target = this.mirrorWorldPosition.clone().sub( this.lookAtPosition );
-            target.reflect( this.normal ).negate();
-            target.add( this.mirrorWorldPosition );
+		this.normal.set(0, 0, 1);
+		this.normal.applyMatrix4(this.rotationMatrix);
 
-            this.up.set( 0, - 1, 0 );
-            this.up.applyMatrix4( this.rotationMatrix );
-            this.up.reflect( this.normal ).negate();
+		var view = this.mirrorWorldPosition.clone().sub(this.cameraWorldPosition);
+		view.reflect(this.normal).negate();
+		view.add(this.mirrorWorldPosition);
 
-            this.mirrorCamera.position.copy( view );
-            this.mirrorCamera.up = this.up;
-            this.mirrorCamera.lookAt( target );
+		this.rotationMatrix.extractRotation(this.camera.matrixWorld);
 
-            this.mirrorCamera.updateProjectionMatrix();
-            this.mirrorCamera.updateMatrixWorld();
-            this.mirrorCamera.matrixWorldInverse.getInverse( this.mirrorCamera.matrixWorld );
+		this.lookAtPosition.set(0, 0, - 1);
+		this.lookAtPosition.applyMatrix4(this.rotationMatrix);
+		this.lookAtPosition.add(this.cameraWorldPosition);
 
-            // Update the texture matrix
-            this.textureMatrix.set( 0.5, 0.0, 0.0, 0.5,
-                                    0.0, 0.5, 0.0, 0.5,
-                                    0.0, 0.0, 0.5, 0.5,
-                                    0.0, 0.0, 0.0, 1.0 );
-            this.textureMatrix.multiply( this.mirrorCamera.projectionMatrix );
-            this.textureMatrix.multiply( this.mirrorCamera.matrixWorldInverse );
+		var target = this.mirrorWorldPosition.clone().sub(this.lookAtPosition);
+		target.reflect(this.normal).negate();
+		target.add(this.mirrorWorldPosition);
 
-            // Now update projection matrix with new clip plane, implementing code from: http://www.terathon.com/code/oblique.html
-            // Paper explaining this technique: http://www.terathon.com/lengyel/Lengyel-Oblique.pdf
-            this.mirrorPlane.setFromNormalAndCoplanarPoint( this.normal, this.mirrorWorldPosition );
-            this.mirrorPlane.applyMatrix4( this.mirrorCamera.matrixWorldInverse );
+		this.up.set(0, - 1, 0);
+		this.up.applyMatrix4(this.rotationMatrix);
+		this.up.reflect(this.normal).negate();
 
-            this.clipPlane.set( this.mirrorPlane.normal.x, this.mirrorPlane.normal.y, this.mirrorPlane.normal.z, this.mirrorPlane.constant );
+		this.mirrorCamera.position.copy(view);
+		this.mirrorCamera.up = this.up;
+		this.mirrorCamera.lookAt(target);
 
-            var q = new THREE.Vector4();
-            var projectionMatrix = this.mirrorCamera.projectionMatrix;
+		this.mirrorCamera.updateProjectionMatrix();
+		this.mirrorCamera.updateMatrixWorld();
+		this.mirrorCamera.matrixWorldInverse.getInverse(this.mirrorCamera.matrixWorld);
 
-            q.x = ( Math.sign( this.clipPlane.x ) + projectionMatrix.elements[ 8 ] ) / projectionMatrix.elements[ 0 ];
-            q.y = ( Math.sign( this.clipPlane.y ) + projectionMatrix.elements[ 9 ] ) / projectionMatrix.elements[ 5 ];
-            q.z = - 1.0;
-            q.w = ( 1.0 + projectionMatrix.elements[ 10 ] ) / projectionMatrix.elements[ 14 ];
+		// Update the texture matrix
+		this.textureMatrix.set(0.5, 0.0, 0.0, 0.5,
+								0.0, 0.5, 0.0, 0.5,
+								0.0, 0.0, 0.5, 0.5,
+								0.0, 0.0, 0.0, 1.0);
+		this.textureMatrix.multiply(this.mirrorCamera.projectionMatrix);
+		this.textureMatrix.multiply(this.mirrorCamera.matrixWorldInverse);
 
-            // Calculate the scaled plane vector
-            var c = new THREE.Vector4();
-            c = this.clipPlane.multiplyScalar( 2.0 / this.clipPlane.dot( q ) );
+		// Now update projection matrix with new clip plane, implementing code from: http://www.terathon.com/code/oblique.html
+		// Paper explaining this technique: http://www.terathon.com/lengyel/Lengyel-Oblique.pdf
+		this.mirrorPlane.setFromNormalAndCoplanarPoint(this.normal, this.mirrorWorldPosition);
+		this.mirrorPlane.applyMatrix4(this.mirrorCamera.matrixWorldInverse);
 
-            // Replacing the third row of the projection matrix
-            projectionMatrix.elements[ 2 ] = c.x;
-            projectionMatrix.elements[ 6 ] = c.y;
-            projectionMatrix.elements[ 10 ] = c.z + 1.0 - this.clipBias;
-            projectionMatrix.elements[ 14 ] = c.w;
+		this.clipPlane.set(this.mirrorPlane.normal.x, this.mirrorPlane.normal.y, this.mirrorPlane.normal.z, this.mirrorPlane.constant);
 
-        };
+		var q = new Vector4();
+		var projectionMatrix = this.mirrorCamera.projectionMatrix;
 
-        Mirror.prototype.render = function () {
+		q.x = (Math.sign(this.clipPlane.x) + projectionMatrix.elements[ 8 ]) / projectionMatrix.elements[ 0 ];
+		q.y = (Math.sign(this.clipPlane.y) + projectionMatrix.elements[ 9 ]) / projectionMatrix.elements[ 5 ];
+		q.z = - 1.0;
+		q.w = (1.0 + projectionMatrix.elements[ 10 ]) / projectionMatrix.elements[ 14 ];
 
-            if ( this.matrixNeedsUpdate ) this.updateTextureMatrix();
+		// Calculate the scaled plane vector
+		var c = new Vector4();
+		c = this.clipPlane.multiplyScalar(2.0 / this.clipPlane.dot(q));
 
-            this.matrixNeedsUpdate = true;
+		// Replacing the third row of the projection matrix
+		projectionMatrix.elements[ 2 ] = c.x;
+		projectionMatrix.elements[ 6 ] = c.y;
+		projectionMatrix.elements[ 10 ] = c.z + 1.0 - this.clipBias;
+		projectionMatrix.elements[ 14 ] = c.w;
 
-            // Render the mirrored view of the current scene into the target texture
-            var scene = this;
+	}
 
-            while ( scene.parent !== null ) {
+	render() {
 
-                scene = scene.parent;
+		if (this.matrixNeedsUpdate) this.updateTextureMatrix();
 
-            }
+		this.matrixNeedsUpdate = true;
 
-            if ( scene !== undefined && scene instanceof THREE.Scene ) {
+		// Render the mirrored view of the current scene into the target texture
+		var scene = this;
 
-                // We can't render ourself to ourself
-                var visible = this.material.visible;
-                this.material.visible = false;
+		while (scene.parent !== null) {
 
-                this.renderer.render( scene, this.mirrorCamera, this.renderTarget, true );
+			scene = scene.parent;
 
-                this.material.visible = visible;
+		}
 
-            }
+		if (scene !== undefined && scene instanceof Scene) {
 
-        };
+			// We can't render ourself to ourself
+			var visible = this.material.visible;
+			this.material.visible = false;
 
-        return Mirror;
-    })()
+			this.renderer.render(scene, this.mirrorCamera, this.renderTarget, true);
 
-});
+			this.material.visible = visible;
 
-// TODO: fix me;
+		}
+
+	}
+}

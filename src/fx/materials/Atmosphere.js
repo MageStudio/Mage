@@ -1,7 +1,23 @@
-M.fx.shadersEngine.create("Atmosphere", {
+import {
+	FrontSide,
+	AdditiveBlending,
+	Color
+} from 'three';
 
-	vertex: function() {
-		if (window.asModule) {return '';}
+export default class Atmosphere {
+
+	constructor() {
+		this.options = {
+			side: FrontSide,
+			blending: AdditiveBlending,
+			transparent: true,
+			depthWrite: false,
+		};
+
+		this.attributes = {};
+	}
+
+	vertex() {
 		return [
 			'varying vec3 vNormal;',
 			'void main(){',
@@ -11,10 +27,9 @@ M.fx.shadersEngine.create("Atmosphere", {
 			'	gl_Position	= projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
 			'}',
 		].join('\n');
-	},
+	}
 
-	fragment: function() {
-		if (window.asModule) {return '';}
+	fragment() {
 		return [
 			'uniform float coeficient;',
 			'uniform float power;',
@@ -27,35 +42,22 @@ M.fx.shadersEngine.create("Atmosphere", {
 			'	gl_FragColor	= vec4( glowColor * intensity, 1.0 );',
 			'}',
 		].join('\n');
-	},
+	}
 
-	uniforms: function() {
-		if (window.asModule) {return {};}
+	uniforms() {
 		return {
-			coeficient	: {
-				type	: "f",
-				value	: 1.0
+			coeficient: {
+				type: "f",
+				value: 1.0
 			},
-			power		: {
-				type	: "f",
-				value	: 2
+			power: {
+				type: "f",
+				value: 2
 			},
-			glowColor	: {
-				type	: "c",
-				value	: new THREE.Color('pink')
+			glowColor: {
+				type: "c",
+				value: new Color('pink')
 			},
 		};
-	},
-
-	options: (window.asModule) ? {} : {
-		side: THREE.FrontSide,
-		blending: THREE.AdditiveBlending,
-		transparent: true,
-		depthWrite: false,
-	},
-
-	attributes: {
-
-	},
-	
-});
+	}
+}

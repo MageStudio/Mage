@@ -1,11 +1,17 @@
-Class("AmbientLight", {
+import Light from './Light';
+import SceneManager from '../base/SceneManager';
+import {
+    AmbientLight as THREEAmbientLight,
+    Vector3
+} from 'three';
 
-    AmbientLight : function(color, _intensity, _position) {
-        var intensity = _intensity ? _intensity : 1,
-            position = _position ? _position : new THREE.Vector3(0, 0, 0);
-        Light.call(this, color, intensity, position);
-        this.light = new THREE.AmbientLight(color);
-        app.add(this.light, this);
+export default class LightAmbient extends Light {
+
+    constructor(color, intensity = 1) {
+        super(color, intensity);
+        this.light = new THREEAmbientLight(color);
+
+        SceneManager.add(this.light, this);
     }
 
-})._extends("Light");
+}

@@ -1,28 +1,37 @@
-window.M = window.M || {};
+import Mesh from '../entities/Mesh';
+import ShaderMesh from '../entities/ShaderMesh';
+import ImagesEngine from '../images/ImagesEngine'
+import Loader from './Loader';
+import {
+    RepeatWrapping
+} from 'three';
 
-M.loader = M.loader || {};
+export class MeshLoader extends Loader {
 
-M.loader.meshes = {
-    load: function(meshes) {
+    constructor() {
+        super();
+    }
+
+    load(meshes) {
         for (var i=0; i<meshes.length; i++) {
 			var current = meshes[i],
-                shader = M.loader.meshes._parseShader(current),
-                script = M.loader.meshes._parseScript(current),
-                parsedMesh = M.loader.meshes._parseMesh(current);
+                shader = this._parseShader(current),
+                script = this._parseScript(current),
+                parsedMesh = this._parseMesh(current);
 
 			if (parsedMesh.name.indexOf('_camera') > -1) {
-				M.loader.meshes._loadCamera(parsedMesh, script);
+				this._loadCamera(parsedMesh, script);
 			} else {
-                M.loader.meshes._loadMesh(current, parsedMesh, script, shader);
+                this._loadMesh(current, parsedMesh, script, shader);
 			}
         }
-    },
+    }
 
-    _parseMesh: function(mesh) {
-        return app.loader.parse(mesh);
-    },
+    _parseMesh(mesh) {
+        return this.loader.parse(mesh);
+    }
 
-    _parseScript: function(mesh) {
+    _parseScript(mesh) {
         var script = mesh.object.userData ? mesh.object.userData['script'] : false,
             dir = false,
             file = false;
@@ -37,9 +46,9 @@ M.loader.meshes = {
             dir: dir,
             file: file
         };
-    },
+    }
 
-    _parseShader: function(mesh) {
+    _parseShader(mesh) {
         var name = mesh.object.userData ? mesh.object.userData['shader_name'] : false,
             options = mesh.object.userData ? JSON.parse(mesh.object.userData['shader_options']) : false;
 
@@ -54,22 +63,20 @@ M.loader.meshes = {
             name: name,
             options: opts
         };
-    },
+    }
 
-    // giro tenere senso derby collaboratore
-
-    _loadCamera: function(mesh, script) {
+    _loadCamera(mesh, script) {
         var camType = mesh.name.replace('_', '').toLowerCase();
         if (app.camera.object.type.toLowerCase() === camType) {
             app.camera.object.position.set(mesh.position.x, mesh.position.y, mesh.position.z);
             app.camera.object.rotation.set(mesh.rotation.x, mesh.rotation.y, mesh.rotation.z);
             app.camera.object.scale.set(mesh.scale.x, mesh.scale.y, mesh.scale.z);
 
-            M.loader.meshes._attachScript(app.camera, script);
+            this._attachScript(app.camera, script);
         }
-    },
+    }
 
-    _loadMesh: function(current, parsedMesh, script, shader) {
+    _loadMesh(current, parsedMesh, script, shader) {
         if (shader && shader.name && shader.options) {
             var mesh = new ShaderMesh({}, shader.name, {}, {}, shader.options);
         } else {
@@ -83,20 +90,22 @@ M.loader.meshes = {
             mesh.mesh.receiveShadow = true;
             // setting texture
             if (current.textureKey) {
-                var texture = M.imagesEngine.get(current.textureKey);
-                texture.wrapS = THREE.RepeatWrapping;
-                texture.wrapT = THREE.RepeatWrapping;
+                var texture = imagesEngine.get(current.textureKey);
+                texture.wrapS = RepeatWrapping;
+                texture.wrapT = RepeatWrapping;
                 texture.repeat.set(1, 1);
                 mesh.mesh.material.map = texture;
             }
         }
 
-        M.loader.meshes._attachScript(mesh, script);
-    },
+        this._attachScript(mesh, script);
+    }
 
-    _attachScript: function(mesh, script) {
+    _attachScript(mesh, script) {
         if (script.dir && script.file) {
             mesh.addScript(script.file.replace('.js', ''), script.dir);
         }
     }
 }
+
+export default new MeshLoader();

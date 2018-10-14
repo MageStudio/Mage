@@ -1,53 +1,64 @@
-Class("Light", {
+import Entity from '../entities/Entity';
+import LightEngine from './LightEngine';
+import { Vector3 } from 'three';
 
-	Light : function(color, intensity, position) {
+console.log('logging entity', Entity);
+
+export default class Light extends Entity {
+
+	constructor(color, intensity) {
 		//this.mesh = new THREE.AmbientLight(color);
 		//app.add(this.mesh, this);
-		Entity.call(this);
+		super();
 		this.color = color;
 		this.intensity = intensity;
-		this.position = position || {
-			x: 0,
-			y: 0,
-			z: 0
-		};
 		this.isLightOn = false;
 		this.mesh = undefined;
-		M.lightEngine.add(this);
-	},
+		LightEngine.add(this);
+	}
 
-	on: function() {
-		if (this.light) {
-			var self = this;
-			var _delay = function() {
-				self.light.intensity += M.lightEngine.delayFactor;
-				if (self.light.intensity < self.intensity) {
-					setTimeout(_delay, M.lightEngine.delayStep);
-				} else {
-					self.isLightOn = true;
-				}
-			}
-			_delay();
-		} else {
-			console.log("You should create your light, first");
+	setPosition(position = {}) {
+		const { x = 0, y = 0, z = 0 } = position;
+		this.position = {
+			x,
+			y,
+			z
+		};
+		if (this.mesh && this.light) {
+			this.mesh.mesh.position.set(x, y, z);
+	        this.light.position.set(x, y, z);
 		}
-	},
+	}
 
-	off: function() {
-		if (this.light) {
-			var self = this;
-			var _delay = function() {
-				self.light.intensity -= M.lightEngine.delayFactor;
-				if (self.light.intensity > 0) {
-					setTimeout(_delay, M.lightEngine.delayStep);
+	on() {
+		if (this.light) {
+			const delay = () => {
+				this.light.intensity += LightEngine.delayFactor;
+				if (this.light.intensity < this.intensity) {
+					setTimeout(_delay, LightEngine.delayStep);
 				} else {
-					self.isLightOn = false;
+					this.isLightOn = true;
 				}
 			}
-			_delay();
+			delay();
 		} else {
 			console.log("You should create your light, first");
 		}
 	}
 
-})._extends("Entity");
+	off() {
+		if (this.light) {
+			const delay = () => {
+				this.light.intensity -= LightEngine.delayFactor;
+				if (this.light.intensity > 0) {
+					setTimeout(_delay, LightEngine.delayStep);
+				} else {
+					this.isLightOn = false;
+				}
+			}
+			delay();
+		} else {
+			console.log("You should create your light, first");
+		}
+	}
+};

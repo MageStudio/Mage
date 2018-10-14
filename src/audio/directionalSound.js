@@ -1,14 +1,18 @@
-Class("DirectionalSound", {
+import AudioEngine from './AudioEngine';
+import Beat from './Beat';
+import { Vector3 } from 'three';
 
-	DirectionalSound : function(name, angles, options) {
-		Beat.call(this, name);
+export default class DirectionalSound extends Beat {
+
+	constructor(name, angles, options) {
+		super(name);
 
 		//creating panner, we need to update on object movements.
-		this.sound.panner = M.audioEngine.context.createPanner();
+		this.sound.panner = AudioEngine.context.createPanner();
 		//disconnecting from main volume, then connecting to panner and main volume again
 		this.sound.volume.disconnect();
 		this.sound.volume.connect(this.sound.panner);
-		this.sound.panner.connect(M.audioEngine.volume);
+		this.sound.panner.connect(AudioEngine.volume);
 
 		//storing mesh
 		this.mesh = options.mesh;
@@ -16,24 +20,24 @@ Class("DirectionalSound", {
 		this.sound.panner.coneInnerAngle = angles.innerAngleInDegrees;
 		this.sound.panner.coneOuterAngle = angles.outerAngleInDegrees;
 		this.sound.panner.coneOuterGain = angles.outerGainFactor;
-		
+
 		if (options.effect) {
 
-			this.convolver = M.audioEngine.context.createConvolver();
-			this.mixer = M.audioEngine.createGain();
+			this.convolver = AudioEngine.context.createConvolver();
+			this.mixer = AudioEngine.createGain();
 			this.sound.panner.disconnect();
 			this.sound.panner.connect(this.mixer);
 			//creating gains
-			this.plainGain = M.audioEngine.context.createGain();
-			this.convolverGain = M.audioEngine.context.createGain();
+			this.plainGain = AudioEngine.context.createGain();
+			this.convolverGain = AudioEngine.context.createGain();
 			//connect mixer to new gains
 			this.mixer.connect(plainGain);
 			this.mixer.connect(convolverGain);
 
-			this.plainGain.connect(M.audioEngine.volume);
-			this.convolverGain.connect(M.audioEngine.volume);
+			this.plainGain.connect(AudioEngine.volume);
+			this.convolverGain.connect(AudioEngine.volume);
 
-			this.convolver.buffer = M.audioEngine.get(options.effect);
+			this.convolver.buffer = AudioEngine.get(options.effect);
 			this.convolverGain.gain.value = 0.7;
 			this.plainGain.gain.value = 0.3;
 
@@ -44,18 +48,18 @@ Class("DirectionalSound", {
 			this.start();
 		}
 		//adding this sound to AudioEngine
-		M.audioEngine.add(this);
-	},
+		AudioEngine.add(this);
+	}
 
-	update : function(dt) {
+	update(dt) {
 
-		var p = new THREE.Vector3();
+		var p = new Vector3();
 		p.setFromMatrixPosition(this.mesh.matrixWorld);
 		var px = p.x, py = p.y, pz = p.z;
 
 		this.mesh.updateMatrixWorld();
 
-		var q = new THREE.Vector3();
+		var q = new Vector3();
 		q.setFromMatrixPosition(this.mesh.matrixWorld);
 		var dx = q.x-px, dy = q.y-py, dz = q.z-pz;
 		//setting panner position and velocity using doppler effect.
@@ -63,7 +67,7 @@ Class("DirectionalSound", {
 		this.sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);
 
 
-		var vec = new THREE.Vector3(0,0,1);
+		var vec = new Vector3(0,0,1);
 		var m = this.mesh.matrixWorld;
 
 		// Save the translation column and zero it.
@@ -83,4 +87,4 @@ Class("DirectionalSound", {
 
 	}
 
-})._extends("Beat");
+}

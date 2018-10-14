@@ -1,7 +1,8 @@
-window.M = window.M || {};
+export class VideoEngine {
 
-M.videoEngine = {};
+    constructor() {}
 
-M.videoEngine.load = function() {
-	//loading videos
-};
+    load() { return Promise.resolve('video'); }
+}
+
+export default new VideoEngine();

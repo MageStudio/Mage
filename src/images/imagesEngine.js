@@ -1,98 +1,96 @@
-(function() {
+import {
+	TextureLoader,
+	ImageLoader
+} from 'three';
 
-	window.M = window.M || {};
+export class ImagesEngine {
 
-	M.imagesEngine = {
-
-		numImages: 0,
-		imagesLoaded: 0,
-
-		defaults: {
+	constructor() {
+		this.defaults = {
 			"waterNormal": "assets/images/waternormals.jpg",
 			"water": "assets/images/water.jpg",
 			'smokeparticle': 'assets/images/smokeparticle.png'
-		},
+		};
 
-		imagesDefault: {
+		this.imagesDefault = {
 			"skybox": "assets/images/skybox_1.png"
-		},
+		};
 
-		load: function() {
-			//loading images
-			M.imagesEngine.map = new HashMap();
-			M.imagesEngine.images = [];
-			M.imagesEngine.numImages = 0;
-			M.imagesEngine.loader = new THREE.TextureLoader();
-			M.imagesEngine.imageLoader = new THREE.ImageLoader();
+		this.map = {};
+		this.images = [];
+		this.numImages = 0;
+		this.loader = new TextureLoader();
+		this.imageLoader = new ImageLoader();
 
-			// extending assets images with our defaults
-			Object.assign(Assets.Textures, M.imagesEngine.defaults);
-			Object.assign(Assets.Images, M.imagesEngine.imagesDefault);
+	}
 
-			for (var image in Assets.Textures) {
-				M.imagesEngine.numImages++;
-				M.imagesEngine.loadSingleFile(image, Assets.Textures[image]);
-			}
+	load() {
+		// extending assets images with our defaults
+		Object.assign(SceneManager.assets.Textures, this.defaults);
+		Object.assign(SceneManager.assets.Images, this.imagesDefault);
 
-			for (var image in Assets.Images) {
-				M.imagesEngine.numImages++;
-				M.imagesEngine.loadSingleImage(image, Assets.Images[image]);
-			}
+		if (!(Object.keys(SceneManager.assets.Textures).length + Object.keys(SceneManager.assets.Images).length)) {
+			return Promise.resolve('images');
+		}
 
-			if (M.imagesEngine.numImages == 0) {
-				M.assetsManager.completed.images = true;
-			}
-		},
+		const promises = Object
+			.keys(SceneManager.assets.Textures)
+			.map(this.loadSingleFile)
+			.concat(Object.keys(SceneManager.assets.Images)
+			.map(this.loadSingleImage));
 
-		get: function(key) {
-			return M.imagesEngine.map.get(key) || false;
-		},
+		return Promise.all(promises);
+	}
 
-		loadSingleImage: function(id, path) {
-				try {
-				M.imagesEngine.imagesLoaded++;
-				M.imagesEngine.imageLoader.load(path, function(image) {
-					M.imagesEngine.map.put(id, image);
-					M.imagesEngine.checkLoad();
-				}, function() {
-					// displaying progress
-				}, function() {
+	get(key) {
+		return this.map[key] || false;
+	}
+
+	loadSingleImage(id) {
+		const path = SceneManager.assets.Images[id];
+		return new Promise(resolve => {
+			try {
+				this.imageLoader.load(path, function(image) {
+					this.map[id] = image;
+					resolve();
+				},
+				function() {},  // displaying progress
+				function() {
 					console.log('An error occurred while fetching texture.');
-					M.imagesEngine.checkLoad();
+					resolve();
 				});
 			} catch (e) {
 				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
+				resolve();
 			}
-		},
+		})
+	}
 
-		loadSingleFile : function(id, path) {
+	loadSingleFile(id) {
+		const path = SceneManager.assets.Textures[id];
+		return new Promise(resolve => {
 			try {
-				M.imagesEngine.imagesLoaded++;
-				M.imagesEngine.loader.load(path, function(texture) {
-					M.imagesEngine.map.put(id, texture);
-					M.imagesEngine.checkLoad();
-				}, function() {
-					// displaying progress
-				}, function() {
+				this.loader.load(path, function(texture) {
+					this.map.put(id, texture);
+					resolve();
+				},
+				function() {},  // displaying progress
+				function() {
 					console.log('An error occurred while fetching texture.');
-					M.imagesEngine.checkLoad();
+					resolve();
 				});
 			} catch (e) {
-
+				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
+				resolve();
 			}
-		},
-
-		checkLoad: function() {
-			if (M.imagesEngine.imagesLoaded == M.imagesEngine.numImages) {
-				M.assetsManager.completed.images = true;
-			}
-		},
-
-		//add method
-		add: function(id, image) {
-			if (id && image) {
-				M.imagesEngine.map.put(id, image);
-			}
-		},
+		});
 	}
-})();
+
+	add(id, image) {
+		if (id && image) {
+			this.map.put(id, image);
+		}
+	}
+}
+
+export default new ImagesEngine();

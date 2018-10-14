@@ -1,23 +1,23 @@
-/**************************************************
-		MESH CLASS
-**************************************************/
+import Entity from './Entity';
+import SceneManager from '../base/SceneManager';
+import { Mesh as THREEMesh, RepeatWrapping } from 'three';
 
-Class("Mesh", {
+export default class Mesh extends Entity {
 
-	Mesh : function(geometry, material, options) {
-		Entity.call(this);
+	constructor(geometry, material, options) {
+		super();
 		this.geometry = geometry;
 		this.material = material;
 		this.script = {};
 		this.hasScript = false;
 
-		this.mesh = new THREE.Mesh(geometry, material);
+		this.mesh = new THREEMesh(geometry, material);
 		if (app.util.cast_shadow) {
 			this.mesh.castShadow = true;
 			this.mesh.receiveShadow = true;
 		}
 		//adding to core
-		app.add(this.mesh, this);
+		SceneManager.add(this.mesh, this);
 
 		if (options) {
 			//do something with options
@@ -29,16 +29,15 @@ Class("Mesh", {
 				}
 			}
 		}
-	},
+	}
 
-	texture: function(texture) {
+	texture(texture) {
 		if (texture && this.mesh && this.mesh.material) {
-			texture.wrapS = THREE.RepeatWrapping;
-			texture.wrapT = THREE.RepeatWrapping;
+			texture.wrapS = RepeatWrapping;
+			texture.wrapT = RepeatWrapping;
 
 			texture.repeat.set(1, 1);
 			this.mesh.material.map = texture;
 		}
 	}
-
-})._extends("Entity");
+}

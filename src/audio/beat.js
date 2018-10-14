@@ -1,12 +1,14 @@
-Class("Beat", {
+import AudioEngine from './AudioEngine';
 
-	Beat : function(name) {
+export default class Beat {
+
+	constructor(name) {
 		this.name = name;
 		//this sound name should already be loaded by our engine
 		this.sound = {};
-		this.sound.source = M.audioEngine.context.createBufferSource();
-		this.sound.volume = M.audioEngine.context.createGain();
-		this.sound.volume.gain.value = M.audioEngine.VOLUME;
+		this.sound.source = AudioEngine.context.createBufferSource();
+		this.sound.volume = AudioEngine.context.createGain();
+		this.sound.volume.gain.value = AudioEngine.VOLUME;
 
 		//setting listeners
 		this.setListeners();
@@ -14,74 +16,73 @@ Class("Beat", {
 		// Connect the sound source to the volume control.
 		this.sound.source.connect(this.sound.volume);
 		// Hook up the sound volume control to the main volume.
-		this.sound.volume.connect(M.audioEngine.volume);
-	},
+		this.sound.volume.connect(AudioEngine.volume);
+	}
 
-	setListeners : function() {
+	setListeners() {
 		//setting listeners
 		this.sound.source._caller = this;
 		//this.sound.source.onended = this.onEnd;
 		//this.sound.source.loopEnd = this.onLoopEnd;
-		//this.sound.source.loopStart = this.onLoopstart; 
-	},
+		//this.sound.source.loopStart = this.onLoopstart;
+	}
 
-	reset : function() {
+	reset() {
 		this.sound.source.disconnect();
-		this.sound.source = M.audioEngine.context.createBufferSource();
+		this.sound.source = AudioEngine.context.createBufferSource();
 		this.sound.source.connect(this.sound.volume);
 		//setting listeners
 		this.setListeners();
-	},
+	}
 
-	start : function() {
-		var buffer = M.audioEngine.get(this.name);
+	start() {
+		const buffer = AudioEngine.get(this.name);
 		if (!buffer) {
 			console.error("Unable to load sound, sorry.");
 			return;
 		}
 		this.sound.source.buffer = buffer;
 		this.sound.volume.gain.value = 0;
-		this.sound.source.start(M.audioEngine.context.currentTime);
-		var self = this;
-		var _delay = function() {
-			self.sound.volume.gain.value = self.sound.volume.gain.value + M.audioEngine.DELAY_FACTOR;
-			if (self.sound.volume.gain.value < M.audioEngine.DELAY_NORMAL_VALUE) {
-				setTimeout(_delay, M.audioEngine.DELAY_STEP);
+		this.sound.source.start(AudioEngine.context.currentTime);
+
+		const delay = () => {
+			this.sound.volume.gain.value = this.sound.volume.gain.value + AudioEngine.DELAY_FACTOR;
+			if (this.sound.volume.gain.value < AudioEngine.DELAY_NORMAL_VALUE) {
+				setTimeout(delay, AudioEngine.DELAY_STEP);
 			}
 		}
-		_delay();
-	},
+		delay();
+	}
 
-	stop : function() {
-		var self = this;
-		var _delay = function() {
-			self.sound.volume.gain.value = self.sound.volume.gain.value - M.audioEngine.DELAY_FACTOR;
-			if (self.sound.volume.gain.value > M.audioEngine.DELAY_MIN_VALUE) {
-				setTimeout(_delay, M.audioEngine.DELAY_STEP);
+	stop() {
+		const delay = () => {
+			this.sound.volume.gain.value = this.sound.volume.gain.value - AudioEngine.DELAY_FACTOR;
+			if (this.sound.volume.gain.value > AudioEngine.DELAY_MIN_VALUE) {
+				setTimeout(delay, AudioEngine.DELAY_STEP);
 			} else {
-				self.sound.source.stop();
+				this.sound.source.stop();
 			}
 		}
-		_delay();
-	},
+		delay();
+	}
 
-	onEnd : function() {
+	onEnd() {
 		if (this._caller.onEndCallback) {
 			this._caller.onEndCallback();
 		}
 		this._caller.reset();
-	},
+	}
 
-	onLoopEnd : function() {
+	onLoopEnd() {
 		if (this._caller.onLoopEndCallback) {
 			this._caller.onLoopEndCallback();
 		}
-	},
+	}
 
-	onLoopStart : function() {
+	onLoopStart() {
 		if (this._caller.onLoopStartCallback) {
 			this._caller.onLoopStartCallback();
 		}
 	}
-	
-});
+
+}

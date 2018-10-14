@@ -36,138 +36,6 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     document = window.document;
     M = window.M || {};
 };
-var __pool__ = {};
-function Class(name, methods) {
-	var upper = __upperCaseFirstLetter__(name);
-	__pool__[upper] = new __class__(upper, methods);
-	//constructor not found
-	if (!methods[upper]) throw "NO CONSTRUCTOR PROVIDED";
-	window[upper] = methods[upper];
-	for (var k in methods) {
-		if (k != name) window[upper].prototype[k] = methods[k];
-	}
-	//adding a few useful methods
-	window[upper].prototype['__print__'] = function() {console.table(this)}
-	return __pool__[upper];
-}
-
-function __class__ (name, methods) {
-	this.name = name;
-	this.methods = methods;
-}
-
-__class__.prototype.has = {}.hasOwnProperty;
-__class__.prototype._extends = function(toextend) {
-	var c = window[this.name];
-	var sup = (typeof(toextend) == "string") ? window[toextend] : toextend;
-	if (!sup) throw "NO UPPER CLASS"
-	window[this.name].prototype = Object.create(sup.prototype);
-	window[this.name].prototype.constructor = window[this.name];
-	this._setMethods();
-	//apparently useless code below.
-	window[this.name].prototype.__getSuper = function() {
-		//console.log(c);
-		//console.log(sup);
-		return sup;
-	}
-
-	window.subClasses = window.subClasses || {};
-	if (!window.subClasses[toextend]) {
-		window.subClasses[toextend] = this.name;
-	}
-	/*
-	window[this.name].prototype._super = function() {
-		this.__getSuper().apply(this, arguments);
-	};*/
-	window[this.name].prototype._super = (typeof(toextend) == "string") ? window[toextend].call : toextend.call;
-}
-
-__class__.prototype._setMethods = function() {
-	for (var k in this.methods) {
-		if (k != this.name) window[__upperCaseFirstLetter__(this.name)].prototype[k] = this.methods[k];
-	}
-}
-
-function __upperCaseFirstLetter__ (s) {
-	return (s.length > 2) ? s[0].toUpperCase() + s.substring(1, s.length) : s.toUpperCase();
-}
-
-
-function include(src, callback) {
-
-	var s, r, t, scripts = [];
-	var _scripts = document.getElementsByTagName("script");
-	for (var i=0; i<_scripts.length; i++) {
-		//collecting all script names.
-		scripts.push(_scripts[i].src);
-	}
-	var alreadyGot = function( value ) {
-		for (var i=0; i<scripts.length; i++) {
-			if (scripts[i].indexOf(value) != -1) {
-				return true;
-			}
-		}
-		return false;
-	}
-	//check if src is array or not,
-	//split function in two separate parts
-	if (src instanceof Array) {
-		//for each element import, than call callback
-		var got = 0;
-		if (src.length == 0) {
-			console.log("Why are you triyng to include 0 scripts? This makes me sad.")
-			return;
-		}
-		//console.log(src);
-		//console.log(src.length);
-		var check = function() {
-			if (got == src.length) callback();
-		}
-		for (var j=0; j<src.length; j++) {
-			if (!alreadyGot(src[j])) {
-				s = document.createElement('script');
-				s.type = 'text/javascript';
-				s.src = src[j] + ".js";
-				if (callback) {
-					s.onload = s.onreadystatechange = function() {
-						if (!this.readyState || this.readyState == 'complete') {
-							got++;
-							check();
-						}
-					};
-				}
-				t = document.getElementsByTagName('script')[0];
-				t.parentNode.insertBefore(s, t);
-			} else {
-				if (callback) {
-					check();
-				}
-			}
-		}
-	} else if (typeof src == "string") {
-		if (!alreadyGot(src)) {
-			r = false;
-			s = document.createElement('script');
-			s.type = 'text/javascript';
-			s.src = src + ".js";
-			if (callback) {
-				s.onload = s.onreadystatechange = function() {
-					if ( !r && (!this.readyState || this.readyState == 'complete') ) {
-						r = true;
-						callback();
-					}
-				};
-			}
-			t = document.getElementsByTagName('script')[0];
-			t.parentNode.insertBefore(s, t);
-		} else {
-			if (callback) {
-				callback();
-			}
-		}
-	}
-}
-;
 function BEE(){this.options=void 0,this.nodes=[],this.size=0,this.hasRoot=!1,this._idPool=[]}function _preEach(t,e,o){if(o){var r=e+1;t(o,r),_preEach(t,e,o.leftBranch),_preEach(t,e,o.rightBranch)}}function _postEach(t,e,o){if(o){console.log("inside _postEach"),_postEach(t,e,o.leftBranch),_postEach(t,e,o.rightBranch);var r=e+1;t(o,r)}}function _defEach(t,e,o){if(o){_defEach(t,e,o.leftBranch);var r=e+1;t(o,r),_defEach(t,e,o.rightBranch)}}function _hasLTR(t,o,r){return o?r(t.data,o.data)?!0:_hasLTR(e,o.leftBranch)||_hasLTR(e,o.rightBranch):!1}function _hasRTL(t,o,r){return o?r(t.data,o.data)?!0:_hasRTL(e,o.rightBranch)||_hasRTL(e,o.leftBranch):!1}function _orderedHas(t,e,o){return e?0==o(t.data,e.data)?!0:o(t.data,e.data)<0?_orderedHas(t,e.leftBranch):_orderedHas(t,e.rightBranch):!1}function height(t){return t?1+Math.max(_height(t.leftBranch),_height(t.rightBranch)):0}function _orderedIns(t,e,o){return e?(o(t.data,e.data)<0||0==o(t.data,e.data)?e.leftBranch=_orderedIns(t,e.leftBranch):e.rightBranch=_orderedIns(t,e.rightBranch),e):buildNode(data,void 0,void 0)}function buildNode(t,e,o){var r=this.createNode(t);return r.addLeaf(e,{branch:"left"}),r.addLeaf(o,{branch:"right"}),r}function Node(t){if(!(t.tree&&t.tree instanceof BEE))throw BEE.VALID_BEE;this.tree=t.tree;for(var e=Math.random().toString(BEE.MAX_ID_SIZE).slice(2);this.tree._idPool.indexOf(e)>-1;)e=Math.random().toString(BEE.MAX_ID_SIZE).slice(2);this.tree._idPool.push(e),this._id=e,Object.defineProperty(this,"_id",{set:function(){throw BEE.UNTOUCHABLE},get:function(){return e}}),this.data=t.data,this.tree.size+=1,this.tree.nodes.push(this),this.leftBranch=void 0,this.rightBranch=void 0,this.rightWeight=void 0,this.leftWeight=void 0,this._isRoot=!1,this._isLeaf=!1,this._isParent=!1,this.children=0,this.parents=0,this.parent=void 0}BEE.version="0.1",BEE.authors=[{name:"Marco Stagni",website:"http://marcostagni.com"}],BEE.MAX_CHILDREN_COUNT=2,BEE.MAX_PARENTS_COUNT=1,BEE.MAX_ID_SIZE=12,BEE.MAX_ROOT_NUMBER=1,BEE.VALID_BEE="Please use a valid BEE object.",BEE.UNTOUCHABLE="Untouchable value. Get away.",BEE.VALID_BRANCH="Please specify a valid branch.",BEE.NO_MORE_CHILDREN="No more children allowed for this node.",BEE.NO_MORE_PARENTS="This node already have a parent.",BEE.ERROR_NO_LEAVES="Sorry, something wrong in your BEE. There are no leaves :(",BEE.ERROR_NO_PARENTS="Sorry, something wrong in your BEE. There are no leaves :(",BEE.ERROR_STRANGE_ROOTS="Sorry, something wrong in your BEE. Strange number of root nodes",BEE.ERROR_ALREADY_LEFT="Sorry, this node already have a left branch.",BEE.ERROR_ALREADY_RIGHT="Sorry, this node already have a right branch.",BEE.BAD_ARGUMENTS="BAD ARGUMENTS, please check them.",BEE.prototype.createNode=function(t){var e=new Node({tree:this,data:t});return e},BEE.prototype.getAllLeaves=function(){var t=[];for(var e in this.nodes)this.nodes[e]._isLeaf&&t.push(this.nodes[e]);if(0==t.length)throw BEE.ERROR_NO_LEAVES;return t},BEE.prototype.getRootNode=function(){var t=[];for(var e in this.nodes)this.nodes[e]._isRoot&&t.push(this.nodes[e]);if(1!=t.length)throw BEE.ERROR_STRANGE_ROOTS;return t[0]},BEE.prototype.getAllParents=function(){var t=[];for(var e in this.nodes)this.nodes[e]._isParent&&t.push(this.nodes[e]);if(0==t.length)throw BEE.ERROR_NO_PARENTS;return t},BEE.prototype.getPath=function(t){var e,o,r=[];for(r.push({n:t,w:void 0}),e=t.parent,o=t;e;){var i=e.leftBranch._id==o._id?e.leftWeight:e.rightWeight;r.push({n:e,w:i}),o=e,e=e.parent}return r.reverse()},BEE.prototype.each=function(t,e){var o=0;if("function"!=typeof t)throw BEE.BAD_ARGUMENTS;"post"==e?(console.log("inside post"),console.log(this.getRootNode()),_postEach(t,o,this.getRootNode())):"pre"==e?_preEach(t,o,this.getRootNode()):_defEach(t,o,this.getRootNode())},BEE.prototype.has=function(t,e,o){if("function"!=typeof e)throw BEE.BAD_ARGUMENTS;var r;if(o)if(_s=o.toLowerCase(),"ltr"==_s)r=_hasLTR(t,this.getRootNode(),e);else{if("rtl"!=_s)throw BEE.BAD_ARGUMENTS;r=_hasRTL(t,this.getRootNode(),e)}else r=_hasLTR(t,this.getRootNode(),e);return r},BEE.prototype.orderedHas=function(t,e){return _orderedIns(t,this.getRootNode(),e)},BEE.prototype.height=function(){var t=_height(this.getRootNode());return t},BEE.prototype.orderedIns=function(t,e){try{_orderedIns(t,this.getRootNode(),e)}catch(o){return console.log("Something bad happened in ordIns"),!1}},BEE.prototype.buildNode=function(t,e,o){var r=this.createNode(t);return r.addLeaf(e,{branch:"left"}),r.addLeaf(o,{branch:"right"}),r},Node.prototype.setRoot=function(t){this._isRoot=t},Node.prototype.setParent=function(t){this._isParent=t},Node.prototype.setLeaf=function(t){this._isLeaf=t},Node.prototype.update=function(){0==this.children?0==this.parents?(this.setLeaf(!1),this.setRoot(!0),this.setParent(!1)):(this.setLeaf(!0),this.setRoot(!1),this.setParent(!1)):0==this.parents?(this.setLeaf(!1),this.setRoot(!0),this.setParent(!0)):(this.setLeaf(!1),this.setRoot(!1),this.setParent(!0))},Node.prototype.addLeaf=function(t,e){if(this.children+1>BEE.MAX_CHILDREN_COUNT)throw BEE.NO_MORE_CHILDREN;if(!e.branch)throw BEE.BAD_ARGUMENTS;if("left"==e.branch){if(this.leftBranch)throw BEE.ERROR_ALREADY_LEFT;this.leftBranch=t,this.leftWeight=e.weights&&e.weights.l?e.weights.l:0}else{if("right"!=e.branch)throw BEE.VALID_BRANCH;if(this.rightBranch)throw BEE.ERROR_ALREADY_RIGHT;this.rightBranch=t,this.rightWeight=e.weights&&e.weights.r?e.weights.r:1}this.children+=1,t.parent=this,t.parents=1,this.update(),t.update()},Node.prototype.addParent=function(t,e){if(this.parents+1>BEE.MAX_PARENTS_COUNT)throw BEE.NO_MORE_PARENTS;if(t.children+1>BEE.MAX_CHILDREN_COUNT)throw BEE.NO_MORE_CHILDREN;t.addLeaf(this,e)};
 ;
 /* shader-particle-engine 1.0.6
@@ -215,583 +83,240 @@ this.attributes.rotationCenter.typedArray.setVec3(a,this.rotation._center)},SPE.
 "use strict";this.particlesPerSecond=0,this.attributeOffset=0,this.activationIndex=0,this.activeParticleCount=0,this.group=null,this.attributes=null,this.paramsArray=null,this.age=0},SPE.Emitter.prototype._decrementParticleCount=function(){"use strict";--this.activeParticleCount},SPE.Emitter.prototype._incrementParticleCount=function(){"use strict";++this.activeParticleCount},SPE.Emitter.prototype._checkParticleAges=function(a,b,c,d){"use strict";for(var e,f,g,h,i=b-1;i>=a;--i)e=4*i,h=c[e],0!==h&&(g=c[e+1],f=c[e+2],1===this.direction?(g+=d,g>=f&&(g=0,h=0,this._decrementParticleCount())):(g-=d,0>=g&&(g=f,h=0,this._decrementParticleCount())),c[e]=h,c[e+1]=g,this._updateAttributeUpdateRange("params",i))},SPE.Emitter.prototype._activateParticles=function(a,b,c,d){"use strict";for(var e,f,g=this.direction,h=a;b>h;++h)e=4*h,0!=c[e]&&1!==this.particleCount||(this._incrementParticleCount(),c[e]=1,this._resetParticle(h),f=d*(h-a),c[e+1]=-1===g?c[e+2]-f:f,this._updateAttributeUpdateRange("params",h));
 },SPE.Emitter.prototype.tick=function(a){"use strict";if(!this.isStatic){null===this.paramsArray&&(this.paramsArray=this.attributes.params.typedArray.array);var b=this.attributeOffset,c=b+this.particleCount,d=this.paramsArray,e=this.particlesPerSecond*this.activeMultiplier*a,f=this.activationIndex;if(this._resetBufferRanges(),this._checkParticleAges(b,c,d,a),this.alive===!1)return void(this.age=0);if(null!==this.duration&&this.age>this.duration)return this.alive=!1,void(this.age=0);var g=1===this.particleCount?f:0|f,h=Math.min(g+e,this.activationEnd),i=h-this.activationIndex|0,j=i>0?a/i:0;this._activateParticles(g,h,d,j),this.activationIndex+=e,this.activationIndex>c&&(this.activationIndex=b),this.age+=a}},SPE.Emitter.prototype.reset=function(a){"use strict";if(this.age=0,this.alive=!1,a===!0){for(var b,c=this.attributeOffset,d=c+this.particleCount,e=this.paramsArray,f=this.attributes.params.bufferAttribute,g=d-1;g>=c;--g)b=4*g,e[b]=0,e[b+1]=0;f.updateRange.offset=0,f.updateRange.count=-1,
 f.needsUpdate=!0}return this},SPE.Emitter.prototype.enable=function(){"use strict";return this.alive=!0,this},SPE.Emitter.prototype.disable=function(){"use strict";return this.alive=!1,this},SPE.Emitter.prototype.remove=function(){"use strict";return null!==this.group?this.group.removeEmitter(this):console.error("Emitter does not belong to a group, cannot remove."),this};;
-function randomColor() {
-	var letters = '0123456789ABCDEF'.split('');
-	var color = '#';
-	for (var i = 0; i < 6; i++ ) {
+export function randomColor() {
+	const letters = '0123456789ABCDEF'.split('');
+	let color = '#';
+	for (let i = 0; i < 6; i++ ) {
 		color += letters[Math.floor(Math.random() * 16)];
 	}
 	return color;
 }
 
-function componentToHex(c) {
-	var hex = c.toString(16);
+export function componentToHex(c) {
+	const hex = c.toString(16);
 	return hex.length == 1 ? "0" + hex : hex;
 }
 
-function rgbToHex(r, g, b) {
+export function rgbToHex(r, g, b) {
 	return "0x" + componentToHex(r) + componentToHex(g) + componentToHex(b);
 }
 
-function getIntValueFromHex(hex) {
+export function getIntValueFromHex(hex) {
 	return parseInt(hex, 16);
-};
-function HashMap() {
-	if (arguments.length == 0) {
-		//costruttore di default
-		this.total = 0;
-		this.keys = new Array();
-		this.maxDimension = undefined;
-	}
-	else {
-		if (arguments.length == 1) {
-			if (!isNaN(arguments[0])) {
-				
-				/*------------------------------
-				INITIALIZING MAP with a 
-				prefixed max dimension.				
-				------------------------------*/
-
-				this.total = 0;
-				this.maxDimension = arguments[0];
-				this.keys = new Array();
-
-			}
-			else {
-				
-				/*------------------------------
-				 we must implement constructor 
-				 from another map.
-				------------------------------*/
-
-				this.total = 0;
-				this.keys = new Array();
-				this.maxDimension = undefined;
-
-			}		
-
-		}
-
-	}
-
-	/*------------------------------
-	anyway, we must create a 
-	map object inside out object
-	------------------------------*/
-
-	this.map = {};
-	
-}
-
-
-HashMap.prototype.clear = function() {
-	
-	/*------------------------------
-	clearing every element of our 
-	map.
-	------------------------------*/
-
-	for (key in this.map) {
-		this.map[""+key] = undefined;
-	}
-	this.total = 0;
-	this.keys = new Array();
-}
-
-
-HashMap.prototype.clone = function() {
-
-	/*------------------------------
-	creating a temporary object
-	exact clone of this.
-	------------------------------*/
-
-	var temp = new HashMap();
-	for (key in this.map) {
-		temp.map[""+key] = this.map[""+key];
-	}
-
-	return temp;
-}
-
-HashMap.prototype.containsKey = function( key ) {
-
-	/*------------------------------
-	searching across the map for
-	the key selected.
-	------------------------------*/
-
-	var found = false;
-	for (innerkey in this.map) {
-		if (innerkey == key ) {
-			found = true;
-			break;
-		}
-	}
-
-	return found;
-}
-
-HashMap.prototype.containsValue = function( value ) {
-
-	/*------------------------------
-	searching across the map for
-	the key selected.
-	------------------------------*/
-
-	var found = false;
-	for (key in this.map) {
-		if (this.map[""+key] == value ) {
-			found = true;
-			break;
-		}
-	}
-
-	return found;
-}
-
-HashMap.prototype.get = function( key ) {
-	
-	/*------------------------------
-	searching across the map for
-	the key selected.
-	------------------------------*/	
-	for (innerkey in this.map) {
-		if (innerkey == key ) {
-			return this.map[""+innerkey];
-		}
-	} 
-
-	return null;
-}
-
-HashMap.prototype.isEmpty = function() {
-
-	return (this.total == 0);
-}
-
-HashMap.prototype.put = function( key, value) {
-	if (this.maxDimension) {
-		if (this.total < this.maxDimension) {
-			this.map[""+key] = value;
-			this.keys.push(key);
-			this.total += 1;
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	else {
-		this.map[""+key] = value;
-		this.keys.push(key);
-		this.total += 1;
-		return true;
-	}
-}
-
-
-
-HashMap.prototype.remove = function ( key ) {
-	//must return true or false if our deletion
-	//is succesful or not.
-	try {
-		for (innerkey in this.map) {
-			if (innerkey == key) {
-				var index = this.keys.indexOf(innerkey);
-				var b = new Array();
-				for (var i =0; i < this.keys.length; i++) {
-					if (i!=index) {
-						b.push(this.keys[i]);
-					}
-				}
-				this.keys = new Array();
-				this.keys = b;
-				delete this.map[""+innerkey];
-				this.total = 0;
-				return true;
-			}
-		}
-
-		return false;
-	}
-	catch ( error ) {
-		console.log("HASHMAP ERROR ");
-		console.error(error);
-		console.trace();
-		return false;
-	}
-
-}
-
-HashMap.prototype.size = function () {
-
-	return this.total;
-};
-window.M = window.M || {};
-
-M.assetsManager = {};
-
-M.assetsManager.completed = {
-	sound : false,
-	video : true,
-	images : false,
-	models : false,
-	shaders : false
-};
-
-M.assetsManager.load = function(callback) {
-	//first we load scripts
-	//console.log(include);
-	M.assetsManager.callback = callback;
-	//over loading scripts
-	M.audioEngine.load();
-	M.videoEngine.load();
-	M.imagesEngine.load();
-	M.modelsEngine.load();
-	//effects
-	M.fx.shadersEngine.load();
-	M.assetsManager.checkInterval = setInterval(M.assetsManager.check, 100);
-};
-
-M.assetsManager.loadingMessage = function(loaded) {
-	//this method is up to you, developer!
-	//console.log(loaded);
-}
-
-M.assetsManager.check = function() {
-	if (M.assetsManager.completed.sound && M.assetsManager.completed.video && M.assetsManager.completed.images && M.assetsManager.completed.models) {
-		//we finished loading all assets, yay!
-		M.assetsManager.loadingMessage(true);
-		clearInterval(M.assetsManager.checkInterval);
-		M.assetsManager.callback();
-	} else {
-		M.assetsManager.loadingMessage(false);
-	}
 }
 ;
-window.M = window.M || {};
+import AudioEngine from '../audio/AudioEngine';
+import VideoEngine from '../video/VideoEngine';
+import ImagesEngine from '../images/ImagesEngine';
+import ModelsEngine from '../models/ModelsEngine';
+import ShadersEngine from '../fx/shaders/ShadersEngine';
 
-M.fx = {};;
-window.M = window.M || {};
+export default class AssetsManager {
 
-M.audioEngine = {
-
-	DELAY_FACTOR : 0.02,
-	DELAY_STEP : 1, //millis
-	DELAY_MIN_VALUE : 0.2,
-	DELAY_NORMAL_VALUE : 40,
-	VOLUME : 80,
-	_volume : 80,
-
-	soundPath : "js/core/sound/",
-	soundModules : [
-		"js/core/audio/beat", //parent
-		"js/core/audio/sound",
-		"js/core/audio/ambientSound"
-	],
-
-	numSound : 0,
-	soundLoaded : 0,
-	load : function() {
-
-		M.audioEngine.map = new HashMap();
-		M.audioEngine.sounds = [];
-
-		M.audioEngine.AudioContext = window.AudioContext || window.webkitAudioContext || null;
-
-		if (M.audioEngine.AudioContext) {
-			//creating a new audio context if it's available.
-			M.audioEngine.context = new M.audioEngine.AudioContext();
-			//creating a gain node to control volume
-			M.audioEngine.volume = M.audioEngine.context.createGain();
-			M.audioEngine.volume.gain.value = M.audioEngine.VOLUME;
-			//connecting volume node to context destination
-			M.audioEngine.volume.connect(M.audioEngine.context.destination);
-		} else {
-			console.error("No Audio Context available, sorry.");
+	constructor() {
+		this.completed = {
+			sound: false,
+			video: true,
+			images: false,
+			models: false,
+			shaders: false
 		}
 
-		for (var audio in Assets.Audio) {
-			M.audioEngine.numSound++;
-			M.audioEngine.loadSingleFile(audio, Assets.Audio[audio]);
-		}
-
-		if (M.audioEngine.numSound == 0) {
-			M.assetsManager.completed.sound = true;
-		}
-	},
-
-	get : function(id) {
-		//returning stored buffer;
-		return M.audioEngine.map.get(id) || false;
-	},
-
-	loadSingleFile : function(id, path) {
-		// Load a sound file using an ArrayBuffer XMLHttpRequest.
-		var request = new XMLHttpRequest();
-		request.open("GET", path, true);
-		request.responseType = "arraybuffer";
-		request.onload = function(e) {
-
-			// Create a buffer from the response ArrayBuffer.
-			M.audioEngine.context.decodeAudioData(this.response, function onSuccess(buffer) {
-				//storing audio buffer inside map
-				M.audioEngine.map.put(id, buffer);
-				M.audioEngine.soundLoaded++;
-				M.audioEngine.checkLoad();
-			}, function onFailure() {
-				M.audioEngine.map.put(id, null);
-				M.audioEngine.soundLoaded++;
-				console.error("Decoding the audio buffer failed");
-			});
-
-		};
-		request.send();
-	},
-
-	checkLoad: function() {
-		if (M.audioEngine.soundLoaded == M.audioEngine.numSound) {
-			M.assetsManager.completed.sound = true;
-		}
-	},
-
-	//add method
-	add: function(sound) {
-		M.audioEngine.sounds.push(sound);
-	},
-
-	update: function() {
-		var start = new Date();
-		for (var index in M.audioEngine.sounds) {
-			var sound = M.audioEngine.sounds[index];
-			sound.update(app.clock.getDelta());
-
-			//now handling listener
-			app.camera.object.updateMatrixWorld();
-			var p = new THREE.Vector3();
-			p.setFromMatrixPosition(app.camera.object.matrixWorld);
-
-			//setting audio engine context listener position on camera position
-			M.audioEngine.context.listener.setPosition(p.x, p.y, p.z);
-
-
-			//this is to add up and down vector to our camera
-			// The camera's world matrix is named "matrix".
-			var m = app.camera.object.matrix;
-
-			mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
-			m.elements[12] = m.elements[13] = m.elements[14] = 0;
-
-			// Multiply the orientation vector by the world matrix of the camera.
-			var vec = new THREE.Vector3(0,0,1);
-			vec.applyProjection(m);
-			vec.normalize();
-
-			// Multiply the up vector by the world matrix.
-			var up = new THREE.Vector3(0,-1,0);
-			up.applyProjection(m);
-			up.normalize();
-
-			// Set the orientation and the up-vector for the listener.
-			M.audioEngine.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
-
-			m.elements[12] = mx;
-			m.elements[13] = my;
-			m.elements[14] = mz;
-
-			if ((+new Date() - start) > 50) return;
-		}
+		this.audioEngine = new AudioEngine(this);
+		this.videoEngine = new VideoEngine(this);
+		this.imagesEngine = new ImagesEngine(this);
+		this.modelsEngine = new ModelsEngine(this);
+		this.shadersEngine = new ShadersEngine(this);
 	}
-};
 
-Object.defineProperty(M.audioEngine, "VOLUME", {
+	load(callback) {
 
-	set: function(value) {
-		M.audioEngine._volume = value;
-		M.audioEngine.volume.gain.value = M.audioEngine._volume;
-	},
+		return Promise.all([
+			this.audioEngine.load(),
+			this.videoEngine.load(),
+			this.imagesEngine.load(),
+			this.modelsEngine.load(),
+			this.shadersEngine.load()
+		]).then(() => {
+			callback();
+			this.loadingMessage(true);
+		}).catch((e) => {
+			callback(e);
+			this.loadingMessage(false);
+		});
+	}
 
-	get: function() {
-		if (M.audioEngine._volume) {
-			return M.audioEngine._volume;
-		}
-	},
-});
+	loadingMessage(loaded) {}
+}
 ;
-window.M = window.M || {};
+export default class VideoEngine {
 
-M.videoEngine = {};
+    constructor() {}
 
-M.videoEngine.load = function() {
-	//loading videos
-};;
-(function() {
+    load() {}
+}
+;
+export default class ImagesEngine {
 
-	window.M = window.M || {};
-
-	M.imagesEngine = {
-
-		numImages: 0,
-		imagesLoaded: 0,
-
-		defaults: {
+	constructor(assetsManager) {
+		this.numImages = 0;
+		this.imagesLoaded = 0;
+		this.defaults = {
 			"waterNormal": "assets/images/waternormals.jpg",
 			"water": "assets/images/water.jpg",
 			'smokeparticle': 'assets/images/smokeparticle.png'
-		},
+		};
 
-		imagesDefault: {
+		this.imagesDefault = {
 			"skybox": "assets/images/skybox_1.png"
-		},
+		};
 
-		load: function() {
-			//loading images
-			M.imagesEngine.map = new HashMap();
-			M.imagesEngine.images = [];
-			M.imagesEngine.numImages = 0;
-			M.imagesEngine.loader = new THREE.TextureLoader();
-			M.imagesEngine.imageLoader = new THREE.ImageLoader();
+		this.map = {};
+		this.images = [];
+		this.numImages = 0;
+		this.loader = new THREE.TextureLoader();
+		this.imageLoader = new THREE.ImageLoader();
 
-			// extending assets images with our defaults
-			Object.assign(Assets.Textures, M.imagesEngine.defaults);
-			Object.assign(Assets.Images, M.imagesEngine.imagesDefault);
-
-			for (var image in Assets.Textures) {
-				M.imagesEngine.numImages++;
-				M.imagesEngine.loadSingleFile(image, Assets.Textures[image]);
-			}
-
-			for (var image in Assets.Images) {
-				M.imagesEngine.numImages++;
-				M.imagesEngine.loadSingleImage(image, Assets.Images[image]);
-			}
-
-			if (M.imagesEngine.numImages == 0) {
-				M.assetsManager.completed.images = true;
-			}
-		},
-
-		get: function(key) {
-			return M.imagesEngine.map.get(key) || false;
-		},
-
-		loadSingleImage: function(id, path) {
-				try {
-				M.imagesEngine.imagesLoaded++;
-				M.imagesEngine.imageLoader.load(path, function(image) {
-					M.imagesEngine.map.put(id, image);
-					M.imagesEngine.checkLoad();
-				}, function() {
-					// displaying progress
-				}, function() {
-					console.log('An error occurred while fetching texture.');
-					M.imagesEngine.checkLoad();
-				});
-			} catch (e) {
-				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
-			}
-		},
-
-		loadSingleFile : function(id, path) {
-			try {
-				M.imagesEngine.imagesLoaded++;
-				M.imagesEngine.loader.load(path, function(texture) {
-					M.imagesEngine.map.put(id, texture);
-					M.imagesEngine.checkLoad();
-				}, function() {
-					// displaying progress
-				}, function() {
-					console.log('An error occurred while fetching texture.');
-					M.imagesEngine.checkLoad();
-				});
-			} catch (e) {
-
-			}
-		},
-
-		checkLoad: function() {
-			if (M.imagesEngine.imagesLoaded == M.imagesEngine.numImages) {
-				M.assetsManager.completed.images = true;
-			}
-		},
-
-		//add method
-		add: function(id, image) {
-			if (id && image) {
-				M.imagesEngine.map.put(id, image);
-			}
-		},
+		this.assetsManager = assetsManager;
 	}
-})();
+
+	load() {
+		// extending assets images with our defaults
+		Object.assign(Assets.Textures, this.defaults);
+		Object.assign(Assets.Images, this.imagesDefault);
+
+		for (var image in Assets.Textures) {
+			this.numImages++;
+			this.loadSingleFile(image, Assets.Textures[image]);
+		}
+
+		for (var image in Assets.Images) {
+			this.numImages++;
+			this.loadSingleImage(image, Assets.Images[image]);
+		}
+
+		if (this.numImages == 0) {
+			this.assetsManager.completed.images = true;
+		}
+	}
+
+	get(key) {
+		return this.map[key] || false;
+	}
+
+	loadSingleImage(id, path) {
+		try {
+			this.imagesLoaded++;
+			this.imageLoader.load(path, function(image) {
+				this.map[id] = image;
+				this.checkLoad();
+			}, function() {
+				// displaying progress
+			}, function() {
+				console.log('An error occurred while fetching texture.');
+				this.checkLoad();
+			});
+		} catch (e) {
+			console.log('[MAGE] error loading image ' + id + ' at path ' + path);
+		}
+	}
+
+	loadSingleFile(id, path) {
+		try {
+			this.imagesLoaded++;
+			this.loader.load(path, function(texture) {
+				this.map.put(id, texture);
+				this.checkLoad();
+			}, function() {
+				// displaying progress
+			}, function() {
+				console.log('An error occurred while fetching texture.');
+				this.checkLoad();
+			});
+		} catch (e) {
+
+		}
+	}
+
+	checkLoad() {
+		if (this.imagesLoaded == this.numImages) {
+			this.assetsManager.completed.images = true;
+		}
+	}
+
+	add(id, image) {
+		if (id && image) {
+			this.map.put(id, image);
+		}
+	}
+}
 ;
+class LigthEngine {
 
-window.M = window.M || {};
+    constructor() {
+        this.delayFactor = 0.1;
+        this.delayStep = 30;
+        this.holderRadius = 0.01;
+        this.holderSegments = 1;
+        this.numLights = 0;
 
-M.lightEngine = {
+        this.map = {};
+        this.lights = [];
+    }
 
-    delayFactor: 0.1,
-    delayStep: 30,
-    holderRadius: 0.01,
-    holderSegments: 1,
+    add(light) {
+        this.lights.push(light);
+    }
 
-    init: function() {
-        M.lightEngine.map = new HashMap();
-        M.lightEngine.lights = [];
-    },
-
-    numLights : 0,
-
-    //add method
-    add: function(light) {
-        M.lightEngine.lights.push(light);
-    },
-
-    update: function() {
+    update() {
         var start = new Date();
-        for (var index in M.lightEngine.lights) {
-            var light = M.lightEngine.lights[index];
+        for (var index in this.lights) {
+            var light = this.lights[index];
             light.update(app.clock.getDelta());
             if ((+new Date() - start) > 50) return;
         }
     }
-};
+}
 
-M.lightEngine.init();;
-window.M = window.M || {};
+export default new LightEngine();
+;
+import Mesh from '../entities/Mesh';
 
-M.modelsEngine = {
+export default class ModelsEngine {
 
-	loader: new THREE.JSONLoader(),
-	numModels : 0,
-	modelsLoaded : 0,
-	load : function() {
+	constructor(assetsManager) {
+		this.loaders = THREE.JSONLoader(),
+		this.numModels = 0;
+		this.modelsLoaded = 0;
+		this.assetsManager = assetsManager;
+	}
 
-		M.modelsEngine.map = new HashMap();
-		M.modelsEngine.models = [];
+	load() {
+		this.map = {};
+		this.models = [];
 
 		for (var model in Assets.Models) {
-			M.modelsEngine.numModels++;
-			M.modelsEngine.loadSingleFile(model, Assets.Models[model]);
+			this.numModels++;
+			this.loadSingleFile(model, Assets.Models[model]);
 		}
 
-		if (M.modelsEngine.numModels == 0) {
-			M.assetsManager.completed.models = true;
+		if (this.numModels == 0) {
+			this.assetsManager.completed.models = true;
 		}
-	},
+	}
 
-	get: function(id) {
-		var model = M.modelsEngine.map.get(id) || false;
+	get(id) {
+		var model = this.map[id] || false;
 		if (model) {
 			model.material.wireframe = false;
 			return new Mesh(model.geometry, model.material);
 		}
 		return false;
-	},
+	}
 
-	loadSingleFile : function(id, path) {
+	loadSingleFile(id, path) {
 		// Load a sound file using an ArrayBuffer XMLHttpRequest.
-		M.modelsEngine.loader.load(path, function(geometry, materials) {
+		this.loader.load(path, function(geometry, materials) {
             var faceMaterial;
             if (materials && materials.length > 0) {
                 var material = materials[0];
@@ -806,175 +331,171 @@ M.modelsEngine = {
 				material: faceMaterial
 			}
 
-			M.modelsEngine.map.put(id, model);
-			M.modelsEngine.modelsLoaded++;
-			M.modelsEngine.checkLoad();
+			this.map[id] = model;
+			this.modelsLoaded++;
+			this.checkLoad();
         });
-	},
-
-	checkLoad: function() {
-		if (M.modelsEngine.modelsLoaded == M.modelsEngine.numModels) {
-			M.assetsManager.completed.models = true;
-		}
-	},
-
-	add: function(model) {
-		M.modelsEngine.models.push(model);
 	}
-};
+
+	checkLoad() {
+		if (this.modelsLoaded == this.numModels) {
+			this.assetsManager.completed.models = true;
+		}
+	}
+
+	add(model) {
+		this.models.push(model);
+	}
+}
 ;
-window.M = window.M || {};
-M.fx = M.fx || {},
+export default class ShadersEngine {
 
-M.fx.shadersEngine = {
+	constructor(assetsManager) {
+		this.SHADERS_DIR = "app/shaders/";
+		this.SHADERS = [];
 
-	SHADERS_DIR : "app/shaders/",
+		this.map = {};
+		this.shaders = [];
 
-	SHADERS: [],
+		this.numShaders = 0;
+		this.shadersLoaded = 0;
+		this.assetsManager = assetsManager;
+	}
 
-	map: new HashMap(),
-	shaders: [],
-
-	shaders: {},
-	numShaders : 0,
-	shadersLoaded : 0,
-	update: function() {
-		//console.log("inside old update ShadersEngine");
-	},
-
-	load: function() {
-
+	load() {
 		if (Assets.Shaders) {
 			for (var shader in Assets.Shaders) {
-				M.fx.shadersEngine.numShaders++;
-				M.fx.shadersEngine.loadSingleFile(shader, Assets.Shaders[shader]);
+				this.numShaders++;
+				this.loadSingleFile(shader, Assets.Shaders[shader]);
 			}
 		}
 
-		if (M.fx.shadersEngine.numShaders == 0) {
-			M.assetsManager.completed.shaders = true;
+		if (this.numShaders == 0) {
+			this.assetsManager.completed.shaders = true;
 		}
-	},
+	}
 
-	get: function(id) {
-		//returning stored shader;
-		return M.fx.shadersEngine.map.get(id) || false;
-	},
+	get(id) {
+		return this.map[id] || false;
+	}
 
-	loadSingleFile: function(id, path) {
-		// @todo this has to be changed. We can load a M.fx.createShader file, a custom shader or a threejs shader/material.
-		var type = path.split(".")[1];
+	loadSingleFile(id, path) {
+		const type = path.split(".")[1];
+
 		if ( type == "js" ) {
 			include(path.split(".js")[0], this.checkLoad);
 		} else {
-			var request = new XMLHttpRequest();
+			const request = new XMLHttpRequest();
 			request.open("GET", path, true);
 			request.responseType = "text";
-			request.onload = function(e) {
-				var shader = M.fx.shadersEngine._parseShader(this.responseText);
-				M.fx.shadersEngine.map.put(id, shader);
-				M.fx.shadersEngine.shadersLoaded++;
-				M.fx.shadersEngine.checkLoad();
+			request.onload = (e) => {
+				const shader = this.parseShader(request.responseText);
+				this.map[id] = shader;
+				this.shadersLoaded++;
+				this.checkLoad();
 			};
 			request.send();
 		}
-	},
+	}
 
-	_parseShader: function(text) {
-		var obj = {};
-		obj.name = text.substring(text.indexOf("<name>")+6, text.indexOf("</name>"));
-		obj.vertex = text.substring(text.indexOf("<vertex>")+8, text.indexOf("</vertex>"));
-		obj.fragment = text.substring(text.indexOf("<fragment>")+10, text.indexOf("</fragment>"));
-		obj.options = {};
-		obj.attributes = {};
-		obj.uniforms = {};
-		return obj;
-	},
-
-	create: function( name, params ) {
-		var obj = {};
-
-		obj.name = name;
-		obj.vertex = params.vertex || "";
-		obj.fragment = params.fragment || "";
-		obj.options = params.options || {};
-		obj.attributes = params.attributes || {};
-		obj.uniforms = params.uniforms || {};
-		obj.instance = params.instance || false;
-
-		M.fx.shadersEngine.SHADERS.push(name);
-		M.fx.shadersEngine.map.put( name, obj );
-	},
-
-	checkLoad: function() {
-		if (M.fx.shadersEngine.shadersLoaded == M.fx.shadersEngine.numShaders) {
-			M.assetsManager.completed.shaders = true;
+	parseShader(text) {
+		return {
+			name: text.substring(text.indexOf("<name>") + 6, text.indexOf("</name>")),
+			vertex: text.substring(text.indexOf("<vertex>") + 8, text.indexOf("</vertex>")),
+			fragment: text.substring(text.indexOf("<fragment>") + 10, text.indexOf("</fragment>")),
+			options: {},
+			attributes: {},
+			uniforms: {}
 		}
-	},
+	}
 
-	//add method
-	add: function(shader) {
-		M.fx.shadersEngine.shaders.push(shader);
-	},
-};;
-window.M = window.M || {};
-M.fx = M.fx || {},
+	create(name, params) {
+		this.SHADERS.push(name);
+		this.map.put(name, {
+			name,
+			vertex: params.vertex || "",
+			fragment: params.fragment || "",
+			options: params.options || {},
+			attributes: params.attributes || {},
+			uniforms: params.uniforms || {},
+			instance: params.instance || false
+		});
+	}
 
-M.fx.particlesEngine = {
+	checkLoad() {
+		if (this.shadersLoaded == this.numShaders) {
+			this.assetsManager.completed.shaders = true;
+		}
+	}
 
-	PARTICLES_DIR : "app/particles/",
+	add(shader) {
+		this.shaders.push(shader);
+	}
+}
+;
+//M.fx.particlesEngine = {
+import { include } from '../../base/util';
+import Rain from './Rain';
+import Clouds from './Clouds';
 
-	PARTICLES: [],
+export default class ParticleEngine {
 
-	map: new HashMap(),
-	particles: [],
+	constructor(assetsManager) {
+		this.PARTICLES_DIR = 'app/particles/';
+		this.PARTICLES = [];
 
-	particles: {},
-	numParticles : 0,
-	particlesLoaded : 0,
-	update: function() {
-		//console.log("inside old update particlesEngine");
-	},
+		this.map = {
+			'Rain': Rain,
+			'Clouds': Clouds
+		};
+		this.particles = [];
 
-	load: function() {
+		this.particles = {};
+		this.numParticles  = 0;
+		this.particlesLoaded  = 0;
+
+		this.assetsManager = assetsManager;
+	}
+
+	load() {
 
 		if (Assets.Particles) {
 			for (var particle in Assets.Particles) {
-				M.fx.particlesEngine.numParticles++;
-				M.fx.particlesEngine.loadSingleFile(particle, Assets.particles[particle]);
+				this.numParticles++;
+				this.loadSingleFile(particle, Assets.particles[particle]);
 			}
 		}
 
-		if (M.fx.particlesEngine.numParticles == 0) {
-			M.assetsManager.completed.particles = true;
+		if (this.numParticles == 0) {
+			this.assetsManager.completed.particles = true;
 		}
-	},
+	}
 
-	get: function(id) {
+	get(id) {
 		//returning stored particle;
-		return M.fx.particlesEngine.map.get(id) || false;
-	},
+		return this.map[id] || false;
+	}
 
-	loadSingleFile: function(id, path) {
+	loadSingleFile(id, path) {
 		// @todo this has to be changed. We can load a M.fx.createparticle file, a custom particle or a threejs particle/material.
-		var type = path.split(".")[1];
+		const type = path.split(".")[1];
 		if ( type == "js" ) {
 			include(path.split(".js")[0], this.checkLoad);
 		} else {
-			var request = new XMLHttpRequest();
+			const request = new XMLHttpRequest();
 			request.open("GET", path, true);
 			request.responseType = "text";
-			request.onload = function(e) {
-				var particle = M.fx.particlesEngine._parseParticle(this.responseText);
-				M.fx.particlesEngine.map.put(id, particle);
-				M.fx.particlesEngine.particlesLoaded++;
-				M.fx.particlesEngine.checkLoad();
+			request.onload = (e) => {
+				var particle = this.parseParticle(request.responseText);
+				this.map[id] = particle;
+				this.particlesLoaded++;
+				this.checkLoad();
 			};
 			request.send();
 		}
-	},
+	}
 
-	_parseParticle: function(text) {
+	parseParticle(text) {
 		var obj = {};
 		obj.name = text.substring(text.indexOf("<name>")+6, text.indexOf("</name>"));
 		obj.vertex = text.substring(text.indexOf("<vertex>")+8, text.indexOf("</vertex>"));
@@ -983,10 +504,10 @@ M.fx.particlesEngine = {
 		obj.attributes = {};
 		obj.uniforms = {};
 		return obj;
-	},
+	}
 
-	create: function( name, params ) {
-		var obj = {};
+	create(name, params) {
+		const obj = {};
 
 		obj.name = name;
 		obj.vertex = params.vertex || "";
@@ -996,30 +517,33 @@ M.fx.particlesEngine = {
 		obj.uniforms = params.uniforms || {};
 		obj.instance = params.instance || false;
 
-		M.fx.particlesEngine.PARTICLES.push(name);
-		M.fx.particlesEngine.map.put( name, obj );
-	},
+		this.PARTICLES.push(name);
+		this.map[name] = obj;
+	}
 
-	checkLoad: function() {
-		if (M.fx.particlesEngine.particlesLoaded == M.fx.particlesEngine.numParticles) {
-			M.assetsManager.completed.particles = true;
+
+
+	checkLoad() {
+		if (this.particlesLoaded == this.numParticles) {
+			this.assetsManager.completed.particles = true;
 		}
-	},
+	}
 
-	//add method
-	add: function(particle) {
-		M.fx.particlesEngine.PARTICLES.push(particle);
-	},
-};;
-M.fx.particlesEngine.create('Rain', {
+	add(particle) {
+		this.PARTICLES.push(particle);
+	}
+}
+;
+export default class Rain {
 
-    instance: function(options) {
-        var particleGroup = new SPE.Group({
+    constructor(options) {
+        this.particleGroup = new SPE.Group({
             texture: {
                 value: options.texture
             }
         });
-        var emitter = new SPE.Emitter({
+
+        this.emitter = new SPE.Emitter({
             maxAge: {
                 value: options.maxAge || 2
             },
@@ -1043,27 +567,28 @@ M.fx.particlesEngine.create('Rain', {
             },
             particleCount: options.particleCount || 2000
         });
-        particleGroup.addEmitter( emitter );
-        particleGroup.clock = new THREE.Clock();
 
-        particleGroup.render = function() {
-            particleGroup.tick(particleGroup.clock.getDelta());
-        }
-
-        return particleGroup;
+        this.particleGroup.addEmitter(this.emitter);
+        this.particleGroup.clock = new THREE.Clock();
     }
-});;
-M.fx.particlesEngine.create('Clouds', {
 
-    instance: function(options) {
-        var particleGroup = new SPE.Group({
+    render() {
+        this.particleGroup.tick(this.particleGroup.clock.getDelta());
+    }
+}
+;
+export default Clouds {
+
+    constructor(options) {
+        this.particleGroup = new SPE.Group({
             texture: {
                 value: options.texture
             },
             blending: THREE.NormalBlending,
             fog: true
         });
-        var emitter = new SPE.Emitter({
+
+        this.emitter = new SPE.Emitter({
             particleCount: options.particleCount || 750,
             maxAge: {
                 value: options.maxAge || 3,
@@ -1094,83 +619,92 @@ M.fx.particlesEngine.create('Clouds', {
             }
         });
 
-        particleGroup.addEmitter( emitter );
-        particleGroup.clock = new THREE.Clock();
-
-        particleGroup.render = function() {
-            particleGroup.tick(particleGroup.clock.getDelta());
-        }
-
-        return particleGroup;
-
+        this.particleGroup.addEmitter( emitter );
+        this.particleGroup.clock = new THREE.Clock();
     }
-});;
-M.fx.shadersEngine.create("Skybox", {
-    instance: function(options) {
-        var cubeMap = new THREE.CubeTexture( [] );
-        cubeMap.format = THREE.RGBFormat;
-        
-        var _buildCube = function(image) {
-            var getSide = function ( x, y ) {
-                var size = 1024;
-                var canvas = document.createElement( 'canvas' );
-                canvas.width = size;
-                canvas.height = size;
-                var context = canvas.getContext( '2d' );
-                context.drawImage( image, - x * size, - y * size );
-                return canvas;
-            };
 
-            cubeMap.images[ 0 ] = getSide( 2, 1 ); // px
-            cubeMap.images[ 1 ] = getSide( 0, 1 ); // nx
-            cubeMap.images[ 2 ] = getSide( 1, 0 ); // py
-            cubeMap.images[ 3 ] = getSide( 1, 2 ); // ny
-            cubeMap.images[ 4 ] = getSide( 1, 1 ); // pz
-            cubeMap.images[ 5 ] = getSide( 3, 1 ); // nz
-            cubeMap.needsUpdate = true;
+    render() {
+        this.particleGroup.tick(this.particleGroup.clock.getDelta());
+    }
+}
+;
+export default class Skybox {
+
+    static get options() {
+        return {
+            textureName: {
+                name: 'texture',
+                type: 'string',
+                default: 'skybox',
+                mandatory: true
+            }
         }
+    }
+
+    constructor(imagesEngine, options) {
+        this.cubeMap = new THREE.CubeTexture( [] );
+        this.cubeMap.format = THREE.RGBFormat;
 
         if (options.texture) {
-            _buildCube(options.texture);
+            this.buildCube(options.texture);
         } else {
             var textureName = options.textureName || 'skybox';
-            _buildCube(M.imagesEngine.get(textureName));
+            this.buildCube(imagesEngine.get(textureName));
         }
-        
 
-        var cubeShader = THREE.ShaderLib[ 'cube' ];
-        cubeShader.uniforms[ 'tCube' ].value = cubeMap;
+        const cubeShader = THREE.ShaderLib[ 'cube' ];
+        cubeShader.uniforms[ 'tCube' ].value = this.cubeMap;
 
 
-        var skyBoxMaterial = new THREE.ShaderMaterial( {
+        const skyBoxMaterial = new THREE.ShaderMaterial( {
             fragmentShader: cubeShader.fragmentShader,
             vertexShader: cubeShader.vertexShader,
             uniforms: cubeShader.uniforms,
             depthWrite: false,
             side: THREE.BackSide
-        } );
+        });
 
-        var skyBox = new THREE.Mesh(
+        this.mesh = new THREE.Mesh(
             new THREE.BoxGeometry( 1000000, 1000000, 1000000 ),
             skyBoxMaterial
         );
-    
-        return skyBox;
-    },
-
-    options: {
-        textureName: {
-            name: 'texture',
-            type: 'string',
-            default: 'skybox',
-            mandatory: true
-        }
     }
-});;
-M.fx.shadersEngine.create("Atmosphere", {
 
-	vertex: function() {
-		if (window.asModule) {return '';}
+    buildCube(image) {
+        this.cubeMap.images[ 0 ] = this.getSide(image, 2, 1 ); // px
+        this.cubeMap.images[ 1 ] = this.getSide(image, 0, 1 ); // nx
+        this.cubeMap.images[ 2 ] = this.getSide(image, 1, 0 ); // py
+        this.cubeMap.images[ 3 ] = this.getSide(image, 1, 2 ); // ny
+        this.cubeMap.images[ 4 ] = this.getSide(image, 1, 1 ); // pz
+        this.cubeMap.images[ 5 ] = this.getSide(image, 3, 1 ); // nz
+        this.cubeMap.needsUpdate = true;
+    }
+
+    getSide(image, x, y ) {
+        const size = 1024;
+        const canvas = document.createElement( 'canvas' );
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext( '2d' );
+        context.drawImage( image, - x * size, - y * size );
+        return canvas;
+    }
+}
+;
+export default class Atmosphere {
+
+	constructor() {
+		this.options = {
+			side: THREE.FrontSide,
+			blending: THREE.AdditiveBlending,
+			transparent: true,
+			depthWrite: false,
+		};
+
+		this.attributes = {};
+	}
+
+	vertex() {
 		return [
 			'varying vec3 vNormal;',
 			'void main(){',
@@ -1180,10 +714,9 @@ M.fx.shadersEngine.create("Atmosphere", {
 			'	gl_Position	= projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
 			'}',
 		].join('\n');
-	},
+	}
 
-	fragment: function() {
-		if (window.asModule) {return '';}
+	fragment() {
 		return [
 			'uniform float coeficient;',
 			'uniform float power;',
@@ -1196,54 +729,61 @@ M.fx.shadersEngine.create("Atmosphere", {
 			'	gl_FragColor	= vec4( glowColor * intensity, 1.0 );',
 			'}',
 		].join('\n');
-	},
+	}
 
-	uniforms: function() {
-		if (window.asModule) {return {};}
+	uniforms() {
 		return {
-			coeficient	: {
-				type	: "f",
-				value	: 1.0
+			coeficient: {
+				type: "f",
+				value: 1.0
 			},
-			power		: {
-				type	: "f",
-				value	: 2
+			power: {
+				type: "f",
+				value: 2
 			},
-			glowColor	: {
-				type	: "c",
-				value	: new THREE.Color('pink')
+			glowColor: {
+				type: "c",
+				value: new THREE.Color('pink')
 			},
 		};
-	},
-
-	options: (window.asModule) ? {} : {
-		side: THREE.FrontSide,
-		blending: THREE.AdditiveBlending,
-		transparent: true,
-		depthWrite: false,
-	},
-
-	attributes: {
-
-	},
-	
-});
+	}
+}
 ;
 /**
  * @author Slayvin / http://slayvin.net
  */
+import {
+	Object3D,
+	Color,
+	Matrix4,
+	Vector3,
+	Vector4,
+	ArrowHelper,
+	Geometry,
+	Line,
+	LineBasicMaterial,
+	PerspectiveCamera,
+	ShaderMaterial,
+	WebGLRenderTarget,
+	UniformsUtils,
+	Math,
+	Scene,
+	LinearFilter,
+	RGBFormat,
+	Plane
+} from 'three';
 
-M.fx.shadersEngine.create('Mirror', {
+export deafult class MirrorShader extends Object3D {
 
-	uniforms: function() {
-        return { 
-            "mirrorColor": { type: "c", value: new THREE.Color( 0x7F7F7F ) },
+	uniforms() {
+        return {
+            "mirrorColor": { type: "c", value: new Color(0x7F7F7F) },
 			"mirrorSampler": { type: "t", value: null },
-			"textureMatrix" : { type: "m4", value: new THREE.Matrix4() }
+			"textureMatrix" : { type: "m4", value: new Matrix4() }
         };
-	},
+	}
 
-	vertex: function() {
+	vertex() {
         return [
 
             "uniform mat4 textureMatrix;",
@@ -1252,18 +792,18 @@ M.fx.shadersEngine.create('Mirror', {
 
             "void main() {",
 
-                "vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );",
-                "vec4 worldPosition = modelMatrix * vec4( position, 1.0 );",
+                "vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);",
+                "vec4 worldPosition = modelMatrix * vec4(position, 1.0);",
                 "mirrorCoord = textureMatrix * worldPosition;",
 
                 "gl_Position = projectionMatrix * mvPosition;",
 
             "}"
 
-        ].join( "\n" );
-    },
+        ].join("\n");
+    }
 
-	fragment: function() {
+	fragment() {
         return [
 
             "uniform vec3 mirrorColor;",
@@ -1272,7 +812,7 @@ M.fx.shadersEngine.create('Mirror', {
             "varying vec4 mirrorCoord;",
 
             "float blendOverlay(float base, float blend) {",
-                "return( base < 0.5 ? ( 2.0 * base * blend ) : (1.0 - 2.0 * ( 1.0 - base ) * ( 1.0 - blend ) ) );",
+                "return(base < 0.5 ? (2.0 * base * blend) : (1.0 - 2.0 * (1.0 - base) * (1.0 - blend)));",
             "}",
 
             "void main() {",
@@ -1284,243 +824,256 @@ M.fx.shadersEngine.create('Mirror', {
 
             "}"
 
-        ].join( "\n" );
-    },
+        ].join("\n");
+    }
 
-    instance: (function() {
+	constructor(renderer, camera, scene, options) {
+		super();
 
-        var Mirror = function ( renderer, camera, scene, options ) {
+		this.name = 'mirror_' + this.id;
 
-            THREE.Object3D.call( this );
+		options = options || {};
 
-            this.name = 'mirror_' + this.id;
+		this.matrixNeedsUpdate = true;
 
-            options = options || {};
+		var width = options.textureWidth !== undefined ? options.textureWidth : 512;
+		var height = options.textureHeight !== undefined ? options.textureHeight : 512;
 
-            this.matrixNeedsUpdate = true;
+		this.clipBias = options.clipBias !== undefined ? options.clipBias : 0.0;
 
-            var width = options.textureWidth !== undefined ? options.textureWidth : 512;
-            var height = options.textureHeight !== undefined ? options.textureHeight : 512;
+		var mirrorColor = options.color !== undefined ? new Color(options.color) : new Color(0x7F7F7F);
 
-            this.clipBias = options.clipBias !== undefined ? options.clipBias : 0.0;
+		this.renderer = renderer;
+		this.mirrorPlane = new Plane();
+		this.normal = new Vector3(0, 0, 1);
+		this.mirrorWorldPosition = new Vector3();
+		this.cameraWorldPosition = new Vector3();
+		this.rotationMatrix = new Matrix4();
+		this.lookAtPosition = new Vector3(0, 0, - 1);
+		this.clipPlane = new Vector4();
 
-            var mirrorColor = options.color !== undefined ? new THREE.Color( options.color ) : new THREE.Color( 0x7F7F7F );
+		// For debug only, show the normal and plane of the mirror
+		var debugMode = options.debugMode !== undefined ? options.debugMode : false;
 
-            this.renderer = renderer;
-            this.mirrorPlane = new THREE.Plane();
-            this.normal = new THREE.Vector3( 0, 0, 1 );
-            this.mirrorWorldPosition = new THREE.Vector3();
-            this.cameraWorldPosition = new THREE.Vector3();
-            this.rotationMatrix = new THREE.Matrix4();
-            this.lookAtPosition = new THREE.Vector3( 0, 0, - 1 );
-            this.clipPlane = new THREE.Vector4();
+		if (debugMode) {
 
-            // For debug only, show the normal and plane of the mirror
-            var debugMode = options.debugMode !== undefined ? options.debugMode : false;
+			var arrow = new ArrowHelper(new Vector3(0, 0, 1), new Vector3(0, 0, 0), 10, 0xffff80);
+			var planeGeometry = new Geometry();
+			planeGeometry.vertices.push(new Vector3(- 10, - 10, 0));
+			planeGeometry.vertices.push(new Vector3(10, - 10, 0));
+			planeGeometry.vertices.push(new Vector3(10, 10, 0));
+			planeGeometry.vertices.push(new Vector3(- 10, 10, 0));
+			planeGeometry.vertices.push(planeGeometry.vertices[ 0 ]);
+			var plane = new Line(planeGeometry, new LineBasicMaterial({ color: 0xffff80 }));
 
-            if ( debugMode ) {
+			this.add(arrow);
+			this.add(plane);
 
-                var arrow = new THREE.ArrowHelper( new THREE.Vector3( 0, 0, 1 ), new THREE.Vector3( 0, 0, 0 ), 10, 0xffff80 );
-                var planeGeometry = new THREE.Geometry();
-                planeGeometry.vertices.push( new THREE.Vector3( - 10, - 10, 0 ) );
-                planeGeometry.vertices.push( new THREE.Vector3( 10, - 10, 0 ) );
-                planeGeometry.vertices.push( new THREE.Vector3( 10, 10, 0 ) );
-                planeGeometry.vertices.push( new THREE.Vector3( - 10, 10, 0 ) );
-                planeGeometry.vertices.push( planeGeometry.vertices[ 0 ] );
-                var plane = new THREE.Line( planeGeometry, new THREE.LineBasicMaterial( { color: 0xffff80 } ) );
+		}
 
-                this.add( arrow );
-                this.add( plane );
+		if (camera instanceof PerspectiveCamera) {
 
-            }
+			this.camera = camera;
 
-            if ( camera instanceof THREE.PerspectiveCamera ) {
+		} else {
 
-                this.camera = camera;
+			this.camera = new PerspectiveCamera();
+			console.log(this.name + ': camera is not a Perspective Camera!');
 
-            } else {
+		}
 
-                this.camera = new THREE.PerspectiveCamera();
-                console.log( this.name + ': camera is not a Perspective Camera!' );
+		this.textureMatrix = new Matrix4();
 
-            }
+		this.mirrorCamera = this.camera.clone();
+		this.mirrorCamera.matrixAutoUpdate = true;
 
-            this.textureMatrix = new THREE.Matrix4();
+		var parameters = { minFilter: LinearFilter, magFilter: LinearFilter, format: RGBFormat, stencilBuffer: false };
 
-            this.mirrorCamera = this.camera.clone();
-            this.mirrorCamera.matrixAutoUpdate = true;
+		this.renderTarget = new WebGLRenderTarget(width, height, parameters);
+		this.renderTarget2 = new WebGLRenderTarget(width, height, parameters);
 
-            var parameters = { minFilter: THREE.LinearFilter, magFilter: THREE.LinearFilter, format: THREE.RGBFormat, stencilBuffer: false };
+		var mirrorUniforms = UniformsUtils.clone(MirrorShader.uniforms());
 
-            this.renderTarget = new THREE.WebGLRenderTarget( width, height, parameters );
-            this.renderTarget2 = new THREE.WebGLRenderTarget( width, height, parameters );
+		this.material = new ShaderMaterial({
 
-            var mirrorShader = M.fx.shadersEngine.get('Mirror');
-            var mirrorUniforms = THREE.UniformsUtils.clone( mirrorShader.uniforms() );
+			fragmentShader: MirrorShader.fragment(),
+			vertexShader: MirrorShader.vertex(),
+			uniforms: mirrorUniforms
 
-            this.material = new THREE.ShaderMaterial( {
+		});
 
-                fragmentShader: mirrorShader.fragment(),
-                vertexShader: mirrorShader.vertex(),
-                uniforms: mirrorUniforms
+		this.material.uniforms.mirrorSampler.value = this.renderTarget.texture;
+		this.material.uniforms.mirrorColor.value = mirrorColor;
+		this.material.uniforms.textureMatrix.value = this.textureMatrix;
 
-            } );
+		if (! Math.isPowerOfTwo(width) || ! Math.isPowerOfTwo(height)) {
 
-            this.material.uniforms.mirrorSampler.value = this.renderTarget.texture;
-            this.material.uniforms.mirrorColor.value = mirrorColor;
-            this.material.uniforms.textureMatrix.value = this.textureMatrix;
+			this.renderTarget.texture.generateMipmaps = false;
+			this.renderTarget2.texture.generateMipmaps = false;
 
-            if ( ! THREE.Math.isPowerOfTwo( width ) || ! THREE.Math.isPowerOfTwo( height ) ) {
+		}
 
-                this.renderTarget.texture.generateMipmaps = false;
-                this.renderTarget2.texture.generateMipmaps = false;
+		this.updateTextureMatrix();
+		this.render();
+	}
 
-            }
+	renderWithMirror(otherMirror) {
 
-            this.updateTextureMatrix();
-            this.render();
+		// update the mirror matrix to mirror the current view
+		this.updateTextureMatrix();
+		this.matrixNeedsUpdate = false;
 
-        };
+		// set the camera of the other mirror so the mirrored view is the reference view
+		var tempCamera = otherMirror.camera;
+		otherMirror.camera = this.mirrorCamera;
 
-        Mirror.prototype = Object.create(THREE.Object3D.prototype);
-        Mirror.prototype.constructor = Mirror;
+		// render the other mirror in temp texture
+		otherMirror.renderTemp();
+		otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget2.texture;
 
-        Mirror.prototype.renderWithMirror = function(otherMirror) {
+		// render the current mirror
+		this.render();
+		this.matrixNeedsUpdate = true;
 
-            // update the mirror matrix to mirror the current view
-            this.updateTextureMatrix();
-            this.matrixNeedsUpdate = false;
+		// restore material and camera of other mirror
+		otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget.texture;
+		otherMirror.camera = tempCamera;
 
-            // set the camera of the other mirror so the mirrored view is the reference view
-            var tempCamera = otherMirror.camera;
-            otherMirror.camera = this.mirrorCamera;
+		// restore texture matrix of other mirror
+		otherMirror.updateTextureMatrix();
 
-            // render the other mirror in temp texture
-            otherMirror.renderTemp();
-            otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget2.texture;
+	}
 
-            // render the current mirror
-            this.render();
-            this.matrixNeedsUpdate = true;
+	renderWithMirror(otherMirror) {
 
-            // restore material and camera of other mirror
-            otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget.texture;
-            otherMirror.camera = tempCamera;
+		// update the mirror matrix to mirror the current view
+		this.updateTextureMatrix();
+		this.matrixNeedsUpdate = false;
 
-            // restore texture matrix of other mirror
-            otherMirror.updateTextureMatrix();
+		// set the camera of the other mirror so the mirrored view is the reference view
+		const tempCamera = otherMirror.camera;
+		otherMirror.camera = this.mirrorCamera;
 
-        };
+		// render the other mirror in temp texture
+		otherMirror.renderTemp();
+		otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget2.texture;
 
-        Mirror.prototype.updateTextureMatrix = function () {
+		// render the current mirror
+		this.render();
+		this.matrixNeedsUpdate = true;
 
-            this.updateMatrixWorld();
-            this.camera.updateMatrixWorld();
+		// restore material and camera of other mirror
+		otherMirror.material.uniforms.mirrorSampler.value = otherMirror.renderTarget.texture;
+		otherMirror.camera = tempCamera;
 
-            this.mirrorWorldPosition.setFromMatrixPosition( this.matrixWorld );
-            this.cameraWorldPosition.setFromMatrixPosition( this.camera.matrixWorld );
+		// restore texture matrix of other mirror
+		otherMirror.updateTextureMatrix();
 
-            this.rotationMatrix.extractRotation( this.matrixWorld );
+	}
 
-            this.normal.set( 0, 0, 1 );
-            this.normal.applyMatrix4( this.rotationMatrix );
+	updateTextureMatrix() {
 
-            var view = this.mirrorWorldPosition.clone().sub( this.cameraWorldPosition );
-            view.reflect( this.normal ).negate();
-            view.add( this.mirrorWorldPosition );
+		this.updateMatrixWorld();
+		this.camera.updateMatrixWorld();
 
-            this.rotationMatrix.extractRotation( this.camera.matrixWorld );
+		this.mirrorWorldPosition.setFromMatrixPosition(this.matrixWorld);
+		this.cameraWorldPosition.setFromMatrixPosition(this.camera.matrixWorld);
 
-            this.lookAtPosition.set( 0, 0, - 1 );
-            this.lookAtPosition.applyMatrix4( this.rotationMatrix );
-            this.lookAtPosition.add( this.cameraWorldPosition );
+		this.rotationMatrix.extractRotation(this.matrixWorld);
 
-            var target = this.mirrorWorldPosition.clone().sub( this.lookAtPosition );
-            target.reflect( this.normal ).negate();
-            target.add( this.mirrorWorldPosition );
+		this.normal.set(0, 0, 1);
+		this.normal.applyMatrix4(this.rotationMatrix);
 
-            this.up.set( 0, - 1, 0 );
-            this.up.applyMatrix4( this.rotationMatrix );
-            this.up.reflect( this.normal ).negate();
+		var view = this.mirrorWorldPosition.clone().sub(this.cameraWorldPosition);
+		view.reflect(this.normal).negate();
+		view.add(this.mirrorWorldPosition);
 
-            this.mirrorCamera.position.copy( view );
-            this.mirrorCamera.up = this.up;
-            this.mirrorCamera.lookAt( target );
+		this.rotationMatrix.extractRotation(this.camera.matrixWorld);
 
-            this.mirrorCamera.updateProjectionMatrix();
-            this.mirrorCamera.updateMatrixWorld();
-            this.mirrorCamera.matrixWorldInverse.getInverse( this.mirrorCamera.matrixWorld );
+		this.lookAtPosition.set(0, 0, - 1);
+		this.lookAtPosition.applyMatrix4(this.rotationMatrix);
+		this.lookAtPosition.add(this.cameraWorldPosition);
 
-            // Update the texture matrix
-            this.textureMatrix.set( 0.5, 0.0, 0.0, 0.5,
-                                    0.0, 0.5, 0.0, 0.5,
-                                    0.0, 0.0, 0.5, 0.5,
-                                    0.0, 0.0, 0.0, 1.0 );
-            this.textureMatrix.multiply( this.mirrorCamera.projectionMatrix );
-            this.textureMatrix.multiply( this.mirrorCamera.matrixWorldInverse );
+		var target = this.mirrorWorldPosition.clone().sub(this.lookAtPosition);
+		target.reflect(this.normal).negate();
+		target.add(this.mirrorWorldPosition);
 
-            // Now update projection matrix with new clip plane, implementing code from: http://www.terathon.com/code/oblique.html
-            // Paper explaining this technique: http://www.terathon.com/lengyel/Lengyel-Oblique.pdf
-            this.mirrorPlane.setFromNormalAndCoplanarPoint( this.normal, this.mirrorWorldPosition );
-            this.mirrorPlane.applyMatrix4( this.mirrorCamera.matrixWorldInverse );
+		this.up.set(0, - 1, 0);
+		this.up.applyMatrix4(this.rotationMatrix);
+		this.up.reflect(this.normal).negate();
 
-            this.clipPlane.set( this.mirrorPlane.normal.x, this.mirrorPlane.normal.y, this.mirrorPlane.normal.z, this.mirrorPlane.constant );
+		this.mirrorCamera.position.copy(view);
+		this.mirrorCamera.up = this.up;
+		this.mirrorCamera.lookAt(target);
 
-            var q = new THREE.Vector4();
-            var projectionMatrix = this.mirrorCamera.projectionMatrix;
+		this.mirrorCamera.updateProjectionMatrix();
+		this.mirrorCamera.updateMatrixWorld();
+		this.mirrorCamera.matrixWorldInverse.getInverse(this.mirrorCamera.matrixWorld);
 
-            q.x = ( Math.sign( this.clipPlane.x ) + projectionMatrix.elements[ 8 ] ) / projectionMatrix.elements[ 0 ];
-            q.y = ( Math.sign( this.clipPlane.y ) + projectionMatrix.elements[ 9 ] ) / projectionMatrix.elements[ 5 ];
-            q.z = - 1.0;
-            q.w = ( 1.0 + projectionMatrix.elements[ 10 ] ) / projectionMatrix.elements[ 14 ];
+		// Update the texture matrix
+		this.textureMatrix.set(0.5, 0.0, 0.0, 0.5,
+								0.0, 0.5, 0.0, 0.5,
+								0.0, 0.0, 0.5, 0.5,
+								0.0, 0.0, 0.0, 1.0);
+		this.textureMatrix.multiply(this.mirrorCamera.projectionMatrix);
+		this.textureMatrix.multiply(this.mirrorCamera.matrixWorldInverse);
 
-            // Calculate the scaled plane vector
-            var c = new THREE.Vector4();
-            c = this.clipPlane.multiplyScalar( 2.0 / this.clipPlane.dot( q ) );
+		// Now update projection matrix with new clip plane, implementing code from: http://www.terathon.com/code/oblique.html
+		// Paper explaining this technique: http://www.terathon.com/lengyel/Lengyel-Oblique.pdf
+		this.mirrorPlane.setFromNormalAndCoplanarPoint(this.normal, this.mirrorWorldPosition);
+		this.mirrorPlane.applyMatrix4(this.mirrorCamera.matrixWorldInverse);
 
-            // Replacing the third row of the projection matrix
-            projectionMatrix.elements[ 2 ] = c.x;
-            projectionMatrix.elements[ 6 ] = c.y;
-            projectionMatrix.elements[ 10 ] = c.z + 1.0 - this.clipBias;
-            projectionMatrix.elements[ 14 ] = c.w;
+		this.clipPlane.set(this.mirrorPlane.normal.x, this.mirrorPlane.normal.y, this.mirrorPlane.normal.z, this.mirrorPlane.constant);
 
-        };
+		var q = new Vector4();
+		var projectionMatrix = this.mirrorCamera.projectionMatrix;
 
-        Mirror.prototype.render = function () {
+		q.x = (Math.sign(this.clipPlane.x) + projectionMatrix.elements[ 8 ]) / projectionMatrix.elements[ 0 ];
+		q.y = (Math.sign(this.clipPlane.y) + projectionMatrix.elements[ 9 ]) / projectionMatrix.elements[ 5 ];
+		q.z = - 1.0;
+		q.w = (1.0 + projectionMatrix.elements[ 10 ]) / projectionMatrix.elements[ 14 ];
 
-            if ( this.matrixNeedsUpdate ) this.updateTextureMatrix();
+		// Calculate the scaled plane vector
+		var c = new Vector4();
+		c = this.clipPlane.multiplyScalar(2.0 / this.clipPlane.dot(q));
 
-            this.matrixNeedsUpdate = true;
+		// Replacing the third row of the projection matrix
+		projectionMatrix.elements[ 2 ] = c.x;
+		projectionMatrix.elements[ 6 ] = c.y;
+		projectionMatrix.elements[ 10 ] = c.z + 1.0 - this.clipBias;
+		projectionMatrix.elements[ 14 ] = c.w;
 
-            // Render the mirrored view of the current scene into the target texture
-            var scene = this;
+	}
 
-            while ( scene.parent !== null ) {
+	render() {
 
-                scene = scene.parent;
+		if (this.matrixNeedsUpdate) this.updateTextureMatrix();
 
-            }
+		this.matrixNeedsUpdate = true;
 
-            if ( scene !== undefined && scene instanceof THREE.Scene ) {
+		// Render the mirrored view of the current scene into the target texture
+		var scene = this;
 
-                // We can't render ourself to ourself
-                var visible = this.material.visible;
-                this.material.visible = false;
+		while (scene.parent !== null) {
 
-                this.renderer.render( scene, this.mirrorCamera, this.renderTarget, true );
+			scene = scene.parent;
 
-                this.material.visible = visible;
+		}
 
-            }
+		if (scene !== undefined && scene instanceof Scene) {
 
-        };
+			// We can't render ourself to ourself
+			var visible = this.material.visible;
+			this.material.visible = false;
 
-        return Mirror;
-    })()
+			this.renderer.render(scene, this.mirrorCamera, this.renderTarget, true);
 
-});
+			this.material.visible = visible;
 
-// TODO: fix me;
+		}
+
+	}
+}
 ;
 /**
  * @author jbouny / https://github.com/jbouny
@@ -1941,9 +1494,9 @@ M.fx.shadersEngine.create('Water', {
         }
     }
 });;
-M.fx.shadersEngine.create('OceanMain', {
-	
-    uniforms: function() { 
+export class OceanMain {
+
+    static uniforms() {
         return {
             "u_displacementMap": { type: "t", value: null },
             "u_normalMap": { type: "t", value: null },
@@ -1957,14 +1510,16 @@ M.fx.shadersEngine.create('OceanMain', {
             "u_sunDirection": { type: "v3", value: null },
             "u_exposure": { type: "f", value: null },
         }
-    },
-	varying: function() {
+    }
+
+	static varying() {
        return {
             "vPos": { type: "v3" },
             "vUV": { type: "v2" }
         }
-    },
-	vertex: function() {
+    }
+
+	static vertex() {
         return [
             'precision highp float;',
 
@@ -1984,9 +1539,9 @@ M.fx.shadersEngine.create('OceanMain', {
                 'gl_Position = u_projectionMatrix * u_viewMatrix * vec4(newPos, 1.0);',
             '}'
         ].join( '\n' )
-    },
+    }
 
-	fragment: function() {
+	static fragment() {
         return [
             'precision highp float;',
 
@@ -2021,24 +1576,25 @@ M.fx.shadersEngine.create('OceanMain', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanNormals', {
-	uniforms: function() { 
+export class OceanNormals {
+
+	static uniforms() {
         return {
             "u_displacementMap": { type: "t", value: null },
             "u_resolution": { type: "f", value: null },
             "u_size": { type: "f", value: null },
         }
-    },
+    }
 
-	varying: function() {
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
+    }
 
-	fragment: function() {
+	static fragment() {
         return [
             'precision highp float;',
 
@@ -2067,10 +1623,11 @@ M.fx.shadersEngine.create('OceanNormals', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanSpectrum', {
-	uniforms: function() {
+export class OceanSpectrum {
+
+	static uniforms() {
         return {
             "u_size": { type: "f", value: null },
             "u_resolution": { type: "f", value: null },
@@ -2080,13 +1637,13 @@ M.fx.shadersEngine.create('OceanSpectrum', {
         }
     },
 
-	varying: function() { 
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
+    }
 
-	fragment: function()  {
+	static fragment()  {
         return [
             'precision highp float;',
             '#include <common>',
@@ -2143,23 +1700,26 @@ M.fx.shadersEngine.create('OceanSpectrum', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanPhase', {
-    uniforms: function() {
+export class OceanPhase {
+
+    static uniforms() {
         return {
             "u_phases": { type: "t", value: null },
             "u_deltaTime": { type: "f", value: null },
             "u_resolution": { type: "f", value: null },
             "u_size": { type: "f", value: null },
         }
-    },
-	varying: function() {
+    }
+
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
-	fragment: function() {
+    }
+
+	static fragment() {
         return [
             'precision highp float;',
             '#include <common>',
@@ -2193,18 +1753,19 @@ M.fx.shadersEngine.create('OceanPhase', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanInitialSpectrum', {
-    uniforms: function() {
+export class OceanInitialSpectrum {
+
+    static uniforms() {
         return {
             "u_wind": { type: "v2", value: new THREE.Vector2( 10.0, 10.0 ) },
             "u_resolution": { type: "f", value: 512.0 },
             "u_size": { type: "f", value: 250.0 },
         }
-    },
+    }
 
-	fragment: function() {
+	static fragment() {
         return [
             'precision highp float;',
             '#include <common>',
@@ -2275,22 +1836,25 @@ M.fx.shadersEngine.create('OceanInitialSpectrum', {
             '}'
         ].join( '\n' )
     }
-});
+}
 
-M.fx.shadersEngine.create('OceanSubtransform', {
-    uniforms: function() {
+export class OceanSubTransform {
+
+    static uniforms() {
         return {
             "u_input": { type: "t", value: null },
             "u_transformSize": { type: "f", value: 512.0 },
             "u_subtransformSize": { type: "f", value: 250.0 }
         }
-    },
-	varying: function() {
+    }
+
+	static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
-	fragment: function() {
+    }
+
+	static fragment() {
         return [
             //GPU FFT using a Stockham formulation
 
@@ -2335,15 +1899,17 @@ M.fx.shadersEngine.create('OceanSubtransform', {
             '}'
         ].join( '\n' )
     }
-})
+}
 
-M.fx.shadersEngine.create('OceanSimVertex', {
-    varying: function() {
+export class OceanSimVertex {
+
+    static varying() {
         return {
             "vUV": { type: "v2" }
         }
-    },
-	vertex: function() {
+    }
+
+	static vertex() {
         return [
             'varying vec2 vUV;',
 
@@ -2353,423 +1919,420 @@ M.fx.shadersEngine.create('OceanSimVertex', {
             '}'
         ].join( '\n' )
     }
-});;
-M.fx.shadersEngine.create('Ocean', {
-    instance: (function() {
-        var Ocean = function ( renderer, camera, scene, options ) {
+}
+;
+import {
+    OceanSimVertex,
+    OceanSubTransform,
+    OceanInitialSpectrum,
+    OceanNormals,
+    OceanPhase,
+    OceanMain,
+    OceanSpectrum
+} from './OceanShaders';
+
+class OceanShader {
+
+    constructor(renderer, camera, scene, options) {
+
+        // flag used to trigger parameter changes
+        this.changed = true;
+        this.initial = true;
+
+        // Assign required parameters as object properties
+        this.oceanCamera = new THREE.OrthographicCamera(); //camera.clone();
+        this.oceanCamera.position.z = 1;
+        this.renderer = renderer;
+        this.renderer.clearColor(0xffffff);
+
+        this.scene = new THREE.Scene();
+
+        // Assign optional parameters as variables and object properties
+        function optionalParameter(value, defaultValue) {
+
+            return value !== undefined ? value : defaultValue;
 
-            // flag used to trigger parameter changes
-            this.changed = true;
-            this.initial = true;
-
-            // Assign required parameters as object properties
-            this.oceanCamera = new THREE.OrthographicCamera(); //camera.clone();
-            this.oceanCamera.position.z = 1;
-            this.renderer = renderer;
-            this.renderer.clearColor( 0xffffff );
-
-            this.scene = new THREE.Scene();
-
-            // Assign optional parameters as variables and object properties
-            function optionalParameter( value, defaultValue ) {
-
-                return value !== undefined ? value : defaultValue;
-
-            }
-            options = options || {};
-            this.clearColor = optionalParameter( options.CLEAR_COLOR, [ 1.0, 1.0, 1.0, 0.0 ] );
-            this.geometryOrigin = optionalParameter( options.GEOMETRY_ORIGIN, [ - 1000.0, - 1000.0 ] );
-            this.sunDirectionX = optionalParameter( options.SUN_DIRECTION[ 0 ], - 1.0 );
-            this.sunDirectionY = optionalParameter( options.SUN_DIRECTION[ 1 ], 1.0 );
-            this.sunDirectionZ = optionalParameter( options.SUN_DIRECTION[ 2 ], 1.0 );
-            this.oceanColor = optionalParameter( options.OCEAN_COLOR, new THREE.Vector3( 0.004, 0.016, 0.047 ) );
-            this.skyColor = optionalParameter( options.SKY_COLOR, new THREE.Vector3( 3.2, 9.6, 12.8 ) );
-            this.exposure = optionalParameter( options.EXPOSURE, 0.35 );
-            this.geometryResolution = optionalParameter( options.GEOMETRY_RESOLUTION, 32 );
-            this.geometrySize = optionalParameter( options.GEOMETRY_SIZE, 2000 );
-            this.resolution = optionalParameter( options.RESOLUTION, 64 );
-            this.floatSize = optionalParameter( options.SIZE_OF_FLOAT, 4 );
-            this.windX = optionalParameter( options.INITIAL_WIND[ 0 ], 10.0 ),
-            this.windY = optionalParameter( options.INITIAL_WIND[ 1 ], 10.0 ),
-            this.size = optionalParameter( options.INITIAL_SIZE, 250.0 ),
-            this.choppiness = optionalParameter( options.INITIAL_CHOPPINESS, 1.5 );
-
-            //
-            this.matrixNeedsUpdate = false;
-
-            // Setup framebuffer pipeline
-            var renderTargetType = optionalParameter( options.USE_HALF_FLOAT, false ) ? THREE.HalfFloatType : THREE.FloatType;
-            var LinearClampParams = {
-                minFilter: THREE.LinearFilter,
-                magFilter: THREE.LinearFilter,
-                wrapS: THREE.ClampToEdgeWrapping,
-                wrapT: THREE.ClampToEdgeWrapping,
-                format: THREE.RGBAFormat,
-                stencilBuffer: false,
-                depthBuffer: false,
-                premultiplyAlpha: false,
-                type: renderTargetType
-            };
-            var NearestClampParams = {
-                minFilter: THREE.NearestFilter,
-                magFilter: THREE.NearestFilter,
-                wrapS: THREE.ClampToEdgeWrapping,
-                wrapT: THREE.ClampToEdgeWrapping,
-                format: THREE.RGBAFormat,
-                stencilBuffer: false,
-                depthBuffer: false,
-                premultiplyAlpha: false,
-                type: renderTargetType
-            };
-            var NearestRepeatParams = {
-                minFilter: THREE.NearestFilter,
-                magFilter: THREE.NearestFilter,
-                wrapS: THREE.RepeatWrapping,
-                wrapT: THREE.RepeatWrapping,
-                format: THREE.RGBAFormat,
-                stencilBuffer: false,
-                depthBuffer: false,
-                premultiplyAlpha: false,
-                type: renderTargetType
-            };
-            this.initialSpectrumFramebuffer = new THREE.WebGLRenderTarget( this.resolution, this.resolution, NearestRepeatParams );
-            this.spectrumFramebuffer = new THREE.WebGLRenderTarget( this.resolution, this.resolution, NearestClampParams );
-            this.pingPhaseFramebuffer = new THREE.WebGLRenderTarget( this.resolution, this.resolution, NearestClampParams );
-            this.pongPhaseFramebuffer = new THREE.WebGLRenderTarget( this.resolution, this.resolution, NearestClampParams );
-            this.pingTransformFramebuffer = new THREE.WebGLRenderTarget( this.resolution, this.resolution, NearestClampParams );
-            this.pongTransformFramebuffer = new THREE.WebGLRenderTarget( this.resolution, this.resolution, NearestClampParams );
-            this.displacementMapFramebuffer = new THREE.WebGLRenderTarget( this.resolution, this.resolution, LinearClampParams );
-            this.normalMapFramebuffer = new THREE.WebGLRenderTarget( this.resolution, this.resolution, LinearClampParams );
-
-            // Define shaders and constant uniforms
-            ////////////////////////////////////////
-
-            // 0 - The vertex shader used in all of the simulation steps
-            var fullscreeenVertexShader = M.fx.shadersEngine.get('OceanSimVertex');
-
-            // 1 - Horizontal wave vertices used for FFT
-            var oceanHorizontalShader = M.fx.shadersEngine.get('OceanSubtransform');
-            var oceanHorizontalUniforms = THREE.UniformsUtils.clone( oceanHorizontalShader.uniforms() );
-            this.materialOceanHorizontal = new THREE.ShaderMaterial( {
-                uniforms: oceanHorizontalUniforms,
-                vertexShader: fullscreeenVertexShader.vertex(),
-                fragmentShader: "#define HORIZONTAL \n" + oceanHorizontalShader.fragment()
-            } );
-            this.materialOceanHorizontal.uniforms.u_transformSize = { type: "f", value: this.resolution };
-            this.materialOceanHorizontal.uniforms.u_subtransformSize = { type: "f", value: null };
-            this.materialOceanHorizontal.uniforms.u_input = { type: "t", value: null };
-            this.materialOceanHorizontal.depthTest = false;
-
-            // 2 - Vertical wave vertices used for FFT
-            var oceanVerticalShader = M.fx.shadersEngine.get('OceanSubtransform');
-            var oceanVerticalUniforms = THREE.UniformsUtils.clone( oceanVerticalShader.uniforms() );
-            this.materialOceanVertical = new THREE.ShaderMaterial( {
-                uniforms: oceanVerticalUniforms,
-                vertexShader: fullscreeenVertexShader.vertex(),
-                fragmentShader: oceanVerticalShader.fragment()
-            } );
-            this.materialOceanVertical.uniforms.u_transformSize = { type: "f", value: this.resolution };
-            this.materialOceanVertical.uniforms.u_subtransformSize = { type: "f", value: null };
-            this.materialOceanVertical.uniforms.u_input = { type: "t", value: null };
-            this.materialOceanVertical.depthTest = false;
-
-            // 3 - Initial spectrum used to generate height map
-            var initialSpectrumShader = M.fx.shadersEngine.get('OceanInitialSpectrum');
-            var initialSpectrumUniforms = THREE.UniformsUtils.clone( initialSpectrumShader.uniforms() );
-            this.materialInitialSpectrum = new THREE.ShaderMaterial( {
-                uniforms: initialSpectrumUniforms,
-                vertexShader: fullscreeenVertexShader.vertex(),
-                fragmentShader: initialSpectrumShader.fragment()
-            } );
-            this.materialInitialSpectrum.uniforms.u_wind = { type: "v2", value: new THREE.Vector2() };
-            this.materialInitialSpectrum.uniforms.u_resolution = { type: "f", value: this.resolution };
-            this.materialInitialSpectrum.depthTest = false;
-
-            // 4 - Phases used to animate heightmap
-            var phaseShader = M.fx.shadersEngine.get('OceanPhase');
-            var phaseUniforms = THREE.UniformsUtils.clone( phaseShader.uniforms() );
-            this.materialPhase = new THREE.ShaderMaterial( {
-                uniforms: phaseUniforms,
-                vertexShader: fullscreeenVertexShader.vertex(),
-                fragmentShader: phaseShader.fragment()
-            } );
-            this.materialPhase.uniforms.u_resolution = { type: "f", value: this.resolution };
-            this.materialPhase.depthTest = false;
-
-            // 5 - Shader used to update spectrum
-            var spectrumShader = M.fx.shadersEngine.get('OceanSpectrum');
-            var spectrumUniforms = THREE.UniformsUtils.clone( spectrumShader.uniforms() );
-            this.materialSpectrum = new THREE.ShaderMaterial( {
-                uniforms: spectrumUniforms,
-                vertexShader: fullscreeenVertexShader.vertex(),
-                fragmentShader: spectrumShader.fragment()
-            } );
-            this.materialSpectrum.uniforms.u_initialSpectrum = { type: "t", value: null };
-            this.materialSpectrum.uniforms.u_resolution = { type: "f", value: this.resolution };
-            this.materialSpectrum.depthTest = false;
-
-            // 6 - Shader used to update spectrum normals
-            var normalShader = M.fx.shadersEngine.get('OceanNormals');
-            var normalUniforms = THREE.UniformsUtils.clone( normalShader.uniforms() );
-            this.materialNormal = new THREE.ShaderMaterial( {
-                uniforms: normalUniforms,
-                vertexShader: fullscreeenVertexShader.vertex(),
-                fragmentShader: normalShader.fragment()
-            } );
-            this.materialNormal.uniforms.u_displacementMap = { type: "t", value: null };
-            this.materialNormal.uniforms.u_resolution = { type: "f", value: this.resolution };
-            this.materialNormal.depthTest = false;
-
-            // 7 - Shader used to update normals
-            var oceanShader = M.fx.shadersEngine.get('OceanMain');
-            var oceanUniforms = THREE.UniformsUtils.clone( oceanShader.uniforms() );
-            this.materialOcean = new THREE.ShaderMaterial( {
-                uniforms: oceanUniforms,
-                vertexShader: oceanShader.vertex(),
-                fragmentShader: oceanShader.fragment()
-            } );
-            // this.materialOcean.wireframe = true;
-            this.materialOcean.uniforms.u_geometrySize = { type: "f", value: this.resolution };
-            this.materialOcean.uniforms.u_displacementMap = { type: "t", value: this.displacementMapFramebuffer.texture };
-            this.materialOcean.uniforms.u_normalMap = { type: "t", value: this.normalMapFramebuffer.texture };
-            this.materialOcean.uniforms.u_oceanColor = { type: "v3", value: this.oceanColor };
-            this.materialOcean.uniforms.u_skyColor = { type: "v3", value: this.skyColor };
-            this.materialOcean.uniforms.u_sunDirection = { type: "v3", value: new THREE.Vector3( this.sunDirectionX, this.sunDirectionY, this.sunDirectionZ ) };
-            this.materialOcean.uniforms.u_exposure = { type: "f", value: this.exposure };
-
-            // Disable blending to prevent default premultiplied alpha values
-            this.materialOceanHorizontal.blending = 0;
-            this.materialOceanVertical.blending = 0;
-            this.materialInitialSpectrum.blending = 0;
-            this.materialPhase.blending = 0;
-            this.materialSpectrum.blending = 0;
-            this.materialNormal.blending = 0;
-            this.materialOcean.blending = 0;
-
-            // Create the simulation plane
-            this.screenQuad = new THREE.Mesh( new THREE.PlaneBufferGeometry( 2, 2 ) );
-            this.scene.add( this.screenQuad );
-
-            // Initialise spectrum data
-            this.generateSeedPhaseTexture();
-
-            // Generate the ocean mesh
-            this.generateMesh();
-
-        };
-
-        Ocean.prototype.generateMesh = function () {
-
-            var geometry = new THREE.PlaneBufferGeometry( this.geometrySize, this.geometrySize, this.geometryResolution, this.geometryResolution );
-
-            geometry.rotateX( - Math.PI / 2 );
-
-            this.oceanMesh = new THREE.Mesh( geometry, this.materialOcean );
-
-        };
-
-        Ocean.prototype.update = function () {
-
-            this.scene.overrideMaterial = null;
-
-            if ( this.changed )
-                this.renderInitialSpectrum();
-
-            this.renderWavePhase();
-            this.renderSpectrum();
-            this.renderSpectrumFFT();
-            this.renderNormalMap();
-            this.scene.overrideMaterial = null;
-
-        };
-
-        Ocean.prototype.generateSeedPhaseTexture = function() {
-
-            // Setup the seed texture
-            this.pingPhase = true;
-            var phaseArray = new Float32Array( this.resolution * this.resolution * 4 );
-            for ( var i = 0; i < this.resolution; i ++ ) {
-
-                for ( var j = 0; j < this.resolution; j ++ ) {
-
-                    phaseArray[ i * this.resolution * 4 + j * 4 ] =  Math.random() * 2.0 * Math.PI;
-                    phaseArray[ i * this.resolution * 4 + j * 4 + 1 ] = 0.0;
-                    phaseArray[ i * this.resolution * 4 + j * 4 + 2 ] = 0.0;
-                    phaseArray[ i * this.resolution * 4 + j * 4 + 3 ] = 0.0;
-
-                }
-
-            }
-
-            this.pingPhaseTexture = new THREE.DataTexture( phaseArray, this.resolution, this.resolution, THREE.RGBAFormat );
-            this.pingPhaseTexture.wrapS = THREE.ClampToEdgeWrapping;
-            this.pingPhaseTexture.wrapT = THREE.ClampToEdgeWrapping;
-            this.pingPhaseTexture.type = THREE.FloatType;
-            this.pingPhaseTexture.needsUpdate = true;
-
-        };
-
-        Ocean.prototype.renderInitialSpectrum = function () {
-
-            this.scene.overrideMaterial = this.materialInitialSpectrum;
-            this.materialInitialSpectrum.uniforms.u_wind.value.set( this.windX, this.windY );
-            this.materialInitialSpectrum.uniforms.u_size.value = this.size;
-            this.renderer.render( this.scene, this.oceanCamera, this.initialSpectrumFramebuffer, true );
-
-        };
-
-        Ocean.prototype.renderWavePhase = function () {
-
-            this.scene.overrideMaterial = this.materialPhase;
-            this.screenQuad.material = this.materialPhase;
-            if ( this.initial ) {
-
-                this.materialPhase.uniforms.u_phases.value = this.pingPhaseTexture;
-                this.initial = false;
-
-            }else {
-
-                this.materialPhase.uniforms.u_phases.value = this.pingPhase ? this.pingPhaseFramebuffer.texture : this.pongPhaseFramebuffer.texture;
-
-            }
-            this.materialPhase.uniforms.u_deltaTime.value = this.deltaTime;
-            this.materialPhase.uniforms.u_size.value = this.size;
-            this.renderer.render( this.scene, this.oceanCamera, this.pingPhase ? this.pongPhaseFramebuffer : this.pingPhaseFramebuffer );
-            this.pingPhase = ! this.pingPhase;
-
-        };
-
-        Ocean.prototype.renderSpectrum = function () {
-
-            this.scene.overrideMaterial = this.materialSpectrum;
-            this.materialSpectrum.uniforms.u_initialSpectrum.value = this.initialSpectrumFramebuffer.texture;
-            this.materialSpectrum.uniforms.u_phases.value = this.pingPhase ? this.pingPhaseFramebuffer.texture : this.pongPhaseFramebuffer.texture;
-            this.materialSpectrum.uniforms.u_choppiness.value = this.choppiness;
-            this.materialSpectrum.uniforms.u_size.value = this.size;
-            this.renderer.render( this.scene, this.oceanCamera, this.spectrumFramebuffer );
-
-        };
-
-        Ocean.prototype.renderSpectrumFFT = function() {
-
-            // GPU FFT using Stockham formulation
-            var iterations = Math.log( this.resolution ) / Math.log( 2 ); // log2
-
-            this.scene.overrideMaterial = this.materialOceanHorizontal;
-
-            for ( var i = 0; i < iterations; i ++ ) {
-
-                if ( i === 0 ) {
-
-                    this.materialOceanHorizontal.uniforms.u_input.value = this.spectrumFramebuffer.texture;
-                    this.materialOceanHorizontal.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-                    this.renderer.render( this.scene, this.oceanCamera, this.pingTransformFramebuffer );
-
-                } else if ( i % 2 === 1 ) {
-
-                    this.materialOceanHorizontal.uniforms.u_input.value = this.pingTransformFramebuffer.texture;
-                    this.materialOceanHorizontal.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-                    this.renderer.render( this.scene, this.oceanCamera, this.pongTransformFramebuffer );
-
-                } else {
-
-                    this.materialOceanHorizontal.uniforms.u_input.value = this.pongTransformFramebuffer.texture;
-                    this.materialOceanHorizontal.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-                    this.renderer.render( this.scene, this.oceanCamera, this.pingTransformFramebuffer );
-
-                }
-
-            }
-            this.scene.overrideMaterial = this.materialOceanVertical;
-            for ( var i = iterations; i < iterations * 2; i ++ ) {
-
-                if ( i === iterations * 2 - 1 ) {
-
-                    this.materialOceanVertical.uniforms.u_input.value = ( iterations % 2 === 0 ) ? this.pingTransformFramebuffer.texture : this.pongTransformFramebuffer.texture;
-                    this.materialOceanVertical.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-                    this.renderer.render( this.scene, this.oceanCamera, this.displacementMapFramebuffer );
-
-                } else if ( i % 2 === 1 ) {
-
-                    this.materialOceanVertical.uniforms.u_input.value = this.pingTransformFramebuffer.texture;
-                    this.materialOceanVertical.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-                    this.renderer.render( this.scene, this.oceanCamera, this.pongTransformFramebuffer );
-
-                } else {
-
-                    this.materialOceanVertical.uniforms.u_input.value = this.pongTransformFramebuffer.texture;
-                    this.materialOceanVertical.uniforms.u_subtransformSize.value = Math.pow( 2, ( i % ( iterations ) ) + 1 );
-                    this.renderer.render( this.scene, this.oceanCamera, this.pingTransformFramebuffer );
-
-                }
-
-            }
-
-        };
-
-        Ocean.prototype.renderNormalMap = function () {
-
-            this.scene.overrideMaterial = this.materialNormal;
-            if ( this.changed ) this.materialNormal.uniforms.u_size.value = this.size;
-            this.materialNormal.uniforms.u_displacementMap.value = this.displacementMapFramebuffer.texture;
-            this.renderer.render( this.scene, this.oceanCamera, this.normalMapFramebuffer, true );
-
-        };
-
-        return function(renderer, camera, scene, options) {
-            var gsize = options.geometrySize || 512,
-                res = options.resolution || 1024,
-                gres = res / 2,
-                origx = -gsize / 2,
-                origz = -gsize / 2; 
-
-            ocean = new Ocean(renderer, camera, scene, {
-                USE_HALF_FLOAT : true,
-                INITIAL_SIZE : options.initial.size || 256.0,
-                INITIAL_WIND : options.initial.wind || [10.0, 10.0],
-                INITIAL_CHOPPINESS : options.initial.choppiness || 1.5,
-                CLEAR_COLOR : options.clearColor || [1.0, 1.0, 1.0, 0.0],
-                GEOMETRY_ORIGIN : [origx, origz],
-                SUN_DIRECTION : options.sunDirection || [-1.0, 1.0, 1.0],
-                OCEAN_COLOR: options.oceanColor || new THREE.Vector3(0.004, 0.016, 0.047),
-                SKY_COLOR: options.skyColor || new THREE.Vector3(3.2, 9.6, 12.8),
-                EXPOSURE : options.exposure || 0.35,
-                GEOMETRY_RESOLUTION: gres,
-                GEOMETRY_SIZE : gsize,
-                RESOLUTION : res
-            });
-            ocean.lastTime = (new Date()).getTime();
-            ocean.materialOcean.uniforms.u_projectionMatrix = { type: "m4", value: camera.projectionMatrix };
-            ocean.materialOcean.uniforms.u_viewMatrix = { type: "m4", value: camera.matrixWorldInverse };
-            ocean.materialOcean.uniforms.u_cameraPosition = { type: "v3", value: camera.position };
-
-            ocean.render = function() {
-                var currentTime = new Date().getTime();
-                ocean.deltaTime = (currentTime - ocean.lastTime) / 1000 || 0.0;
-                ocean.lastTime = currentTime;
-                ocean.update(ocean.deltaTime);
-                ocean.overrideMaterial = ocean.materialOcean;
-                if (ocean.changed) {
-                    ocean.materialOcean.uniforms.u_size.value = ocean.size;
-                    ocean.materialOcean.uniforms.u_sunDirection.value.set( ocean.sunDirectionX, ocean.sunDirectionY, ocean.sunDirectionZ );
-                    ocean.materialOcean.uniforms.u_exposure.value = ocean.exposure;
-                    ocean.changed = false;
-                }
-                ocean.materialOcean.uniforms.u_normalMap.value = ocean.normalMapFramebuffer.texture;
-                ocean.materialOcean.uniforms.u_displacementMap.value = ocean.displacementMapFramebuffer.texture;
-                ocean.materialOcean.uniforms.u_projectionMatrix.value = camera.projectionMatrix;
-                ocean.materialOcean.uniforms.u_viewMatrix.value = camera.matrixWorldInverse;
-                ocean.materialOcean.uniforms.u_cameraPosition.value = camera.position;
-                ocean.materialOcean.depthTest = true;
-            }
-            
-            return ocean;
         }
-    })()
-});;
-Class("App", {
+        options = options || {};
+        this.clearColor = optionalParameter(options.CLEAR_COLOR, [ 1.0, 1.0, 1.0, 0.0 ]);
+        this.geometryOrigin = optionalParameter(options.GEOMETRY_ORIGIN, [ - 1000.0, - 1000.0 ]);
+        this.sunDirectionX = optionalParameter(options.SUN_DIRECTION[ 0 ], - 1.0);
+        this.sunDirectionY = optionalParameter(options.SUN_DIRECTION[ 1 ], 1.0);
+        this.sunDirectionZ = optionalParameter(options.SUN_DIRECTION[ 2 ], 1.0);
+        this.oceanColor = optionalParameter(options.OCEAN_COLOR, new THREE.Vector3(0.004, 0.016, 0.047));
+        this.skyColor = optionalParameter(options.SKY_COLOR, new THREE.Vector3(3.2, 9.6, 12.8));
+        this.exposure = optionalParameter(options.EXPOSURE, 0.35);
+        this.geometryResolution = optionalParameter(options.GEOMETRY_RESOLUTION, 32);
+        this.geometrySize = optionalParameter(options.GEOMETRY_SIZE, 2000);
+        this.resolution = optionalParameter(options.RESOLUTION, 64);
+        this.floatSize = optionalParameter(options.SIZE_OF_FLOAT, 4);
+        this.windX = optionalParameter(options.INITIAL_WIND[ 0 ], 10.0),
+        this.windY = optionalParameter(options.INITIAL_WIND[ 1 ], 10.0),
+        this.size = optionalParameter(options.INITIAL_SIZE, 250.0),
+        this.choppiness = optionalParameter(options.INITIAL_CHOPPINESS, 1.5);
 
-    App: function() {
+        //
+        this.matrixNeedsUpdate = false;
+
+        // Setup framebuffer pipeline
+        const renderTargetType = optionalParameter(options.USE_HALF_FLOAT, false) ? THREE.HalfFloatType : THREE.FloatType;
+        const LinearClampParams = {
+            minFilter: THREE.LinearFilter,
+            magFilter: THREE.LinearFilter,
+            wrapS: THREE.ClampToEdgeWrapping,
+            wrapT: THREE.ClampToEdgeWrapping,
+            format: THREE.RGBAFormat,
+            stencilBuffer: false,
+            depthBuffer: false,
+            premultiplyAlpha: false,
+            type: renderTargetType
+        };
+        const NearestClampParams = {
+            minFilter: THREE.NearestFilter,
+            magFilter: THREE.NearestFilter,
+            wrapS: THREE.ClampToEdgeWrapping,
+            wrapT: THREE.ClampToEdgeWrapping,
+            format: THREE.RGBAFormat,
+            stencilBuffer: false,
+            depthBuffer: false,
+            premultiplyAlpha: false,
+            type: renderTargetType
+        };
+        const NearestRepeatParams = {
+            minFilter: THREE.NearestFilter,
+            magFilter: THREE.NearestFilter,
+            wrapS: THREE.RepeatWrapping,
+            wrapT: THREE.RepeatWrapping,
+            format: THREE.RGBAFormat,
+            stencilBuffer: false,
+            depthBuffer: false,
+            premultiplyAlpha: false,
+            type: renderTargetType
+        };
+        this.initialSpectrumFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestRepeatParams);
+        this.spectrumFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.pingPhaseFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.pongPhaseFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.pingTransformFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.pongTransformFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, NearestClampParams);
+        this.displacementMapFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, LinearClampParams);
+        this.normalMapFramebuffer = new THREE.WebGLRenderTarget(this.resolution, this.resolution, LinearClampParams);
+
+        // Define shaders and constant uniforms
+        ////////////////////////////////////////
+
+
+        // 1 - Horizontal wave vertices used for FFT
+        this.materialOceanHorizontal = new THREE.ShaderMaterial({
+            uniforms: THREE.UniformsUtils.clone(OceanSubTransform.uniforms()),
+            vertexShader: OceanSimVertex.vertex(),
+            fragmentShader: "#define HORIZONTAL \n" + OceanSubTransform.fragment()
+        });
+
+        this.materialOceanHorizontal.uniforms.u_transformSize = { type: "f", value: this.resolution };
+        this.materialOceanHorizontal.uniforms.u_subtransformSize = { type: "f", value: null };
+        this.materialOceanHorizontal.uniforms.u_input = { type: "t", value: null };
+        this.materialOceanHorizontal.depthTest = false;
+
+        // 2 - Vertical wave vertices used for FFT
+        this.materialOceanVertical = new THREE.ShaderMaterial({
+            uniforms: THREE.UniformsUtils.clone(OceanSubTransform.uniforms()),
+            vertexShader: OceanSimVertex.vertex(),
+            fragmentShader: OceanSubTransform.fragment()
+        });
+        this.materialOceanVertical.uniforms.u_transformSize = { type: "f", value: this.resolution };
+        this.materialOceanVertical.uniforms.u_subtransformSize = { type: "f", value: null };
+        this.materialOceanVertical.uniforms.u_input = { type: "t", value: null };
+        this.materialOceanVertical.depthTest = false;
+
+        // 3 - Initial spectrum used to generate height map
+        this.materialInitialSpectrum = new THREE.ShaderMaterial({
+            uniforms: THREE.UniformsUtils.clone(OceanInitialSpectrum.uniforms());,
+            vertexShader: OceanSimVertex.vertex(),
+            fragmentShader: OceanInitialSpectrum.fragment()
+        });
+        this.materialInitialSpectrum.uniforms.u_wind = { type: "v2", value: new THREE.Vector2() };
+        this.materialInitialSpectrum.uniforms.u_resolution = { type: "f", value: this.resolution };
+        this.materialInitialSpectrum.depthTest = false;
+
+        // 4 - Phases used to animate heightmap
+        this.materialPhase = new THREE.ShaderMaterial({
+            uniforms: THREE.UniformsUtils.clone(OceanPhase.uniforms());,
+            vertexShader: OceanSimVertex.vertex(),
+            fragmentShader: OceanPhase.fragment()
+        });
+        this.materialPhase.uniforms.u_resolution = { type: "f", value: this.resolution };
+        this.materialPhase.depthTest = false;
+
+        // 5 - Shader used to update spectrum
+        this.materialSpectrum = new THREE.ShaderMaterial({
+            uniforms: THREE.UniformsUtils.clone(OceanSpectrum.uniforms()),
+            vertexShader: OceanSimVertex.vertex(),
+            fragmentShader: OceanSpectrum.fragment()
+        });
+        this.materialSpectrum.uniforms.u_initialSpectrum = { type: "t", value: null };
+        this.materialSpectrum.uniforms.u_resolution = { type: "f", value: this.resolution };
+        this.materialSpectrum.depthTest = false;
+
+        // 6 - Shader used to update spectrum normals
+        this.materialNormal = new THREE.ShaderMaterial({
+            uniforms: THREE.UniformsUtils.clone(OceanNormals.uniforms()),
+            vertexShader: OceanSimVertex.vertex(),
+            fragmentShader: OceanNormals.fragment()
+        });
+        this.materialNormal.uniforms.u_displacementMap = { type: "t", value: null };
+        this.materialNormal.uniforms.u_resolution = { type: "f", value: this.resolution };
+        this.materialNormal.depthTest = false;
+
+        // 7 - Shader used to update normals
+        this.materialOcean = new THREE.ShaderMaterial({
+            uniforms: THREE.UniformsUtils.clone(OceanMain.uniforms()),
+            vertexShader: OceanMain.vertex(),
+            fragmentShader: OceanMain.fragment()
+        });
+        // this.materialOcean.wireframe = true;
+        this.materialOcean.uniforms.u_geometrySize = { type: "f", value: this.resolution };
+        this.materialOcean.uniforms.u_displacementMap = { type: "t", value: this.displacementMapFramebuffer.texture };
+        this.materialOcean.uniforms.u_normalMap = { type: "t", value: this.normalMapFramebuffer.texture };
+        this.materialOcean.uniforms.u_oceanColor = { type: "v3", value: this.oceanColor };
+        this.materialOcean.uniforms.u_skyColor = { type: "v3", value: this.skyColor };
+        this.materialOcean.uniforms.u_sunDirection = { type: "v3", value: new THREE.Vector3(this.sunDirectionX, this.sunDirectionY, this.sunDirectionZ) };
+        this.materialOcean.uniforms.u_exposure = { type: "f", value: this.exposure };
+
+        // Disable blending to prevent default premultiplied alpha values
+        this.materialOceanHorizontal.blending = 0;
+        this.materialOceanVertical.blending = 0;
+        this.materialInitialSpectrum.blending = 0;
+        this.materialPhase.blending = 0;
+        this.materialSpectrum.blending = 0;
+        this.materialNormal.blending = 0;
+        this.materialOcean.blending = 0;
+
+        // Create the simulation plane
+        this.screenQuad = new THREE.Mesh(new THREE.PlaneBufferGeometry(2, 2));
+        this.scene.add(this.screenQuad);
+
+        // Initialise spectrum data
+        this.generateSeedPhaseTexture();
+
+        // Generate the ocean mesh
+        this.generateMesh();
+
+    }
+
+    generateMesh() {
+
+        const geometry = new THREE.PlaneBufferGeometry(this.geometrySize, this.geometrySize, this.geometryResolution, this.geometryResolution);
+
+        geometry.rotateX(- Math.PI / 2);
+
+        this.oceanMesh = new THREE.Mesh(geometry, this.materialOcean);
+
+    }
+
+    update() {
+
+        this.scene.overrideMaterial = null;
+
+        if (this.changed)
+            this.renderInitialSpectrum();
+
+        this.renderWavePhase();
+        this.renderSpectrum();
+        this.renderSpectrumFFT();
+        this.renderNormalMap();
+        this.scene.overrideMaterial = null;
+
+    }
+
+    generateSeedPhaseTexture() {
+
+        // Setup the seed texture
+        this.pingPhase = true;
+        const phaseArray = new Float32Array(this.resolution * this.resolution * 4);
+        for (var i = 0; i < this.resolution; i ++) {
+
+            for (var j = 0; j < this.resolution; j ++) {
+
+                phaseArray[ i * this.resolution * 4 + j * 4 ] =  Math.random() * 2.0 * Math.PI;
+                phaseArray[ i * this.resolution * 4 + j * 4 + 1 ] = 0.0;
+                phaseArray[ i * this.resolution * 4 + j * 4 + 2 ] = 0.0;
+                phaseArray[ i * this.resolution * 4 + j * 4 + 3 ] = 0.0;
+
+            }
+
+        }
+
+        this.pingPhaseTexture = new THREE.DataTexture(phaseArray, this.resolution, this.resolution, THREE.RGBAFormat);
+        this.pingPhaseTexture.wrapS = THREE.ClampToEdgeWrapping;
+        this.pingPhaseTexture.wrapT = THREE.ClampToEdgeWrapping;
+        this.pingPhaseTexture.type = THREE.FloatType;
+        this.pingPhaseTexture.needsUpdate = true;
+
+    }
+
+    renderInitialSpectrum() {
+
+        this.scene.overrideMaterial = this.materialInitialSpectrum;
+        this.materialInitialSpectrum.uniforms.u_wind.value.set(this.windX, this.windY);
+        this.materialInitialSpectrum.uniforms.u_size.value = this.size;
+        this.renderer.render(this.scene, this.oceanCamera, this.initialSpectrumFramebuffer, true);
+
+    }
+
+    renderWavePhase() {
+
+        this.scene.overrideMaterial = this.materialPhase;
+        this.screenQuad.material = this.materialPhase;
+        if (this.initial) {
+
+            this.materialPhase.uniforms.u_phases.value = this.pingPhaseTexture;
+            this.initial = false;
+
+        } else {
+
+            this.materialPhase.uniforms.u_phases.value = this.pingPhase ? this.pingPhaseFramebuffer.texture : this.pongPhaseFramebuffer.texture;
+
+        }
+        this.materialPhase.uniforms.u_deltaTime.value = this.deltaTime;
+        this.materialPhase.uniforms.u_size.value = this.size;
+        this.renderer.render(this.scene, this.oceanCamera, this.pingPhase ? this.pongPhaseFramebuffer : this.pingPhaseFramebuffer);
+        this.pingPhase = ! this.pingPhase;
+
+    }
+
+    renderSpectrum() {
+
+        this.scene.overrideMaterial = this.materialSpectrum;
+        this.materialSpectrum.uniforms.u_initialSpectrum.value = this.initialSpectrumFramebuffer.texture;
+        this.materialSpectrum.uniforms.u_phases.value = this.pingPhase ? this.pingPhaseFramebuffer.texture : this.pongPhaseFramebuffer.texture;
+        this.materialSpectrum.uniforms.u_choppiness.value = this.choppiness;
+        this.materialSpectrum.uniforms.u_size.value = this.size;
+        this.renderer.render(this.scene, this.oceanCamera, this.spectrumFramebuffer);
+
+    }
+
+    renderSpectrumFFT() {
+
+        // GPU FFT using Stockham formulation
+        var iterations = Math.log(this.resolution) / Math.log(2); // log2
+
+        this.scene.overrideMaterial = this.materialOceanHorizontal;
+
+        for (var i = 0; i < iterations; i ++) {
+
+            if (i === 0) {
+
+                this.materialOceanHorizontal.uniforms.u_input.value = this.spectrumFramebuffer.texture;
+                this.materialOceanHorizontal.uniforms.u_subtransformSize.value = Math.pow(2, (i % (iterations)) + 1);
+                this.renderer.render(this.scene, this.oceanCamera, this.pingTransformFramebuffer);
+
+            } else if (i % 2 === 1) {
+
+                this.materialOceanHorizontal.uniforms.u_input.value = this.pingTransformFramebuffer.texture;
+                this.materialOceanHorizontal.uniforms.u_subtransformSize.value = Math.pow(2, (i % (iterations)) + 1);
+                this.renderer.render(this.scene, this.oceanCamera, this.pongTransformFramebuffer);
+
+            } else {
+
+                this.materialOceanHorizontal.uniforms.u_input.value = this.pongTransformFramebuffer.texture;
+                this.materialOceanHorizontal.uniforms.u_subtransformSize.value = Math.pow(2, (i % (iterations)) + 1);
+                this.renderer.render(this.scene, this.oceanCamera, this.pingTransformFramebuffer);
+
+            }
+
+        }
+        this.scene.overrideMaterial = this.materialOceanVertical;
+        for (var i = iterations; i < iterations * 2; i ++) {
+
+            if (i === iterations * 2 - 1) {
+
+                this.materialOceanVertical.uniforms.u_input.value = (iterations % 2 === 0) ? this.pingTransformFramebuffer.texture : this.pongTransformFramebuffer.texture;
+                this.materialOceanVertical.uniforms.u_subtransformSize.value = Math.pow(2, (i % (iterations)) + 1);
+                this.renderer.render(this.scene, this.oceanCamera, this.displacementMapFramebuffer);
+
+            } else if (i % 2 === 1) {
+
+                this.materialOceanVertical.uniforms.u_input.value = this.pingTransformFramebuffer.texture;
+                this.materialOceanVertical.uniforms.u_subtransformSize.value = Math.pow(2, (i % (iterations)) + 1);
+                this.renderer.render(this.scene, this.oceanCamera, this.pongTransformFramebuffer);
+
+            } else {
+
+                this.materialOceanVertical.uniforms.u_input.value = this.pongTransformFramebuffer.texture;
+                this.materialOceanVertical.uniforms.u_subtransformSize.value = Math.pow(2, (i % (iterations)) + 1);
+                this.renderer.render(this.scene, this.oceanCamera, this.pingTransformFramebuffer);
+
+            }
+
+        }
+
+    }
+
+    renderNormalMap() {
+        this.scene.overrideMaterial = this.materialNormal;
+        if (this.changed) this.materialNormal.uniforms.u_size.value = this.size;
+        this.materialNormal.uniforms.u_displacementMap.value = this.displacementMapFramebuffer.texture;
+        this.renderer.render(this.scene, this.oceanCamera, this.normalMapFramebuffer, true);
+
+    }
+}
+
+export default class Ocean {
+
+    constructor() {
+        const gsize = options.geometrySize || 512,
+            res = options.resolution || 1024,
+            gres = res / 2,
+            origx = -gsize / 2,
+            origz = -gsize / 2;
+
+        this.ocean = new OceanShader(renderer, camera, scene, {
+            USE_HALF_FLOAT : true,
+            INITIAL_SIZE : options.initial.size || 256.0,
+            INITIAL_WIND : options.initial.wind || [10.0, 10.0],
+            INITIAL_CHOPPINESS : options.initial.choppiness || 1.5,
+            CLEAR_COLOR : options.clearColor || [1.0, 1.0, 1.0, 0.0],
+            GEOMETRY_ORIGIN : [origx, origz],
+            SUN_DIRECTION : options.sunDirection || [-1.0, 1.0, 1.0],
+            OCEAN_COLOR: options.oceanColor || new THREE.Vector3(0.004, 0.016, 0.047),
+            SKY_COLOR: options.skyColor || new THREE.Vector3(3.2, 9.6, 12.8),
+            EXPOSURE : options.exposure || 0.35,
+            GEOMETRY_RESOLUTION: gres,
+            GEOMETRY_SIZE : gsize,
+            RESOLUTION : res
+        });
+
+        this.ocean.lastTime = (new Date()).getTime();
+        this.ocean.materialOcean.uniforms.u_projectionMatrix = { type: "m4", value: camera.projectionMatrix };
+        this.ocean.materialOcean.uniforms.u_viewMatrix = { type: "m4", value: camera.matrixWorldInverse };
+        this.ocean.materialOcean.uniforms.u_cameraPosition = { type: "v3", value: camera.position };
+    }
+
+    render() {
+        const currentTime = new Date().getTime();
+        this.ocean.deltaTime = (currentTime - this.ocean.lastTime) / 1000 || 0.0;
+        this.ocean.lastTime = currentTime;
+        this.ocean.update(this.ocean.deltaTime);
+        this.ocean.overrideMaterial = this.ocean.materialOcean;
+        if (this.ocean.changed) {
+            this.ocean.materialOcean.uniforms.u_size.value = this.ocean.size;
+            this.ocean.materialOcean.uniforms.u_sunDirection.value.set(this.ocean.sunDirectionX, this.ocean.sunDirectionY, this.ocean.sunDirectionZ);
+            this.ocean.materialOcean.uniforms.u_exposure.value = this.ocean.exposure;
+            this.ocean.changed = false;
+        }
+        this.ocean.materialOcean.uniforms.u_normalMap.value = this.ocean.normalMapFramebuffer.texture;
+        this.ocean.materialOcean.uniforms.u_displacementMap.value = this.ocean.displacementMapFramebuffer.texture;
+        this.ocean.materialOcean.uniforms.u_projectionMatrix.value = camera.projectionMatrix;
+        this.ocean.materialOcean.uniforms.u_viewMatrix.value = camera.matrixWorldInverse;
+        this.ocean.materialOcean.uniforms.u_cameraPosition.value = camera.position;
+        this.ocean.materialOcean.depthTest = true;
+    }
+}
+;
+export default class App {
+
+    constructor() {
 
         this.log_types = {
     		"e" : "error",
@@ -2832,43 +2395,43 @@ Class("App", {
         window.addEventListener("onmessage", this.onMessage, false);
         window.addEventListener("message", this.onMessage, false);
 
-    },
+    }
 
     //onCreate method, ovveride to start creating stuff
-    onCreate: function() {},
+    onCreate() {}
 
     //this methods helps you loading heavy stuff
-    preload: function(callback) {
+    preload(callback) {
         callback();
-    },
+    }
 
     //do stuff before onCreate method( prepare meshes, whatever )
-    prepareScene: function() {},
+    prepareScene() {}
 
     //this is what happens during game loading, the progress animation
-    progressAnimation: function(callback) {
+    progressAnimation(callback) {
         $('#loader').animate({"opacity" : "0", "margin-top" : "250px"}, 1000 , function () {
     		$('#loader').remove();
     		$('body').animate({backgroundColor : "#fff"}, 200 , callback);
     	});
-    },
+    }
 
     //needed if user wants to add a customRender method
-    _render: function() {},
+    _render() {}
 
     //setupleap motion device
-    setUpLeap: function() {},
+    setUpLeap() {}
 
     //leap motion socket connected
-    onLeapSocketConnected: function() {},
+    onLeapSocketConnected() {}
 
     //leap motion device connected
-    onLeapDeviceConnected: function() {},
+    onLeapDeviceConnected() {}
 
     //leap motion device disconnected
-    onLeapDeviceDisconnected: function() {},
+    onLeapDeviceDisconnected() {}
 
-    render : function () {
+    render() {
 
         //handling user input
         //M.user.handleUserInput();
@@ -2881,14 +2444,14 @@ Class("App", {
         M.control.update();
 
         //updating camera if we need to do so.
-        if (app.camera.update) {
-            app.camera.update(app.clock.getDelta());
+        if (this.camera.update) {
+            this.camera.update(this.clock.getDelta());
         }
 
-        app.renderer.autoClear = false;
-        app.renderer.clear(app.clearColor);
-        app._render();
-        app.renderer.render(app.scene, app.camera.object);
+        this.renderer.autoClear = false;
+        this.renderer.clear(this.clearColor);
+        this._render();
+        this.renderer.render(this.scene, this.camera.object);
 
         /*
         setTimeout(function() {
@@ -2903,67 +2466,62 @@ Class("App", {
             requestAnimFrame(app.render);
         }, 1000 / app.util.frameRate);
         */
-        if (app.util.physics_enabled && Physijs._isLoaded) {
-            app.scene.simulate();
+        if (this.util.physics_enabled && Physijs._isLoaded) {
+            this.scene.simulate();
         }
-        if (app.util.tween_enabled) {
+        if (this.util.tween_enabled) {
             TWEEN.update();
         }
-        requestAnimFrame(app.render);
+        requestAnimFrame(this.render.bind(this));
 
-    },
+    }
 
-    add : function(mesh, element) {
-
-		//method to be called when creating a new element
+    add(mesh, element) {
 		this.scene.add(mesh);
 		M.universe.reality.put(mesh.uuid, element);
+	}
 
-	},
-
-	remove : function(mesh) {
-
+	remove(mesh) {
 		this.scene.remove(mesh);
 		M.universe.reality.remove(mesh.uuid);
+	}
 
-	},
+    init() {
 
-    init: function() {
-
-        app.three = THREE;
-        var c_util 	= app.util.camera; //camera util
-        var util 	= app.util;
+        this.three = THREE;
+        var c_util = this.util.camera; //camera util
+        var util = this.util;
 
         if (window.keypress) {
-            app._keylistener =  new window.keypress.Listener();
+            this._keylistener =  new window.keypress.Listener();
         }
 
         //try{
             //configuring threejs and physijs
             if (config) {
-                app.log("config loaded");
-                if (app.util.physics_enabled) {
-                    app.log("physics enabled.");
+                this.log("config loaded");
+                if (this.util.physics_enabled) {
+                    this.log("physics enabled.");
                     try {
                         Physijs.scripts.worker = 'workers/physijs_worker.js';
                         Physijs.scripts.ammo = 'ammo.js';
-                        app.scene = new Physijs.Scene();
+                        this.scene = new Physijs.Scene();
                         Physijs._isLoaded = true;
                     } catch (ex) {
-                        app.log("something bad trying to create physijs scene", "e");
-                        app.log(ex);
+                        this.log("something bad trying to create physijs scene", "e");
+                        this.log(ex);
                         Physijs._isLoaded = false;
-                        app.scene = new app.three.Scene();
+                        this.scene = new this.three.Scene();
                     }
                 } else {
-                    app.log("physics not enabled.");
+                    this.log("physics not enabled.");
                     Physijs._isLoaded = false;
-                    app.scene = new app.three.Scene();
+                    this.scene = new this.three.Scene();
                 }
             } else {
-                app.log("config not loaded, switching to three.js");
+                this.log("config not loaded, switching to three.js");
                 Physijs._isLoaded = false;
-                app.scene = new app.three.Scene();
+                this.scene = new this.three.Scene();
             }
             //setting up camera
             var cameraOptions = {
@@ -2973,29 +2531,29 @@ Class("App", {
                 far : c_util.far
             };
             if (config) {
-                if (app.util.camera) {
-                    cameraOptions.fov = app.util.camera.fov ? app.util.camera.fov : cameraOptions.fov;
-                    cameraOptions.ratio = app.util.camera.ratio ? app.util.camera.ratio : cameraOptions.ratio;
-                    cameraOptions.near = app.util.camera.near ? app.util.camera.near : cameraOptions.near;
-                    cameraOptions.far = app.util.camera.far ? app.util.camera.far : cameraOptions.far;
+                if (this.util.camera) {
+                    cameraOptions.fov = this.util.camera.fov ? this.util.camera.fov : cameraOptions.fov;
+                    cameraOptions.ratio = this.util.camera.ratio ? this.util.camera.ratio : cameraOptions.ratio;
+                    cameraOptions.near = this.util.camera.near ? this.util.camera.near : cameraOptions.near;
+                    cameraOptions.far = this.util.camera.far ? this.util.camera.far : cameraOptions.far;
                 }
             }
-            app.camera = new Camera(cameraOptions);
+            this.camera = new Camera(cameraOptions);
             var alphaRenderer = false;
-            if (app.util.alpha) {
+            if (this.util.alpha) {
                 alphaRenderer = true;
             }
-            app.renderer = new app.three.WebGLRenderer({alpha:alphaRenderer, antialias: true});
-            if (app.util.cast_shadow) {
-                app.renderer.shadowMap.enabled = true;
-                app.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-                app.renderer.sortObjects = false;
+            this.renderer = new this.three.WebGLRenderer({alpha:alphaRenderer, antialias: true});
+            if (this.util.cast_shadow) {
+                this.renderer.shadowMap.enabled = true;
+                this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                this.renderer.sortObjects = false;
             }
             //this.renderer.setClearColor(new THREE.Color('#000000'));
-            app.renderer.setPixelRatio( window.devicePixelRatio );
-            app.renderer.setSize( util.w , util.h );
-            //document.body.appendChild( app.renderer.domElement );
-            document.getElementById("gameContainer").appendChild(app.renderer.domElement);
+            this.renderer.setPixelRatio( window.devicePixelRatio );
+            this.renderer.setSize( util.w , util.h );
+            //document.body.appendChild( this.renderer.domElement );
+            document.getElementById("gameContainer").appendChild(this.renderer.domElement);
             //handling user input
             //M.user.handleUserInput();
             //updating game
@@ -3005,11 +2563,11 @@ Class("App", {
 
             //launch render method
             M.control.init();
-            app.render();
+            this.render();
 
             //we are pretty sure we can add stuff to our universe
-            if (app.onCreate instanceof Function) {
-                app.onCreate();
+            if (this.onCreate instanceof Function) {
+                this.onCreate();
             } else {
                 console.log("Something wrong in your onCreate method");
             }
@@ -3019,9 +2577,9 @@ Class("App", {
         //	console.trace();
         //}
 
-    },
+    }
 
-    load: function() {
+    load() {
 
         console.log("inside load");
         if (!(typeof this.progressAnimation == "function")) {
@@ -3030,29 +2588,29 @@ Class("App", {
                 callback();
             }
         }
-        this.progressAnimation(app.init);
+        this.progressAnimation(this.init);
 
-    },
+    }
 
-    sendMessage: function(message) {
+    sendMessage(message) {
 		parent.postMessage(message, location.origin);
-    },
+    }
 
-    onMessage: function() {
-        var origin = event.origin || event.originalEvent.origin;
+    onMessage() {
+        const origin = event.origin || event.originalEvent.origin;
         if (origin !== location.origin)
             return;
 
-    },
+    }
 
-    onkey: function(key, callback) {
-        if (app._keylistener) {
-            app._keylistener.simple_combo(key, callback);
+    onkey(key, callback) {
+        if (this._keylistener) {
+            this._keylistener.simple_combo(key, callback);
         }
-    },
+    }
 
     //utilities methods
-    log: function() {
+    log() {
 
     	if (this.debug) {
     		if (arguments.length>1) {
@@ -3066,63 +2624,61 @@ Class("App", {
     		}
     	}
 
-    },
+    }
 
-    //document input method
-    onDocumentMouseWheel: function(event) {
+    onDocumentMouseWheel(event) {
 
     	event.preventDefault();
-    	app.zoom = event.wheelDelta * 0.05;
-    	app.camera.object.position.z += app.zoom;
+    	this.zoom = event.wheelDelta * 0.05;
+    	this.camera.object.position.z += this.zoom;
 
-    },
+    }
 
-    onDocumentMouseMove: function(event) {
+    onDocumentMouseMove(event) {
 
-    	app.mouseX = event.clientX - app.windowHalfX;
-    	app.mouseY = event.clientY - app.windowHalfY;
+    	this.mouseX = event.clientX - this.windowHalfX;
+    	this.mouseY = event.clientY - this.windowHalfY;
 
-    },
+    }
 
-    onDocumentTouchStart: function(event) {
+    onDocumentTouchStart(event) {
 
-    	if ( event.touches.length === 1 ) {
-
-    		event.preventDefault();
-
-    		app.mouseX = event.touches[ 0 ].pageX - app.windowHalfX;
-    		app.mouseY = event.touches[ 0 ].pageY - app.windowHalfY;
-
-    	}
-
-    },
-
-    onDocumentTouchMove: function(event) {
-
-    	if ( event.touches.length === 1 ) {
+    	if (event.touches.length === 1) {
 
     		event.preventDefault();
 
-    		app.mouseX = event.touches[ 0 ].pageX - app.windowHalfX;
-    		app.mouseY = event.touches[ 0 ].pageY - app.windowHalfY;
+    		this.mouseX = event.touches[ 0 ].pageX - this.windowHalfX;
+    		this.mouseY = event.touches[ 0 ].pageY - this.windowHalfY;
+
+    	}
+    }
+
+    onDocumentTouchMove(event) {
+
+    	if (event.touches.length === 1) {
+
+    		event.preventDefault();
+
+    		this.mouseX = event.touches[ 0 ].pageX - this.windowHalfX;
+    		this.mouseY = event.touches[ 0 ].pageY - this.windowHalfY;
 
     	}
 
-    },
+    }
 
     //keyup event
-    keyup: function(event) {},
+    keyup(event) {}
 
     //keydown event
-    keydown: function(event) {},
+    keydown(event) {}
 
     //handling failed tests
-    onFailedTest: function(message, test) {},
+    onFailedTest(message, test) {}
 
     //handling succesful tests
-    onSuccededTest: function(message) {}
+    onSuccededTest(message) {}
 
-});
+}
 
 // retrieving M object
 if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
@@ -3134,7 +2690,7 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
     // we're inside our favourite browser
     window.app = {};
     M.started = false;
-    M.start = function() {
+    M.start = function(_app) {
         if (M.started) {
             console.log('app already started');
             return;
@@ -3142,9 +2698,8 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         M.started = true;
         console.log("inside window onload");
         //creating app object
-        if (window.subClasses["App"]) {
-            var subName = window.subClasses["App"];
-            app = new window[subName]();
+        if (_app)
+            app = _app;
         } else {
             app = new App();
         }
@@ -3152,15 +2707,15 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         //before starting loading stuff, be sure to pass all tests
         M.util.start();
 
-        if (M.util.check.start(app.onSuccededTest, app.onFailedTest)) {
-            //we passed every test, we can go
-            app.preload(function() {
-                M.assetsManager.load(function() {
-                    app.prepareScene();
-                    app.load();
+        M.util.check.start(app.onSuccededTest, app.onFailedTest)
+            .then(() => {
+                app.preload(function() {
+                    M.assetsManager.load(function() {
+                        app.prepareScene();
+                        app.load();
+                    });
                 });
-            });
-        }
+            })
     };
 
     M.resize = function () {
@@ -3174,7 +2729,7 @@ if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
         app.renderer.setSize(app.util.w, app.util.h);
     };
 
-    window.addEventListener('load', M.start);
+    //window.addEventListener('load', M.start);
     window.addEventListener('resize', M.resize);
 
 

@@ -1,29 +1,40 @@
-Class("ShaderMesh", {
+import { Mesh } from 'three';
+import Shader from '../fx/shaders/Shader';
+import SceneManager from '../base/SceneManager';
+import Entity from './Entity';
 
-    ShaderMesh : function(geometry, name, attributes, uniforms, options) {
-        Entity.call(this);
+export default class ShaderMesh extends Entity {
+
+    constructor(geometry, name, attributes, uniforms, options) {
+        super();
         this.geometry = geometry;
         this.attributes = attributes;
         this.uniforms = uniforms;
         this.shaderName = name;
-        var shader = new Shader(this.shaderName, this.attributes, this.uniforms, options);
-        if (shader.shader && !shader.shader.instance) {
-            if ( !attributes ) {
+
+        const shader = new Shader(this.shaderName, this.attributes, this.uniforms, options);
+        if (shader.instance && !(typeof shader.instance === 'function')) {
+            if (!attributes) {
                 this.attributes = shader.attributes;
             }
-            if ( !uniforms ) {
+            if (!uniforms) {
                 this.uniforms = shader.uniforms;
             }
             this.script = {};
             this.hasScript = false;
 
-            this.mesh = new THREE.Mesh(geometry, shader.material);
+            this.mesh = new Mesh(geometry, shader.material);
         } else {
-            this.mesh = shader.shader.instance(app.renderer, app.camera.object, app.scene, options);
+            this.mesh = new shader.instance(
+                app.renderer,
+                app.camera.object,
+                app.scene,
+                options
+            );
         }
-        
+
         //adding to core
-        app.add(this.mesh, this);
+        SceneManager.add(this.mesh, this);
 
         if (options) {
             //do something with options
@@ -36,5 +47,4 @@ Class("ShaderMesh", {
             }
         }
     }
-
-})._extends("Entity");
+}

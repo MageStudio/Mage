@@ -2,13 +2,16 @@
   "name": "mage-engine",
   "version": "0.0.83",
   "description": "A WebGL Javascript Game Engine, built on top of THREE.js and many other libraries.",
-  "main": "mage.js",
+  "main": "build/mage",
   "author": {
     "name": "Marco Stagni",
     "email": "mrc.stagni@gmail.com"
   },
   "scripts": {
-    "build": "sh update.sh"
+    "build": "npm run build:web && npm run build:node",
+    "build:web": "webpack --config webpack.config.js --mode development",
+    "build:node": "webpack --config webpack.node.js --mode development",
+    "test": ""
   },
   "repository": {
     "type": "git",
@@ -29,15 +32,20 @@
     "shader"
   ],
   "dependencies": {
+    "ammo.js": "github:kripken/ammo.js",
     "colors": "*",
-    "connect": "^3.6.0",
+    "connect": "3.6.0",
     "http": "0.0.0",
     "ncp": "*",
     "node-prefix": "*",
     "open": "0.0.5",
-    "serve-static": "^1.12.1",
-    "url": "^0.11.0",
-    "vivifyjs": "*"
+    "path": "0.12.7",
+    "serve-static": "1.12.1",
+    "three": "0.97.0",
+    "url": "0.11.0",
+    "vivifyjs": "*",
+    "vivus": "0.4.4",
+    "whatwg-fetch": "3.0.0"
   },
   "devDependencies": {
     "bower": "^1.7.9",
@@ -47,6 +55,10 @@
     "grunt-contrib-jshint": "~0.10.0",
     "grunt-contrib-uglify": "~0.5.0",
     "grunt-contrib-watch": "*",
-    "npm-cli-login": "0.0.10"
+    "npm-cli-login": "0.0.10",
+    "babel-loader": "7.1.4",
+    "babel-preset-stage-0": "6.24.1",
+    "webpack": "4.1.0",
+    "webpack-cli": "2.0.10"
   }
 }

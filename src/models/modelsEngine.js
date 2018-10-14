@@ -1,64 +1,74 @@
-window.M = window.M || {};
+import Mesh from '../entities/Mesh';
+import {
+	MultiMaterial,
+	MeshLambertMaterial,
+	JSONLoader,
+	LoadingManager
+} from 'three';
 
-M.modelsEngine = {
+export class ModelsEngine {
 
-	loader: new THREE.JSONLoader(),
-	numModels : 0,
-	modelsLoaded : 0,
-	load : function() {
+	constructor() {
+		// this.loadingManager = new LoadingManager(this.onLoad, this.onProgress, this.onError);
+		this.loaders = new JSONLoader(false),
+		this.numModels = 0;
+		this.modelsLoaded = 0;
+	}
 
-		M.modelsEngine.map = new HashMap();
-		M.modelsEngine.models = [];
+	onLoad() {}
+	onProgress() {}
+	onError() {}
 
-		for (var model in Assets.Models) {
-			M.modelsEngine.numModels++;
-			M.modelsEngine.loadSingleFile(model, Assets.Models[model]);
+	load() {
+		this.map = {};
+		this.models = [];
+		const keys = Object.keys(SceneManager.assets.Models);
+
+		if (!keys.length) {
+			return Promise.resolve('models');
 		}
 
-		if (M.modelsEngine.numModels == 0) {
-			M.assetsManager.completed.models = true;
-		}
-	},
+		return Promise.all(keys.map(this.loadSingleFile));
+	}
 
-	get: function(id) {
-		var model = M.modelsEngine.map.get(id) || false;
+	get(id) {
+		var model = this.map[id] || false;
 		if (model) {
 			model.material.wireframe = false;
 			return new Mesh(model.geometry, model.material);
 		}
 		return false;
-	},
-
-	loadSingleFile : function(id, path) {
-		// Load a sound file using an ArrayBuffer XMLHttpRequest.
-		M.modelsEngine.loader.load(path, function(geometry, materials) {
-            var faceMaterial;
-            if (materials && materials.length > 0) {
-                var material = materials[0];
-                material.morphTargets = true;
-                faceMaterial = new THREE.MultiMaterial(materials);
-            } else {
-                faceMaterial = new THREE.MeshLambertMaterial({wireframe: true});
-            }
-
-            var model = {
-				geometry: geometry,
-				material: faceMaterial
-			}
-
-			M.modelsEngine.map.put(id, model);
-			M.modelsEngine.modelsLoaded++;
-			M.modelsEngine.checkLoad();
-        });
-	},
-
-	checkLoad: function() {
-		if (M.modelsEngine.modelsLoaded == M.modelsEngine.numModels) {
-			M.assetsManager.completed.models = true;
-		}
-	},
-
-	add: function(model) {
-		M.modelsEngine.models.push(model);
 	}
-};
+
+	loadSingleFile(id) {
+		const path = SceneManager.assets.Models[id];
+		return new Promise(resolve => {
+			this.loader.load(path, (geometry, materials) => {
+	            var faceMaterial;
+	            if (materials && materials.length > 0) {
+	                var material = materials[0];
+	                material.morphTargets = true;
+	                faceMaterial = new MultiMaterial(materials);
+	            } else {
+	                faceMaterial = new MeshLambertMaterial({wireframe: true});
+	            }
+
+	            var model = {
+					geometry,
+					material: faceMaterial
+				}
+
+				this.map[id] = model;
+				resolve();
+	        });
+		});
+		// Load a sound file using an ArrayBuffer XMLHttpRequest.
+
+	}
+
+	add(model) {
+		this.models.push(model);
+	}
+}
+
+export default new ModelsEngine();
