@@ -9,7 +9,6 @@ import {
 export class ModelsEngine {
 
 	constructor() {
-		console.log(LoadingManager);
 		// this.loadingManager = new LoadingManager(this.onLoad, this.onProgress, this.onError);
 		this.loaders = new JSONLoader(false),
 		this.numModels = 0;
@@ -23,7 +22,7 @@ export class ModelsEngine {
 	load() {
 		this.map = {};
 		this.models = [];
-		const keys = Object.keys(Assets.Models);
+		const keys = Object.keys(SceneManager.assets.Models);
 
 		if (!keys.length) {
 			return Promise.resolve('models');
@@ -42,7 +41,7 @@ export class ModelsEngine {
 	}
 
 	loadSingleFile(id) {
-		const path = Assets.Models[id];
+		const path = SceneManager.assets.Models[id];
 		return new Promise(resolve => {
 			this.loader.load(path, (geometry, materials) => {
 	            var faceMaterial;

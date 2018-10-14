@@ -26,17 +26,17 @@ export class ImagesEngine {
 
 	load() {
 		// extending assets images with our defaults
-		Object.assign(Assets.Textures, this.defaults);
-		Object.assign(Assets.Images, this.imagesDefault);
+		Object.assign(SceneManager.assets.Textures, this.defaults);
+		Object.assign(SceneManager.assets.Images, this.imagesDefault);
 
-		if (!(Object.keys(Assets.Textures).length + Object.keys(Assets.Images).length)) {
+		if (!(Object.keys(SceneManager.assets.Textures).length + Object.keys(SceneManager.assets.Images).length)) {
 			return Promise.resolve('images');
 		}
 
 		const promises = Object
-			.keys(Assets.Textures)
+			.keys(SceneManager.assets.Textures)
 			.map(this.loadSingleFile)
-			.concat(Object.keys(Assets.Images)
+			.concat(Object.keys(SceneManager.assets.Images)
 			.map(this.loadSingleImage));
 
 		return Promise.all(promises);
@@ -47,7 +47,7 @@ export class ImagesEngine {
 	}
 
 	loadSingleImage(id) {
-		const path = Assets.Images[id];
+		const path = SceneManager.assets.Images[id];
 		return new Promise(resolve => {
 			try {
 				this.imageLoader.load(path, function(image) {
@@ -67,7 +67,7 @@ export class ImagesEngine {
 	}
 
 	loadSingleFile(id) {
-		const path = Assets.Textures[id];
+		const path = SceneManager.assets.Textures[id];
 		return new Promise(resolve => {
 			try {
 				this.loader.load(path, function(texture) {

@@ -64,8 +64,6 @@ Class("MyGame", {
 		next();
 	},
 
-	prepareScene: function() {
-
-	}
+	prepareScene: function() {}
 
 })._extends("App");

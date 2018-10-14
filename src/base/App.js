@@ -19,7 +19,7 @@ export const author = {
 
 export class App {
 
-    constructor() {
+    constructor(config, assets) {
 
         this.log_types = {
     		"e" : "error",
@@ -46,6 +46,7 @@ export class App {
     		}
     	}, config);
 
+        this.assets = assets;
 
     	//scnee parameters
         this.user = undefined;
@@ -68,6 +69,7 @@ export class App {
         // creating manager
         this.manager = new Manager();
         SceneManager.setConfig(this.config);
+        SceneManager.setAssets(this.assets);
 
         // registering listener for events from parent
         window.addEventListener("onmessage", this.onMessage, false);
@@ -149,15 +151,13 @@ export class App {
         if (this.onCreate instanceof Function) {
             this.onCreate();
         } else {
-            console.log("Something wrong in your onCreate method");
+            console.log("[Mage] Something wrong in your onCreate method");
         }
     }
 
     load() {
-        console.log("inside load");
         if (!(typeof this.progressAnimation == "function")) {
             this.progressAnimation = function(callback) {
-                console.log("def progressAnimation");
                 callback();
             }
         }
@@ -240,11 +240,11 @@ export class App {
 
 export default App;
 
-export const start = (className) => {
+export const start = (className, config, assets) => {
     if (typeof className === 'function') {
-        window.app = new className();
+        window.app = new className(config, assets);
     } else {
-        window.app = new App();
+        window.app = new App(config, assets);
     }
 
     util.start();

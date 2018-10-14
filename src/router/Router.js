@@ -1,3 +1,5 @@
+import { start } from '../base/App';
+
 class Loader {
 
     constructor() {
@@ -21,49 +23,36 @@ class Loader {
     }
 }
 
-export default class Router {
+class Router {
 
-    constructor(data) {
+    constructor() {
         if (document && window) {
-            this.iframe = document.createElement('iframe');
-            this.baseFolder = 'scenes/';
-
             this.loader = new Loader();
 
             window.addEventListener("message", this.onMessage, false);
             window.addEventListener("onmessage", this.onMessage, false);
-            window.addEventListener('load', this.onLoad, false);
         }
     }
 
-    onGameJSONLoad = (request) => () => {
-        try {
-            const data = JSON.parse(request.responseText);
-
-            this.init({
-                ...data
-            });
-        } catch(e) {
-            console.log('[Mage] Couldn\'t load game.json');
+    start(config) {
+        if (config && typeof config === 'object') {
+            this.config = config;
+            this.init();
+        } else {
+            console.log('[Mage] You need provide a config to Router');
         }
     }
 
-    onLoad() {
-        const request = new XMLHttpRequest();
-        request.addEventListener("load", this.onGameJSONLoad(request));
-        request.open("GET", "game.json");
-        request.send();
-    }
+    init() {
+        if (document && this.config.scenes.lenth > 0) {
+            const firstScene = this.config.scenes[0];
 
-    start(data) {
-        if (document) {
-            this.iframe.src = this.baseFolder + "" + (data.firstScene ? data.firstScene : data.scenes[0].name);
+            this.scenes = this.config.scenes;
+            this.current = firstScene;
 
-            this.firstScene = data.firstScene;
-            this.scenes = data.scenes;
-            this.current = data.firstScene;
-
-            document.body.appendChild(this.iframe);
+            start(firstScene.className, firstScene.game, firstScene.assets);
+        } else {
+            console.log('[Mage] You need to provide at least one scene in your config');
         }
     }
 
@@ -77,13 +66,15 @@ export default class Router {
     }
 
     changeScene(scene) {
-        if (!this.iframe || !this.checkScene(scene)) {
+        if (!this.checkScene(scene)) {
             console.error('[Mage] Couldn\'t load scene: ' + scene);
             return;
         }
         this.loader.start();
-        this.iframe.src = this.baseFolder + scene;
+        start(scene, this.config);
         this.current = scene;
         this.loader.stop();
     }
 }
+
+export default new Router();

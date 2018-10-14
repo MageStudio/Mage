@@ -57,13 +57,13 @@ export class AudioEngine {
 			console.error("No Audio Context available, sorry.");
 		}
 
-		if (Object.keys(Assets.Audio).length == 0) {
+		if (Object.keys(SceneManager.assets.Audio).length == 0) {
 			return Promise.resolve('audio');
 		}
 
 		return Promise
 			.all(Object
-				.keys(Assets.Audio)
+				.keys(SceneManager.assets.Audio)
 				.map(this.loadSingleFile)
 			);
 	}
@@ -74,7 +74,7 @@ export class AudioEngine {
 	}
 
 	loadSingleFile(id) {
-		const path = Assets.Audio[id];
+		const path = SceneManager.assets.Audio[id];
 		// Load a sound file using an ArrayBuffer XMLHttpRequest.
 		const request = new XMLHttpRequest();
 		return new Promise(resolve => {

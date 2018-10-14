@@ -11,6 +11,10 @@ export class SceneManager {
         this.config = config;
     }
 
+    setAssets(assets) {
+        this.assets = assets;
+    }
+
     createScene() {
         const { physics_enabled = false } = this.config;
         const ammo = 'ammo.js';

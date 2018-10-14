@@ -2,7 +2,7 @@
   "name": "mage-engine",
   "version": "0.0.83",
   "description": "A WebGL Javascript Game Engine, built on top of THREE.js and many other libraries.",
-  "main": "mage.js",
+  "main": "build/mage",
   "author": {
     "name": "Marco Stagni",
     "email": "mrc.stagni@gmail.com"
@@ -32,6 +32,7 @@
     "shader"
   ],
   "dependencies": {
+    "ammo.js": "github:kripken/ammo.js",
     "colors": "*",
     "connect": "^3.6.0",
     "http": "0.0.0",

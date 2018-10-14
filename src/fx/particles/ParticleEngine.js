@@ -21,9 +21,9 @@ export class ParticleEngine {
 
 	load() {
 
-		if (Assets.Particles) {
+		if (SceneManager.assets.Particles) {
 
-			const keys = Object.keys(Assets.Particles);
+			const keys = Object.keys(SceneManager.assets.Particles);
 
 			if (!keys.length) {
 				return Promise.resolve('particles');
@@ -41,7 +41,7 @@ export class ParticleEngine {
 	}
 
 	loadSingleFile(id) {
-		const path = Assets.Particles[id];
+		const path = SceneManager.assets.Particles[id];
 		// @todo this has to be changed. We can load a M.fx.createparticle file, a custom particle or a threejs particle/material.
 		const type = path.split(".")[1];
 

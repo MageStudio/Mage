@@ -27,8 +27,8 @@ export class ShadersEngine {
 	}
 
 	load() {
-		if (Assets.Shaders) {
-			const keys = Object.keys(Assets.Shaders);
+		if (SceneManager.assets.Shaders) {
+			const keys = Object.keys(SceneManager.assets.Shaders);
 			if (!keys.length) {
 				return Promise.resolve('shaders');
 			}
@@ -42,7 +42,7 @@ export class ShadersEngine {
 	}
 
 	loadSingleFile(id) {
-		const path = Assets.Shaders[id];
+		const path = SceneManager.assets.Shaders[id];
 		const type = path.split(".")[1];
 
 		return new Promise(resolve => {
