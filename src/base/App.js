@@ -3,12 +3,16 @@ import Universe from './Universe';
 import SceneManager from './SceneManager';
 import Camera from '../entities/Camera';
 import util from './util';
+import MeshLoader from '../loaders/MeshLoader';
+import LightLoader from '../loaders/LightLoader';
+
 import {
     Clock,
     Scene,
     WebGLRenderer,
     PCFSoftShadowMap
 } from 'three';
+import { fetch } from 'whatwg-fetch';
 
 export const version = '0.0.83';
 export const author = {
@@ -82,11 +86,32 @@ export class App {
     }
 
     //onCreate method, ovveride to start creating stuff
-    onCreate() {}
+    onCreate()
+        if (this._scene) {
+            const { meshes, models, lights } = this._scene;
+
+    		for (var i in models) {
+    			meshes.push(models[i]);
+    		}
+
+    		MeshLoader.load(meshes);
+            LightLoader.load(lights);
+
+    		SceneManager.updateChildren();
+        }
+    }
 
     //this methods helps you loading heavy stuff
     preload(callback) {
-        callback();
+        return new Promise(resolve => {
+            fetch('scene.json')
+                .then(res => res.json())
+                .then(json => {
+                    this._scene = json;
+                    resolve();
+                })
+                .catch(resolve);
+        })
     }
 
     //do stuff before onCreate method( prepare meshes, whatever )
@@ -157,9 +182,7 @@ export class App {
 
     load() {
         if (!(typeof this.progressAnimation == "function")) {
-            this.progressAnimation = function(callback) {
-                callback();
-            }
+            this.progressAnimation = (callback) => callback();
         }
         this.progressAnimation(this.init);
     }
@@ -251,12 +274,16 @@ export const start = (className, config, assets) => {
     util.checker.start(
         app.onSuccededTest,
         app.onFailedTest
-    ).then(app.preload(() => {
-        app.manager
-            .load()
+    ).then(() => {
+        app.preload()
             .then(() => {
-                app.prepareScene();
-                app.load();
-            })
-    }));
+                app.manager
+                    .load()
+                    .then(() => {
+                        app.prepareScene();
+                        app.load();
+                    })
+                })
+        });
+    }
 }

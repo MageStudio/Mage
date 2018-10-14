@@ -31,6 +31,14 @@ export class SceneManager {
         }
     }
 
+    updateChildren() {
+        for (var i in this.scene.children) {
+            if (this.scene.children[i].material) {
+                this.scene.children[i].material.needsUpdate = true;
+            }
+        }
+    }
+
     add(mesh, element) {
 		this.scene.add(mesh);
 		Universe.set(mesh.uuid, element);

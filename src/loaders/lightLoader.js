@@ -2,7 +2,7 @@ import Loader from './Loader';
 import DirectionalLight from '../lights/DirectionalLight';
 import AmbientLight from '../lights/AmbientLight';
 
-export default class LightLoader extends Loader {
+export class LightLoader extends Loader {
 
     constructor() {
         super();
@@ -62,3 +62,5 @@ export default class LightLoader extends Loader {
         pointlight.light.shadow.darkness = 0.2;
     }
 }
+
+export default new LightLoader();

@@ -6,7 +6,7 @@ import {
     RepeatWrapping
 } from 'three';
 
-export default class MeshLoader extends Loader {
+export class MeshLoader extends Loader {
 
     constructor() {
         super();
@@ -107,3 +107,5 @@ export default class MeshLoader extends Loader {
         }
     }
 }
+
+export default new MeshLoader();

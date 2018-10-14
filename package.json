@@ -34,7 +34,7 @@
   "dependencies": {
     "ammo.js": "github:kripken/ammo.js",
     "colors": "*",
-    "connect": "^3.6.0",
+    "connect": "3.6.0",
     "http": "0.0.0",
     "ncp": "*",
     "node-prefix": "*",
@@ -44,7 +44,8 @@
     "three": "0.97.0",
     "url": "0.11.0",
     "vivifyjs": "*",
-    "vivus": "^0.4.4"
+    "vivus": "0.4.4",
+    "whatwg-fetch": "3.0.0"
   },
   "devDependencies": {
     "bower": "^1.7.9",
