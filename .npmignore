@@ -1,6 +1,6 @@
-src/**/*.js
-examples/**/*.js
-templates/**/*.js
-scripts/**/*.sh
+src
+examples
+templates
+scripts
 .gitignore
 package-lock.json
