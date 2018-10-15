@@ -1,10 +1,6 @@
-.git
-npm-debug.log
-Gruntfile.js
 src/**/*.js
-examples/**/*.*
-src
-examples
-bower.json
-modules.js
-*.sh
+examples/**/*.js
+templates/**/*.js
+scripts/**/*.sh
+.gitignore
+package-lock.json
