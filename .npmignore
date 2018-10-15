@@ -1,6 +1,8 @@
 src
 examples
-templates
+template
 scripts
+webpack.config.js
+webpack.node.js
 .gitignore
 package-lock.json
