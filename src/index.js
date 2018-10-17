@@ -41,6 +41,7 @@ export {
     author,
 
     App,
+    Router,
 
     MeshLoader,
     LightLoader,

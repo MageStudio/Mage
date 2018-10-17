@@ -35,7 +35,7 @@ export class AudioEngine {
 		this.volume.gain.value = this._volume;
 	}
 
-	load() {
+	load = () => {
 		this.map = {};
 		this.sounds = [];
 
@@ -73,7 +73,7 @@ export class AudioEngine {
 		return M.audioEngine.map[id] || false;
 	}
 
-	loadSingleFile(id) {
+	loadSingleFile = (id) => {
 		const path = SceneManager.assets.Audio[id];
 		// Load a sound file using an ArrayBuffer XMLHttpRequest.
 		const request = new XMLHttpRequest();
@@ -81,18 +81,21 @@ export class AudioEngine {
 			request.open("GET", path, true);
 			request.responseType = "arraybuffer";
 			request.onload = (e) => {
-				this.context.decodeAudioData(this.response,
-					(buffer) => {
-						this.map[id] = buffer;
-						resolve();
-						this.checkLoad();
-					},
-					() => {
-						this.map.put[id] = null;
-						resolve();
-						console.error("Decoding the audio buffer failed");
-					});
-
+				if (e) {
+					resolve();
+				} else {
+					this.context.decodeAudioData(this.response,
+						(buffer) => {
+							this.map[id] = buffer;
+							resolve();
+							this.checkLoad();
+						},
+						() => {
+							this.map.put[id] = null;
+							resolve();
+							console.error("Decoding the audio buffer failed");
+						});
+				}
 			};
 			request.send();
 		})

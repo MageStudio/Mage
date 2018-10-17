@@ -1,6 +1,7 @@
 import { include } from '../../base/util';
 import Rain from './Rain';
 import Clouds from './Clouds';
+import SceneManager from '../../base/SceneManager';
 
 export class ParticleEngine {
 

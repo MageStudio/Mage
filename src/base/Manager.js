@@ -4,14 +4,11 @@ import ImagesEngine from '../images/ImagesEngine';
 import ModelsEngine from '../models/ModelsEngine';
 import ShadersEngine from '../fx/shaders/ShadersEngine';
 import ParticleEngine from '../fx/particles/ParticleEngine';
-
 import LightEngine from '../lights/LightEngine';
 
 export default class Manager {
 
-	constructor() {
-		this.lights = new LightEngine();
-	}
+	constructor() {}
 
 	load() {
 		return new Promise((resolve, reject) => {
@@ -34,7 +31,7 @@ export default class Manager {
 
 	update() {
 		AudioEngine.update();
-		this.lights.update();
+		LightEngine.update();
 	}
 
 	loadingMessage(loaded) {}

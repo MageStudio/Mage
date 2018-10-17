@@ -6,7 +6,7 @@ import util from './util';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 
-import * as Vivus from 'vivus';
+import Vivus from 'vivus';
 
 import {
     Clock,
@@ -83,7 +83,7 @@ export class App {
         window.addEventListener('resize', this.onResize);
     }
 
-    set clearColor(value) {
+    setClearColor(value) {
         SceneManager.setClearColor(value);
     }
 
@@ -135,7 +135,7 @@ export class App {
     onLeapDeviceDisconnected() {}
 
     // window Resized
-    onResize() {
+    onResize = () => {
         this.config.h = window.innerHeight;
         this.config.w = window.innerWidth;
         this.config.ratio = this.config.w / this.config.h;
@@ -143,7 +143,7 @@ export class App {
         SceneManager.onResize(this.config);
     };
 
-    render() {
+    render = () => {
         this.manager.update();
         // M.control.update();
         this._render();
@@ -153,7 +153,7 @@ export class App {
 
     }
 
-    init() {
+    init = () => {
         if (window && window.keypress) {
             this._keylistener = new window.keypress.Listener();
         }
@@ -172,6 +172,7 @@ export class App {
     load() {
         if (!(typeof this.progressAnimation == "function")) {
             this.progressAnimation = (callback) => {
+                console.log(Vivus);
         		new Vivus("mage", {
                     type: 'oneByOne',
                     duration: 1000,
@@ -182,6 +183,9 @@ export class App {
                 setTimeout(() => {
                     document.getElementById('loader').classList.add('fadeout');
                 }, 5000)
+                setTimeout(() => {
+                    document.getElementById('loader').classList.add('invisible');
+                }, 6000);
         		callback();
         	}
 
@@ -273,7 +277,7 @@ export const start = (className, config, assets) => {
     }
 
     util.start();
-    util.checker.start(
+    util.checker.check(
         app.onSuccededTest,
         app.onFailedTest
     ).then(() => {

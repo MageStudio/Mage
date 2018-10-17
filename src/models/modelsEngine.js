@@ -6,6 +6,8 @@ import {
 	LoadingManager
 } from 'three';
 
+import SceneManager from '../base/SceneManager';
+
 export class ModelsEngine {
 
 	constructor() {
@@ -22,7 +24,9 @@ export class ModelsEngine {
 	load() {
 		this.map = {};
 		this.models = [];
-		const keys = Object.keys(SceneManager.assets.Models);
+		const { Models = [] } = SceneManager.assets;
+
+		const keys = Object.keys(Models);
 
 		if (!keys.length) {
 			return Promise.resolve('models');

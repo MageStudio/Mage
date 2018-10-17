@@ -6,11 +6,8 @@ const config = {
         'mage': './src/index.js'
     },
     output: {
-        library: 'M',
-        libraryTarget: 'umd',
         path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js',
-        umdNamedDefine: true
+        filename: 'bundle.js',
     },
     module: {
         rules: [

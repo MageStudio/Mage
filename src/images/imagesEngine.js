@@ -3,6 +3,8 @@ import {
 	ImageLoader
 } from 'three';
 
+import SceneManager from '../base/SceneManager';
+
 export class ImagesEngine {
 
 	constructor() {

@@ -44,7 +44,7 @@ class Router {
     }
 
     init() {
-        if (document && this.config.scenes.lenth > 0) {
+        if (document && this.config.scenes.length > 0) {
             const firstScene = this.config.scenes[0];
 
             this.scenes = this.config.scenes;

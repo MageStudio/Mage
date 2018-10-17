@@ -1,5 +1,5 @@
 import { include } from '../../base/util';
-
+import SceneManager from '../../base/SceneManager';
 import Atmosphere from '../materials/Atmosphere';
 import Mirror from '../materials/Mirror';
 import Ocean from '../materials/Ocean';

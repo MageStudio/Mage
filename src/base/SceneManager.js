@@ -1,5 +1,12 @@
 import Universe from './Universe';
-import { Clock } from 'three';
+import Camera from '../entities/Camera';
+import {
+    Clock,
+    Scene,
+    PCFSoftShadowMap,
+    WebGLRenderer,
+    alphaRenderer
+} from 'three';
 
 export class SceneManager {
 
@@ -24,9 +31,9 @@ export class SceneManager {
             Physijs.scripts.worker = worker;
             Physijs.scripts.ammo = ammo;
             this.scene = new Physijs.Scene();
-            Physijs._isLoaded = true;
+            this.physics = true;
         } else {
-            Physijs._isLoaded = false;
+            this.physics = false;
             this.scene = new Scene();
         }
     }
@@ -50,7 +57,9 @@ export class SceneManager {
 	}
 
     setClearColor(value) {
-        this.renderer.setClearColor(value);
+        if (this.renderer) {
+            this.renderer.setClearColor(value);
+        }
     }
 
     create() {
@@ -105,10 +114,10 @@ export class SceneManager {
         this.renderer.clear(this.clearColor);
         this.renderer.render(this.scene, this.camera.object);
 
-        if (this.config.physics_enabled && Physijs._isLoaded) {
+        if (this.config.physics_enabled && this.physics) {
             this.scene.simulate();
         }
-        if (this.config.tween_enabled) {
+        if (this.config.tween_enabled && TWEEN) {
             TWEEN.update();
         }
 

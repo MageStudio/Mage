@@ -1,14 +1,14 @@
 {
-  "name": "mage-engine",
+  "name": "test",
   "version": "0.0.1",
-  "description": "A WebGL Javascript Game Engine, built on top of THREE.js and many other libraries.",
+  "description": "Testing mage engine",
   "author": {
     "name": "<Your Name Here>",
     "email": "<Your Email Here>"
   },
   "scripts": {
     "dev": "npm run build && npm run start",
-    "build": "webpack --config webpack.config.js",
+    "build": "webpack --config webpack.js",
     "start": "http-server ./ -p 8080"
   },
   "license": "<Your License Here>",
@@ -25,7 +25,7 @@
     "url": "0.11.0",
     "vivifyjs": "*",
     "vivus": "^0.4.4",
-    "http-server": "0.11.1",
+    "http-server": "0.11.1"
   },
   "devDependencies": {
     "npm-cli-login": "0.0.10",
