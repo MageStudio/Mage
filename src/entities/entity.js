@@ -27,6 +27,18 @@ export default class Entity {
 		ScriptManager.attachScript(this, scriptname, path);
 	}
 
+	loadScript(name) {
+		const script = ScriptManager.get(name);
+		for (let method in script) {
+			this[method] = script[method];
+		}
+		try {
+			this.start();
+		} catch(e) {
+			console.log("Check your start method inside your " + script.name + ".js script");
+		}
+	}
+
 	//__loadScript will be automatically called by Game object
 	__loadScript(script) {
 		for (let method in script) {

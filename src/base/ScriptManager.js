@@ -12,6 +12,10 @@ export class ScriptManager {
 
 	update() {}
 
+	get(id) {
+		return this.scripts[id] || {};
+	}
+
 	create(name, methods) {
 		const obj = {};
 		obj.name = name;

@@ -12,6 +12,7 @@ import * as util from './base/util';
 import Config from './base/config';
 import Router from './router/Router';
 import SceneManager from './base/SceneManager';
+import ScriptManager from './base/ScriptManager';
 
 import Entity from './entities/Entity';
 import Mesh from './entities/Mesh';
@@ -51,6 +52,7 @@ export {
     App,
     Config,
     SceneManager,
+    ScriptManager,
     Router,
 
     ImagesEngine,
