@@ -9,13 +9,13 @@ export class ImagesEngine {
 
 	constructor() {
 		this.defaults = {
-			"waterNormal": "assets/images/waternormals.jpg",
-			"water": "assets/images/water.jpg",
-			'smokeparticle': 'assets/images/smokeparticle.png'
+			//"waterNormal": "assets/images/waternormals.jpg",
+			//"water": "assets/images/water.jpg",
+			//'smokeparticle': 'assets/images/smokeparticle.png'
 		};
 
 		this.imagesDefault = {
-			"skybox": "assets/images/skybox_1.png"
+			//"skybox": "assets/images/skybox_1.png"
 		};
 
 		this.map = {};
@@ -26,7 +26,7 @@ export class ImagesEngine {
 
 	}
 
-	load() {
+	load = () => {
 		// extending assets images with our defaults
 		Object.assign(SceneManager.assets.Textures, this.defaults);
 		Object.assign(SceneManager.assets.Images, this.imagesDefault);
@@ -48,16 +48,16 @@ export class ImagesEngine {
 		return this.map[key] || false;
 	}
 
-	loadSingleImage(id) {
+	loadSingleImage = (id) => {
 		const path = SceneManager.assets.Images[id];
 		return new Promise(resolve => {
 			try {
-				this.imageLoader.load(path, function(image) {
+				this.imageLoader.load(path, (image) => {
 					this.map[id] = image;
 					resolve();
 				},
-				function() {},  // displaying progress
-				function() {
+				() => {},  // displaying progress
+				() => {
 					console.log('An error occurred while fetching texture.');
 					resolve();
 				});
@@ -68,16 +68,16 @@ export class ImagesEngine {
 		})
 	}
 
-	loadSingleFile(id) {
+	loadSingleFile = (id) => {
 		const path = SceneManager.assets.Textures[id];
 		return new Promise(resolve => {
 			try {
-				this.loader.load(path, function(texture) {
-					this.map.put(id, texture);
+				this.loader.load(path, (texture) => {
+					this.map[id] = texture;
 					resolve();
 				},
-				function() {},  // displaying progress
-				function() {
+				() => {},  // displaying progress
+				() => {
 					console.log('An error occurred while fetching texture.');
 					resolve();
 				});
@@ -90,7 +90,7 @@ export class ImagesEngine {
 
 	add(id, image) {
 		if (id && image) {
-			this.map.put(id, image);
+			this.map[id] = image;
 		}
 	}
 }

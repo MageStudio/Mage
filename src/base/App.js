@@ -3,6 +3,7 @@ import Universe from './Universe';
 import SceneManager from './SceneManager';
 import Camera from '../entities/Camera';
 import util from './util';
+import Config from './config';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 
@@ -33,24 +34,7 @@ export class App {
     		"i" : "info"
     	};
 
-        //util
-        const DEFAULT_HEIGHT = 600;
-        const DEFAULT_WIDTH = 800;
-        const DEFAULT_RATIO = DEFAULT_WIDTH / DEFAULT_HEIGHT;
-
-        this.config = Object.assign({
-    		h : window ? window.innerHeight : DEFAULT_HEIGHT,
-    		w : window ? window.innerWidth : DEFAULT_WIDTH,
-    		ratio : window ? (window.innerWidth/window.innerHeight) : DEFAULT_RATIO,
-    		frameRate : 60,
-
-    		camera : {
-    			//handling useful informations about our camera.
-    			fov : 75,
-    			near : 0.1,
-    			far : 100
-    		}
-    	}, config);
+        Config.setConfig(config);
 
         this.assets = assets;
 
@@ -60,7 +44,6 @@ export class App {
 
     	//debug mode
         this.debug = true;
-
 
         //window and mouse variables
         this.mouseX = 0;
@@ -74,7 +57,6 @@ export class App {
 
         // creating manager
         this.manager = new Manager();
-        SceneManager.setConfig(this.config);
         SceneManager.setAssets(this.assets);
 
         // registering listener for events from parent
@@ -136,11 +118,7 @@ export class App {
 
     // window Resized
     onResize = () => {
-        this.config.h = window.innerHeight;
-        this.config.w = window.innerWidth;
-        this.config.ratio = this.config.w / this.config.h;
-
-        SceneManager.onResize(this.config);
+        SceneManager.onResize();
     };
 
     render = () => {
@@ -169,10 +147,9 @@ export class App {
         }
     }
 
-    load() {
+    load = () => {
         if (!(typeof this.progressAnimation == "function")) {
             this.progressAnimation = (callback) => {
-                console.log(Vivus);
         		new Vivus("mage", {
                     type: 'oneByOne',
                     duration: 1000,
@@ -229,7 +206,7 @@ export class App {
     onDocumentMouseWheel(event) {
     	event.preventDefault();
     	this.zoom = event.wheelDelta * 0.05;
-    	this.camera.object.position.z += this.zoom;
+    	SceneManager.camera.object.position.z += this.zoom;
     }
 
     onDocumentMouseMove(event) {

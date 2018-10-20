@@ -1,5 +1,6 @@
 import Universe from './Universe';
 import Camera from '../entities/Camera';
+import Config from './config';
 import {
     Clock,
     Scene,
@@ -14,20 +15,16 @@ export class SceneManager {
         this.clock = new Clock();
     }
 
-    setConfig(config) {
-        this.config = config;
-    }
-
     setAssets(assets) {
         this.assets = assets;
     }
 
     createScene() {
-        const { physics_enabled = false } = this.config;
+        const { enabled = false } = Config.physics();
         const ammo = 'ammo.js';
         const worker = 'workers/physijs_worker.js';
 
-        if (physics_enabled && Physijs) {
+        if (enabled && Physijs) {
             Physijs.scripts.worker = worker;
             Physijs.scripts.ammo = ammo;
             this.scene = new Physijs.Scene();
@@ -69,55 +66,57 @@ export class SceneManager {
     }
 
     createCamera() {
-        const cameraOptions = {
-            fov : this.config.camera.fov,
-            ratio : this.config.ratio,
-            near : this.config.camera.near,
-            far : this.config.camera.far
-        };
+        const { ratio } = Config.screen();
+        const { fov, near, far } = Config.camera();
 
-        this.camera = new Camera(cameraOptions);
+        this.camera = new Camera({
+            fov,
+            ratio,
+            near,
+            far
+        });
     }
 
     createRenderer() {
-        const alphaRenderer = !!this.config.alpha;
+        const { alpha } = Config.screen();
+        const { shadows } = Config.lights();
+        const { w, h } = Config.screen();
 
-        this.renderer = new WebGLRenderer({alpha: alphaRenderer, antialias: true});
+        this.renderer = new WebGLRenderer({alpha, antialias: true});
 
-        if (this.config.cast_shadow) {
+        if (shadows) {
             this.renderer.shadowMap.enabled = true;
             this.renderer.shadowMap.type = PCFSoftShadowMap;
             this.renderer.sortObjects = false;
         }
 
         this.renderer.setPixelRatio( window.devicePixelRatio );
-        this.renderer.setSize( this.config.w , this.config.h );
+        this.renderer.setSize(w , h);
 
         document.getElementById("gameContainer").appendChild(this.renderer.domElement);
     }
 
     onResize(config) {
-        this.config = config;
+        const { ratio, w, h } = Config.screen();
 
         if (!this.camera || !this.renderer) return;
 
-        this.camera.object.aspect = this.config.ratio;
+        this.camera.object.aspect = ratio;
         this.camera.object.updateProjectionMatrix();
-        this.renderer.setSize(this.config.w, this.config.h);
+        this.renderer.setSize(w, h);
     }
 
     update() {
-
         Universe.update(this.clock.getDelta());
 
         this.renderer.autoClear = false;
         this.renderer.clear(this.clearColor);
         this.renderer.render(this.scene, this.camera.object);
 
-        if (this.config.physics_enabled && this.physics) {
+        if (Config.physics().enabled && this.physics) {
             this.scene.simulate();
         }
-        if (this.config.tween_enabled && TWEEN) {
+        if (Config.tween().enabled && TWEEN) {
             TWEEN.update();
         }
 

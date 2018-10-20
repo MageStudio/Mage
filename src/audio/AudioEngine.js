@@ -91,7 +91,7 @@ export class AudioEngine {
 							this.checkLoad();
 						},
 						() => {
-							this.map.put[id] = null;
+							this.map[id] = null;
 							resolve();
 							console.error("Decoding the audio buffer failed");
 						});

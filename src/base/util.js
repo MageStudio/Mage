@@ -1,3 +1,5 @@
+import Config from './config';
+
 export const include = (src, callback) => {
 
 	var s, r, t, scripts = [];
@@ -93,9 +95,8 @@ export class Checker {
 	}
 
 	check(onSuccess, onFailure) {
-		const tests = (app &&
-            app.util &&
-            app.util.tests) ||
+		const tests = Config.tests().length ?
+			Config.tests() :
             this.tests;
 
         	if (tests.indexOf("webgl") == -1) {
@@ -106,7 +107,6 @@ export class Checker {
         const promises = tests
             .map(test => this[test] || Promise.reject('No such test'));
 
-        console.log(promises);
 
         return Promise
             .all(promises)

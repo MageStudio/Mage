@@ -1,4 +1,5 @@
 import Loader from './Loader';
+import Config from '../base/config';
 import DirectionalLight from '../lights/DirectionalLight';
 import AmbientLight from '../lights/AmbientLight';
 
@@ -58,7 +59,7 @@ export class LightLoader extends Loader {
         pointlight.light.shadow.camera.right = d;
         pointlight.light.shadow.camera.top = d;
         pointlight.light.shadow.camera.bottom = -d;
-        pointlight.light.shadow.camera.far = app.util.camera.far;
+        pointlight.light.shadow.camera.far = Config.camera().far;
         pointlight.light.shadow.darkness = 0.2;
     }
 }

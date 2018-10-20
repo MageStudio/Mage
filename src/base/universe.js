@@ -19,7 +19,7 @@ export class Universe {
 		if (keys.length != 0) {
 			var start = +new Date();
 			do {
-				const o = this.reality[keys_list.shift()];
+				const o = this.reality[keys.shift()];
 				if (o && o.update) {
 					o.update(delta);
 				}

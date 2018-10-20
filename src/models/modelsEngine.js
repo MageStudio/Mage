@@ -12,7 +12,7 @@ export class ModelsEngine {
 
 	constructor() {
 		// this.loadingManager = new LoadingManager(this.onLoad, this.onProgress, this.onError);
-		this.loaders = new JSONLoader(false),
+		this.loader = new JSONLoader(false),
 		this.numModels = 0;
 		this.modelsLoaded = 0;
 	}
@@ -21,7 +21,7 @@ export class ModelsEngine {
 	onProgress() {}
 	onError() {}
 
-	load() {
+	load = () => {
 		this.map = {};
 		this.models = [];
 		const { Models = [] } = SceneManager.assets;
@@ -44,7 +44,7 @@ export class ModelsEngine {
 		return false;
 	}
 
-	loadSingleFile(id) {
+	loadSingleFile = (id) => {
 		const path = SceneManager.assets.Models[id];
 		return new Promise(resolve => {
 			this.loader.load(path, (geometry, materials) => {

@@ -76,7 +76,7 @@ export class ShadersEngine {
 
 	create(name, params) {
 		this.SHADERS.push(name);
-		this.map.put(name, {
+		this.map[name] = {
 			name,
 			vertex: params.vertex || "",
 			fragment: params.fragment || "",
@@ -84,7 +84,7 @@ export class ShadersEngine {
 			attributes: params.attributes || {},
 			uniforms: params.uniforms || {},
 			instance: params.instance || false
-		});
+		};
 	}
 
 	add(shader) {

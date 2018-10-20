@@ -1,4 +1,5 @@
 import Entity from './Entity';
+import Config from '../base/config';
 import SceneManager from '../base/SceneManager';
 import { Mesh as THREEMesh, RepeatWrapping } from 'three';
 
@@ -12,7 +13,7 @@ export default class Mesh extends Entity {
 		this.hasScript = false;
 
 		this.mesh = new THREEMesh(geometry, material);
-		if (app.util.cast_shadow) {
+		if (Config.lights().shadows) {
 			this.mesh.castShadow = true;
 			this.mesh.receiveShadow = true;
 		}

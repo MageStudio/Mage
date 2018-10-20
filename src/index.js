@@ -5,11 +5,13 @@ import BackgroundSound from './audio/BackgroundSound';
 import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
 
+import * as THREE from 'three';
 import App, { start, version, author } from './base/App';
-import * as colors from './base/colors';
+import Color from './base/Color';
 import * as util from './base/util';
+import Config from './base/config';
 import Router from './router/Router';
-
+import SceneManager from './base/SceneManager';
 
 import Entity from './entities/Entity';
 import Mesh from './entities/Mesh';
@@ -35,13 +37,25 @@ import Skybox from './fx/scenery/Skybox';
 
 import Shader from './fx/shaders/Shader';
 
+import ImagesEngine from './images/ImagesEngine';
+import ModelsEngine from './models/ModelsEngine';
+import ShadersEngine from './fx/shaders/ShadersEngine';
+
 export {
     start,
     version,
     author,
 
+    THREE,
+
     App,
+    Config,
+    SceneManager,
     Router,
+
+    ImagesEngine,
+    ModelsEngine,
+    ShadersEngine,
 
     MeshLoader,
     LightLoader,
@@ -72,6 +86,6 @@ export {
 
     Shader,
 
-    colors,
+    Color,
     util
 };
