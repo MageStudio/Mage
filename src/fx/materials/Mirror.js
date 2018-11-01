@@ -22,9 +22,9 @@ import {
 	Plane
 } from 'three';
 
-export default class MirrorShader extends Object3D {
+export default class Mirror extends Object3D {
 
-	uniforms() {
+	mirroruniforms() {
         return {
             "mirrorColor": { type: "c", value: new Color(0x7F7F7F) },
 			"mirrorSampler": { type: "t", value: null },
@@ -32,7 +32,7 @@ export default class MirrorShader extends Object3D {
         };
 	}
 
-	vertex() {
+	mirrorvertex() {
         return [
 
             "uniform mat4 textureMatrix;",
@@ -52,7 +52,7 @@ export default class MirrorShader extends Object3D {
         ].join("\n");
     }
 
-	fragment() {
+	mirrorfragment() {
         return [
 
             "uniform vec3 mirrorColor;",
@@ -141,14 +141,14 @@ export default class MirrorShader extends Object3D {
 		this.renderTarget = new WebGLRenderTarget(width, height, parameters);
 		this.renderTarget2 = new WebGLRenderTarget(width, height, parameters);
 
-		var mirrorUniforms = UniformsUtils.clone(MirrorShader.uniforms());
-
+		console.log(this.mirrorfragment());
+		console.log(this.mirrorvertex());
+		console.log(this.mirroruniforms());
+		
 		this.material = new ShaderMaterial({
-
-			fragmentShader: MirrorShader.fragment(),
-			vertexShader: MirrorShader.vertex(),
-			uniforms: mirrorUniforms
-
+			fragmentShader: this.mirrorfragment(),
+			vertexShader: this.mirrorvertex(),
+			uniforms: UniformsUtils.clone(this.mirroruniforms())
 		});
 
 		this.material.uniforms.mirrorSampler.value = this.renderTarget.texture;
@@ -277,8 +277,8 @@ export default class MirrorShader extends Object3D {
 		var q = new Vector4();
 		var projectionMatrix = this.mirrorCamera.projectionMatrix;
 
-		q.x = (Math.sign(this.clipPlane.x) + projectionMatrix.elements[ 8 ]) / projectionMatrix.elements[ 0 ];
-		q.y = (Math.sign(this.clipPlane.y) + projectionMatrix.elements[ 9 ]) / projectionMatrix.elements[ 5 ];
+		q.x = (window.Math.sign(this.clipPlane.x) + projectionMatrix.elements[ 8 ]) / projectionMatrix.elements[ 0 ];
+		q.y = (window.Math.sign(this.clipPlane.y) + projectionMatrix.elements[ 9 ]) / projectionMatrix.elements[ 5 ];
 		q.z = - 1.0;
 		q.w = (1.0 + projectionMatrix.elements[ 10 ]) / projectionMatrix.elements[ 14 ];
 
@@ -310,7 +310,7 @@ export default class MirrorShader extends Object3D {
 		}
 
 		if (scene !== undefined && scene instanceof Scene) {
-
+			console.log('rendering mirror');
 			// We can't render ourself to ourself
 			var visible = this.material.visible;
 			this.material.visible = false;

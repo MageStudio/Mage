@@ -5,6 +5,7 @@ import ModelsEngine from '../models/ModelsEngine';
 import ShadersEngine from '../fx/shaders/ShadersEngine';
 import ParticleEngine from '../fx/particles/ParticleEngine';
 import LightEngine from '../lights/LightEngine';
+import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
 
 export default class Manager {
 
@@ -32,6 +33,8 @@ export default class Manager {
 	update() {
 		AudioEngine.update();
 		LightEngine.update();
+		PostProcessingEngine.update();
+
 	}
 
 	loadingMessage(loaded) {}

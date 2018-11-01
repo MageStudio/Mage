@@ -138,7 +138,7 @@ export default class Entity {
 	}
 
 	add(mesh) {
-		if (mesh.mesh && this.mesh) {
+		if (this.mesh) {
 			this.mesh.add(mesh.mesh);
 		}
 	}

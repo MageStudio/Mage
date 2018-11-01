@@ -6,6 +6,7 @@ import util from './util';
 import Config from './config';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
+import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
 
 import Vivus from 'vivus';
 
@@ -137,6 +138,7 @@ export class App {
         }
 
         SceneManager.create();
+        PostProcessingEngine.init();
         // M.control.init();
         this.render();
 

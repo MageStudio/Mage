@@ -3,6 +3,7 @@ import SceneManager from '../../base/SceneManager';
 import Atmosphere from '../materials/Atmosphere';
 import Mirror from '../materials/Mirror';
 import Ocean from '../materials/Ocean';
+import Water from '../materials/Water';
 import OceanShaders from '../materials/OceanShaders';
 import Skybox from '../scenery/Skybox';
 
@@ -17,7 +18,8 @@ export class ShadersEngine {
 			Mirror,
 			Ocean,
 			OceanShaders,
-			Skybox
+			Skybox,
+			Water
 		};
 
 		this.shaders = [];
@@ -26,7 +28,7 @@ export class ShadersEngine {
 		this.shadersLoaded = 0;
 	}
 
-	load() {
+	load = () => {
 		if (SceneManager.assets.Shaders) {
 			const keys = Object.keys(SceneManager.assets.Shaders);
 			if (!keys.length) {
@@ -37,11 +39,11 @@ export class ShadersEngine {
 		return Promise.resolve('shaders');
 	}
 
-	get(id) {
+	get = (id) => {
 		return this.map[id] || false;
 	}
 
-	loadSingleFile(id) {
+	loadSingleFile = (id) => {
 		const path = SceneManager.assets.Shaders[id];
 		const type = path.split(".")[1];
 

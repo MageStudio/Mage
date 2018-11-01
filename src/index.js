@@ -41,6 +41,7 @@ import Shader from './fx/shaders/Shader';
 import ImagesEngine from './images/ImagesEngine';
 import ModelsEngine from './models/ModelsEngine';
 import ShadersEngine from './fx/shaders/ShadersEngine';
+import PostProcessingEngine from './fx/postprocessing/PostProcessingEngine';
 
 export {
     start,
@@ -58,6 +59,7 @@ export {
     ImagesEngine,
     ModelsEngine,
     ShadersEngine,
+    PostProcessingEngine,
 
     MeshLoader,
     LightLoader,

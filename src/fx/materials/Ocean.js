@@ -204,7 +204,7 @@ class OceanShader {
 
         // Create the simulation plane
         this.screenQuad = new THREEMesh(new PlaneBufferGeometry(2, 2));
-        this.scene.add(this.screenQuad);
+            this.scene.add(this.screenQuad);
 
         // Initialise spectrum data
         this.generateSeedPhaseTexture();

@@ -8,6 +8,9 @@ import {
     BackSide
 } from 'three';
 
+import ImagesEngine from '../../images/ImagesEngine';
+import SceneManager from '../../base/SceneManager';
+
 export default class Skybox {
 
     static get options() {
@@ -21,7 +24,7 @@ export default class Skybox {
         }
     }
 
-    constructor(imagesEngine, options) {
+    constructor(options) {
         this.cubeMap = new CubeTexture( [] );
         this.cubeMap.format = RGBFormat;
 
@@ -29,7 +32,7 @@ export default class Skybox {
             this.buildCube(options.texture);
         } else {
             var textureName = options.textureName || 'skybox';
-            this.buildCube(imagesEngine.get(textureName));
+            this.buildCube(ImagesEngine.get(textureName));
         }
 
         const cubeShader = ShaderLib[ 'cube' ];
@@ -48,7 +51,11 @@ export default class Skybox {
             new BoxGeometry( 1000000, 1000000, 1000000 ),
             skyBoxMaterial
         );
+
+        SceneManager.add(this.mesh, this);
     }
+
+    render() {}
 
     buildCube(image) {
         this.cubeMap.images[ 0 ] = this.getSide(image, 2, 1 ); // px
@@ -62,7 +69,7 @@ export default class Skybox {
 
     getSide(image, x, y ) {
         const size = 1024;
-        const canvas = document.createElement( 'canvas' );
+        const canvas = document.createElement('canvas');
         canvas.width = size;
         canvas.height = size;
         const context = canvas.getContext( '2d' );

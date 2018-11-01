@@ -17,7 +17,7 @@ export default class Atmosphere {
 		this.attributes = {};
 	}
 
-	vertex() {
+	static vertex() {
 		return [
 			'varying vec3 vNormal;',
 			'void main(){',
@@ -29,7 +29,7 @@ export default class Atmosphere {
 		].join('\n');
 	}
 
-	fragment() {
+	static fragment() {
 		return [
 			'uniform float coeficient;',
 			'uniform float power;',
@@ -44,7 +44,7 @@ export default class Atmosphere {
 		].join('\n');
 	}
 
-	uniforms() {
+	static uniforms() {
 		return {
 			coeficient: {
 				type: "f",
