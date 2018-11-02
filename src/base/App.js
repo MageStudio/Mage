@@ -123,10 +123,16 @@ export class App {
     };
 
     render = () => {
-        this.manager.update();
+        //if (PostProcessingEngine.isEnabled()) {
+        //} else {
+            SceneManager.render();
+            PostProcessingEngine.render();
+        //}
         // M.control.update();
         this._render();
         SceneManager.update();
+        this.manager.update();
+
 
         requestAnimFrame(this.render.bind(this));
 

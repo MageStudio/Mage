@@ -33,8 +33,6 @@ export default class Manager {
 	update() {
 		AudioEngine.update();
 		LightEngine.update();
-		PostProcessingEngine.update();
-
 	}
 
 	loadingMessage(loaded) {}

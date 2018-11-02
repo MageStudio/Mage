@@ -106,12 +106,14 @@ export class SceneManager {
         this.renderer.setSize(w, h);
     }
 
-    update() {
-        Universe.update(this.clock.getDelta());
-
+    render() {
         this.renderer.autoClear = false;
         this.renderer.clear(this.clearColor);
         this.renderer.render(this.scene, this.camera.object);
+    }
+
+    update() {
+        Universe.update(this.clock.getDelta());
 
         if (Config.physics().enabled && this.physics) {
             this.scene.simulate();
