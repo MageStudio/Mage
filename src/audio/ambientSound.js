@@ -47,7 +47,7 @@ export default class AmbientSound extends Beat {
 			this.start();
 		}
 		//adding this sound to AudioEngine
-		M.audioEngine.add(this);
+		AudioEngine.add(this);
 	}
 
 	update(dt) {

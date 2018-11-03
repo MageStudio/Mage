@@ -58,6 +58,7 @@ export class AudioEngine {
 		}
 
 		if (Object.keys(SceneManager.assets.Audio).length == 0) {
+			console.log('empty Assets.Audio');
 			return Promise.resolve('audio');
 		}
 
@@ -70,7 +71,7 @@ export class AudioEngine {
 
 	get(id) {
 		//returning stored buffer;
-		return M.audioEngine.map[id] || false;
+		return this.map[id] || false;
 	}
 
 	loadSingleFile = (id) => {
@@ -80,21 +81,21 @@ export class AudioEngine {
 		return new Promise(resolve => {
 			request.open("GET", path, true);
 			request.responseType = "arraybuffer";
-			request.onload = (e) => {
-				if (e) {
-					resolve();
-				} else {
-					this.context.decodeAudioData(this.response,
+			request.onreadystatechange = (e) => {
+				if (request.readyState === 4 && request.status === 200) {
+					this.context.decodeAudioData(request.response,
 						(buffer) => {
 							this.map[id] = buffer;
 							resolve();
-							this.checkLoad();
 						},
 						() => {
 							this.map[id] = null;
 							resolve();
 							console.error("Decoding the audio buffer failed");
 						});
+				} else if (request.readyState === 4 && request.status === 200) {
+					console.log('error downloadindg audio ', path);
+					resolve();
 				}
 			};
 			request.send();
@@ -124,17 +125,17 @@ export class AudioEngine {
 			// The camera's world matrix is named "matrix".
 			var m = SceneManager.camera.object.matrix;
 
-			mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
+			const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
 			m.elements[12] = m.elements[13] = m.elements[14] = 0;
 
 			// Multiply the orientation vector by the world matrix of the camera.
 			var vec = new Vector3(0,0,1);
-			vec.applyProjection(m);
+			vec.applyMatrix4(m);
 			vec.normalize();
 
 			// Multiply the up vector by the world matrix.
 			var up = new Vector3(0,-1,0);
-			up.applyProjection(m);
+			up.applyMatrix4(m);
 			up.normalize();
 
 			// Set the orientation and the up-vector for the listener.

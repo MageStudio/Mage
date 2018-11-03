@@ -59,6 +59,7 @@ export {
     ImagesEngine,
     ModelsEngine,
     ShadersEngine,
+    AudioEngine,
     PostProcessingEngine,
 
     MeshLoader,

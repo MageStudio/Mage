@@ -3,11 +3,9 @@ import ShaderPass from './effects/ShaderPass';
 const HueSaturationShader = {
 
 	uniforms: {
-
 		"tDiffuse":   { value: null },
-		"hue":        { value: 1 },
-		"saturation": { value: 10 }
-
+		"hue":        { value: 0 },
+		"saturation": { value: 0 }
 	},
 
 	vertexShader: [
@@ -61,9 +59,16 @@ const HueSaturationShader = {
 
 };
 
-export default (options) => {
-    const pass = new ShaderPass(HueSaturationShader);
-    if (options.renderToScreen) {
+export default ({ hue = 0, saturation = 0, ...rest}) => {
+    const shader = {
+        ...HueSaturationShader
+    };
+
+    shader.uniforms.hue.value = hue;
+    shader.uniforms.saturation.value = saturation;
+
+    const pass = new ShaderPass(shader);
+    if (rest.renderToScreen) {
         pass.renderToScreen = true;
     }
 
