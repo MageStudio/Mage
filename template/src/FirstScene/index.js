@@ -1,8 +1,8 @@
-export FirstScene from './somewhere';
+export FirstScene from './App';
 
 export const assets = {
 	Audio : {
-		"rain" : "assets/audio/rain.mp3"
+
 	},
 
 	Video : {
@@ -17,23 +17,40 @@ export const assets = {
 
 	},
 
+	Models : {
+
+	},
+
 	General : {
 		//whatever file you need to load
 	}
 };
 
 export const game = {
-    physics_enabled: false,
-	tween_enabled: true,
-	cast_shadow: true,
-	frameRate: 60,
-	h: window && window.innerHeight,
-    w: window && window.innerWidth,
-    ratio:  window && (window.innerWidth/window.innerHeight),
-	camera: {
-		fov: 45,
-		ratio:  window && (window.innerWidth / window.innerHeight),
-		near: 1,
-		far: 3000000
+	screen: {
+		h : window ? window.innerHeight : DEFAULT_HEIGHT,
+		w : window ? window.innerWidth : DEFAULT_WIDTH,
+		ratio : window ? (window.innerWidth/window.innerHeight) : DEFAULT_RATIO,
+		frameRate : 60,
+		alpha: true
+	},
+
+	lights: {
+		shadows: true
+	},
+
+	physics: {
+		enabled: false
+	},
+
+	tween: {
+		enabled: false
+	},
+
+	camera : {
+		//handling useful informations about our camera.
+		fov : 75,
+		near : 0.1,
+		far : 3000000
 	}
 };

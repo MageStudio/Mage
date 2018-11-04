@@ -28,11 +28,7 @@ export class PostProcessingEngine {
             HueSaturationEffect
         };
 
-
         this.effects = [];
-        //this.frame = new NodeFrame();
-
-
     }
 
     isEnabled() {
@@ -44,13 +40,10 @@ export class PostProcessingEngine {
 
         this.composer = new EffectComposer(SceneManager.renderer);
         this.composer.addPass(new RenderPass(SceneManager.scene, SceneManager.camera.object));
-
-
-        //this.nodepost = new NodePostProcessing(SceneManager.renderer);
     }
 
     onWindowResize = () => {
-        //this.nodepost.setSize(window.innerWidth, window.innerHeight);
+        this.composer.setSize(window.innerWidth, window.innerHeight);
     }
 
     get(id) {
@@ -58,19 +51,6 @@ export class PostProcessingEngine {
     }
 
     add = (effect, options) => {
-        //this.nodepost.output = effect(options);
-        //this.nodepost.needsUpdate = true;
-
-
-        /*
-        const effect = new effectConstructor();
-        const effectPass = new EffectPass(SceneManager.camera, effect);
-        effectPass.renderToScreen = true;
-
-        this.composer.addPass(effectPass);
-
-        */
-
         if (effect && typeof effect === 'function') {
             const pass = effect(options);
             console.log(pass);
@@ -81,15 +61,6 @@ export class PostProcessingEngine {
 
     render = () => {
         const delta = SceneManager.clock.getDelta();
-        // multiple post processing elements
-        // each one acting on the nodePost = new THREE.NodePostProcessing(renderer);
-        //this.frame.update(delta);
-
-        /*this.nodepost.render(
-            SceneManager.scene,
-            SceneManager.camera.object,
-            this.frame
-        );*/
         this.composer.render(delta);
     }
 }

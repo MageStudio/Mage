@@ -6,16 +6,13 @@
 @keyframes fadeOut {
     0%{
         opacity: 1;
-        transform: : rotateX(90deg);
     }
     50%{
         opacity: 0.5;
-        transform: : rotateX(0deg);
     }
     100%{
         display: none;
         opacity: 0;
-        transform: rotateX(90deg);
     }
 }
 
@@ -91,7 +88,12 @@ canvas {
 
 #loader.fadeout {
     animation: fadeOut;
-    animation-duration: 1000;
+    animation-duration: 1s;
+}
+
+#loader.invisible {
+    visibility: hidden;
+    display: none;
 }
 
 
@@ -117,8 +119,12 @@ canvas {
     font-weight: bold;
 }
 
-#loader #container svg {
+#mage {
     position: absolute;
     left: -25px;
     visibility: hidden;
+}
+
+#mage.visible {
+    visibility: visible;
 }

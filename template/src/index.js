@@ -1,6 +1,6 @@
-import M from 'mage';
+import { Router } from 'mage-engine';
 import config from './config';
 
 window.addEventListener('load', () => {
-    M.Router.start(config);
+    Router.start(config);
 }, false);

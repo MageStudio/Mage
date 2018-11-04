@@ -1,10 +1,10 @@
 import {
-    FirstScene,
     assets,
-    game
+    game,
+    FirstScene
 } from './FirstScene';
 
-export const config = {
+export default {
     name: "First Game",
     author: "Your name goes here",
     description: "this is just a sample game",
