@@ -7,23 +7,14 @@ import EffectComposer from './effects/EffectComposer';
 
 import RenderPass from './effects/RenderPass';
 
-import {
-    NodeFrame,
-    NodePostProcessing
-} from './nodes';
-
 import SceneManager from '../../base/SceneManager';
-import ColorAdjustement from './ColorAdjustement';
 import HueSaturationEffect from './HueSaturationEffect';
 import SepiaEffect from './SepiaEffect';
-import MotionBlur from './MotionBlur';
 
 export class PostProcessingEngine {
 
     constructor() {
         this.map = {
-            ColorAdjustement,
-            MotionBlur,
             SepiaEffect,
             HueSaturationEffect
         };
