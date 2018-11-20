@@ -6,6 +6,7 @@ import Ocean from '../materials/Ocean';
 import Water from '../materials/Water';
 import OceanShaders from '../materials/OceanShaders';
 import Skybox from '../scenery/Skybox';
+import Sky from '../scenery/Sky';
 
 export class ShadersEngine {
 
@@ -19,6 +20,7 @@ export class ShadersEngine {
 			Ocean,
 			OceanShaders,
 			Skybox,
+			Sky,
 			Water
 		};
 

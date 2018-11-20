@@ -27,8 +27,8 @@ export default class DirectionalLight extends Light {
 
         this.light.castShadow = true;
 
-		this.light.shadow.mapSize.width = 512;
-		this.light.shadow.mapSize.height = 512;
+		this.light.shadow.mapSize.width = 2048;
+		this.light.shadow.mapSize.height = 2048;
 
 		var d = 300;
 

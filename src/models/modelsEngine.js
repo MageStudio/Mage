@@ -66,8 +66,6 @@ export class ModelsEngine {
 				resolve();
 	        });
 		});
-		// Load a sound file using an ArrayBuffer XMLHttpRequest.
-
 	}
 
 	add(model) {

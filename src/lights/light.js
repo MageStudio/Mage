@@ -24,9 +24,12 @@ export default class Light extends Entity {
 			y,
 			z
 		};
-		if (this.mesh && this.light) {
-			this.mesh.mesh.position.set(x, y, z);
+		if (this.light) {
 	        this.light.position.set(x, y, z);
+		}
+
+		if (this.mesh) {
+			this.mesh.mesh.position.set(x, y, z);
 		}
 	}
 

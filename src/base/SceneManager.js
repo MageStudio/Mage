@@ -6,7 +6,8 @@ import {
     Scene,
     PCFSoftShadowMap,
     WebGLRenderer,
-    alphaRenderer
+    alphaRenderer,
+    FogExp2
 } from 'three';
 
 export class SceneManager {
@@ -96,8 +97,10 @@ export class SceneManager {
         document.getElementById("gameContainer").appendChild(this.renderer.domElement);
     }
 
-    onResize(config) {
-        const { ratio, w, h } = Config.screen();
+    onResize = () => {
+        const h = window.innerHeight;
+		const w = window.innerWidth;
+		const ratio = window.innerWidth/window.innerHeight;
 
         if (!this.camera || !this.renderer) return;
 
@@ -110,6 +113,10 @@ export class SceneManager {
         this.renderer.autoClear = false;
         this.renderer.clear(this.clearColor);
         this.renderer.render(this.scene, this.camera.object);
+    }
+
+    fog(color, intensity) {
+        this.scene.fog = new FogExp2(color, intensity);
     }
 
     update() {
