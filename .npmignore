@@ -6,4 +6,3 @@ webpack.config.js
 webpack.node.js
 .gitignore
 package-lock.json
-dist/mage.node.js

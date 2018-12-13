@@ -17,6 +17,7 @@ import {
     PCFSoftShadowMap
 } from 'three';
 import { fetch } from 'whatwg-fetch';
+import { getWindow } from './window';
 
 export const version = '0.0.83';
 export const author = {
@@ -28,6 +29,8 @@ export const author = {
 export class App {
 
     constructor(config, assets) {
+
+        const win = getWindow();
 
         this.log_types = {
     		"e" : "error",
@@ -51,8 +54,6 @@ export class App {
         this.mouseY = 0;
         this.zoom = 0;
 
-        this.windowHalfX = window.innerWidth / 2;
-        this.windowHalfY = window.innerHeight / 2;
         this.CAMERA_MAX_Z = 1000;
         this.CAMERA_MIN_Z = 250;
 
@@ -61,9 +62,13 @@ export class App {
         SceneManager.setAssets(this.assets);
 
         // registering listener for events from parent
-        window.addEventListener("onmessage", this.onMessage, false);
-        window.addEventListener("message", this.onMessage, false);
-        window.addEventListener('resize', this.onResize);
+        if (win) {
+            this.windowHalfX = win.innerWidth / 2;
+            this.windowHalfY = win.innerHeight / 2;
+            win.addEventListener("onmessage", this.onMessage, false);
+            win.addEventListener("message", this.onMessage, false);
+            win.addEventListener('resize', this.onResize);
+        }
     }
 
     setClearColor(value) {
@@ -87,15 +92,20 @@ export class App {
     }
 
     //this methods helps you loading heavy stuff
-    preload(callback) {
+    preload = (callback) => {
         return new Promise(resolve => {
-            fetch('scene.json')
-                .then(res => res.json())
-                .then(json => {
-                    this._scene = json;
-                    resolve();
-                })
-                .catch(resolve);
+            if (getWindow()) {
+                fetch('scene.json')
+                    .then(res => res.json())
+                    .then(json => {
+                        this._scene = json;
+                        resolve();
+                    })
+                    .catch(resolve);
+            } else {
+                resolve();
+            }
+
         })
     }
 
@@ -139,8 +149,9 @@ export class App {
     }
 
     init = () => {
-        if (window && window.keypress) {
-            this._keylistener = new window.keypress.Listener();
+        const win = getWindow();
+        if (win && win.keypress) {
+            this._keylistener = new win.keypress.Listener();
         }
 
         SceneManager.create();
@@ -255,10 +266,11 @@ export class App {
 export default App;
 
 export const start = (className, config, assets) => {
+    let app;
     if (typeof className === 'function') {
-        window.app = new className(config, assets);
+        app = new className(config, assets);
     } else {
-        window.app = new App(config, assets);
+        app = new App(config, assets);
     }
 
     util.start();
@@ -277,4 +289,6 @@ export const start = (className, config, assets) => {
                 })
         }
     );
+
+    return app;
 }

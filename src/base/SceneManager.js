@@ -94,7 +94,15 @@ export class SceneManager {
         this.renderer.setPixelRatio( window.devicePixelRatio );
         this.renderer.setSize(w , h);
 
-        document.getElementById("gameContainer").appendChild(this.renderer.domElement);
+        let container = document.getElementById('gameContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'gameContainer';
+            document.body.appendChild(container);
+        }
+
+        this.container = container;
+        this.container.appendChild(this.renderer.domElement);
     }
 
     onResize = () => {

@@ -50,7 +50,7 @@ class Router {
             this.scenes = this.config.scenes;
             this.current = firstScene;
 
-            start(firstScene.className, firstScene.game, firstScene.assets);
+            return start(firstScene.className, firstScene.game, firstScene.assets);
         } else {
             console.log('[Mage] You need to provide at least one scene in your config');
         }

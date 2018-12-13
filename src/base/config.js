@@ -1,3 +1,5 @@
+import { getWindow } from './window';
+
 const DEFAULT_HEIGHT = 600;
 const DEFAULT_WIDTH = 800;
 const DEFAULT_RATIO = DEFAULT_WIDTH / DEFAULT_HEIGHT;
@@ -5,14 +7,17 @@ const DEFAULT_RATIO = DEFAULT_WIDTH / DEFAULT_HEIGHT;
 class Config {
 
     constructor() {
+
+        const win = getWindow();
+
         this.default = {
 
             tests: [],
 
             screen: {
-                h : window ? window.innerHeight : DEFAULT_HEIGHT,
-        		w : window ? window.innerWidth : DEFAULT_WIDTH,
-        		ratio : window ? (window.innerWidth/window.innerHeight) : DEFAULT_RATIO,
+                h : win ? win.innerHeight : DEFAULT_HEIGHT,
+        		w : win ? win.innerWidth : DEFAULT_WIDTH,
+        		ratio : win ? (win.innerWidth/win.innerHeight) : DEFAULT_RATIO,
         		frameRate : 60,
                 alpha: true
             },
@@ -54,11 +59,12 @@ class Config {
     }
 
     screen() {
+        const win = getWindow();
         this.config.screen = {
             ...this.config.screen,
-            h : window ? window.innerHeight : DEFAULT_HEIGHT,
-            w : window ? window.innerWidth : DEFAULT_WIDTH,
-            ratio : window ? (window.innerWidth/window.innerHeight) : DEFAULT_RATIO
+            h : win ? win.innerHeight : DEFAULT_HEIGHT,
+            w : win ? win.innerWidth : DEFAULT_WIDTH,
+            ratio : win ? (win.innerWidth/win.innerHeight) : DEFAULT_RATIO
         }
         return this.config.screen;
     }
