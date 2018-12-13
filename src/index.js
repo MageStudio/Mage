@@ -6,7 +6,7 @@ import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
 
 import * as THREE from 'three';
-import App, { start, version, author } from './base/App';
+import App, { start, author } from './base/App';
 import Color from './base/Color';
 import * as util from './base/util';
 import Config from './base/config';
@@ -45,7 +45,6 @@ import PostProcessingEngine from './fx/postprocessing/PostProcessingEngine';
 
 export {
     start,
-    version,
     author,
 
     THREE,

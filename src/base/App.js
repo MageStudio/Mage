@@ -19,7 +19,6 @@ import {
 import { fetch } from 'whatwg-fetch';
 import { getWindow } from './window';
 
-export const version = '0.0.83';
 export const author = {
     name: 'Marco Stagni',
     email: 'mrc.stagni@gmail.com',
