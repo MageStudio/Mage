@@ -27,7 +27,7 @@ export const author = {
 
 export class App {
 
-    constructor(config, assets) {
+    constructor(config, assets, container) {
 
         const win = getWindow();
 
@@ -38,6 +38,7 @@ export class App {
     	};
 
         Config.setConfig(config);
+        Config.setContainer(container);
 
         this.assets = assets;
 
@@ -252,12 +253,12 @@ export class App {
 
 export default App;
 
-export const start = (className, config, assets) => {
+export const start = (className, config, assets, container) => {
     let app;
     if (typeof className === 'function') {
-        app = new className(config, assets);
+        app = new className(config, assets, container);
     } else {
-        app = new App(config, assets);
+        app = new App(config, assets, container);
     }
 
     util.start();

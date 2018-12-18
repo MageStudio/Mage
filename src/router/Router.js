@@ -34,9 +34,10 @@ class Router {
         }
     }
 
-    start(config) {
+    start(config, selector) {
         if (config && typeof config === 'object') {
             this.config = config;
+            this.selector = selector;
             this.init();
         } else {
             console.log('[Mage] You need provide a config to Router');
@@ -50,7 +51,7 @@ class Router {
             this.scenes = this.config.scenes;
             this.current = firstScene;
 
-            return start(firstScene.className, firstScene.game, firstScene.assets);
+            return start(firstScene.className, firstScene.game, firstScene.assets, this.selector);
         } else {
             console.log('[Mage] You need to provide at least one scene in your config');
         }
