@@ -19,7 +19,6 @@ import {
 import { fetch } from 'whatwg-fetch';
 import { getWindow } from './window';
 
-export const version = '0.0.83';
 export const author = {
     name: 'Marco Stagni',
     email: 'mrc.stagni@gmail.com',
@@ -76,37 +75,40 @@ export class App {
     }
 
     //onCreate method, ovveride to start creating stuff
-    onCreate() {
-        if (this._scene) {
-            const { meshes, models, lights } = this._scene;
+    onCreate() { }
 
-    		for (var i in models) {
-    			meshes.push(models[i]);
-    		}
+    parseScene = ({ meshes = [], models = [], lights = [] }) => {
+        return new Promise((resolve, reject) => {
+            if (meshes.length) {
+                for (var i in models) {
+                    meshes.push(models[i]);
+                }
+                MeshLoader.load(meshes);
+            }
 
-    		MeshLoader.load(meshes);
-            LightLoader.load(lights);
+            if (lights.length) {
+                LightLoader.load(lights);
+            }
 
-    		SceneManager.updateChildren();
+            SceneManager.updateChildren();
+
+            resolve();
+        })
+    }
+
+    loadScene = () => {
+        if (getWindow()) {
+            return fetch('scene.json')
+                .then(res => res.json())
+                .then(this.parseScene)
+                .catch(Promise.resolve);
         }
+        return Promise.resolve();
     }
 
     //this methods helps you loading heavy stuff
-    preload = (callback) => {
-        return new Promise(resolve => {
-            if (getWindow()) {
-                fetch('scene.json')
-                    .then(res => res.json())
-                    .then(json => {
-                        this._scene = json;
-                        resolve();
-                    })
-                    .catch(resolve);
-            } else {
-                resolve();
-            }
-
-        })
+    preload = () => {
+        return this.loadScene();
     }
 
     //do stuff before onCreate method( prepare meshes, whatever )
@@ -115,30 +117,15 @@ export class App {
     //needed if user wants to add a customRender method
     _render() {}
 
-    //setupleap motion device
-    setUpLeap() {}
-
-    //leap motion socket connected
-    onLeapSocketConnected() {}
-
-    //leap motion device connected
-    onLeapDeviceConnected() {}
-
-    //leap motion device disconnected
-    onLeapDeviceDisconnected() {}
-
     // window Resized
     onResize = () => {
         SceneManager.onResize();
     };
 
     render = () => {
-        //if (PostProcessingEngine.isEnabled()) {
-        //} else {
-            SceneManager.render();
-            PostProcessingEngine.render();
-        //}
-        // M.control.update();
+        SceneManager.render();
+        PostProcessingEngine.render();
+
         this._render();
         SceneManager.update();
         this.manager.update();

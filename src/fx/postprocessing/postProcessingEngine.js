@@ -2,7 +2,6 @@ import {
     WebGLRenderer
 } from 'three';
 
-//import { BloomEffect, EffectComposer, EffectPass, RenderPass } from "postprocessing";
 import EffectComposer from './effects/EffectComposer';
 
 import RenderPass from './effects/RenderPass';
@@ -44,7 +43,6 @@ export class PostProcessingEngine {
     add = (effect, options) => {
         if (effect && typeof effect === 'function') {
             const pass = effect(options);
-            console.log(pass);
             this.composer.addPass(pass);
             this.effects.push(pass);
         }
