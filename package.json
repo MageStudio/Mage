@@ -39,7 +39,6 @@
     "ncp": "*",
     "node-prefix": "*",
     "path": "0.12.7",
-    "postprocessing": "^5.0.0",
     "serve-static": "^1.13.2",
     "three": "0.97.0",
     "url": "0.11.0",
