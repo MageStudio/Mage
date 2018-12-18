@@ -79,9 +79,9 @@ export class SceneManager {
     }
 
     createRenderer() {
-        const { alpha } = Config.screen();
         const { shadows } = Config.lights();
-        const { w, h } = Config.screen();
+        const { alpha, w, h } = Config.screen();
+        let container = Config.container();
 
         this.renderer = new WebGLRenderer({alpha, antialias: true});
 
@@ -92,23 +92,17 @@ export class SceneManager {
         }
 
         this.renderer.setPixelRatio( window.devicePixelRatio );
-        this.renderer.setSize(w , h);
+        this.renderer.setSize(w, h);
 
-        let container = document.getElementById('gameContainer');
         if (!container) {
-            container = document.createElement('div');
-            container.id = 'gameContainer';
-            document.body.appendChild(container);
+            document.body.appendChild(this.renderer.domElement);
+        } else {
+            container.appendChild(this.renderer.domElement);
         }
-
-        this.container = container;
-        this.container.appendChild(this.renderer.domElement);
     }
 
     onResize = () => {
-        const h = window.innerHeight;
-		const w = window.innerWidth;
-		const ratio = window.innerWidth/window.innerHeight;
+        const { h, w, ratio } = Config.screen();
 
         if (!this.camera || !this.renderer) return;
 

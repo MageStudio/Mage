@@ -15,9 +15,6 @@ class Config {
             tests: [],
 
             screen: {
-                h : win ? win.innerHeight : DEFAULT_HEIGHT,
-        		w : win ? win.innerWidth : DEFAULT_WIDTH,
-        		ratio : win ? (win.innerWidth/win.innerHeight) : DEFAULT_RATIO,
         		frameRate : 60,
                 alpha: true
             },
@@ -43,11 +40,19 @@ class Config {
         }
     }
 
+    setContainer(container) {
+        this._container = container;
+    }
+
     setConfig(config) {
         this.config = {
             ...this.default,
             ...config
         };
+    }
+
+    container() {
+        return document && document.querySelector(this._container);
     }
 
     tests() {
@@ -58,13 +63,47 @@ class Config {
         return this.config.lights;
     }
 
-    screen() {
+    getContainerSize() {
+        const container = this.container();
+        if (!container) return false;
+
+        const height = container.offsetHeight;
+        const width = container.offsetWidth;
+        const ratio = width / height;
+
+        return { h: height, w: width, ratio };
+    }
+
+    getWindowSize() {
         const win = getWindow();
+
+        if (!win) return false;
+
+        const height = win.innerHeight;
+        const width = win.innerWidth;
+        const ratio = width / height;
+
+        return { h: height, w: width, ratio };
+    }
+
+    getDefaults() {
+        return {
+            h: DEFAULT_HEIGHT,
+            w: DEFAULT_WIDTH,
+            ratio: DEFAULT_RATIO
+        };
+    }
+
+    screen() {
+        const { h, w, ratio } = this.getContainerSize() ||
+            this.getWindowSize() ||
+            this.getDefaults();
+
         this.config.screen = {
             ...this.config.screen,
-            h : win ? win.innerHeight : DEFAULT_HEIGHT,
-            w : win ? win.innerWidth : DEFAULT_WIDTH,
-            ratio : win ? (win.innerWidth/win.innerHeight) : DEFAULT_RATIO
+            h,
+            w,
+            ratio
         }
         return this.config.screen;
     }
