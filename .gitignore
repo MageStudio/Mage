@@ -1,9 +1,7 @@
 node_modules/*
 npm-debug.log
-Editor/build.sh
-Editor/node_modules/*
 
-update_and_publish.sh
-update.sh
+dist/mage.js
+dist/mage.node.js
 
 .DS_STORE
