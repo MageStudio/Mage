@@ -1,6 +1,7 @@
 import Manager from './Manager';
 import Universe from './Universe';
 import SceneManager from './SceneManager';
+import SceneHelper from './SceneHelper';
 import Camera from '../entities/Camera';
 import util from './util';
 import Config from './config';
@@ -60,6 +61,8 @@ export class App {
         // creating manager
         this.manager = new Manager();
         SceneManager.setAssets(this.assets);
+
+        this.sceneHelper = new SceneHelper();
 
         // registering listener for events from parent
         if (win) {
@@ -131,9 +134,7 @@ export class App {
         SceneManager.update();
         this.manager.update();
 
-
         requestAnimFrame(this.render.bind(this));
-
     }
 
     init = () => {

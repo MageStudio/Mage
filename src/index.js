@@ -14,6 +14,8 @@ import Router from './router/Router';
 import SceneManager from './base/SceneManager';
 import ScriptManager from './base/ScriptManager';
 
+import ControlsManager from './controls/ControlsManager';
+
 import Entity from './entities/Entity';
 import Mesh from './entities/Mesh';
 import AnimatedMesh from './entities/AnimatedMesh';
@@ -54,6 +56,8 @@ export {
     SceneManager,
     ScriptManager,
     Router,
+
+    ControlsManager,
 
     ImagesEngine,
     ModelsEngine,

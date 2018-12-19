@@ -33,4 +33,10 @@ export default class Camera extends Entity {
 			this.object.rotation.set(_x, _y, _z);
 		}
 	}
+
+	lookAt(x, y, z) {
+		if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
+			this.object.lookAt(x, y, z);
+		}
+	}
 }
