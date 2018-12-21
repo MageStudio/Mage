@@ -13,6 +13,8 @@ import {
     OrthographicCamera
 } from 'three';
 
+import SceneManager from '../base/SceneManager';
+
 import Gizmo from './TransformGizmo';
 import Plane from './TransformPlane';
 
@@ -41,6 +43,8 @@ export default class TransformControls extends Object3D {
         this._enabled = true;
         this._axis = null;
         this._mode = 'translate';
+        this.gizmo['mode'] = this._mode;
+        this.plane['mode'] = this._mode;
         this._translationSnap = null;
         this._rotationSnap = null;
         this._space = 'world';
@@ -92,6 +96,7 @@ export default class TransformControls extends Object3D {
 
 
         this.isTransformControls = true;
+        SceneManager.add(this, this);
     }
 
     setAndDispatch(fieldName, value) {
@@ -100,7 +105,7 @@ export default class TransformControls extends Object3D {
         this.plane[fieldName] = value;
 
         this.dispatchEvent({ type: fieldName + "-changed", value } );
-        this.dispatchEvent(changeEvent);
+        this.dispatchEvent(this.changeEvent);
     }
 
     getPrivateField(fieldName) {
@@ -113,7 +118,7 @@ export default class TransformControls extends Object3D {
     set object(value) { this.setAndDispatch('object', value); }
     get object() { return this.getPrivateField('object'); }
 
-    set enabled(value) { this.setAndDispatch('enabled', value); }
+    enabled(value) { this.setAndDispatch('enabled', value); }
     get enabled() { return this.getPrivateField('enabled'); }
 
     set axis(value) { this.setAndDispatch('axis', value); }
@@ -255,7 +260,7 @@ export default class TransformControls extends Object3D {
 		}
 	}
 
-    pointerDown(pointer) {
+    pointerDown = (pointer) => {
 		if (this.object === undefined ||
             this.dragging === true ||
             (pointer.button !== undefined && pointer.button !== 0)) return;

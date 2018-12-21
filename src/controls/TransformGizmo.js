@@ -2,11 +2,13 @@ import {
     Object3D,
     MeshBasicMaterial,
     LineBasicMaterial,
+    BufferGeometry,
+    PlaneBufferGeometry,
+    SphereBufferGeometry,
     CylinderBufferGeometry,
     BoxBufferGeometry,
     Float32BufferAttribute,
     Mesh,
-    OctahedronBufferGeometry,
     OctahedronBufferGeometry,
     TorusBufferGeometry,
     Line,
@@ -18,7 +20,7 @@ import {
     DoubleSide
 } from 'three';
 
-export class Gizmo extends Object3D {
+export default class Gizmo extends Object3D {
 
     constructor() {
         super();
@@ -123,15 +125,15 @@ export class Gizmo extends Object3D {
     	this.picker = {};
     	this.helper = {};
 
-    	this.add(this.gizmo["translate"] = setupGizmo(Gizmo.getGizmoTranslate()));
-    	this.add(this.gizmo["rotate"] = setupGizmo(Gizmo.getGizmoRotate()));
-    	this.add(this.gizmo["scale"] = setupGizmo(Gizmo.getGizmoScale()));
-    	this.add(this.picker["translate"] = setupGizmo(Gizmo.getPickerTranslate()));
-    	this.add(this.picker["rotate"] = setupGizmo(Gizmo.getPickerRotate()));
-    	this.add(this.picker["scale"] = setupGizmo(Gizmo.getPickerScale()));
-    	this.add(this.helper["translate"] = setupGizmo(Gizmo.getHelperTranslate()));
-    	this.add(this.helper["rotate"] = setupGizmo(Gizmo.getHelperRotate()));
-    	this.add(this.helper["scale"] = setupGizmo(Gizmo.getHelperScale()));
+    	this.add(this.gizmo["translate"] = this.setupGizmo(this.getGizmoTranslate()));
+    	this.add(this.gizmo["rotate"] = this.setupGizmo(this.getGizmoRotate()));
+    	this.add(this.gizmo["scale"] = this.setupGizmo(this.getGizmoScale()));
+    	this.add(this.picker["translate"] = this.setupGizmo(this.getPickerTranslate()));
+    	this.add(this.picker["rotate"] = this.setupGizmo(this.getPickerRotate()));
+    	this.add(this.picker["scale"] = this.setupGizmo(this.getPickerScale()));
+    	this.add(this.helper["translate"] = this.setupGizmo(this.getHelperTranslate()));
+    	this.add(this.helper["rotate"] = this.setupGizmo(this.getHelperRotate()));
+    	this.add(this.helper["scale"] = this.setupGizmo(this.getHelperScale()));
 
     	// Pickers should be hidden always
 
@@ -142,7 +144,7 @@ export class Gizmo extends Object3D {
         this.isTransformControlsGizmo = true;
     }
 
-    static createCircleGeometry(radius, arc) {
+    createCircleGeometry(radius, arc) {
 		const geometry = new BufferGeometry();
 		const vertices = [];
 
@@ -155,7 +157,7 @@ export class Gizmo extends Object3D {
 		return geometry;
 	}
 
-    static createTranslateHelperGeometry(radius, arc) {
+    createTranslateHelperGeometry(radius, arc) {
 
 		const geometry = new BufferGeometry()
 
@@ -164,7 +166,7 @@ export class Gizmo extends Object3D {
 		return geometry;
 	}
 
-    static getGizmoTranslate() {
+    getGizmoTranslate() {
         return {
     		X: [
     			[new Mesh(this.arrowGeometry, this.matRed), [1, 0, 0], [0, 0, -Math.PI / 2], null, 'fwd'],
@@ -174,7 +176,7 @@ export class Gizmo extends Object3D {
     		Y: [
     			[new Mesh(this.arrowGeometry, this.matGreen), [0, 1, 0], null, null, 'fwd'],
     			[new Mesh(this.arrowGeometry, this.matGreen), [0, 1, 0], [Math.PI, 0, 0], null, 'bwd'],
-    			[new Line(lineGeometry, this.matLineGreen), null, [0, 0, Math.PI / 2]]
+    			[new Line(this.lineGeometry, this.matLineGreen), null, [0, 0, Math.PI / 2]]
     		],
     		Z: [
     			[new Mesh(this.arrowGeometry, this.matBlue), [0, 0, 1], [Math.PI / 2, 0, 0], null, 'fwd'],
@@ -202,7 +204,7 @@ export class Gizmo extends Object3D {
     	}
     }
 
-    static getPickerTranslate() {
+    getPickerTranslate() {
         return {
     		X: [
     			[new Mesh(new CylinderBufferGeometry(0.2, 0, 1, 4, 1, false), this.matInvisible), [0.6, 0, 0], [0, 0, -Math.PI / 2]]
@@ -228,7 +230,7 @@ export class Gizmo extends Object3D {
     	};
     }
 
-    static getHelperTranslate() {
+    getHelperTranslate() {
         return {
     		START: [
     			[new Mesh(new OctahedronBufferGeometry(0.01, 2), this.matHelper), null, null, null, 'helper']
@@ -237,7 +239,7 @@ export class Gizmo extends Object3D {
     			[new Mesh(new OctahedronBufferGeometry(0.01, 2), this.matHelper), null, null, null, 'helper']
     		],
     		DELTA: [
-    			[new Line(Gizmo.createTranslateHelperGeometry(), this.matHelper), null, null, null, 'helper']
+    			[new Line(this.createTranslateHelperGeometry(), this.matHelper), null, null, null, 'helper']
     		],
     		X: [
     			[new Line(this.lineGeometry, this.matHelper.clone()), [-1e3, 0, 0], null, [1e6, 1, 1], 'helper']
@@ -251,42 +253,42 @@ export class Gizmo extends Object3D {
     	};
     }
 
-    static getGizmoRotate() {
+    getGizmoRotate() {
         return {
     		X: [
-    			[new Line(Gizmo.createCircleGeometry(1, 0.5), this.matLineRed)],
+    			[new Line(this.createCircleGeometry(1, 0.5), this.matLineRed)],
     			[new Mesh(new OctahedronBufferGeometry(0.04, 0), this.matRed), [0, 0, 0.99], null, [1, 3, 1]],
     		],
     		Y: [
-    			[new Line(Gizmo.createCircleGeometry(1, 0.5), this.matLineGreen), null, [0, 0, -Math.PI / 2]],
+    			[new Line(this.createCircleGeometry(1, 0.5), this.matLineGreen), null, [0, 0, -Math.PI / 2]],
     			[new Mesh(new OctahedronBufferGeometry(0.04, 0), this.matGreen), [0, 0, 0.99], null, [3, 1, 1]],
     		],
     		Z: [
-    			[new Line(Gizmo.createCircleGeometry(1, 0.5), this.matLineBlue), null, [0, Math.PI / 2, 0]],
+    			[new Line(this.createCircleGeometry(1, 0.5), this.matLineBlue), null, [0, Math.PI / 2, 0]],
     			[new Mesh(new OctahedronBufferGeometry(0.04, 0), this.matBlue), [0.99, 0, 0], null, [1, 3, 1]],
     		],
     		E: [
-    			[new Line(Gizmo.createCircleGeometry(1.25, 1), this.matLineYellowTransparent), null, [0, Math.PI / 2, 0]],
+    			[new Line(this.createCircleGeometry(1.25, 1), this.matLineYellowTransparent), null, [0, Math.PI / 2, 0]],
     			[new Mesh(new CylinderBufferGeometry(0.03, 0, 0.15, 4, 1, false), this.matLineYellowTransparent), [1.17, 0, 0], [0, 0, -Math.PI / 2], [1, 1, 0.001]],
     			[new Mesh(new CylinderBufferGeometry(0.03, 0, 0.15, 4, 1, false), this.matLineYellowTransparent), [-1.17, 0, 0], [0, 0, Math.PI / 2], [1, 1, 0.001]],
     			[new Mesh(new CylinderBufferGeometry(0.03, 0, 0.15, 4, 1, false), this.matLineYellowTransparent), [0, -1.17, 0], [Math.PI, 0, 0], [1, 1, 0.001]],
     			[new Mesh(new CylinderBufferGeometry(0.03, 0, 0.15, 4, 1, false), this.matLineYellowTransparent), [0, 1.17, 0], [0, 0, 0], [1, 1, 0.001]],
     		],
     		XYZE: [
-    			[new Line(Gizmo.createCircleGeometry(1, 1), this.matLineGray), null, [0, Math.PI / 2, 0]]
+    			[new Line(this.createCircleGeometry(1, 1), this.matLineGray), null, [0, Math.PI / 2, 0]]
     		]
     	}
     }
 
-    static getHelperRotate() {
+    getHelperRotate() {
         return {
     		AXIS: [
-    			[new Line(lineGeometry, this.matHelper.clone()), [-1e3, 0, 0], null, [1e6, 1, 1], 'helper']
+    			[new Line(this.lineGeometry, this.matHelper.clone()), [-1e3, 0, 0], null, [1e6, 1, 1], 'helper']
     		]
     	}
     }
 
-    static getPickerRotate() {
+    getPickerRotate() {
         return {
     		X: [
     			[new Mesh(new TorusBufferGeometry(1, 0.1, 4, 24), this.matInvisible), [0, 0, 0], [0, -Math.PI / 2, -Math.PI / 2]],
@@ -306,7 +308,7 @@ export class Gizmo extends Object3D {
     	};
     }
 
-    static getGizmoScale() {
+    getGizmoScale() {
         return {
     		X: [
     			[new Mesh(this.scaleHandleGeometry, this.matRed), [0.8, 0, 0], [0, 0, -Math.PI / 2]],
@@ -347,7 +349,7 @@ export class Gizmo extends Object3D {
     	}
     }
 
-    static getPickerScale() {
+    getPickerScale() {
         return {
     		X: [
     			[new Mesh(new CylinderBufferGeometry(0.2, 0, 0.8, 4, 1, false), this.matInvisible), [0.5, 0, 0], [0, 0, -Math.PI / 2]]
@@ -379,7 +381,7 @@ export class Gizmo extends Object3D {
     	}
     }
 
-    static getHelperScale() {
+    getHelperScale() {
         return {
     		X: [
     			[new Line(this.lineGeometry, this.matHelper.clone()), [-1e3, 0, 0], null, [1e6, 1, 1], 'helper']
@@ -437,7 +439,7 @@ export class Gizmo extends Object3D {
 
 	}
 
-    updateMatrixWorld() {
+    updateMatrixWorld = () => {
 
 		var space = this.space;
 
