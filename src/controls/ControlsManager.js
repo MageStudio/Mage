@@ -41,7 +41,7 @@ export class ControlsManager {
 		this.controls.transform.addEventListener('change', SceneManager.render);
 		this.controls.transform.addEventListener('dragging-changed', (event) => {
             if (this.controls.orbit) {
-                this.controls.orbit.enabled(!event.value)
+                this.controls.orbit.enabled = !event.value;
             }
 		});
     }

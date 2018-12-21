@@ -89,7 +89,7 @@ export default class TransformControlsPlane extends Mesh {
 
 		} else {
 			this.tempMatrix.lookAt(this.tempVector.set(0, 0, 0), this.dirVector, this.alignVector);
-			this.quaternion.setFromRotationMatrix(this.stempMatrix);
+			this.quaternion.setFromRotationMatrix(this.tempMatrix);
 		}
 		super.updateMatrixWorld();
 	}

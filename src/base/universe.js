@@ -20,10 +20,10 @@ export class Universe {
 			var start = +new Date();
 			do {
 				const o = this.reality[keys.shift()];
-				if (o && o.update) {
-					o.update(delta);
-				}
-				o.render();
+
+				o.update && o.update(delta);
+				o.render && o.render(delta);
+
 			} while (keys.length > 0 && (+new Date() - start < 50));
 		}
 	}

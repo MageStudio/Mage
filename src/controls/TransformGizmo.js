@@ -458,12 +458,15 @@ export default class Gizmo extends Object3D {
 		this.helper["scale"].visible = this.mode === "scale";
 
 
-		var handles = [];
-		handles = handles.concat(this.picker[this.mode].children);
-		handles = handles.concat(this.gizmo[this.mode].children);
-		handles = handles.concat(this.helper[this.mode].children);
-
-		for (var i = 0; i < handles.length; i++) {
+		var handles = [
+            ...this.picker[this.mode].children,
+            ...this.gizmo[this.mode].children,
+            ...this.helper[this.mode].children
+        ];
+		//handles = handles.concat(this.picker[this.mode].children);
+		//handles = handles.concat(this.gizmo[this.mode].children);
+		//handles = handles.concat(this.helper[this.mode].children);
+        for (var i = 0; i < handles.length; i++) {
 
 			var handle = handles[i];
 

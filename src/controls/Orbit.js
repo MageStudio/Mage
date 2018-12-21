@@ -137,10 +137,6 @@ export default class Orbit extends EventDispatcher {
 		this.lastQuaternion = new Quaternion();
     }
 
-    enabled(flag) {
-        this.enabled = flag;
-    }
-
     init() {
         this.domElement.addEventListener('contextmenu', this.onContextMenu, false);
 
@@ -534,7 +530,7 @@ export default class Orbit extends EventDispatcher {
 
     onMouseDown = (event) => {
 
-		if (this.enabled === false) return;
+		if (!this.enabled) return;
 
 		event.preventDefault();
 
@@ -580,7 +576,7 @@ export default class Orbit extends EventDispatcher {
 
     onMouseMove = (event) => {
 
-		if (this.enabled === false) return;
+		if (!this.enabled) return;
 
 		event.preventDefault();
 
@@ -608,7 +604,7 @@ export default class Orbit extends EventDispatcher {
 
     onMouseUp = (event) => {
 
-		if (this.enabled === false) return;
+		if (!this.enabled) return;
 
 		this.handleMouseUp(event);
 
@@ -622,7 +618,7 @@ export default class Orbit extends EventDispatcher {
 
     onMouseWheel = (event) => {
 
-		if (this.enabled === false || this.enableZoom === false || (this.state !== this.STATE.NONE && this.state !== this.STATE.ROTATE)) return;
+		if (!this.enabled || this.enableZoom === false || (this.state !== this.STATE.NONE && this.state !== this.STATE.ROTATE)) return;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -633,7 +629,7 @@ export default class Orbit extends EventDispatcher {
 	}
 
     onKeyDown = (event) => {
-		if (this.enabled === false ||
+		if (!this.enabled ||
             this.enableKeys === false ||
             this.enablePan === false) return;
 
@@ -641,7 +637,7 @@ export default class Orbit extends EventDispatcher {
 	}
 
     onTouchStart = (event) => {
-		if (this.enabled === false) return;
+		if (!this.enabled) return;
 
 		event.preventDefault();
 
@@ -672,7 +668,7 @@ export default class Orbit extends EventDispatcher {
 	}
 
     onTouchMove = (event) => {
-		if (this.enabled === false) return;
+		if (!this.enabled) return;
 
 		event.preventDefault();
 		event.stopPropagation();
@@ -699,7 +695,7 @@ export default class Orbit extends EventDispatcher {
 	}
 
     onTouchEnd = (event) => {
-		if (this.enabled === false) return;
+		if (!this.enabled) return;
 
 		this.handleTouchEnd(event);
 		this.dispatchEvent(this.endEvent);
@@ -708,7 +704,7 @@ export default class Orbit extends EventDispatcher {
 	}
 
     onContextMenu = (event) => {
-		if (this.enabled === false) return;
+		if (!this.enabled) return;
 
 		event.preventDefault();
 	}

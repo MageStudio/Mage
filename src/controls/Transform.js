@@ -41,18 +41,31 @@ export default class TransformControls extends Object3D {
         this._camera = camera;
         this._object = undefined;
         this._enabled = true;
+
         this._axis = null;
+        this.setAndDispatch('axis', null);
+
         this._mode = 'translate';
-        this.gizmo['mode'] = this._mode;
-        this.plane['mode'] = this._mode;
+        this.setAndDispatch('mode', 'translate');
+
         this._translationSnap = null;
         this._rotationSnap = null;
+
         this._space = 'world';
+        this.setAndDispatch('space', 'world');
+
         this._size = 1;
+        this.setAndDispatch('size', 1);
+
         this._dragging = false;
+        this.setAndDispatch('dragging', false);
+
         this._showX = true;
         this._showY = true;
         this._showZ = true;
+        this.setAndDispatch('showX', true);
+        this.setAndDispatch('showY', true);
+        this.setAndDispatch('showZ', true);
 
         this.ray = new Raycaster();
 
@@ -73,7 +86,11 @@ export default class TransformControls extends Object3D {
     	this._rotationAngle = 0;
 
     	this._cameraPosition = new Vector3();
+        this.setAndDispatch('cameraPosition', new Vector3());
+
     	this._cameraQuaternion = new Quaternion();
+        this.setAndDispatch('cameraQuaternion', new Quaternion());
+
     	this.cameraScale = new Vector3();
 
     	this.parentPosition = new Vector3();
@@ -81,14 +98,23 @@ export default class TransformControls extends Object3D {
     	this.parentScale = new Vector3();
 
     	this._worldPositionStart = new Vector3();
+        this.setAndDispatch('worldPositionStart', new Vector3());
+
     	this._worldQuaternionStart = new Quaternion();
+        this.setAndDispatch('worldQuaternionStart', new Quaternion());
+
     	this.worldScaleStart = new Vector3();
 
     	this._worldPosition = new Vector3();
+        this.setAndDispatch('worldPosition', new Vector3());
+
     	this._worldQuaternion = new Quaternion();
+        this.setAndDispatch('worldQuaternion', new Quaternion());
+
     	this.worldScale = new Vector3();
 
     	this._eye = new Vector3();
+        this.setAndDispatch('eye', new Vector3());
 
     	this._positionStart = new Vector3();
     	this._quaternionStart = new Quaternion();
@@ -98,6 +124,9 @@ export default class TransformControls extends Object3D {
         this.isTransformControls = true;
         SceneManager.add(this, this);
     }
+
+    render() {}
+    update() {}
 
     setAndDispatch(fieldName, value) {
         this[`_${fieldName}`] = value;
@@ -115,76 +144,76 @@ export default class TransformControls extends Object3D {
     set camera(value) { this.setAndDispatch('camera', value); }
     get camera() { return this.getPrivateField('camera'); }
 
-    set object(value) { this.setAndDispatch('object', value); }
+    set object(value) { this.setAndDispatch('object', value); } // no
     get object() { return this.getPrivateField('object'); }
 
     enabled(value) { this.setAndDispatch('enabled', value); }
     get enabled() { return this.getPrivateField('enabled'); }
 
-    set axis(value) { this.setAndDispatch('axis', value); }
+    set axis(value) { this.setAndDispatch('axis', value); } // si
     get axis() { return this.getPrivateField('axis'); }
 
-    set mode(value) { this.setAndDispatch('mode', value); }
+    set mode(value) { this.setAndDispatch('mode', value); } // si
     get mode() { return this.getPrivateField('mode'); }
 
-    set translationSnap(value) { this.setAndDispatch('translationSnap', value); }
+    set translationSnap(value) { this.setAndDispatch('translationSnap', value); } // no
     get translationSnap() { return this.getPrivateField('translationSnap'); }
 
-    set rotationSnap(value) { this.setAndDispatch('rotationSnap', value); }
+    set rotationSnap(value) { this.setAndDispatch('rotationSnap', value); } // no
     get rotationSnap() { return this.getPrivateField('rotationSnap'); }
 
-    set space(value) { this.setAndDispatch('space', value); }
+    set space(value) { this.setAndDispatch('space', value); } // si
     get space() { return this.getPrivateField('space'); }
 
-    set size(value) { this.setAndDispatch('size', value); }
+    set size(value) { this.setAndDispatch('size', value); } // si
     get size() { return this.getPrivateField('size'); }
 
-    set dragging(value) { this.setAndDispatch('dragging', value); }
+    set dragging(value) { this.setAndDispatch('dragging', value); } // si
     get dragging() { return this.getPrivateField('dragging'); }
 
-    set showX(value) { this.setAndDispatch('showX', value); }
+    set showX(value) { this.setAndDispatch('showX', value); } // si
     get showX() { return this.getPrivateField('showX'); }
 
-    set showY(value) { this.setAndDispatch('showY', value); }
+    set showY(value) { this.setAndDispatch('showY', value); } // si
     get showY() { return this.getPrivateField('showY'); }
 
-    set showZ(value) { this.setAndDispatch('showZ', value); }
+    set showZ(value) { this.setAndDispatch('showZ', value); } // si
     get showZ() { return this.getPrivateField('showZ'); }
 
-    set parentQuaternion(value) { this.setAndDispatch('parentQuaternion', value); }
+    set parentQuaternion(value) { this.setAndDispatch('parentQuaternion', value); } // no
     get parentQuaternion() { return this.getPrivateField('parentQuaternion'); }
 
-    set worldPosition(value) { this.setAndDispatch('worldPosition', value); }
+    set worldPosition(value) { this.setAndDispatch('worldPosition', value); } // si
     get worldPosition() { return this.getPrivateField('worldPosition'); }
 
-    set worldPositionStart(value) { this.setAndDispatch('worldPositionStart', value); }
+    set worldPositionStart(value) { this.setAndDispatch('worldPositionStart', value); } // si
     get worldPositionStart() { return this.getPrivateField('worldPositionStart'); }
 
-    set worldQuaternion(value) { this.setAndDispatch('worldQuaternion', value); }
+    set worldQuaternion(value) { this.setAndDispatch('worldQuaternion', value); } // si
     get worldQuaternion() { return this.getPrivateField('worldQuaternion'); }
 
-    set worldQuaternionStart(value) { this.setAndDispatch('worldQuaternionStart', value); }
+    set worldQuaternionStart(value) { this.setAndDispatch('worldQuaternionStart', value); } // si
     get worldQuaternionStart() { return this.getPrivateField('worldQuaternionStart'); }
 
-    set cameraPosition(value) { this.setAndDispatch('cameraPosition', value); }
+    set cameraPosition(value) { this.setAndDispatch('cameraPosition', value); } // si
     get cameraPosition() { return this.getPrivateField('cameraPosition'); }
 
-    set cameraQuaternion(value) { this.setAndDispatch('cameraQuaternion', value); }
+    set cameraQuaternion(value) { this.setAndDispatch('cameraQuaternion', value); } // si
     get cameraQuaternion() { return this.getPrivateField('cameraQuaternion'); }
 
-    set pointStart(value) { this.setAndDispatch('pointStart', value); }
+    set pointStart(value) { this.setAndDispatch('pointStart', value); } // no
     get pointStart() { return this.getPrivateField('pointStart'); }
 
-    set pointEnd(value) { this.setAndDispatch('pointEnd', value); }
+    set pointEnd(value) { this.setAndDispatch('pointEnd', value); } // no
     get pointEnd() { return this.getPrivateField('pointEnd'); }
 
-    set rotationAxis(value) { this.setAndDispatch('rotationAxis', value); }
+    set rotationAxis(value) { this.setAndDispatch('rotationAxis', value); } // no
     get rotationAxis() { return this.getPrivateField('rotationAxis'); }
 
-    set rotationAngle(value) { this.setAndDispatch('rotationAngle', value); }
+    set rotationAngle(value) { this.setAndDispatch('rotationAngle', value); } // no
     get rotationAngle() { return this.getPrivateField('rotationAngle'); }
 
-    set eye(value) { this.setAndDispatch('eye', value); }
+    set eye(value) { this.setAndDispatch('eye', value); } // si
     get eye() { return this.getPrivateField('eye'); }
 
 
@@ -244,7 +273,8 @@ export default class TransformControls extends Object3D {
 		super.updateMatrixWorld();
 	}
 
-    pointerHover(pointer) {
+    pointerHover = (pointer) => {
+        console.log('hover', pointer, this.object, this.dragging);
 		if (this.object === undefined ||
             this.dragging === true ||
             (pointer.button !== undefined && pointer.button !== 0)) return;
@@ -254,6 +284,7 @@ export default class TransformControls extends Object3D {
 		var intersect = this.ray.intersectObjects(this.gizmo.picker[this.mode].children, true)[0] || false;
 
 		if (intersect) {
+            console.log('intersetcint');
 			this.axis = intersect.object.name;
 		} else {
 			this.axis = null;
@@ -311,7 +342,7 @@ export default class TransformControls extends Object3D {
 		}
 	}
 
-    pointerMove(pointer) {
+    pointerMove = (pointer) => {
 		var axis = this.axis;
 		var mode = this.mode;
 		var object = this.object;
@@ -473,7 +504,7 @@ export default class TransformControls extends Object3D {
 		this.dispatchEvent(this.objectChangeEvent);
 	}
 
-    pointerMove(pointer) {
+    pointerMove = (pointer) => {
 		var axis = this.axis;
 		var mode = this.mode;
 		var object = this.object;
@@ -654,7 +685,7 @@ export default class TransformControls extends Object3D {
 		this.dispatchEvent(this.objectChangeEvent);
 	}
 
-    pointerUp(pointer) {
+    pointerUp = (pointer) => {
 
 		if (pointer.button !== undefined && pointer.button !== 0) return;
 
@@ -668,7 +699,7 @@ export default class TransformControls extends Object3D {
 		if (pointer.button === undefined) this.axis = null;
 	}
 
-    getPointer(event) {
+    getPointer = (event) => {
 		const pointer = event.changedTouches ? event.changedTouches[ 0 ] : event;
 		const rect = this.domElement.getBoundingClientRect();
 
@@ -679,17 +710,17 @@ export default class TransformControls extends Object3D {
 		};
 	}
 
-    onContext(event) {
+    onContext = (event) => {
 		event.preventDefault();
 	}
 
-    onPointerHover(event) {
+    onPointerHover = (event) => {
 		if (!this.enabled) return;
 
 		this.pointerHover(this.getPointer(event));
 	}
 
-    onPointerDown(event) {
+    onPointerDown = (event) => {
 		if (!this.enabled) return;
 
 		event.preventDefault();
@@ -700,7 +731,7 @@ export default class TransformControls extends Object3D {
 		this.pointerDown(this.getPointer(event));
 	}
 
-    onPointerMove(event) {
+    onPointerMove = (event) => {
 		if (!this.enabled) return;
 
 		event.preventDefault();
@@ -708,7 +739,7 @@ export default class TransformControls extends Object3D {
 		this.pointerMove(this.getPointer(event));
 	}
 
-    onPointerUp(event) {
+    onPointerUp = (event) => {
 
 		if (!this.enabled) return;
 
