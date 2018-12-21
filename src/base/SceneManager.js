@@ -111,7 +111,7 @@ export class SceneManager {
         this.renderer.setSize(w, h);
     }
 
-    render() {
+    render = () => {
         this.renderer.autoClear = false;
         this.renderer.clear(this.clearColor);
         this.renderer.render(this.scene, this.camera.object);
