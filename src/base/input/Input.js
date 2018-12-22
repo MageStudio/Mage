@@ -3,12 +3,13 @@ import {
 } from 'three';
 
 import Keyboard from './Keyboard';
+import Mouse from './Mouse';
 
 export default class Input extends EventDispatcher {
 
     constructor() {
         super();
-        this.mouse = undefined;
+        this.mouse = new Mouse();
         this.keyboard = new Keyboard();
     }
 
