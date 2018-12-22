@@ -83,6 +83,8 @@ export default class TransformControls extends Object3D {
     	this._pointStart = new Vector3();
     	this._pointEnd = new Vector3();
     	this._rotationAxis = new Vector3();
+        this.setAndDispatch('rotationAxis', new Vector3());
+
     	this._rotationAngle = 0;
 
     	this._cameraPosition = new Vector3();
@@ -274,7 +276,6 @@ export default class TransformControls extends Object3D {
 	}
 
     pointerHover = (pointer) => {
-        console.log('hover', pointer, this.object, this.dragging);
 		if (this.object === undefined ||
             this.dragging === true ||
             (pointer.button !== undefined && pointer.button !== 0)) return;
