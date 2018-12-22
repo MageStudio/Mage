@@ -8,6 +8,7 @@ import Config from './config';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
+import Input from './input/Input';
 
 import Vivus from 'vivus';
 
@@ -62,7 +63,11 @@ export class App {
         this.manager = new Manager();
         SceneManager.setAssets(this.assets);
 
+        // scene helper
         this.sceneHelper = new SceneHelper();
+
+        // registering input
+        this.input = new Input();
 
         // registering listener for events from parent
         if (win) {
@@ -77,6 +82,13 @@ export class App {
     setClearColor(value) {
         SceneManager.setClearColor(value);
     }
+
+    enableInput = () => {
+        this.input.enable();
+        this.input.addEventListener('keyPress', this.onKeyPress.bind(this));
+    }
+
+    onKeyPress = () => {}
 
     //onCreate method, ovveride to start creating stuff
     onCreate() { }

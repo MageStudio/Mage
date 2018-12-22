@@ -35,6 +35,7 @@
     "ammo.js": "github:kripken/ammo.js",
     "colors": "*",
     "connect": "^3.6.6",
+    "hotkeys-js": "^3.4.1",
     "http": "0.0.0",
     "ncp": "*",
     "node-prefix": "*",
@@ -47,7 +48,6 @@
     "whatwg-fetch": "3.0.0"
   },
   "devDependencies": {
-    "npm-cli-login": "0.0.10",
     "babel-loader": "7.1.4",
     "babel-preset-stage-0": "6.24.1",
     "webpack": "4.1.0",
