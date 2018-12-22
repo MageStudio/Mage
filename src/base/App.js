@@ -13,11 +13,10 @@ import Input from './input/Input';
 import Vivus from 'vivus';
 
 import {
-    Clock,
     Scene,
-    WebGLRenderer,
-    PCFSoftShadowMap
+    EventDispatcher
 } from 'three';
+
 import { fetch } from 'whatwg-fetch';
 import { getWindow } from './window';
 
@@ -27,10 +26,10 @@ export const author = {
     website: 'http://mage.studio'
 };
 
-export class App {
+export class App extends EventDispatcher {
 
     constructor(config, assets, container) {
-
+        super();
         const win = getWindow();
 
         this.log_types = {
