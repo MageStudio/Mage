@@ -38,7 +38,7 @@ class Router {
         if (config && typeof config === 'object') {
             this.config = config;
             this.selector = selector;
-            this.init();
+            return this.init();
         } else {
             console.log('[Mage] You need provide a config to Router');
         }
