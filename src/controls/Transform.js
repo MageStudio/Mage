@@ -245,8 +245,10 @@ export default class TransformControls extends Object3D {
 		this.domElement.removeEventListener("contextmenu", this.onContext);
 	}
 
-    attach(object) {
-		this.object = object;
+    attach({ mesh }) {
+        if (!mesh) return;
+        
+		this.object = mesh;
 		this.visible = true;
 	}
 

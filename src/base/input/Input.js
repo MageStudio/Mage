@@ -25,11 +25,20 @@ export default class Input extends EventDispatcher {
 
     enableKeyboard() {
         this.keyboard.enable(this.handleKeyBoardEvent);
-        //this.keyboard.addEventListener('keyPress', this.propagate.bind(this));
     }
 
     enableMouse() {
+        this.mouse.enable();
 
+        this.mouse.addEventListener('mouseDown', this.propagate.bind(this));
+        this.mouse.addEventListener('mouseUp', this.propagate.bind(this));
+        this.mouse.addEventListener('mouseMove', this.propagate.bind(this));
+        this.mouse.addEventListener('meshClick', this.propagate.bind(this));
+
+    }
+
+    propagate = (event) => {
+        this.dispatchEvent(event);
     }
 
     handleKeyBoardEvent = (event) => {
@@ -48,5 +57,10 @@ export default class Input extends EventDispatcher {
     disableMouse() {
         this.mouse.disable();
         this.mouse = undefined;
+
+        this.mouse.removeEventListener('mouseDown', this.propagate.bind(this));
+        this.mouse.removeEventListener('mouseUp', this.propagate.bind(this));
+        this.mouse.removeEventListener('mouseMove', this.propagate.bind(this));
+        this.mouse.removeEventListener('meshClick', this.propagate.bind(this));
     }
 }

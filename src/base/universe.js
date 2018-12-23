@@ -5,6 +5,10 @@ export class Universe {
 		this.worker = undefined;
 	}
 
+	get(id) {
+		return this.reality[id];
+	}
+
 	set(id, value) {
 		this.reality[id] = value;
 	}
