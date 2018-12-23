@@ -85,9 +85,26 @@ export class App extends EventDispatcher {
     enableInput = () => {
         this.input.enable();
         this.input.addEventListener('keyPress', this.onKeyPress.bind(this));
+        this.input.addEventListener('mouseDown', this.onMouseDown.bind(this));
+        this.input.addEventListener('mouseUp', this.onMouseUp.bind(this));
+        this.input.addEventListener('mouseMove', this.onMouseMove.bind(this));
+        this.input.addEventListener('meshClick', this.onMeshClick.bind(this));
+    }
+
+    disableInput = () => {
+        this.input.disable();
+        this.input.removeEventListener('keyPress', this.onKeyPress.bind(this));
+        this.input.removeEventListener('mouseDown', this.onMouseDown.bind(this));
+        this.input.removeEventListener('mouseUp', this.onMouseUp.bind(this));
+        this.input.removeEventListener('mouseMove', this.onMouseMove.bind(this));
+        this.input.removeEventListener('meshClick', this.onMeshClick.bind(this));
     }
 
     onKeyPress = () => {}
+    onMouseDown = () => {}
+    onMouseUp = () => {}
+    onMouseMove = () => {}
+    onMeshClick = () => {}
 
     //onCreate method, ovveride to start creating stuff
     onCreate() { }
