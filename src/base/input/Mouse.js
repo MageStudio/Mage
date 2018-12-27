@@ -21,6 +21,7 @@ export default class Mouse extends EventDispatcher {
         this.mouseUpEvent = { type: 'mouseUp' };
         this.mouseMoveEvent = { type: 'mouseMove' };
         this.meshClickEvent = { type: 'meshClick' };
+        this.meshDeselectEvent = { type: 'meshDeselect' };
     }
 
     createRayCaster() {
@@ -101,8 +102,10 @@ export default class Mouse extends EventDispatcher {
             normalized: { x: this.mouse.x, y: this.mouse.y }
         };
         this.meshClickEvent.meshes = meshes;
-        if (!meshes.length) return;
-
-        this.dispatchEvent(this.meshClickEvent);
+        if (!meshes.length) {
+            this.dispatchEvent(this.meshDeselectEvent);
+        } else {
+            this.dispatchEvent(this.meshClickEvent);
+        }
     }
 }

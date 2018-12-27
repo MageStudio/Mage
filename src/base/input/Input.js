@@ -34,7 +34,7 @@ export default class Input extends EventDispatcher {
         this.mouse.addEventListener('mouseUp', this.propagate.bind(this));
         this.mouse.addEventListener('mouseMove', this.propagate.bind(this));
         this.mouse.addEventListener('meshClick', this.propagate.bind(this));
-
+        this.mouse.addEventListener('meshDeselect', this.propagate.bind(this));
     }
 
     propagate = (event) => {
