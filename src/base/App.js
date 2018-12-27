@@ -89,6 +89,7 @@ export class App extends EventDispatcher {
         this.input.addEventListener('mouseUp', this.onMouseUp.bind(this));
         this.input.addEventListener('mouseMove', this.onMouseMove.bind(this));
         this.input.addEventListener('meshClick', this.onMeshClick.bind(this));
+        this.input.addEventListener('meshDeselect', this.onMeshDeselect.bind(this));
     }
 
     disableInput = () => {
@@ -98,6 +99,7 @@ export class App extends EventDispatcher {
         this.input.removeEventListener('mouseUp', this.onMouseUp.bind(this));
         this.input.removeEventListener('mouseMove', this.onMouseMove.bind(this));
         this.input.removeEventListener('meshClick', this.onMeshClick.bind(this));
+        this.input.removeEventListener('meshDeselect', this.onMeshDeselect.bind(this));
     }
 
     onKeyPress = () => {}
@@ -105,6 +107,7 @@ export class App extends EventDispatcher {
     onMouseUp = () => {}
     onMouseMove = () => {}
     onMeshClick = () => {}
+    onMeshDeselect = () => {}
 
     //onCreate method, ovveride to start creating stuff
     onCreate() { }

@@ -19,6 +19,12 @@ class Config {
                 alpha: true
             },
 
+            fog: {
+                enabled: false,
+                density: 0,
+                color: '#ffffff'
+            },
+
             lights: {
                 shadows: true
             },
@@ -38,6 +44,8 @@ class Config {
     			far : 100
     		}
         }
+
+        this.isDefault = true;
     }
 
     setContainer(container) {
@@ -45,10 +53,19 @@ class Config {
     }
 
     setConfig(config) {
-        this.config = {
-            ...this.default,
-            ...config
-        };
+        if (this.isDefault) {
+            this.isDefault = false;
+            this.config = {
+                ...this.default,
+                ...config
+            };
+        } else {
+            this.config = {
+                ...this.config,
+                config
+            };
+        }
+
     }
 
     container() {
@@ -61,6 +78,10 @@ class Config {
 
     lights() {
         return this.config.lights;
+    }
+
+    fog() {
+        return this.config.fog;
     }
 
     getContainerSize() {

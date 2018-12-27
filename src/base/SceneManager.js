@@ -31,8 +31,14 @@ export class SceneManager {
             this.scene = new Physijs.Scene();
             this.physics = true;
         } else {
+            const fog = Config.fog();
+
             this.physics = false;
             this.scene = new Scene();
+
+            if (fog.enabled) {
+                this.fog(fog.color, fog.density);
+            }
         }
     }
 
@@ -91,7 +97,7 @@ export class SceneManager {
             this.renderer.sortObjects = false;
         }
 
-        this.renderer.setPixelRatio( window.devicePixelRatio );
+        this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(w, h);
 
         if (!container) {
@@ -117,8 +123,15 @@ export class SceneManager {
         this.renderer.render(this.scene, this.camera.object);
     }
 
-    fog(color, intensity) {
-        this.scene.fog = new FogExp2(color, intensity);
+    fog(color, density) {
+        this.scene.fog = new FogExp2(color, density);
+        Config.setConfig({
+            fog: {
+                enabled: true,
+                color,
+                density
+            }
+        });
     }
 
     update() {
