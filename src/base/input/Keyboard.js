@@ -4,10 +4,12 @@ export default class Keyboard {
 
     constructor() {
         this.keys = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'l', 'k', 'j', 'h', 'g', 'f', 'd', 's', 'a', 'z', 'x', 'c', 'v', 'b', 'n', 'm'];
+        this.specials = ['esc', 'escape', 'enter'];
         this.symbols = [];
 
         this.combos = [
             ...this.keys,
+            ...this.specials,
             ...this.symbols
         ];
 
