@@ -51,6 +51,29 @@ export default class Entity {
 		}
 	}
 
+	setMesh() {
+		this._isMesh = true;
+		this._isLight = false;
+		this._isModel = false;
+	}
+
+	setLight() {
+		this._isMesh = false;
+		this._isLight = true;
+		this._isModel = false;
+	}
+
+	setModel() {
+		this._isMesh = false;
+		this._isLight = false;
+		this._isModel = true;
+	}
+
+
+	isMesh() { return this._isMesh; }
+	isLight() { return this._isLight; }
+	isModel() { return this._isModel; }
+
 	addSound(name, options) {
 		const _autoplay = options.autoplay || false;
 		this.isPlayingSound = _autoplay;

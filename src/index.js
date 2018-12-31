@@ -7,6 +7,7 @@ import Sound from './audio/Sound';
 
 import * as THREE from 'three';
 import App, { start, author } from './base/App';
+import Universe from './base/Universe';
 import Color from './base/Color';
 import * as util from './base/util';
 import Config from './base/config';
@@ -54,6 +55,7 @@ export {
     App,
     Config,
     SceneManager,
+    Universe,
     ScriptManager,
     Router,
 

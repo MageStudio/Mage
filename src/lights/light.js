@@ -14,6 +14,8 @@ export default class Light extends Entity {
 		this.intensity = intensity;
 		this.isLightOn = false;
 		this.mesh = undefined;
+		this.setLight();
+
 		LightEngine.add(this);
 	}
 

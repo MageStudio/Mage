@@ -17,6 +17,7 @@ export default class Mesh extends Entity {
 			this.mesh.castShadow = true;
 			this.mesh.receiveShadow = true;
 		}
+		this.setMesh();
 		//adding to core
 		SceneManager.add(this.mesh, this);
 
