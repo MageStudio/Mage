@@ -131,7 +131,11 @@ export default class Entity {
 	}
 
 	scale(options) {
-		if (options === undefined) return this.mesh.scale;
+		if (options === undefined) return {
+			x: this.mesh.scale.x,
+			y: this.mesh.scale.y,
+			z: this.mesh.scale.z
+		};
 
 		const _x = options.x || 1,
 			_y = options.y || 1,
@@ -143,7 +147,11 @@ export default class Entity {
 	}
 
 	position(options) {
-		if (options === undefined) return this.mesh.position;
+		if (options === undefined) return {
+			x: this.mesh.position.x,
+			y: this.mesh.position.y,
+			z: this.mesh.position.z
+		}
 
 		const _x = options.x || this.mesh.position.x,
 			_y = options.y || this.mesh.position.y,
@@ -155,7 +163,11 @@ export default class Entity {
 	}
 
 	rotation(options) {
-		if (options === undefined) return this.mesh.rotation;
+		if (options === undefined) return {
+			x: this.mesh.rotation.x,
+			y: this.mesh.rotation.y,
+			z: this.mesh.rotation.z
+		}
 
 		const _x = options.x || this.mesh.rotation.x,
 			_y = options.y || this.mesh.rotation.y,
@@ -163,6 +175,22 @@ export default class Entity {
 
 		if (this.mesh) {
 			this.mesh.rotation.set(_x, _y, _z);
+		}
+	}
+
+	uuid(uuid) {
+		if (uuid && this.mesh) {
+			this.mesh.uuid = uuid;
+		} else {
+			return this.mesh.uuid;
+		}
+	}
+
+	name(name) {
+		if (name && this.mesh) {
+			this.mesh.name = name;
+		} else {
+			return this.mesh.name;
 		}
 	}
 
