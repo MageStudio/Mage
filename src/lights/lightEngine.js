@@ -25,6 +25,10 @@ export class LightEngine {
             if ((+new Date() - start) > 50) return;
         }
     }
+
+    toJSON() {
+        return { lights: [] }; 
+    }
 }
 
 export default new LightEngine();

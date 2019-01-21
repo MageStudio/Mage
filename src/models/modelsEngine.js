@@ -39,7 +39,10 @@ export class ModelsEngine {
 		var model = this.map[id] || false;
 		if (model) {
 			model.material.wireframe = false;
-			return new Mesh(model.geometry, model.material);
+			const mesh = new Mesh(model.geometry, model.material);
+			mesh.setModel();
+
+			return mesh;
 		}
 		return false;
 	}
@@ -70,6 +73,10 @@ export class ModelsEngine {
 
 	add(model) {
 		this.models.push(model);
+	}
+
+	toJSON() {
+
 	}
 }
 

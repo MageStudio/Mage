@@ -124,7 +124,7 @@ export default class TransformControls extends Object3D {
 
 
         this.isTransformControls = true;
-        SceneManager.add(this, this);
+        SceneManager.add(this, this, false);
     }
 
     render() {}
@@ -247,7 +247,7 @@ export default class TransformControls extends Object3D {
 
     attach({ mesh }) {
         if (!mesh) return;
-        
+
 		this.object = mesh;
 		this.visible = true;
 	}

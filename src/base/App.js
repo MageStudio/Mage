@@ -10,6 +10,9 @@ import LightLoader from '../loaders/LightLoader';
 import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
 import Input from './input/Input';
 
+import LightEngine from '../lights/LightEngine';
+import ModelsEngine from '../models/ModelsEngine';
+
 import Vivus from 'vivus';
 
 import {
@@ -280,6 +283,15 @@ export class App extends EventDispatcher {
 
     //handling succesful tests
     onSuccededTest(message) {}
+
+    toJSON() {
+        // export everything that is inside Universe
+        // and LightEngine
+        return {
+            ...LightEngine.toJSON(),
+            ...Universe.toJSON()
+        };
+    }
 
 }
 
