@@ -74,10 +74,6 @@ export class ModelsEngine {
 	add(model) {
 		this.models.push(model);
 	}
-
-	toJSON() {
-
-	}
 }
 
 export default new ModelsEngine();

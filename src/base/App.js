@@ -11,7 +11,6 @@ import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
 import Input from './input/Input';
 
 import LightEngine from '../lights/LightEngine';
-import ModelsEngine from '../models/ModelsEngine';
 
 import Vivus from 'vivus';
 
