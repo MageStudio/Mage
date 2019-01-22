@@ -6,7 +6,7 @@ export default class Grid {
     constructor(size, division, color1, color2) {
         this.mesh = new GridHelper(size, division, color1, color2);
 
-        SceneManager.add(this.mesh, this);
+        SceneManager.add(this.mesh, this, false);
     }
 
     update() {}

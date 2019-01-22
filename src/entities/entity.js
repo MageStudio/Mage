@@ -19,35 +19,17 @@ export default class Entity {
 		}
 	}
 
-	addScript(scriptname, dir) {
-		let path = ScriptManager.SCRIPTS_DIR + (dir || "");
-		if (path[path.length - 1] != "/") {
-			path += "/"; //adding dir separator if we forgot it
-		}
-		ScriptManager.attachScript(this, scriptname, path);
-	}
-
-	loadScript(name) {
+	addScript(name) {
 		const script = ScriptManager.get(name);
-		for (let method in script) {
-			this[method] = script[method];
-		}
-		try {
-			this.start();
-		} catch(e) {
-			console.log("Check your start method inside your " + script.name + ".js script");
-		}
-	}
+		this.script = name;
 
-	//__loadScript will be automatically called by Game object
-	__loadScript(script) {
 		for (let method in script) {
 			this[method] = script[method];
 		}
 		try {
 			this.start();
 		} catch(e) {
-			console.log("Check your start method inside your " + script.name + ".js script");
+			console.log("Check your start method inside your " + name + ".js script");
 		}
 	}
 
@@ -183,6 +165,14 @@ export default class Entity {
 			this.mesh.uuid = uuid;
 		} else {
 			return this.mesh.uuid;
+		}
+	}
+
+	equals(element) {
+		try {
+			return element.uuid ? this.uuid() === element.uuid() : false;
+		} catch(e) {
+			return false;
 		}
 	}
 

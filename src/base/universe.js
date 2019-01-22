@@ -31,6 +31,12 @@ export class Universe {
 			} while (keys.length > 0 && (+new Date() - start < 50));
 		}
 	}
+
+	toJSON() {
+		return {
+			meshes: Object.keys(this.reality).map(k => this.get(k).toJSON())
+		}
+	}
 }
 
 export default new Universe();

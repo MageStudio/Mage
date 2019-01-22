@@ -50,9 +50,11 @@ export class SceneManager {
         }
     }
 
-    add(mesh, element) {
+    add(mesh, element, addUniverse = true) {
 		this.scene.add(mesh);
-		Universe.set(mesh.uuid, element);
+        if (addUniverse) {
+            Universe.set(mesh.uuid, element);
+        }
 	}
 
 	remove(mesh) {
