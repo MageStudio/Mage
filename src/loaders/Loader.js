@@ -1,11 +1,11 @@
 import {
-    JSONLoader
+    ObjectLoader
 } from 'three';
 
 export default class Loader {
 
     constructor() {
-        this.loader = new JSONLoader();
+        this.loader = new ObjectLoader();
     }
 
     load() {}

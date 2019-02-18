@@ -15,12 +15,12 @@ export class MeshLoader extends Loader {
     load(meshes) {
         for (var i=0; i<meshes.length; i++) {
 			var current = meshes[i],
-                //shader = this._parseShader(current),
-                //script = this._parseScript(current),
+                shader = this._parseShader(current),
+                script = this._parseScript(current),
                 parsedMesh = this._parseMesh(current);
 
 			if (parsedMesh.name.indexOf('_camera') > -1) {
-				//this._loadCamera(parsedMesh, script);
+				this._loadCamera(parsedMesh, script);
 			} else {
                 this._loadMesh(current, parsedMesh, script, shader);
 			}
@@ -64,7 +64,7 @@ export class MeshLoader extends Loader {
             options: opts
         };
     }
-    /*
+
     _loadCamera(mesh, script) {
         var camType = mesh.name.replace('_', '').toLowerCase();
         if (app.camera.object.type.toLowerCase() === camType) {
@@ -75,7 +75,7 @@ export class MeshLoader extends Loader {
             this._attachScript(app.camera, script);
         }
     }
-    */
+
     _loadMesh(current, parsedMesh, script, shader) {
         if (shader && shader.name && shader.options) {
             var mesh = new ShaderMesh({}, shader.name, {}, {}, shader.options);
