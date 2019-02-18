@@ -228,22 +228,6 @@ export class App extends EventDispatcher {
         }
     }
 
-    //utilities methods
-    log() {
-    	if (this.debug) {
-    		if (arguments.length>1) {
-    			if (arguments[1] in this.log_types) {
-    				console[this.log_types[arguments[1]]](arguments[0]);
-    			} else {
-    				console.log(arguments[0]);
-    			}
-    		} else {
-    			console.log(arguments[0]);
-    		}
-    	}
-
-    }
-
     onDocumentMouseWheel(event) {
     	event.preventDefault();
     	this.zoom = event.wheelDelta * 0.05;

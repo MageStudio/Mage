@@ -47,6 +47,13 @@ export class ModelsEngine {
 		return false;
 	}
 
+	parseModel = (json) => {
+		const defaultMaterial = new MeshLambertMaterial({wireframe: true});
+		const { geometry, material = defaultMaterial} = this.loader.parse(json);
+
+		return new Mesh(geometry, material);
+	}
+
 	loadSingleFile = (id) => {
 		const path = SceneManager.assets.Models[id];
 		return new Promise(resolve => {
