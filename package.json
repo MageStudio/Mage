@@ -8,7 +8,10 @@
     "email": "mrc.stagni@gmail.com"
   },
   "scripts": {
-    "prepublish": "npm run test && npm run build",
+    "preversion": "npm test",
+    "version": "npm run build",
+    "postversion:push": "git push --no-verify && git push --tags --no-verify",
+    "postversion": "npm run postversion:push && npm publish",
     "build": "npm run build:web && npm run build:node",
     "build:web": "webpack --config webpack.config.js --mode development",
     "build:node": "webpack --config webpack.node.js --mode development",
