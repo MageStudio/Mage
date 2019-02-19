@@ -32,7 +32,7 @@ export class MeshLoader extends Loader {
     }
 
     _parseScript(mesh) {
-        var script = mesh.object.userData ? mesh.object.userData['script'] : false,
+        var script = (mesh.object && mesh.object.userData) ? mesh.object.userData['script'] : false,
             dir = false,
             file = false;
         if (script) {
@@ -49,8 +49,8 @@ export class MeshLoader extends Loader {
     }
 
     _parseShader(mesh) {
-        var name = mesh.object.userData ? mesh.object.userData['shader_name'] : false,
-            options = mesh.object.userData ? JSON.parse(mesh.object.userData['shader_options']) : false;
+        var name = (mesh.object && mesh.object.userData) ? mesh.object.userData['shader_name'] : false,
+            options = (mesh.object && mesh.object.userData) ? JSON.parse(mesh.object.userData['shader_options']) : false;
 
         if (name) {
             var opts = {};
