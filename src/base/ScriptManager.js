@@ -1,4 +1,4 @@
-import { include } from './util';
+import BaseScript from './BaseScript';
 
 export class ScriptManager {
 
@@ -6,39 +6,34 @@ export class ScriptManager {
 		this.scripts = {};
 	}
 
-	get SCRIPTS_DIR() {
-		return 'app/scripts/';
-	}
-
 	update() {}
+
+	set(id, script) {
+		this.scripts[id] = script;
+	}
 
 	get(id) {
 		return this.scripts[id] || {};
 	}
 
-	create(name, methods) {
-		const obj = {};
-		obj.name = name;
-		for (var method in methods) {
-			obj[method] = methods[method];
-		}
-		if (!obj.start) {
-			obj.start = new Function("console.warn('You need a start method');");
-		}
-		if (!obj.update) {
-			obj.update = new Function("console.warn('You need an update method');");
-		}
-
-		if (!(name in this.scripts)) {
-			this.scripts[name] = obj;
-		}
+	parseScript(content) {
+		// does this mean we can send whatever we want down to the script?
+		return new Function('Script', 'return ' + obj + ';')(BaseScript);
 	}
 
-	attachScript(object, script, dir) {
-		const path = dir + script;
-		include(path, function() {
-			object.__loadScript(this.scripts[script]);
-		});
+	createFromString(stringContent) {
+		const Script = this.parseScript(stringContent);
+		const s = new Script();
+
+		this.set(s.name(), s);
+	}
+
+	create(name, script = {}) {
+		if (script instanceof BaseScript) {
+			this.set(name, script);
+		} else {
+			console.error('[Mage] Script needs to be an instance of Script.')l;
+		}
 	}
 }
 

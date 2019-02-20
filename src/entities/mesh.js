@@ -7,6 +7,10 @@ export default class Mesh extends Entity {
 
 	constructor(geometry, material, options) {
 		super();
+
+		this.script = undefined;
+		this.texture = undefined;
+
 		this.geometry = geometry;
 		this.material = material;
 
@@ -34,7 +38,7 @@ export default class Mesh extends Entity {
 	toJSON() {
 		return {
 			mesh: this.mesh.toJSON(),
-			script: this.script,
+			script: this.script && this.script.toJSON(),
 			texture: this.texture
 		}
 	}

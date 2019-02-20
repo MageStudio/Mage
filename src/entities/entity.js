@@ -9,9 +9,13 @@ export default class Entity {
 
 	constructor() {}
 
-	start() {}
+	start() {
+		this.script && this.script.start.call(this);
+	}
 
-	update() {}
+	update(dt) {
+		this.script && this.script.update.call(this, dt);
+	}
 
 	render() {
 		if (this.mesh && this.mesh.render) {
@@ -19,15 +23,13 @@ export default class Entity {
 		}
 	}
 
-	addScript(name) {
-		const script = ScriptManager.get(name);
-		this.script = name;
+	addScript(name, enabled = true) {
+		this.script = ScriptManager.get(name);
 
-		for (let method in script) {
-			this[method] = script[method];
-		}
 		try {
-			this.start();
+			if (enabled) {
+				this.start();
+			}
 		} catch(e) {
 			console.log("Check your start method inside your " + name + ".js script");
 		}
