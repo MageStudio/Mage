@@ -18,7 +18,7 @@ export class ScriptManager {
 
 	parseScript(content) {
 		// does this mean we can send whatever we want down to the script?
-		return new Function('Script', 'return ' + obj + ';')(BaseScript);
+		return new Function('Script', 'return ' + content + ';')(BaseScript);
 	}
 
 	createFromString(stringContent) {
@@ -26,13 +26,16 @@ export class ScriptManager {
 		const s = new Script();
 
 		this.set(s.name(), s);
+
+		return s;
 	}
 
 	create(name, script = {}) {
 		if (script instanceof BaseScript) {
 			this.set(name, script);
+			return script;
 		} else {
-			console.error('[Mage] Script needs to be an instance of Script.')l;
+			console.error('[Mage] Script needs to be an instance of Script.');
 		}
 	}
 }
