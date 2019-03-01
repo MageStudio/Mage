@@ -5,3 +5,4 @@ dist/mage.js
 dist/mage.node.js
 
 .DS_STORE
+.idea
