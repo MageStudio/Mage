@@ -2,7 +2,6 @@ import Manager from './Manager';
 import Universe from './Universe';
 import SceneManager from './SceneManager';
 import SceneHelper from './SceneHelper';
-import Camera from '../entities/Camera';
 import util from './util';
 import Config from './config';
 import MeshLoader from '../loaders/MeshLoader';
@@ -67,9 +66,6 @@ export class App extends EventDispatcher {
         // scene helper
         this.sceneHelper = new SceneHelper();
 
-        // registering input
-        this.input = new Input();
-
         // registering listener for events from parent
         if (win) {
             this.windowHalfX = win.innerWidth / 2;
@@ -85,23 +81,23 @@ export class App extends EventDispatcher {
     }
 
     enableInput = () => {
-        this.input.enable();
-        this.input.addEventListener('keyPress', this.onKeyPress.bind(this));
-        this.input.addEventListener('mouseDown', this.onMouseDown.bind(this));
-        this.input.addEventListener('mouseUp', this.onMouseUp.bind(this));
-        this.input.addEventListener('mouseMove', this.onMouseMove.bind(this));
-        this.input.addEventListener('meshClick', this.onMeshClick.bind(this));
-        this.input.addEventListener('meshDeselect', this.onMeshDeselect.bind(this));
+        Input.enable();
+        Input.addEventListener('keyPress', this.onKeyPress.bind(this));
+        Input.addEventListener('mouseDown', this.onMouseDown.bind(this));
+        Input.addEventListener('mouseUp', this.onMouseUp.bind(this));
+        Input.addEventListener('mouseMove', this.onMouseMove.bind(this));
+        Input.addEventListener('meshClick', this.onMeshClick.bind(this));
+        Input.addEventListener('meshDeselect', this.onMeshDeselect.bind(this));
     }
 
     disableInput = () => {
-        this.input.disable();
-        this.input.removeEventListener('keyPress', this.onKeyPress.bind(this));
-        this.input.removeEventListener('mouseDown', this.onMouseDown.bind(this));
-        this.input.removeEventListener('mouseUp', this.onMouseUp.bind(this));
-        this.input.removeEventListener('mouseMove', this.onMouseMove.bind(this));
-        this.input.removeEventListener('meshClick', this.onMeshClick.bind(this));
-        this.input.removeEventListener('meshDeselect', this.onMeshDeselect.bind(this));
+        Input.disable();
+        Input.removeEventListener('keyPress', this.onKeyPress.bind(this));
+        Input.removeEventListener('mouseDown', this.onMouseDown.bind(this));
+        Input.removeEventListener('mouseUp', this.onMouseUp.bind(this));
+        Input.removeEventListener('mouseMove', this.onMouseMove.bind(this));
+        Input.removeEventListener('meshClick', this.onMeshClick.bind(this));
+        Input.removeEventListener('meshDeselect', this.onMeshDeselect.bind(this));
     }
 
     onKeyPress = () => {}
@@ -133,9 +129,9 @@ export class App extends EventDispatcher {
         })
     }
 
-    loadScene = () => {
+    loadScene = (url) => {
         if (getWindow()) {
-            return fetch('scene.json')
+            return fetch(url)
                 .then(res => res.json())
                 .then(this.parseScene)
                 .catch(Promise.resolve);
@@ -145,7 +141,8 @@ export class App extends EventDispatcher {
 
     //this methods helps you loading heavy stuff
     preload = () => {
-        return this.loadScene();
+        const url = 'scene.json';
+        return this.loadScene(url);
     }
 
     //do stuff before onCreate method( prepare meshes, whatever )

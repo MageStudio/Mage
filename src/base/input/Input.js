@@ -5,7 +5,7 @@ import {
 import Keyboard from './Keyboard';
 import Mouse from './Mouse';
 
-export default class Input extends EventDispatcher {
+export class Input extends EventDispatcher {
 
     constructor() {
         super();
@@ -64,3 +64,5 @@ export default class Input extends EventDispatcher {
         this.mouse.removeEventListener('meshClick', this.propagate.bind(this));
     }
 }
+
+export default new Input();

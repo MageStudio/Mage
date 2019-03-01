@@ -26,7 +26,6 @@ export class ScriptManager {
 		const s = new Script();
 
 		this.set(s.name(), s);
-
 		return s;
 	}
 
