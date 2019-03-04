@@ -3,7 +3,7 @@ import {
 	ImageLoader
 } from 'three';
 
-import SceneManager from '../base/SceneManager';
+import AssetsManager from '../base/AssetsManager';
 
 export class ImagesEngine {
 
@@ -28,17 +28,17 @@ export class ImagesEngine {
 
 	load = () => {
 		// extending assets images with our defaults
-		Object.assign(SceneManager.assets.Textures, this.defaults);
-		Object.assign(SceneManager.assets.Images, this.imagesDefault);
+		Object.assign(AssetsManager.textures(), this.defaults);
+		Object.assign(AssetsManager.images(), this.imagesDefault);
 
-		if (!(Object.keys(SceneManager.assets.Textures).length + Object.keys(SceneManager.assets.Images).length)) {
+		if (!(Object.keys(AssetsManager.textures()).length + Object.keys(AssetsManager.images()).length)) {
 			return Promise.resolve('images');
 		}
 
 		const promises = Object
-			.keys(SceneManager.assets.Textures)
+			.keys(AssetsManager.textures())
 			.map(this.loadSingleFile)
-			.concat(Object.keys(SceneManager.assets.Images)
+			.concat(Object.keys(AssetsManager.images())
 			.map(this.loadSingleImage));
 
 		return Promise.all(promises);
@@ -49,7 +49,7 @@ export class ImagesEngine {
 	}
 
 	loadSingleImage = (id) => {
-		const path = SceneManager.assets.Images[id];
+		const path = AssetsManager.images()[id];
 		return new Promise(resolve => {
 			try {
 				this.imageLoader.load(path, (image) => {
@@ -69,7 +69,7 @@ export class ImagesEngine {
 	}
 
 	loadSingleFile = (id) => {
-		const path = SceneManager.assets.Textures[id];
+		const path = AssetsManager.textures()[id];
 		return new Promise(resolve => {
 			try {
 				this.loader.load(path, (texture) => {

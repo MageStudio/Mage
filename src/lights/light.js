@@ -2,8 +2,6 @@ import Entity from '../entities/Entity';
 import LightEngine from './LightEngine';
 import { Vector3 } from 'three';
 
-console.log('logging entity', Entity);
-
 export default class Light extends Entity {
 
 	constructor(color, intensity) {

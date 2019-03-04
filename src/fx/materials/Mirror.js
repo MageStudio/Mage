@@ -140,10 +140,6 @@ export default class Mirror extends Object3D {
 
 		this.renderTarget = new WebGLRenderTarget(width, height, parameters);
 		this.renderTarget2 = new WebGLRenderTarget(width, height, parameters);
-
-		console.log(this.mirrorfragment());
-		console.log(this.mirrorvertex());
-		console.log(this.mirroruniforms());
 		
 		this.material = new ShaderMaterial({
 			fragmentShader: this.mirrorfragment(),
@@ -310,7 +306,6 @@ export default class Mirror extends Object3D {
 		}
 
 		if (scene !== undefined && scene instanceof Scene) {
-			console.log('rendering mirror');
 			// We can't render ourself to ourself
 			var visible = this.material.visible;
 			this.material.visible = false;

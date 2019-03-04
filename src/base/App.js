@@ -1,4 +1,4 @@
-import Manager from './Manager';
+import AssetsManager from './AssetsManager';
 import Universe from './Universe';
 import SceneManager from './SceneManager';
 import SceneHelper from './SceneHelper';
@@ -29,7 +29,7 @@ export const author = {
 
 export class App extends EventDispatcher {
 
-    constructor(config, assets, container) {
+    constructor(config, container) {
         super();
         const win = getWindow();
 
@@ -39,10 +39,6 @@ export class App extends EventDispatcher {
     		"i" : "info"
     	};
 
-        Config.setConfig(config);
-        Config.setContainer(container);
-
-        this.assets = assets;
 
     	//scnee parameters
         this.user = undefined;
@@ -60,8 +56,10 @@ export class App extends EventDispatcher {
         this.CAMERA_MIN_Z = 250;
 
         // creating manager
-        this.manager = new Manager();
-        SceneManager.setAssets(this.assets);
+        //this.manager = new AssetsManager();
+        //SceneManager.setAssets(this.assets);
+
+        //this.input = new Input();
 
         // scene helper
         this.sceneHelper = new SceneHelper();
@@ -134,14 +132,14 @@ export class App extends EventDispatcher {
             return fetch(url)
                 .then(res => res.json())
                 .then(this.parseScene)
-                .catch(Promise.resolve);
+                .catch(() => Promise.resolve());
         }
         return Promise.resolve();
     }
 
     //this methods helps you loading heavy stuff
-    preload = () => {
-        const url = 'scene.json';
+    preload = (url = 'scene.json') => {
+        console.log('preloading ', url);
         return this.loadScene(url);
     }
 
@@ -162,7 +160,7 @@ export class App extends EventDispatcher {
 
         this._render();
         SceneManager.update();
-        this.manager.update();
+        AssetsManager.update();
 
         requestAnimFrame(this.render.bind(this));
     }
@@ -174,6 +172,7 @@ export class App extends EventDispatcher {
         }
 
         SceneManager.create();
+        //SceneManager.setClearColor(this.clearColor);
         PostProcessingEngine.init();
         // M.control.init();
         this.render();
@@ -276,31 +275,3 @@ export class App extends EventDispatcher {
 }
 
 export default App;
-
-export const start = (className, config, assets, container) => {
-    let app;
-    if (typeof className === 'function') {
-        app = new className(config, assets, container);
-    } else {
-        app = new App(config, assets, container);
-    }
-
-    util.start();
-    util.checker.check(
-        app.onSuccededTest,
-        app.onFailedTest
-    ).then(() => {
-        app.preload()
-            .then(() => {
-                app.manager
-                    .load()
-                    .then(() => {
-                        app.prepareScene();
-                        app.load();
-                    })
-                })
-        }
-    );
-
-    return app;
-}

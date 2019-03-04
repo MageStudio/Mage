@@ -6,7 +6,7 @@ import {
 	LoadingManager
 } from 'three';
 
-import SceneManager from '../base/SceneManager';
+import AssetsManager from '../base/AssetsManager';
 
 export class ModelsEngine {
 
@@ -24,9 +24,8 @@ export class ModelsEngine {
 	load = () => {
 		this.map = {};
 		this.models = [];
-		const { Models = [] } = SceneManager.assets;
 
-		const keys = Object.keys(Models);
+		const keys = Object.keys(AssetsManager.models());
 
 		if (!keys.length) {
 			return Promise.resolve('models');
@@ -55,7 +54,7 @@ export class ModelsEngine {
 	}
 
 	loadSingleFile = (id) => {
-		const path = SceneManager.assets.Models[id];
+		const path = AssetsManager.models()[id];
 		return new Promise(resolve => {
 			this.loader.load(path, (geometry, materials) => {
 	            var faceMaterial;

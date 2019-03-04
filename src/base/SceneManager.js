@@ -16,10 +16,6 @@ export class SceneManager {
         this.clock = new Clock();
     }
 
-    setAssets(assets) {
-        this.assets = assets;
-    }
-
     createScene() {
         const { enabled = false } = Config.physics();
         const ammo = 'ammo.js';

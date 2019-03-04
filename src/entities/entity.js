@@ -1,9 +1,8 @@
-import ScriptManager from '../base/ScriptManager';
+import ScriptManager from '../scripts/ScriptManager';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
 // import { LightPoint } from '../lights/LightPoint';
-import SceneManager from '../base/SceneManager';
 
 export default class Entity {
 

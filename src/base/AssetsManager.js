@@ -5,11 +5,51 @@ import ModelsEngine from '../models/ModelsEngine';
 import ShadersEngine from '../fx/shaders/ShadersEngine';
 import ParticleEngine from '../fx/particles/ParticleEngine';
 import LightEngine from '../lights/LightEngine';
+import ScriptsManager from '../scripts/ScriptManager';
 import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
 
-export default class Manager {
+const DEFAULT_ASSETS = {
+	Audio : {},
+	Video : {},
+	Images : {},
+	Textures: {},
+	Models : {},
+	Shaders: {},
+	Particles: {},
+	General : {},
+	Scripts: {}
+};
 
-	constructor() {}
+export class AssetsManager {
+
+	constructor() {
+		this.assets = DEFAULT_ASSETS;
+	}
+
+	setAssets(assets = DEFAULT_ASSETS) {
+		this.assets = {
+			...DEFAULT_ASSETS,
+			...assets
+		};
+	}
+
+	audio() { return this.assets.Audio; }
+
+	video() { return this.assets.Video; }
+
+	images() { return this.assets.Images; }
+
+	textures() { return this.assets.Textures; }
+
+	models() { return this.assets.Models; }
+
+	shaders() { return this.assets.Shaders; }
+
+	particles() { return this.assets.Particles; }
+
+	scripts() { return this.assets.Scripts; }
+
+	general() { return this.assets.General; }
 
 	load() {
 		return new Promise((resolve, reject) => {
@@ -19,7 +59,8 @@ export default class Manager {
 				ImagesEngine.load(),
 				ModelsEngine.load(),
 				ShadersEngine.load(),
-				ParticleEngine.load()
+				ParticleEngine.load(),
+				ScriptsManager.load()
 			]).then(() => {
 				resolve();
 				this.loadingMessage(true);
@@ -37,3 +78,5 @@ export default class Manager {
 
 	loadingMessage(loaded) {}
 }
+
+export default new AssetsManager();

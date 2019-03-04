@@ -1,80 +1,104 @@
-import { start } from '../base/App';
+import GameRunner from '../runner/GameRunner';
+import AssetsManager from "../base/AssetsManager";
+import util from '../base/util';
+import Config from "../base/config";
 
-class Loader {
-
-    constructor() {
-        this.classname = 'game-loader';
-    }
-
-    start() {
-        if (document) {
-            this.element = document.createElement("div");
-            this.element.className = this.className;
-            document.body.appendChild(this.element);
-            this.element.style.opacity = "1";
-        }
-    }
-
-    stop() {
-        this.element.style.opacity = "1";
-        setTimeout(function() {
-            document.body.removeChild(this.element);
-        }, 250);
-    }
-}
+const ROOT = '/';
+const DIVIDER = '/';
+const HASH = '#';
 
 class Router {
 
     constructor() {
-        if (document && window) {
-            this.loader = new Loader();
+        // create new GameRunner
+        this.runner = new GameRunner();
+        this.routes = [];
+    }
 
-            window.addEventListener("message", this.onMessage, false);
-            window.addEventListener("onmessage", this.onMessage, false);
+    storeConfiguration(configuration) {
+        this.configuration = configuration;
+    }
+
+    getConfiguration() {
+        return this.configuration;
+    }
+
+    storeSelector(selector) {
+        this.selector = selector;
+    }
+
+    getSelector() {
+        return this.selector;
+    }
+
+    static extractLocationHash() {
+        if (location) {
+            return Router.cleanRoute(location.hash);
+        }
+
+        return Router.cleanRoute(ROOT);
+    }
+
+    static cleanRoute(route = HASH) {
+        if (!route.length) {
+            return ROOT;
+        }
+        const cleaned = route.split(HASH)[1];
+
+        return DIVIDER.concat(cleaned);
+    }
+
+    isValidRoute = (route) => this.routes.includes(route);
+
+    handleFailure() {
+        console.error('[Mage] Error when initialising app');
+    }
+    handleSuccess() {}
+
+    handleHashChange = () => {
+        const hash = Router.extractLocationHash();
+
+        if (this.isValidRoute(hash)) {
+            this.runner.start(hash, this.getConfiguration(), this.getSelector());
         }
     }
 
-    start(config, selector) {
-        if (config && typeof config === 'object') {
-            this.config = config;
-            this.selector = selector;
-            return this.init();
-        } else {
-            console.log('[Mage] You need provide a config to Router');
+    on(route, classname) {
+        // call regitser on runner
+        const path = Router.cleanRoute(route.replace('/', '#'));
+        if (this.runner.register(path, classname)) {
+            this.routes.push(route);
         }
     }
 
-    init() {
-        if (document && this.config.scenes.length > 0) {
-            const firstScene = this.config.scenes[0];
+    start(config, assets, selector) {
+        // we should get all assets first then do the rest
+        Config.setConfig(config);
+        Config.setContainer(selector);
 
-            this.scenes = this.config.scenes;
-            this.current = firstScene;
+        util.start();
+        AssetsManager.setAssets(assets);
 
-            return start(firstScene.className, firstScene.game, firstScene.assets, this.selector);
-        } else {
-            console.log('[Mage] You need to provide at least one scene in your config');
-        }
-    }
+        util.checker
+            .check(this.handleSuccess, this.handleFailure)
+            .then(() => AssetsManager.load())
+            .then(() => {
+                // starts listening
+                if (window) {
+                    window.addEventListener('hashchange', this.handleHashChange, false);
+                }
+                // store configuration
+                this.storeConfiguration(config);
+                this.storeSelector(selector);
 
-    onMessage(message) {}
+                // check current path
+                const currentHash = Router.extractLocationHash();
 
-    checkScene(scene) {
-        for (var i=0; i<this.scenes.length; i++) {
-            if (this.scenes[i].name == scene) return true;
-        }
-        return false;
-    }
-
-    changeScene(scene) {
-        if (!this.checkScene(scene)) {
-            console.error('[Mage] Couldn\'t load scene: ' + scene);
-            return;
-        }
-        this.loader.start();
-        start(scene, this.config);
-        this.current = scene;
-        this.loader.stop();
+                if (this.isValidRoute(currentHash)) {
+                    // if path is matching something starts that
+                    this.runner.start(currentHash, this.getConfiguration(), this.getSelector());
+                }
+            });
     }
 }
 
