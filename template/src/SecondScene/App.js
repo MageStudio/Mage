@@ -4,14 +4,14 @@ import {
     SceneManager
 } from 'mage-engine';
 
-export default class FirstScene extends App {
+export default class SecondScene extends App {
 
     constructor(config, container) {
         super(config, container);
     }
 
     onCreate() {
-        ControlsManager.setOrbitControl();
+        //ControlsManager.setOrbitControl();
         const cube = this.sceneHelper.addCube(20, 0xffffff);
         this.sceneHelper.addCube(40, 0x00ffff);
 

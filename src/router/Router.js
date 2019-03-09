@@ -97,6 +97,8 @@ class Router {
                 if (this.isValidRoute(currentHash)) {
                     // if path is matching something starts that
                     this.runner.start(currentHash, this.getConfiguration(), this.getSelector());
+                } else {
+                    this.runner.start('/', this.getConfiguration(), this.getSelector());
                 }
             });
     }

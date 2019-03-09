@@ -10,10 +10,13 @@ import {
     FogExp2
 } from 'three';
 
+import { generateUUID } from './util';
+
 export class SceneManager {
 
     constructor() {
         this.clock = new Clock();
+        this.rendererElements = {};
     }
 
     createScene() {
@@ -82,6 +85,26 @@ export class SceneManager {
         });
     }
 
+    removeExistingRendererElements() {
+        Object
+            .keys(this.rendererElements)
+            .forEach((k) => {
+                const element = document.body.querySelector(`#${k}`);
+
+                if (element) {
+                    element.remove();
+                }
+            });
+
+    }
+
+    storeRenderer(rendererElement) {
+        const id = `renderer_${generateUUID()}`;
+        this.rendererElements[id] = rendererElement;
+
+        return id;
+    }
+
     createRenderer() {
         const { shadows } = Config.lights();
         const { alpha, w, h } = Config.screen();
@@ -97,6 +120,9 @@ export class SceneManager {
 
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(w, h);
+
+        this.renderer.domElement.id = this.storeRenderer(this.renderer.domElement);
+        this.removeExistingRendererElements();
 
         if (!container) {
             document.body.appendChild(this.renderer.domElement);
