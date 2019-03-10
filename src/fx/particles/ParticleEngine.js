@@ -1,7 +1,7 @@
 import { include } from '../../base/util';
 import Rain from './Rain';
 import Clouds from './Clouds';
-import SceneManager from '../../base/SceneManager';
+import AssetsManager from '../../base/AssetsManager';
 
 export class ParticleEngine {
 
@@ -22,9 +22,9 @@ export class ParticleEngine {
 
 	load() {
 
-		if (SceneManager.assets.Particles) {
+		if (AssetsManager.particles()) {
 
-			const keys = Object.keys(SceneManager.assets.Particles);
+			const keys = Object.keys(AssetsManager.particles());
 
 			if (!keys.length) {
 				return Promise.resolve('particles');
@@ -42,7 +42,7 @@ export class ParticleEngine {
 	}
 
 	loadSingleFile(id) {
-		const path = SceneManager.assets.Particles[id];
+		const path = AssetsManager.particles()[id];
 		// @todo this has to be changed. We can load a M.fx.createparticle file, a custom particle or a threejs particle/material.
 		const type = path.split(".")[1];
 

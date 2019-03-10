@@ -1,7 +1,7 @@
 import {
 	Vector3
 } from 'three';
-import SceneManager from '../base/SceneManager';
+import AssetsManager from '../base/AssetsManager';
 
 export class AudioEngine {
 
@@ -57,14 +57,13 @@ export class AudioEngine {
 			console.error("No Audio Context available, sorry.");
 		}
 
-		if (Object.keys(SceneManager.assets.Audio).length == 0) {
-			console.log('empty Assets.Audio');
+		if (Object.keys(AssetsManager.audio()).length === 0) {
 			return Promise.resolve('audio');
 		}
 
 		return Promise
 			.all(Object
-				.keys(SceneManager.assets.Audio)
+				.keys(AssetsManager.audio())
 				.map(this.loadSingleFile)
 			);
 	}
@@ -75,7 +74,7 @@ export class AudioEngine {
 	}
 
 	loadSingleFile = (id) => {
-		const path = SceneManager.assets.Audio[id];
+		const path = AssetsManager.audio()[id];
 		// Load a sound file using an ArrayBuffer XMLHttpRequest.
 		const request = new XMLHttpRequest();
 		return new Promise(resolve => {
@@ -94,7 +93,6 @@ export class AudioEngine {
 							console.error("Decoding the audio buffer failed");
 						});
 				} else if (request.readyState === 4 && request.status === 200) {
-					console.log('error downloadindg audio ', path);
 					resolve();
 				}
 			};
@@ -110,12 +108,12 @@ export class AudioEngine {
 		const start = new Date();
 		for (var index in this.sounds) {
 			var sound = this.sounds[index];
-			sound.update(SceneManager.clock.getDelta());
+			sound.update(AssetsManager.clock.getDelta());
 
 			//now handling listener
-			SceneManager.camera.object.updateMatrixWorld();
+			AssetsManager.camera.object.updateMatrixWorld();
 			var p = new Vector3();
-			p.setFromMatrixPosition(SceneManager.camera.object.matrixWorld);
+			p.setFromMatrixPosition(AssetsManager.camera.object.matrixWorld);
 
 			//setting audio engine context listener position on camera position
 			this.context.listener.setPosition(p.x, p.y, p.z);
@@ -123,7 +121,7 @@ export class AudioEngine {
 
 			//this is to add up and down vector to our camera
 			// The camera's world matrix is named "matrix".
-			var m = SceneManager.camera.object.matrix;
+			var m = AssetsManager.camera.object.matrix;
 
 			const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
 			m.elements[12] = m.elements[13] = m.elements[14] = 0;

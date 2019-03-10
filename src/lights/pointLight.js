@@ -8,8 +8,6 @@ import {
     PointLight as THREEPointLight
 } from 'three';
 
-console.log(Light);
-
 export default class LightPoint extends Light {
 
     constructor(color, intensity, distance, position) {

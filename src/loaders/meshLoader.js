@@ -12,7 +12,8 @@ export class MeshLoader extends Loader {
         super();
     }
 
-    load(meshes) {
+    load(meshes = []) {
+        /*
         for (var i=0; i<meshes.length; i++) {
 			var current = meshes[i],
                 shader = this._parseShader(current),
@@ -25,10 +26,43 @@ export class MeshLoader extends Loader {
                 this._loadMesh(current, parsedMesh, script, shader);
 			}
         }
+        */
+        meshes.forEach((object) => {
+            const { mesh, script, texture } = object;
+            const parsed = this.parseMesh(mesh);
+
+            MeshLoader.loadMesh(parsed, script, texture);
+        });
     }
 
-    _parseMesh(mesh) {
+    parseMesh(mesh) {
         return this.loader.parse(mesh);
+    }
+
+    static loadMesh(parsedMesh, script, texture) {
+        //if (shader && shader.name && shader.options) {
+        //    var mesh = new ShaderMesh({}, shader.name, {}, {}, shader.options);
+        //} else {
+            //parsedMesh.castShadow = true;
+            //parsedMesh.receiveShadow = true;
+        const mesh = new Mesh(parsedMesh.geometry, parsedMesh.material);
+        mesh.position({ ...parsedMesh.position });
+        mesh.rotation({ ...parsedMesh.rotation });
+        mesh.scale({ ...parsedMesh.scale });
+
+        //mesh.mesh.castShadow = true;
+        //mesh.mesh.receiveShadow = true;
+            // setting texture
+            //if (current.textureKey) {
+            //    var texture = imagesEngine.get(current.textureKey);
+            //    texture.wrapS = RepeatWrapping;
+            //    texture.wrapT = RepeatWrapping;
+            //    texture.repeat.set(1, 1);
+            //    mesh.mesh.material.map = texture;
+            //}
+        //}
+
+        //this._attachScript(mesh, script);
     }
 
     _parseScript(mesh) {
@@ -74,31 +108,6 @@ export class MeshLoader extends Loader {
 
             this._attachScript(app.camera, script);
         }
-    }
-
-    _loadMesh(current, parsedMesh, script, shader) {
-        if (shader && shader.name && shader.options) {
-            var mesh = new ShaderMesh({}, shader.name, {}, {}, shader.options);
-        } else {
-            parsedMesh.castShadow = true;
-            parsedMesh.receiveShadow = true;
-            var mesh = new Mesh(parsedMesh.geometry, parsedMesh.material);
-            mesh.mesh.position.set(parsedMesh.position.x, parsedMesh.position.y, parsedMesh.position.z);
-            mesh.mesh.rotation.set(parsedMesh.rotation.x, parsedMesh.rotation.y, parsedMesh.rotation.z);
-            mesh.mesh.scale.set(parsedMesh.scale.x, parsedMesh.scale.y, parsedMesh.scale.z);
-            mesh.mesh.castShadow = true;
-            mesh.mesh.receiveShadow = true;
-            // setting texture
-            if (current.textureKey) {
-                var texture = imagesEngine.get(current.textureKey);
-                texture.wrapS = RepeatWrapping;
-                texture.wrapT = RepeatWrapping;
-                texture.repeat.set(1, 1);
-                mesh.mesh.material.map = texture;
-            }
-        }
-
-        this._attachScript(mesh, script);
     }
 
     _attachScript(mesh, script) {

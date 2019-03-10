@@ -28,7 +28,6 @@ export default class Orbit extends EventDispatcher {
         super();
 
         this.object = object;
-        console.log(this.object);
 
     	this.domElement = ( domElement !== undefined ) ? domElement : document;
 

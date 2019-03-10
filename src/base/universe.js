@@ -18,7 +18,6 @@ export class Universe {
 	}
 
 	update(delta) {
-
 		const keys = Object.keys(this.reality);
 		if (keys.length != 0) {
 			var start = +new Date();

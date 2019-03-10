@@ -1,8 +1,7 @@
-import Manager from './Manager';
+import AssetsManager from './AssetsManager';
 import Universe from './Universe';
 import SceneManager from './SceneManager';
 import SceneHelper from './SceneHelper';
-import Camera from '../entities/Camera';
 import util from './util';
 import Config from './config';
 import MeshLoader from '../loaders/MeshLoader';
@@ -30,7 +29,7 @@ export const author = {
 
 export class App extends EventDispatcher {
 
-    constructor(config, assets, container) {
+    constructor(config, container) {
         super();
         const win = getWindow();
 
@@ -40,10 +39,6 @@ export class App extends EventDispatcher {
     		"i" : "info"
     	};
 
-        Config.setConfig(config);
-        Config.setContainer(container);
-
-        this.assets = assets;
 
     	//scnee parameters
         this.user = undefined;
@@ -61,14 +56,13 @@ export class App extends EventDispatcher {
         this.CAMERA_MIN_Z = 250;
 
         // creating manager
-        this.manager = new Manager();
-        SceneManager.setAssets(this.assets);
+        //this.manager = new AssetsManager();
+        //SceneManager.setAssets(this.assets);
+
+        //this.input = new Input();
 
         // scene helper
         this.sceneHelper = new SceneHelper();
-
-        // registering input
-        this.input = new Input();
 
         // registering listener for events from parent
         if (win) {
@@ -85,23 +79,23 @@ export class App extends EventDispatcher {
     }
 
     enableInput = () => {
-        this.input.enable();
-        this.input.addEventListener('keyPress', this.onKeyPress.bind(this));
-        this.input.addEventListener('mouseDown', this.onMouseDown.bind(this));
-        this.input.addEventListener('mouseUp', this.onMouseUp.bind(this));
-        this.input.addEventListener('mouseMove', this.onMouseMove.bind(this));
-        this.input.addEventListener('meshClick', this.onMeshClick.bind(this));
-        this.input.addEventListener('meshDeselect', this.onMeshDeselect.bind(this));
+        Input.enable();
+        Input.addEventListener('keyPress', this.onKeyPress.bind(this));
+        Input.addEventListener('mouseDown', this.onMouseDown.bind(this));
+        Input.addEventListener('mouseUp', this.onMouseUp.bind(this));
+        Input.addEventListener('mouseMove', this.onMouseMove.bind(this));
+        Input.addEventListener('meshClick', this.onMeshClick.bind(this));
+        Input.addEventListener('meshDeselect', this.onMeshDeselect.bind(this));
     }
 
     disableInput = () => {
-        this.input.disable();
-        this.input.removeEventListener('keyPress', this.onKeyPress.bind(this));
-        this.input.removeEventListener('mouseDown', this.onMouseDown.bind(this));
-        this.input.removeEventListener('mouseUp', this.onMouseUp.bind(this));
-        this.input.removeEventListener('mouseMove', this.onMouseMove.bind(this));
-        this.input.removeEventListener('meshClick', this.onMeshClick.bind(this));
-        this.input.removeEventListener('meshDeselect', this.onMeshDeselect.bind(this));
+        Input.disable();
+        Input.removeEventListener('keyPress', this.onKeyPress.bind(this));
+        Input.removeEventListener('mouseDown', this.onMouseDown.bind(this));
+        Input.removeEventListener('mouseUp', this.onMouseUp.bind(this));
+        Input.removeEventListener('mouseMove', this.onMouseMove.bind(this));
+        Input.removeEventListener('meshClick', this.onMeshClick.bind(this));
+        Input.removeEventListener('meshDeselect', this.onMeshDeselect.bind(this));
     }
 
     onKeyPress = () => {}
@@ -133,19 +127,19 @@ export class App extends EventDispatcher {
         })
     }
 
-    loadScene = () => {
+    loadScene = (url) => {
         if (getWindow()) {
-            return fetch('scene.json')
+            return fetch(url)
                 .then(res => res.json())
                 .then(this.parseScene)
-                .catch(Promise.resolve);
+                .catch(() => Promise.resolve());
         }
         return Promise.resolve();
     }
 
     //this methods helps you loading heavy stuff
-    preload = () => {
-        return this.loadScene();
+    preload = (url = 'scene.json') => {
+        return this.loadScene(url);
     }
 
     //do stuff before onCreate method( prepare meshes, whatever )
@@ -165,7 +159,7 @@ export class App extends EventDispatcher {
 
         this._render();
         SceneManager.update();
-        this.manager.update();
+        AssetsManager.update();
 
         requestAnimFrame(this.render.bind(this));
     }
@@ -177,6 +171,7 @@ export class App extends EventDispatcher {
         }
 
         SceneManager.create();
+        //SceneManager.setClearColor(this.clearColor);
         PostProcessingEngine.init();
         // M.control.init();
         this.render();
@@ -279,31 +274,3 @@ export class App extends EventDispatcher {
 }
 
 export default App;
-
-export const start = (className, config, assets, container) => {
-    let app;
-    if (typeof className === 'function') {
-        app = new className(config, assets, container);
-    } else {
-        app = new App(config, assets, container);
-    }
-
-    util.start();
-    util.checker.check(
-        app.onSuccededTest,
-        app.onFailedTest
-    ).then(() => {
-        app.preload()
-            .then(() => {
-                app.manager
-                    .load()
-                    .then(() => {
-                        app.prepareScene();
-                        app.load();
-                    })
-                })
-        }
-    );
-
-    return app;
-}

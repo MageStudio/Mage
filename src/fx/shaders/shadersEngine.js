@@ -1,5 +1,5 @@
 import { include } from '../../base/util';
-import SceneManager from '../../base/SceneManager';
+import AssetsManager from '../../base/AssetsManager';
 import Atmosphere from '../materials/Atmosphere';
 import Mirror from '../materials/Mirror';
 import Ocean from '../materials/Ocean';
@@ -31,8 +31,8 @@ export class ShadersEngine {
 	}
 
 	load = () => {
-		if (SceneManager.assets.Shaders) {
-			const keys = Object.keys(SceneManager.assets.Shaders);
+		if (AssetsManager.shaders()) {
+			const keys = Object.keys(AssetsManager.shaders());
 			if (!keys.length) {
 				return Promise.resolve('shaders');
 			}
@@ -46,7 +46,7 @@ export class ShadersEngine {
 	}
 
 	loadSingleFile = (id) => {
-		const path = SceneManager.assets.Shaders[id];
+		const path = AssetsManager.shaders()[id];
 		const type = path.split(".")[1];
 
 		return new Promise(resolve => {

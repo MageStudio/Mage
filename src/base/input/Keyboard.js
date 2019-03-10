@@ -30,7 +30,6 @@ export default class Keyboard {
 
     handler = (event, handler) => {
         if (!this.enabled) return;
-        console.log('dispatching keypress');
         this.listener(event);
     }
 

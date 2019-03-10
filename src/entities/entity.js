@@ -1,17 +1,20 @@
-import ScriptManager from '../base/ScriptManager';
+import ScriptManager from '../scripts/ScriptManager';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
 // import { LightPoint } from '../lights/LightPoint';
-import SceneManager from '../base/SceneManager';
 
 export default class Entity {
 
 	constructor() {}
 
-	start() {}
+	start() {
+		this.script && this.script.start.call(this);
+	}
 
-	update() {}
+	update(dt) {
+		this.script && this.script.update.call(this, dt);
+	}
 
 	render() {
 		if (this.mesh && this.mesh.render) {
@@ -19,15 +22,13 @@ export default class Entity {
 		}
 	}
 
-	addScript(name) {
-		const script = ScriptManager.get(name);
-		this.script = name;
+	addScript(name, enabled = true) {
+		this.script = ScriptManager.get(name);
 
-		for (let method in script) {
-			this[method] = script[method];
-		}
 		try {
-			this.start();
+			if (enabled) {
+				this.start();
+			}
 		} catch(e) {
 			console.log("Check your start method inside your " + name + ".js script");
 		}
