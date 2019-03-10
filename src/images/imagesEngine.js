@@ -58,7 +58,6 @@ export class ImagesEngine {
 				},
 				() => {},  // displaying progress
 				() => {
-					console.log('An error occurred while fetching texture.');
 					resolve();
 				});
 			} catch (e) {
@@ -78,7 +77,6 @@ export class ImagesEngine {
 				},
 				() => {},  // displaying progress
 				() => {
-					console.log('An error occurred while fetching texture.');
 					resolve();
 				});
 			} catch (e) {

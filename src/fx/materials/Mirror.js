@@ -125,10 +125,7 @@ export default class Mirror extends Object3D {
 			this.camera = camera;
 
 		} else {
-
 			this.camera = new PerspectiveCamera();
-			console.log(this.name + ': camera is not a Perspective Camera!');
-
 		}
 
 		this.textureMatrix = new Matrix4();

@@ -72,35 +72,39 @@ class Router {
     }
 
     start(config, assets, selector) {
-        // we should get all assets first then do the rest
-        Config.setConfig(config);
-        Config.setContainer(selector);
+        return new Promise((resolve, reject) => {
+            // we should get all assets first then do the rest
+            Config.setConfig(config);
+            Config.setContainer(selector);
 
-        util.start();
-        AssetsManager.setAssets(assets);
+            util.start();
+            AssetsManager.setAssets(assets);
 
-        util.checker
-            .check(this.handleSuccess, this.handleFailure)
-            .then(() => AssetsManager.load())
-            .then(() => {
-                // starts listening
-                if (window) {
-                    window.addEventListener('hashchange', this.handleHashChange, false);
-                }
-                // store configuration
-                this.storeConfiguration(config);
-                this.storeSelector(selector);
+            util.checker
+                .check(this.handleSuccess, this.handleFailure)
+                .then(() => AssetsManager.load())
+                .then(() => {
+                    // starts listening
+                    if (window) {
+                        window.addEventListener('hashchange', this.handleHashChange, false);
+                    }
+                    // store configuration
+                    this.storeConfiguration(config);
+                    this.storeSelector(selector);
 
-                // check current path
-                const currentHash = Router.extractLocationHash();
+                    // check current path
+                    const currentHash = Router.extractLocationHash();
 
-                if (this.isValidRoute(currentHash)) {
-                    // if path is matching something starts that
-                    this.runner.start(currentHash, this.getConfiguration(), this.getSelector());
-                } else {
-                    this.runner.start('/', this.getConfiguration(), this.getSelector());
-                }
-            });
+                    if (this.isValidRoute(currentHash)) {
+                        // if path is matching something starts that
+                        this.runner.start(currentHash, this.getConfiguration(), this.getSelector())
+                            .then(resolve);
+                    } else {
+                        this.runner.start('/', this.getConfiguration(), this.getSelector())
+                            .then(resolve);
+                    }
+                });
+        });
     }
 }
 

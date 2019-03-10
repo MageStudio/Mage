@@ -139,7 +139,6 @@ export class App extends EventDispatcher {
 
     //this methods helps you loading heavy stuff
     preload = (url = 'scene.json') => {
-        console.log('preloading ', url);
         return this.loadScene(url);
     }
 

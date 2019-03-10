@@ -23,10 +23,8 @@ export default class GameRunner {
         // check if classname is a function and if extends App
         try {
             if (GameRunner.isValidClassname(classname)) {
-                console.log('calid ', classname);
                 this.store[path] = classname;
             } else {
-                console.log('invalid');
                 this.store[path] = App;
             }
             return true;
@@ -36,24 +34,28 @@ export default class GameRunner {
     }
 
     start(path, config, selector) {
-        if (!this.has(path)) {
-            return false;
-        }
+        return new Promise((resolve, reject) => {
+            if (!this.has(path)) {
+                return false;
+            }
 
-        if (this.running) {
-            // do something with the current running instance
-        }
-        // starting the right classname
-        const classname = this.get(path);
-        this.running = new classname(config, selector);
+            if (this.running) {
+                // do something with the current running instance
+            }
+            // starting the right classname
+            const classname = this.get(path);
+            this.running = new classname(config, selector);
 
-        // replicate what happens in the start method inside App
-        this.running.preload()
-            .then(() => {
-                this.running.prepareScene();
-                this.running.load();
-            })
-            .catch((e) => console.log(e));
+            // replicate what happens in the start method inside App
+            this.running.preload()
+                .then(() => {
+                    this.running.prepareScene();
+                    this.running.load();
+                    // app is ready
+                    resolve(this.running);
+                })
+                .catch((e) => console.log(e));
+        })
     }
 }
 

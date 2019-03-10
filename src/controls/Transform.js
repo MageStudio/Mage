@@ -287,7 +287,6 @@ export default class TransformControls extends Object3D {
 		var intersect = this.ray.intersectObjects(this.gizmo.picker[this.mode].children, true)[0] || false;
 
 		if (intersect) {
-            console.log('intersetcint');
 			this.axis = intersect.object.name;
 		} else {
 			this.axis = null;

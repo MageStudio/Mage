@@ -58,7 +58,6 @@ export class AudioEngine {
 		}
 
 		if (Object.keys(AssetsManager.audio()).length === 0) {
-			console.log('empty Assets.Audio');
 			return Promise.resolve('audio');
 		}
 
@@ -94,7 +93,6 @@ export class AudioEngine {
 							console.error("Decoding the audio buffer failed");
 						});
 				} else if (request.readyState === 4 && request.status === 200) {
-					console.log('error downloadindg audio ', path);
 					resolve();
 				}
 			};

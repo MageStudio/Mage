@@ -42,7 +42,6 @@ export class Input extends EventDispatcher {
     }
 
     handleKeyBoardEvent = (event) => {
-        console.log('inside handlekeyboard event');
         this.dispatchEvent({
             type: 'keyPress',
             event
