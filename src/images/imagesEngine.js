@@ -37,7 +37,7 @@ export class ImagesEngine {
 
 		const promises = Object
 			.keys(AssetsManager.textures())
-			.map(this.loadSingleFile)
+			.map(this.loadSingleTexture)
 			.concat(Object.keys(AssetsManager.images())
 			.map(this.loadSingleImage));
 
@@ -48,13 +48,13 @@ export class ImagesEngine {
 		return this.map[key] || false;
 	}
 
-	loadSingleImage = (id) => {
-		const path = AssetsManager.images()[id];
+	loadSingleImage = (id, imagePath) => {
+		const path = imagePath || AssetsManager.images()[id];
 		return new Promise(resolve => {
 			try {
 				this.imageLoader.load(path, (image) => {
-					this.map[id] = image;
-					resolve();
+					this.add(id, image);
+					resolve(image);
 				},
 				() => {},  // displaying progress
 				() => {
@@ -62,26 +62,32 @@ export class ImagesEngine {
 				});
 			} catch (e) {
 				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
-				resolve();
+				reject();
 			}
 		})
 	}
 
-	loadSingleFile = (id) => {
-		const path = AssetsManager.textures()[id];
+	loadSingleTexture = (id, imagePath) => {
+		const existingTexture = this.get(id);
+		if (existingTexture) {
+			return Promise.resolve(existingTexture);
+		}
+
+		const path = imagePath || AssetsManager.textures()[id];
 		return new Promise(resolve => {
 			try {
 				this.loader.load(path, (texture) => {
-					this.map[id] = texture;
-					resolve();
+					this.add(id, texture);
+					resolve(texture);
 				},
 				() => {},  // displaying progress
 				() => {
+					console.log('[Mage] error loading image ' + id + ' at path ' + path);
 					resolve();
 				});
 			} catch (e) {
 				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
-				resolve();
+				reject();
 			}
 		});
 	}
