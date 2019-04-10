@@ -1,7 +1,8 @@
 import Entity from './Entity';
 import Config from '../base/config';
 import SceneManager from '../base/SceneManager';
-import { Mesh as THREEMesh, RepeatWrapping } from 'three';
+import ImagesEngine from '../images/ImagesEngine';
+import { Mesh as THREEMesh, RepeatWrapping, MeshBasicMaterial } from 'three';
 
 export default class Mesh extends Entity {
 
@@ -24,14 +25,22 @@ export default class Mesh extends Entity {
 		SceneManager.add(this.mesh, this);
 	}
 
-	setTexture(texture) {
-		if (texture && this.mesh && this.mesh.material) {
-			this.texture = texture;
+	setTexture(textureid) {
+		if (textureid &&
+			this.texture !== textureid &&
+			this.mesh && this.mesh.material) {
+
+			const texture = ImagesEngine.get(textureid);
+
+			this.texture = textureid;
+
 			texture.wrapS = RepeatWrapping;
 			texture.wrapT = RepeatWrapping;
 
 			texture.repeat.set(1, 1);
-			this.mesh.material.map = texture;
+
+			this.mesh.material.wireframe = false;
+			this.mesh.material = new MeshBasicMaterial({ map: texture });
 		}
 	}
 
