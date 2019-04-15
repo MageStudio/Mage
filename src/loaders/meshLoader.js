@@ -50,6 +50,7 @@ export class MeshLoader extends Loader {
         mesh.rotation({ ...parsedMesh.rotation });
         mesh.scale({ ...parsedMesh.scale });
 
+
         //mesh.mesh.castShadow = true;
         //mesh.mesh.receiveShadow = true;
             // setting texture

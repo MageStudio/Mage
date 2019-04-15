@@ -82,11 +82,11 @@ export class ImagesEngine {
 				},
 				() => {},  // displaying progress
 				() => {
-					console.log('[Mage] error loading image ' + id + ' at path ' + path);
+					console.log('[Mage] error loading texture ' + id + ' at path ' + path);
 					resolve();
 				});
 			} catch (e) {
-				console.log('[MAGE] error loading image ' + id + ' at path ' + path);
+				console.log('[MAGE] error loading texture ' + id + ' at path ' + path);
 				reject();
 			}
 		});
