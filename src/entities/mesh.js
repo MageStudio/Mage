@@ -2,7 +2,15 @@ import Entity from './Entity';
 import Config from '../base/config';
 import SceneManager from '../base/SceneManager';
 import ImagesEngine from '../images/ImagesEngine';
-import { Mesh as THREEMesh, RepeatWrapping, MeshBasicMaterial } from 'three';
+import {
+	Mesh as THREEMesh,
+	RepeatWrapping,
+	MeshBasicMaterial,
+	MeshLambertMaterial,
+	MeshPhongMaterial,
+	MeshDepthMaterial,
+	MeshStandardMaterial
+} from 'three';
 
 export default class Mesh extends Entity {
 
@@ -12,10 +20,11 @@ export default class Mesh extends Entity {
 		this.script = undefined;
 		this.texture = undefined;
 
+		this.options = options;
 		this.geometry = geometry;
 		this.material = material;
 
-		this.mesh = new THREEMesh(geometry, material);
+		this.mesh = new THREEMesh(this.geometry, this.material);
 
 		if (Config.lights().shadows) {
 			this.mesh.castShadow = true;
@@ -42,6 +51,36 @@ export default class Mesh extends Entity {
 			this.mesh.material.wireframe = false;
 			this.mesh.material = new MeshBasicMaterial({ map: texture });
 		}
+	}
+
+	setMaterialFromName(materialName) {
+		switch(materialName) {
+			case 'lambert':
+				this.setMaterial(MeshLambertMaterial);
+				break;
+			case 'phong':
+				this.setMaterial(MeshPhongMaterial);
+				break;
+			case 'depth':
+				this.setMaterial(MeshDepthMaterial);
+				break;
+			case 'standard':
+				this.setMaterial(MeshStandardMaterial);
+				break;
+			case 'basic':
+			default:
+				this.setMaterial(MeshBasicMaterial);
+				break;
+		}
+	}
+
+	setMaterial(MeshMaterial) {
+		const material = new MeshMaterial({
+			map: this.mesh.material.map,
+			color: this.mesh.material.color
+		});
+
+		this.mesh.material = material;
 	}
 
 	toJSON() {
