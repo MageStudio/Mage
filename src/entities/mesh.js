@@ -69,13 +69,16 @@ export default class Mesh extends Entity {
 				break;
 			case 'basic':
 			default:
-				this.setMaterial(MeshBasicMaterial)
+				this.setMaterial(MeshBasicMaterial);
 				break;
 		}
 	}
 
 	setMaterial(MeshMaterial) {
-		const material = new MeshMaterial({ map: this.mesh.material.map });
+		const material = new MeshMaterial({
+			map: this.mesh.material.map,
+			color: this.mesh.material.color
+		});
 
 		this.mesh.material = material;
 	}
