@@ -37,9 +37,9 @@ export class ImagesEngine {
 
 		const promises = Object
 			.keys(AssetsManager.textures())
-			.map(this.loadSingleTexture)
+			.map(path => this.loadSingleTexture(path))
 			.concat(Object.keys(AssetsManager.images())
-			.map(this.loadSingleImage));
+			.map(path => this.loadSingleImage(path)));
 
 		return Promise.all(promises);
 	}
@@ -50,7 +50,7 @@ export class ImagesEngine {
 
 	loadSingleImage = (id, imagePath) => {
 		const path = imagePath || AssetsManager.images()[id];
-		return new Promise(resolve => {
+		return new Promise((resolve, reject) => {
 			try {
 				this.imageLoader.load(path, (image) => {
 					this.add(id, image);
@@ -74,7 +74,7 @@ export class ImagesEngine {
 		}
 
 		const path = imagePath || AssetsManager.textures()[id];
-		return new Promise(resolve => {
+		return new Promise((resolve, reject) => {
 			try {
 				this.loader.load(path, (texture) => {
 					this.add(id, texture);
