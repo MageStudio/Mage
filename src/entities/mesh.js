@@ -32,6 +32,8 @@ export default class Mesh extends Entity {
 		}
 		this.setMesh();
 		SceneManager.add(this.mesh, this);
+
+		console.log('created mesh inside constructor', this.mesh);
 	}
 
 	setTexture(textureid) {
