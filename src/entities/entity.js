@@ -134,7 +134,7 @@ export default class Entity {
 			x: this.mesh.position.x,
 			y: this.mesh.position.y,
 			z: this.mesh.position.z
-		}
+		};
 
 		const _x = options.x || this.mesh.position.x,
 			_y = options.y || this.mesh.position.y,

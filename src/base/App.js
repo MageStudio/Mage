@@ -64,6 +64,8 @@ export class App extends EventDispatcher {
         // scene helper
         this.sceneHelper = new SceneHelper();
 
+        SceneManager.create();
+
         // registering listener for events from parent
         if (win) {
             this.windowHalfX = win.innerWidth / 2;
@@ -170,10 +172,8 @@ export class App extends EventDispatcher {
             this._keylistener = new win.keypress.Listener();
         }
 
-        SceneManager.create();
-        //SceneManager.setClearColor(this.clearColor);
         PostProcessingEngine.init();
-        // M.control.init();
+
         this.render();
 
         if (this.onCreate instanceof Function) {
