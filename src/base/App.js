@@ -172,10 +172,8 @@ export class App extends EventDispatcher {
             this._keylistener = new win.keypress.Listener();
         }
 
-        // SceneManager.create();
-        //SceneManager.setClearColor(this.clearColor);
         PostProcessingEngine.init();
-        // M.control.init();
+
         this.render();
 
         if (this.onCreate instanceof Function) {
