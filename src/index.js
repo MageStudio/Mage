@@ -24,7 +24,7 @@ import ShaderMesh from './entities/ShaderMesh';
 import Camera from './entities/Camera';
 
 import AmbientLight from './lights/AmbientLight';
-import DirectionalLight from './lights/DirectionalLight';
+import SunLight from './lights/SunLight';
 import PointLight from './lights/PointLight';
 
 import LightLoader from './loaders/LightLoader';
@@ -82,7 +82,7 @@ export {
     DirectionalSound,
 
     AmbientLight,
-    DirectionalLight,
+    SunLight,
     PointLight,
 
     Atmosphere,

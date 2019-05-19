@@ -14,7 +14,7 @@ import {
 
 export default class Mesh extends Entity {
 
-	constructor(geometry, material, options) {
+	constructor(geometry, material, options = {}) {
 		super();
 
 		this.script = undefined;
@@ -31,7 +31,10 @@ export default class Mesh extends Entity {
 			this.mesh.receiveShadow = true;
 		}
 		this.setMesh();
-		SceneManager.add(this.mesh, this);
+
+		const { addUniverse = true } = options;
+
+		SceneManager.add(this.mesh, this, addUniverse);
 	}
 
 	setTexture(textureid) {
