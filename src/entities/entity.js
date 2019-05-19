@@ -90,13 +90,10 @@ export default class Entity {
 	}
 
 	addLight(light) {
-		const position = {
-			x: this.mesh.position.x,
-			y: this.mesh.position.y,
-			z: this.mesh.position.z
-		}
-		this.light.setPosition(position);
-		this.addMesh(this.light.mesh.mesh);
+		const { x, y, z } = this.position();
+
+		light.position({ x, y, z });
+		this.light = light;
 	}
 
 	playSound() {
@@ -120,12 +117,14 @@ export default class Entity {
 			z: this.mesh.scale.z
 		};
 
-		const _x = options.x || 1,
-			_y = options.y || 1,
-			_z = options.z || 1;
+		const scale = {
+			x: options.x === undefined ? this.mesh.scale.x : options.x,
+			y: options.y === undefined ? this.mesh.scale.y : options.y,
+			z: options.x === undefined ? this.mesh.scale.z : options.z
+		};
 
 		if (this.mesh) {
-			this.mesh.scale.set(_x, _y, _z);
+			this.mesh.scale.set(scale.x, scale.y, scale.z);
 		}
 	}
 
@@ -136,12 +135,14 @@ export default class Entity {
 			z: this.mesh.position.z
 		};
 
-		const _x = options.x || this.mesh.position.x,
-			_y = options.y || this.mesh.position.y,
-			_z = options.z || this.mesh.position.z;
+		const position = {
+			x: options.x === undefined ? this.mesh.position.x : options.x,
+			y: options.y === undefined ? this.mesh.position.y : options.y,
+			z: options.x === undefined ? this.mesh.position.z : options.z
+		};
 
 		if (this.mesh) {
-			this.mesh.position.set(_x, _y, _z);
+			this.mesh.position.set(position.x, position.y, position.z);
 		}
 	}
 
@@ -150,14 +151,16 @@ export default class Entity {
 			x: this.mesh.rotation.x,
 			y: this.mesh.rotation.y,
 			z: this.mesh.rotation.z
-		}
+		};
 
-		const _x = options.x || this.mesh.rotation.x,
-			_y = options.y || this.mesh.rotation.y,
-			_z = options.z || this.mesh.rotation.z;
+		const rotation = {
+			x: options.x === undefined ? this.mesh.rotation.x : options.x,
+			y: options.y === undefined ? this.mesh.rotation.y : options.y,
+			z: options.x === undefined ? this.mesh.rotation.z : options.z
+		};
 
 		if (this.mesh) {
-			this.mesh.rotation.set(_x, _y, _z);
+			this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
 		}
 	}
 

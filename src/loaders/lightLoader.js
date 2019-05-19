@@ -1,6 +1,6 @@
 import Loader from './Loader';
 import Config from '../base/config';
-import DirectionalLight from '../lights/DirectionalLight';
+import SunLight from '../lights/SunLight';
 import AmbientLight from '../lights/AmbientLight';
 
 export class LightLoader extends Loader {
@@ -14,7 +14,7 @@ export class LightLoader extends Loader {
             var current = lights[j]
                 parsedLight = this._parseLight(current);
 
-            if (current.light.object.type == "DirectionalLight") {
+            if (current.light.object.type == "SunLight") {
                 this._loadDirectionalLight(parsedLight);
             } else if (current.light.object.type == "AmbientLight") {
                 this._loadAmbientLight(parsedLight);
@@ -33,7 +33,7 @@ export class LightLoader extends Loader {
     }
 
     _loadDirectionalLight(light) {
-        new DirectionalLight(
+        new SunLight(
             light.light.color,
             light.light.intensity,
             light.light.distance,
