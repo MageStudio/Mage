@@ -36,7 +36,6 @@
     "shader"
   ],
   "dependencies": {
-    "ammo.js": "github:kripken/ammo.js",
     "colors": "*",
     "connect": "^3.6.6",
     "hotkeys-js": "^3.4.1",
