@@ -31,6 +31,9 @@ export class App extends EventDispatcher {
 
     constructor(config, container) {
         super();
+
+        this.name = this.constructor.name;
+
         const win = getWindow();
 
         this.log_types = {
@@ -129,7 +132,9 @@ export class App extends EventDispatcher {
         })
     }
 
-    loadScene = (url) => {
+    getJSONUrl = () => `assets/scenes/${this.name}.json`;
+
+    loadScene = (url = this.getJSONUrl()) => {
         if (getWindow()) {
             return fetch(url)
                 .then(res => res.json())
@@ -140,7 +145,7 @@ export class App extends EventDispatcher {
     }
 
     //this methods helps you loading heavy stuff
-    preload = (url = 'scene.json') => {
+    preload = (url = this.getJSONUrl()) => {
         return this.loadScene(url);
     }
 
@@ -148,7 +153,7 @@ export class App extends EventDispatcher {
     prepareScene() {}
 
     //needed if user wants to add a customRender method
-    _render() {}
+    onUpdate() {}
 
     // window Resized
     onResize = () => {
@@ -159,7 +164,7 @@ export class App extends EventDispatcher {
         SceneManager.render();
         PostProcessingEngine.render();
 
-        this._render();
+        this.onUpdate();
         SceneManager.update();
         AssetsManager.update();
 
