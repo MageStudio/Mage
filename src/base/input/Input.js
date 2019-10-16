@@ -9,18 +9,25 @@ export class Input extends EventDispatcher {
 
     constructor() {
         super();
-        this.mouse = new Mouse();
-        this.keyboard = new Keyboard();
+        this.enabled = false;
     }
 
     enable() {
-        this.enableKeyboard();
-        this.enableMouse();
+        if (!this.enabled) {
+            this.mouse = new Mouse();
+            this.keyboard = new Keyboard();
+            this.enableKeyboard();
+            this.enableMouse();
+            this.enabled = true;
+        }
     }
 
     disable() {
-        this.disableKeyboard();
-        this.disableMouse();
+        if (this.enabled) {
+            this.disableKeyboard();
+            this.disableMouse();
+            this.enabled = false;
+        }
     }
 
     enableKeyboard() {

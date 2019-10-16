@@ -1,4 +1,5 @@
 import BaseScript from './BaseScript';
+import Input from '../base/input/Input';
 import { fetch } from 'whatwg-fetch';
 import AssetsManager from "../base/AssetsManager";
 
@@ -28,7 +29,7 @@ export class ScriptManager {
             fetch(path)
                 .then(response => response.text())
                 .then((text) => {
-                    this.createFromString(text, id);
+                    this.createFromString(text);
                     resolve();
                 });
         });
@@ -44,14 +45,14 @@ export class ScriptManager {
 
 	parseScript(content) {
 		// does this mean we can send whatever we want down to the script?
-		return new Function('Script', 'return ' + content + ';')(BaseScript);
+		return new Function('Script', 'Input', 'return ' + content + ';')(BaseScript, Input);
 	}
 
-	createFromString(stringContent, name) {
+	createFromString(stringContent) {
 		const Script = this.parseScript(stringContent);
 		const s = new Script();
 
-		this.set(name || s.name(), s);
+		this.set(s.name(), s);
 		return s;
 	}
 

@@ -2,6 +2,7 @@ import Mesh from '../entities/Mesh';
 import ShaderMesh from '../entities/ShaderMesh';
 import ImagesEngine from '../images/ImagesEngine'
 import Loader from './Loader';
+import ScriptManager from '../scripts/ScriptManager';
 import {
     RepeatWrapping
 } from 'three';
@@ -14,9 +15,9 @@ export class MeshLoader extends Loader {
 
     load(meshes = []) {
         try {
-            meshes.map(({mesh, script, texture}) => {
-                MeshLoader.loadMesh(this.parseMesh(mesh), script, texture);
-            });
+            meshes
+                .map(({mesh, script, texture}) => MeshLoader.loadMesh(this.parseMesh(mesh), script, texture))
+                .map(MeshLoader.executeStartScript);
         } catch(e) {
             console.log(e);
         }
@@ -37,6 +38,8 @@ export class MeshLoader extends Loader {
         mesh.rotation({ ...parsedMesh.rotation });
         mesh.scale({ ...parsedMesh.scale });
 
+        mesh.addScript(script.name, false);
+
         //mesh.mesh.castShadow = true;
         //mesh.mesh.receiveShadow = true;
             // setting texture
@@ -50,6 +53,13 @@ export class MeshLoader extends Loader {
         //}
 
         //this._attachScript(mesh, script);
+
+        return mesh;
+    }
+
+    static executeStartScript(element) {
+        element.start();
+        return element;
     }
 
     // _parseScript(mesh) {
