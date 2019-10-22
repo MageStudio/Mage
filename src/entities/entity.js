@@ -9,11 +9,11 @@ export default class Entity {
 	constructor() {}
 
 	start() {
-		this.script && this.script.start.call(this);
+		this.script && this.script.start(this);
 	}
 
 	update(dt) {
-		this.script && this.script.update.call(this, dt);
+		this.script && this.script.update(dt);
 	}
 
 	render() {
