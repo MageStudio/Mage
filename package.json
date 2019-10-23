@@ -38,7 +38,7 @@
   "dependencies": {
     "colors": "*",
     "connect": "^3.6.6",
-    "hotkeys-js": "^3.4.1",
+    "hotkeys-js": "3.7.2",
     "http": "0.0.0",
     "ncp": "*",
     "node-prefix": "*",
