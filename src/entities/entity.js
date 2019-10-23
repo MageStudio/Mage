@@ -2,28 +2,29 @@ import ScriptManager from '../scripts/ScriptManager';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
+import BaseScript from '../scripts/BaseScript';
 // import { LightPoint } from '../lights/LightPoint';
 
 export default class Entity {
 
-	constructor() {}
+	constructor() {
+		this.script = new BaseScript('default');
+	}
 
 	start() {
-		this.script && this.script.start(this);
+		this.script.start(this);
 	}
 
 	update(dt) {
-		this.script && this.script.update(dt);
-	}
-
-	render() {
-		if (this.mesh && this.mesh.render) {
-			this.mesh.render();
-		}
+		this.script.update(dt);
 	}
 
 	addScript(name, enabled = true) {
-		this.script = ScriptManager.get(name);
+		const script = ScriptManager.get(name);
+		if (!script) {
+			console.log("You can\'t add a script that hasn't been loaded.");
+			return;
+		}
 
 		try {
 			if (enabled) {

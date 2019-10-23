@@ -40,7 +40,7 @@ export class ScriptManager {
 	}
 
 	get(id) {
-		return this.scripts[id] || {};
+		return this.scripts[id] || false;
 	}
 
 	parseScript(content) {

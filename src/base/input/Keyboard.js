@@ -1,5 +1,10 @@
 import hotkeys from 'hotkeys-js';
 
+const DEFAULT_OPTIONS = {
+    keyup: true,
+    keydown: true
+};
+
 export default class Keyboard {
 
     constructor() {
@@ -17,6 +22,9 @@ export default class Keyboard {
         this.listener = undefined;
     }
 
+    static get KEYDOWN() { return 'keydown'; }
+    static get KEYUP() { return 'keyup'; }
+
     register(combo) {
         if (this.enabled) {
             if (this.combos.includes(combo)) {
@@ -24,20 +32,20 @@ export default class Keyboard {
                 return;
             }
             this.combos.push(combo);
-            hotkeys(combo, this.handler);
+            hotkeys(combo, DEFAULT_OPTIONS, this.handler);
         }
     }
 
     handler = (event, handler) => {
         if (!this.enabled) return;
-        this.listener(event);
+        this.listener(event, handler);
     }
 
     enable(cb = f => f) {
         this.enabled = true;
         this.listener = cb;
         this.combos.forEach(combo => {
-            hotkeys(combo, this.handler);
+            hotkeys(combo, DEFAULT_OPTIONS, this.handler);
         });
     }
 

@@ -48,7 +48,21 @@ export class Input extends EventDispatcher {
         this.dispatchEvent(event);
     }
 
-    handleKeyBoardEvent = (event) => {
+    handleKeyBoardEvent = (event, handler) => {
+        if (event.type === Keyboard.KEYDOWN) {
+            this.dispatchEvent({
+                type: 'keyDown',
+                event
+            });
+        }
+
+        if (event.type === Keyboard.KEYUP) {
+            this.dispatchEvent({
+                type: 'keyUp',
+                event
+            });
+        }
+
         this.dispatchEvent({
             type: 'keyPress',
             event

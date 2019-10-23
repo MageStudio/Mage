@@ -17,7 +17,6 @@ export default class Mesh extends Entity {
 	constructor(geometry, material, options = {}) {
 		super();
 
-		this.script = undefined;
 		this.texture = undefined;
 
 		this.options = options;
