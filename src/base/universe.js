@@ -24,8 +24,7 @@ export class Universe {
 			do {
 				const o = this.reality[keys.shift()];
 
-				o.update && o.update(delta);
-				o.render && o.render(delta);
+				o.update(delta);
 
 			} while (keys.length > 0 && (+new Date() - start < 50));
 		}

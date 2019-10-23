@@ -30,7 +30,7 @@ export default class Keyboard {
 
     handler = (event, handler) => {
         if (!this.enabled) return;
-        this.listener(event);
+        this.listener(event, handler);
     }
 
     enable(cb = f => f) {

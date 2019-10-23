@@ -38,7 +38,9 @@ export class MeshLoader extends Loader {
         mesh.rotation({ ...parsedMesh.rotation });
         mesh.scale({ ...parsedMesh.scale });
 
-        mesh.addScript(script.name, false);
+        if (script && script.name) {
+            mesh.addScript(script.name, false);
+        }
 
         //mesh.mesh.castShadow = true;
         //mesh.mesh.receiveShadow = true;
@@ -58,7 +60,7 @@ export class MeshLoader extends Loader {
     }
 
     static executeStartScript(element) {
-        element.start();
+        element.start.call(element);
         return element;
     }
 
