@@ -12,11 +12,11 @@ export default class Entity {
 	}
 
 	start() {
-		this.script.start(this);
+		this.scriptEnabled && this.script.start(this);
 	}
 
 	update(dt) {
-		this.script.update(dt);
+		this.scriptEnabled && this.script.update(dt);
 	}
 
 	addScript(name, enabled = true) {
@@ -26,13 +26,18 @@ export default class Entity {
 			return;
 		}
 
+		this.script = script;
+		this.scriptEnabled = enabled;
+
 		try {
-			if (enabled) {
-				this.start();
-			}
+			this.start();
 		} catch(e) {
 			console.log("Check your start method inside your " + name + ".js script");
 		}
+	}
+
+	enableScript() {
+		this.scriptEnabled = true;
 	}
 
 	setMesh() {
