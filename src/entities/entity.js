@@ -23,17 +23,10 @@ export default class Entity {
 		const script = ScriptManager.get(name);
 		if (!script) {
 			console.log("You can\'t add a script that hasn't been loaded.");
-			return;
 		}
 
 		this.script = script;
-		this.scriptEnabled = enabled;
-
-		try {
-			this.start();
-		} catch(e) {
-			console.log("Check your start method inside your " + name + ".js script");
-		}
+		this.scriptEnabled = !!script && enabled;
 	}
 
 	enableScript() {

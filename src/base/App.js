@@ -120,17 +120,17 @@ export class App extends EventDispatcher {
     //onCreate method, ovveride to start creating stuff
     onCreate() { }
 
-    parseScene = ({ meshes = [], models = [], lights = [] }) => {
+    parseScene = ({ meshes = [], models = [], lights = [] }, options = {}) => {
         return new Promise((resolve, reject) => {
             if (meshes.length) {
                 for (var i in models) {
                     meshes.push(models[i]);
                 }
-                MeshLoader.load(meshes);
+                MeshLoader.load(meshes, options);
             }
 
             if (lights.length) {
-                LightLoader.load(lights);
+                LightLoader.load(lights, options);
             }
 
             SceneManager.updateChildren();

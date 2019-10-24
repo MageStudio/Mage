@@ -56,4 +56,8 @@ export default class Keyboard {
             hotkeys.unbind(combo);
         });
     }
+
+    isPressed(key) {
+        return hotkeys.isPressed(key);
+    }
 }
