@@ -31,7 +31,7 @@ export class Input extends EventDispatcher {
     }
 
     enableKeyboard() {
-        this.keyboard.enable(this.handleKeyBoardEvent);
+        this.keyboard.enable(this.handleKeyBoardEvent.bind(this));
     }
 
     enableMouse() {
