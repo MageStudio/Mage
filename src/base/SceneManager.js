@@ -52,13 +52,13 @@ export class SceneManager {
     add(mesh, element, addUniverse = true) {
 		this.scene.add(mesh);
         if (addUniverse) {
-            Universe.set(mesh.uuid, element);
+            Universe.set(element.name, element);
         }
 	}
 
 	remove(mesh) {
 		this.scene.remove(mesh);
-		Universe.remove(mesh.uuid);
+		Universe.remove(mesh.name);
 	}
 
     setClearColor(value) {

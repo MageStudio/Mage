@@ -7,7 +7,8 @@ import BaseScript from '../scripts/BaseScript';
 
 export default class Entity {
 
-	constructor() {
+	constructor(options) {
+		this.setName(options.name || `default_${Math.random()}`);
 		this.script = new BaseScript('default');
 	}
 
@@ -179,11 +180,10 @@ export default class Entity {
 		}
 	}
 
-	name(name) {
+	setName(name) {
 		if (name && this.mesh) {
+			this.name = name;
 			this.mesh.name = name;
-		} else {
-			return this.mesh.name;
 		}
 	}
 

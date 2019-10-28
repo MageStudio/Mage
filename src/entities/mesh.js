@@ -15,14 +15,13 @@ import {
 export default class Mesh extends Entity {
 
 	constructor(geometry, material, options = {}) {
-		super();
+		super(options);
 
 		this.texture = undefined;
 
 		this.options = options;
 		this.geometry = geometry;
 		this.material = material;
-
 		this.mesh = new THREEMesh(this.geometry, this.material);
 
 		if (Config.lights().shadows) {

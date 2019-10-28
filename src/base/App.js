@@ -35,52 +35,17 @@ export class App extends EventDispatcher {
         this.name = this.constructor.name;
 
         const win = getWindow();
-
-        this.log_types = {
-    		"e" : "error",
-    		"w" : "warn",
-    		"i" : "info"
-    	};
-
-
-    	//scnee parameters
-        this.user = undefined;
-        this.clearColor = 0x000000;
-
-    	//debug mode
         this.debug = true;
 
-        //window and mouse variables
-        this.mouseX = 0;
-        this.mouseY = 0;
-        this.zoom = 0;
-
-        this.CAMERA_MAX_Z = 1000;
-        this.CAMERA_MIN_Z = 250;
-
-        // creating manager
-        //this.manager = new AssetsManager();
-        //SceneManager.setAssets(this.assets);
-
-        //this.input = new Input();
-
-        // scene helper
         this.sceneHelper = new SceneHelper();
 
         SceneManager.create();
 
-        // registering listener for events from parent
         if (win) {
             this.windowHalfX = win.innerWidth / 2;
             this.windowHalfY = win.innerHeight / 2;
-            win.addEventListener("onmessage", this.onMessage, false);
-            win.addEventListener("message", this.onMessage, false);
             win.addEventListener('resize', this.onResize);
         }
-    }
-
-    setClearColor(value) {
-        SceneManager.setClearColor(value);
     }
 
     enableInput = () => {
@@ -107,7 +72,6 @@ export class App extends EventDispatcher {
         Input.removeEventListener('meshDeselect', this.onMeshDeselect);
     }
 
-    // input events
     onKeyPress = () => {}
     onKeyDown = () => {}
     onKeyUp = () => {}
@@ -117,8 +81,11 @@ export class App extends EventDispatcher {
     onMeshClick = () => {}
     onMeshDeselect = () => {}
 
-    //onCreate method, ovveride to start creating stuff
-    onCreate() { }
+    onCreate() {}
+    prepareScene() {}
+    onUpdate() {}
+    onFailedTest(message, test) {}
+    onSuccededTest(message) {}
 
     parseScene = ({ meshes = [], models = [], lights = [] }, options = {}) => {
         return new Promise((resolve, reject) => {
@@ -151,26 +118,13 @@ export class App extends EventDispatcher {
         return Promise.resolve();
     }
 
-    //this methods helps you loading heavy stuff
-    preload = (url = this.getJSONUrl()) => {
-        return this.loadScene(url);
-    }
+    preload = (url = this.getJSONUrl()) => this.loadScene(url);
 
-    //do stuff before onCreate method( prepare meshes, whatever )
-    prepareScene() {}
-
-    //needed if user wants to add a customRender method
-    onUpdate() {}
-
-    // window Resized
-    onResize = () => {
-        SceneManager.onResize();
-    };
+    onResize = () => SceneManager.onResize();
 
     render = () => {
         SceneManager.render();
         PostProcessingEngine.render();
-
         this.onUpdate();
         SceneManager.update();
         AssetsManager.update();
@@ -180,15 +134,13 @@ export class App extends EventDispatcher {
 
     init = () => {
         const win = getWindow();
-        if (win && win.keypress) {
-            this._keylistener = new win.keypress.Listener();
-        }
 
         PostProcessingEngine.init();
 
         this.render();
 
         if (this.onCreate instanceof Function) {
+            console.log('calling oncreate');
             this.onCreate();
         } else {
             console.log("[Mage] Something wrong in your onCreate method");
@@ -217,62 +169,6 @@ export class App extends EventDispatcher {
         }
         this.progressAnimation(this.init);
     }
-
-    sendMessage(message) {
-		parent.postMessage(message, location.origin);
-    }
-
-    onMessage() {
-        const origin = event.origin || event.originalEvent.origin;
-        if (origin !== location.origin)
-            return;
-
-    }
-
-    onkey(key, callback) {
-        if (this._keylistener) {
-            this._keylistener.simple_combo(key, callback);
-        }
-    }
-
-    onDocumentMouseWheel(event) {
-    	event.preventDefault();
-    	this.zoom = event.wheelDelta * 0.05;
-    	SceneManager.camera.object.position.z += this.zoom;
-    }
-
-    onDocumentMouseMove(event) {
-    	this.mouseX = event.clientX - this.windowHalfX;
-    	this.mouseY = event.clientY - this.windowHalfY;
-    }
-
-    onDocumentTouchStart(event) {
-    	if (event.touches.length === 1) {
-    		event.preventDefault();
-    		this.mouseX = event.touches[ 0 ].pageX - this.windowHalfX;
-    		this.mouseY = event.touches[ 0 ].pageY - this.windowHalfY;
-    	}
-    }
-
-    onDocumentTouchMove(event) {
-    	if (event.touches.length === 1) {
-    		event.preventDefault();
-    		this.mouseX = event.touches[ 0 ].pageX - this.windowHalfX;
-    		this.mouseY = event.touches[ 0 ].pageY - this.windowHalfY;
-    	}
-    }
-
-    //keyup event
-    keyup(event) {}
-
-    //keydown event
-    keydown(event) {}
-
-    //handling failed tests
-    onFailedTest(message, test) {}
-
-    //handling succesful tests
-    onSuccededTest(message) {}
 
     toJSON() {
         // export everything that is inside Universe
