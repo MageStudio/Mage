@@ -6,7 +6,7 @@ import Entity from './Entity';
 export default class ShaderMesh extends Entity {
 
     constructor(geometry, name, attributes, uniforms, options) {
-        super();
+        super(options);
         this.geometry = geometry;
         this.attributes = attributes;
         this.uniforms = uniforms;

@@ -4,7 +4,9 @@ import { PerspectiveCamera } from 'three';
 export default class Camera extends Entity {
 
 	constructor(options) {
-		super();
+		const name = options.name || 'camera';
+		super({ name });
+
 		this.options = options;
 		this.object = new PerspectiveCamera(
 			options.fov,

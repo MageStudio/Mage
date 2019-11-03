@@ -9,8 +9,9 @@ import Mesh from '../entities/mesh';
 
 export default class LightAmbient extends Light {
 
-    constructor(color, intensity = 1) {
-        super(color, intensity);
+    constructor({ color, intensity = 1, name }) {
+        super({ color, intensity, name });
+
         this.light = new THREEAmbientLight(color);
 
         SceneManager.add(this.light, this);

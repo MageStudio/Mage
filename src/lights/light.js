@@ -3,10 +3,11 @@ import LightEngine from './LightEngine';
 
 export default class Light extends Entity {
 
-	constructor(color, intensity) {
-		super();
+	constructor({ color, intensity, name }) {
+		super({ name });
 		this.color = color;
 		this.intensity = intensity;
+		this.name = name || `light_${Math.random() * 1000}`;
 		this.isLightOn = false;
 		this.mesh = undefined;
 

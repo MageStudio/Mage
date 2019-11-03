@@ -19,6 +19,7 @@ import ControlsManager from './controls/ControlsManager';
 
 import Entity from './entities/Entity';
 import Mesh from './entities/Mesh';
+import Line from './entities/line';
 import AnimatedMesh from './entities/AnimatedMesh';
 import ShaderMesh from './entities/ShaderMesh';
 import Camera from './entities/Camera';
@@ -72,6 +73,7 @@ export {
 
     Entity,
     Mesh,
+    Line,
     AnimatedMesh,
     ShaderMesh,
     Camera,

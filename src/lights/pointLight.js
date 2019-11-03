@@ -10,9 +10,9 @@ import {
 
 export default class LightPoint extends Light {
 
-    constructor(color, intensity, distance, position) {
+    constructor({ color, intensity, distance, position, name }) {
 
-        super(color, intensity);
+        super({ color, intensity, name });
 
         this.geometry = new SphereGeometry(
             LightEngine.holderRadius,

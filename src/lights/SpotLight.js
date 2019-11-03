@@ -12,8 +12,8 @@ import debounce from '../lib/debounce';
 
 export default class SpotLight extends Light {
 
-    constructor(color, intensity, target) {
-        super(color, intensity);
+    constructor({ color, intensity, target, name }) {
+        super({ color, intensity, name });
 
         this.light = new THREESpotLight(color, intensity);
 

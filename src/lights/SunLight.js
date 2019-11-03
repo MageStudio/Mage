@@ -8,12 +8,11 @@ import {
     DirectionalLightHelper
 } from 'three';
 import SceneManager from '../base/SceneManager';
-import debounce from '../lib/debounce';
 
 export default class SunLight extends Light {
 
-    constructor(color, intensity, target) {
-        super(color, intensity);
+    constructor({ color, intensity, target, name }) {
+        super({ color, intensity, name });
 
         this.light = new THREEDirectionalLight(color, intensity);
 

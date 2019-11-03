@@ -16,7 +16,7 @@ export default class AnimatedMesh extends Entity {
 
     constructor(geometry, materials, options) {
 
-        super();
+        super(options);
 
         this.animations = {};
         this.weightSchedule = [];
