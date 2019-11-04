@@ -3,6 +3,8 @@ import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
 import BaseScript from '../scripts/BaseScript';
+import Between from 'between.js';
+
 // import { LightPoint } from '../lights/LightPoint';
 
 export default class Entity {
@@ -162,6 +164,17 @@ export default class Entity {
 		if (this.mesh) {
 			this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
 		}
+	}
+
+	goTo(position, time) {
+		const { x, y, z } = this.position();
+
+		return new Promise((resolve) => {
+			return new Between({ x, y, z}, position)
+				.time(time)
+				.on('update', value => this.position(value))
+				.on('complete', resolve);
+		});
 	}
 
 	uuid(uuid) {

@@ -36,6 +36,7 @@
     "shader"
   ],
   "dependencies": {
+    "between.js": "^0.1.2-fix.2",
     "colors": "*",
     "connect": "^3.6.6",
     "hotkeys-js": "3.7.2",
