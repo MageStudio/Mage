@@ -8,8 +8,9 @@ import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
 import Input from './input/Input';
-
 import LightEngine from '../lights/LightEngine';
+
+import { renderUI } from '../ui/render';
 
 import Vivus from 'vivus';
 
@@ -80,6 +81,10 @@ export class App extends EventDispatcher {
     onMouseMove = () => {}
     onMeshClick = () => {}
     onMeshDeselect = () => {}
+
+    enableUI = (RootComponent, options) => {
+        renderUI(RootComponent, options);
+    }
 
     onCreate() {}
     prepareScene() {}

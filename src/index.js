@@ -5,7 +5,7 @@ import BackgroundSound from './audio/BackgroundSound';
 import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
 
-import * as THREE from 'three';
+//import * as THREE from 'three';
 import App, { start, author } from './base/App';
 import Universe from './base/Universe';
 import Color from './base/Color';
@@ -50,8 +50,6 @@ import PostProcessingEngine from './fx/postprocessing/PostProcessingEngine';
 export {
     start,
     author,
-
-    THREE,
 
     App,
     Config,
