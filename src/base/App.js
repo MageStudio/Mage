@@ -82,7 +82,10 @@ export class App extends EventDispatcher {
     onMeshClick = () => {}
     onMeshDeselect = () => {}
 
-    enableUI = (RootComponent, options) => {
+    enableUI = (RootComponent, _options) => {
+        const options = {
+            scene: this
+        };
         renderUI(RootComponent, options);
     }
 
