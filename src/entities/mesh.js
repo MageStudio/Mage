@@ -35,6 +35,10 @@ export default class Mesh extends Entity {
 		SceneManager.add(this.mesh, this, addUniverse);
 	}
 
+	destroy() {
+		SceneManager.remove(this.mesh);
+	}
+
 	setTexture(textureid) {
 		if (textureid &&
 			this.texture !== textureid &&
