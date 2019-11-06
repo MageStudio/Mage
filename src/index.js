@@ -6,7 +6,7 @@ import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
 
 //import * as THREE from 'three';
-import App, { start, author } from './base/App';
+import App, { author } from './base/App';
 import Universe from './base/Universe';
 import Color from './base/Color';
 import * as util from './base/util';
@@ -20,8 +20,8 @@ import ControlsManager from './controls/ControlsManager';
 import Entity from './entities/Entity';
 import Mesh from './entities/Mesh';
 import Line from './entities/line';
-import AnimatedMesh from './entities/AnimatedMesh';
-import ShaderMesh from './entities/ShaderMesh';
+//import AnimatedMesh from './entities/AnimatedMesh';
+//import ShaderMesh from './entities/ShaderMesh';
 import Camera from './entities/Camera';
 
 import AmbientLight from './lights/AmbientLight';
@@ -48,7 +48,6 @@ import ShadersEngine from './fx/shaders/ShadersEngine';
 import PostProcessingEngine from './fx/postprocessing/PostProcessingEngine';
 
 export {
-    start,
     author,
 
     App,
@@ -72,8 +71,8 @@ export {
     Entity,
     Mesh,
     Line,
-    AnimatedMesh,
-    ShaderMesh,
+    //AnimatedMesh,
+    //ShaderMesh,
     Camera,
 
     Sound,

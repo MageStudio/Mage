@@ -2,7 +2,7 @@ import {
 	Color as THREEColor
 } from 'three';
 
-export class Color {
+export default class Color {
 
 	static randomColor() {
 		const letters = '0123456789ABCDEF'.split('');

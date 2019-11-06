@@ -428,3 +428,5 @@ export class OceanSimVertex {
         ].join( '\n' )
     }
 }
+
+export default {};
