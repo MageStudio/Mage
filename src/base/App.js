@@ -12,8 +12,6 @@ import LightEngine from '../lights/LightEngine';
 
 import { renderUI } from '../ui/render';
 
-import Vivus from 'vivus';
-
 import {
     Scene,
     EventDispatcher
@@ -158,19 +156,6 @@ export class App extends EventDispatcher {
     load = () => {
         if (!(typeof this.progressAnimation == "function")) {
             this.progressAnimation = (callback) => {
-        		new Vivus("mage", {
-                    type: 'oneByOne',
-                    duration: 1000,
-                    onReady: function() {
-            			document.getElementById('mage').classList.add('visible');
-            		}
-                });
-                setTimeout(() => {
-                    document.getElementById('loader').classList.add('fadeout');
-                }, 5000)
-                setTimeout(() => {
-                    document.getElementById('loader').classList.add('invisible');
-                }, 6000);
         		callback();
         	}
 

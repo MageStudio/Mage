@@ -5,6 +5,7 @@ import AmbientSound from '../audio/AmbientSound';
 import BaseScript from '../scripts/BaseScript';
 import Between from 'between.js';
 
+import SceneManager from '../base/SceneManager';
 // import { LightPoint } from '../lights/LightPoint';
 
 export default class Entity {
@@ -20,6 +21,12 @@ export default class Entity {
 
 	update(dt) {
 		this.scriptEnabled && this.script.update(dt);
+	}
+
+	destroy() {
+		if (this.mesh) {
+			SceneManager.remove(this.mesh);
+		}
 	}
 
 	addScript(name, enabled = true) {
