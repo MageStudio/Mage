@@ -20,7 +20,10 @@ export default class Entity {
 	}
 
 	update(dt) {
-		this.scriptEnabled && this.script.update(dt);
+		return new Promise((resolve) => {
+			this.scriptEnabled && this.script.update(dt);
+			resolve();
+		});
 	}
 
 	destroy() {

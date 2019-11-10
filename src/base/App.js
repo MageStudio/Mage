@@ -150,7 +150,6 @@ export class App extends EventDispatcher {
         this.render();
 
         if (this.onCreate instanceof Function) {
-            console.log('calling oncreate');
             this.onCreate();
         } else {
             console.log("[Mage] Something wrong in your onCreate method");
