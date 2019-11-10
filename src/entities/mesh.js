@@ -84,6 +84,10 @@ export default class Mesh extends Entity {
 		this.mesh.material = material;
 	}
 
+	setWireframe(flag = true) {
+		this.mesh.material.wireframe = flag;
+	}
+
 	toJSON() {
 		return {
 			mesh: this.mesh.toJSON(),

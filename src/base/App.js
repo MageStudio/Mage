@@ -4,6 +4,7 @@ import SceneManager from './SceneManager';
 import SceneHelper from './SceneHelper';
 import util from './util';
 import Config from './config';
+import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
@@ -11,8 +12,6 @@ import Input from './input/Input';
 import LightEngine from '../lights/LightEngine';
 
 import { renderUI } from '../ui/render';
-
-import Vivus from 'vivus';
 
 import {
     Scene,
@@ -82,11 +81,12 @@ export class App extends EventDispatcher {
     onMeshClick = () => {}
     onMeshDeselect = () => {}
 
-    enableUI = (RootComponent, _options) => {
-        const options = {
-            scene: this
+    enableUI = (RootComponent, _props) => {
+        const props = {
+            scene: this,
+            ..._props
         };
-        renderUI(RootComponent, options);
+        renderUI(RootComponent, props);
     }
 
     onCreate() {}
@@ -136,6 +136,7 @@ export class App extends EventDispatcher {
         this.onUpdate();
         SceneManager.update();
         AssetsManager.update();
+        Stats.update();
 
         requestAnimFrame(this.render.bind(this));
     }
@@ -144,6 +145,7 @@ export class App extends EventDispatcher {
         const win = getWindow();
 
         PostProcessingEngine.init();
+        Stats.init();
 
         this.render();
 
@@ -158,19 +160,6 @@ export class App extends EventDispatcher {
     load = () => {
         if (!(typeof this.progressAnimation == "function")) {
             this.progressAnimation = (callback) => {
-        		new Vivus("mage", {
-                    type: 'oneByOne',
-                    duration: 1000,
-                    onReady: function() {
-            			document.getElementById('mage').classList.add('visible');
-            		}
-                });
-                setTimeout(() => {
-                    document.getElementById('loader').classList.add('fadeout');
-                }, 5000)
-                setTimeout(() => {
-                    document.getElementById('loader').classList.add('invisible');
-                }, 6000);
         		callback();
         	}
 

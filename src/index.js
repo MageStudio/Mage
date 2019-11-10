@@ -10,6 +10,7 @@ import App, { author } from './base/App';
 import Universe from './base/Universe';
 import Color from './base/Color';
 import * as util from './base/util';
+import Stats from './base/Stats';
 import Config from './base/config';
 import Router from './router/Router';
 import SceneManager from './base/SceneManager';
@@ -96,5 +97,6 @@ export {
     Shader,
 
     Color,
-    util
+    util,
+    Stats
 };
