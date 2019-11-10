@@ -3,9 +3,11 @@ import BaseUI from './BaseUI';
 
 export const renderUI = (Component, options = {}) => {
 
-    const root = options.root || '#ui';
-    const scene = options.scene;
+    const {
+        root = '#ui',
+        ...props
+    } = options;
 
     const UI = Component || BaseUI;
-    render(<UI scene={scene} />, document.querySelector(root));
+    render(<UI {...props} />, document.querySelector(root));
 }

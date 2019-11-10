@@ -4,6 +4,7 @@ import SceneManager from './SceneManager';
 import SceneHelper from './SceneHelper';
 import util from './util';
 import Config from './config';
+import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
@@ -80,11 +81,12 @@ export class App extends EventDispatcher {
     onMeshClick = () => {}
     onMeshDeselect = () => {}
 
-    enableUI = (RootComponent, _options) => {
-        const options = {
-            scene: this
+    enableUI = (RootComponent, _props) => {
+        const props = {
+            scene: this,
+            ..._props
         };
-        renderUI(RootComponent, options);
+        renderUI(RootComponent, props);
     }
 
     onCreate() {}
@@ -134,6 +136,7 @@ export class App extends EventDispatcher {
         this.onUpdate();
         SceneManager.update();
         AssetsManager.update();
+        Stats.update();
 
         requestAnimFrame(this.render.bind(this));
     }
@@ -142,6 +145,7 @@ export class App extends EventDispatcher {
         const win = getWindow();
 
         PostProcessingEngine.init();
+        Stats.init();
 
         this.render();
 
