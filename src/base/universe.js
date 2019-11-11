@@ -19,15 +19,14 @@ export class Universe {
 
 	update(delta) {
 		const keys = Object.keys(this.reality);
-		if (keys.length !== 0) {
-			const start = +new Date();
-			do {
-				const o = this.reality[keys.shift()];
-
-				o.update(delta);
-
-			} while (keys.length > 0 && (+new Date() - start < 50));
-		}
+		return new Promise(resolve => {
+			Promise
+				.all(keys.map(k => {
+					const o = this.reality[k];
+					o.update(delta);
+				}))
+				.then(resolve)
+		});
 	}
 
 	toJSON() {
