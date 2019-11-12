@@ -1,6 +1,7 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  */
+import { Subject } from 'rxjs';
 
 class Stats {
 
@@ -9,8 +10,9 @@ class Stats {
         this.prevTime = this.beginTime;
 
         this.frames = 0;
-        this.fps = 0;
-        this.fpsMax = 100;
+        this._fps = 0;
+        this._fpsMax = 100;
+        this.fps = new Subject();
 
         this.memory = performance.memory.usedJSHeapSize / 1048576;
         this.memoryMax = performance.memory.jsHeapSizeLimit / 1048576;
@@ -25,12 +27,15 @@ class Stats {
         const time = (performance || Date).now();
 
         if (time >= this.prevTime + 1000) {
-            this.fps =  (this.frames * 1000)/(time - this.prevTime);
+            this._fps =  (this.frames * 1000)/(time - this.prevTime);
             this.prevTime = time;
             this.frames = 0;
+            this.fps.next(this._fps);
         }
 
         this.beginTime = time;
+
+        return this._fps;
     }
 
     getMemory() {

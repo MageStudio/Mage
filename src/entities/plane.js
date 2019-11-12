@@ -17,9 +17,13 @@ export default class Plane extends Entity {
 	constructor(height, width, options = {}) {
 		super(options);
 
-        const { color = 0xfffffff } = options;
+        const {
+            color = 0xfffffff,
+            transparent = false,
+            opacity = 1
+        } = options;
 
-        this.material = new MeshBasicMaterial({ color, side: DoubleSide });
+        this.material = new MeshBasicMaterial({ color, side: DoubleSide, transparent, opacity });
 		this.geometry = new PlaneGeometry(width, height);
 
 		this.mesh = new Mesh(this.geometry, this.material);
@@ -34,7 +38,7 @@ export default class Plane extends Entity {
 
     face(direction) {
         const vector = new Vector3(direction.x, direction.y, direction.z);
-        
+
         this.mesh.lookAt(vector);
     }
 
