@@ -11,7 +11,6 @@ import SceneManager from '../base/SceneManager';
 export default class Entity {
 
 	constructor(options) {
-		this.setName(options.name || `default_${Math.random()}`);
 		this.script = new BaseScript('default');
 	}
 

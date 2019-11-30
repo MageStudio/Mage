@@ -63,45 +63,53 @@ export default class Mouse extends EventDispatcher {
 		this.mouse.y = - (y / h) * 2 + 1;
     }
 
+    getMouseEvent = (event) => {
+        const { x, y } = this.getRelativeMousePosition(event);
+        this.normalizeMouse(x, y);
+
+        return {
+            x, y,
+            normalized: { ...this.mouse }
+        }
+    }
+
     onMouseMove = () => {
         if (!this.enabled) return;
-
         event.preventDefault();
 
-        const { x, y } = this.getRelativeMousePosition(event);
+        this.mouseMoveEvent.mouse = this.getMouseEvent(event);
 
-        this.normalizeMouse(x, y);
-        this.mouseMoveEvent.mouse = {
-            position: { x, y },
-            normalized: { x: this.mouse.x, y: this.mouse.y }
-        };
         this.dispatchEvent(this.mouseMoveEvent);
+    }
+
+    isIntersectionAMesh = (o) => o.object instanceof Mesh;
+    getMeshFromUniverse = ({ object: { name } = {} }) => Universe.get(name);
+    meshExists = (m) => !!m;
+
+    getIntersections = () => {
+        this.raycaster.setFromCamera(this.mouse, SceneManager.camera.object);
+
+        const intersects = this.raycaster.intersectObjects(SceneManager.scene.children);
+        const filtered = intersects.filter(this.isIntersectionAMesh);
+
+        return filtered
+            .map(this.getMeshFromUniverse)
+            .filter(this.meshExists);
     }
 
     onMouseDown = (event) => {
         if (!this.enabled) return;
-
         event.preventDefault();
 
-        const { x, y } = this.getRelativeMousePosition(event);
-        this.normalizeMouse(x, y);
-        this.mouseDownEvent.mouse = {
-            position: { x, y },
-            normalized: { x: this.mouse.x, y: this.mouse.y }
-        };
+        const mouseEvent = this.getMouseEvent(event);
+        this.mouseDownEvent.mouse = mouseEvent;
+        this.meshClickEvent.mouse = mouseEvent;
+
         this.dispatchEvent(this.mouseDownEvent);
 
-        this.raycaster.setFromCamera(this.mouse, SceneManager.camera.object);
-        const intersects = this.raycaster.intersectObjects(SceneManager.scene.children);
-
-        const filtered = intersects.filter(o => o.object instanceof Mesh);
-        const meshes = filtered.map(o => Universe.get(o.object.uuid)).filter(o => !!o);
-
-        this.meshClickEvent.mouse = {
-            position: { x, y },
-            normalized: { x: this.mouse.x, y: this.mouse.y }
-        };
+        const meshes = this.getIntersections();
         this.meshClickEvent.meshes = meshes;
+
         if (!meshes.length) {
             this.dispatchEvent(this.meshDeselectEvent);
         } else {

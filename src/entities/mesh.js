@@ -17,21 +17,25 @@ export default class Mesh extends Entity {
 	constructor(geometry, material, options = {}) {
 		super(options);
 
-		this.texture = undefined;
+		const {
+			addUniverse = true,
+			name = `default_${Math.random()}`
+		} = options;
 
+		this.texture = undefined;
 		this.options = options;
 		this.geometry = geometry;
 		this.material = material;
 		this.mesh = new THREEMesh(this.geometry, this.material);
 
+		this.setName(name);
+
 		if (Config.lights().shadows) {
 			this.mesh.castShadow = true;
 			this.mesh.receiveShadow = true;
 		}
+
 		this.setMesh();
-
-		const { addUniverse = true } = options;
-
 		SceneManager.add(this.mesh, this, addUniverse);
 	}
 
