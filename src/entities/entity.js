@@ -6,7 +6,6 @@ import BaseScript from '../scripts/BaseScript';
 import Between from 'between.js';
 
 import SceneManager from '../base/SceneManager';
-// import { LightPoint } from '../lights/LightPoint';
 
 export default class Entity {
 
@@ -202,10 +201,14 @@ export default class Entity {
 		}
 	}
 
-	setName(name) {
+	setName(name, { replace = false } = {}) {
 		if (name && this.mesh) {
+			if (replace) this.destroy();
+
 			this.name = name;
 			this.mesh.name = name;
+
+			if (replace) SceneManager.add(this.mesh, this, true);
 		}
 	}
 
