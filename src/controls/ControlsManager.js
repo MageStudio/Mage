@@ -1,6 +1,7 @@
 import SceneManager from '../base/SceneManager';
 import Orbit from './Orbit';
 import Transform from './Transform';
+import FirstPersonControl from './FirstPersonControl';
 
 export class ControlsManager {
 
@@ -8,7 +9,8 @@ export class ControlsManager {
 
         this.controls = {
             orbit: undefined,
-            transform: undefined
+            transform: undefined,
+            fps: undefined
         };
     }
 
@@ -25,6 +27,14 @@ export class ControlsManager {
         if (control && this.controls[control]) {
             return this.controls[control];
         }
+    }
+
+    update() {
+        Object
+            .keys(this.controls)
+            .forEach(control => {
+                this.controls[control] && this.controls[control].update();
+            });
     }
 
     setOrbitControl() {
@@ -44,6 +54,11 @@ export class ControlsManager {
                 this.controls.orbit.enabled = !event.value;
             }
 		});
+    }
+
+    setFirstPersonControl() {
+        this.controls.fps = new FirstPersonControl(SceneManager.camera.object, document.body);
+        this.controls.fps.init();
     }
 }
 

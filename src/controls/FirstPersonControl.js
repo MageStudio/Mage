@@ -1,225 +1,222 @@
 /**
  * @author mrdoob / http://mrdoob.com/
+ * @author Mugen87 / https://github.com/Mugen87
  */
 
 import {
+    EventDispatcher,
     Vector3,
-    Vector2,
-    Spherical,
-    Quaternion,
-    Object3D,
-    MOUSE,
-    EventDispatcher
+    Euler,
+    Raycaster
 } from 'three';
+
+import SceneManager from '../base/SceneManager';
+
+const CHANGE_EVENT = { type: 'change' };
+const LOCK_EVENT = { type: 'lock' };
+const UNLOCK_EVENT = { type: 'unlock' };
 
 const PI_2 = Math.PI / 2;
 
-export default class FIrstPersonControl extends EventDispatcher {
+export default class FirstPersonControl extends EventDispatcher {
 
-    constructor(camera) {
-        this._camera = camera;
+    constructor(camera, domElement) {
+        super();
 
+        this.camera = camera;
+        this.camera.position.y = 10;
+
+        this.domElement = domElement || document.body;
+        this.isLocked = false;
+
+        this.euler = new Euler( 0, 0, 0, 'YXZ' );
+        this.vector = new Vector3();
+
+        this.raycaster = new Raycaster(new Vector3(), new Vector3(0, - 1, 0), 0, 10);
+
+		this.movingForward = false;
+		this.movingBackward = false;
+		this.movingLeft = false;
+		this.movingRight = false;
+		this.canJump = false;
+		this.prevTime = performance.now();
+		this.velocity = new Vector3();
+		this.direction = new Vector3();
     }
 
     init() {
-        // setting listeners on this.domElement
-        // calling this.update once
+        document.addEventListener('click', this.onClick.bind(this), false);
+        document.addEventListener('mousemove', this.onMouseMove.bind(this), false);
+        document.addEventListener('keydown', this.onKeyDown.bind(this), false);
+        document.addEventListener('keyup', this.onKeyUp.bind(this), false);
+		document.addEventListener('pointerlockchange', this.onPointerlockChange.bind(this), false);
+		document.addEventListener('pointerlockerror', this.onPointerlockError.bind(this), false);
     }
 
-    onMouseMove = (event) => {
-        if (!this.enabled) return;
+    dispose() {
+        document.removeEventListener('click', this.onClick, false);
+        document.removeEventListener('mousemove', this.onMouseMove, false);
+        document.removeEventListener('keydown', this.onKeyDown, false);
+        document.removeEventListener('keyup', this.onKeyUp, false);
+		document.removeEventListener('pointerlockchange', this.onPointerlockChange, false);
+		document.removeEventListener('pointerlockerror', this.onPointerlockError, false);
+
+        this.unlock();
+    }
+
+    getObject() { // retaining this method for backward compatibility
+		return this.camera;
+	};
+
+    getDirection = (() => {
+		const direction = new Vector3(0, 0, - 1);
+
+		return (v) => {
+			return v.copy(direction).applyQuaternion(this.camera.quaternion);
+		};
+
+	})();
+
+    onClick() {
+        if (!this.isLocked) {
+            this.lock();
+        }
+    }
+
+    onKeyDown(event) {
+		switch (event.keyCode) {
+			case 38: // up
+			case 87: // w
+				this.movingForward = true;
+				break;
+			case 37: // left
+			case 65: // a
+				this.movingLeft = true;
+				break;
+			case 40: // down
+			case 83: // s
+				this.movingBackward = true;
+				break;
+			case 39: // right
+			case 68: // d
+				this.movingRight = true;
+				break;
+			case 32: // space
+				if (this.canJump === true ) this.velocity.y += 350;
+				this.canJump = false;
+				break;
+		}
+	};
+
+    onKeyUp(event) {
+		switch (event.keyCode) {
+			case 38: // up
+			case 87: // w
+				this.movingForward = false;
+				break;
+			case 37: // left
+			case 65: // a
+				this.movingLeft = false;
+				break;
+			case 40: // down
+			case 83: // s
+				this.movingBackward = false;
+				break;
+			case 39: // right
+			case 68: // d
+				this.movingRight = false;
+				break;
+		}
+	};
+
+
+    onMouseMove(event) {
+		if (!this.isLocked) return;
 
 		const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
 		const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
 
-		this.yawObject.rotation.y -= movementX * 0.002;
-		this.pitchObject.rotation.x -= movementY * 0.002;
+		this.euler.setFromQuaternion(this.camera.quaternion);
 
-		this.pitchObject.rotation.x = Math.max( - PI_2, Math.min( PI_2, this.pitchObject.rotation.x ) );
-    }
+		this.euler.y -= movementX * 0.002;
+		this.euler.x -= movementY * 0.002;
 
-    onKeyDown = ({ keyCode }) => {
-        switch (keyCode) {
-			case 38: // up
-			case 87: // w
-				this.moveForward = true;
-				break;
+		this.euler.x = Math.max(-PI_2, Math.min(PI_2, this.euler.x));
 
-			case 37: // left
-			case 65: // a
-				this.moveLeft = true;
-                break;
+		this.camera.quaternion.setFromEuler(this.euler);
 
-			case 40: // down
-			case 83: // s
-				this.moveBackward = true;
-				break;
+		this.dispatchEvent(CHANGE_EVENT);
+	}
 
-			case 39: // right
-			case 68: // d
-				this.moveRight = true;
-				break;
-
-			case 32: // space
-				if (this.canJump) {
-                    this.velocity.y += 10;
-                }
-				this.canJump = false;
-				break;
+    onPointerlockChange() {
+		if (document.pointerLockElement === this.domElement) {
+			this.dispatchEvent(LOCK_EVENT);
+			this.isLocked = true;
+		} else {
+			this.dispatchEvent(UNLOCK_EVENT);
+			this.isLocked = false;
 		}
-    }
+	}
 
-    onKeyUp = ({ keyCode }) => {
-        switch(keyCode) {
+    onPointerlockError(e) {
+		console.error('Unable to use Pointer Lock API', e);
+	}
 
-            case 38: // up
-            case 87: // w
-                this.moveForward = false;
-                break;
+    moveForward(distance) {
+		// move forward parallel to the xz-plane
+		// assumes camera.up is y-up
+		this.vector.setFromMatrixColumn(this.camera.matrix, 0);
+		this.vector.crossVectors(this.camera.up, this.vector);
+		this.camera.position.addScaledVector(this.vector, distance);
+	};
 
-            case 37: // left
-            case 65: // a
-                this.moveLeft = false;
-                break;
+    moveRight(distance) {
+		this.vector.setFromMatrixColumn(this.camera.matrix, 0);
+		this.camera.position.addScaledVector(this.vector, distance);
+	};
 
-            case 40: // down
-            case 83: // s
-                this.moveBackward = false;
-                break;
+    lock() {
+		this.domElement.requestPointerLock();
+	};
 
-            case 39: // right
-            case 68: // d
-                this.moveRight = false;
-                break;
+    unlock() {
+		document.exitPointerLock();
+	};
 
-        }
+    update() {
+        if (this.isLocked) {
+    		this.raycaster.ray.origin.copy( this.getObject().position );
+    		this.raycaster.ray.origin.y -= 10;
+
+    		const intersections = this.raycaster.intersectObjects(SceneManager.scene.children);
+    		const onObject = intersections.length > 0;
+    		const time = performance.now();
+    		const delta = ( time - this.prevTime ) / 1000;
+
+    		this.velocity.x -= this.velocity.x * 10.0 * delta;
+    		this.velocity.z -= this.velocity.z * 10.0 * delta;
+    		this.velocity.y -= 9.8 * 100.0 * delta; // 100.0 = mass
+    		this.direction.z = Number( this.movingForward ) - Number( this.movingBackward );
+    		this.direction.x = Number( this.movingRight ) - Number( this.movingLeft );
+    		this.direction.normalize(); // this ensures consistent movements in all this.directions
+
+    		if ( this.movingForward || this.movingBackward ) this.velocity.z -= this.direction.z * 400.0 * delta;
+    		if ( this.movingLeft || this.movingRight ) this.velocity.x -= this.direction.x * 400.0 * delta;
+    		if ( onObject === true ) {
+    			this.velocity.y = Math.max( 0, this.velocity.y );
+    			this.canJump = true;
+    		}
+
+    		this.moveRight(- this.velocity.x * delta);
+    		this.moveForward(- this.velocity.z * delta);
+    		this.getObject().position.y += (this.velocity.y * delta); // new behavior
+
+    		if (this.getObject().position.y < 10) {
+    			this.velocity.y = 0;
+    			this.getObject().position.y = 10;
+    			this.canJump = true;
+    		}
+    		this.prevTime = time;
+    	}
     }
 }
-
-
-THREE.PointerLockControls = function ( camera ) {
-
-	var scope = this;
-
-	camera.rotation.set( 0, 0, 0 );
-
-	var pitchObject = new THREE.Object3D();
-	pitchObject.add( camera );
-
-	var yawObject = new THREE.Object3D();
-	yawObject.position.y = 10;
-	yawObject.add( pitchObject );
-
-	var moveForward = false;
-	var moveBackward = false;
-	var moveLeft = false;
-	var moveRight = false;
-
-	var isOnObject = false;
-	var canJump = false;
-
-	var velocity = new THREE.Vector3();
-
-
-	var onMouseMove = function ( event ) {
-
-
-
-	};
-
-	var onKeyDown = function ( event ) {
-		l("inside pointer lock controls onKeyDown " + event.keyCode);
-
-
-	};
-
-	var onKeyUp = function ( event ) {
-
-
-
-	};
-
-	document.addEventListener( 'mousemove', onMouseMove, false );
-	document.addEventListener( 'keydown', onKeyDown, false );
-	document.addEventListener( 'keyup', onKeyUp, false );
-
-	this.enabled = false;
-
-	this.getObject = function () {
-
-		return yawObject;
-
-	};
-
-	this.isOnObject = function ( boolean ) {
-
-		isOnObject = boolean;
-		canJump = boolean;
-
-	};
-
-	this.getDirection = function() {
-
-		// assumes the camera itself is not rotated
-
-		var direction = new THREE.Vector3( 0, 0, -1 );
-		var rotation = new THREE.Euler( 0, 0, 0, "YXZ" );
-
-		return function( v ) {
-
-			rotation.set( pitchObject.rotation.x, yawObject.rotation.y, 0 );
-
-			v.copy( direction ).applyEuler( rotation );
-
-			return v;
-
-		}
-
-	}();
-
-	this.update = function ( delta ) {
-
-		if ( scope.enabled === false )  {
-			l("pointerlock not enabled. please enable it.");
-			return;
-		}
-
-		delta *= 0.1;
-
-		//velocity.x += ( - velocity.x ) * 0.08 * delta;
-		//velocity.z += ( - velocity.z ) * 0.08 * delta;
-
-		velocity.y -= 0.25 * delta;
-
-		var V = 0.1;
-
-		if ( moveForward ) velocity.z = -V;//-= V * delta;
-		if ( moveBackward ) velocity.z = V;//+= V * delta;
-		if (!moveBackward && !moveForward) velocity.z = 0;
-
-		if ( moveLeft ) velocity.x =  -V//-= V * delta;
-		if ( moveRight ) velocity.x = V//+= V * delta;
-		if (!moveRight && !moveLeft) velocity.x = 0;
-
-		if ( isOnObject === true ) {
-
-			velocity.y = Math.max( 0, velocity.y );
-
-		}
-
-		yawObject.translateX( velocity.x );
-		yawObject.translateY( velocity.y );
-		yawObject.translateZ( velocity.z );
-
-		if ( yawObject.position.y < 10 ) {
-
-			velocity.y = 0;
-			yawObject.position.y = 10;
-
-			canJump = true;
-
-		}
-
-	};
-
-};
