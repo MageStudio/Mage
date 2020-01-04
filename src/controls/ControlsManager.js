@@ -2,6 +2,7 @@ import SceneManager from '../base/SceneManager';
 import Orbit from './Orbit';
 import Transform from './Transform';
 import FirstPersonControl from './FirstPersonControl';
+import FlyControl from './FlyControl';
 
 export class ControlsManager {
 
@@ -10,7 +11,8 @@ export class ControlsManager {
         this.controls = {
             orbit: undefined,
             transform: undefined,
-            fps: undefined
+            fps: undefined,
+            fly: undefined
         };
     }
 
@@ -33,7 +35,7 @@ export class ControlsManager {
         Object
             .keys(this.controls)
             .forEach(control => {
-                this.controls[control] && this.controls[control].update();
+                this.controls[control] && this.controls[control].update(SceneManager.clock.getDelta());
             });
     }
 
@@ -59,6 +61,11 @@ export class ControlsManager {
     setFirstPersonControl() {
         this.controls.fps = new FirstPersonControl(SceneManager.camera.object, document.body);
         this.controls.fps.init();
+    }
+
+    setFlyControl() {
+        this.controls.fly = new FlyControl(SceneManager.camera.object, document.body);
+        this.controls.fly.init();
     }
 }
 
