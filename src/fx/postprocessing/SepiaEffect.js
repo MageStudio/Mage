@@ -27,11 +27,12 @@ const SepiaShader = {
 	].join( "\n" )
 }
 
-export default (options) => {
-    const pass = new ShaderPass(SepiaShader);
-    if (options.renderToScreen) {
-        pass.renderToScreen = true;
-    }
+export default ({ value = 1.0, renderToScreen = true }) => {
+	const shader = SepiaShader;
+	shader.uniforms.amount.value = value;
+
+    const pass = new ShaderPass(shader);
+    pass.renderToScreen = renderToScreen;
 
     return pass;
 }
