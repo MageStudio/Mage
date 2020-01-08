@@ -6,21 +6,32 @@ import BaseScript from '../scripts/BaseScript';
 import Between from 'between.js';
 
 import SceneManager from '../base/SceneManager';
-// import { LightPoint } from '../lights/LightPoint';
 
 export default class Entity {
 
 	constructor(options) {
-		this.script = new BaseScript('default');
+		this.scripts = [];
 	}
 
 	start() {
-		this.scriptEnabled && this.script.start(this);
+		if (this.hasScripts()) {
+			this.scripts.forEach(({ script, enabled }) => {
+				if (enabled) {
+					script.start(this);
+				}
+			});
+		}
 	}
 
 	update(dt) {
 		return new Promise((resolve) => {
-			this.scriptEnabled && this.script.update(dt);
+			if (this.hasScripts()) {
+				this.scripts.forEach(({ script, enabled }) => {
+					if (enabled) {
+						script.update(dt);
+					}
+				});
+			}
 			resolve();
 		});
 	}
@@ -31,18 +42,31 @@ export default class Entity {
 		}
 	}
 
-	addScript(name, enabled = true) {
-		const script = ScriptManager.get(name);
-		if (!script) {
-			console.log("You can\'t add a script that hasn't been loaded.");
-		}
+	hasScripts = () => this.scripts.length > 0;
 
-		this.script = script;
-		this.scriptEnabled = !!script && enabled;
+	setScripts(scripts = []) {
+		this.scripts = scripts.map(name => ({
+			script: ScriptManager.get(name),
+			enabled: true
+		}));
 	}
 
-	enableScript() {
-		this.scriptEnabled = true;
+	addScript(name, enabled = true) {
+		const script = ScriptManager.get(name);
+		if (script) {
+			this.scripts.push({
+				script,
+				enabled
+			})
+		}
+	}
+
+	enableScripts() {
+		this.scriptsEnabled = true;
+	}
+
+	disableScripts() {
+		this.scriptsEnabled = false;
 	}
 
 	setMesh() {
