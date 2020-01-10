@@ -45,6 +45,8 @@ export class ControlsManager {
         this.controls.orbit.init();
 
         this.controls.orbit.addEventListener('change', SceneManager.render);
+
+        return this.controls.orbit;
     }
 
     setTransformControl() {
@@ -56,16 +58,22 @@ export class ControlsManager {
                 this.controls.orbit.enabled = !event.value;
             }
 		});
+
+        return this.controls.transform;
     }
 
     setFirstPersonControl() {
         this.controls.fps = new FirstPersonControl(SceneManager.camera.object, document.body);
         this.controls.fps.init();
+
+        return this.controls.fps;
     }
 
     setFlyControl() {
         this.controls.fly = new FlyControl(SceneManager.camera.object, document.body);
         this.controls.fly.init();
+
+        return this.controls.fly;
     }
 }
 
