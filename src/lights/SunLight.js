@@ -12,7 +12,7 @@ import SceneManager from '../base/SceneManager';
 export default class SunLight extends Light {
 
     constructor({ color, intensity, target, name }) {
-        super({ color, intensity, name });
+        super({ name });
 
         this.light = new THREEDirectionalLight(color, intensity);
 
@@ -47,11 +47,11 @@ export default class SunLight extends Light {
             wireframe: true
         });
 
-         const target = new Mesh(geometry, material);
+        const target = new Mesh(geometry, material);
 
-         target.position(initialPosition);
+        target.position(initialPosition);
 
-         return target;
+        return target;
     }
 
     targetPosition(options) {
@@ -82,7 +82,8 @@ export default class SunLight extends Light {
     addHelper() {
         this.helper = new DirectionalLightHelper(this.light, 10);
         SceneManager.add(this.helper, null, false);
-
+        this.addHolder();
+        /*
         const segments = 8;
         const radius = 5;
         const geometry = new SphereGeometry(radius, segments, segments);
@@ -92,18 +93,16 @@ export default class SunLight extends Light {
         });
 
         this.holder = new Mesh(geometry, material);
+        */
     }
 
     hasTarget() {
         return !!this.target;
     }
 
-    // overriding from base class
     update(dt) {
         super.update(dt);
-        //  setting position if the light is using a helper.
         if (this.hasHelper()) {
-            //this.position(this.holder.position());
             const { x = 0, y = 0, z = 0 } = this.holder.position();
             this.light.position.set(x, y, z);
 
