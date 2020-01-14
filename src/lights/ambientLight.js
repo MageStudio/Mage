@@ -6,6 +6,7 @@ import {
     SphereGeometry
 } from 'three';
 import Mesh from '../entities/mesh';
+import AmbientLampModel from './ambient_lamp.json';
 
 export default class LightAmbient extends Light {
 
@@ -18,18 +19,8 @@ export default class LightAmbient extends Light {
     }
 
     addHelper() {
-        // this helper
-        // setting holder to be some default mesh
         this.helper = true;
-        const segments = 8;
-        const radius = 5;
-        const geometry = new SphereGeometry(radius, segments, segments);
-        const material = new MeshBasicMaterial({
-            color: 0xffff00,
-            wireframe: true,
-        });
-
-        this.holder = new Mesh(geometry, material);
+        this.addHolder(AmbientLampModel);
     }
 
     update(dt) {
