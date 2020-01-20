@@ -8,13 +8,17 @@ import {
     DirectionalLightHelper
 } from 'three';
 import SceneManager from '../base/SceneManager';
+import { SUNLIGHT } from './lightEngine';
 
 export default class SunLight extends Light {
 
-    constructor({ color, intensity, target, name }) {
+    constructor({ color, intensity, position = {}, target, name }) {
         super({ name });
 
         this.light = new THREEDirectionalLight(color, intensity);
+
+        const { x = 0, y = 0, z = 0 } = position;
+        this.light.position.set(x, y, z);
 
         if (target && target instanceof Object) {
             this.target = target;
@@ -83,17 +87,6 @@ export default class SunLight extends Light {
         this.helper = new DirectionalLightHelper(this.light, 10);
         SceneManager.add(this.helper, null, false);
         this.addHolder();
-        /*
-        const segments = 8;
-        const radius = 5;
-        const geometry = new SphereGeometry(radius, segments, segments);
-        const material = new MeshBasicMaterial({
-            color: 0xff0000,
-            wireframe: true
-        });
-
-        this.holder = new Mesh(geometry, material);
-        */
     }
 
     hasTarget() {
@@ -108,6 +101,12 @@ export default class SunLight extends Light {
 
             this.helper.update();
         }
+    }
 
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            type: SUNLIGHT
+        }
     }
 }
