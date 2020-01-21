@@ -43,6 +43,7 @@
     "hotkeys-js": "3.7.2",
     "http": "0.0.0",
     "inferno": "7.3.2",
+    "inferno-create-element": "^7.3.3",
     "ncp": "*",
     "node-prefix": "*",
     "path": "0.12.7",

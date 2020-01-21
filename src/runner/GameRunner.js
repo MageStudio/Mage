@@ -41,6 +41,7 @@ export default class GameRunner {
 
             if (this.running) {
                 // do something with the current running instance
+                this.running.stop();
             }
             // starting the right classname
             const classname = this.get(path);
