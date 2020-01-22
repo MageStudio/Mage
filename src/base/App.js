@@ -160,11 +160,13 @@ export class App extends EventDispatcher {
         }
     };
 
-    stop = () => {
+    dispose = () => {
         // how do we make this stop running
         // we need to kill the scene somehow
         // stop rendering the ui if it's enabled
         this.disableUI();
+        Universe.bigfreeze();
+        SceneManager.dispose();
     };
 
     load = () => {

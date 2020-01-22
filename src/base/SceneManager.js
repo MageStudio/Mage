@@ -73,6 +73,13 @@ export class SceneManager {
         this.createRenderer();
     }
 
+    dispose() {
+        // destroy scene
+        this.scene.dispose();
+        // destroy renderer
+        this.renderer.dispose();
+    }
+
     createCamera() {
         const { ratio } = Config.screen();
         const { fov, near, far } = Config.camera();
@@ -142,8 +149,8 @@ export class SceneManager {
     }
 
     render = () => {
-        this.renderer.autoClear = false;
-        this.renderer.clear(this.clearColor);
+        //this.renderer.autoClear = false;
+        //this.renderer.clear();
         this.renderer.render(this.scene, this.camera.object);
     }
 

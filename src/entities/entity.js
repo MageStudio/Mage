@@ -37,9 +37,13 @@ export default class Entity {
 		});
 	}
 
-	destroy() {
+	dispose() {
 		if (this.mesh) {
 			SceneManager.remove(this.mesh);
+			this.mesh.material.dispose();
+			this.mesh.geometry.dispose();
+
+			//this.mesh.dispose();
 		}
 	}
 

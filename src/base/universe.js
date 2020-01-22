@@ -17,16 +17,28 @@ export class Universe {
 		delete this.reality[id];
 	}
 
-	update(delta) {
+	forEach = (callback) => {
 		const keys = Object.keys(this.reality);
+
+		keys.forEach(k => callback(this.reality[k]));
+	};
+
+	forEachAsync = (callback) => {
+		const keys = Object.keys(this.reality);
+
 		return new Promise(resolve => {
 			Promise
-				.all(keys.map(k => {
-					const o = this.reality[k];
-					o.update(delta);
-				}))
-				.then(resolve)
+				.all(keys.map(k => callback(this.reality[k])))
+				.then(resolve);
 		});
+	}
+
+	update(delta) {
+		return this.forEachAsync(o => o.update(delta));
+	}
+
+	bigfreeze = () => {
+		this.forEach(o => o.dispose());
 	}
 
 	toJSON() {
