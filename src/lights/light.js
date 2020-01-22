@@ -2,7 +2,7 @@ import Entity from '../entities/Entity';
 import Mesh from '../entities/mesh';
 import LightEngine from './LightEngine';
 import {
-	JSONLoader,
+	ObjectLoader,
 	MeshBasicMaterial
 } from 'three';
 import lampModel from './lamp.json';
@@ -32,7 +32,7 @@ export default class Light extends Entity {
 	}
 
 	addHolder = (json = lampModel) => {
-		const loader = new JSONLoader(false);
+		const loader = new ObjectLoader(false);
 		const material = new MeshBasicMaterial({ wireframe: true, color: LAMP_COLOR });
 		const mesh = loader.parse(json);
 

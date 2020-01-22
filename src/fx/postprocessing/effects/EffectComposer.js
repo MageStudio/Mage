@@ -3,9 +3,9 @@
  */
 
 import {
-    WebGLRenderTarget,
-    RGBAFormat,
-    LinearFilter
+	WebGLRenderTarget,
+	RGBAFormat,
+	LinearFilter, Vector2
 } from 'three';
 
 import ShaderPass from './ShaderPass';
@@ -21,14 +21,16 @@ export default class EffectComposer {
 
     	if ( renderTarget === undefined ) {
 
-    		var parameters = {
+    		const parameters = {
     			minFilter: LinearFilter,
     			magFilter: LinearFilter,
     			format: RGBAFormat,
     			stencilBuffer: false
     		};
 
-    		var size = renderer.getDrawingBufferSize();
+			const size = new Vector2();
+
+			this.renderer.getDrawingBufferSize(size);
     		renderTarget = new WebGLRenderTarget( size.width, size.height, parameters );
     		renderTarget.texture.name = 'EffectComposer.rt1';
 
@@ -56,8 +58,10 @@ export default class EffectComposer {
 	addPass(pass) {
 		this.passes.push( pass );
 
-		var size = this.renderer.getDrawingBufferSize();
-		pass.setSize( size.width, size.height );
+		const target = new Vector2();
+
+		this.renderer.getDrawingBufferSize(target);
+		pass.setSize( target.width, target.height );
 	}
 
 	insertPass(pass, index) {
@@ -77,7 +81,7 @@ export default class EffectComposer {
 
 			if ( pass.needsSwap ) {
 				if ( maskActive ) {
-					var context = this.renderer.context;
+					const context = this.renderer.context;
 					context.stencilFunc( context.NOTEQUAL, 1, 0xffffffff );
 					this.copyPass.render( this.renderer, this.writeBuffer, this.readBuffer, delta );
 					context.stencilFunc( context.EQUAL, 1, 0xffffffff );
@@ -97,10 +101,11 @@ export default class EffectComposer {
 
 	reset(renderTarget) {
 		if ( renderTarget === undefined ) {
-			var size = this.renderer.getDrawingBufferSize();
+			const size = new Vector2();
+			this.renderer.getDrawingBufferSize(size);
 
 			renderTarget = this.renderTarget1.clone();
-			renderTarget.setSize( size.width, size.height );
+			renderTarget.setSize(size.width, size.height);
 		}
 
 		this.renderTarget1.dispose();
@@ -116,7 +121,7 @@ export default class EffectComposer {
 		this.renderTarget1.setSize( width, height );
 		this.renderTarget2.setSize( width, height );
 
-		for ( var i = 0; i < this.passes.length; i ++ ) {
+		for ( let i = 0; i < this.passes.length; i ++ ) {
 			this.passes[ i ].setSize( width, height );
 		}
 	}

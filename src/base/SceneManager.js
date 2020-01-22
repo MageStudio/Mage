@@ -17,6 +17,7 @@ export class SceneManager {
     constructor() {
         this.clock = new Clock();
         this.rendererElements = {};
+        this.clearColor = 0x000000;
     }
 
     createScene() {
@@ -63,6 +64,7 @@ export class SceneManager {
 
     setClearColor(value) {
         if (this.renderer) {
+            this.clearColor = value;
             this.renderer.setClearColor(value);
         }
     }
@@ -150,7 +152,9 @@ export class SceneManager {
 
     render = () => {
         //this.renderer.autoClear = false;
-        //this.renderer.clear();
+        this.renderer.setClearColor(this.clearColor);
+        this.renderer.clear();
+        this.renderer.setRenderTarget(null);
         this.renderer.render(this.scene, this.camera.object);
     }
 
