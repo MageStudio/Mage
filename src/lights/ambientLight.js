@@ -1,42 +1,38 @@
 import Light from './Light';
 import SceneManager from '../base/SceneManager';
-import {
-    AmbientLight as THREEAmbientLight,
-    MeshBasicMaterial,
-    SphereGeometry
-} from 'three';
-import Mesh from '../entities/mesh';
+import { AmbientLight as THREEAmbientLight } from 'three';
+import { AMBIENTLIGHT } from './lightEngine';
+import AmbientLampModel from './ambient_lamp.json';
 
 export default class LightAmbient extends Light {
 
-    constructor({ color, intensity = 1, name }) {
+    constructor({ color, intensity = 1, position = {}, name }) {
         super({ color, intensity, name });
 
         this.light = new THREEAmbientLight(color);
+
+        const { x = 0, y = 0, z = 0 } = position;
+        this.light.position.set(x, y, z);
 
         SceneManager.add(this.light, this);
     }
 
     addHelper() {
-        // this helper
-        // setting holder to be some default mesh
         this.helper = true;
-        const segments = 8;
-        const radius = 5;
-        const geometry = new SphereGeometry(radius, segments, segments);
-        const material = new MeshBasicMaterial({
-            color: 0xffff00,
-            wireframe: true,
-        });
-
-        this.holder = new Mesh(geometry, material);
+        this.addHolder(AmbientLampModel);
     }
 
     update(dt) {
         super.update(dt);
-        //  setting position if the light is using a helper.
         if (this.hasHelper()) {
             this.position(this.holder.position())
+        }
+    }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            type: AMBIENTLIGHT
         }
     }
 }

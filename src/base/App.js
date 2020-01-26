@@ -10,6 +10,7 @@ import LightLoader from '../loaders/LightLoader';
 import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
 import Input from './input/Input';
 import LightEngine from '../lights/LightEngine';
+import ControlsManager from '../controls/ControlsManager';
 
 import { renderUI } from '../ui/render';
 
@@ -137,6 +138,7 @@ export class App extends EventDispatcher {
         SceneManager.update();
         AssetsManager.update();
         Stats.update();
+        ControlsManager.update();
 
         requestAnimFrame(this.render.bind(this));
     }

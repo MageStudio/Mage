@@ -8,13 +8,17 @@ import {
     DirectionalLightHelper
 } from 'three';
 import SceneManager from '../base/SceneManager';
+import { SUNLIGHT } from './lightEngine';
 
 export default class SunLight extends Light {
 
-    constructor({ color, intensity, target, name }) {
-        super({ color, intensity, name });
+    constructor({ color, intensity, position = {}, target, name }) {
+        super({ name });
 
         this.light = new THREEDirectionalLight(color, intensity);
+
+        const { x = 0, y = 0, z = 0 } = position;
+        this.light.position.set(x, y, z);
 
         if (target && target instanceof Object) {
             this.target = target;
@@ -47,11 +51,11 @@ export default class SunLight extends Light {
             wireframe: true
         });
 
-         const target = new Mesh(geometry, material);
+        const target = new Mesh(geometry, material);
 
-         target.position(initialPosition);
+        target.position(initialPosition);
 
-         return target;
+        return target;
     }
 
     targetPosition(options) {
@@ -82,33 +86,27 @@ export default class SunLight extends Light {
     addHelper() {
         this.helper = new DirectionalLightHelper(this.light, 10);
         SceneManager.add(this.helper, null, false);
-
-        const segments = 8;
-        const radius = 5;
-        const geometry = new SphereGeometry(radius, segments, segments);
-        const material = new MeshBasicMaterial({
-            color: 0xff0000,
-            wireframe: true
-        });
-
-        this.holder = new Mesh(geometry, material);
+        this.addHolder();
     }
 
     hasTarget() {
         return !!this.target;
     }
 
-    // overriding from base class
     update(dt) {
         super.update(dt);
-        //  setting position if the light is using a helper.
         if (this.hasHelper()) {
-            //this.position(this.holder.position());
             const { x = 0, y = 0, z = 0 } = this.holder.position();
             this.light.position.set(x, y, z);
 
             this.helper.update();
         }
+    }
 
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            type: SUNLIGHT
+        }
     }
 }

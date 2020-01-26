@@ -29,17 +29,17 @@ export class MeshLoader extends Loader {
         return this.loader.parse(mesh);
     }
 
-    loadMesh(parsedMesh, script, texture, options) {
+    loadMesh(parsedMesh, script, texture, meshOptions) {
 
         const { scriptEnabled = true } = this.options;
-        const mesh = new Mesh(parsedMesh.geometry, parsedMesh.material, options);
+        const mesh = new Mesh(parsedMesh.geometry, parsedMesh.material, meshOptions);
 
         mesh.position({ ...parsedMesh.position });
         mesh.rotation({ ...parsedMesh.rotation });
         mesh.scale({ ...parsedMesh.scale });
 
-        if (script && script.name) {
-            mesh.addScript(script.name, scriptEnabled);
+        if (scripts && scripts.length) {
+            mesh.setScripts(scripts, scriptEnabled);
         }
 
         return mesh;

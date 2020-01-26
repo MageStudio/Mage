@@ -1,6 +1,8 @@
 import SceneManager from '../base/SceneManager';
 import Orbit from './Orbit';
 import Transform from './Transform';
+import FirstPersonControl from './FirstPersonControl';
+import FlyControl from './FlyControl';
 
 export class ControlsManager {
 
@@ -8,7 +10,9 @@ export class ControlsManager {
 
         this.controls = {
             orbit: undefined,
-            transform: undefined
+            transform: undefined,
+            fps: undefined,
+            fly: undefined
         };
     }
 
@@ -27,12 +31,22 @@ export class ControlsManager {
         }
     }
 
+    update() {
+        Object
+            .keys(this.controls)
+            .forEach(control => {
+                this.controls[control] && this.controls[control].update(SceneManager.clock.getDelta());
+            });
+    }
+
     setOrbitControl() {
         this.disposePreviousControls(['pointerlock', 'fly']);
         this.controls.orbit = new Orbit(SceneManager.camera.object, SceneManager.renderer.domElement);
         this.controls.orbit.init();
 
         this.controls.orbit.addEventListener('change', SceneManager.render);
+
+        return this.controls.orbit;
     }
 
     setTransformControl() {
@@ -44,6 +58,22 @@ export class ControlsManager {
                 this.controls.orbit.enabled = !event.value;
             }
 		});
+
+        return this.controls.transform;
+    }
+
+    setFirstPersonControl() {
+        this.controls.fps = new FirstPersonControl(SceneManager.camera.object, document.body);
+        this.controls.fps.init();
+
+        return this.controls.fps;
+    }
+
+    setFlyControl() {
+        this.controls.fly = new FlyControl(SceneManager.camera.object, document.body);
+        this.controls.fly.init();
+
+        return this.controls.fly;
     }
 }
 

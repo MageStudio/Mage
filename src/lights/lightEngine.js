@@ -1,5 +1,9 @@
 import SceneManager from '../base/SceneManager';
 
+export const POINTLIGHT = 'pointlight';
+export const AMBIENTLIGHT = 'ambientlight';
+export const SUNLIGHT = 'sunlight';
+
 export class LightEngine {
 
     constructor() {
@@ -27,7 +31,9 @@ export class LightEngine {
     }
 
     toJSON() {
-        return { lights: [] }; 
+        return {
+            lights: this.lights.map(l => l.toJSON())
+        };
     }
 }
 

@@ -1,31 +1,35 @@
 import Light from './Light';
-import LightEngine from './LightEngine';
 import SceneManager from '../base/SceneManager';
+import { POINTLIGHT } from './lightEngine';
 
 import {
-    SphereGeometry,
-    MeshPhongMaterial,
     PointLight as THREEPointLight
 } from 'three';
 
-export default class LightPoint extends Light {
+export default class PointLight extends Light {
 
-    constructor({ color, intensity, distance, position, name }) {
-
+    constructor({ color, intensity, distance, position = {}, name }) {
         super({ color, intensity, name });
 
-        this.geometry = new SphereGeometry(
-            LightEngine.holderRadius,
-            LightEngine.holderSegment,
-            LightEngine.holderSegment
-        );
-        this.material = new MeshPhongMaterial({color: this.color});
-        this.mesh = new Mesh(this.geometry, this.material);
+        this.distance = distance;
         this.light = new THREEPointLight(color, intensity, distance);
 
-        this.mesh.mesh.add(this.light);
+        const { x = 0, y = 0, z = 0 } = position;
+        this.light.position.set(x, y, z);
 
         SceneManager.add(this.light, this);
+    }
 
+    addHelper() {
+        this.helper = true;
+        this.addHolder();
+    }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            distance: this.distance,
+            type: POINTLIGHT
+        }
     }
 }

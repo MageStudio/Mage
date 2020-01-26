@@ -59,7 +59,7 @@ const HueSaturationShader = {
 
 };
 
-export default ({ hue = 0, saturation = 0, ...rest}) => {
+export default ({ hue = 0, saturation = 0, renderToScreen = true }) => {
     const shader = {
         ...HueSaturationShader
     };
@@ -68,9 +68,7 @@ export default ({ hue = 0, saturation = 0, ...rest}) => {
     shader.uniforms.saturation.value = saturation;
 
     const pass = new ShaderPass(shader);
-    if (rest.renderToScreen) {
-        pass.renderToScreen = true;
-    }
+    pass.renderToScreen = renderToScreen;
 
     return pass;
 }

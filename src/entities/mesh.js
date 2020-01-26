@@ -95,11 +95,13 @@ export default class Mesh extends Entity {
 	}
 
 	toJSON() {
-		return {
-			mesh: this.mesh.toJSON(),
-			script: this.script && this.script.toJSON(),
-			texture: this.texture,
-			name: this.name
+		if (this.serializable) {
+			return {
+				mesh: this.mesh.toJSON(),
+				scripts: this.scripts && this.scripts.map(s => s.toJSON()),
+				texture: this.texture
+			}
 		}
+
 	}
 }
