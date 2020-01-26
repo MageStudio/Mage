@@ -227,10 +227,14 @@ export default class Entity {
 		}
 	}
 
-	setName(name) {
+	setName(name, { replace = false } = {}) {
 		if (name && this.mesh) {
+			if (replace) this.destroy();
+
 			this.name = name;
 			this.mesh.name = name;
+
+			if (replace) SceneManager.add(this.mesh, this, true);
 		}
 	}
 

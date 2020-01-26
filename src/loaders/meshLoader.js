@@ -17,8 +17,9 @@ export class MeshLoader extends Loader {
         this.options = options;
         try {
             meshes
-                .map(({mesh, scripts, texture}) => this.loadMesh(this.parseMesh(mesh), scripts, texture))
-                .map(MeshLoader.executeStartScript);
+                .map(({mesh, script, texture, ...opts }) => (
+                    this.loadMesh(this.parseMesh(mesh), script, texture, opts)
+                )).map(MeshLoader.executeStartScript);
         } catch(e) {
             console.log(e);
         }
@@ -28,10 +29,10 @@ export class MeshLoader extends Loader {
         return this.loader.parse(mesh);
     }
 
-    loadMesh(parsedMesh, scripts, texture) {
+    loadMesh(parsedMesh, script, texture, meshOptions) {
 
         const { scriptEnabled = true } = this.options;
-        const mesh = new Mesh(parsedMesh.geometry, parsedMesh.material);
+        const mesh = new Mesh(parsedMesh.geometry, parsedMesh.material, meshOptions);
 
         mesh.position({ ...parsedMesh.position });
         mesh.rotation({ ...parsedMesh.rotation });
