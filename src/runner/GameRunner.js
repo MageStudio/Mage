@@ -41,6 +41,7 @@ export default class GameRunner {
 
             if (this.running) {
                 // do something with the current running instance
+                this.running.dispose();
             }
             // starting the right classname
             const classname = this.get(path);
@@ -58,5 +59,3 @@ export default class GameRunner {
         })
     }
 }
-
-

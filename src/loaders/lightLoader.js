@@ -13,7 +13,6 @@ export class LightLoader extends Loader {
     }
 
     load(lights, { useHelper = false }) {
-        console.log(lights);
         lights.forEach(this.createLight(useHelper));
     }
 

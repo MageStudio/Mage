@@ -17,6 +17,26 @@ export class Universe {
 		delete this.reality[id];
 	}
 
+	forEach = (callback) => {
+		const keys = Object.keys(this.reality);
+
+		keys.forEach(k => callback(this.reality[k]));
+	};
+
+	forEachAsync = (callback) => {
+		const keys = Object.keys(this.reality);
+
+		return new Promise(resolve => {
+			Promise
+				.all(keys.map(k => callback(this.reality[k])))
+				.then(resolve);
+		});
+	}
+
+	// update(delta) {
+	// 	return this.forEachAsync(o => o.update(delta));
+	// }
+
 	update(delta) {
 		const keys = Object.keys(this.reality);
 		return new Promise(resolve => {
@@ -29,10 +49,14 @@ export class Universe {
 		});
 	}
 
+	bigfreeze = () => {
+		this.forEach(o => o.dispose());
+	}
+
 	toJSON() {
 		const meshes = Object.keys(this.reality)
 			.map(k => this.get(k))
-			.filter(m => m.serializable)
+			.filter(m => m.serializable && m.isMesh())
 			.map(m => m.toJSON());
 
 		return { meshes }

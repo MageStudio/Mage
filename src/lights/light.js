@@ -1,11 +1,11 @@
 import Entity from '../entities/Entity';
 import Mesh from '../entities/mesh';
 import LightEngine from './LightEngine';
+import ModelsEngine from '../models/modelsEngine';
 import {
-	JSONLoader,
+	ObjectLoader,
 	MeshBasicMaterial
 } from 'three';
-import lampModel from './lamp.json';
 
 const LAMP_COLOR = 0Xf1c40f;
 
@@ -31,28 +31,36 @@ export default class Light extends Entity {
 		LightEngine.add(this);
 	}
 
-	addHolder = (json = lampModel) => {
-		const loader = new JSONLoader(false);
-		const material = new MeshBasicMaterial({ wireframe: true, color: LAMP_COLOR });
-		const mesh = loader.parse(json);
+	addHolder = (name = 'lightholder') => {
+		const mesh = ModelsEngine.getModel(name);
 
-		//mesh.material.wireframe = true;
-		this.holder = new Mesh(mesh.geometry, material, { addUniverse: true, serializable: false });
-	}
+		if (mesh) {
+			this.holder = mesh;
+			this.holder.setMaterial(MeshBasicMaterial, { wireframe: true, color: LAMP_COLOR });
+			this.holder.serializable = false;
+			this.holder.position({
+				x: this.light.position.x,
+				y: this.light.position.y,
+				z: this.light.position.z
+			});
+		} else {
+			console.warn('[Mage] Couldnt load the lamp holder.');
+		}
+	};
 
 	hasHelper() {
 		return !!this.helper && !!this.holder;
 	}
 
 	// overriding from Entity base class
-	position(position = {}) {
+	position(position = {}, updateHolder = true) {
 		const { x = 0, y = 0, z = 0 } = position;
 
 		if (this.light) {
 	        this.light.position.set(x, y, z);
 		}
 
-		if (this.holder) {
+		if (updateHolder && this.holder) {
 			this.holder.position({ x, y, z });
 		}
 	}

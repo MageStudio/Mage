@@ -37,9 +37,11 @@ export default class Entity {
 		});
 	}
 
-	destroy() {
+	dispose() {
 		if (this.mesh) {
 			SceneManager.remove(this.mesh);
+			this.mesh.material.dispose();
+			this.mesh.geometry.dispose();
 		}
 	}
 
@@ -229,7 +231,7 @@ export default class Entity {
 
 	setName(name, { replace = false } = {}) {
 		if (name && this.mesh) {
-			if (replace) this.destroy();
+			if (replace) this.dispose();
 
 			this.name = name;
 			this.mesh.name = name;

@@ -2,7 +2,6 @@ import Light from './Light';
 import SceneManager from '../base/SceneManager';
 import { AmbientLight as THREEAmbientLight } from 'three';
 import { AMBIENTLIGHT } from './lightEngine';
-import AmbientLampModel from './ambient_lamp.json';
 
 export default class LightAmbient extends Light {
 
@@ -19,7 +18,7 @@ export default class LightAmbient extends Light {
 
     addHelper() {
         this.helper = true;
-        this.addHolder(AmbientLampModel);
+        this.addHolder('ambientlightholder');
     }
 
     update(dt) {
