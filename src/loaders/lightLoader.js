@@ -13,7 +13,6 @@ export class LightLoader extends Loader {
     }
 
     load(lights, { useHelper = false }) {
-        console.log(lights);
         lights.forEach(this.createLight(useHelper));
     }
 
@@ -33,18 +32,9 @@ export class LightLoader extends Loader {
                 break;
         }
 
-<<<<<<< HEAD
         if (light && useHelper) {
             light.addHelper();
         }
-=======
-    _parseLight(light) {
-        return {
-            holder: (light.holder) ? this.loader.parseObject(light.holder) : false,
-            target: (light.target) ? this.loader.parseObject(light.target) : false,
-            light: (light.light) ? this.loader.parseObject(light.light) : false
-        };
->>>>>>> M-52 lights seems to be working with t112
     }
 
     createSunlight({ color, intensity, position, target, name }) {
