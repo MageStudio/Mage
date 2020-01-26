@@ -9,8 +9,9 @@ import SceneManager from '../base/SceneManager';
 
 export default class Entity {
 
-	constructor(options) {
+	constructor({ serializable = true }) {
 		this.scripts = [];
+		this.serializable = serializable;
 	}
 
 	start() {
@@ -44,10 +45,10 @@ export default class Entity {
 
 	hasScripts = () => this.scripts.length > 0;
 
-	setScripts(scripts = []) {
+	setScripts(scripts = [], enabled = true) {
 		this.scripts = scripts.map(name => ({
 			script: ScriptManager.get(name),
-			enabled: true
+			enabled
 		}));
 	}
 
