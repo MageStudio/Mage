@@ -12,15 +12,15 @@ import { SUNLIGHT } from './lightEngine';
 
 export default class SunLight extends Light {
 
-    constructor({ color, intensity, position = {}, target, name }) {
+    constructor({ color, intensity, position = {}, target = {}, name }) {
         super({ name });
 
         this.light = new THREEDirectionalLight(color, intensity);
 
-        const { x = 0, y = 0, z = 0 } = position;
+        const { x = 0, y = 1, z = 0 } = position;
         this.light.position.set(x, y, z);
 
-        if (target && target instanceof Object) {
+        if (target) {
             this.target = target;
             const { x = 0, y = 0, z = 0 } = target;
             this.light.target.position.set(x, y, z);
@@ -90,14 +90,13 @@ export default class SunLight extends Light {
     }
 
     hasTarget() {
-        return !!this.target;
+        return !!this.target && !!this.holder;
     }
 
     update(dt) {
         super.update(dt);
         if (this.hasHelper()) {
-            const { x = 0, y = 0, z = 0 } = this.holder.position();
-            this.light.position.set(x, y, z);
+            this.position(this.holder.position(), false);
 
             this.helper.update();
         }

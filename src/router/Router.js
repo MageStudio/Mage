@@ -82,7 +82,7 @@ class Router {
 
             util.checker
                 .check(this.handleSuccess, this.handleFailure)
-                .then(() => AssetsManager.load())
+                .then(AssetsManager.load)
                 .then(() => {
                     // starts listening
                     if (window) {

@@ -79,12 +79,13 @@ export default class Mesh extends Entity {
 		}
 	}
 
-	setMaterial(MeshMaterial) {
+	setMaterial(MeshMaterial, options = {}) {
 		const material = new MeshMaterial({
 			map: this.mesh.material.map,
 			color: this.mesh.material.color,
 			transparent: this.mesh.material.transparent,
-			opacity: this.mesh.material.opacity
+			opacity: this.mesh.material.opacity,
+			...options
 		});
 
 		this.mesh.material = material;
