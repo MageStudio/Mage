@@ -34,9 +34,9 @@ export class MeshLoader extends Loader {
         const { scriptEnabled = true } = this.options;
         const mesh = new Mesh(parsedMesh.geometry, parsedMesh.material, meshOptions);
 
-        mesh.position({ ...parsedMesh.position });
-        mesh.rotation({ ...parsedMesh.rotation });
-        mesh.scale({ ...parsedMesh.scale });
+        mesh.position = { ...parsedMesh.position };
+        mesh.rotation = { ...parsedMesh.rotation };
+        mesh.scale = { ...parsedMesh.scale };
 
         if (scripts && scripts.length) {
             mesh.setScripts(scripts, scriptEnabled);

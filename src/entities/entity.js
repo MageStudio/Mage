@@ -128,7 +128,7 @@ export default class Entity {
 	}
 
 	addLight(light) {
-		const { x, y, z } = this.position();
+		const { x, y, z } = this.position;
 
 		light.position({ x, y, z });
 		this.light = light;
@@ -148,67 +148,91 @@ export default class Entity {
 		}
 	}
 
-	scale(options) {
-		if (options === undefined) return {
+	get scale() {
+		return (this.mesh) ? {
 			x: this.mesh.scale.x,
 			y: this.mesh.scale.y,
 			z: this.mesh.scale.z
+		} : {
+			x: 1,
+			y: 1,
+			z: 1
 		};
+	}
 
+	set scale({ x, y, z }) {
 		const scale = {
-			x: options.x === undefined ? this.mesh.scale.x : options.x,
-			y: options.y === undefined ? this.mesh.scale.y : options.y,
-			z: options.x === undefined ? this.mesh.scale.z : options.z
-		};
+			x: isUndefined(x) ? this.mesh.scale.x : x,
+			y: isUndefined(y) ? this.mesh.scale.y : y,
+			z: isUndefined(z) ? this.mesh.scale.z : z
+		}
 
 		if (this.mesh) {
 			this.mesh.scale.set(scale.x, scale.y, scale.z);
+		} else {
+			console.warn('[Mage] Missing mesh, cannot apply scale.');
 		}
 	}
 
-	position(options) {
-		if (options === undefined) return {
-			x: this.mesh.position.x,
-			y: this.mesh.position.y,
-			z: this.mesh.position.z
-		};
-
-		const position = {
-			x: options.x === undefined ? this.mesh.position.x : options.x,
-			y: options.y === undefined ? this.mesh.position.y : options.y,
-			z: options.x === undefined ? this.mesh.position.z : options.z
-		};
-
-		if (this.mesh) {
-			this.mesh.position.set(position.x, position.y, position.z);
-		}
-	}
-
-	rotation(options) {
-		if (options === undefined) return {
+	get rotation() {
+		return (this.mesh) ? {
 			x: this.mesh.rotation.x,
 			y: this.mesh.rotation.y,
 			z: this.mesh.rotation.z
+		} : {
+			x: 1,
+			y: 1,
+			z: 1
 		};
+	}
 
+	set rotation({ x, y, z }) {
 		const rotation = {
-			x: options.x === undefined ? this.mesh.rotation.x : options.x,
-			y: options.y === undefined ? this.mesh.rotation.y : options.y,
-			z: options.x === undefined ? this.mesh.rotation.z : options.z
-		};
+			x: isUndefined(x) ? this.mesh.rotation.x : x,
+			y: isUndefined(y) ? this.mesh.rotation.y : y,
+			z: isUndefined(z) ? this.mesh.rotation.z : z
+		}
 
 		if (this.mesh) {
 			this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+		} else {
+			console.warn('[Mage] Missing mesh, cannot apply rotation.');
+		}
+	}
+
+	get position() {
+		return (this.mesh) ? {
+			x: this.mesh.position.x,
+			y: this.mesh.position.y,
+			z: this.mesh.position.z
+		} : {
+			x: 1,
+			y: 1,
+			z: 1
+		};
+	}
+
+	set position({ x, y, z }) {
+		const position = {
+			x: isUndefined(x) ? this.mesh.position.x : x,
+			y: isUndefined(y) ? this.mesh.position.y : y,
+			z: isUndefined(z) ? this.mesh.position.z : z
+		}
+
+		if (this.mesh) {
+			this.mesh.position.set(position.x, position.y, position.z);
+		} else {
+			console.warn('[Mage] Missing mesh, cannot apply position.');
 		}
 	}
 
 	goTo(position, time) {
-		const { x, y, z } = this.position();
+		const { x, y, z } = this.position;
 
 		return new Promise((resolve) => {
 			return new Between({ x, y, z}, position)
 				.time(time)
-				.on('update', value => this.position(value))
+				.on('update', value => this.position = value)
 				.on('complete', resolve);
 		});
 	}

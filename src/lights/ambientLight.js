@@ -24,7 +24,7 @@ export default class LightAmbient extends Light {
     update(dt) {
         super.update(dt);
         if (this.hasHelper()) {
-            this.position(this.holder.position())
+            this.position = this.holder.position;
         }
     }
 

@@ -23,6 +23,7 @@ export default class Light extends Entity {
 		this.helper = undefined;
 		// holder mesh representing the light
 		this.holder = undefined;
+		this.updateHolder = true;
 		// target mesh for the light (only used by directional light)
 		this.target = undefined;
 
@@ -38,11 +39,11 @@ export default class Light extends Entity {
 			this.holder = mesh;
 			this.holder.setMaterial(MeshBasicMaterial, { wireframe: true, color: LAMP_COLOR });
 			this.holder.serializable = false;
-			this.holder.position({
+			this.holder.position = {
 				x: this.light.position.x,
 				y: this.light.position.y,
 				z: this.light.position.z
-			});
+			};
 		} else {
 			console.warn('[Mage] Couldnt load the lamp holder.');
 		}
@@ -52,16 +53,28 @@ export default class Light extends Entity {
 		return !!this.helper && !!this.holder;
 	}
 
+	shouldUpdateHolder(value = true) {
+		this.updateHolder = Boolean(value);
+	}
+
 	// overriding from Entity base class
-	position(position = {}, updateHolder = true) {
+	set position(position = {}) {
 		const { x = 0, y = 0, z = 0 } = position;
 
 		if (this.light) {
 	        this.light.position.set(x, y, z);
 		}
 
-		if (updateHolder && this.holder) {
-			this.holder.position({ x, y, z });
+		if (this.updateHolder && this.holder) {
+			this.holder.position = { x, y, z };
+		}
+	}
+
+	get position() {
+		return {
+			x: this.light.position.x,
+			y: this.light.position.y,
+			z: this.light.position.z
 		}
 	}
 
@@ -98,10 +111,8 @@ export default class Light extends Entity {
 	}
 
 	toJSON() {
-		const { x, y, z } = this.light.position;
-
 		return {
-			position: { x, y, z },
+			position: { ...this.position },
 			color: this.color,
 			intensity: this.intensity,
 			name: this.name

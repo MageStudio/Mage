@@ -50,7 +50,7 @@ export default class SpotLight extends Light {
 
         const target = new Mesh(geometry, material);
 
-        target.position(initialPosition);
+        target.position = initialPosition;
 
         return target;
     }
@@ -58,7 +58,7 @@ export default class SpotLight extends Light {
     targetPosition(options) {
         if (this.target && options === undefined) {
             return {
-                ...this.target.position()
+                ...this.target.position
             };
         }
 
@@ -66,7 +66,7 @@ export default class SpotLight extends Light {
             this.target = this.getTargetMesh(options);
         }
 
-        const { x, y, z } = this.target.position();
+        const { x, y, z } = this.target.position;
 
         const position = {
             x: options.x === undefined ? x : options.x,
@@ -75,7 +75,7 @@ export default class SpotLight extends Light {
         };
 
         if (this.target) {
-            this.target.position(position);
+            this.target.position = position;
             this.light.target.position.set(position.x, position.y, position.z);
         }
     }
@@ -105,7 +105,7 @@ export default class SpotLight extends Light {
         //  setting position if the light is using a helper.
         if (this.hasHelper()) {
             //this.position(this.holder.position());
-            const { x = 0, y = 0, z = 0 } = this.holder.position();
+            const { x = 0, y = 0, z = 0 } = this.holder.position;
             this.light.position.set(x, y, z);
 
             this.helper.update();

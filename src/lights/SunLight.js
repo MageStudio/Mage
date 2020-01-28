@@ -53,23 +53,21 @@ export default class SunLight extends Light {
 
         const target = new Mesh(geometry, material);
 
-        target.position(initialPosition);
+        target.position = initialPosition;
 
         return target;
     }
 
     targetPosition(options) {
         if (this.target && options === undefined) {
-            return {
-                ...this.target.position()
-            };
+            return { ...this.target.position };
         }
 
         if (!this.target) {
             this.target = this.getTargetMesh(options);
         }
 
-        const { x, y, z } = this.target.position();
+        const { x, y, z } = this.target.position;
 
         const position = {
             x: options.x === undefined ? x : options.x,
@@ -78,7 +76,7 @@ export default class SunLight extends Light {
         };
 
         if (this.target) {
-            this.target.position(position);
+            this.target.position = position;
             this.light.target.position.set(position.x, position.y, position.z);
         }
     }
@@ -96,7 +94,9 @@ export default class SunLight extends Light {
     update(dt) {
         super.update(dt);
         if (this.hasHelper()) {
-            this.position(this.holder.position(), false);
+            this.shouldUpdateHolder(false);
+            this.position = this.holder.position();
+            this.shouldUpdateHolder(true);
 
             this.helper.update();
         }
