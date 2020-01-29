@@ -16,23 +16,55 @@ export default class Camera extends Entity {
 		);
 	}
 
-	position(options) {
-		const _x = options.x || this.object.position.x,
-			_y = options.y || this.object.position.y,
-			_z = options.z || this.object.position.z;
+	get rotation() {
+		return (this.object) ? {
+			x: this.object.rotation.x,
+			y: this.object.rotation.y,
+			z: this.object.rotation.z
+		} : {
+			x: 1,
+			y: 1,
+			z: 1
+		};
+	}
+
+	set rotation({ x, y, z }) {
+		const rotation = {
+			x: isUndefined(x) ? this.object.rotation.x : x,
+			y: isUndefined(y) ? this.object.rotation.y : y,
+			z: isUndefined(z) ? this.object.rotation.z : z
+		}
 
 		if (this.object) {
-			this.object.position.set(_x, _y, _z);
+			this.object.rotation.set(rotation.x, rotation.y, rotation.z);
+		} else {
+			console.warn('[Mage] Missing camera, cannot apply rotation.');
 		}
 	}
 
-	rotation(options) {
-		const _x = options.x || this.object.rotation.x,
-			_y = options.y || this.object.rotation.y,
-			_z = options.z || this.object.rotation.z;
+	get position() {
+		return (this.object) ? {
+			x: this.object.position.x,
+			y: this.object.position.y,
+			z: this.object.position.z
+		} : {
+			x: 1,
+			y: 1,
+			z: 1
+		};
+	}
+
+	set position({ x, y, z }) {
+		const position = {
+			x: isUndefined(x) ? this.object.position.x : x,
+			y: isUndefined(y) ? this.object.position.y : y,
+			z: isUndefined(z) ? this.object.position.z : z
+		}
 
 		if (this.object) {
-			this.object.rotation.set(_x, _y, _z);
+			this.object.position.set(position.x, position.y, position.z);
+		} else {
+			console.warn('[Mage] Missing camera, cannot apply position.');
 		}
 	}
 
