@@ -162,9 +162,9 @@ export default class Entity {
 
 	set scale({ x, y, z }) {
 		const scale = {
-			x: isUndefined(x) ? this.mesh.scale.x : x,
-			y: isUndefined(y) ? this.mesh.scale.y : y,
-			z: isUndefined(z) ? this.mesh.scale.z : z
+			x: x === undefined ? this.mesh.scale.x : x,
+			y: y === undefined ? this.mesh.scale.y : y,
+			z: z === undefined ? this.mesh.scale.z : z
 		}
 
 		if (this.mesh) {
@@ -188,9 +188,9 @@ export default class Entity {
 
 	set rotation({ x, y, z }) {
 		const rotation = {
-			x: isUndefined(x) ? this.mesh.rotation.x : x,
-			y: isUndefined(y) ? this.mesh.rotation.y : y,
-			z: isUndefined(z) ? this.mesh.rotation.z : z
+			x: x === undefined ? this.mesh.rotation.x : x,
+			y: y === undefined ? this.mesh.rotation.y : y,
+			z: z === undefined ? this.mesh.rotation.z : z
 		}
 
 		if (this.mesh) {
@@ -214,9 +214,9 @@ export default class Entity {
 
 	set position({ x, y, z }) {
 		const position = {
-			x: isUndefined(x) ? this.mesh.position.x : x,
-			y: isUndefined(y) ? this.mesh.position.y : y,
-			z: isUndefined(z) ? this.mesh.position.z : z
+			x: x === undefined ? this.mesh.position.x : x,
+			y: y === undefined ? this.mesh.position.y : y,
+			z: z === undefined ? this.mesh.position.z : z
 		}
 
 		if (this.mesh) {

@@ -30,9 +30,9 @@ export default class Camera extends Entity {
 
 	set rotation({ x, y, z }) {
 		const rotation = {
-			x: isUndefined(x) ? this.object.rotation.x : x,
-			y: isUndefined(y) ? this.object.rotation.y : y,
-			z: isUndefined(z) ? this.object.rotation.z : z
+			x: x === undefined ? this.object.rotation.x : x,
+			y: y === undefined ? this.object.rotation.y : y,
+			z: z === undefined ? this.object.rotation.z : z
 		}
 
 		if (this.object) {
@@ -56,9 +56,9 @@ export default class Camera extends Entity {
 
 	set position({ x, y, z }) {
 		const position = {
-			x: isUndefined(x) ? this.object.position.x : x,
-			y: isUndefined(y) ? this.object.position.y : y,
-			z: isUndefined(z) ? this.object.position.z : z
+			x: x === undefined ? this.object.position.x : x,
+			y: y === undefined ? this.object.position.y : y,
+			z: z === undefined ? this.object.position.z : z
 		}
 
 		if (this.object) {
