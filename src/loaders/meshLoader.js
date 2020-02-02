@@ -46,7 +46,7 @@ export class MeshLoader extends Loader {
     }
 
     static executeStartScript(element) {
-        element.start.call(element);
+        element.start();
         return element;
     }
 }

@@ -1,5 +1,7 @@
 export default class BaseScript {
 
+    __check() { return true; }
+
     constructor(name) {
         if (name) {
             this.__name = name;

@@ -134,13 +134,15 @@ export class App extends EventDispatcher {
     onResize = () => SceneManager.onResize();
 
     render = () => {
-        SceneManager.render();
-        PostProcessingEngine.render();
-        this.onUpdate();
-        SceneManager.update();
-        AssetsManager.update();
-        Stats.update();
-        ControlsManager.update();
+        const dt = SceneManager.clock.getDelta();
+
+        SceneManager.render(dt);
+        PostProcessingEngine.render(dt);
+        this.onUpdate(dt);
+        SceneManager.update(dt);
+        AssetsManager.update(dt);
+        Stats.update(dt);
+        ControlsManager.update(dt);
 
         requestAnimFrame(this.render.bind(this));
     }

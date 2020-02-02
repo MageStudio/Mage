@@ -38,7 +38,10 @@ export class Universe {
 	// }
 
 	update(delta) {
-		const keys = Object.keys(this.reality);
+		Object
+			.keys(this.reality)
+			.map(k => this.reality[k].update(delta))
+		/*
 		return new Promise(resolve => {
 			Promise
 				.all(keys.map(k => {
@@ -46,7 +49,7 @@ export class Universe {
 					o.update(delta);
 				}))
 				.then(resolve)
-		});
+		});*/
 	}
 
 	bigfreeze = () => {

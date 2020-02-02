@@ -15,8 +15,11 @@ import Config from './base/config';
 import Router from './router/Router';
 import SceneManager from './base/SceneManager';
 import ScriptManager from './scripts/ScriptManager';
-
 import ControlsManager from './controls/ControlsManager';
+
+import BaseScript from './scripts/BaseScript';
+
+import Input from './base/input/Input';
 
 import Entity from './entities/Entity';
 import Mesh from './entities/Mesh';
@@ -69,6 +72,10 @@ export {
 
     MeshLoader,
     LightLoader,
+
+    BaseScript,
+
+    Input,
 
     Entity,
     Mesh,

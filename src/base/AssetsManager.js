@@ -71,9 +71,9 @@ export class AssetsManager {
 		})
 	}
 
-	update() {
-		AudioEngine.update();
-		LightEngine.update();
+	update(dt) {
+		AudioEngine.update(dt);
+		LightEngine.update(dt);
 	}
 
 	loadingMessage(loaded) {}

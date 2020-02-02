@@ -31,11 +31,11 @@ export class ControlsManager {
         }
     }
 
-    update() {
+    update(dt) {
         Object
             .keys(this.controls)
             .forEach(control => {
-                this.controls[control] && this.controls[control].update(SceneManager.clock.getDelta());
+                this.controls[control] && this.controls[control].update(dt);
             });
     }
 

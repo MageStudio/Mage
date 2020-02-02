@@ -202,6 +202,14 @@ export default class Entity {
 		}
 	}
 
+	translate({ x = 0, y = 0, z = 0}) {
+		if (this.mesh) {
+			this.mesh.translateX(x);
+			this.mesh.translateY(y);
+			this.mesh.translateZ(z);
+		}
+	}
+
 	goTo(position, time) {
 		const { x, y, z } = this.position();
 

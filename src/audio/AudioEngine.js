@@ -105,11 +105,11 @@ export class AudioEngine {
 		this.sounds.push(sound);
 	}
 
-	update() {
+	update(dt) {
 		const start = new Date();
 		for (var index in this.sounds) {
 			var sound = this.sounds[index];
-			sound.update(SceneManager.clock.getDelta());
+			sound.update(dt);
 
 			//now handling listener
 			SceneManager.camera.object.updateMatrixWorld();

@@ -21,11 +21,11 @@ export class LightEngine {
         this.lights.push(light);
     }
 
-    update() {
+    update(dt) {
         var start = new Date();
         for (var index in this.lights) {
             var light = this.lights[index];
-            light.update(SceneManager.clock.getDelta());
+            light.update(dt);
             if ((+new Date() - start) > 50) return;
         }
     }
