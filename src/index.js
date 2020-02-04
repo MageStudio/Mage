@@ -48,7 +48,7 @@ import Skybox from './fx/scenery/Skybox';
 import Shader from './fx/shaders/Shader';
 
 import ImagesEngine from './images/ImagesEngine';
-import * as ModelsEngine from './models/modelsEngine';
+import ModelsEngine from './models/modelsEngine';
 import ShadersEngine from './fx/shaders/ShadersEngine';
 import PostProcessingEngine from './fx/postprocessing/PostProcessingEngine';
 
