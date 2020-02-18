@@ -9,7 +9,9 @@ import {
 	MeshLambertMaterial,
 	MeshPhongMaterial,
 	MeshDepthMaterial,
-	MeshStandardMaterial
+	MeshStandardMaterial,
+	Raycaster,
+	Vector3
 } from 'three';
 
 export default class Mesh extends Entity {
@@ -27,6 +29,7 @@ export default class Mesh extends Entity {
 		this.geometry = geometry;
 		this.material = material;
 		this.mesh = new THREEMesh(this.geometry, this.material);
+		this.raycaster = new Raycaster(new Vector3(), new Vector3(0, - 1, 0), 0, 10);
 
 		this.setName(name);
 
@@ -37,6 +40,17 @@ export default class Mesh extends Entity {
 
 		this.setMesh();
 		SceneManager.add(this.mesh, this, addUniverse);
+	}
+
+	update(dt) {
+		super.update(dt);
+		this.raycaster.ray.origin.copy(this.mesh.position);
+		this.raycaster.ray.origin.y -= 10;
+	}
+
+	isOnObject() {
+		const intersections = this.raycaster.intersectObjects(SceneManager.scene.children);
+		return intersections.length > 0;
 	}
 
 	setTexture(textureid) {
