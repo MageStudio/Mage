@@ -13,6 +13,7 @@ import {
 	Raycaster,
 	Vector3
 } from 'three';
+import { DOWN, UP } from '../lib/constants';
 
 export default class Mesh extends Entity {
 
@@ -29,7 +30,11 @@ export default class Mesh extends Entity {
 		this.geometry = geometry;
 		this.material = material;
 		this.mesh = new THREEMesh(this.geometry, this.material);
-		this.raycaster = new Raycaster(new Vector3(), new Vector3(0, - 1, 0), 0, 10);
+
+		this.mesh.geometry.computeBoundingBox();
+		this.boundingBox = this.mesh.geometry.boundingBox;
+
+		this.rayColliders = [];
 
 		this.setName(name);
 
@@ -44,9 +49,50 @@ export default class Mesh extends Entity {
 
 	update(dt) {
 		super.update(dt);
-		this.raycaster.ray.origin.copy(this.mesh.position);
-		this.raycaster.ray.origin.y -= 10;
+		if (this.hasRayColliders()) {
+			this.updateRayColliders();
+		}
 	}
+
+	hasRayColliders = () => this.rayColliders.length > 0;z
+
+	updateRayColliders = () => {
+		this.rayColliders.forEach(({ type, rayCollider }) => {
+			if (type === DOWN) {
+				rayCollider.ray.origin.copy(this.boundingBox.min);
+			} else if (type === UP) {
+				rayCollider.ray.origin.copy(this.boundingBox.max);
+			} else {
+				rayCollider.ray.origin.copy(this.mesh.position);
+			}
+		});
+	};
+
+	createRayColliderFromVector = ({ type, vector }, near, far) => ({
+		type,
+		rayCollider: new Raycaster(new Vector3(), vector, near, far),
+	});
+
+	setRayColliders = (vectors = [], options = {}) => {
+		const { near = 0, far = 10, debug = false } = options;
+
+		this.rayColliders = [
+			...this.rayColliders,
+			...vectors.map((v) => this.createRayColliderFromVector(v, near, far))
+		];
+	};
+
+	checkCollisions = () => {
+		const collisions = [];
+		this.rayColliders.forEach(({ type, rayCollider }) => {
+			const intersections = rayCollider.intersectObjects(SceneManager.scene.children);
+			if (intersections.length > 0) {
+				collisions.push(type);
+			}
+		});
+
+		return collisions;
+	};
 
 	isOnObject() {
 		const intersections = this.raycaster.intersectObjects(SceneManager.scene.children);

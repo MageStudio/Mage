@@ -17,6 +17,8 @@ import SceneManager from './base/SceneManager';
 import ScriptManager from './scripts/ScriptManager';
 import ControlsManager from './controls/ControlsManager';
 
+import * as constants from './lib/constants';
+
 import BaseScript from './scripts/BaseScript';
 
 import Input from './base/input/Input';
@@ -107,5 +109,6 @@ export {
 
     Color,
     util,
+    constants,
     Stats
 };
