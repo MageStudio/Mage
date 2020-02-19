@@ -53,24 +53,21 @@ export default class Mesh extends Entity {
 		return intersections.length > 0;
 	}
 
-	setTexture(textureId, { options = {} }) {
-		if (textureId &&
-			this.texture !== textureId &&
-			this.mesh && this.mesh.material) {
-
+	setTextureMap(textureId, options = {}) {
+		if (textureId && this.mesh && this.mesh.material) {
+			const {
+				repeat = { x: 1, y: 1 },
+				wrap = RepeatWrapping
+			} = options;
 			const texture = ImagesEngine.get(textureId);
 
 			this.texture = textureId;
 
-			texture.wrapS = RepeatWrapping;
-			texture.wrapT = RepeatWrapping;
-
-			const { repeat = { x: 1, y: 1 } } = options;
-
+			texture.wrapS = wrap;
+			texture.wrapT = wrap;
 			texture.repeat.set(repeat.x, repeat.y);
 
-			this.mesh.material.wireframe = false;
-			this.mesh.material = new MeshBasicMaterial({ map: texture });
+			this.mesh.material.map = texture;
 		}
 	}
 
