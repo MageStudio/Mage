@@ -169,8 +169,8 @@ export class SceneManager {
         });
     }
 
-    update() {
-        Universe.update(this.clock.getDelta());
+    update(dt) {
+        Universe.update(dt);
 
         if (Config.physics().enabled && this.physics) {
             this.scene.simulate();
@@ -181,7 +181,7 @@ export class SceneManager {
 
         //updating camera if we need to do so.
         if (this.camera.update) {
-            this.camera.update(this.clock.getDelta());
+            this.camera.update(dt);
         }
     }
 }

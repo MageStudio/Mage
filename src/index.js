@@ -15,8 +15,13 @@ import Config from './base/config';
 import Router from './router/Router';
 import SceneManager from './base/SceneManager';
 import ScriptManager from './scripts/ScriptManager';
-
 import ControlsManager from './controls/ControlsManager';
+
+import * as constants from './lib/constants';
+
+import BaseScript from './scripts/BaseScript';
+
+import Input from './base/input/Input';
 
 import Entity from './entities/Entity';
 import Mesh from './entities/Mesh';
@@ -45,7 +50,7 @@ import Skybox from './fx/scenery/Skybox';
 import Shader from './fx/shaders/Shader';
 
 import ImagesEngine from './images/ImagesEngine';
-import * as ModelsEngine from './models/modelsEngine';
+import ModelsEngine from './models/modelsEngine';
 import ShadersEngine from './fx/shaders/ShadersEngine';
 import PostProcessingEngine from './fx/postprocessing/PostProcessingEngine';
 
@@ -69,6 +74,10 @@ export {
 
     MeshLoader,
     LightLoader,
+
+    BaseScript,
+
+    Input,
 
     Entity,
     Mesh,
@@ -100,5 +109,6 @@ export {
 
     Color,
     util,
+    constants,
     Stats
 };

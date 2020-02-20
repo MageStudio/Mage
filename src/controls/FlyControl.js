@@ -106,8 +106,6 @@ export default class FlyControl extends EventDispatcher {
 
 		this.updateMovementVector();
 		this.updateRotationVector();
-
-        console.log(this.moveVector);
 	};
 
     onKeyUp = (event) => {

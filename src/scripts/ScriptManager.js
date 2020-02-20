@@ -56,12 +56,16 @@ export class ScriptManager {
 		return s;
 	}
 
-	create(name, script = {}) {
-		if (script instanceof BaseScript) {
-			this.set(name, script);
-			return script;
+	create(name, ScriptClass) {
+		if (ScriptClass) {
+			const script = new ScriptClass();
+			if (script.__check && script.__check()) {
+				this.set(name, script);
+			} else {
+				console.error('[Mage] Script:', name, 'needs to be an instance of Script.');
+			}
 		} else {
-			console.error('[Mage] Script: ', name ,' needs to be an instance of Script.');
+			console.error('[Mage] Script not provided.');
 		}
 	}
 }

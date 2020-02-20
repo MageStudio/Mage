@@ -1,15 +1,16 @@
+import Between from 'between.js';
+import { EventDispatcher } from 'three';
+
 import ScriptManager from '../scripts/ScriptManager';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
-import BaseScript from '../scripts/BaseScript';
-import Between from 'between.js';
-
 import SceneManager from '../base/SceneManager';
 
-export default class Entity {
+export default class Entity extends EventDispatcher {
 
 	constructor({ serializable = true }) {
+		super();
 		this.scripts = [];
 		this.serializable = serializable;
 	}
@@ -19,6 +20,7 @@ export default class Entity {
 			this.scripts.forEach(({ script, enabled }) => {
 				if (enabled) {
 					script.start(this);
+					script.__hasStarted(true);
 				}
 			});
 		}
@@ -28,7 +30,7 @@ export default class Entity {
 		return new Promise((resolve) => {
 			if (this.hasScripts()) {
 				this.scripts.forEach(({ script, enabled }) => {
-					if (enabled) {
+					if (script && enabled) {
 						script.update(dt);
 					}
 				});
@@ -47,11 +49,42 @@ export default class Entity {
 
 	hasScripts = () => this.scripts.length > 0;
 
+	startScript(scriptName) {
+		const script = this.scripts.filter(({ name }) => name === scriptName)[0];
+
+		if (script) {
+			script.start(this);
+		} else {
+			console.error('[Mage] Could not find desired script');
+		}
+	}
+
 	setScripts(scripts = [], enabled = true) {
 		this.scripts = scripts.map(name => ({
 			script: ScriptManager.get(name),
 			enabled
 		}));
+
+		if (enabled) {
+			this.start();
+		}
+	}
+
+	addScripts(scripts = [], enabled = true) {
+		const parsedScripts = scripts.map(name => ({
+			script: ScriptManager.get(name),
+			name,
+			enabled
+		}));
+
+		this.scripts = [
+			...this.scripts,
+			parsedScripts
+		];
+
+		if (enabled) {
+			parsedScripts.forEach(({ name }) => this.startScript(name));
+		}
 	}
 
 	addScript(name, enabled = true) {
@@ -59,8 +92,12 @@ export default class Entity {
 		if (script) {
 			this.scripts.push({
 				script,
+				name,
 				enabled
-			})
+			});
+			if (enabled) {
+				script.start(this);
+			}
 		}
 	}
 
@@ -199,6 +236,14 @@ export default class Entity {
 
 		if (this.mesh) {
 			this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+		}
+	}
+
+	translate({ x = 0, y = 0, z = 0}) {
+		if (this.mesh) {
+			this.mesh.translateX(x);
+			this.mesh.translateY(y);
+			this.mesh.translateZ(z);
 		}
 	}
 

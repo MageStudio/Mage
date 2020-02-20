@@ -48,9 +48,8 @@ export class PostProcessingEngine {
         }
     }
 
-    render = () => {
-        const delta = SceneManager.clock.getDelta();
-        this.composer.render(delta);
+    render = (dt) => {
+        this.composer.render(dt);
     }
 }
 

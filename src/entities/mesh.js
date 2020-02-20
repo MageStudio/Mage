@@ -1,4 +1,5 @@
 import Entity from './Entity';
+import Line from './Line';
 import Config from '../base/config';
 import SceneManager from '../base/SceneManager';
 import ImagesEngine from '../images/ImagesEngine';
@@ -9,8 +10,11 @@ import {
 	MeshLambertMaterial,
 	MeshPhongMaterial,
 	MeshDepthMaterial,
-	MeshStandardMaterial
+	MeshStandardMaterial,
+	Raycaster,
+	Vector3
 } from 'three';
+import { DOWN, UP } from '../lib/constants';
 
 export default class Mesh extends Entity {
 
@@ -28,6 +32,11 @@ export default class Mesh extends Entity {
 		this.material = material;
 		this.mesh = new THREEMesh(this.geometry, this.material);
 
+		this.mesh.geometry.computeBoundingBox();
+		this.boundingBox = this.mesh.geometry.boundingBox;
+
+		this.rayColliders = [];
+
 		this.setName(name);
 
 		if (Config.lights().shadows) {
@@ -39,22 +48,90 @@ export default class Mesh extends Entity {
 		SceneManager.add(this.mesh, this, addUniverse);
 	}
 
-	setTexture(textureid) {
-		if (textureid &&
-			this.texture !== textureid &&
-			this.mesh && this.mesh.material) {
+	update(dt) {
+		super.update(dt);
+		if (this.hasRayColliders()) {
+			this.updateRayColliders();
+		}
+	}
 
-			const texture = ImagesEngine.get(textureid);
+	hasRayColliders = () => this.rayColliders.length > 0;z
 
-			this.texture = textureid;
+	updateRayColliders = () => {
+		this.rayColliders.forEach(({ rayCollider, helper }) => {
 
-			texture.wrapS = RepeatWrapping;
-			texture.wrapT = RepeatWrapping;
+			rayCollider.ray.origin.copy(this.mesh.position);
 
-			texture.repeat.set(1, 1);
+			if (helper) {
+				helper.updatePoints(this.getPointsFromRayCollider(rayCollider));
+			}
+		});
+	};
 
-			this.mesh.material.wireframe = false;
-			this.mesh.material = new MeshBasicMaterial({ map: texture });
+	getPointsFromRayCollider = (rayCollider) => {
+		const origin = this.mesh.position.clone();
+		const end = origin.add(rayCollider.ray.direction.clone().multiplyScalar(rayCollider.far));
+		//rayCollider.ray.direction.clone().multiplyScalar(rayCollider.far);
+
+		return [origin, end];
+	}
+
+	createColliderHelper = (rayCollider) => new Line(this.getPointsFromRayCollider(rayCollider));
+
+	createRayColliderFromVector = ({ type, vector }, near, far, debug) => {
+
+		const position = this.mesh.position.clone();
+		const rayCollider = new Raycaster(position, vector, near, far);
+		const helper = debug && this.createColliderHelper(rayCollider);
+
+		return {
+			type,
+			rayCollider,
+			helper
+		};
+	}
+
+	setRayColliders = (vectors = [], options = {}) => {
+		const { near = 0, far = 10, debug = false } = options;
+
+		this.rayColliders = [
+			...this.rayColliders,
+			...vectors.map((v) => this.createRayColliderFromVector(v, near, far, debug))
+		];
+	};
+
+	checkCollisions = () => {
+		const collisions = [];
+		this.rayColliders.forEach(({ type, rayCollider }) => {
+			const intersections = rayCollider.intersectObjects(SceneManager.scene.children);
+			if (intersections.length > 0) {
+				collisions.push(type);
+			}
+		});
+
+		return collisions;
+	};
+
+	isOnObject() {
+		const intersections = this.raycaster.intersectObjects(SceneManager.scene.children);
+		return intersections.length > 0;
+	}
+
+	setTextureMap(textureId, options = {}) {
+		if (textureId && this.mesh && this.mesh.material) {
+			const {
+				repeat = { x: 1, y: 1 },
+				wrap = RepeatWrapping
+			} = options;
+			const texture = ImagesEngine.get(textureId);
+
+			this.texture = textureId;
+
+			texture.wrapS = wrap;
+			texture.wrapT = wrap;
+			texture.repeat.set(repeat.x, repeat.y);
+
+			this.mesh.material.map = texture;
 		}
 	}
 
@@ -100,7 +177,8 @@ export default class Mesh extends Entity {
 			return {
 				mesh: this.mesh.toJSON(),
 				scripts: this.scripts && this.scripts.map(s => s.toJSON()),
-				texture: this.texture
+				texture: this.texture,
+				...this.options
 			}
 		}
 
