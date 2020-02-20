@@ -1,4 +1,5 @@
 import Entity from './Entity';
+import Line from './Line';
 import Config from '../base/config';
 import SceneManager from '../base/SceneManager';
 import ImagesEngine from '../images/ImagesEngine';
@@ -57,28 +58,45 @@ export default class Mesh extends Entity {
 	hasRayColliders = () => this.rayColliders.length > 0;z
 
 	updateRayColliders = () => {
-		this.rayColliders.forEach(({ type, rayCollider }) => {
-			if (type === DOWN) {
-				rayCollider.ray.origin.copy(this.boundingBox.min);
-			} else if (type === UP) {
-				rayCollider.ray.origin.copy(this.boundingBox.max);
-			} else {
-				rayCollider.ray.origin.copy(this.mesh.position);
+		this.rayColliders.forEach(({ rayCollider, helper }) => {
+
+			rayCollider.ray.origin.copy(this.mesh.position);
+
+			if (helper) {
+				helper.updatePoints(this.getPointsFromRayCollider(rayCollider));
 			}
 		});
 	};
 
-	createRayColliderFromVector = ({ type, vector }, near, far) => ({
-		type,
-		rayCollider: new Raycaster(new Vector3(), vector, near, far),
-	});
+	getPointsFromRayCollider = (rayCollider) => {
+		const origin = this.mesh.position.clone();
+		const end = origin.add(rayCollider.ray.direction.clone().multiplyScalar(rayCollider.far));
+		//rayCollider.ray.direction.clone().multiplyScalar(rayCollider.far);
+
+		return [origin, end];
+	}
+
+	createColliderHelper = (rayCollider) => new Line(this.getPointsFromRayCollider(rayCollider));
+
+	createRayColliderFromVector = ({ type, vector }, near, far, debug) => {
+
+		const position = this.mesh.position.clone();
+		const rayCollider = new Raycaster(position, vector, near, far);
+		const helper = debug && this.createColliderHelper(rayCollider);
+
+		return {
+			type,
+			rayCollider,
+			helper
+		};
+	}
 
 	setRayColliders = (vectors = [], options = {}) => {
 		const { near = 0, far = 10, debug = false } = options;
 
 		this.rayColliders = [
 			...this.rayColliders,
-			...vectors.map((v) => this.createRayColliderFromVector(v, near, far))
+			...vectors.map((v) => this.createRayColliderFromVector(v, near, far, debug))
 		];
 	};
 

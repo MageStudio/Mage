@@ -28,6 +28,12 @@ export default class Line extends Entity {
 		SceneManager.add(this.mesh, this, addUniverse);
 	}
 
+    updatePoints = (points) => {
+        const vectors = points.map(({ x, y, z }) => new Vector3(x, y, z));
+        this.mesh.geometry.vertices = vectors;
+        this.mesh.geometry.verticesNeedUpdate = true;
+    }
+
 	toJSON() {
 		return {
 			mesh: this.mesh.toJSON(),
