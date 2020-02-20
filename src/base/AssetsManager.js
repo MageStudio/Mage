@@ -59,7 +59,6 @@ export class AssetsManager {
 				ImagesEngine.load(),
 				ModelsEngine.loadModels(),
 				ShadersEngine.load(),
-				ParticleEngine.load(),
 				ScriptsManager.load()
 			]).then(() => {
 				resolve();
@@ -74,6 +73,7 @@ export class AssetsManager {
 	update(dt) {
 		AudioEngine.update(dt);
 		LightEngine.update(dt);
+		ParticleEngine.update(dt);
 	}
 
 	loadingMessage(loaded) {}

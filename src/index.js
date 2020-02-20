@@ -42,13 +42,15 @@ import Atmosphere from './fx/materials/Atmosphere';
 import Mirror from './fx/materials/Mirror';
 import Ocean from './fx/materials/Ocean';
 
-import Clouds from './fx/particles/Clouds';
-import Rain from './fx/particles/Rain';
+// import Clouds from './fx/particles/Clouds';
+// import Rain from './fx/particles/Rain';
+
 
 import Skybox from './fx/scenery/Skybox';
 
 import Shader from './fx/shaders/Shader';
 
+import ParticleEngine from './fx/particles/ParticleEngine';
 import ImagesEngine from './images/ImagesEngine';
 import ModelsEngine from './models/modelsEngine';
 import ShadersEngine from './fx/shaders/ShadersEngine';
@@ -71,6 +73,7 @@ export {
     ShadersEngine,
     AudioEngine,
     PostProcessingEngine,
+    ParticleEngine,
 
     MeshLoader,
     LightLoader,
@@ -99,9 +102,6 @@ export {
     Atmosphere,
     Mirror,
     Ocean,
-
-    Clouds,
-    Rain,
 
     Skybox,
 
