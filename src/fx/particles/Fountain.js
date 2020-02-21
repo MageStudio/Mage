@@ -1,10 +1,8 @@
-import Partykals from 'partykals';
+import { ParticlesSystem, Randomizers, Emitter } from 'mage-engine.particles';
 import {
     Vector3
 } from 'three';
 import SceneManager from '../../base/SceneManager';
-
-const { ParticlesSystem, Randomizers, Emitter } = Partykals;
 
 export default class Fountain {
 

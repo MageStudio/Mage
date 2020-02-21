@@ -46,7 +46,7 @@
     "inferno-create-element": "^7.3.3",
     "ncp": "*",
     "node-prefix": "*",
-    "partykals": "1.0.1",
+    "mage-engine.particles": "github:MageStudio/partykals#1.0.1",
     "path": "0.12.7",
     "rxjs": "6.5.3",
     "serve-static": "1.13.2",

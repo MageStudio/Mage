@@ -284,10 +284,4 @@ export default class Entity extends EventDispatcher {
 			if (replace) SceneManager.add(this.mesh, this, true);
 		}
 	}
-
-	add(mesh) {
-		if (this.mesh) {
-			this.mesh.add(mesh.mesh);
-		}
-	}
 }
