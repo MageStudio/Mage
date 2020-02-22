@@ -55,6 +55,12 @@ export default class Mesh extends Entity {
 		}
 	}
 
+	add(mesh) {
+		if (this.mesh) {
+			this.mesh.add(mesh.mesh);
+		}
+	}
+
 	hasRayColliders = () => this.rayColliders.length > 0;z
 
 	updateRayColliders = () => {
