@@ -66,6 +66,12 @@ export default class Beat {
 		delay();
 	}
 
+	detune(value) {
+		if (this.sound.source) {
+			this.sound.source.detune.value = value;
+		}
+	}
+
 	onEnd() {
 		if (this._caller.onEndCallback) {
 			this._caller.onEndCallback();

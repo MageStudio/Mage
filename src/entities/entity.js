@@ -133,35 +133,42 @@ export default class Entity extends EventDispatcher {
 	isModel() { return this._isModel; }
 
 	addSound(name, options) {
-		const _autoplay = options.autoplay || false;
-		this.isPlayingSound = _autoplay;
+		const { autoplay = false, ...opts } = options;
+
+		this.isPlayingSound = autoplay;
 		this.sound = new Sound(name, {
 			mesh: this.mesh,
-			autoplay: _autoplay,
-			effect: options.effect
+			autoplay,
+			...opts
 		});
+
+		return this.sound;
 	}
 
 	addDirectionalSound(name, options) {
-		const _autoplay = options.autoplay || false;
-		this.isPlayingSound = _autoplay;
+		const { autoplay = false, ...opts } = options;
+
+		this.isPlayingSound = autoplay;
 		this.sound = new DirectionalSound(name, {
 			mesh: this.mesh,
-			autoplay: _autoplay,
-			effect: options.effect
+			autoplay,
+			...opts
 		});
+
+		return this.sound;
 	}
 
 	addAmbientSound(name, options) {
-		const _autoplay = options.autoplay || false;
-		const _loop = options.loop || false;
-		this.isPlayingSound = _autoplay;
+		const { autoplay = false, ...opts } = options;
+
+		this.isPlayingSound = autoplay;
 		this.sound = new AmbientSound(name, {
 			mesh: this.mesh,
-			autoplay: _autoplay,
-			loop: _loop,
-			effect: options.effect
+			autoplay,
+			...opts
 		});
+
+		return this.sound;
 	}
 
 	addLight(light) {

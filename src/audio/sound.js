@@ -4,10 +4,18 @@ import { Vector3 } from 'three';
 
 export default class Sound extends Beat {
 
-	constructor(name, opt) {
+	constructor(name, options = {}) {
 		super(name);
 
-		var options = opt || {};
+		const {
+			mesh = false,
+			loop = false,
+			effect = false,
+			autoplay = false
+		} = options;
+
+		this.sound.source.loop = loop;
+
 		//creating panner, we need to update on object movements.
 		this.sound.panner = AudioEngine.context.createPanner();
 		//disconnecting from main volume, then connecting to panner and main volume again
@@ -15,14 +23,13 @@ export default class Sound extends Beat {
 		this.sound.volume.connect(this.sound.panner);
 		this.sound.panner.connect(AudioEngine.volume);
 
-		if (options.mesh) {
-			this.mesh = options.mesh;
+		if (mesh) {
+			this.mesh = mesh;
 		} else {
 			this.update = function() {};
 		}
 
-		if (options.effect) {
-
+		if (effect) {
 			this.convolver = AudioEngine.context.createConvolver();
 			this.mixer = AudioEngine.createGain();
 			this.sound.panner.disconnect();
@@ -37,22 +44,16 @@ export default class Sound extends Beat {
 			this.plainGain.connect(AudioEngine.volume);
 			this.convolverGain.connect(AudioEngine.volume);
 
-			this.convolver.buffer = AudioEngine.get(options.effect);
+			this.convolver.buffer = AudioEngine.get(effect);
 			this.convolverGain.gain.value = 0.7;
 			this.plainGain.gain.value = 0.3;
 
 		}
-		//autoplay option
-		var autoplay = options.autoplay || false;
+
 		if (autoplay) {
 			this.start();
 		}
-		//setting listeners if provided
-		//this.onEndCallback = options.onEnd || new Function();
-		//this.onLoopStartCallback = options.onLoopStart || new Function();
-		//this.onLoopEndCallback = options.onLoopEnd || new Function();
 
-		//adding this sound to AudioEngine
 		AudioEngine.add(this);
 	}
 
