@@ -8,21 +8,33 @@ export default class Fountain {
 
     constructor(options = {}) {
 
-        const { container = SceneManager.scene } = options;
+        const {
+            container = SceneManager.scene,
+            particles = {}
+        } = options;
+
+        const {
+            ttl = 10,
+            globalSize = 5,
+            gravity = -10,
+            velocity = new Randomizers.SphereRandomizer(12.5),
+            velocityBonus = new Vector3(0, 25, 0),
+            particlesCount = 1000,
+            ...rest
+        } = particles;
 
         this.system = new ParticlesSystem({
             container,
             particles: {
-                globalSize: 5,
-                ttl: 10,
-                velocity: new Randomizers.SphereRandomizer(12.5),
-                velocityBonus: new Vector3(0, 25, 0),
-                gravity: -10,
-                startColor: new Randomizers.ColorsRandomizer(),
-                endColor: new Randomizers.ColorsRandomizer(),
+                globalSize,
+                ttl,
+                velocity,
+                velocityBonus,
+                gravity,
+                ...rest
             },
             system: {
-                particlesCount: 1000,
+                particlesCount,
                 emitters: new Emitter({
                     onInterval: new Randomizers.MinMaxRandomizer(0, 5),
                     interval: new Randomizers.MinMaxRandomizer(0, 0.25),

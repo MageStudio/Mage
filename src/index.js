@@ -6,6 +6,10 @@ import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
 
 //import * as THREE from 'three';
+import {
+    Vector3,
+    Color as THREEColor
+} from 'three';
 import App, { author } from './base/App';
 import Universe from './base/Universe';
 import Color from './base/Color';
@@ -45,6 +49,7 @@ import Ocean from './fx/materials/Ocean';
 // import Clouds from './fx/particles/Clouds';
 // import Rain from './fx/particles/Rain';
 
+import * as Partykals from 'mage-engine.particles';
 
 import Skybox from './fx/scenery/Skybox';
 
@@ -74,6 +79,7 @@ export {
     AudioEngine,
     PostProcessingEngine,
     ParticleEngine,
+    Partykals,
 
     MeshLoader,
     LightLoader,
@@ -108,6 +114,8 @@ export {
     Shader,
 
     Color,
+    Vector3,
+    THREEColor,
     util,
     constants,
     Stats
