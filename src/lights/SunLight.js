@@ -31,7 +31,7 @@ export default class SunLight extends Light {
             this.light.shadow.mapSize.width = 2048;
             this.light.shadow.mapSize.height = 2048;
 
-            const d = 300;
+            const d = 1024;
 
             this.light.shadow.camera.left = -d;
             this.light.shadow.camera.right = d;

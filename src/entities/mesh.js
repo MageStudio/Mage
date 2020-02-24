@@ -12,7 +12,7 @@ import {
 	MeshDepthMaterial,
 	MeshStandardMaterial,
 	Raycaster,
-	Vector3
+	Color
 } from 'three';
 import { DOWN, UP } from '../lib/constants';
 
@@ -121,6 +121,12 @@ export default class Mesh extends Entity {
 	isOnObject() {
 		const intersections = this.raycaster.intersectObjects(SceneManager.scene.children);
 		return intersections.length > 0;
+	}
+
+	setColor(color) {
+		if (color && this.mesh.material.color) {
+			this.mesh.material.color = new Color(color);
+		}
 	}
 
 	setTextureMap(textureId, options = {}) {

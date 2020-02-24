@@ -11,8 +11,8 @@ export class AudioEngine {
 		this.DELAY_STEP = 1; //millis
 		this.DELAY_MIN_VALUE = 0.2;
 		this.DELAY_NORMAL_VALUE = 40;
-		this.VOLUME = 80;
-		this._volume = 80;
+		this.VOLUME = 20;
+		this._volume = 20;
 
 		this.soundPath = "js/core/sound/";
 		this.soundModules = [
@@ -51,7 +51,7 @@ export class AudioEngine {
 			this.context = new this.AudioContext();
 			//creating a gain node to control volume
 			this.volume = this.context.createGain();
-			this.volume.gain.value = this.VOLUME;
+			this.volume.gain.value = this.getVolume();
 			//connecting volume node to context destination
 			this.volume.connect(this.context.destination);
 		} else {
