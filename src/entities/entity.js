@@ -202,7 +202,7 @@ export default class Entity extends EventDispatcher {
 		const scale = {
 			x: options.x === undefined ? this.mesh.scale.x : options.x,
 			y: options.y === undefined ? this.mesh.scale.y : options.y,
-			z: options.x === undefined ? this.mesh.scale.z : options.z
+			z: options.z === undefined ? this.mesh.scale.z : options.z
 		};
 
 		if (this.mesh) {
@@ -220,7 +220,7 @@ export default class Entity extends EventDispatcher {
 		const position = {
 			x: options.x === undefined ? this.mesh.position.x : options.x,
 			y: options.y === undefined ? this.mesh.position.y : options.y,
-			z: options.x === undefined ? this.mesh.position.z : options.z
+			z: options.z === undefined ? this.mesh.position.z : options.z
 		};
 
 		if (this.mesh) {
@@ -238,7 +238,7 @@ export default class Entity extends EventDispatcher {
 		const rotation = {
 			x: options.x === undefined ? this.mesh.rotation.x : options.x,
 			y: options.y === undefined ? this.mesh.rotation.y : options.y,
-			z: options.x === undefined ? this.mesh.rotation.z : options.z
+			z: options.z === undefined ? this.mesh.rotation.z : options.z
 		};
 
 		if (this.mesh) {
