@@ -180,6 +180,11 @@ export default class Mesh extends Entity {
 		this.mesh.material = material;
 	}
 
+	setOpacity(value = 1.0) {
+		this.mesh.material.transparent = true;
+		this.mesh.material.opacity = value;
+	}
+
 	setWireframe(flag = true) {
 		this.mesh.material.wireframe = flag;
 	}
