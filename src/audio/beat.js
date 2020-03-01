@@ -8,7 +8,7 @@ export default class Beat {
 		this.sound = {};
 		this.sound.source = AudioEngine.context.createBufferSource();
 		this.sound.volume = AudioEngine.context.createGain();
-		this.sound.volume.gain.value = AudioEngine.VOLUME;
+		this.sound.volume.gain.value = AudioEngine.getVolume();
 
 		//setting listeners
 		this.setListeners();
@@ -35,6 +35,10 @@ export default class Beat {
 		this.setListeners();
 	}
 
+	setVolume(value) {
+		this.sound.volume.gain.value = value;
+	}
+
 	start() {
 		const buffer = AudioEngine.get(this.name);
 		if (!buffer) {
@@ -47,7 +51,7 @@ export default class Beat {
 
 		const delay = () => {
 			this.sound.volume.gain.value = this.sound.volume.gain.value + AudioEngine.DELAY_FACTOR;
-			if (this.sound.volume.gain.value < AudioEngine.DELAY_NORMAL_VALUE) {
+			if (this.sound.volume.gain.value < AudioEngine.getVolume()) {
 				setTimeout(delay, AudioEngine.DELAY_STEP);
 			}
 		}
@@ -64,6 +68,12 @@ export default class Beat {
 			}
 		}
 		delay();
+	}
+
+	detune(value) {
+		if (this.sound.source) {
+			this.sound.source.detune.value = value;
+		}
 	}
 
 	onEnd() {

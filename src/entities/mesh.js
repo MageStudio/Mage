@@ -12,7 +12,7 @@ import {
 	MeshDepthMaterial,
 	MeshStandardMaterial,
 	Raycaster,
-	Vector3
+	Color
 } from 'three';
 import { DOWN, UP } from '../lib/constants';
 
@@ -123,6 +123,12 @@ export default class Mesh extends Entity {
 		return intersections.length > 0;
 	}
 
+	setColor(color) {
+		if (color && this.mesh.material.color) {
+			this.mesh.material.color = new Color(color);
+		}
+	}
+
 	setTextureMap(textureId, options = {}) {
 		if (textureId && this.mesh && this.mesh.material) {
 			const {
@@ -172,6 +178,11 @@ export default class Mesh extends Entity {
 		});
 
 		this.mesh.material = material;
+	}
+
+	setOpacity(value = 1.0) {
+		this.mesh.material.transparent = true;
+		this.mesh.material.opacity = value;
 	}
 
 	setWireframe(flag = true) {
