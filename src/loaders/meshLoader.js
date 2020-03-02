@@ -29,7 +29,6 @@ export class MeshLoader extends Loader {
     }
 
     loadMesh(parsedMesh, scripts, texture, meshOptions) {
-
         const { scriptEnabled = true } = this.options;
         const mesh = new Mesh(parsedMesh.geometry, parsedMesh.material, meshOptions);
 
