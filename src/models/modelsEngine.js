@@ -9,18 +9,40 @@ import AssetsManager from '../base/AssetsManager';
 
 const EXTENSIONS = {
 	JSON: 'json',
-	GLTF: 'glb'
+	GLB: 'glb',
+	GLTF: 'gltf'
 };
 
 const FULL_STOP = '.';
 
 const loaders = {
 	[EXTENSIONS.JSON]: new ObjectLoader(),
+	[EXTENSIONS.GLB]: new GLTFLoader(),
 	[EXTENSIONS.GLTF]: new GLTFLoader()
 };
 
 const extractExtension = (path) => path.split(FULL_STOP).slice(-1);
 const getLoaderFromExtension = (extension) => loaders[extension] || new ObjectLoader();
+
+const gltfParser = (gltf) => {
+	let mesh;
+	gltf.scene.traverse(m => {
+		if (m.isMesh) {
+			mesh = m;
+		}
+	});
+
+	return mesh;
+}
+const glbParser = (glb) => glb.scene.children[0];
+const defaultParser = m => m;
+
+const parsers = {
+	[EXTENSIONS.JSON]: defaultParser,
+	[EXTENSIONS.GLB]: glbParser,
+	[EXTENSIONS.GLTF]: gltfParser
+};
+const getModelParserFromExtension = (extension) => parsers[extension] || defaultParser;
 
 const ModelsEngine = {
 	map: {},
@@ -45,14 +67,16 @@ const ModelsEngine = {
 
 		return Promise.all(keys.map(ModelsEngine.loadSingleFile));
 	},
+
 	loadSingleFile: (id) => {
 		const path = AssetsManager.models()[id];
 		const extension = extractExtension(path);
 		const loader = getLoaderFromExtension(extension);
+		const parser = getModelParserFromExtension(extension);
 
 		return new Promise(resolve => {
 			loader.load(path, model => {
-				ModelsEngine.map[id] = model.scene.children[0] || model;
+				ModelsEngine.map[id] = parser(model);
 				resolve();
 			});
 		});
