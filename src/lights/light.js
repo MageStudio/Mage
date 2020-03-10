@@ -65,12 +65,31 @@ export default class Light extends Entity {
 		}
 	}
 
+	isAlreadyOn() {
+		return this.light && this.light.intensity === this.intensity;
+	}
+
+	isAlreadyOff() {
+		return this.light && this.light.intensity <= 0;
+	}
+
+	setIntensity(value) {
+		if (this.light) {
+			this.light.intensity = value;
+		}
+	}
+
+	dim(value, speed, factor) {
+		// goes to value decreasing by factor. It takes speed ms to get to value.
+		console.warn('[Mage] Not implemented.', value, speed, factor);
+	}
+
 	on() {
 		if (this.light) {
 			const delay = () => {
 				this.light.intensity += LightEngine.delayFactor;
 				if (this.light.intensity < this.intensity) {
-					setTimeout(_delay, LightEngine.delayStep);
+					setTimeout(delay, LightEngine.delayStep);
 				} else {
 					this.isLightOn = true;
 				}
@@ -86,7 +105,7 @@ export default class Light extends Entity {
 			const delay = () => {
 				this.light.intensity -= LightEngine.delayFactor;
 				if (this.light.intensity > 0) {
-					setTimeout(_delay, LightEngine.delayStep);
+					setTimeout(delay, LightEngine.delayStep);
 				} else {
 					this.isLightOn = false;
 				}

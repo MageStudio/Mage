@@ -36,6 +36,7 @@ export default class Mesh extends Entity {
 		this.boundingBox = this.mesh.geometry.boundingBox;
 
 		this.rayColliders = [];
+		this.children = [];
 
 		this.setName(name);
 
@@ -57,8 +58,15 @@ export default class Mesh extends Entity {
 
 	add(mesh) {
 		if (this.mesh) {
+			this.children.push(mesh);
 			this.mesh.add(mesh.mesh);
 		}
+	}
+
+	getChildByName(name) {
+		return this.children.filter((child) =>
+			child.name === name
+		)[0];
 	}
 
 	hasRayColliders = () => this.rayColliders.length > 0;z
