@@ -2,7 +2,7 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
-import Pass from './Pass';
+import Pass from "./Pass.js";
 
 export default class RenderPass extends Pass {
 
@@ -10,47 +10,48 @@ export default class RenderPass extends Pass {
         super();
 
         this.scene = scene;
-    	this.camera = camera;
+        this.camera = camera;
 
-    	this.overrideMaterial = overrideMaterial;
+        this.overrideMaterial = overrideMaterial;
 
-    	this.clearColor = clearColor;
-    	this.clearAlpha = ( clearAlpha !== undefined ) ? clearAlpha : 0;
+        this.clearColor = clearColor;
+        this.clearAlpha = ( clearAlpha !== undefined ) ? clearAlpha : 0;
 
-    	this.clear = true;
-    	this.clearDepth = false;
-    	this.needsSwap = false;
+        this.clear = true;
+        this.clearDepth = false;
+        this.needsSwap = false;
     }
 
-    render(renderer, writeBuffer, readBuffer, delta, maskActive) {
+    render(renderer, writeBuffer, readBuffer) {
+        const oldAutoClear = renderer.autoClear;
+        let oldClearColor, oldClearAlpha;
 
-		var oldAutoClear = renderer.autoClear;
 		renderer.autoClear = false;
 
 		this.scene.overrideMaterial = this.overrideMaterial;
 
-		var oldClearColor, oldClearAlpha;
-
-		if ( this.clearColor ) {
+		if (this.clearColor) {
 			oldClearColor = renderer.getClearColor().getHex();
 			oldClearAlpha = renderer.getClearAlpha();
 
-			renderer.setClearColor( this.clearColor, this.clearAlpha );
+			renderer.setClearColor(this.clearColor, this.clearAlpha);
 		}
 
-		if ( this.clearDepth ) {
+		if (this.clearDeptH) {
 			renderer.clearDepth();
 		}
 
-		renderer.setRenderTarget(this.renderToScreen ? null : readBuffer);
-		renderer.clear(this.clear);
-		renderer.render( this.scene, this.camera);
+		renderer.setRenderTarget( this.renderToScreen ? null : readBuffer );
 
-		if ( this.clearColor ) {
-			renderer.setClearColor( oldClearColor, oldClearAlpha );
+		// TODO: Avoid using autoClear properties, see https://github.com/mrdoob/three.js/pull/15571#issuecomment-465669600
+		if (this.clear) renderer.clear(renderer.autoClearColor, renderer.autoClearDepth, renderer.autoClearStencil);
+		renderer.render(this.scene, this.camera);
+
+		if (this.clearColor) {
+			renderer.setClearColor(oldClearColor, oldClearAlpha);
 		}
 
 		this.scene.overrideMaterial = null;
 		renderer.autoClear = oldAutoClear;
-	}
+    }
 }

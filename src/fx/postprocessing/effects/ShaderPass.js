@@ -1,57 +1,57 @@
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-import {
-    ShaderMaterial,
-    UniformsUtils,
-    OrthographicCamera,
-    Scene,
-    Mesh,
-    PlaneBufferGeometry
-} from 'three';
 
-import Pass from './Pass';
+import {
+	ShaderMaterial,
+	UniformsUtils
+} from "three";
+import Pass from "./Pass";
 
 export default class ShaderPass extends Pass {
 
     constructor(shader, textureID) {
         super();
 
-        this.textureID = ( textureID !== undefined ) ? textureID : "tDiffuse";
+        this.textureID = (textureID !== undefined) ? textureID : "tDiffuse";
 
     	if (shader instanceof ShaderMaterial) {
+
     		this.uniforms = shader.uniforms;
+
     		this.material = shader;
-    	} else if ( shader ) {
-    		this.uniforms = UniformsUtils.clone( shader.uniforms );
+
+    	} else if (shader) {
+
+    		this.uniforms = UniformsUtils.clone(shader.uniforms);
+
     		this.material = new ShaderMaterial({
-    			defines: Object.assign( {}, shader.defines ),
+    			defines: Object.assign({}, shader.defines),
     			uniforms: this.uniforms,
     			vertexShader: shader.vertexShader,
     			fragmentShader: shader.fragmentShader
     		});
     	}
 
-    	this.camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
-    	this.scene = new Scene();
-
-    	this.quad = new Mesh( new PlaneBufferGeometry( 2, 2 ), null );
-    	this.quad.frustumCulled = false; // Avoid getting clipped
-    	this.scene.add( this.quad );
-
+    	this.fsQuad = new Pass.FullScreenQuad(this.material);
     }
 
-    render(renderer, writeBuffer, readBuffer, delta, maskActive) {
+    render(renderer, writeBuffer, readBuffer) {
+
 		if (this.uniforms[this.textureID]) {
 			this.uniforms[this.textureID].value = readBuffer.texture;
 		}
 
-		this.quad.material = this.material;
+		this.fsQuad.material = this.material;
 
 		if (this.renderToScreen) {
-			renderer.render( this.scene, this.camera );
+			renderer.setRenderTarget(null);
+			this.fsQuad.render(renderer);
 		} else {
-			renderer.render( this.scene, this.camera, writeBuffer, this.clear );
+			renderer.setRenderTarget(writeBuffer);
+			// TODO: Avoid using autoClear properties, see https://github.com/mrdoob/three.js/pull/15571#issuecomment-465669600
+			if (this.clear) renderer.clear(renderer.autoClearColor, renderer.autoClearDepth, renderer.autoClearStencil);
+			this.fsQuad.render(renderer);
 		}
 	}
 }

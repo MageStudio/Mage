@@ -10,9 +10,20 @@ import {
 import SceneManager from '../base/SceneManager';
 import { SUNLIGHT } from './lightEngine';
 
+const DEFAULT_NEAR = 0.1;
+const DEFAULT_FAR = 40;
+
 export default class SunLight extends Light {
 
-    constructor({ color, intensity, position = {}, target = {}, name }) {
+    constructor({
+        color,
+        intensity,
+        position = {},
+        target = {},
+        name,
+        near = DEFAULT_NEAR,
+        far = DEFAULT_FAR
+    }) {
         super({ name });
 
         this.light = new THREEDirectionalLight(color, intensity);
@@ -28,17 +39,16 @@ export default class SunLight extends Light {
 
         if (Config.lights().shadows) {
             this.light.castShadow = true;
-            this.light.shadow.mapSize.width = 2048;
-            this.light.shadow.mapSize.height = 2048;
 
-            const d = 1024;
+            const d = far/2;
 
             this.light.shadow.camera.left = -d;
             this.light.shadow.camera.right = d;
             this.light.shadow.camera.top = d;
             this.light.shadow.camera.bottom = -d;
 
-            this.light.shadow.camera.far = 1000;
+            this.light.shadow.camera.near = near;
+            this.light.shadow.camera.far = far;
         }
 
         SceneManager.add(this.light, this);

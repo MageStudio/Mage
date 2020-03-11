@@ -46,12 +46,16 @@ const getModelParserFromExtension = (extension) => parsers[extension] || default
 
 const ModelsEngine = {
 	map: {},
-	getModel: (id, options = {}) => {
-		const model = ModelsEngine.map[id] || false;
+	getModel: (name, options = {}) => {
+		const model = ModelsEngine.map[name] || false;
 
 		if (model) {
 			model.material.wireframe = false;
-			const mesh = new Mesh(model.geometry, model.material, options);
+			const meshOptions = {
+				...options,
+				name
+			};
+			const mesh = new Mesh(model.geometry, model.material, meshOptions);
 			mesh.setModel();
 
 			return mesh;
