@@ -11,7 +11,7 @@ import {
 } from "three";
 
 import ShaderPass from './ShaderPass';
-import CopyShader from './CopyShader';
+import CopyShader from '../shaders/CopyShader';
 import MaskPass from './MaskPass';
 import ClearMaskPass from './ClearMaskPass';
 
@@ -75,7 +75,6 @@ export default class EffectComposer {
 	addPass(pass) {
 		this.passes.push(pass);
 		pass.setSize(this._width * this._pixelRatio, this._height * this._pixelRatio);
-
 	}
 
 	insertPass(pass, index) {
