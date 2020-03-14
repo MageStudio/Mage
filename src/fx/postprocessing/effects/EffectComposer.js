@@ -77,6 +77,12 @@ export default class EffectComposer {
 		pass.setSize(this._width * this._pixelRatio, this._height * this._pixelRatio);
 	}
 
+	ensureLastPassIsRendered = () => {
+		this.passes.forEach((pass, index) =>
+			pass.renderToScreen = index === (this.passes.length - 1)
+		);
+	};
+
 	insertPass(pass, index) {
 		this.passes.splice(index, 0, pass);
 	}

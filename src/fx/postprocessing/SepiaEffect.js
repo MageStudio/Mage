@@ -27,7 +27,7 @@ const SepiaShader = {
 	].join( "\n" )
 }
 
-export default ({ value = 1.0, renderToScreen = true }) => {
+export default ({ value = 1.0, renderToScreen = false }) => {
 	const shader = SepiaShader;
 	shader.uniforms.amount.value = value;
 
