@@ -1,7 +1,3 @@
-import {
-    WebGLRenderer
-} from 'three';
-
 import EffectComposer from './effects/EffectComposer';
 
 import RenderPass from './effects/RenderPass';
@@ -9,13 +5,24 @@ import RenderPass from './effects/RenderPass';
 import SceneManager from '../../base/SceneManager';
 import HueSaturationEffect from './HueSaturationEffect';
 import SepiaEffect from './SepiaEffect';
+import BloomPass from './BloomPass';
 
 export class PostProcessingEngine {
 
     constructor() {
         this.map = {
-            SepiaEffect,
-            HueSaturationEffect
+            SepiaEffect: {
+                effect: SepiaEffect,
+                isClass: false
+            },
+            HueSaturationEffect: {
+                effect: HueSaturationEffect,
+                isClass: false
+            },
+            BloomPass: {
+                effect: BloomPass,
+                isClass: true
+            }
         };
 
         this.effects = [];
@@ -40,13 +47,39 @@ export class PostProcessingEngine {
         return this.map[id] || null;
     }
 
-    add = (effect, options) => {
-        if (effect && typeof effect === 'function') {
-            const pass = effect(options);
+    static createPass({ effect, isClass }, options) {
+        let pass;
+        if (effect && !isClass) {
+            pass = effect(options);
+        } else if (effect && isClass) {
+            pass = new effect(options);
+        }
+
+        return pass;
+    }
+
+    add = (effect, options = {}) => {
+        let pass;
+        if (typeof effect === 'string') {
+            const effectDescription = this.get(effect);
+            if (effectDescription) {
+                pass = PostProcessingEngine.createPass(effectDescription, options);
+            } else {
+                console.error('[Mage] Requested effect is not available');
+                return;
+            }
+        } else {
+            pass = PostProcessingEngine.createPass(effect, options);
+        }
+
+        if (pass) {
             this.composer.addPass(pass);
             this.effects.push(pass);
+            this.composer.ensureLastPassIsRendered();
+        } else {
+            console.error('[Mage] Could not create requested effect');
         }
-    }
+    };
 
     render = (dt) => {
         this.composer.render(dt);
