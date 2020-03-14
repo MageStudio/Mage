@@ -14,7 +14,8 @@ import {
 	Raycaster,
 	Color
 } from 'three';
-import { DOWN, UP } from '../lib/constants';
+import { COLLISION_EVENT } from '../lib/constants';
+import universe from '../base/universe';
 
 export default class Mesh extends Entity {
 
@@ -36,6 +37,7 @@ export default class Mesh extends Entity {
 		this.boundingBox = this.mesh.geometry.boundingBox;
 
 		this.rayColliders = [];
+		this.collisionsEnabled = true;
 		this.children = [];
 
 		this.setName(name);
@@ -51,8 +53,9 @@ export default class Mesh extends Entity {
 
 	update(dt) {
 		super.update(dt);
-		if (this.hasRayColliders()) {
+		if (this.hasRayColliders() && this.areCollisionsEnabled()) {
 			this.updateRayColliders();
+			this.checkCollisions();
 		}
 	}
 
@@ -69,7 +72,12 @@ export default class Mesh extends Entity {
 		)[0];
 	}
 
-	hasRayColliders = () => this.rayColliders.length > 0;z
+	hasRayColliders = () => this.rayColliders.length > 0;
+
+	areCollisionsEnabled = () => this.collisionsEnabled;
+
+	enableCollisions = () => this.collisionsEnabled = true;
+	disableCollisions = () => this.collisionsEnabled = false;
 
 	updateRayColliders = () => {
 		this.rayColliders.forEach(({ rayCollider, helper }) => {
@@ -88,7 +96,7 @@ export default class Mesh extends Entity {
 		//rayCollider.ray.direction.clone().multiplyScalar(rayCollider.far);
 
 		return [origin, end];
-	}
+	};
 
 	createColliderHelper = (rayCollider) => new Line(this.getPointsFromRayCollider(rayCollider));
 
@@ -103,7 +111,7 @@ export default class Mesh extends Entity {
 			rayCollider,
 			helper
 		};
-	}
+	};
 
 	setRayColliders = (vectors = [], options = {}) => {
 		const { near = 0, far = 10, debug = false } = options;
@@ -114,21 +122,50 @@ export default class Mesh extends Entity {
 		];
 	};
 
+	mapIntersectionToMesh(mesh) {
+		const uuid = mesh.uuid;
+
+		return universe.getByUUID(uuid);
+	}
+
+	checkRayCollider = ({ rayCollider, type }) => {
+		const intersections = rayCollider.intersectObjects(SceneManager.scene.children);
+		if (intersections.length > 0) {
+			return {
+				meshes: intersections.map(this.mapIntersectionToMesh),
+				type
+			};
+		}
+	};
+
 	checkCollisions = () => {
 		const collisions = [];
-		this.rayColliders.forEach(({ type, rayCollider }) => {
-			const intersections = rayCollider.intersectObjects(SceneManager.scene.children);
-			if (intersections.length > 0) {
-				collisions.push(type);
+		this.rayColliders.forEach((collider) => {
+			const collision = this.checkRayCollider(collider);
+
+			if (collision) {
+				collisions.push(collision);
 			}
 		});
+
+		if (collisions.length) {
+			this.dispatchEvent({
+				type: COLLISION_EVENT,
+				collisions
+			});
+		}
 
 		return collisions;
 	};
 
-	isOnObject() {
-		const intersections = this.raycaster.intersectObjects(SceneManager.scene.children);
-		return intersections.length > 0;
+	isCollidingOnDirection(direction) {
+		const rayCollider = this.rayColliders.filter(({ type }) => type === direction)[0];
+
+		if (rayCollider) {
+			return this.checkRayCollider(rayCollider);
+		}
+
+		return null;
 	}
 
 	setColor(color) {
