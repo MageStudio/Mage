@@ -2,6 +2,7 @@ export class Universe {
 
 	constructor() {
 		this.reality = {};
+		this.realityUUID = {};
 		this.worker = undefined;
 	}
 
@@ -9,7 +10,16 @@ export class Universe {
 		return this.reality[id];
 	}
 
+	getByUUID(uuid) {
+		const id = this.realityUUID[uuid];
+
+		if (id) {
+			return this.get(id);
+		}
+	}
+
 	set(id, value) {
+		this.realityUUID[value.uuid] = id;
 		this.reality[id] = value;
 	}
 
@@ -31,7 +41,7 @@ export class Universe {
 				.all(keys.map(k => callback(this.reality[k])))
 				.then(resolve);
 		});
-	}
+	};
 
 	// update(delta) {
 	// 	return this.forEachAsync(o => o.update(delta));
