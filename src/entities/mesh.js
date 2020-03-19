@@ -135,6 +135,11 @@ export default class Mesh extends Entity {
 				meshes: intersections.map(this.mapIntersectionToMesh),
 				type
 			};
+		} else {
+			return {
+				meshes: [],
+				type
+			}
 		}
 	};
 
