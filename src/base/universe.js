@@ -19,8 +19,11 @@ export class Universe {
 	}
 
 	set(id, value) {
-		this.realityUUID[value.uuid] = id;
 		this.reality[id] = value;
+	}
+
+	storeUUIDToElementNameReference(uuid, name) {
+		this.realityUUID[uuid] = name;
 	}
 
 	remove(id) {
