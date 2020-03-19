@@ -5,6 +5,8 @@ import {
     Clock,
     Scene,
     PCFSoftShadowMap,
+    BasicShadowMap,
+    PCFShadowMap,
     WebGLRenderer,
     alphaRenderer,
     FogExp2
@@ -12,12 +14,21 @@ import {
 
 import { generateUUID } from './util';
 
+const SHADOW_TYPES = {
+    basic: BasicShadowMap,
+    soft: PCFSoftShadowMap,
+    hard: PCFShadowMap
+};
+const DEFAULT_SHADOWTYPE = 'soft';
+
 export class SceneManager {
 
     constructor() {
         this.clock = new Clock();
         this.rendererElements = {};
         this.clearColor = 0x000000;
+
+        this.shadowType = SHADOW_TYPES[DEFAULT_SHADOWTYPE];
     }
 
     createScene() {
@@ -54,6 +65,7 @@ export class SceneManager {
 		this.scene.add(mesh);
         if (addUniverse) {
             Universe.set(element.name, element);
+            Universe.storeUUIDToElementNameReference(mesh.uuid, element.name);
         }
 	}
 
@@ -66,6 +78,13 @@ export class SceneManager {
         if (this.renderer) {
             this.clearColor = value;
             this.renderer.setClearColor(value);
+        }
+    }
+
+    setShadowType = (type = DEFAULT_SHADOWTYPE) => {
+        if (Object.keys(SHADOW_TYPES).includes(type)) {
+            this.shadowMap = SHADOW_TYPES[type];
+            this.setRendererShadowMap();
         }
     }
 
@@ -114,6 +133,12 @@ export class SceneManager {
         return id;
     }
 
+    setRendererShadowMap = () => {
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMap.type = this.shadowType;
+        this.renderer.sortObjects = false;
+    }
+
     createRenderer() {
         const { shadows } = Config.lights();
         const { alpha, w, h } = Config.screen();
@@ -122,9 +147,7 @@ export class SceneManager {
         this.renderer = new WebGLRenderer({alpha, antialias: true});
 
         if (shadows) {
-            this.renderer.shadowMap.enabled = true;
-            this.renderer.shadowMap.type = PCFSoftShadowMap;
-            this.renderer.sortObjects = false;
+            this.setRendererShadowMap();
         }
 
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -151,7 +174,6 @@ export class SceneManager {
     }
 
     render = () => {
-        //this.renderer.autoClear = false;
         this.renderer.setClearColor(this.clearColor);
         this.renderer.clear();
         this.renderer.setRenderTarget(null);

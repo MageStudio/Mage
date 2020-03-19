@@ -36,7 +36,7 @@ export default class Mesh extends Entity {
 		this.mesh.geometry.computeBoundingBox();
 		this.boundingBox = this.mesh.geometry.boundingBox;
 
-		this.rayColliders = [];
+		this.colliders = [];
 		this.collisionsEnabled = true;
 		this.children = [];
 
@@ -72,7 +72,7 @@ export default class Mesh extends Entity {
 		)[0];
 	}
 
-	hasRayColliders = () => this.rayColliders.length > 0;
+	hasRayColliders = () => this.colliders.length > 0;
 
 	areCollisionsEnabled = () => this.collisionsEnabled;
 
@@ -80,44 +80,44 @@ export default class Mesh extends Entity {
 	disableCollisions = () => this.collisionsEnabled = false;
 
 	updateRayColliders = () => {
-		this.rayColliders.forEach(({ rayCollider, helper }) => {
+		this.colliders.forEach(({ ray, helper }) => {
 
-			rayCollider.ray.origin.copy(this.mesh.position);
+			ray.ray.origin.copy(this.mesh.position);
 
 			if (helper) {
-				helper.updatePoints(this.getPointsFromRayCollider(rayCollider));
+				helper.updatePoints(this.getPointsFromRayCollider(ray));
 			}
 		});
 	};
 
-	getPointsFromRayCollider = (rayCollider) => {
+	getPointsFromRayCollider = (ray) => {
 		const origin = this.mesh.position.clone();
-		const end = origin.add(rayCollider.ray.direction.clone().multiplyScalar(rayCollider.far));
-		//rayCollider.ray.direction.clone().multiplyScalar(rayCollider.far);
+		const end = origin.add(ray.ray.direction.clone().multiplyScalar(ray.far));
+		//ray.ray.direction.clone().multiplyScalar(ray.far);
 
 		return [origin, end];
 	};
 
-	createColliderHelper = (rayCollider) => new Line(this.getPointsFromRayCollider(rayCollider));
+	createColliderHelper = (ray) => new Line(this.getPointsFromRayCollider(ray));
 
 	createRayColliderFromVector = ({ type, vector }, near, far, debug) => {
 
 		const position = this.mesh.position.clone();
-		const rayCollider = new Raycaster(position, vector, near, far);
-		const helper = debug && this.createColliderHelper(rayCollider);
+		const ray = new Raycaster(position, vector, near, far);
+		const helper = debug && this.createColliderHelper(ray);
 
 		return {
 			type,
-			rayCollider,
+			ray,
 			helper
 		};
 	};
 
-	setRayColliders = (vectors = [], options = {}) => {
+	setColliders = (vectors = [], options = {}) => {
 		const { near = 0, far = 10, debug = false } = options;
 
-		this.rayColliders = [
-			...this.rayColliders,
+		this.colliders = [
+			...this.colliders,
 			...vectors.map((v) => this.createRayColliderFromVector(v, near, far, debug))
 		];
 	};
@@ -128,8 +128,8 @@ export default class Mesh extends Entity {
 		return universe.getByUUID(uuid);
 	}
 
-	checkRayCollider = ({ rayCollider, type }) => {
-		const intersections = rayCollider.intersectObjects(SceneManager.scene.children);
+	checkRayCollider = ({ ray, type }) => {
+		const intersections = ray.intersectObjects(SceneManager.scene.children);
 		if (intersections.length > 0) {
 			return {
 				meshes: intersections.map(this.mapIntersectionToMesh),
@@ -140,7 +140,7 @@ export default class Mesh extends Entity {
 
 	checkCollisions = () => {
 		const collisions = [];
-		this.rayColliders.forEach((collider) => {
+		this.colliders.forEach((collider) => {
 			const collision = this.checkRayCollider(collider);
 
 			if (collision) {
@@ -159,13 +159,16 @@ export default class Mesh extends Entity {
 	};
 
 	isCollidingOnDirection(direction) {
-		const rayCollider = this.rayColliders.filter(({ type }) => type === direction)[0];
+		const collider = this.colliders.filter(({ type }) => type === direction)[0];
 
-		if (rayCollider) {
-			return this.checkRayCollider(rayCollider);
+		if (collider) {
+			return this.checkRayCollider(collider);
 		}
 
-		return null;
+		return {
+			meshes: [],
+			type: direction
+		};
 	}
 
 	setColor(color) {
