@@ -10,7 +10,7 @@ import {
     Vector3,
     Color as THREEColor
 } from 'three';
-import App, { author } from './base/App';
+import BaseScene, { author } from './base/BaseScene';
 import Universe from './base/Universe';
 import Color from './base/Color';
 import * as util from './base/util';
@@ -64,7 +64,7 @@ import PostProcessingEngine from './fx/postprocessing/PostProcessingEngine';
 export {
     author,
 
-    App,
+    BaseScene,
     Config,
     SceneManager,
     Universe,

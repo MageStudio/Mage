@@ -28,7 +28,7 @@ export const author = {
     website: 'http://mage.studio'
 };
 
-export class App extends EventDispatcher {
+export class BaseScene extends EventDispatcher {
 
     constructor(config, container) {
         super();
@@ -192,4 +192,4 @@ export class App extends EventDispatcher {
 
 }
 
-export default App;
+export default BaseScene;

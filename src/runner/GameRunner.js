@@ -1,4 +1,4 @@
-import App from '../base/App';
+import BaseScene from '../base/BaseScene';
 
 export default class GameRunner {
 
@@ -20,12 +20,12 @@ export default class GameRunner {
     }
 
     register(path, classname) {
-        // check if classname is a function and if extends App
+        // check if classname is a function and if extends BaseScene
         try {
             if (GameRunner.isValidClassname(classname)) {
                 this.store[path] = classname;
             } else {
-                this.store[path] = App;
+                this.store[path] = BaseScene;
             }
             return true;
         } catch(e) {
@@ -47,7 +47,7 @@ export default class GameRunner {
             const classname = this.get(path);
             this.running = new classname(config, selector);
 
-            // replicate what happens in the start method inside App
+            // replicate what happens in the start method inside BaseScene
             this.running.preload()
                 .then(() => {
                     this.running.prepareScene();
