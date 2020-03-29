@@ -1,4 +1,7 @@
 import BaseScene from '../base/BaseScene';
+import { subscribeScene, unsubScribeScene } from '../store/Store';
+
+import { PATH_NOT_FOUND } from '../lib/messages';
 
 export default class GameRunner {
 
@@ -20,7 +23,6 @@ export default class GameRunner {
     }
 
     register(path, classname) {
-        // check if classname is a function and if extends BaseScene
         try {
             if (GameRunner.isValidClassname(classname)) {
                 this.store[path] = classname;
@@ -33,29 +35,38 @@ export default class GameRunner {
         }
     }
 
+    createNewScene = (path, config, selector) => {
+        const classname = this.get(path);
+        const scene = new classname(config, selector);
+
+        subscribeScene(path, scene);
+
+        return scene;
+    }
+
+    disposeCurrentScene = (path) => {
+        unsubScribeScene(path);
+        this.running.dispose();
+    }
+
     start(path, config, selector) {
         return new Promise((resolve, reject) => {
             if (!this.has(path)) {
-                return false;
+                reject(PATH_NOT_FOUND);
             }
 
             if (this.running) {
-                // do something with the current running instance
-                this.running.dispose();
+                this.disposeCurrentScene();
             }
-            // starting the right classname
-            const classname = this.get(path);
-            this.running = new classname(config, selector);
 
-            // replicate what happens in the start method inside BaseScene
+            this.running = this.createNewScene(path, config, selector);
             this.running.preload()
                 .then(() => {
                     this.running.prepareScene();
                     this.running.load();
-                    // app is ready
                     resolve(this.running);
                 })
-                .catch((e) => console.log(e));
+                .catch(reject);
         })
     }
 }

@@ -81,6 +81,7 @@ export class BaseScene extends EventDispatcher {
     onMouseMove = () => {};
     onMeshClick = () => {};
     onMeshDeselect = () => {};
+    onStateChange = (state) => {};
 
     enableUI = (RootComponent, _props) => {
         const props = {
