@@ -1,6 +1,7 @@
 import Universe from './Universe';
 import Camera from '../entities/Camera';
 import Config from './config';
+import { getWindow } from './window';
 import {
     Clock,
     Scene,
@@ -8,7 +9,6 @@ import {
     BasicShadowMap,
     PCFShadowMap,
     WebGLRenderer,
-    alphaRenderer,
     FogExp2
 } from 'three';
 
@@ -92,6 +92,18 @@ export class SceneManager {
         this.createScene();
         this.createCamera();
         this.createRenderer();
+        this.listenToResizeEvent();
+    }
+
+    listenToResizeEvent() {
+        const win = getWindow();
+        if (win) {
+            win.addEventListener('resize', this.onResize);
+        }
+    }
+
+    stopResizeListener() {
+        win.removeEventListener('resize', this.onResize);
     }
 
     dispose() {
@@ -99,6 +111,8 @@ export class SceneManager {
         this.scene.dispose();
         // destroy renderer
         this.renderer.dispose();
+        // remove listener to resize
+        this.stopResizeListener();
     }
 
     createCamera() {
