@@ -1,11 +1,11 @@
 import {
     getState,
-    addReducer,
+    combineReducers,
     dispatch
 } from './Store';
 
 export {
     getState,
-    addReducer,
+    combineReducers,
     dispatch
 };

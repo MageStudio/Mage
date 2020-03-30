@@ -1,30 +1,46 @@
 // creates the store
 import * as redux from 'redux';
+import thunk from 'redux-thunk';
+
 import stats from './reducers/stats';
 
-import {
-    NEW_REDUCER_ERROR,
-    STORE_DOESNT_EXIST
-} from '../lib/messages';
+import { STORE_DOESNT_EXIST } from '../lib/messages';
 
 let store;
-const reducers = {
+const DEFAULT_REDUCERS = {
     stats
 };
 let unsubscribe;
 const subscribers = {};
 
-const combineReducers = () => {
-    return redux.combineReducers(reducers);
+const applyMiddlewares = (mdws, debug) => {
+    if (debug) {
+        return redux.compose(
+            redux.applyMiddleware(...mdws),
+            window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f
+        );
+    }
+    return redux.applyMiddleware(...mdws);
 }
 
-export const addReducer = (name, reducer) => {
-    if (name && reducer) {
-        reducers[name] = reducer;
-    } else {
-        console.log(NEW_REDUCER_ERROR, name, reducer);
-    }
-};
+export default function configureStore(initialState = {}) {
+    const middleware = defaultMiddleware();
+
+    return createStore(
+        reducers,
+        initialState,
+        applyMiddlewareWithDevTools(middleware)
+    );
+}
+
+const defaultMiddleware = () => [thunk];
+
+export const combineReducers = (reducers) => (
+    redux.combineReducers({
+        ...reducers,
+        ...DEFAULT_REDUCERS
+    })
+);
 
 export const getState = () => {
     if (store) {
@@ -36,7 +52,7 @@ export const getState = () => {
 
 export const getStore = () => store;
 
-const handleSubscriptions = () => {
+const handleSubscriptions = () => (
     Object
         .keys(subscribers)
         .forEach((path) => {
@@ -44,25 +60,21 @@ const handleSubscriptions = () => {
                 subscribers[path].onStateChange(getState());
             }
         })
-}
+)
 
-export const createStore = (initialState = {}) => {
+export const createStore = (reducers = {}, initialState = {}, debug = false) => {
     if (!store) {
-        store = redux.createStore(combineReducers(), initialState);
+        store = redux.createStore(
+            combineReducers(reducers),
+            initialState,
+            applyMiddlewares(defaultMiddleware(), debug)
+        );
         unsubscribe = store.subscribe(handleSubscriptions);
     }
 };
 
-export const subscribeScene = (path, scene) => {
-    if (store) {
-        subscribers[path] = scene;
-    }
-}
-
-export const unsubScribeScene = (path) => {
-    delete subscribers[path];
-}
-
+export const subscribeScene = (path, scene) => subscribers[path] = scene;
+export const unsubScribeScene = (path) => delete subscribers[path];
 export const unsubscribeAll = () => unsubscribe();
 
 export const dispatch = (action) => {

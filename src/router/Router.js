@@ -3,8 +3,6 @@ import AssetsManager from "../base/AssetsManager";
 import util from '../base/util';
 import Config from "../base/config";
 
-import { createStore } from '../store/Store';
-
 const ROOT = '/';
 const DIVIDER = '/';
 const HASH = '#';
@@ -79,7 +77,6 @@ class Router {
 
     start(config, assets, selector) {
         return new Promise((resolve, reject) => {
-            createStore();
             Config.setConfig(config);
             Config.setContainer(selector);
 
