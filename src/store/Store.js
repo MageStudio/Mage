@@ -23,16 +23,6 @@ const applyMiddlewares = (mdws, debug) => {
     return redux.applyMiddleware(...mdws);
 }
 
-export default function configureStore(initialState = {}) {
-    const middleware = defaultMiddleware();
-
-    return createStore(
-        reducers,
-        initialState,
-        applyMiddlewareWithDevTools(middleware)
-    );
-}
-
 const defaultMiddleware = () => [thunk];
 
 export const combineReducers = (reducers) => (
@@ -65,7 +55,7 @@ const handleSubscriptions = () => (
 export const createStore = (reducers = {}, initialState = {}, debug = false) => {
     if (!store) {
         store = redux.createStore(
-            combineReducers(reducers),
+            reducers,
             initialState,
             applyMiddlewares(defaultMiddleware(), debug)
         );
