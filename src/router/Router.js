@@ -10,7 +10,6 @@ const HASH = '#';
 class Router {
 
     constructor() {
-        // create new GameRunner
         this.runner = new GameRunner();
         this.routes = [];
     }
@@ -64,16 +63,20 @@ class Router {
     }
 
     on(route, classname) {
-        // call regitser on runner
-        const path = Router.cleanRoute(route.replace('/', '#'));
+        const path = Router.cleanRoute(route.replace(DIVIDER, HASH));
         if (this.runner.register(path, classname)) {
             this.routes.push(route);
         }
     }
 
+    setHashChangeListener = () => {
+        if (window) {
+            window.addEventListener('hashchange', this.handleHashChange, false);
+        }
+    }
+
     start(config, assets, selector) {
         return new Promise((resolve, reject) => {
-            // we should get all assets first then do the rest
             Config.setConfig(config);
             Config.setContainer(selector);
 
@@ -84,23 +87,19 @@ class Router {
                 .check(this.handleSuccess, this.handleFailure)
                 .then(AssetsManager.load)
                 .then(() => {
-                    // starts listening
-                    if (window) {
-                        window.addEventListener('hashchange', this.handleHashChange, false);
-                    }
-                    // store configuration
+                    this.setHashChangeListener()
                     this.storeConfiguration(config);
                     this.storeSelector(selector);
 
-                    // check current path
                     const currentHash = Router.extractLocationHash();
 
                     if (this.isValidRoute(currentHash)) {
-                        // if path is matching something starts that
-                        this.runner.start(currentHash, this.getConfiguration(), this.getSelector())
+                        this.runner
+                            .start(currentHash, this.getConfiguration(), this.getSelector())
                             .then(resolve);
                     } else {
-                        this.runner.start('/', this.getConfiguration(), this.getSelector())
+                        this.runner
+                            .start(ROOT, this.getConfiguration(), this.getSelector())
                             .then(resolve);
                     }
                 });

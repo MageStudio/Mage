@@ -21,6 +21,9 @@ import SceneManager from './base/SceneManager';
 import ScriptManager from './scripts/ScriptManager';
 import ControlsManager from './controls/ControlsManager';
 
+import * as store from './store';
+import { Provider, connect } from 'inferno-redux';
+
 import * as constants from './lib/constants';
 
 import BaseScript from './scripts/BaseScript';
@@ -70,6 +73,10 @@ export {
     Universe,
     ScriptManager,
     Router,
+
+    store,
+    Provider,
+    connect,
 
     ControlsManager,
 

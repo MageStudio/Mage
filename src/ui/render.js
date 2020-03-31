@@ -1,18 +1,22 @@
 import { render } from 'inferno';
 import { createElement } from 'inferno-create-element';
+import { Provider } from 'inferno-redux';
+import { getStore } from '../store/Store';
 import BaseUI from './BaseUI';
 
 const ROOT_ID = '#ui';
 
-export const mount = (Component, options = {}) => {
+export const mount = (UI = BaseUI, options = {}) => {
     const {
         root = ROOT_ID,
         ...props
     } = options;
 
-    const UI = Component || BaseUI;
     render(
-        createElement(UI, props),
+        createElement(Provider, {
+            store: getStore(),
+            children: createElement(UI, props)
+        }),
         document.querySelector(root)
     );
 };

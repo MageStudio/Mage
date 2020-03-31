@@ -2,8 +2,6 @@ import AssetsManager from './AssetsManager';
 import Universe from './Universe';
 import SceneManager from './SceneManager';
 import SceneHelper from './SceneHelper';
-import util from './util';
-import Config from './config';
 import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
@@ -11,14 +9,10 @@ import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
 import Input from './input/Input';
 import LightEngine from '../lights/LightEngine';
 import ControlsManager from '../controls/ControlsManager';
-
-import {mount, unmount} from '../ui/render';
-
+import { mount, unmount } from '../ui/render';
 import {
-    Scene,
     EventDispatcher
 } from 'three';
-
 import { fetch } from 'whatwg-fetch';
 import { getWindow } from './window';
 
@@ -34,19 +28,10 @@ export class BaseScene extends EventDispatcher {
         super();
 
         this.name = this.constructor.name;
-
-        const win = getWindow();
         this.debug = true;
-
         this.sceneHelper = new SceneHelper();
 
         SceneManager.create();
-
-        if (win) {
-            this.windowHalfX = win.innerWidth / 2;
-            this.windowHalfY = win.innerHeight / 2;
-            win.addEventListener('resize', this.onResize);
-        }
     }
 
     enableInput = () => {
@@ -81,6 +66,7 @@ export class BaseScene extends EventDispatcher {
     onMouseMove = () => {};
     onMeshClick = () => {};
     onMeshDeselect = () => {};
+    onStateChange = (state) => {};
 
     enableUI = (RootComponent, _props) => {
         const props = {
@@ -148,8 +134,6 @@ export class BaseScene extends EventDispatcher {
     }
 
     init = () => {
-        const win = getWindow();
-
         PostProcessingEngine.init();
         Stats.init();
 
@@ -173,17 +157,12 @@ export class BaseScene extends EventDispatcher {
 
     load = () => {
         if (!(typeof this.progressAnimation == "function")) {
-            this.progressAnimation = (callback) => {
-        		callback();
-        	}
-
+            this.progressAnimation = (callback) => callback();
         }
         this.progressAnimation(this.init);
     };
 
     toJSON() {
-        // export everything that is inside Universe
-        // and LightEngine
         return {
             ...LightEngine.toJSON(),
             ...Universe.toJSON()
