@@ -132,7 +132,9 @@ export default class Mesh extends Entity {
 		const intersections = ray.intersectObjects(SceneManager.scene.children);
 		if (intersections.length > 0) {
 			return {
-				meshes: intersections.map(this.mapIntersectionToMesh),
+				meshes: intersections.map(({ object }) => {
+					return this.mapIntersectionToMesh(object);
+				}),
 				type
 			};
 		} else {
