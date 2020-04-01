@@ -14,7 +14,7 @@ import {
 	Raycaster,
 	Color
 } from 'three';
-import { COLLISION_EVENT } from '../lib/constants';
+import {COLLISION_EVENT, FRONT} from '../lib/constants';
 import universe from '../base/universe';
 
 export default class Mesh extends Entity {
@@ -122,27 +122,23 @@ export default class Mesh extends Entity {
 		];
 	};
 
-	mapIntersectionToMesh(mesh) {
-		const uuid = mesh.uuid;
 
-		return universe.getByUUID(uuid);
-	}
 
 	checkRayCollider = ({ ray, type }) => {
 		const intersections = ray.intersectObjects(SceneManager.scene.children);
-		if (intersections.length > 0) {
-			return {
-				meshes: intersections.map(({ object }) => {
-					return this.mapIntersectionToMesh(object);
-				}),
-				type
-			};
-		} else {
-			return {
-				meshes: [],
-				type
-			}
+		if (type === FRONT) {
+			console.log(intersections);
 		}
+
+		const mapCollision = ({ distance, object: { uuid }}) => ({
+			distance,
+			mesh: universe.getByUUID(uuid)
+		});
+
+		return {
+			collisions: intersections.length ? intersections.map(mapCollision) : [],
+			type
+		};
 	};
 
 	checkCollisions = () => {
@@ -243,6 +239,11 @@ export default class Mesh extends Entity {
 	setWireframe(flag = true) {
 		this.mesh.material.wireframe = flag;
 	}
+
+	equals = (object) => (
+		this.name === object.name &&
+		this.mesh.uuid === object.mesh.uuid
+	);
 
 	toJSON() {
 		if (this.serializable) {
