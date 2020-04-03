@@ -113,26 +113,26 @@ export default class Mesh extends Entity {
 		};
 	};
 
-	setColliders = (vectors = [], options = {}) => {
-		const { near = 0, far = 10, debug = false } = options;
+	setColliders = (vectors = [], options = []) => {
+		const colliders = vectors.map((vector, i) => {
+			const { near = 0, far = 10, debug = false } = options[i];
+			return this.createRayColliderFromVector(vector, near, far, debug)
+		});
 
 		this.colliders = [
 			...this.colliders,
-			...vectors.map((v) => this.createRayColliderFromVector(v, near, far, debug))
+			...colliders
 		];
 	};
 
-
-
 	checkRayCollider = ({ ray, type }) => {
 		const intersections = ray.intersectObjects(SceneManager.scene.children);
-		if (type === FRONT) {
+		if (intersections.length && type == FRONT) {
 			console.log(intersections);
 		}
-
-		const mapCollision = ({ distance, object: { uuid }}) => ({
+		const mapCollision = ({ distance, object }) => ({
 			distance,
-			mesh: universe.getByUUID(uuid)
+			mesh: universe.getByUUID(object.uuid)
 		});
 
 		return {
