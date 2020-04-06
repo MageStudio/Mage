@@ -11,7 +11,7 @@ export class Universe {
 	}
 
 	getByUUID(uuid) {
-		const id = this.realityUUID[uuid];
+		const id = this.realityUUID[uuid.toString()];
 
 		if (id) {
 			return this.get(id);

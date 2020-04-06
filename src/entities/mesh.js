@@ -127,13 +127,15 @@ export default class Mesh extends Entity {
 
 	checkRayCollider = ({ ray, type }) => {
 		const intersections = ray.intersectObjects(SceneManager.scene.children);
-		if (intersections.length && type == FRONT) {
-			console.log(intersections);
+		const mapCollision = (collision) => {
+			const { distance, object } = collision;
+			const { uuid } = object;
+
+			return ({
+				distance,
+				uuid
+			});
 		}
-		const mapCollision = ({ distance, object }) => ({
-			distance,
-			mesh: universe.getByUUID(object.uuid)
-		});
 
 		return {
 			collisions: intersections.length ? intersections.map(mapCollision) : [],
@@ -163,15 +165,14 @@ export default class Mesh extends Entity {
 
 	isCollidingOnDirection(direction) {
 		const collider = this.colliders.filter(({ type }) => type === direction)[0];
-
-		if (collider) {
-			return this.checkRayCollider(collider);
-		}
-
-		return {
-			meshes: [],
+		const emptyCollision = {
+			collisions: [],
 			type: direction
 		};
+
+		return collider ?
+			this.checkRayCollider(collider) :
+			emptyCollision;
 	}
 
 	setColor(color) {
