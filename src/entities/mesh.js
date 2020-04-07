@@ -15,7 +15,7 @@ import {
 	Color
 } from 'three';
 import {COLLISION_EVENT, FRONT} from '../lib/constants';
-import universe from '../base/universe';
+import Universe from '../base/Universe';
 
 export default class Mesh extends Entity {
 
@@ -133,7 +133,7 @@ export default class Mesh extends Entity {
 
 			return {
 				distance,
-				uuid
+				mesh: Universe.getByUUID(uuid)
 			};
 		}
 
