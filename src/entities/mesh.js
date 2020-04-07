@@ -131,10 +131,10 @@ export default class Mesh extends Entity {
 			const { distance, object } = collision;
 			const { uuid } = object;
 
-			return ({
+			return {
 				distance,
 				uuid
-			});
+			};
 		}
 
 		return {
