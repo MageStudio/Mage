@@ -14,8 +14,8 @@ import {
 	Raycaster,
 	Color
 } from 'three';
-import { COLLISION_EVENT } from '../lib/constants';
-import universe from '../base/universe';
+import {COLLISION_EVENT, FRONT} from '../lib/constants';
+import Universe from '../base/Universe';
 
 export default class Mesh extends Entity {
 
@@ -113,34 +113,34 @@ export default class Mesh extends Entity {
 		};
 	};
 
-	setColliders = (vectors = [], options = {}) => {
-		const { near = 0, far = 10, debug = false } = options;
+	setColliders = (vectors = [], options = []) => {
+		const colliders = vectors.map((vector, i) => {
+			const { near = 0, far = 10, debug = false } = options[i];
+			return this.createRayColliderFromVector(vector, near, far, debug)
+		});
 
 		this.colliders = [
 			...this.colliders,
-			...vectors.map((v) => this.createRayColliderFromVector(v, near, far, debug))
+			...colliders
 		];
 	};
 
-	mapIntersectionToMesh(mesh) {
-		const uuid = mesh.uuid;
-
-		return universe.getByUUID(uuid);
-	}
-
 	checkRayCollider = ({ ray, type }) => {
 		const intersections = ray.intersectObjects(SceneManager.scene.children);
-		if (intersections.length > 0) {
+		const mapCollision = (collision) => {
+			const { distance, object } = collision;
+			const { uuid } = object;
+
 			return {
-				meshes: intersections.map(this.mapIntersectionToMesh),
-				type
+				distance,
+				mesh: Universe.getByUUID(uuid)
 			};
-		} else {
-			return {
-				meshes: [],
-				type
-			}
 		}
+
+		return {
+			collisions: intersections.length ? intersections.map(mapCollision) : [],
+			type
+		};
 	};
 
 	checkCollisions = () => {
@@ -165,15 +165,14 @@ export default class Mesh extends Entity {
 
 	isCollidingOnDirection(direction) {
 		const collider = this.colliders.filter(({ type }) => type === direction)[0];
-
-		if (collider) {
-			return this.checkRayCollider(collider);
-		}
-
-		return {
-			meshes: [],
+		const emptyCollision = {
+			collisions: [],
 			type: direction
 		};
+
+		return collider ?
+			this.checkRayCollider(collider) :
+			emptyCollision;
 	}
 
 	setColor(color) {
@@ -241,6 +240,11 @@ export default class Mesh extends Entity {
 	setWireframe(flag = true) {
 		this.mesh.material.wireframe = flag;
 	}
+
+	equals = (object) => (
+		this.name === object.name &&
+		this.mesh.uuid === object.mesh.uuid
+	);
 
 	toJSON() {
 		if (this.serializable) {
