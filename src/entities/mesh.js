@@ -59,10 +59,18 @@ export default class Mesh extends Entity {
 		}
 	}
 
-	add(mesh) {
+	add(what) {
 		if (this.mesh) {
-			this.children.push(mesh);
-			this.mesh.add(mesh.mesh);
+			const _add = (mesh) => {
+				this.children.push(mesh);
+				this.mesh.add(mesh.mesh);
+			};
+
+			if (Array.isArray(what)) {
+				what.forEach(_add);
+			} else {
+				_add(what);
+			}
 		}
 	}
 
