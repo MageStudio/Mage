@@ -6,6 +6,7 @@ import SceneManager from '../../base/SceneManager';
 import HueSaturationEffect from './HueSaturationEffect';
 import SepiaEffect from './SepiaEffect';
 import BloomPass from './BloomPass';
+import DepthOfField from './DepthOfField';
 
 export class PostProcessingEngine {
 
@@ -21,6 +22,10 @@ export class PostProcessingEngine {
             },
             BloomPass: {
                 effect: BloomPass,
+                isClass: true
+            },
+            DepthOfField: {
+                effect: DepthOfField,
                 isClass: true
             }
         };
