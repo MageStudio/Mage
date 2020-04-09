@@ -18,6 +18,8 @@ export default class Pass {
 
     	// if set to true, the result of the pass is rendered to screen. This is set automatically by EffectComposer.
     	this.renderToScreen = false;
+
+        this.isPass = true;
     }
 
     setSize(width, height) {}
