@@ -6,6 +6,7 @@ import SceneManager from '../../base/SceneManager';
 import HueSaturationEffect from './HueSaturationEffect';
 import SepiaEffect from './SepiaEffect';
 import BloomPass from './BloomPass';
+import DepthOfField from './DepthOfField';
 
 export class PostProcessingEngine {
 
@@ -22,15 +23,18 @@ export class PostProcessingEngine {
             BloomPass: {
                 effect: BloomPass,
                 isClass: true
+            },
+            DepthOfField: {
+                effect: DepthOfField,
+                isClass: true
             }
         };
 
         this.effects = [];
+        this.customs = [];
     }
 
-    isEnabled() {
-        return !!this.effects.length;
-    }
+    isEnabled = () => !!this.effects.length || !!this.customs.length;
 
     init = () => {
         window.addEventListener( 'resize', this.onWindowResize, false );
@@ -47,7 +51,7 @@ export class PostProcessingEngine {
         return this.map[id] || null;
     }
 
-    static createPass({ effect, isClass }, options) {
+    static createEffect({ effect, isClass }, options) {
         let pass;
         if (effect && !isClass) {
             pass = effect(options);
@@ -58,24 +62,36 @@ export class PostProcessingEngine {
         return pass;
     }
 
-    add = (effect, options = {}) => {
-        let pass;
-        if (typeof effect === 'string') {
-            const effectDescription = this.get(effect);
+    addEffectToComposer = (effect) => {
+        this.composer.addPass(effect);
+        this.effects.push(effect);
+        this.composer.ensureLastPassIsRendered();
+    }
+
+    addEffectToCustomEffects = (effect) => {
+        this.customs.push(effect);
+    }
+
+    add = (desiredEffect, options = {}) => {
+        let effect;
+        if (typeof desiredEffect === 'string') {
+            const effectDescription = this.get(desiredEffect);
             if (effectDescription) {
-                pass = PostProcessingEngine.createPass(effectDescription, options);
+                effect = PostProcessingEngine.createEffect(effectDescription, options);
             } else {
                 console.error('[Mage] Requested effect is not available');
                 return;
             }
         } else {
-            pass = PostProcessingEngine.createPass(effect, options);
+            effect = PostProcessingEngine.createEffect(desiredEffect, options);
         }
 
-        if (pass) {
-            this.composer.addPass(pass);
-            this.effects.push(pass);
-            this.composer.ensureLastPassIsRendered();
+        if (effect) {
+            if (effect.isPass) {
+                this.addEffectToComposer(effect);
+            } else {
+                this.addEffectToCustomEffects(effect);
+            }
         } else {
             console.error('[Mage] Could not create requested effect');
         }
@@ -83,6 +99,7 @@ export class PostProcessingEngine {
 
     render = (dt) => {
         this.composer.render(dt);
+        this.customs.forEach(e => e.render());
     }
 }
 
