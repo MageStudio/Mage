@@ -22,6 +22,11 @@ export class Universe {
 		this.reality[id] = value;
 	}
 
+	reset = () => {
+		this.reality = {};
+		this.realityUUID = {};
+	}
+
 	storeUUIDToElementNameReference(uuid, name) {
 		this.realityUUID[uuid] = name;
 	}
@@ -67,6 +72,7 @@ export class Universe {
 
 	bigfreeze = () => {
 		this.forEach(o => o.dispose());
+		this.reset();
 	}
 
 	toJSON() {

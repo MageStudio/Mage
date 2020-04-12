@@ -74,10 +74,16 @@ export default class Mesh extends Entity {
 		}
 	}
 
-	getChildByName(name) {
-		return this.children.filter((child) =>
-			child.name === name
-		)[0];
+	getChildByName(name, options = {}) {
+		const { recursive = false } = options;
+		const find = () => this.children.filter(mesh => mesh.name === name)[0];
+
+		if (recursive) {
+			const mesh = find() || null;
+			return mesh ? mesh : this.children.map((c) => c.getChild(name))[0];
+		}
+
+		return find();
 	}
 
 	hasRayColliders = () => this.colliders.length > 0;
