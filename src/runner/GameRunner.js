@@ -1,9 +1,9 @@
 import BaseScene from '../base/BaseScene';
 import { subscribeScene, unsubScribeScene } from '../store/Store';
-
+import storage from '../storage/storage';
 import { PATH_NOT_FOUND } from '../lib/messages';
 
-export default class GameRunner {
+export class GameRunner {
 
     constructor() {
         this.store = {};
@@ -16,6 +16,14 @@ export default class GameRunner {
 
     get(path) {
         return this.store[path];
+    }
+
+    getCurrentScene() {
+        return this.running;
+    }
+
+    getCurrentPath() {
+        return this.currentPath;
     }
 
     static isValidClassname(classname) {
@@ -35,9 +43,9 @@ export default class GameRunner {
         }
     }
 
-    createNewScene = (path, config, selector) => {
+    createNewScene = (path, options) => {
         const classname = this.get(path);
-        const scene = new classname(config, selector);
+        const scene = new classname(options);
 
         subscribeScene(path, scene);
 
@@ -49,8 +57,10 @@ export default class GameRunner {
         this.running.dispose();
     }
 
-    start(path, config, selector) {
+    start(path, config, selector, options) {
         return new Promise((resolve, reject) => {
+            const { loading = false } = options;
+
             if (!this.has(path)) {
                 reject(PATH_NOT_FOUND);
             }
@@ -59,14 +69,28 @@ export default class GameRunner {
                 this.disposeCurrentScene();
             }
 
-            this.running = this.createNewScene(path, config, selector);
-            this.running.preload()
-                .then(() => {
-                    this.running.prepareScene();
-                    this.running.load();
-                    resolve(this.running);
-                })
-                .catch(reject);
+            this.currentPath = path;
+            this.running = this.createNewScene(path, options);
+            if (loading) {
+                storage
+                    .loadScene()
+                    .then(this.running.parseScene)
+                    .then(() => {
+                        this.running.prepareScene();
+                        this.running.load();
+                        resolve(this.running);
+                    })
+            } else {
+                this.running.preload()
+                    .then(() => {
+                        this.running.prepareScene();
+                        this.running.load();
+                        resolve(this.running);
+                    })
+                    .catch(reject);
+            }
         })
     }
 }
+
+export default new GameRunner();

@@ -3,14 +3,16 @@ import AssetsManager from "../base/AssetsManager";
 import util from '../base/util';
 import Config from "../base/config";
 
+import { toQueryString, parseQuery } from '../lib/query';
+
 const ROOT = '/';
 const DIVIDER = '/';
 const HASH = '#';
+const EMPTY = '';
 
 class Router {
 
     constructor() {
-        this.runner = new GameRunner();
         this.routes = [];
     }
 
@@ -30,12 +32,25 @@ class Router {
         return this.selector;
     }
 
+    static hasLocation() {
+        return !!window &&
+            !!window.location &&
+            !!window.location.query &&
+            !!window.location.search;
+    }
+
     static extractLocationHash() {
-        if (location) {
+        if (Router.hasLocation()) {
             return Router.cleanRoute(location.hash);
         }
 
         return Router.cleanRoute(ROOT);
+    }
+
+    static extractQuery() {
+        if (Router.hasLocation()) {
+            return parseQuery(location.search);
+        }
     }
 
     static cleanRoute(route = HASH) {
@@ -56,15 +71,16 @@ class Router {
 
     handleHashChange = () => {
         const hash = Router.extractLocationHash();
+        const query = Router.extractQuery();
 
         if (this.isValidRoute(hash)) {
-            this.runner.start(hash, this.getConfiguration(), this.getSelector());
+            GameRunner.start(hash, this.getConfiguration(), this.getSelector(), query);
         }
     }
 
     on(route, classname) {
         const path = Router.cleanRoute(route.replace(DIVIDER, HASH));
-        if (this.runner.register(path, classname)) {
+        if (GameRunner.register(path, classname)) {
             this.routes.push(route);
         }
     }
@@ -73,6 +89,18 @@ class Router {
         if (window) {
             window.addEventListener('hashchange', this.handleHashChange, false);
         }
+    }
+
+    goTo(path, options) {
+        if (window &&
+            window.location &&
+            window.location.hash) {
+                const { query } = options;
+                if (query) {
+                    window.location.search = toQueryString(query);
+                }
+                window.location.hash = path.replace(DIVIDER, EMPTY);
+            }
     }
 
     start(config, assets, selector) {
@@ -94,11 +122,11 @@ class Router {
                     const currentHash = Router.extractLocationHash();
 
                     if (this.isValidRoute(currentHash)) {
-                        this.runner
+                        GameRunner
                             .start(currentHash, this.getConfiguration(), this.getSelector())
                             .then(resolve);
                     } else {
-                        this.runner
+                        GameRunner
                             .start(ROOT, this.getConfiguration(), this.getSelector())
                             .then(resolve);
                     }

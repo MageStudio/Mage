@@ -2,13 +2,18 @@
 import * as redux from 'redux';
 import thunk from 'redux-thunk';
 
-import stats from './reducers/stats';
+import {
+    info,
+    storage,
+    createRootReducer
+} from './reducers';
 
 import { STORE_DOESNT_EXIST } from '../lib/messages';
 
 let store;
 const DEFAULT_REDUCERS = {
-    stats
+    info,
+    storage
 };
 let unsubscribe;
 const subscribers = {};
@@ -55,7 +60,7 @@ const handleSubscriptions = () => (
 export const createStore = (reducers = {}, initialState = {}, debug = false) => {
     if (!store) {
         store = redux.createStore(
-            reducers,
+            createRootReducer(reducers),
             initialState,
             applyMiddlewares(defaultMiddleware(), debug)
         );
