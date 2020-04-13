@@ -24,9 +24,10 @@ export const author = {
 
 export class BaseScene extends EventDispatcher {
 
-    constructor(config, container) {
+    constructor(options) {
         super();
 
+        this.options = options;
         this.name = this.constructor.name;
         this.debug = true;
         this.sceneHelper = new SceneHelper();

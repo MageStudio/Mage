@@ -4,8 +4,6 @@ const DEFAULT_STATE = {
     mage: packageJSON.version
 }
 
-const stats = (state = DEFAULT_STATE, action = {}) => {
+export default (state = DEFAULT_STATE, action = {}) => {
     return state;
 };
-
-export default stats;
