@@ -1,6 +1,7 @@
 import Universe from './Universe';
 import Camera from '../entities/Camera';
 import Config from './config';
+import Util from './util';
 import { getWindow } from './window';
 import {
     Clock,
@@ -153,12 +154,23 @@ export class SceneManager {
         this.renderer.sortObjects = false;
     }
 
+    createOffsetCanvas = (width, height) => {
+        if (Util.isFeatureSupported('offscreenCanvas')) {
+            return new window.OffscreenCanvas(width, height);
+        }
+    }
+
     createRenderer() {
         const { shadows } = Config.lights();
         const { alpha, w, h } = Config.screen();
         let container = Config.container();
+        const canvas = this.createOffsetCanvas(w, h);
 
-        this.renderer = new WebGLRenderer({alpha, antialias: true});
+        this.renderer = new WebGLRenderer({
+            alpha,
+            antialias: true,
+            canvas
+        });
 
         if (shadows) {
             this.setRendererShadowMap();

@@ -95,20 +95,32 @@ export const getProportion = (max1, b, max2) => {
 export class Checker {
 
 	constructor() {
-		this.tests = [
-			'webgl',
-			'webaudioapi',
-			'webworker',
-			'ajax'
-		];
+		this.tests = {
+			'webgl': false,
+			'webaudioapi': false,
+			'webworker': false,
+			'ajax': false
+		};
+	}
+
+	isFeatureSupported(feature) {
+		if (feature in this.tests) {
+			return this.tests[feature];
+		}
+
+		if (typeof this[feature] === 'function') {
+			return this[feature]();
+		}
+
+		return false;
 	}
 
 	check(onSuccess, onFailure) {
 		const tests = Config.tests().length ?
 			Config.tests() :
-            this.tests;
+            Object.keys(this.tests);
 
-        	if (tests.indexOf("webgl") == -1) {
+        if (tests.indexOf("webgl") == -1) {
             //we MUST pass the webgl test
             tests.push("webgl");
         }
@@ -121,6 +133,33 @@ export class Checker {
             .all(promises)
             .then(onSuccess)
             .catch(onFailure)
+	}
+
+	localStorage() {
+		return new Promise((resolve, reject) => {
+			if (window &&
+	            window.localStorage &&
+	            typeof window.localStorage.setItem === 'function' &&
+	            typeof window.localStorage.getItem === 'function' &&
+	            typeof window.localStorage.removeItem === 'function' &&
+	            typeof window.localStorage.clear === 'function') {
+					resolve()
+				} else {
+					reject();
+				}
+		});
+	}
+
+	offscreenCanvas() {
+		return new Promise((resolve, reject) => {
+			const hasOffscreenCanvas = !!window.OffscreenCanvas;
+
+			if (hasOffscreenCanvas) {
+				resolve();
+			} else {
+				reject();
+			}
+		});
 	}
 
 	webgl() {
@@ -198,6 +237,10 @@ export class Util {
 
 	constructor() {
 		this.checker = new Checker();
+	}
+
+	isFeatureSupported(feature) {
+		return this.checker.isFeatureSupported(feature);
 	}
 
 	start() {
