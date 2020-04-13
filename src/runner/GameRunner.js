@@ -57,7 +57,7 @@ export class GameRunner {
         this.running.dispose();
     }
 
-    start(path, config, selector, options) {
+    start(path, config, selector, options = {}) {
         return new Promise((resolve, reject) => {
             const { loading = false } = options;
 

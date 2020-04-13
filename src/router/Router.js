@@ -123,11 +123,11 @@ class Router {
 
                     if (this.isValidRoute(currentHash)) {
                         GameRunner
-                            .start(currentHash, this.getConfiguration(), this.getSelector())
+                            .start(currentHash)
                             .then(resolve);
                     } else {
                         GameRunner
-                            .start(ROOT, this.getConfiguration(), this.getSelector())
+                            .start(ROOT)
                             .then(resolve);
                     }
                 });
