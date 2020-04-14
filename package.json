@@ -56,7 +56,8 @@
     "three": "0.112.0",
     "url": "0.11.0",
     "vivifyjs": "*",
-    "whatwg-fetch": "3.0.0"
+    "whatwg-fetch": "3.0.0",
+    "xstate": "^4.8.0"
   },
   "devDependencies": {
     "@babel/cli": "7.5.0",
