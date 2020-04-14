@@ -1,4 +1,5 @@
 import Between from 'between.js';
+import { createMachine, interpret } from 'xstate';
 import { EventDispatcher } from 'three';
 
 import ScriptManager from '../scripts/ScriptManager';
@@ -6,6 +7,8 @@ import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
 import SceneManager from '../base/SceneManager';
+
+const STATE_CHANGE_EVENT = { type: 'stateChange' };
 
 export default class Entity extends EventDispatcher {
 
@@ -44,6 +47,40 @@ export default class Entity extends EventDispatcher {
 			SceneManager.remove(this.mesh);
 			this.mesh.material.dispose();
 			this.mesh.geometry.dispose();
+		}
+	}
+
+	hasStateMachine = () => !!this.stateMachine;
+
+	addStateMachine(description) {
+		this.stateMachine = interpret(createMachine(description))
+			.onTransition(state => {
+				this.dispatchEvent({
+					STATE_CHANGE_EVENT,
+					state
+				});
+			});
+
+		if (description.autostart) {
+			this.startStateMachine();
+		}
+	}
+
+	startStateMachine() {
+		if (this.hasStateMachine()) {
+			this.stateMachine.start();
+		}
+	}
+
+	stopStateMachine() {
+		if (this.hasStateMachine()) {
+			this.stateMachine.stop();
+		}
+	}
+
+	changeState(event) {
+		if (this.hasStateMachine()) {
+			this.stateMachine.send(event);
 		}
 	}
 
