@@ -280,6 +280,8 @@ export default class Entity extends EventDispatcher {
 			z: options.z === undefined ? this.mesh.position.z : options.z
 		};
 
+		// if we're using physics, send message to worker
+
 		if (this.mesh) {
 			this.mesh.position.set(position.x, position.y, position.z);
 		}
