@@ -28,8 +28,7 @@ export class Physics extends EventDispatcher {
     dispose() {
         if (Config.physics().enabled) {
             this.worker.postMessage({
-                type: TERMINATE_EVENT,
-                path: Config.physics().path
+                type: TERMINATE_EVENT
             });
         }
     }
@@ -38,7 +37,8 @@ export class Physics extends EventDispatcher {
         if (Config.physics().enabled) {
             this.worker.postMessage({
                 type: INIT_EVENT,
-                dt: SceneManager.clock.getDelta()
+                dt: SceneManager.clock.getDelta(),
+                path: Config.physics().path
             });
         }
     }
