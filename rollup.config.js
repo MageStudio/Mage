@@ -35,7 +35,7 @@ export default [{
     input: './src/physics/OimoProxy.js',
     output: {
         file: './dist/mage.physics.js',
-        format: 'esm',
+        format: 'commonjs',
         compact: true,
         name: 'M'
     },
