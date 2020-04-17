@@ -14,8 +14,9 @@ import {
 	Raycaster,
 	Color
 } from 'three';
-import {COLLISION_EVENT, FRONT} from '../lib/constants';
+import { COLLISION_EVENT, FRONT } from '../lib/constants';
 import Universe from '../base/Universe';
+import Physics from '../physics/physics';
 
 export default class Mesh extends Entity {
 
@@ -49,6 +50,7 @@ export default class Mesh extends Entity {
 
 		this.setMesh();
 		SceneManager.add(this.mesh, this, addUniverse);
+		Physics.add(this);
 	}
 
 	update(dt) {
@@ -265,6 +267,14 @@ export default class Mesh extends Entity {
 
 	setWireframe(flag = true) {
 		this.mesh.material.wireframe = flag;
+	}
+
+	cloneRotation = (rotation) => {
+		this.mesh.rotation.clone(rotation);
+	}
+
+	clonePosition = (position) => {
+		this.mesh.position.clone(position);
 	}
 
 	equals = (object) => (

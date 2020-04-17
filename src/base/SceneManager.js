@@ -32,15 +32,8 @@ export class SceneManager {
     }
 
     createScene() {
-        const { enabled = false } = Config.physics();
-
-        if (enabled) {
-
-        }
-
         const fog = Config.fog();
 
-        this.physics = false;
         this.scene = new Scene();
 
         if (fog.enabled) {

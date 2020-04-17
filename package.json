@@ -37,6 +37,7 @@
   "dependencies": {
     "@babel/plugin-transform-runtime": "7.5.0",
     "@babel/runtime": "7.5.0",
+    "ammo.js": "github:MageStudio/partykals#v0.0.3",
     "between.js": "0.1.2-fix.2",
     "colors": "*",
     "connect": "3.6.6",
@@ -46,9 +47,9 @@
     "inferno-create-element": "7.3.3",
     "inferno-redux": "7.4.2",
     "mage-engine.particles": "github:MageStudio/partykals#v2.0.1",
-    "ammo.js": "github:MageStudio/partykals#v0.0.3",
     "ncp": "*",
     "node-prefix": "*",
+    "oimo": "^1.0.9",
     "path": "0.12.7",
     "redux": "4.0.5",
     "redux-thunk": "^2.3.0",

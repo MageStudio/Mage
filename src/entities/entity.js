@@ -2,11 +2,13 @@ import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
 import { EventDispatcher } from 'three';
 
+import Config from '../base/config';
 import ScriptManager from '../scripts/ScriptManager';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
 import SceneManager from '../base/SceneManager';
+import Physics from '../physics/physics';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
 
@@ -280,7 +282,9 @@ export default class Entity extends EventDispatcher {
 			z: options.z === undefined ? this.mesh.position.z : options.z
 		};
 
-		// if we're using physics, send message to worker
+		if (Config.physics().enabled) {
+			Physics.updatePosition(this.uuid(), position);
+		}
 
 		if (this.mesh) {
 			this.mesh.position.set(position.x, position.y, position.z);
@@ -300,8 +304,12 @@ export default class Entity extends EventDispatcher {
 			z: options.z === undefined ? this.mesh.rotation.z : options.z
 		};
 
-		if (this.mesh) {
-			this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+		if (Config.physics().enabled) {
+			Physics.updateRotation(this.uuid(), rotation);
+		} else {
+			if (this.mesh) {
+				this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+			}
 		}
 	}
 

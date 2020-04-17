@@ -30,7 +30,8 @@ class Config {
             },
 
             physics: {
-                enabled: false
+                enabled: false,
+                path: './mage.physics.js'
             },
 
             tween: {

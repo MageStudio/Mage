@@ -20,6 +20,7 @@ import Router from './router/Router';
 import SceneManager from './base/SceneManager';
 import ScriptManager from './scripts/ScriptManager';
 import ControlsManager from './controls/ControlsManager';
+import Physics from './physics/physics';
 
 import * as store from './store';
 import { Provider, connect } from 'inferno-redux';
@@ -89,6 +90,7 @@ export {
     PostProcessingEngine,
     ParticleEngine,
     Partykals,
+    Physics,
 
     MeshLoader,
     LightLoader,

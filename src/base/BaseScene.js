@@ -9,6 +9,7 @@ import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
 import Input from './input/Input';
 import LightEngine from '../lights/LightEngine';
 import ControlsManager from '../controls/ControlsManager';
+import Physics from '../physics/physics';
 import { mount, unmount } from '../ui/render';
 import {
     EventDispatcher
@@ -123,6 +124,7 @@ export class BaseScene extends EventDispatcher {
     render = () => {
         const dt = SceneManager.clock.getDelta();
 
+        Physics.update();
         SceneManager.render(dt);
         PostProcessingEngine.render(dt);
         this.onUpdate(dt);
@@ -135,6 +137,7 @@ export class BaseScene extends EventDispatcher {
     }
 
     init = () => {
+        Physics.init();
         PostProcessingEngine.init();
         Stats.init();
 
@@ -152,6 +155,7 @@ export class BaseScene extends EventDispatcher {
         // we need to kill the scene somehow
         // stop rendering the ui if it's enabled
         this.disableInput();
+        Physics.dispose();
         this.disableUI();
         Universe.bigfreeze();
         SceneManager.dispose();
