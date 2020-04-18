@@ -8,7 +8,6 @@ import {
     DirectionalLightHelper
 } from 'three';
 import SceneManager from '../base/SceneManager';
-import debounce from '../lib/debounce';
 
 export default class SpotLight extends Light {
 
