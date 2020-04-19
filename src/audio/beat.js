@@ -10,6 +10,8 @@ export default class Beat {
 		this.sound.volume = AudioEngine.context.createGain();
 		this.sound.volume.gain.value = AudioEngine.getVolume();
 
+		this.buffer = null;
+
 		//setting listeners
 		this.setListeners();
 
@@ -39,13 +41,27 @@ export default class Beat {
 		this.sound.volume.gain.value = value;
 	}
 
-	start() {
+	hasBuffer() {
+		return !!this.buffer;
+	}
+
+	setBuffer() {
 		const buffer = AudioEngine.get(this.name);
 		if (!buffer) {
 			console.error("Unable to load sound, sorry.");
 			return;
 		}
+
+		this.buffer = buffer;
 		this.sound.source.buffer = buffer;
+	}
+
+	start() {
+
+		if (!this.hasBuffer()) {
+			this.setBuffer();
+		}
+
 		this.sound.volume.gain.value = 0;
 		this.sound.source.start(AudioEngine.context.currentTime);
 

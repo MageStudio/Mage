@@ -74,6 +74,15 @@ export default class Mesh extends Entity {
 		}
 	}
 
+	remove(what) {
+		if (this.mesh) {
+			this.mesh.remove(what.mesh);
+			const index = this.children.findIndex(m => m.equals(what));
+
+			this.children.splice(index, 1);
+		}
+	}
+
 	getChildByName(name, options = {}) {
 		const { recursive = false } = options;
 		const find = () => this.children.filter(mesh => mesh.name === name)[0];
