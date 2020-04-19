@@ -42,8 +42,6 @@ export class ScriptManager {
 	get(id) {
 		const ScriptClass = this.scripts[id];
 
-		console.log(ScriptClass);
-
 		if (ScriptClass) {
 			return new ScriptClass();
 		}

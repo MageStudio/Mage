@@ -34,9 +34,7 @@ class Router {
 
     static hasLocation() {
         return !!window &&
-            !!window.location &&
-            !!window.location.query &&
-            !!window.location.search;
+            !!window.location;
     }
 
     static extractLocationHash() {
@@ -74,9 +72,9 @@ class Router {
         const query = Router.extractQuery();
 
         if (this.isValidRoute(hash)) {
-            GameRunner.start(hash, this.getConfiguration(), this.getSelector(), query);
+            GameRunner.start(hash, query);
         }
-    }
+    };
 
     on(route, classname) {
         const path = Router.cleanRoute(route.replace(DIVIDER, HASH));
@@ -115,19 +113,20 @@ class Router {
                 .check(this.handleSuccess, this.handleFailure)
                 .then(AssetsManager.load)
                 .then(() => {
-                    this.setHashChangeListener()
+                    this.setHashChangeListener();
                     this.storeConfiguration(config);
                     this.storeSelector(selector);
 
                     const currentHash = Router.extractLocationHash();
+                    const query = Router.extractQuery();
 
                     if (this.isValidRoute(currentHash)) {
                         GameRunner
-                            .start(currentHash)
+                            .start(currentHash, query)
                             .then(resolve);
                     } else {
                         GameRunner
-                            .start(ROOT)
+                            .start(ROOT, query)
                             .then(resolve);
                     }
                 });

@@ -45,7 +45,10 @@ export class GameRunner {
 
     createNewScene = (path, options) => {
         const classname = this.get(path);
-        const scene = new classname(options);
+        const scene = new classname({
+            ...options,
+            path
+        });
 
         subscribeScene(path, scene);
 
@@ -57,7 +60,7 @@ export class GameRunner {
         this.running.dispose();
     }
 
-    start(path, config, selector, options = {}) {
+    start(path, options = {}) {
         return new Promise((resolve, reject) => {
             const { loading = false } = options;
 
