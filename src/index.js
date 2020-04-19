@@ -25,6 +25,7 @@ import * as store from './store';
 import { Provider, connect } from 'inferno-redux';
 
 import * as constants from './lib/constants';
+import debounce from './lib/debounce';
 
 import BaseScript from './scripts/BaseScript';
 
@@ -63,6 +64,7 @@ import ImagesEngine from './images/ImagesEngine';
 import ModelsEngine from './models/modelsEngine';
 import ShadersEngine from './fx/shaders/ShadersEngine';
 import PostProcessingEngine from './fx/postprocessing/PostProcessingEngine';
+
 
 export {
     author,
@@ -125,5 +127,6 @@ export {
     THREEColor,
     util,
     constants,
+    debounce,
     Stats
 };

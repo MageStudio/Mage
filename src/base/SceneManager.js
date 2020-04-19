@@ -103,7 +103,10 @@ export class SceneManager {
     }
 
     stopResizeListener() {
-        win.removeEventListener('resize', this.onResize);
+        const win = getWindow();
+        if (win) {
+            win.removeEventListener('resize', this.onResize);
+        }
     }
 
     dispose() {

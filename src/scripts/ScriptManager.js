@@ -35,12 +35,18 @@ export class ScriptManager {
         });
     }
 
-	set(id, script) {
-		this.scripts[id] = script;
+	set(id, ScriptClass) {
+		this.scripts[id] = ScriptClass;
 	}
 
 	get(id) {
-		return this.scripts[id] || false;
+		const ScriptClass = this.scripts[id];
+
+		if (ScriptClass) {
+			return new ScriptClass();
+		}
+
+		return false;
 	}
 
 	parseScript(content) {
@@ -60,7 +66,7 @@ export class ScriptManager {
 		if (ScriptClass) {
 			const script = new ScriptClass();
 			if (script.__check && script.__check()) {
-				this.set(name, script);
+				this.set(name, ScriptClass);
 			} else {
 				console.error('[Mage] Script:', name, 'needs to be an instance of Script.');
 			}
