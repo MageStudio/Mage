@@ -37,14 +37,14 @@ export class BaseScene extends EventDispatcher {
 
     enableInput = () => {
         Input.enable();
-        Input.addEventListener('keyPress', this.onKeyPress.bind(this));
-        Input.addEventListener('keyDown', this.onKeyDown.bind(this));
-        Input.addEventListener('keyUp', this.onKeyUp.bind(this));
-        Input.addEventListener('mouseDown', this.onMouseDown.bind(this));
-        Input.addEventListener('mouseUp', this.onMouseUp.bind(this));
-        Input.addEventListener('mouseMove', this.onMouseMove.bind(this));
-        Input.addEventListener('meshClick', this.onMeshClick.bind(this));
-        Input.addEventListener('meshDeselect', this.onMeshDeselect.bind(this));
+        Input.addEventListener('keyPress', this.onKeyPress);
+        Input.addEventListener('keyDown', this.onKeyDown);
+        Input.addEventListener('keyUp', this.onKeyUp);
+        Input.addEventListener('mouseDown', this.onMouseDown);
+        Input.addEventListener('mouseUp', this.onMouseUp);
+        Input.addEventListener('mouseMove', this.onMouseMove);
+        Input.addEventListener('meshClick', this.onMeshClick);
+        Input.addEventListener('meshDeselect', this.onMeshDeselect);
     };
 
     disableInput = () => {
@@ -151,6 +151,7 @@ export class BaseScene extends EventDispatcher {
         // how do we make this stop running
         // we need to kill the scene somehow
         // stop rendering the ui if it's enabled
+        this.disableInput();
         this.disableUI();
         Universe.bigfreeze();
         SceneManager.dispose();

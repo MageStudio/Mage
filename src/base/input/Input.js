@@ -76,12 +76,13 @@ export class Input extends EventDispatcher {
 
     disableMouse() {
         this.mouse.disable();
-        this.mouse = undefined;
 
         this.mouse.removeEventListener('mouseDown', this.propagate.bind(this));
         this.mouse.removeEventListener('mouseUp', this.propagate.bind(this));
         this.mouse.removeEventListener('mouseMove', this.propagate.bind(this));
         this.mouse.removeEventListener('meshClick', this.propagate.bind(this));
+
+        this.mouse = undefined;
     }
 }
 
