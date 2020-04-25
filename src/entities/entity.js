@@ -18,6 +18,21 @@ export default class Entity extends EventDispatcher {
 		this.serializable = serializable;
 	}
 
+	reset() {
+		this.scripts = [];
+	}
+
+	stopScripts() {
+		if (this.hasScripts()) {
+			this.scripts.forEach(({ script, enabled }) => {
+				if (enabled) {
+					script.onDispose();
+					script.__hasStarted(false);
+				}
+			});
+		}
+	}
+
 	start() {
 		if (this.hasScripts()) {
 			this.scripts.forEach(({ script, enabled }) => {
@@ -47,6 +62,11 @@ export default class Entity extends EventDispatcher {
 			SceneManager.remove(this.mesh);
 			this.mesh.material.dispose();
 			this.mesh.geometry.dispose();
+			// stopping state machine
+			this.stopStateMachine();
+			// stopping all scripts now
+			this.stopScripts();
+			this.reset();
 		}
 	}
 

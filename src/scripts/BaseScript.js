@@ -5,13 +5,7 @@ export default class BaseScript {
     __hasStarted(flag) { this.hasStarted = flag; }
 
     constructor(name) {
-        if (name) {
-            this.__name = name;
-        } else {
-            // this.__name = `${DEFAULT_NAME}_${Math.floor(Math.random() * 100)}`;
-            this.__name = this.contructor.name;
-        }
-
+        this.__name = name || this.contructor.name;
         this.hasStarted = false;
     }
 
@@ -22,6 +16,8 @@ export default class BaseScript {
     start() {}
 
     update(dt) {}
+
+    onDispose() {}
 
     toJSON() {
         return {
