@@ -5,7 +5,6 @@ import SceneManager from '../base/SceneManager';
 import Universe from '../base/Universe';
 import Config from '../base/config';
 import worker from './worker';
-import { getDescriptionForMesh } from './utils';
 
 import {
     INIT_EVENT,
@@ -80,24 +79,15 @@ export class Physics extends EventDispatcher {
     };
 
     handleMeshUpdate = ({ quaternion, position, uuid }) => {
-        // we get mesh from uuid
-        // we update mesh position and quaternion accordin to payload
-        // on update, we receive mesh quaternion and position, and uuid
         const mesh = Universe.getByUUID(uuid);
 
         mesh.copyPosition(position);
         mesh.copyQuaternion(quaternion);
     };
 
-    add(mesh, options) {
+    add(mesh, description) {
         if (Config.physics().enabled) {
             const uuid = mesh.uuid();
-            const description = {
-                ...getDescriptionForMesh(mesh),
-                ...options
-            };
-
-            console.log('adding physics', description);
 
             this.worker.postMessage({
                 type: ADD_EVENT,
@@ -108,7 +98,6 @@ export class Physics extends EventDispatcher {
     }
 
     applyForce(uuid, force) {
-        // tell worker to apply force to this uuid mesh
         if (Config.physics().enabled) {
             this.worker.postMessage({
                 type: APPLY_FORCE_EVENT,
@@ -119,7 +108,6 @@ export class Physics extends EventDispatcher {
     }
 
     updatePosition(uuid, position) {
-        // tell worker to update this uuid mesh
         if (Config.physics().enabled) {
             this.worker.postMessage({
                 type: POSITION_CHANGE_EVENT,
@@ -130,7 +118,6 @@ export class Physics extends EventDispatcher {
     }
 
     updateRotation(uuid, rotation) {
-        // tell worker to update this uuid mesh
         if (Config.physics().enabled) {
             this.worker.postMessage({
                 type: ROTATION_CHANGE_EVENT,

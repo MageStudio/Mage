@@ -17,6 +17,11 @@ import {
 import { COLLISION_EVENT, FRONT } from '../lib/constants';
 import Universe from '../base/Universe';
 import Physics from '../physics/physics';
+import { getDescriptionForMesh } from '../physics/utils';
+import Box from './helpers/Box';
+
+const BOUNDING_BOX_COLOR = 0Xf368e0;
+const BOUNDING_BOX_INCREASE = .5;
 
 export default class Mesh extends Entity {
 
@@ -54,8 +59,29 @@ export default class Mesh extends Entity {
 
 	enablePhysics(options) {
 		if (Config.physics().enabled) {
-			Physics.add(this, options);
+			const description = {
+                ...getDescriptionForMesh(this),
+                ...options
+			};
+
+			if (options.debug) {
+				this.addPhysicsBoundingBox(description);
+			}
+			
+			Physics.add(this, description);
 		}
+	}
+
+	addPhysicsBoundingBox({ rot, pos, size }) {
+		const scaledSize = size.map(s => s + BOUNDING_BOX_INCREASE);
+		const box = new Box(scaledSize[0], scaledSize[1], scaledSize[2], BOUNDING_BOX_COLOR);
+
+		box.position({ x: pos[0], y: pos[1], z: pos[2] });
+		box.rotation({ x: rot[0], y: rot[1], z: rot[2] });
+		box.setWireframe(true);
+		box.setWireframeLineWidth(2);
+
+		this.add(box);
 	}
 
 	applyForce(force) {
@@ -278,6 +304,10 @@ export default class Mesh extends Entity {
 
 	setWireframe(flag = true) {
 		this.mesh.material.wireframe = flag;
+	}
+
+	setWireframeLineWidth(width = 1) {
+		this.mesh.material.wireframeLinewidth = width;
 	}
 
 	copyQuaternion = (quaternion) => {

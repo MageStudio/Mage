@@ -19,7 +19,7 @@ export const getDescriptionForMesh = mesh => {
             density: 1,
             size: [ sizeX, sizeY, sizeZ ],
             pos: [ x, y, z ],
-            //rot: [ rotation.x, rotation.y, rotation.z ]
+            rot: [ rotation.x, rotation.y, rotation.z ]
         };
     }
 
