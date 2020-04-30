@@ -2,6 +2,7 @@ import {
     EventDispatcher
 } from 'three';
 import SceneManager from '../base/SceneManager';
+import Universe from '../base/Universe';
 import Config from '../base/config';
 import worker from './worker';
 import { getDescriptionForMesh } from './utils';
@@ -13,8 +14,20 @@ import {
     TERMINATE_EVENT,
     POSITION_CHANGE_EVENT,
     ROTATION_CHANGE_EVENT,
-    UPDATE_EVENT
+    UPDATE_EVENT,
+    APPLY_FORCE_EVENT,
+    ANGULAR_VELOCITY_CHANGE_EVENT,
+    LINEAR_VELOCITY_CHANGE_EVENT
 } from './messages';
+
+const DEFAULT_WORLD_CONFIG = {
+    iterations: 8,
+    broadphase: 2,
+    worldscale: 1,
+    random: true,
+    info: false,
+    gravity: [0, -9.8, 0]
+};
 
 export class Physics extends EventDispatcher {
 
@@ -35,10 +48,16 @@ export class Physics extends EventDispatcher {
 
     init() {
         if (Config.physics().enabled) {
+            const worldConfig = {
+                ...DEFAULT_WORLD_CONFIG,
+                ...Config.physics(),
+                dt: SceneManager.clock.getDelta()
+            };
+
             this.worker.postMessage({
                 type: INIT_EVENT,
-                dt: SceneManager.clock.getDelta(),
-                path: Config.physics().path
+                path: Config.physics().path,
+                worldConfig: worldConfig
             });
         }
     }
@@ -60,20 +79,25 @@ export class Physics extends EventDispatcher {
         this.worker.terminate();
     };
 
-    handleMeshUpdate = ({ rotation, position, uuid }) => {
+    handleMeshUpdate = ({ quaternion, position, uuid }) => {
         // we get mesh from uuid
-        // we update mesh position and rotation accordin to payload
-        // on update, we receive mesh rotation and position, and uuid
+        // we update mesh position and quaternion accordin to payload
+        // on update, we receive mesh quaternion and position, and uuid
         const mesh = Universe.getByUUID(uuid);
 
-        mesh.clonePosition(position);
-        mesh.cloneRotation(rotation);
+        mesh.copyPosition(position);
+        mesh.copyQuaternion(quaternion);
     };
 
-    add(mesh) {
+    add(mesh, options) {
         if (Config.physics().enabled) {
             const uuid = mesh.uuid();
-            const description = getDescriptionForMesh(mesh);
+            const description = {
+                ...getDescriptionForMesh(mesh),
+                ...options
+            };
+
+            console.log('adding physics', description);
 
             this.worker.postMessage({
                 type: ADD_EVENT,
@@ -83,8 +107,15 @@ export class Physics extends EventDispatcher {
         }
     }
 
-    applyForce(mesh) {
+    applyForce(uuid, force) {
         // tell worker to apply force to this uuid mesh
+        if (Config.physics().enabled) {
+            this.worker.postMessage({
+                type: APPLY_FORCE_EVENT,
+                uuid,
+                force
+            });
+        }
     }
 
     updatePosition(uuid, position) {
@@ -98,13 +129,33 @@ export class Physics extends EventDispatcher {
         }
     }
 
-    updatePosition(uuid, rotation) {
+    updateRotation(uuid, rotation) {
         // tell worker to update this uuid mesh
         if (Config.physics().enabled) {
             this.worker.postMessage({
                 type: ROTATION_CHANGE_EVENT,
                 uuid,
                 rotation
+            });
+        }
+    }
+
+    updateAngularVelocity(uuid, velocity) {
+        if (Config.physics().enabled) {
+            this.worker.postMessage({
+                type: ANGULAR_VELOCITY_CHANGE_EVENT,
+                uuid,
+                velocity
+            });
+        }
+    }
+
+    updateLinearVelocity(uuid, velocity) {
+        if (Config.physics().enabled) {
+            this.worker.postMessage({
+                type: LINEAR_VELOCITY_CHANGE_EVENT,
+                uuid,
+                velocity
             });
         }
     }

@@ -25,7 +25,7 @@ export default class Mesh extends Entity {
 
 		const {
 			addUniverse = true,
-			name = `default_${Math.random()}`
+			name = `default_${Math.random()}`,
 		} = options;
 
 		this.texture = undefined;
@@ -50,7 +50,18 @@ export default class Mesh extends Entity {
 
 		this.setMesh();
 		SceneManager.add(this.mesh, this, addUniverse);
-		Physics.add(this);
+	}
+
+	enablePhysics(options) {
+		if (Config.physics().enabled) {
+			Physics.add(this, options);
+		}
+	}
+
+	applyForce(force) {
+		if (Config.physics().enabled) {
+			Physics.applyForce(this.uuid(), force);
+		}
 	}
 
 	update(dt) {
@@ -269,12 +280,12 @@ export default class Mesh extends Entity {
 		this.mesh.material.wireframe = flag;
 	}
 
-	cloneRotation = (rotation) => {
-		this.mesh.rotation.clone(rotation);
+	copyQuaternion = (quaternion) => {
+		this.mesh.quaternion.copy(quaternion);
 	}
 
-	clonePosition = (position) => {
-		this.mesh.position.clone(position);
+	copyPosition = (position) => {
+		this.mesh.position.copy(position);
 	}
 
 	equals = (object) => (

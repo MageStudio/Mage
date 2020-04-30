@@ -13,6 +13,7 @@ export default [{
         file: './dist/mage.js',
         format: 'esm',
         compact: true,
+        minifyInternalExports: false,
         name: 'M'
     },
     plugins: [
@@ -32,12 +33,13 @@ export default [{
     ]
 },
 {
-    input: './src/physics/OimoProxy.js',
+    input: './src/physics.index.js',
     output: {
         file: './dist/mage.physics.js',
-        format: 'commonjs',
+        format: 'umd',
         compact: true,
-        name: 'M'
+        minifyInternalExports: false,
+        name: 'OIMO'
     },
     plugins: [
         resolve(),

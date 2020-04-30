@@ -9,6 +9,7 @@ const DEFAULT_BOX_DESCRIPTION = {
 export const getDescriptionForMesh = mesh => {
     const { boundingBox } = mesh;
     const { x, y, z } = mesh.position();
+    const rotation = mesh.rotation();
     const { x: sizeX, y: sizeY, z:sizeZ } = boundingBox.getSize();
 
     if (boundingBox) {
@@ -18,6 +19,7 @@ export const getDescriptionForMesh = mesh => {
             density: 1,
             size: [ sizeX, sizeY, sizeZ ],
             pos: [ x, y, z ],
+            //rot: [ rotation.x, rotation.y, rotation.z ]
         };
     }
 

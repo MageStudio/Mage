@@ -17,7 +17,7 @@ export default class Cylinder {
             ...options
 		});
 
-		this.mesh = new Mesh(this.geometry, this.material);
+		this.mesh = new Mesh(this.geometry, this.material, options);
 
         return this.mesh;
     }

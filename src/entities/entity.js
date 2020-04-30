@@ -1,6 +1,6 @@
 import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
-import { EventDispatcher } from 'three';
+import { EventDispatcher, Quaternion, Euler } from 'three';
 
 import Config from '../base/config';
 import ScriptManager from '../scripts/ScriptManager';
@@ -284,9 +284,7 @@ export default class Entity extends EventDispatcher {
 
 		if (Config.physics().enabled) {
 			Physics.updatePosition(this.uuid(), position);
-		}
-
-		if (this.mesh) {
+		} else if (this.mesh) {
 			this.mesh.position.set(position.x, position.y, position.z);
 		}
 	}
@@ -306,11 +304,17 @@ export default class Entity extends EventDispatcher {
 
 		if (Config.physics().enabled) {
 			Physics.updateRotation(this.uuid(), rotation);
-		} else {
-			if (this.mesh) {
-				this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
-			}
+		} else if (this.mesh) {
+			this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
 		}
+	}
+
+	setAngularVelocity(velocity) {
+		Physics.updateAngularVelocity(this.uuid(), velocity);
+	}
+
+	setLinearVelocity(velocity) {
+		Physics.updateLinearVelocity(this.uuid(), velocity);
 	}
 
 	translate({ x = 0, y = 0, z = 0}) {
@@ -324,12 +328,12 @@ export default class Entity extends EventDispatcher {
 	goTo(position, time) {
 		const { x, y, z } = this.position();
 
-		return new Promise((resolve) => {
-			return new Between({ x, y, z}, position)
+		return new Promise((resolve) => 
+			new Between({ x, y, z}, position)
 				.time(time)
 				.on('update', value => this.position(value))
-				.on('complete', resolve);
-		});
+				.on('complete', resolve)
+		);
 	}
 
 	uuid(uuid) {

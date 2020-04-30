@@ -9,23 +9,18 @@ const worker = createWorker(() => {
     const TERMINATE_EVENT = 'TERMINATE_EVENT';
     const ROTATION_CHANGE_EVENT = 'ROTATION_CHANGE_EVENT';
     const POSITION_CHANGE_EVENT = 'POSITION_CHANGE_EVENT';
+    const APPLY_FORCE_EVENT = 'APPLY_FORCE_EVENT';
+    const ANGULAR_VELOCITY_CHANGE_EVENT = 'ANGULAR_VELOCITY_CHANGE_EVENT';
+    const LINEAR_VELOCITY_CHANGE_EVENT = 'LINEAR_VELOCITY_CHANGE_EVENT';
 
     let world,
         elements;
 
-    const handleInitEvent = ({ dt, path }) => {
-        const OIMO = self.importScripts(path);
+    const handleInitEvent = ({ path, worldConfig }) => {
+        self.importScripts(path);
 
         elements = [];
-        world = new OIMO.World({
-            timestep: dt,
-            iterations: 8,
-            broadphase: 2,
-            worldscale: 1,
-            random: true,
-            info: false,
-            gravity: [0, -9.8, 0]
-        });
+        world = new OIMO.World(worldConfig);
     }
 
     const handleUpdateEvent = ({ }) => {
@@ -33,34 +28,64 @@ const worker = createWorker(() => {
             world.step();
 
             Object.keys(elements).forEach(uuid => {
-                const position = elements[uuid].getPosition();
-                const rotation = elements[uuid].getRotation();
+                const body = elements[uuid];
 
-                self.postMessage({
-                    type: MESH_UPDATE,
-                    position,
-                    rotation,
-                    uuid
-                });
+                if (!body.sleeping) {
+                    const position = elements[uuid].getPosition();
+                    const quaternion = elements[uuid].getQuaternion();
+    
+                    self.postMessage({
+                        type: MESH_UPDATE,
+                        position,
+                        quaternion,
+                        uuid
+                    });
+                }
             })
         }
     }
 
     const handleAddEvent = ({ description, uuid }) => {
         if (world) {
+            console.log('description for', uuid, description);
             elements[uuid] = world.add(description);
         }
     }
 
     const handlePositionChangeEvent = ({ uuid, position }) => {
-        if (world) {
+        if (world && elements[uuid]) {
             elements[uuid].setPosition(position);
         }
     };
 
     const handleRotationChangeEvent = ({ uuid, rotation }) => {
-        if (world) {
+        if (world && elements[uuid]) {
             elements[uuid].setRotation(rotation);
+        }
+    }
+
+    const handleApplyForceEvent = ({ uuid, force }) => {
+        if (world && elements[uuid]) {
+            elements[uuid].applyImpulse(elements[uuid].getPosition(), force);
+        }
+    }
+
+    const handleAngularVelocityChangeEvent = ({ uuid, velocity }) => {
+        if (world && elements[uuid]) {
+            const { x, y, z } = velocity;
+
+            elements[uuid].angularVelocity.x = x || elements[uuid].angularVelocity.x;
+            elements[uuid].angularVelocity.y = y || elements[uuid].angularVelocity.y;
+            elements[uuid].angularVelocity.z = z || elements[uuid].angularVelocity.z;        }
+    }
+
+    const handleLinearVelocityChangeEvent = ({ uuid, velocity }) => {
+        if (world && elements[uuid]) {
+            const { x, y, z } = velocity;
+
+            elements[uuid].linearVelocity.x = x || elements[uuid].linearVelocity.x;
+            elements[uuid].linearVelocity.y = y || elements[uuid].linearVelocity.y;
+            elements[uuid].linearVelocity.z = z || elements[uuid].linearVelocity.z;
         }
     }
 
@@ -89,6 +114,15 @@ const worker = createWorker(() => {
                 break;
             case POSITION_CHANGE_EVENT:
                 handlePositionChangeEvent(data);
+                break;
+            case APPLY_FORCE_EVENT:
+                handleApplyForceEvent(data);
+                break;
+            case ANGULAR_VELOCITY_CHANGE_EVENT:
+                handleAngularVelocityChangeEvent(data);
+                break;
+            case LINEAR_VELOCITY_CHANGE_EVENT:
+                handleLinearVelocityChangeEvent(data);
                 break;
             case TERMINATE_EVENT:
                 handleTerminateEvent();
