@@ -16,6 +16,8 @@ const worker = createWorker(() => {
     let world,
         elements;
 
+    const isUndefined = e => e === undefined;
+
     const handleInitEvent = ({ path, worldConfig }) => {
         self.importScripts(path);
 
@@ -74,18 +76,19 @@ const worker = createWorker(() => {
         if (world && elements[uuid]) {
             const { x, y, z } = velocity;
 
-            elements[uuid].angularVelocity.x = x || elements[uuid].angularVelocity.x;
-            elements[uuid].angularVelocity.y = y || elements[uuid].angularVelocity.y;
-            elements[uuid].angularVelocity.z = z || elements[uuid].angularVelocity.z;        }
+            elements[uuid].angularVelocity.x = isUndefined(x) ? elements[uuid].angularVelocity.x : x;
+            elements[uuid].angularVelocity.y = isUndefined(y) ? elements[uuid].angularVelocity.y : y;
+            elements[uuid].angularVelocity.z = isUndefined(z) ? elements[uuid].angularVelocity.z : z;
+        }
     }
 
     const handleLinearVelocityChangeEvent = ({ uuid, velocity }) => {
         if (world && elements[uuid]) {
             const { x, y, z } = velocity;
 
-            elements[uuid].linearVelocity.x = x || elements[uuid].linearVelocity.x;
-            elements[uuid].linearVelocity.y = y || elements[uuid].linearVelocity.y;
-            elements[uuid].linearVelocity.z = z || elements[uuid].linearVelocity.z;
+            elements[uuid].linearVelocity.x = isUndefined(x) ? elements[uuid].linearVelocity.x : x;
+            elements[uuid].linearVelocity.y = isUndefined(y) ? elements[uuid].linearVelocity.y : y;
+            elements[uuid].linearVelocity.z = isUndefined(z) ? elements[uuid].linearVelocity.z : z;
         }
     }
 
