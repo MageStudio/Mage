@@ -15,7 +15,7 @@ export default class Cube {
             ...options
 		});
 
-		this.mesh = new Mesh(this.geometry, this.material);
+		this.mesh = new Mesh(this.geometry, this.material, options);
 
         return this.mesh;
     }

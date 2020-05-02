@@ -1,16 +1,14 @@
 import SceneHelper from '../../base/SceneManager';
 import Mesh from '../Mesh';
 import {
-    CylinderGeometry,
+    CubeGeometry,
     MeshBasicMaterial
 } from 'three';
 
-export default class Cylinder {
+export default class Box {
 
-    constructor(radiusTop = 10, radiusBottom = 10, height, color, options = {}) {
-        const segments = 32;
-
-        this.geometry = new CylinderGeometry(radiusTop, radiusBottom, height, segments );
+    constructor(width = 10, height = 10, depth = 10, color, options = {}) {
+        this.geometry = new CubeGeometry(width, height, depth);
 		this.material = new MeshBasicMaterial({
 			color: color,
 			wireframe: false,

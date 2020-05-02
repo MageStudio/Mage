@@ -32,24 +32,12 @@ export class SceneManager {
     }
 
     createScene() {
-        const { enabled = false } = Config.physics();
-        const ammo = 'ammo.js';
-        const worker = 'workers/physijs_worker.js';
+        const fog = Config.fog();
 
-        if (enabled && Physijs) {
-            Physijs.scripts.worker = worker;
-            Physijs.scripts.ammo = ammo;
-            this.scene = new Physijs.Scene();
-            this.physics = true;
-        } else {
-            const fog = Config.fog();
+        this.scene = new Scene();
 
-            this.physics = false;
-            this.scene = new Scene();
-
-            if (fog.enabled) {
-                this.fog(fog.color, fog.density);
-            }
+        if (fog.enabled) {
+            this.fog(fog.color, fog.density);
         }
     }
 
@@ -211,9 +199,6 @@ export class SceneManager {
     update(dt) {
         Universe.update(dt);
 
-        if (Config.physics().enabled && this.physics) {
-            this.scene.simulate();
-        }
         if (Config.tween().enabled && TWEEN) {
             TWEEN.update();
         }

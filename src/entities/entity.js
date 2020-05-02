@@ -1,14 +1,17 @@
 import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
-import { EventDispatcher } from 'three';
+import { EventDispatcher, Quaternion, Euler, Vector3 } from 'three';
 
+import Config from '../base/config';
 import ScriptManager from '../scripts/ScriptManager';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
 import SceneManager from '../base/SceneManager';
+import Physics from '../physics/physics';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
+const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
 
 export default class Entity extends EventDispatcher {
 
@@ -267,6 +270,17 @@ export default class Entity extends EventDispatcher {
 		}
 	}
 
+	getWorldPosition() {
+		const vector = new Vector3();
+		if (this.mesh) {
+			const { x, y, z } = this.mesh.getWorldPosition(vector);
+			
+			return { x, y, z }
+		}
+
+		return DEFAULT_POSITION;
+	}
+
 	position(options) {
 		if (options === undefined) return {
 			x: this.mesh.position.x,
@@ -280,7 +294,9 @@ export default class Entity extends EventDispatcher {
 			z: options.z === undefined ? this.mesh.position.z : options.z
 		};
 
-		if (this.mesh) {
+		if (Config.physics().enabled) {
+			Physics.updatePosition(this.uuid(), position);
+		} else if (this.mesh) {
 			this.mesh.position.set(position.x, position.y, position.z);
 		}
 	}
@@ -298,9 +314,19 @@ export default class Entity extends EventDispatcher {
 			z: options.z === undefined ? this.mesh.rotation.z : options.z
 		};
 
-		if (this.mesh) {
+		if (Config.physics().enabled) {
+			Physics.updateRotation(this.uuid(), rotation);
+		} else if (this.mesh) {
 			this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
 		}
+	}
+
+	setAngularVelocity(velocity) {
+		Physics.updateAngularVelocity(this.uuid(), velocity);
+	}
+
+	setLinearVelocity(velocity) {
+		Physics.updateLinearVelocity(this.uuid(), velocity);
 	}
 
 	translate({ x = 0, y = 0, z = 0}) {
@@ -314,12 +340,12 @@ export default class Entity extends EventDispatcher {
 	goTo(position, time) {
 		const { x, y, z } = this.position();
 
-		return new Promise((resolve) => {
-			return new Between({ x, y, z}, position)
+		return new Promise((resolve) => 
+			new Between({ x, y, z}, position)
 				.time(time)
 				.on('update', value => this.position(value))
-				.on('complete', resolve);
-		});
+				.on('complete', resolve)
+		);
 	}
 
 	uuid(uuid) {
