@@ -7,13 +7,14 @@ export default class BaseScript {
     constructor(name) {
         this.__name = name || this.contructor.name;
         this.hasStarted = false;
+        this.options = {};
     }
 
     name() {
         return this.__name;
     }
 
-    start() {}
+    start(element, options) {}
 
     update(dt) {}
 
