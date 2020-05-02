@@ -8,3 +8,4 @@ webpack.node.js
 package-lock.json
 !dist/mage.js
 !dist/mage.node.js
+!dist/mage.physics.js

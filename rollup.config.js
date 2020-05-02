@@ -16,6 +16,8 @@ export default [{
         minifyInternalExports: false,
         name: 'M'
     },
+    cache: true,
+    perf: true,
     plugins: [
         resolve(),
         babel({
@@ -41,6 +43,8 @@ export default [{
         minifyInternalExports: false,
         name: 'OIMO'
     },
+    cache: true,
+    perf: true,
     plugins: [
         resolve(),
         babel({

@@ -146,7 +146,7 @@ export class BaseScene extends EventDispatcher {
         if (this.onCreate instanceof Function) {
             this.onCreate();
         } else {
-            console.log("[Mage] Something wrong in your onCreate method");
+            console.log();
         }
     };
 

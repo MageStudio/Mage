@@ -6,22 +6,34 @@ const DEFAULT_BOX_DESCRIPTION = {
     pos: [ 0, 0, 0 ],
 };
 
-export const getDescriptionForMesh = mesh => {
-    const { boundingBox } = mesh;
-    const { x, y, z } = mesh.position();
-    const rotation = mesh.rotation();
-    const { x: sizeX, y: sizeY, z:sizeZ } = boundingBox.getSize();
-
-    if (boundingBox) {
+export const parseBoundingBoxSize = (boundingBox = {}) => {
+    try {
+        const { x: sizeX, y: sizeY, z: sizeZ } = boundingBox.getSize();
         return {
-            type: 'box',
-            move: true,
-            density: 1,
-            size: [ sizeX, sizeY, sizeZ ],
-            pos: [ x, y, z ],
-            rot: [ rotation.x, rotation.y, rotation.z ]
-        };
+            x: sizeX,
+            y: sizeY,
+            z: sizeZ
+        }
+    } catch(e) {
+        console.log(BOUNDINGBOX_NOT_AVAILABLE);
+        return {
+            x: 1,
+            y: 1,
+            z: 1
+        }
     }
+};
 
-    return DEFAULT_BOX_DESCRIPTION;
+export const getDescriptionForMesh = mesh => {
+    const { x, y, z } = mesh.getWorldPosition();
+    const rotation = mesh.rotation();
+    const { boundingBox } = mesh;
+    const size = parseBoundingBoxSize(boundingBox);
+
+    return {
+        ...DEFAULT_BOX_DESCRIPTION,
+        size: [ size.x, size.y, size.z ],
+        pos: [ x, y, z ],
+        rot: [ rotation.x, rotation.y, rotation.z ]
+    };
 }

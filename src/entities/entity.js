@@ -1,6 +1,6 @@
 import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
-import { EventDispatcher, Quaternion, Euler } from 'three';
+import { EventDispatcher, Quaternion, Euler, Vector3 } from 'three';
 
 import Config from '../base/config';
 import ScriptManager from '../scripts/ScriptManager';
@@ -11,6 +11,7 @@ import SceneManager from '../base/SceneManager';
 import Physics from '../physics/physics';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
+const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
 
 export default class Entity extends EventDispatcher {
 
@@ -267,6 +268,17 @@ export default class Entity extends EventDispatcher {
 		if (this.mesh) {
 			this.mesh.scale.set(scale.x, scale.y, scale.z);
 		}
+	}
+
+	getWorldPosition() {
+		const vector = new Vector3();
+		if (this.mesh) {
+			const { x, y, z } = this.mesh.getWorldPosition(vector);
+			
+			return { x, y, z }
+		}
+
+		return DEFAULT_POSITION;
 	}
 
 	position(options) {

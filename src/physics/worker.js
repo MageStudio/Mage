@@ -49,7 +49,6 @@ const worker = createWorker(() => {
 
     const handleAddEvent = ({ description, uuid }) => {
         if (world) {
-            console.log('description for', uuid, description);
             elements[uuid] = world.add(description);
         }
     }
