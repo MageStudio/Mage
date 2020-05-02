@@ -147,7 +147,7 @@ export default class Entity extends EventDispatcher {
 		}
 	}
 
-	addScript(name, enabled = true) {
+	addScript(name, enabled = true, options) {
 		const script = ScriptManager.get(name);
 		if (script) {
 			this.scripts.push({
@@ -156,7 +156,7 @@ export default class Entity extends EventDispatcher {
 				enabled
 			});
 			if (enabled) {
-				script.start(this);
+				script.start(this, options);
 			}
 		}
 	}
