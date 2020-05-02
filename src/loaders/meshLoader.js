@@ -1,8 +1,8 @@
 import Mesh from '../entities/Mesh';
 import ShaderMesh from '../entities/ShaderMesh';
-import ImagesEngine from '../images/ImagesEngine'
+import Images from '../images/Images'
 import Loader from './Loader';
-import ScriptManager from '../scripts/ScriptManager';
+import Scripts from '../scripts/Scripts';
 import {
     RepeatWrapping
 } from 'three';

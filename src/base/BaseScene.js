@@ -1,14 +1,14 @@
-import AssetsManager from './AssetsManager';
+import Assets from './Assets';
 import Universe from './Universe';
-import SceneManager from './SceneManager';
+import Scene from './Scene';
 import SceneHelper from './SceneHelper';
 import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
-import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
+import PostProcessing from '../fx/postprocessing/PostProcessing';
 import Input from './input/Input';
-import LightEngine from '../lights/LightEngine';
-import ControlsManager from '../controls/ControlsManager';
+import Lights from '../lights/Lights';
+import Controls from '../controls/Controls';
 import Physics from '../physics/physics';
 import { mount, unmount } from '../ui/render';
 import {
@@ -33,7 +33,7 @@ export class BaseScene extends EventDispatcher {
         this.debug = true;
         this.sceneHelper = new SceneHelper();
 
-        SceneManager.create();
+        Scene.create();
     }
 
     enableInput = () => {
@@ -99,7 +99,7 @@ export class BaseScene extends EventDispatcher {
                 LightLoader.load(lights, options);
             }
 
-            SceneManager.updateChildren();
+            Scene.updateChildren();
 
             resolve();
         })
@@ -119,26 +119,26 @@ export class BaseScene extends EventDispatcher {
 
     preload = (url = this.getJSONUrl()) => this.loadScene(url);
 
-    onResize = () => SceneManager.onResize();
+    onResize = () => Scene.onResize();
 
     render = () => {
-        const dt = SceneManager.clock.getDelta();
+        const dt = Scene.clock.getDelta();
 
         Physics.update();
-        SceneManager.render(dt);
-        PostProcessingEngine.render(dt);
+        Scene.render(dt);
+        PostProcessing.render(dt);
         this.onUpdate(dt);
-        SceneManager.update(dt);
-        AssetsManager.update(dt);
+        Scene.update(dt);
+        Assets.update(dt);
         Stats.update(dt);
-        ControlsManager.update(dt);
+        Controls.update(dt);
 
         requestAnimFrame(this.render.bind(this));
     }
 
     init = () => {
         Physics.init();
-        PostProcessingEngine.init();
+        PostProcessing.init();
         Stats.init();
 
         this.render();
@@ -158,7 +158,7 @@ export class BaseScene extends EventDispatcher {
         Physics.dispose();
         this.disableUI();
         Universe.bigfreeze();
-        SceneManager.dispose();
+        Scene.dispose();
     };
 
     load = () => {
@@ -170,7 +170,7 @@ export class BaseScene extends EventDispatcher {
 
     toJSON() {
         return {
-            ...LightEngine.toJSON(),
+            ...Lights.toJSON(),
             ...Universe.toJSON()
         };
     }

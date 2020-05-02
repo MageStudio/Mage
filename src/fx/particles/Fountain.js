@@ -2,14 +2,14 @@ import { ParticlesSystem, Randomizers, Emitter } from 'mage-engine.particles';
 import {
     Vector3
 } from 'three';
-import SceneManager from '../../base/SceneManager';
+import Scene from '../../base/Scene';
 
 export default class Fountain {
 
     constructor(options = {}) {
 
         const {
-            container = SceneManager.scene,
+            container = Scene.scene,
             particles = {}
         } = options;
 

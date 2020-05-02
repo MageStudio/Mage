@@ -1,5 +1,5 @@
 import Beat from './Beat';
-import AudioEngine from './AudioEngine';
+import Audio from './Audio';
 import { Vector3 } from 'three';
 
 export default class Sound extends Beat {
@@ -17,11 +17,11 @@ export default class Sound extends Beat {
 		this.sound.source.loop = loop;
 
 		//creating panner, we need to update on object movements.
-		this.sound.panner = AudioEngine.context.createPanner();
+		this.sound.panner = Audio.context.createPanner();
 		//disconnecting from main volume, then connecting to panner and main volume again
 		this.sound.volume.disconnect();
 		this.sound.volume.connect(this.sound.panner);
-		this.sound.panner.connect(AudioEngine.volume);
+		this.sound.panner.connect(Audio.volume);
 
 		if (mesh) {
 			this.mesh = mesh;
@@ -30,21 +30,21 @@ export default class Sound extends Beat {
 		}
 
 		if (effect) {
-			this.convolver = AudioEngine.context.createConvolver();
-			this.mixer = AudioEngine.createGain();
+			this.convolver = Audio.context.createConvolver();
+			this.mixer = Audio.createGain();
 			this.sound.panner.disconnect();
 			this.sound.panner.connect(this.mixer);
 			//creating gains
-			this.plainGain = AudioEngine.context.createGain();
-			this.convolverGain = AudioEngine.context.createGain();
+			this.plainGain = Audio.context.createGain();
+			this.convolverGain = Audio.context.createGain();
 			//connect mixer to new gains
 			this.mixer.connect(plainGain);
 			this.mixer.connect(convolverGain);
 
-			this.plainGain.connect(AudioEngine.volume);
-			this.convolverGain.connect(AudioEngine.volume);
+			this.plainGain.connect(Audio.volume);
+			this.convolverGain.connect(Audio.volume);
 
-			this.convolver.buffer = AudioEngine.get(effect);
+			this.convolver.buffer = Audio.get(effect);
 			this.convolverGain.gain.value = 0.7;
 			this.plainGain.gain.value = 0.3;
 
@@ -54,7 +54,7 @@ export default class Sound extends Beat {
 			this.start();
 		}
 
-		AudioEngine.add(this);
+		Audio.add(this);
 	}
 
 	update(dt) {

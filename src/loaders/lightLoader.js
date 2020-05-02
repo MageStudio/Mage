@@ -4,7 +4,7 @@ import SunLight from '../lights/SunLight';
 import AmbientLight from '../lights/AmbientLight';
 import PointLight from '../lights/PointLight';
 
-import { SUNLIGHT, POINTLIGHT, AMBIENTLIGHT } from '../lights/lightEngine';
+import { SUNLIGHT, POINTLIGHT, AMBIENTLIGHT } from '../lights/Lights';
 
 export class LightLoader extends Loader {
 

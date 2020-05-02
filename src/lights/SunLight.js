@@ -7,8 +7,8 @@ import {
     SphereGeometry,
     DirectionalLightHelper
 } from 'three';
-import SceneManager from '../base/SceneManager';
-import { SUNLIGHT } from './lightEngine';
+import Scene from '../base/Scene';
+import { SUNLIGHT } from './Lights';
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 40;
@@ -51,7 +51,7 @@ export default class SunLight extends Light {
             this.light.shadow.camera.far = far;
         }
 
-        SceneManager.add(this.light, this);
+        Scene.add(this.light, this);
     }
 
     getTargetMesh(initialPosition) {
@@ -95,7 +95,7 @@ export default class SunLight extends Light {
 
     addHelper() {
         this.helper = new DirectionalLightHelper(this.light, 10);
-        SceneManager.add(this.helper, null, false);
+        Scene.add(this.helper, null, false);
         this.addHolder();
     }
 

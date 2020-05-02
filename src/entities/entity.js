@@ -3,11 +3,11 @@ import { createMachine, interpret } from 'xstate';
 import { EventDispatcher, Quaternion, Euler, Vector3 } from 'three';
 
 import Config from '../base/config';
-import ScriptManager from '../scripts/ScriptManager';
+import Scripts from '../scripts/Scripts';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 import Physics from '../physics/physics';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
@@ -62,7 +62,7 @@ export default class Entity extends EventDispatcher {
 
 	dispose() {
 		if (this.mesh) {
-			SceneManager.remove(this.mesh);
+			Scene.remove(this.mesh);
 			this.mesh.material.dispose();
 			this.mesh.geometry.dispose();
 			// stopping state machine
@@ -121,7 +121,7 @@ export default class Entity extends EventDispatcher {
 
 	setScripts(scripts = [], enabled = true) {
 		this.scripts = scripts.map(name => ({
-			script: ScriptManager.get(name),
+			script: Scripts.get(name),
 			enabled
 		}));
 
@@ -132,7 +132,7 @@ export default class Entity extends EventDispatcher {
 
 	addScripts(scripts = [], enabled = true) {
 		const parsedScripts = scripts.map(name => ({
-			script: ScriptManager.get(name),
+			script: Scripts.get(name),
 			name,
 			enabled
 		}));
@@ -148,7 +148,7 @@ export default class Entity extends EventDispatcher {
 	}
 
 	addScript(name, enabled = true, options) {
-		const script = ScriptManager.get(name);
+		const script = Scripts.get(name);
 		if (script) {
 			this.scripts.push({
 				script,
@@ -371,7 +371,7 @@ export default class Entity extends EventDispatcher {
 			this.name = name;
 			this.mesh.name = name;
 
-			if (replace) SceneManager.add(this.mesh, this, true);
+			if (replace) Scene.add(this.mesh, this, true);
 		}
 	}
 }

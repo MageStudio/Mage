@@ -1,4 +1,4 @@
-import AudioEngine from './AudioEngine';
+import Audio from './Audio';
 import Beat from './Beat';
 
 export default class BackgroundSound extends Beat {
@@ -14,21 +14,21 @@ export default class BackgroundSound extends Beat {
         //if we set up an effect in our options, we need to create a convolver node
         if (options.effect) {
 
-            this.convolver = AudioEngine.context.createConvolver();
-            this.mixer = AudioEngine.context.createGain();
+            this.convolver = Audio.context.createConvolver();
+            this.mixer = Audio.context.createGain();
             this.sound.panner.disconnect();
             this.sound.panner.connect(this.mixer);
             //creating gains
-            this.plainGain = AudioEngine.context.createGain();
-            this.convolverGain = AudioEngine.context.createGain();
+            this.plainGain = Audio.context.createGain();
+            this.convolverGain = Audio.context.createGain();
             //connect mixer to new gains
             this.mixer.connect(plainGain);
             this.mixer.connect(convolverGain);
 
-            this.plainGain.connect(AudioEngine.volume);
-            this.convolverGain.connect(AudioEngine.volume);
+            this.plainGain.connect(Audio.volume);
+            this.convolverGain.connect(Audio.volume);
 
-            this.convolver.buffer = AudioEngine.get(options.effect);
+            this.convolver.buffer = Audio.get(options.effect);
             this.convolverGain.gain.value = 0.7;
             this.plainGain.gain.value = 0.3;
 
@@ -38,8 +38,8 @@ export default class BackgroundSound extends Beat {
         if (autoplay) {
             this.start();
         }
-        //adding this sound to AudioEngine
-        AudioEngine.add(this);
+        //adding this sound to Audio
+        Audio.add(this);
     }
 
     update(dt) {}

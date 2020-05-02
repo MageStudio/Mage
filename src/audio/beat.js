@@ -1,4 +1,4 @@
-import AudioEngine from './AudioEngine';
+import Audio from './Audio';
 
 export default class Beat {
 
@@ -6,9 +6,9 @@ export default class Beat {
 		this.name = name;
 		//this sound name should already be loaded by our engine
 		this.sound = {};
-		this.sound.source = AudioEngine.context.createBufferSource();
-		this.sound.volume = AudioEngine.context.createGain();
-		this.sound.volume.gain.value = AudioEngine.getVolume();
+		this.sound.source = Audio.context.createBufferSource();
+		this.sound.volume = Audio.context.createGain();
+		this.sound.volume.gain.value = Audio.getVolume();
 
 		this.buffer = null;
 
@@ -18,7 +18,7 @@ export default class Beat {
 		// Connect the sound source to the volume control.
 		this.sound.source.connect(this.sound.volume);
 		// Hook up the sound volume control to the main volume.
-		this.sound.volume.connect(AudioEngine.volume);
+		this.sound.volume.connect(Audio.volume);
 	}
 
 	setListeners() {
@@ -31,7 +31,7 @@ export default class Beat {
 
 	reset() {
 		this.sound.source.disconnect();
-		this.sound.source = AudioEngine.context.createBufferSource();
+		this.sound.source = Audio.context.createBufferSource();
 		this.sound.source.connect(this.sound.volume);
 		//setting listeners
 		this.setListeners();
@@ -46,7 +46,7 @@ export default class Beat {
 	}
 
 	setBuffer() {
-		const buffer = AudioEngine.get(this.name);
+		const buffer = Audio.get(this.name);
 		if (!buffer) {
 			console.error("Unable to load sound, sorry.");
 			return;
@@ -63,12 +63,12 @@ export default class Beat {
 		}
 
 		this.sound.volume.gain.value = 0;
-		this.sound.source.start(AudioEngine.context.currentTime);
+		this.sound.source.start(Audio.context.currentTime);
 
 		const delay = () => {
-			this.sound.volume.gain.value = this.sound.volume.gain.value + AudioEngine.DELAY_FACTOR;
-			if (this.sound.volume.gain.value < AudioEngine.getVolume()) {
-				setTimeout(delay, AudioEngine.DELAY_STEP);
+			this.sound.volume.gain.value = this.sound.volume.gain.value + Audio.DELAY_FACTOR;
+			if (this.sound.volume.gain.value < Audio.getVolume()) {
+				setTimeout(delay, Audio.DELAY_STEP);
 			}
 		}
 		delay();
@@ -76,9 +76,9 @@ export default class Beat {
 
 	stop() {
 		const delay = () => {
-			this.sound.volume.gain.value = this.sound.volume.gain.value - AudioEngine.DELAY_FACTOR;
-			if (this.sound.volume.gain.value > AudioEngine.DELAY_MIN_VALUE) {
-				setTimeout(delay, AudioEngine.DELAY_STEP);
+			this.sound.volume.gain.value = this.sound.volume.gain.value - Audio.DELAY_FACTOR;
+			if (this.sound.volume.gain.value > Audio.DELAY_MIN_VALUE) {
+				setTimeout(delay, Audio.DELAY_STEP);
 			} else {
 				this.sound.source.stop();
 			}

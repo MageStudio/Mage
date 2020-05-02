@@ -1,7 +1,7 @@
 import {
     EventDispatcher
 } from 'three';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 import Universe from '../base/Universe';
 import Config from '../base/config';
 import worker from './worker';
@@ -50,7 +50,7 @@ export class Physics extends EventDispatcher {
             const worldConfig = {
                 ...DEFAULT_WORLD_CONFIG,
                 ...Config.physics(),
-                dt: SceneManager.clock.getDelta()
+                dt: Scene.clock.getDelta()
             };
 
             this.worker.postMessage({

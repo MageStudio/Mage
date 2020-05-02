@@ -1,5 +1,5 @@
 import GameRunner from '../runner/GameRunner';
-import AssetsManager from "../base/AssetsManager";
+import Assets from "../base/Assets";
 import util from '../base/util';
 import Config from "../base/config";
 
@@ -107,11 +107,11 @@ class Router {
             Config.setContainer(selector);
 
             util.start();
-            AssetsManager.setAssets(assets);
+            Assets.setAssets(assets);
 
             util.checker
                 .check(this.handleSuccess, this.handleFailure)
-                .then(AssetsManager.load)
+                .then(Assets.load)
                 .then(() => {
                     this.setHashChangeListener();
                     this.storeConfiguration(config);

@@ -1,8 +1,8 @@
 import Entity from './Entity';
 import Line from './Line';
 import Config from '../base/config';
-import SceneManager from '../base/SceneManager';
-import ImagesEngine from '../images/ImagesEngine';
+import Scene from '../base/Scene';
+import Images from '../images/Images';
 import {
 	Mesh as THREEMesh,
 	RepeatWrapping,
@@ -54,7 +54,7 @@ export default class Mesh extends Entity {
 		}
 
 		this.setMesh();
-		SceneManager.add(this.mesh, this, addUniverse);
+		Scene.add(this.mesh, this, addUniverse);
 	}
 
 	enablePhysics(options) {
@@ -189,7 +189,7 @@ export default class Mesh extends Entity {
 
 	checkRayCollider = ({ ray, type }) => {
 		const intersections = ray
-			.intersectObjects(SceneManager.scene.children)
+			.intersectObjects(Scene.scene.children)
 			.filter(collision => collision.object.uuid !== this.uuid());
 
 		const mapCollision = (collision) => {
@@ -252,7 +252,7 @@ export default class Mesh extends Entity {
 				repeat = { x: 1, y: 1 },
 				wrap = RepeatWrapping
 			} = options;
-			const texture = ImagesEngine.get(textureId);
+			const texture = Images.get(textureId);
 
 			this.texture = textureId;
 

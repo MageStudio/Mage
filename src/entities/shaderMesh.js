@@ -1,6 +1,6 @@
 import { Mesh } from 'three';
 import Shader from '../fx/shaders/Shader';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 import Entity from './Entity';
 
 export default class ShaderMesh extends Entity {
@@ -34,7 +34,7 @@ export default class ShaderMesh extends Entity {
         }
 
         //adding to core
-        SceneManager.add(this.mesh, this);
+        Scene.add(this.mesh, this);
 
         if (options) {
             //do something with options

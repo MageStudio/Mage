@@ -7,7 +7,7 @@ import {
     SphereGeometry,
     DirectionalLightHelper
 } from 'three';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 
 export default class SpotLight extends Light {
 
@@ -37,7 +37,7 @@ export default class SpotLight extends Light {
             this.light.shadow.camera.far = 1000;
         }
 
-        SceneManager.add(this.light, this);
+        Scene.add(this.light, this);
     }
 
     getTargetMesh(initialPosition) {
@@ -81,7 +81,7 @@ export default class SpotLight extends Light {
 
     addHelper() {
         this.helper = new DirectionalLightHelper(this.light, 10);
-        SceneManager.add(this.helper, null, false);
+        Scene.add(this.helper, null, false);
 
         const segments = 8;
         const radius = 5;

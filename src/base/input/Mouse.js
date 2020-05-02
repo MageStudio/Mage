@@ -6,7 +6,7 @@ import {
 } from 'three';
 
 import Config from '../config';
-import SceneManager from '../SceneManager';
+import Scene from '../Scene';
 import Universe from '../Universe';
 
 export default class Mouse extends EventDispatcher {
@@ -26,7 +26,7 @@ export default class Mouse extends EventDispatcher {
 
     createRayCaster() {
         this.raycaster = new Raycaster();
-        this.raycaster.setFromCamera(this.mouse, SceneManager.camera.object);
+        this.raycaster.setFromCamera(this.mouse, Scene.camera.object);
     }
 
     enable() {
@@ -34,8 +34,8 @@ export default class Mouse extends EventDispatcher {
 
         this.createRayCaster();
 
-        SceneManager.renderer.domElement.addEventListener('mousemove', this.onMouseMove);
-        SceneManager.renderer.domElement.addEventListener('mousedown', this.onMouseDown);
+        Scene.renderer.domElement.addEventListener('mousemove', this.onMouseMove);
+        Scene.renderer.domElement.addEventListener('mousedown', this.onMouseDown);
         document.addEventListener('mouseup', this.onMouseUp);
     }
 
@@ -43,8 +43,8 @@ export default class Mouse extends EventDispatcher {
         this.enabled = false;
 
         document.removeEventListener('mouseup', this.onMouseUp);
-        SceneManager.renderer.domElement.removeEventListener('mousemove', this.onMouseMove);
-        SceneManager.renderer.domElement.removeEventListener('mousedown', this.onMouseDown);
+        Scene.renderer.domElement.removeEventListener('mousemove', this.onMouseMove);
+        Scene.renderer.domElement.removeEventListener('mousedown', this.onMouseDown);
     }
 
     getRelativeMousePosition(event) {
@@ -87,9 +87,9 @@ export default class Mouse extends EventDispatcher {
     meshExists = (m) => !!m;
 
     getIntersections = () => {
-        this.raycaster.setFromCamera(this.mouse, SceneManager.camera.object);
+        this.raycaster.setFromCamera(this.mouse, Scene.camera.object);
 
-        const intersects = this.raycaster.intersectObjects(SceneManager.scene.children);
+        const intersects = this.raycaster.intersectObjects(Scene.scene.children);
         const filtered = intersects.filter(this.isIntersectionAMesh);
 
         return filtered

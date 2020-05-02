@@ -1,7 +1,7 @@
 import Light from './Light';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 import { AmbientLight as THREEAmbientLight } from 'three';
-import { AMBIENTLIGHT } from './lightEngine';
+import { AMBIENTLIGHT } from './Lights';
 
 export default class LightAmbient extends Light {
 
@@ -13,7 +13,7 @@ export default class LightAmbient extends Light {
         const { x = 0, y = 0, z = 0 } = position;
         this.light.position.set(x, y, z);
 
-        SceneManager.add(this.light, this);
+        Scene.add(this.light, this);
     }
 
     addHelper() {

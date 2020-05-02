@@ -1,7 +1,7 @@
 import Entity from '../entities/Entity';
 import Mesh from '../entities/mesh';
-import LightEngine from './LightEngine';
-import ModelsEngine from '../models/modelsEngine';
+import Lights from './Lights';
+import Models from '../models/Models';
 import {
 	ObjectLoader,
 	MeshBasicMaterial
@@ -28,11 +28,11 @@ export default class Light extends Entity {
 
 		this.setLight();
 
-		LightEngine.add(this);
+		Lights.add(this);
 	}
 
 	addHolder = (name = 'lightholder') => {
-		const mesh = ModelsEngine.getModel(name);
+		const mesh = Models.getModel(name);
 
 		if (mesh) {
 			this.holder = mesh;
@@ -87,9 +87,9 @@ export default class Light extends Entity {
 	on() {
 		if (this.light) {
 			const delay = () => {
-				this.light.intensity += LightEngine.delayFactor;
+				this.light.intensity += Lights.delayFactor;
 				if (this.light.intensity < this.intensity) {
-					setTimeout(delay, LightEngine.delayStep);
+					setTimeout(delay, Lights.delayStep);
 				} else {
 					this.isLightOn = true;
 				}
@@ -103,9 +103,9 @@ export default class Light extends Entity {
 	off() {
 		if (this.light) {
 			const delay = () => {
-				this.light.intensity -= LightEngine.delayFactor;
+				this.light.intensity -= Lights.delayFactor;
 				if (this.light.intensity > 0) {
-					setTimeout(delay, LightEngine.delayStep);
+					setTimeout(delay, Lights.delayStep);
 				} else {
 					this.isLightOn = false;
 				}

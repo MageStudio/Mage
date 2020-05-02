@@ -1,4 +1,4 @@
-import SceneHelper from '../../base/SceneManager';
+import SceneHelper from '../../base/Scene';
 import Mesh from '../Mesh';
 import {
     CubeGeometry,

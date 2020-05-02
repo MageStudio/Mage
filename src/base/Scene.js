@@ -4,7 +4,7 @@ import Config from './config';
 import { getWindow } from './window';
 import {
     Clock,
-    Scene,
+    Scene as THREEScene,
     PCFSoftShadowMap,
     BasicShadowMap,
     PCFShadowMap,
@@ -21,7 +21,7 @@ const SHADOW_TYPES = {
 };
 const DEFAULT_SHADOWTYPE = 'soft';
 
-export class SceneManager {
+export class Scene {
 
     constructor() {
         this.clock = new Clock();
@@ -34,7 +34,7 @@ export class SceneManager {
     createScene() {
         const fog = Config.fog();
 
-        this.scene = new Scene();
+        this.scene = new THREEScene();
 
         if (fog.enabled) {
             this.fog(fog.color, fog.density);
@@ -210,4 +210,4 @@ export class SceneManager {
     }
 }
 
-export default new SceneManager();
+export default new Scene();

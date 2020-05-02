@@ -1,5 +1,5 @@
 import Entity from './Entity';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 
 import {
     LineBasicMaterial,
@@ -25,7 +25,7 @@ export default class Line extends Entity {
 
 		const { addUniverse = true } = options;
 
-		SceneManager.add(this.mesh, this, addUniverse);
+		Scene.add(this.mesh, this, addUniverse);
 	}
 
     updatePoints = (points) => {
