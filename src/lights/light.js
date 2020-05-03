@@ -38,7 +38,7 @@ export default class Light extends Entity {
 			this.holder = mesh;
 			this.holder.setMaterial(MeshBasicMaterial, { wireframe: true, color: LAMP_COLOR });
 			this.holder.serializable = false;
-			this.holder.position({
+			this.holder.setPosition({
 				x: this.light.position.x,
 				y: this.light.position.y,
 				z: this.light.position.z
@@ -61,7 +61,7 @@ export default class Light extends Entity {
 		}
 
 		if (updateHolder && this.holder) {
-			this.holder.position({ x, y, z });
+			this.holder.setPosition({ x, y, z });
 		}
 	}
 

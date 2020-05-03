@@ -41,7 +41,7 @@ export class Controls {
 
     setOrbitControl() {
         this.disposePreviousControls(['pointerlock', 'fly']);
-        this.controls.orbit = new Orbit(Scene.camera.object, Scene.renderer.domElement);
+        this.controls.orbit = new Orbit(Scene.getCameraObject(), Scene.renderer.domElement);
         this.controls.orbit.init();
 
         this.controls.orbit.addEventListener('change', Scene.render);
@@ -50,7 +50,7 @@ export class Controls {
     }
 
     setTransformControl() {
-        this.controls.transform = new Transform(Scene.camera.object, Scene.renderer.domElement);
+        this.controls.transform = new Transform(Scene.getCameraObject(), Scene.renderer.domElement);
         this.controls.transform.init();
 		this.controls.transform.addEventListener('change', Scene.render);
 		this.controls.transform.addEventListener('dragging-changed', (event) => {
@@ -63,14 +63,14 @@ export class Controls {
     }
 
     setFirstPersonControl() {
-        this.controls.fps = new FirstPersonControl(Scene.camera.object, document.body);
+        this.controls.fps = new FirstPersonControl(Scene.getCameraObject(), document.body);
         this.controls.fps.init();
 
         return this.controls.fps;
     }
 
     setFlyControl() {
-        this.controls.fly = new FlyControl(Scene.camera.object, document.body);
+        this.controls.fly = new FlyControl(Scene.getCameraObject(), document.body);
         this.controls.fly.init();
 
         return this.controls.fly;

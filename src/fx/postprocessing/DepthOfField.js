@@ -9,7 +9,7 @@ export default class DepthOfField extends BokehPass {
         const { w: width, h: height } = config.screen();
         super(
             Scene.scene,
-            Scene.camera.object,
+            Scene.getCameraObject(),
             { ...params, width, height });
     }
 };

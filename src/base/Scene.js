@@ -118,6 +118,14 @@ export class Scene {
         });
     }
 
+    getCamera() {
+        return this.camera;
+    }
+
+    getCameraObject() {
+        return this.camera.object;
+    }
+
     removeExistingRendererElements() {
         Object
             .keys(this.rendererElements)

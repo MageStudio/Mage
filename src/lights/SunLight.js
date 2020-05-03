@@ -71,7 +71,7 @@ export default class SunLight extends Light {
     targetPosition(options) {
         if (this.target && options === undefined) {
             return {
-                ...this.target.position()
+                ...this.target.getPosition()
             };
         }
 
@@ -79,7 +79,7 @@ export default class SunLight extends Light {
             this.target = this.getTargetMesh(options);
         }
 
-        const { x, y, z } = this.target.position();
+        const { x, y, z } = this.target.getPosition();
 
         const position = {
             x: options.x === undefined ? x : options.x,
@@ -106,7 +106,7 @@ export default class SunLight extends Light {
     update(dt) {
         super.update(dt);
         if (this.hasHelper()) {
-            this.position(this.holder.position(), false);
+            this.position(this.holder.getPosition(), false);
 
             this.helper.update();
         }

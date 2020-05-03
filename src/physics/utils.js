@@ -26,7 +26,7 @@ export const parseBoundingBoxSize = (boundingBox = {}) => {
 
 export const getDescriptionForMesh = mesh => {
     const { x, y, z } = mesh.getWorldPosition();
-    const rotation = mesh.rotation();
+    const rotation = mesh.getRotation();
     const { boundingBox } = mesh;
     const size = parseBoundingBoxSize(boundingBox);
 

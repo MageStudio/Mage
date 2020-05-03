@@ -26,7 +26,7 @@ export default class Mouse extends EventDispatcher {
 
     createRayCaster() {
         this.raycaster = new Raycaster();
-        this.raycaster.setFromCamera(this.mouse, Scene.camera.object);
+        this.raycaster.setFromCamera(this.mouse, Scene.getCameraObject());
     }
 
     enable() {
@@ -87,7 +87,7 @@ export default class Mouse extends EventDispatcher {
     meshExists = (m) => !!m;
 
     getIntersections = () => {
-        this.raycaster.setFromCamera(this.mouse, Scene.camera.object);
+        this.raycaster.setFromCamera(this.mouse, Scene.getCameraObject());
 
         const intersects = this.raycaster.intersectObjects(Scene.scene.children);
         const filtered = intersects.filter(this.isIntersectionAMesh);

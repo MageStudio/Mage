@@ -76,8 +76,8 @@ export default class Mesh extends Entity {
 		const scaledSize = size.map(s => s + BOUNDING_BOX_INCREASE);
 		const box = new Box(scaledSize[0], scaledSize[1], scaledSize[2], BOUNDING_BOX_COLOR);
 
-		box.position({ x: pos[0], y: pos[1], z: pos[2] });
-		box.rotation({ x: rot[0], y: rot[1], z: rot[2] });
+		box.setPosition({ x: pos[0], y: pos[1], z: pos[2] });
+		box.setRotation({ x: rot[0], y: rot[1], z: rot[2] });
 		box.setWireframe(true);
 		box.setWireframeLineWidth(2);
 

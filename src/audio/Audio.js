@@ -112,9 +112,9 @@ export class Audio {
 			sound.update(dt);
 
 			//now handling listener
-			Scene.camera.object.updateMatrixWorld();
+			Scene.getCameraObject().updateMatrixWorld();
 			var p = new Vector3();
-			p.setFromMatrixPosition(Scene.camera.object.matrixWorld);
+			p.setFromMatrixPosition(Scene.getCameraObject().matrixWorld);
 
 			//setting audio engine context listener position on camera position
 			this.context.listener.setPosition(p.x, p.y, p.z);
@@ -122,7 +122,7 @@ export class Audio {
 
 			//this is to add up and down vector to our camera
 			// The camera's world matrix is named "matrix".
-			var m = Scene.camera.object.matrix;
+			var m = Scene.getCameraObject().matrix;
 
 			const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
 			m.elements[12] = m.elements[13] = m.elements[14] = 0;
