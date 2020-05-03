@@ -5,7 +5,6 @@ import {
 } from 'three';
 
 import GLTFLoader from '../loaders/GLTFLoader';
-import AssetsManager from '../base/AssetsManager';
 
 const EXTENSIONS = {
 	JSON: 'json',
@@ -44,10 +43,14 @@ const parsers = {
 };
 const getModelParserFromExtension = (extension) => parsers[extension] || defaultParser;
 
-const ModelsEngine = {
+const Models = {
+
 	map: {},
+
+	models: {},
+
 	getModel: (name, options = {}) => {
-		const model = ModelsEngine.map[name] || false;
+		const model = Models.map[name] || false;
 
 		if (model) {
 			model.material.wireframe = false;
@@ -62,25 +65,28 @@ const ModelsEngine = {
 		}
 		return false;
 	},
-	loadModels: () => {
-		const keys = Object.keys(AssetsManager.models());
+
+	loadModels: (models) => {
+		Models.models = models;
+
+		const keys = Object.keys(Models.models);
 
 		if (!keys.length) {
 			return Promise.resolve('models');
 		}
 
-		return Promise.all(keys.map(ModelsEngine.loadSingleFile));
+		return Promise.all(keys.map(Models.loadSingleFile));
 	},
 
 	loadSingleFile: (id) => {
-		const path = AssetsManager.models()[id];
+		const path = Models.models[id];
 		const extension = extractExtension(path);
 		const loader = getLoaderFromExtension(extension);
 		const parser = getModelParserFromExtension(extension);
 
 		return new Promise(resolve => {
 			loader.load(path, model => {
-				ModelsEngine.map[id] = parser(model);
+				Models.map[id] = parser(model);
 				resolve();
 			});
 		});
@@ -88,4 +94,4 @@ const ModelsEngine = {
 
 }
 
-export default ModelsEngine;
+export default Models;

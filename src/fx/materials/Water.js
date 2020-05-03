@@ -28,8 +28,8 @@ import {
     RepeatWrapping
 } from 'three';
 
-import ImagesEngine from '../../images/ImagesEngine';
-import SceneManager from '../../base/SceneManager';
+import Images from '../../images/Images';
+import Scene from '../../base/Scene';
 
 const mirrorShader = {
     uniforms: UniformsUtils.merge([
@@ -340,7 +340,7 @@ export default class Water {
 
     constructor(options) {
 
-        const waterNormals = options.texture || ImagesEngine.get(options.textureNormalName || 'waterNormal');
+        const waterNormals = options.texture || Images.get(options.textureNormalName || 'waterNormal');
 		waterNormals.wrapS = waterNormals.wrapT = RepeatWrapping;
 
         const width = options.width || 512,
@@ -359,12 +359,12 @@ export default class Water {
 				sunColor: 0xffffff,
 				waterColor: 0x001e0f,
 				distortionScale:  options.distortionScale || 50.0,
-				fog: SceneManager.scene.fog !== undefined
+				fog: Scene.scene.fog !== undefined
 			}
 		);
 		this.water.rotation.x = - window.Math.PI / 2;
 
-        SceneManager.add(this.water, this);
+        Scene.add(this.water, this);
     }
 
     render = () => {

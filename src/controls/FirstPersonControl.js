@@ -10,7 +10,7 @@ import {
     Raycaster
 } from 'three';
 
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 
 const CHANGE_EVENT = { type: 'change' };
 const LOCK_EVENT = { type: 'lock' };
@@ -188,7 +188,7 @@ export default class FirstPersonControl extends EventDispatcher {
     		this.raycaster.ray.origin.copy( this.getObject().position );
     		this.raycaster.ray.origin.y -= 10;
 
-    		const intersections = this.raycaster.intersectObjects(SceneManager.scene.children);
+    		const intersections = this.raycaster.intersectObjects(Scene.scene.children);
     		const onObject = intersections.length > 0;
     		const time = performance.now();
     		const delta = ( time - this.prevTime ) / 1000;

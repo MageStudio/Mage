@@ -1,10 +1,10 @@
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 import Orbit from './Orbit';
 import Transform from './Transform';
 import FirstPersonControl from './FirstPersonControl';
 import FlyControl from './FlyControl';
 
-export class ControlsManager {
+export class Controls {
 
     constructor() {
 
@@ -41,18 +41,18 @@ export class ControlsManager {
 
     setOrbitControl() {
         this.disposePreviousControls(['pointerlock', 'fly']);
-        this.controls.orbit = new Orbit(SceneManager.camera.object, SceneManager.renderer.domElement);
+        this.controls.orbit = new Orbit(Scene.getCameraObject(), Scene.renderer.domElement);
         this.controls.orbit.init();
 
-        this.controls.orbit.addEventListener('change', SceneManager.render);
+        this.controls.orbit.addEventListener('change', Scene.render);
 
         return this.controls.orbit;
     }
 
     setTransformControl() {
-        this.controls.transform = new Transform(SceneManager.camera.object, SceneManager.renderer.domElement);
+        this.controls.transform = new Transform(Scene.getCameraObject(), Scene.renderer.domElement);
         this.controls.transform.init();
-		this.controls.transform.addEventListener('change', SceneManager.render);
+		this.controls.transform.addEventListener('change', Scene.render);
 		this.controls.transform.addEventListener('dragging-changed', (event) => {
             if (this.controls.orbit) {
                 this.controls.orbit.enabled = !event.value;
@@ -63,18 +63,18 @@ export class ControlsManager {
     }
 
     setFirstPersonControl() {
-        this.controls.fps = new FirstPersonControl(SceneManager.camera.object, document.body);
+        this.controls.fps = new FirstPersonControl(Scene.getCameraObject(), document.body);
         this.controls.fps.init();
 
         return this.controls.fps;
     }
 
     setFlyControl() {
-        this.controls.fly = new FlyControl(SceneManager.camera.object, document.body);
+        this.controls.fly = new FlyControl(Scene.getCameraObject(), document.body);
         this.controls.fly.init();
 
         return this.controls.fly;
     }
 }
 
-export default new ControlsManager();
+export default new Controls();

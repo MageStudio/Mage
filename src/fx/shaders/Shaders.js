@@ -1,5 +1,5 @@
 import { include } from '../../base/util';
-import AssetsManager from '../../base/AssetsManager';
+import Assets from '../../base/Assets';
 import Atmosphere from '../materials/Atmosphere';
 import Mirror from '../materials/Mirror';
 import Ocean from '../materials/Ocean';
@@ -8,12 +8,9 @@ import OceanShaders from '../materials/OceanShaders';
 import Skybox from '../scenery/Skybox';
 import Sky from '../scenery/Sky';
 
-export class ShadersEngine {
+export class Shaders {
 
 	constructor() {
-		this.SHADERS_DIR = "app/shaders/";
-		this.SHADERS = [];
-
 		this.map = {
 			Atmosphere,
 			Mirror,
@@ -24,15 +21,16 @@ export class ShadersEngine {
 			Water
 		};
 
-		this.shaders = [];
+		this.shaders = {};
 
 		this.numShaders = 0;
 		this.shadersLoaded = 0;
 	}
 
-	load = () => {
-		if (AssetsManager.shaders()) {
-			const keys = Object.keys(AssetsManager.shaders());
+	load = (shaders) => {
+		this.shaders = shaders;
+		if (this.shaders) {
+			const keys = Object.keys(this.shaders);
 			if (!keys.length) {
 				return Promise.resolve('shaders');
 			}
@@ -46,7 +44,7 @@ export class ShadersEngine {
 	}
 
 	loadSingleFile = (id) => {
-		const path = AssetsManager.shaders()[id];
+		const path = this.shaders[id];
 		const type = path.split(".")[1];
 
 		return new Promise(resolve => {
@@ -79,7 +77,6 @@ export class ShadersEngine {
 	}
 
 	create(name, params) {
-		this.SHADERS.push(name);
 		this.map[name] = {
 			name,
 			vertex: params.vertex || "",
@@ -91,9 +88,9 @@ export class ShadersEngine {
 		};
 	}
 
-	add(shader) {
-		this.shaders.push(shader);
+	add(name, shader) {
+		this.map[name] = shader;
 	}
 }
 
-export default new ShadersEngine();
+export default new Shaders();

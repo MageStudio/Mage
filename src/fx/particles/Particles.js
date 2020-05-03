@@ -1,6 +1,6 @@
 import Fountain from './Fountain';
 
-export class ParticleEngine {
+export class Particles {
 
 	constructor() {
 		this.map = {
@@ -27,4 +27,4 @@ export class ParticleEngine {
 	}
 }
 
-export default new ParticleEngine();
+export default new Particles();

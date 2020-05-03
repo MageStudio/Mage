@@ -29,8 +29,8 @@ import {
 } from 'three';
 
 import Mirror from './Mirror';
-import ImagesEngine from '../../images/ImagesEngine';
-import SceneManager from '../../base/SceneManager';
+import Images from '../../images/Images';
+import Scene from '../../base/Scene';
 
 export class WaterShader extends Mirror {
 
@@ -252,7 +252,7 @@ export class WaterShader extends Mirror {
 export default class Water {
 
 	constructor(renderer, camera, scene, options) {
-		var waterNormals = options.texture || ImagesEngine.get(options.textureNormalName || 'waterNormal');
+		var waterNormals = options.texture || Images.get(options.textureNormalName || 'waterNormal');
 		waterNormals.wrapS = waterNormals.wrapT = RepeatWrapping;
 
 		this.water = new WaterShader(renderer, camera, scene, {
@@ -277,7 +277,7 @@ export default class Water {
 		this.mesh.add(this.water);
 		this.mesh.rotation.x = - window.Math.PI * 0.5;
 
-		SceneManager.add(this.mesh, this);
+		Scene.add(this.mesh, this);
 	}
 
 	render() {

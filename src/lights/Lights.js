@@ -1,10 +1,10 @@
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 
 export const POINTLIGHT = 'pointlight';
 export const AMBIENTLIGHT = 'ambientlight';
 export const SUNLIGHT = 'sunlight';
 
-export class LightEngine {
+export class Lights {
 
     constructor() {
         this.delayFactor = 0.1;
@@ -37,4 +37,4 @@ export class LightEngine {
     }
 }
 
-export default new LightEngine();
+export default new Lights();

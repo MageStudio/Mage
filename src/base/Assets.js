@@ -1,12 +1,12 @@
-import AudioEngine from '../audio/AudioEngine';
-import VideoEngine from '../video/VideoEngine';
-import ImagesEngine from '../images/ImagesEngine';
-import ModelsEngine from '../models/modelsEngine';
-import ShadersEngine from '../fx/shaders/ShadersEngine';
-import ParticleEngine from '../fx/particles/ParticleEngine';
-import LightEngine from '../lights/LightEngine';
-import ScriptsManager from '../scripts/ScriptManager';
-import PostProcessingEngine from '../fx/postprocessing/PostProcessingEngine';
+import Audio from '../audio/Audio';
+import Video from '../video/Video';
+import Images from '../images/Images';
+import Models from '../models/Models';
+import Shaders from '../fx/shaders/Shaders';
+import Particles from '../fx/particles/Particles';
+import Lights from '../lights/Lights';
+import Scripts from '../scripts/Scripts';
+import PostProcessing from '../fx/postprocessing/PostProcessing';
 
 const DEFAULT_ASSETS = {
 	Audio : {},
@@ -20,7 +20,7 @@ const DEFAULT_ASSETS = {
 	Scripts: {}
 };
 
-export class AssetsManager {
+export class Assets {
 
 	constructor() {
 		this.assets = DEFAULT_ASSETS;
@@ -54,12 +54,12 @@ export class AssetsManager {
 	load = () => {
 		return new Promise((resolve, reject) => {
 			Promise.all([
-				AudioEngine.load(),
-				VideoEngine.load(),
-				ImagesEngine.load(),
-				ModelsEngine.loadModels(),
-				ShadersEngine.load(),
-				ScriptsManager.load()
+				Audio.load(this.audio()),
+				Video.load(this.video()),
+				Images.load(this.images(), this.textures()),
+				Models.loadModels(this.models()),
+				Shaders.load(this.shaders()),
+				Scripts.load(this.scripts())
 			]).then(() => {
 				resolve();
 				this.loadingMessage(true);
@@ -71,12 +71,12 @@ export class AssetsManager {
 	}
 
 	update(dt) {
-		AudioEngine.update(dt);
-		LightEngine.update(dt);
-		ParticleEngine.update(dt);
+		Audio.update(dt);
+		Lights.update(dt);
+		Particles.update(dt);
 	}
 
 	loadingMessage(loaded) {}
 }
 
-export default new AssetsManager();
+export default new Assets();

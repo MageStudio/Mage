@@ -3,43 +3,46 @@ import {
 	ImageLoader
 } from 'three';
 
-import AssetsManager from '../base/AssetsManager';
-
-export class ImagesEngine {
+export class Images {
 
 	constructor() {
-		this.defaults = {
-			//"waterNormal": "assets/images/waternormals.jpg",
-			//"water": "assets/images/water.jpg",
-			//'smokeparticle': 'assets/images/smokeparticle.png'
-		};
+		this.defaults = {};
 
-		this.imagesDefault = {
-			//"skybox": "assets/images/skybox_1.png"
-		};
+		this.imagesDefault = {};
 
 		this.map = {};
-		this.images = [];
 		this.numImages = 0;
 		this.loader = new TextureLoader();
 		this.imageLoader = new ImageLoader();
 
+		this.images = {};
+		this.textures = {};
 	}
 
-	load = () => {
+	load = (images, textures) => {
 		// extending assets images with our defaults
-		Object.assign(AssetsManager.textures(), this.defaults);
-		Object.assign(AssetsManager.images(), this.imagesDefault);
+		this.images = {
+			...images,
+			...this.imagesDefault
+		};
 
-		if (!(Object.keys(AssetsManager.textures()).length + Object.keys(AssetsManager.images()).length)) {
+		this.textures = {
+			...textures,
+			...this.defaults
+		};
+
+		if (!(Object.keys(this.textures).length + Object.keys(this.images).length)) {
 			return Promise.resolve('images');
 		}
 
 		const promises = Object
-			.keys(AssetsManager.textures())
+			.keys(this.textures)
 			.map(path => this.loadSingleTexture(path))
-			.concat(Object.keys(AssetsManager.images())
-			.map(path => this.loadSingleImage(path)));
+			.concat(
+				Object
+					.keys(this.images)
+					.map(path => this.loadSingleImage(path))
+			);
 
 		return Promise.all(promises);
 	}
@@ -49,7 +52,7 @@ export class ImagesEngine {
 	}
 
 	loadSingleImage = (id, imagePath) => {
-		const path = imagePath || AssetsManager.images()[id];
+		const path = imagePath || this.images[id];
 		return new Promise((resolve, reject) => {
 			try {
 				this.imageLoader.load(path, (image) => {
@@ -73,7 +76,7 @@ export class ImagesEngine {
 			return Promise.resolve(existingTexture);
 		}
 
-		const path = imagePath || AssetsManager.textures()[id];
+		const path = imagePath || this.textures[id];
 		return new Promise((resolve, reject) => {
 			try {
 				this.loader.load(path, (texture) => {
@@ -99,4 +102,4 @@ export class ImagesEngine {
 	}
 }
 
-export default new ImagesEngine();
+export default new Images();

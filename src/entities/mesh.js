@@ -1,8 +1,8 @@
 import Entity from './Entity';
 import Line from './Line';
 import Config from '../base/config';
-import SceneManager from '../base/SceneManager';
-import ImagesEngine from '../images/ImagesEngine';
+import Scene from '../base/Scene';
+import Images from '../images/Images';
 import {
 	Mesh as THREEMesh,
 	RepeatWrapping,
@@ -54,7 +54,7 @@ export default class Mesh extends Entity {
 		}
 
 		this.setMesh();
-		SceneManager.add(this.mesh, this, addUniverse);
+		Scene.add(this.mesh, this, addUniverse);
 	}
 
 	enablePhysics(options) {
@@ -76,8 +76,8 @@ export default class Mesh extends Entity {
 		const scaledSize = size.map(s => s + BOUNDING_BOX_INCREASE);
 		const box = new Box(scaledSize[0], scaledSize[1], scaledSize[2], BOUNDING_BOX_COLOR);
 
-		box.position({ x: pos[0], y: pos[1], z: pos[2] });
-		box.rotation({ x: rot[0], y: rot[1], z: rot[2] });
+		box.setPosition({ x: pos[0], y: pos[1], z: pos[2] });
+		box.setRotation({ x: rot[0], y: rot[1], z: rot[2] });
 		box.setWireframe(true);
 		box.setWireframeLineWidth(2);
 
@@ -189,7 +189,7 @@ export default class Mesh extends Entity {
 
 	checkRayCollider = ({ ray, type }) => {
 		const intersections = ray
-			.intersectObjects(SceneManager.scene.children)
+			.intersectObjects(Scene.scene.children)
 			.filter(collision => collision.object.uuid !== this.uuid());
 
 		const mapCollision = (collision) => {
@@ -252,7 +252,7 @@ export default class Mesh extends Entity {
 				repeat = { x: 1, y: 1 },
 				wrap = RepeatWrapping
 			} = options;
-			const texture = ImagesEngine.get(textureId);
+			const texture = Images.get(textureId);
 
 			this.texture = textureId;
 

@@ -1,5 +1,5 @@
-// import AssetsManager from './base/AssetsManager';
-import AudioEngine from './audio/AudioEngine';
+// import Assets from './base/Assets';
+import Audio from './audio/Audio';
 import AmbientSound from './audio/AmbientSound';
 import BackgroundSound from './audio/BackgroundSound';
 import DirectionalSound from './audio/DirectionalSound';
@@ -17,9 +17,9 @@ import * as util from './base/util';
 import Stats from './base/Stats';
 import Config from './base/config';
 import Router from './router/Router';
-import SceneManager from './base/SceneManager';
-import ScriptManager from './scripts/ScriptManager';
-import ControlsManager from './controls/ControlsManager';
+import Scene from './base/Scene';
+import Scripts from './scripts/Scripts';
+import Controls from './controls/Controls';
 import Physics from './physics/physics';
 
 import * as store from './store';
@@ -60,11 +60,11 @@ import Skybox from './fx/scenery/Skybox';
 
 import Shader from './fx/shaders/Shader';
 
-import ParticleEngine from './fx/particles/ParticleEngine';
-import ImagesEngine from './images/ImagesEngine';
-import ModelsEngine from './models/modelsEngine';
-import ShadersEngine from './fx/shaders/ShadersEngine';
-import PostProcessingEngine from './fx/postprocessing/PostProcessingEngine';
+import Particles from './fx/particles/Particles';
+import Images from './images/Images';
+import Models from './models/Models';
+import Shaders from './fx/shaders/Shaders';
+import PostProcessing from './fx/postprocessing/PostProcessing';
 
 
 export {
@@ -72,23 +72,23 @@ export {
 
     BaseScene,
     Config,
-    SceneManager,
+    Scene,
     Universe,
-    ScriptManager,
+    Scripts,
     Router,
 
     store,
     Provider,
     connect,
 
-    ControlsManager,
+    Controls,
 
-    ImagesEngine,
-    ModelsEngine,
-    ShadersEngine,
-    AudioEngine,
-    PostProcessingEngine,
-    ParticleEngine,
+    Images,
+    Models,
+    Shaders,
+    Audio,
+    PostProcessing,
+    Particles,
     Partykals,
     Physics,
 

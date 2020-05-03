@@ -3,7 +3,7 @@
  */
 
 import Entity from './Entity';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 import {
     SkinnedMesh,
     Animation,
@@ -29,7 +29,7 @@ export default class AnimatedMesh extends Entity {
         this.meshVisible = true;
         this.mesh = new SkinnedMesh(geometry, originalMaterial);
         this.mesh.visible = this.meshVisible;
-        SceneManager.add(this.mesh, this);
+        Scene.add(this.mesh, this);
 
 
         //storing animations

@@ -1,9 +1,9 @@
 import BaseScript from './BaseScript';
 import Input from '../base/input/Input';
 import { fetch } from 'whatwg-fetch';
-import AssetsManager from "../base/AssetsManager";
+import Assets from "../base/Assets";
 
-export class ScriptManager {
+export class Scripts {
 
 	constructor() {
 		this.scripts = {};
@@ -12,7 +12,7 @@ export class ScriptManager {
 	update() {}
 
 	load = () => {
-        const keys = Object.keys(AssetsManager.scripts());
+        const keys = Object.keys(Assets.scripts());
 
         if (!keys.length) {
             return Promise.resolve('scripts');
@@ -22,7 +22,7 @@ export class ScriptManager {
     }
 
     loadSingleScript = (id) => {
-        const path = AssetsManager.scripts()[id];
+        const path = Assets.scripts()[id];
 
         return new Promise(resolve => {
 
@@ -76,4 +76,4 @@ export class ScriptManager {
 	}
 }
 
-export default new ScriptManager();
+export default new Scripts();

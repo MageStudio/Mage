@@ -3,15 +3,17 @@ import { createMachine, interpret } from 'xstate';
 import { EventDispatcher, Quaternion, Euler, Vector3 } from 'three';
 
 import Config from '../base/config';
-import ScriptManager from '../scripts/ScriptManager';
+import Scripts from '../scripts/Scripts';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 import Physics from '../physics/physics';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
 const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
+const DEFAULT_ANGULAR_VELOCITY = { x: 0, y: 0, z: 0 };
+const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
 
 export default class Entity extends EventDispatcher {
 
@@ -62,7 +64,7 @@ export default class Entity extends EventDispatcher {
 
 	dispose() {
 		if (this.mesh) {
-			SceneManager.remove(this.mesh);
+			Scene.remove(this.mesh);
 			this.mesh.material.dispose();
 			this.mesh.geometry.dispose();
 			// stopping state machine
@@ -121,7 +123,7 @@ export default class Entity extends EventDispatcher {
 
 	setScripts(scripts = [], enabled = true) {
 		this.scripts = scripts.map(name => ({
-			script: ScriptManager.get(name),
+			script: Scripts.get(name),
 			enabled
 		}));
 
@@ -132,7 +134,7 @@ export default class Entity extends EventDispatcher {
 
 	addScripts(scripts = [], enabled = true) {
 		const parsedScripts = scripts.map(name => ({
-			script: ScriptManager.get(name),
+			script: Scripts.get(name),
 			name,
 			enabled
 		}));
@@ -148,7 +150,7 @@ export default class Entity extends EventDispatcher {
 	}
 
 	addScript(name, enabled = true, options) {
-		const script = ScriptManager.get(name);
+		const script = Scripts.get(name);
 		if (script) {
 			this.scripts.push({
 				script,
@@ -232,9 +234,9 @@ export default class Entity extends EventDispatcher {
 	}
 
 	addLight(light) {
-		const { x, y, z } = this.position();
+		const { x, y, z } = this.getPosition();
 
-		light.position({ x, y, z });
+		light.setPosition({ x, y, z });
 		this.light = light;
 	}
 
@@ -252,17 +254,18 @@ export default class Entity extends EventDispatcher {
 		}
 	}
 
-	scale(options) {
-		if (options === undefined) return {
+	getScale() {
+		return {
 			x: this.mesh.scale.x,
 			y: this.mesh.scale.y,
 			z: this.mesh.scale.z
 		};
+	}
 
+	setScale(howbig) {
 		const scale = {
-			x: options.x === undefined ? this.mesh.scale.x : options.x,
-			y: options.y === undefined ? this.mesh.scale.y : options.y,
-			z: options.z === undefined ? this.mesh.scale.z : options.z
+			...this.getScale(),
+			...howbig
 		};
 
 		if (this.mesh) {
@@ -281,17 +284,18 @@ export default class Entity extends EventDispatcher {
 		return DEFAULT_POSITION;
 	}
 
-	position(options) {
-		if (options === undefined) return {
+	getPosition() {
+		return {
 			x: this.mesh.position.x,
 			y: this.mesh.position.y,
 			z: this.mesh.position.z
 		};
+	}
 
+	setPosition(where) {
 		const position = {
-			x: options.x === undefined ? this.mesh.position.x : options.x,
-			y: options.y === undefined ? this.mesh.position.y : options.y,
-			z: options.z === undefined ? this.mesh.position.z : options.z
+			...this.getPosition(),
+			...where
 		};
 
 		if (Config.physics().enabled) {
@@ -301,17 +305,18 @@ export default class Entity extends EventDispatcher {
 		}
 	}
 
-	rotation(options) {
-		if (options === undefined) return {
+	getRotation() {
+		return {
 			x: this.mesh.rotation.x,
 			y: this.mesh.rotation.y,
 			z: this.mesh.rotation.z
 		};
+	}
 
+	setRotation(how) {
 		const rotation = {
-			x: options.x === undefined ? this.mesh.rotation.x : options.x,
-			y: options.y === undefined ? this.mesh.rotation.y : options.y,
-			z: options.z === undefined ? this.mesh.rotation.z : options.z
+			...this.getRotation(),
+			...how
 		};
 
 		if (Config.physics().enabled) {
@@ -321,11 +326,21 @@ export default class Entity extends EventDispatcher {
 		}
 	}
 
+	getAngularVelocity() {
+		return this.angularVelocity || DEFAULT_ANGULAR_VELOCITY;
+	}
+
 	setAngularVelocity(velocity) {
+		this.angularVelocity = velocity;
 		Physics.updateAngularVelocity(this.uuid(), velocity);
 	}
 
+	getLinearVelocity() {
+		return this.linearVelocity || DEFAULT_LINEAR_VELOCITY;
+	}
+
 	setLinearVelocity(velocity) {
+		this.linearVelocity = velocity;
 		Physics.updateLinearVelocity(this.uuid(), velocity);
 	}
 
@@ -338,7 +353,7 @@ export default class Entity extends EventDispatcher {
 	}
 
 	goTo(position, time) {
-		const { x, y, z } = this.position();
+		const { x, y, z } = this.getPosition();
 
 		return new Promise((resolve) => 
 			new Between({ x, y, z}, position)
@@ -371,7 +386,7 @@ export default class Entity extends EventDispatcher {
 			this.name = name;
 			this.mesh.name = name;
 
-			if (replace) SceneManager.add(this.mesh, this, true);
+			if (replace) Scene.add(this.mesh, this, true);
 		}
 	}
 }

@@ -8,8 +8,8 @@ import {
     BackSide
 } from 'three';
 
-import ImagesEngine from '../../images/ImagesEngine';
-import SceneManager from '../../base/SceneManager';
+import Images from '../../images/Images';
+import Scene from '../../base/Scene';
 
 export default class Skybox {
 
@@ -32,7 +32,7 @@ export default class Skybox {
             this.buildCube(options.texture);
         } else {
             var textureName = options.textureName || 'skybox';
-            this.buildCube(ImagesEngine.get(textureName));
+            this.buildCube(Images.get(textureName));
         }
 
         const cubeShader = ShaderLib[ 'cube' ];
@@ -52,7 +52,7 @@ export default class Skybox {
             skyBoxMaterial
         );
 
-        SceneManager.add(this.mesh, this);
+        Scene.add(this.mesh, this);
     }
 
     render() {}

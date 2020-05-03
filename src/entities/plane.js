@@ -1,5 +1,5 @@
 import Entity from './Entity';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 
 import {
     PlaneGeometry,
@@ -30,7 +30,7 @@ export default class Plane extends Entity {
 
 		const { addUniverse = true } = options;
 
-		SceneManager.add(this.mesh, this, addUniverse);
+		Scene.add(this.mesh, this, addUniverse);
 	}
 
     static get UP() { return UP; }

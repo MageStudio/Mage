@@ -2,13 +2,13 @@ import EffectComposer from './effects/EffectComposer';
 
 import RenderPass from './effects/RenderPass';
 
-import SceneManager from '../../base/SceneManager';
+import Scene from '../../base/Scene';
 import HueSaturationEffect from './HueSaturationEffect';
 import SepiaEffect from './SepiaEffect';
 import BloomPass from './BloomPass';
 import DepthOfField from './DepthOfField';
 
-export class PostProcessingEngine {
+export class PostProcessing {
 
     constructor() {
         this.map = {
@@ -39,8 +39,8 @@ export class PostProcessingEngine {
     init = () => {
         window.addEventListener( 'resize', this.onWindowResize, false );
 
-        this.composer = new EffectComposer(SceneManager.renderer);
-        this.composer.addPass(new RenderPass(SceneManager.scene, SceneManager.camera.object));
+        this.composer = new EffectComposer(Scene.renderer);
+        this.composer.addPass(new RenderPass(Scene.scene, Scene.getCameraObject()));
     }
 
     onWindowResize = () => {
@@ -77,13 +77,13 @@ export class PostProcessingEngine {
         if (typeof desiredEffect === 'string') {
             const effectDescription = this.get(desiredEffect);
             if (effectDescription) {
-                effect = PostProcessingEngine.createEffect(effectDescription, options);
+                effect = PostProcessing.createEffect(effectDescription, options);
             } else {
                 console.error('[Mage] Requested effect is not available');
                 return;
             }
         } else {
-            effect = PostProcessingEngine.createEffect(desiredEffect, options);
+            effect = PostProcessing.createEffect(desiredEffect, options);
         }
 
         if (effect) {
@@ -103,4 +103,4 @@ export class PostProcessingEngine {
     }
 }
 
-export default new PostProcessingEngine();
+export default new PostProcessing();

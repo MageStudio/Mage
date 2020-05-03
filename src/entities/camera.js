@@ -16,23 +16,41 @@ export default class Camera extends Entity {
 		);
 	}
 
-	position(options) {
-		const _x = options.x || this.object.position.x,
-			_y = options.y || this.object.position.y,
-			_z = options.z || this.object.position.z;
+	getPosition() {
+		return {
+			x: this.object.position.x,
+			y: this.object.position.y,
+			z: this.object.position.z
+		};
+	}
+
+	setPosition(where) {
+		const position = {
+			...this.getPosition(),
+			...where
+		};
 
 		if (this.object) {
-			this.object.position.set(_x, _y, _z);
+			this.object.position.set(position.x, position.y, position.z);
 		}
 	}
 
-	rotation(options) {
-		const _x = options.x || this.object.rotation.x,
-			_y = options.y || this.object.rotation.y,
-			_z = options.z || this.object.rotation.z;
+	getRotation() {
+		return {
+			x: this.object.rotation.x,
+			y: this.object.rotation.y,
+			z: this.object.rotation.z
+		};
+	}
+
+	setRotation(how) {
+		const rotation = {
+			...this.getRotation(),
+			...how
+		};
 
 		if (this.object) {
-			this.object.rotation.set(_x, _y, _z);
+			this.object.rotation.set(rotation.x, rotation.y, rotation.z);
 		}
 	}
 

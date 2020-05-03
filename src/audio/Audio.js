@@ -1,10 +1,9 @@
 import {
 	Vector3
 } from 'three';
-import AssetsManager from '../base/AssetsManager';
-import SceneManager from '../base/SceneManager';
+import Scene from '../base/Scene';
 
-export class AudioEngine {
+export class Audio {
 
 	constructor() {
 		this.DELAY_FACTOR = 0.02;
@@ -36,9 +35,10 @@ export class AudioEngine {
 		this.volume.gain.value = this._volume;
 	}
 
-	load = () => {
+	load = (audio) => {
 		this.map = {};
 		this.sounds = [];
+		this.audio = audio;
 
 		if (!window) {
 			return Promise.resolve('audio');
@@ -58,13 +58,13 @@ export class AudioEngine {
 			console.error("No Audio Context available, sorry.");
 		}
 
-		if (Object.keys(AssetsManager.audio()).length === 0) {
+		if (Object.keys(this.audio).length === 0) {
 			return Promise.resolve('audio');
 		}
 
 		return Promise
 			.all(Object
-				.keys(AssetsManager.audio())
+				.keys(this.audio)
 				.map(this.loadSingleFile)
 			);
 	}
@@ -75,7 +75,7 @@ export class AudioEngine {
 	}
 
 	loadSingleFile = (id) => {
-		const path = AssetsManager.audio()[id];
+		const path = this.audio[id];
 		// Load a sound file using an ArrayBuffer XMLHttpRequest.
 		const request = new XMLHttpRequest();
 		return new Promise(resolve => {
@@ -112,9 +112,9 @@ export class AudioEngine {
 			sound.update(dt);
 
 			//now handling listener
-			SceneManager.camera.object.updateMatrixWorld();
+			Scene.getCameraObject().updateMatrixWorld();
 			var p = new Vector3();
-			p.setFromMatrixPosition(SceneManager.camera.object.matrixWorld);
+			p.setFromMatrixPosition(Scene.getCameraObject().matrixWorld);
 
 			//setting audio engine context listener position on camera position
 			this.context.listener.setPosition(p.x, p.y, p.z);
@@ -122,7 +122,7 @@ export class AudioEngine {
 
 			//this is to add up and down vector to our camera
 			// The camera's world matrix is named "matrix".
-			var m = SceneManager.camera.object.matrix;
+			var m = Scene.getCameraObject().matrix;
 
 			const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
 			m.elements[12] = m.elements[13] = m.elements[14] = 0;
@@ -149,4 +149,4 @@ export class AudioEngine {
 	}
 }
 
-export default new AudioEngine();
+export default new Audio();

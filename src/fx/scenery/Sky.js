@@ -23,7 +23,7 @@ import {
     BoxBufferGeometry
 } from 'three';
 
-import SceneManager from '../../base/SceneManager';
+import Scene from '../../base/Scene';
 
 export class SkyShader {
 
@@ -233,7 +233,7 @@ export default class Sky {
 
         this.mesh = new Mesh(new BoxBufferGeometry( 1, 1, 1 ), material);
 
-        SceneManager.add(this.mesh, this);
+        Scene.add(this.mesh, this);
     }
 
     turbidity(value) {

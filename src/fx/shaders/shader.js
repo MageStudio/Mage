@@ -1,10 +1,10 @@
 import { ShaderMaterial } from 'three';
-import ShadersEngine from './ShadersEngine';
+import Shaders from './Shaders';
 
 export default class Shader {
 
     constructor( name, attributes, uniforms, options ) {
-        this.instance = ShadersEngine.get(name);
+        this.instance = Shaders.get(name);
 
         if (!this.instance) {
             this.name = this.shader.name;

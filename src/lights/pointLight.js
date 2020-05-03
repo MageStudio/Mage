@@ -1,6 +1,6 @@
 import Light from './Light';
-import SceneManager from '../base/SceneManager';
-import { POINTLIGHT } from './lightEngine';
+import Scene from '../base/Scene';
+import { POINTLIGHT } from './Lights';
 
 import {
     PointLight as THREEPointLight
@@ -17,7 +17,7 @@ export default class PointLight extends Light {
         const { x = 0, y = 0, z = 0 } = position;
         this.light.position.set(x, y, z);
 
-        SceneManager.add(this.light, this);
+        Scene.add(this.light, this);
     }
 
     addHelper() {
