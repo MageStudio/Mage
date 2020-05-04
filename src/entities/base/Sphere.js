@@ -1,16 +1,15 @@
-import SceneHelper from '../../base/Scene';
 import Mesh from '../Mesh';
 import {
-    CylinderGeometry,
+    SphereGeometry,
     MeshBasicMaterial
 } from 'three';
 
-export default class Cylinder {
+export default class Sphere {
 
-    constructor(radiusTop = 10, radiusBottom = 10, height, color, options = {}) {
+    constructor(radius = 10, color, options = {}) {
         const segments = 32;
-
-        this.geometry = new CylinderGeometry(radiusTop, radiusBottom, height, segments );
+        
+        this.geometry = new SphereGeometry(radius, segments, segments);
 		this.material = new MeshBasicMaterial({
 			color: color,
 			wireframe: false,

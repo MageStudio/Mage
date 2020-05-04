@@ -18,7 +18,7 @@ import { COLLISION_EVENT, FRONT } from '../lib/constants';
 import Universe from '../base/Universe';
 import Physics from '../physics/physics';
 import { getDescriptionForMesh } from '../physics/utils';
-import Box from './helpers/Box';
+import Box from './base/Box';
 
 const BOUNDING_BOX_COLOR = 0Xf368e0;
 const BOUNDING_BOX_INCREASE = .5;

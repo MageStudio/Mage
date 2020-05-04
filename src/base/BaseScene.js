@@ -1,7 +1,6 @@
 import Assets from './Assets';
 import Universe from './Universe';
 import Scene from './Scene';
-import SceneHelper from './SceneHelper';
 import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
@@ -31,7 +30,6 @@ export class BaseScene extends EventDispatcher {
         this.options = options;
         this.name = this.constructor.name;
         this.debug = true;
-        this.sceneHelper = new SceneHelper();
 
         Scene.create();
     }
