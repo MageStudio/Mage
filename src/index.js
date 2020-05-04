@@ -36,6 +36,11 @@ import Entity from './entities/Entity';
 import Mesh from './entities/Mesh';
 import Line from './entities/line';
 import Plane from './entities/plane';
+import Box from './entities/base/Box';
+import Cube from './entities/base/Cube';
+import Sphere from './entities/base/Sphere';
+import Cylinder from './entities/base/Cylinder';
+import Grid from './entities/base/Grid';
 //import AnimatedMesh from './entities/AnimatedMesh';
 //import ShaderMesh from './entities/ShaderMesh';
 import Camera from './entities/Camera';
@@ -103,6 +108,11 @@ export {
     Mesh,
     Line,
     Plane,
+    Box,
+    Cube,
+    Cylinder,
+    Sphere,
+    Grid,
     //AnimatedMesh,
     //ShaderMesh,
     Camera,

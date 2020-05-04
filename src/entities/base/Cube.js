@@ -1,16 +1,13 @@
-import SceneHelper from '../../base/Scene';
 import Mesh from '../Mesh';
 import {
-    SphereGeometry,
+    CubeGeometry,
     MeshBasicMaterial
 } from 'three';
 
-export default class Sphere {
+export default class Cube {
 
-    constructor(radius = 10, color, options = {}) {
-        const segments = 32;
-        
-        this.geometry = new SphereGeometry(radius, segments, segments);
+    constructor(side = 10, color, options = {}) {
+        this.geometry = new CubeGeometry(side, side, side);
 		this.material = new MeshBasicMaterial({
 			color: color,
 			wireframe: false,
