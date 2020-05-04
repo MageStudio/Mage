@@ -54,9 +54,8 @@ export default class Camera extends Entity {
 		}
 	}
 
-	lookAt(x, y, z) {
-		if (!isNaN(x) && !isNaN(y) && !isNaN(z)) {
-			this.object.lookAt(x, y, z);
-		}
+	lookAt(position = {}) {
+		const { x = 0, y = 0, z = 0 } = position;
+		this.object.lookAt(x, y, z);
 	}
 }
