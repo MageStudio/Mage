@@ -51,23 +51,13 @@ export class Universe {
 		});
 	};
 
-	// update(delta) {
-	// 	return this.forEachAsync(o => o.update(delta));
-	// }
-
 	update(delta) {
-		Object
-			.keys(this.reality)
-			.map(k => this.reality[k].update(delta))
-		/*
 		return new Promise(resolve => {
-			Promise
-				.all(keys.map(k => {
-					const o = this.reality[k];
-					o.update(delta);
-				}))
-				.then(resolve)
-		});*/
+			Object
+				.keys(this.reality)
+				.map(k => this.reality[k].update(delta))
+			resolve();
+		});
 	}
 
 	bigfreeze = () => {
