@@ -92,6 +92,10 @@ export const getProportion = (max1, b, max2) => {
     return (max1 * b)/max2;
 }
 
+export const upperCaseFirst = (sentence = ' ') => (
+	`${sentence[0].toUpperCase()}${sentence.slice(1, sentence.length)}`.trim()
+);
+
 export class Checker {
 
 	constructor() {

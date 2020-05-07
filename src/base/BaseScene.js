@@ -5,7 +5,7 @@ import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 import PostProcessing from '../fx/postprocessing/PostProcessing';
-import Input from './input/Input';
+import Input, { EVENTS } from './input/Input';
 import Lights from '../lights/Lights';
 import Controls from '../controls/Controls';
 import Physics from '../physics/physics';
@@ -15,6 +15,7 @@ import {
 } from 'three';
 import { fetch } from 'whatwg-fetch';
 import { getWindow } from './window';
+import { upperCaseFirst } from './util';
 
 export const author = {
     name: 'Marco Stagni',
@@ -30,42 +31,36 @@ export class BaseScene extends EventDispatcher {
         this.options = options;
         this.name = this.constructor.name;
         this.debug = true;
+        this.inputListenersAreSet = false;
 
         Scene.create();
+        this.enableInput();
     }
 
     enableInput = () => {
         Input.enable();
-        Input.addEventListener('keyPress', this.onKeyPress);
-        Input.addEventListener('keyDown', this.onKeyDown);
-        Input.addEventListener('keyUp', this.onKeyUp);
-        Input.addEventListener('mouseDown', this.onMouseDown);
-        Input.addEventListener('mouseUp', this.onMouseUp);
-        Input.addEventListener('mouseMove', this.onMouseMove);
-        Input.addEventListener('meshClick', this.onMeshClick);
-        Input.addEventListener('meshDeselect', this.onMeshDeselect);
+        if (!this.inputListenersAreSet) {
+            EVENTS.forEach((event) => {
+                const methodName = `on${upperCaseFirst(event)}`;
+                if (typeof this[methodName] === 'function') {
+                    Input.addEventListener(event, this[methodName].bind(this));
+                }
+            });
+            this.inputListenersAreSet = true;
+        }
     };
 
     disableInput = () => {
         Input.disable();
-        Input.removeEventListener('keyPress', this.onKeyPress);
-        Input.removeEventListener('keyDown', this.onKeyDown);
-        Input.removeEventListener('keyUp', this.onKeyUp);
-        Input.removeEventListener('mouseDown', this.onMouseDown);
-        Input.removeEventListener('mouseUp', this.onMouseUp);
-        Input.removeEventListener('mouseMove', this.onMouseMove);
-        Input.removeEventListener('meshClick', this.onMeshClick);
-        Input.removeEventListener('meshDeselect', this.onMeshDeselect);
+        EVENTS.forEach((event) => {
+            const methodName = `on${upperCaseFirst(event)}`;
+            if (typeof this[methodName] === 'function') {
+                Input.removeEventListener(event, this[methodName]);
+            }
+        });
+        this.inputListenersAreSet = false;
     };
 
-    onKeyPress = () => {};
-    onKeyDown = () => {};
-    onKeyUp = () => {};
-    onMouseDown = () => {};
-    onMouseUp = () => {};
-    onMouseMove = () => {};
-    onMeshClick = () => {};
-    onMeshDeselect = () => {};
     onStateChange = (state) => {};
 
     enableUI = (RootComponent, _props) => {

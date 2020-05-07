@@ -5,6 +5,17 @@ import {
 import Keyboard from './Keyboard';
 import Mouse from './Mouse';
 
+export const EVENTS = [
+    'keyPress',
+    'keyDown',
+    'keyUp',
+    'mouseDown',
+    'mouseUp',
+    'mouseMove',
+    'meshClick',
+    'meshDeselect',
+];
+
 export class Input extends EventDispatcher {
 
     constructor() {
