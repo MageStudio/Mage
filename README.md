@@ -9,7 +9,7 @@
 
 Mage is a game engine built on top of THREEJS. It features all you need to create fully interactive 3D application that can be distributed via web, desktop or mobile.
 
-[Documentation](https://www.notion.so/Mage-77218852b11543de91492694424735c1)
+[Documentation](https://magestudio.github.io/mage-docs/#/)
 
 ---
 
