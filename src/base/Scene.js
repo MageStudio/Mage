@@ -12,7 +12,7 @@ import {
     FogExp2
 } from 'three';
 
-import { generateUUID } from './util';
+import { generateUUID } from '../lib/uuid';
 
 const SHADOW_TYPES = {
     basic: BasicShadowMap,

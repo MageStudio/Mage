@@ -13,7 +13,13 @@ import {
 import BaseScene, { author } from './base/BaseScene';
 import Universe from './base/Universe';
 import Color from './base/Color';
-import * as util from './base/util';
+
+import util from './lib/util';
+import * as math from './lib/math';
+import * as strings from './lib/strings';
+import * as uuid from './lib/uuid';
+import * as workers from './lib/workers';
+
 import Stats from './base/Stats';
 import Config from './base/config';
 import Router from './router/Router';
@@ -68,7 +74,7 @@ import Shader from './fx/shaders/Shader';
 import Particles from './fx/particles/Particles';
 import Images from './images/Images';
 import Models from './models/Models';
-import Shaders from './fx/shaders/Shaders';
+//import Shaders from './fx/shaders/Shaders';
 import PostProcessing from './fx/postprocessing/PostProcessing';
 
 
@@ -90,7 +96,7 @@ export {
 
     Images,
     Models,
-    Shaders,
+    // Shaders,
     Audio,
     PostProcessing,
     Particles,
@@ -138,6 +144,10 @@ export {
     Vector3,
     THREEColor,
     util,
+    math,
+    strings,
+    uuid,
+    workers,
     constants,
     debounce,
     Stats

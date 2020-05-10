@@ -1,6 +1,6 @@
 import GameRunner from '../runner/GameRunner';
 import Assets from "../base/Assets";
-import util from '../base/util';
+import util from '../lib/util';
 import Config from "../base/config";
 
 import { toQueryString, parseQuery } from '../lib/query';
@@ -110,7 +110,7 @@ class Router {
             Assets.setAssets(assets);
 
             util.checker
-                .check(this.handleSuccess, this.handleFailure)
+                .checkFeatures(this.handleSuccess, this.handleFailure)
                 .then(Assets.load)
                 .then(() => {
                     this.setHashChangeListener();
