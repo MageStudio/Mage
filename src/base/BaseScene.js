@@ -15,7 +15,7 @@ import {
 } from 'three';
 import { fetch } from 'whatwg-fetch';
 import { getWindow } from './window';
-import { upperCaseFirst } from './util';
+import { upperCaseFirst } from '../lib/strings';
 
 export const author = {
     name: 'Marco Stagni',

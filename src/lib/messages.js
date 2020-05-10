@@ -12,3 +12,5 @@ export const LOCALSTORAGE_NOT_AVAILABLE = `${PREFIX} localStorage is not availab
 export const WORKERS_NOT_AVAILABLE = `${PREFIX} Your browser doesn't support Workers.`;
 
 export const BOUNDINGBOX_NOT_AVAILABLE = `${PREFIX} Selected mesh does not have a computed bounding box.`;
+
+export const FEATURE_NOT_SUPPORTED = `${PREFIX} The following feature is not supported: `;
