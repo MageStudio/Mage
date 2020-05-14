@@ -62,8 +62,6 @@ export default class Gamepad extends EventDispatcher {
         super();
         this.enabled = false;
         this.gamepads = {};
-
-        // this.evaluateGamepads = debounce(evaluateGamepads, 2000, false, this).bind(this);
     }
 
     reset() {
