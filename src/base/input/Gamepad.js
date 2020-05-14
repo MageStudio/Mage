@@ -151,22 +151,22 @@ export default class Gamepad extends EventDispatcher {
     };
 
     evaluateAxesChange = (gamepad) => {
-        const isMoving = (value) => Math.abs(value) !== 0;
+        const toFloat = (number, fixed) => parseFloat(number.toFixed(fixed));
         let joystick = 0;
         const axes = gamepad.axes;
 
         for (let i = 0; i<axes.length; i+= 2) {
-            let x = parseFloat(axes[i].toFixed(2));
-            let y = parseFloat(axes[i+1].toFixed(2));
 
-            if (isMoving(x) || isMoving(y)) {
-                this.dispatchEvent({
-                    type: AXES_CHANGE_EVENT,
-                    value: { x, y },
-                    gamepad,
-                    joystick
-                })
-            }
+            let x = toFloat(axes[i], 2);
+            let y = toFloat(axes[i+1], 2);
+
+            this.dispatchEvent({
+                type: AXES_CHANGE_EVENT,
+                value: { x, y },
+                gamepad,
+                joystick
+            })
+
             joystick++;
         }
     }
