@@ -16,6 +16,7 @@ import {
 import { fetch } from 'whatwg-fetch';
 import { getWindow } from './window';
 import { upperCaseFirst } from '../lib/strings';
+import { ONCREATE_NOT_AVAILABLE } from '../lib/messages';
 
 export const author = {
     name: 'Marco Stagni',
@@ -125,6 +126,7 @@ export class BaseScene extends EventDispatcher {
         Assets.update(dt);
         Stats.update(dt);
         Controls.update(dt);
+        Input.update(dt);
 
         requestAnimFrame(this.render.bind(this));
     }
@@ -139,14 +141,11 @@ export class BaseScene extends EventDispatcher {
         if (this.onCreate instanceof Function) {
             this.onCreate();
         } else {
-            console.log();
+            console.log(ONCREATE_NOT_AVAILABLE);
         }
     };
 
     dispose = () => {
-        // how do we make this stop running
-        // we need to kill the scene somehow
-        // stop rendering the ui if it's enabled
         this.disableInput();
         Physics.dispose();
         this.disableUI();

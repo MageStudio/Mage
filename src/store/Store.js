@@ -5,6 +5,7 @@ import thunk from 'redux-thunk';
 import {
     info,
     storage,
+    input,
     createRootReducer
 } from './reducers';
 
@@ -13,6 +14,7 @@ import { STORE_DOESNT_EXIST } from '../lib/messages';
 let store;
 const DEFAULT_REDUCERS = {
     info,
+    input,
     storage
 };
 let unsubscribe;

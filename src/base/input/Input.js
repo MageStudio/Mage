@@ -4,6 +4,25 @@ import {
 
 import Keyboard from './Keyboard';
 import Mouse from './Mouse';
+import Gamepad, {
+    BUTTON_PRESSED_EVENT,
+    BUTTON_RELEASED_EVENT,
+    X_AXES_CHANGE_EVENT,
+    Y_AXES_CHANGE_EVENT,
+    AXES_CHANGE_EVENT
+} from './Gamepad';
+
+import { dispatch } from '../../store/Store';
+import {
+    inputEnabled,
+    inputDisabled,
+    gamepadEnabled,
+    keyboardEnabled,
+    mouseEnabled,
+    keyboardDisabled,
+    mouseDisabled,
+    gamepadDisabled
+} from '../../store/actions/input';
 
 export const EVENTS = [
     'keyPress',
@@ -14,6 +33,11 @@ export const EVENTS = [
     'mouseMove',
     'meshClick',
     'meshDeselect',
+    BUTTON_PRESSED_EVENT,
+    BUTTON_RELEASED_EVENT,
+    X_AXES_CHANGE_EVENT,
+    Y_AXES_CHANGE_EVENT,
+    AXES_CHANGE_EVENT
 ];
 
 export class Input extends EventDispatcher {
@@ -25,8 +49,11 @@ export class Input extends EventDispatcher {
 
     enable() {
         if (!this.enabled) {
+            dispatch(inputEnabled());
             this.mouse = new Mouse();
             this.keyboard = new Keyboard();
+            this.gamepad = new Gamepad();
+            this.enableGamepad();
             this.enableKeyboard();
             this.enableMouse();
             this.enabled = true;
@@ -35,19 +62,32 @@ export class Input extends EventDispatcher {
 
     disable() {
         if (this.enabled) {
+            dispatch(inputDisabled());
             this.disableKeyboard();
             this.disableMouse();
+            this.disableGamepad();
             this.enabled = false;
         }
     }
 
+    enableGamepad() {
+        dispatch(gamepadEnabled());
+        
+        this.gamepad.enable();
+        this.gamepad.addEventListener(BUTTON_PRESSED_EVENT, this.propagate.bind(this));
+        this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this));
+        this.gamepad.addEventListener(AXES_CHANGE_EVENT, this.propagate.bind(this));
+    }
+
     enableKeyboard() {
+        dispatch(keyboardEnabled());
         this.keyboard.enable(this.handleKeyBoardEvent.bind(this));
     }
 
     enableMouse() {
-        this.mouse.enable();
+        dispatch(mouseEnabled());
 
+        this.mouse.enable();
         this.mouse.addEventListener('mouseDown', this.propagate.bind(this));
         this.mouse.addEventListener('mouseUp', this.propagate.bind(this));
         this.mouse.addEventListener('mouseMove', this.propagate.bind(this));
@@ -81,19 +121,39 @@ export class Input extends EventDispatcher {
     }
 
     disableKeyboard() {
+        dispatch(keyboardDisabled());
+
         this.keyboard.disable();
         this.keyboard = undefined;
     }
 
     disableMouse() {
-        this.mouse.disable();
+        dispatch(mouseDisabled());
 
+        this.mouse.disable();
         this.mouse.removeEventListener('mouseDown', this.propagate.bind(this));
         this.mouse.removeEventListener('mouseUp', this.propagate.bind(this));
         this.mouse.removeEventListener('mouseMove', this.propagate.bind(this));
         this.mouse.removeEventListener('meshClick', this.propagate.bind(this));
 
         this.mouse = undefined;
+    }
+
+    disableGamepad() {
+        dispatch(gamepadDisabled());
+
+        this.gamepad.disable();
+        this.gamepad.removeEventListener(BUTTON_PRESSED_EVENT, this.propagate.bind(this));
+        this.gamepad.removeEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this));
+        this.gamepad.removeEventListener(AXES_CHANGE_EVENT, this.propagate.bind(this));
+
+        this.gamepad = null;
+    }
+
+    update() {
+        if (this.enabled) {
+            this.gamepad.update();
+        }
     }
 }
 

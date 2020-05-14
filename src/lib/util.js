@@ -6,7 +6,8 @@ export const FEATURES = {
     WEBWORKER: 'webworker',
     LOCALSTORAGE: 'localStorage',
     AJAX: 'ajax',
-    OFFSCREENCANVAS: 'offscreenCanvas'
+    OFFSCREENCANVAS: 'offscreenCanvas',
+    GAMEPADAPI: 'gamepadapi'
 };
 
 export class Checker {
@@ -135,6 +136,24 @@ export class Checker {
             }
         } catch(e) {
             return true;
+        }
+    }
+
+    gamepadapi() {
+        try {
+            if (navigator && (
+                navigator.getGamepads ||
+                navigator.webkitGetGamepads ) &&
+                window.Gamepad &&
+                window.GamepadButton) {
+                    return true;
+                } else {
+                    console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.GAMEPADAPI));
+                    return false;
+                }
+        } catch(e) {
+            console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.GAMEPADAPI));
+            return false;
         }
     }
 }
