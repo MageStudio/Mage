@@ -2,6 +2,7 @@ import { EventDispatcher } from "three";
 import util, { FEATURES } from '../../lib/util';
 import { gamepadDisconnected, gamepadConnected } from "../../store/actions/input";
 import { dispatch } from '../../store/Store';
+import { GAMEPAD_BUTTON_MAPPINGS, STANDARD } from "./constants";
 
 const GAMEPAD_CONNECTED_EVENT = 'gamepadconnected';
 const GAMEPAD_DISCONNECTED_EVENT = 'gamepaddisconnected';
@@ -32,20 +33,26 @@ export const getConnectedGamepads = () => {
     return gamepads;
 };
 
+export const mapButtonIndexToKey = (gamepad, index) => (
+    (GAMEPAD_BUTTON_MAPPINGS[gamepad.id] || GAMEPAD_BUTTON_MAPPINGS[STANDARD])[index]
+);
+
 export const parseButton = (button, index)=> {
 
     if (typeof button === 'number') {
         return {
             pressed: button === 1.0,
             value: button,
-            index
+            index,
+            key: mapButtonIndexToKey(index)
         }
     };
 
     return {
         pressed: button.pressed,
         value: button.value,
-        index
+        index,
+        key: mapButtonIndexToKey(index)
     }
 }
 
@@ -149,8 +156,8 @@ export default class Gamepad extends EventDispatcher {
         const axes = gamepad.axes;
 
         for (let i = 0; i<axes.length; i+= 2) {
-            let x = parseFloat(axes[i].toFixed(3));
-            let y = parseFloat(axes[i+1].toFixed(3));
+            let x = parseFloat(axes[i].toFixed(2));
+            let y = parseFloat(axes[i+1].toFixed(2));
 
             if (isMoving(x) || isMoving(y)) {
                 this.dispatchEvent({
