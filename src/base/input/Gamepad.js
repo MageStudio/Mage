@@ -4,12 +4,15 @@ import { gamepadDisconnected, gamepadConnected } from "../../store/actions/input
 import { dispatch } from '../../store/Store';
 import { GAMEPAD_BUTTON_MAPPINGS, STANDARD } from "./constants";
 
-const GAMEPAD_CONNECTED_EVENT = 'gamepadconnected';
-const GAMEPAD_DISCONNECTED_EVENT = 'gamepaddisconnected';
+const WINDOW_GAMEPAD_CONNECTED_EVENT = 'gamepadconnected';
+const WINDOW_GAMEPAD_DISCONNECTED_EVENT = 'gamepaddisconnected';
+
+export const GAMEPAD_CONNECTED_EVENT = 'gamepadConnected';
+export const GAMEPAD_DISCONNECTED_EVENT = 'gamepadDisconnected';
 
 export const X_AXES_CHANGE_EVENT = 'xAxesChange';
 export const Y_AXES_CHANGE_EVENT = 'yAxesChcange';
-export const AXES_CHANGE_EVENT = 'axesChange';
+export const AXIS_CHANGE_EVENT = 'axisChange';
 
 export const BUTTON_PRESSED_EVENT = 'gamepadButtonPressed';
 export const BUTTON_RELEASED_EVENT = 'gamepadButtonReleased';
@@ -69,18 +72,22 @@ export default class Gamepad extends EventDispatcher {
         this.gamepads = {};
     }
 
+    isEnabled() {
+        return this.enabled;
+    }
+
     enable() {
         if (util.isFeatureSupported(FEATURES.GAMEPADAPI)) {
             this.enabled = true;
-            window.addEventListener(GAMEPAD_CONNECTED_EVENT, this.onGamepadConnected);
-            window.addEventListener(GAMEPAD_DISCONNECTED_EVENT, this.onGamepadDisconnected);
+            window.addEventListener(WINDOW_GAMEPAD_CONNECTED_EVENT, this.onGamepadConnected);
+            window.addEventListener(WINDOW_GAMEPAD_DISCONNECTED_EVENT, this.onGamepadDisconnected);
         }
     }
 
     disable() {
         this.reset();
-        window.removeEventListener(GAMEPAD_CONNECTED_EVENT, this.onGamepadConnected);
-        window.removeEventListener(GAMEPAD_DISCONNECTED_EVENT, this.onGamepadDisconnected);
+        window.removeEventListener(WINDOW_GAMEPAD_CONNECTED_EVENT, this.onGamepadConnected);
+        window.removeEventListener(WINDOW_GAMEPAD_DISCONNECTED_EVENT, this.onGamepadDisconnected);
     }
 
     transformGamepdasForEvent = () => (
@@ -103,10 +110,18 @@ export default class Gamepad extends EventDispatcher {
 
     onGamepadConnected = (e) => {
         this.addGamepad(e.gamepad);
+        this.dispatchEvent({
+            type: GAMEPAD_CONNECTED_EVENT,
+            gamepad: e.gamepad
+        });
         dispatch(gamepadConnected(this.transformGamepdasForEvent()));
     }
     onGamepadDisconnected = (e) => {
         this.removeGamepad(e.gamepad);
+        this.dispatchEvent({
+            type: GAMEPAD_DISCONNECTED_EVENT,
+            gamepad: e.gamepad
+        });
         dispatch(gamepadDisconnected(this.transformGamepdasForEvent()));
     }
 
@@ -159,7 +174,7 @@ export default class Gamepad extends EventDispatcher {
             let y = toFloat(axes[i+1], 2);
 
             this.dispatchEvent({
-                type: AXES_CHANGE_EVENT,
+                type: AXIS_CHANGE_EVENT,
                 value: { x, y },
                 gamepad,
                 joystick

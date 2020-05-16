@@ -5,11 +5,11 @@ import {
 import Keyboard from './Keyboard';
 import Mouse from './Mouse';
 import Gamepad, {
+    GAMEPAD_DISCONNECTED_EVENT,
+    GAMEPAD_CONNECTED_EVENT,
     BUTTON_PRESSED_EVENT,
     BUTTON_RELEASED_EVENT,
-    X_AXES_CHANGE_EVENT,
-    Y_AXES_CHANGE_EVENT,
-    AXES_CHANGE_EVENT
+    AXIS_CHANGE_EVENT
 } from './Gamepad';
 
 import { dispatch } from '../../store/Store';
@@ -33,11 +33,11 @@ export const EVENTS = [
     'mouseMove',
     'meshClick',
     'meshDeselect',
+    GAMEPAD_CONNECTED_EVENT,
+    GAMEPAD_DISCONNECTED_EVENT,
     BUTTON_PRESSED_EVENT,
     BUTTON_RELEASED_EVENT,
-    X_AXES_CHANGE_EVENT,
-    Y_AXES_CHANGE_EVENT,
-    AXES_CHANGE_EVENT
+    AXIS_CHANGE_EVENT
 ];
 
 export class Input extends EventDispatcher {
@@ -74,9 +74,12 @@ export class Input extends EventDispatcher {
         dispatch(gamepadEnabled());
         
         this.gamepad.enable();
+        this.gamepad.addEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this));
+        this.gamepad.addEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate.bind(this));
+        this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this));
         this.gamepad.addEventListener(BUTTON_PRESSED_EVENT, this.propagate.bind(this));
         this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this));
-        this.gamepad.addEventListener(AXES_CHANGE_EVENT, this.propagate.bind(this));
+        this.gamepad.addEventListener(AXIS_CHANGE_EVENT, this.propagate.bind(this));
     }
 
     enableKeyboard() {
@@ -143,15 +146,17 @@ export class Input extends EventDispatcher {
         dispatch(gamepadDisabled());
 
         this.gamepad.disable();
+        this.gamepad.removeEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this));
+        this.gamepad.removeEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate.bind(this));
         this.gamepad.removeEventListener(BUTTON_PRESSED_EVENT, this.propagate.bind(this));
         this.gamepad.removeEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this));
-        this.gamepad.removeEventListener(AXES_CHANGE_EVENT, this.propagate.bind(this));
+        this.gamepad.removeEventListener(AXIS_CHANGE_EVENT, this.propagate.bind(this));
 
         this.gamepad = null;
     }
 
     update() {
-        if (this.enabled) {
+        if (this.gamepad.isEnabled()) {
             this.gamepad.update();
         }
     }
