@@ -33,7 +33,7 @@ export default class Color {
 		this.color = new THREEColor(color);
 	}
 
-	get() {
+	getColor() {
 		return this.color;
 	}
 }

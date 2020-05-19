@@ -8,11 +8,10 @@ import Sound from './audio/Sound';
 //import * as THREE from 'three';
 import {
     Vector3,
-    Color as THREEColor
 } from 'three';
 import BaseScene, { author } from './base/BaseScene';
 import Universe from './base/Universe';
-import Color from './base/Color';
+import Color from './lib/Color';
 
 import util from './lib/util';
 import * as math from './lib/math';
@@ -32,7 +31,7 @@ import * as store from './store';
 import { Provider, connect } from 'inferno-redux';
 
 import * as constants from './lib/constants';
-import debounce from './lib/debounce';
+import * as functions from './lib/functions';
 
 import BaseScript from './scripts/BaseScript';
 
@@ -72,6 +71,8 @@ import Skybox from './fx/scenery/Skybox';
 import Shader from './fx/shaders/Shader';
 
 import Particles from './fx/particles/Particles';
+import ParticlEmitter from './fx/particles/ParticleEmitter';
+
 import Images from './images/Images';
 import Models from './models/Models';
 //import Shaders from './fx/shaders/Shaders';
@@ -100,6 +101,7 @@ export {
     Audio,
     PostProcessing,
     Particles,
+    ParticlEmitter,
     Partykals,
     Physics,
 
@@ -142,13 +144,12 @@ export {
 
     Color,
     Vector3,
-    THREEColor,
     util,
     math,
     strings,
     uuid,
     workers,
     constants,
-    debounce,
+    functions,
     Stats
 };
