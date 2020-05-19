@@ -1,4 +1,5 @@
 import Fountain from './Fountain';
+import { INVALID_EMITTER_ID } from '../../lib/messages';
 
 export class Particles {
 
@@ -14,9 +15,23 @@ export class Particles {
 		return this.map[name] || null;
 	}
 
-	addParticleEmitter(emitter) {
-		this.emitters.push(emitter);
+	registerEmitter(key, Emitter) {
+		this.map[key] = Emitter;
+	}
+
+	addParticleEmitter(emitterId, options) {
+		if (this.isRegisteredEmitter(emitterId)) {
+			const Emitter = this.get(emitterId);
+			const emitter = new Emitter(options);
+
+			this.emitters.push(emitter);
+			return emitter;
+		} else {
+			console.log(INVALID_EMITTER_ID);
+		}
 	};
+
+	isRegisteredEmitter = (name) => typeof name === 'string' && name in this.map;
 
 	hasEmitters = () => this.emitters.length > 0;
 

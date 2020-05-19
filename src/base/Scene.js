@@ -41,6 +41,10 @@ export class Scene {
         }
     }
 
+    getScene() {
+        return this.scene;
+    }
+
     updateChildren() {
         for (var i in this.scene.children) {
             if (this.scene.children[i].material) {
