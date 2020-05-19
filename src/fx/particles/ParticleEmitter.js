@@ -1,13 +1,16 @@
-import { EventDispatcher } from "three";
+import { EventDispatcher, Vector3 } from "three";
+import { Randomizers, ParticlesSystem, Emitter } from 'mage-engine.particles';
 import Scene from '../../base/Scene';
 
 export default class ParticleEmitter extends EventDispatcher {
 
-    constructor(options) {
+    constructor(options = {}) {
         super();
 
         this.system = null;
         this.options = options;
+
+        this.setSystem();
     }
 
     hasSystem() {
