@@ -1,10 +1,12 @@
 import Fountain from './Fountain';
+import Explosion from './Explosion';
 import { INVALID_EMITTER_ID } from '../../lib/messages';
 
 export class Particles {
 
 	constructor() {
 		this.map = {
+			'Explosion': Explosion,
 			'Fountain': Fountain
 		};
 
@@ -19,7 +21,7 @@ export class Particles {
 		this.map[key] = Emitter;
 	}
 
-	addParticleEmitter(emitterId, options) {
+	addParticleEmitter(emitterId, options = {}) {
 		if (this.isRegisteredEmitter(emitterId)) {
 			const Emitter = this.get(emitterId);
 			const emitter = new Emitter(options);
