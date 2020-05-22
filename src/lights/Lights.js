@@ -1,8 +1,8 @@
-import Scene from '../base/Scene';
-
 export const POINTLIGHT = 'pointlight';
 export const AMBIENTLIGHT = 'ambientlight';
 export const SUNLIGHT = 'sunlight';
+
+const TIME_TO_UPDATE = 100;
 
 export class Lights {
 
@@ -22,12 +22,15 @@ export class Lights {
     }
 
     update(dt) {
-        var start = new Date();
-        for (var index in this.lights) {
-            var light = this.lights[index];
-            light.update(dt);
-            if ((+new Date() - start) > 50) return;
-        }
+        return new Promise(resolve => {
+            const start = new Date();
+            for (let index in this.lights) {
+                const light = this.lights[index];
+                light.update(dt);
+                if ((+new Date() - start) > TIME_TO_UPDATE) break;
+            }
+            resolve();
+        });
     }
 
     toJSON() {
