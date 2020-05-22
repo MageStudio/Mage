@@ -38,9 +38,12 @@ export class Particles {
 	hasEmitters = () => this.emitters.length > 0;
 
 	update() {
-		if (this.hasEmitters()) {
-			this.emitters.forEach(e => e.update());
-		}
+		return new Promise(resolve => {
+			if (this.hasEmitters()) {
+				this.emitters.forEach(e => e.update());
+				resolve();
+			}
+		})
 	}
 }
 

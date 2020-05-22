@@ -3,6 +3,8 @@ import {
 } from 'three';
 import Scene from '../base/Scene';
 
+const TIME_FOR_UPDATE = 150;
+
 export class Audio {
 
 	constructor() {
@@ -12,13 +14,6 @@ export class Audio {
 		this.DELAY_NORMAL_VALUE = 40;
 		this.VOLUME = 20;
 		this._volume = 20;
-
-		this.soundPath = "js/core/sound/";
-		this.soundModules = [
-			"js/core/audio/beat", //parent
-			"js/core/audio/sound",
-			"js/core/audio/ambientSound"
-		];
 
 		this.numSound = 0;
 		this.soundLoaded = 0;
@@ -70,7 +65,6 @@ export class Audio {
 	}
 
 	get(id) {
-		//returning stored buffer;
 		return this.map[id] || false;
 	}
 
@@ -93,8 +87,6 @@ export class Audio {
 							resolve();
 							console.error("Decoding the audio buffer failed");
 						});
-				} else if (request.readyState === 4 && request.status === 200) {
-					resolve();
 				}
 			};
 			request.send();
@@ -106,46 +98,49 @@ export class Audio {
 	}
 
 	update(dt) {
-		const start = new Date();
-		for (var index in this.sounds) {
-			var sound = this.sounds[index];
-			sound.update(dt);
+		return new Promise(resolve => {
+			const start = new Date();
+			for (var index in this.sounds) {
+				const sound = this.sounds[index];
+				sound.update(dt);
 
-			//now handling listener
-			Scene.getCameraObject().updateMatrixWorld();
-			var p = new Vector3();
-			p.setFromMatrixPosition(Scene.getCameraObject().matrixWorld);
+				//now handling listener
+				Scene.getCameraObject().updateMatrixWorld();
+				const p = new Vector3();
+				p.setFromMatrixPosition(Scene.getCameraObject().matrixWorld);
 
-			//setting audio engine context listener position on camera position
-			this.context.listener.setPosition(p.x, p.y, p.z);
+				//setting audio engine context listener position on camera position
+				this.context.listener.setPosition(p.x, p.y, p.z);
 
+				//this is to add up and down vector to our camera
+				// The camera's world matrix is named "matrix".
+				const m = Scene.getCameraObject().matrix;
 
-			//this is to add up and down vector to our camera
-			// The camera's world matrix is named "matrix".
-			var m = Scene.getCameraObject().matrix;
+				const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
+				m.elements[12] = m.elements[13] = m.elements[14] = 0;
 
-			const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
-			m.elements[12] = m.elements[13] = m.elements[14] = 0;
+				// Multiply the orientation vector by the world matrix of the camera.
+				const vec = new Vector3(0,0,1);
+				vec.applyMatrix4(m);
+				vec.normalize();
 
-			// Multiply the orientation vector by the world matrix of the camera.
-			var vec = new Vector3(0,0,1);
-			vec.applyMatrix4(m);
-			vec.normalize();
+				// Multiply the up vector by the world matrix.
+				const up = new Vector3(0,-1,0);
+				up.applyMatrix4(m);
+				up.normalize();
 
-			// Multiply the up vector by the world matrix.
-			var up = new Vector3(0,-1,0);
-			up.applyMatrix4(m);
-			up.normalize();
+				// Set the orientation and the up-vector for the listener.
+				this.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
 
-			// Set the orientation and the up-vector for the listener.
-			this.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
+				m.elements[12] = mx;
+				m.elements[13] = my;
+				m.elements[14] = mz;
 
-			m.elements[12] = mx;
-			m.elements[13] = my;
-			m.elements[14] = mz;
+				if ((+new Date() - start) > TIME_FOR_UPDATE) break;
+			}
 
-			if ((+new Date() - start) > 50) return;
-		}
+			resolve();
+		});
 	}
 }
 
