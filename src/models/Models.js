@@ -1,4 +1,5 @@
-import Mesh from '../entities/Mesh';
+import { ENTITY_TYPES } from '../entities/BaseEntity';
+import BaseMesh from '../entities/BaseMesh';
 import {
 	MeshLambertMaterial,
 	ObjectLoader
@@ -6,7 +7,6 @@ import {
 
 import GLTFLoader from '../loaders/GLTFLoader';
 import ColladaLoader from '../loaders/ColladaLoader';
-import { ENTITY_TYPES } from '../entities/entity';
 
 const EXTENSIONS = {
 	JSON: 'json',
@@ -75,7 +75,7 @@ class Models {
 				...options,
 				name
 			};
-			const mesh = new Mesh(null, null, meshOptions);
+			const mesh = new BaseMesh(null, null, meshOptions);
 			mesh.setMesh(model);
 			mesh.setEntityType(ENTITY_TYPES.MODEL);
 

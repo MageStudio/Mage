@@ -1,5 +1,5 @@
 import {
-	Mesh as THREEMesh,
+	Mesh,
 	RepeatWrapping,
 	MeshBasicMaterial,
 	MeshLambertMaterial,
@@ -9,10 +9,10 @@ import {
 	Raycaster,
 	Color
 } from 'three';
+import BaseEntity, { ENTITY_TYPES } from './baseEntity';
 
 import { MESH_NOT_SET, ANIMATION_HANDLER_NOT_FOUND } from '../lib/messages';
 import Images from '../images/Images';
-import Entity, { ENTITY_TYPES } from './entity';
 import AnimationHandler from './animations/AnimationHandler';
 //import Line from './base/Line';
 import Config from '../core/config';
@@ -26,9 +26,7 @@ import Box from './base/Box';
 const BOUNDING_BOX_COLOR = 0Xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
 
-console.log('Entity super', Entity);
-
-export default class Mesh extends Entity {
+export default class BaseMesh extends BaseEntity {
 
 	constructor(geometry, material, options = {}) {
 		super(options);
@@ -46,7 +44,7 @@ export default class Mesh extends Entity {
 		this.collisionsEnabled = true;
 		this.children = [];
 
-		this.AnimationHandler = undefined;
+		this.animationHandler = undefined;
 
 		this.setName(name);
 		this.setEntityType(ENTITY_TYPES.MESH);
@@ -66,7 +64,7 @@ export default class Mesh extends Entity {
 		} else if (geometry && material) {
 			this.geometry = geometry;
 			this.material = material;
-			this.mesh = new THREEMesh(this.geometry, this.material);
+			this.mesh = new Mesh(this.geometry, this.material);
 		}
 
 		if (this.hasMesh()) {
@@ -147,7 +145,6 @@ export default class Mesh extends Entity {
 	}
 
 	update(dt) {
-		super.update(dt);
 		if (this.hasRayColliders() && this.areCollisionsEnabled()) {
 			this.updateRayColliders();
 			this.checkCollisions();

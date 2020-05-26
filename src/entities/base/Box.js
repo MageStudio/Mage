@@ -1,4 +1,4 @@
-import Mesh from '../Mesh';
+import BaseMesh from '../BaseMesh';
 import {
     CubeGeometry,
     MeshBasicMaterial
@@ -14,7 +14,7 @@ export default class Box {
             ...options
 		});
 
-		this.mesh = new Mesh(this.geometry, this.material, options);
+		this.mesh = new BaseMesh(this.geometry, this.material, options);
 
         return this.mesh;
     }

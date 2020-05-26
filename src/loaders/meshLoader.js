@@ -1,4 +1,4 @@
-import Mesh from '../entities/Mesh';
+import BaseMesh from '../entities/BaseMesh';
 import ShaderMesh from '../entities/ShaderMesh';
 import Images from '../images/Images'
 import Loader from './Loader';
@@ -30,7 +30,7 @@ export class MeshLoader extends Loader {
 
     loadMesh(parsedMesh, scripts, texture, meshOptions) {
         const { scriptEnabled = true } = this.options;
-        const mesh = new Mesh(parsedMesh.geometry, parsedMesh.material, meshOptions);
+        const mesh = new BaseMesh(parsedMesh.geometry, parsedMesh.material, meshOptions);
 
         mesh.setPosition({ ...parsedMesh.position });
         mesh.setRotation({ ...parsedMesh.rotation });

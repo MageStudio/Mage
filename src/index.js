@@ -37,8 +37,7 @@ import BaseScript from './scripts/BaseScript';
 
 import Input from './core/input/Input';
 
-import Entity, { ENTITY_TYPES } from './entities/entity';
-import Mesh from './entities/Mesh';
+import Mesh from './entities/BaseMesh';
 import Line from './entities/base/Line';
 import Plane from './entities/base/Plane';
 import Box from './entities/base/Box';
@@ -78,7 +77,6 @@ import Models from './models/Models';
 //import Shaders from './fx/shaders/Shaders';
 import PostProcessing from './fx/postprocessing/PostProcessing';
 
-
 export {
     author,
 
@@ -112,8 +110,6 @@ export {
 
     Input,
 
-    Entity,
-    ENTITY_TYPES,
     Mesh,
     Line,
     Plane,

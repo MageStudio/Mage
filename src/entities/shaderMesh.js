@@ -1,9 +1,9 @@
 import { Mesh } from 'three';
 import Shader from '../fx/shaders/Shader';
 import Scene from '../core/Scene';
-import Entity from './entity';
+import BaseEntity from './BaseEntity';
 
-export default class ShaderMesh extends Entity {
+export default class ShaderMesh extends BaseEntity {
 
     constructor(geometry, name, attributes, uniforms, options) {
         super(options);

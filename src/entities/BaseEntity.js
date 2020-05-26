@@ -21,7 +21,7 @@ export const ENTITY_TYPES = {
 	MODEL: 2
 };
 
-export default class Entity extends EventDispatcher {
+export default class BaseEntity extends EventDispatcher {
 
 	constructor({ serializable = true }) {
 		super();
@@ -44,19 +44,18 @@ export default class Entity extends EventDispatcher {
 		}
 	}
 
-	start() {
-		if (this.hasScripts()) {
-			this.scripts.forEach(({ script, enabled }) => {
-				if (enabled) {
-					script.start(this);
-					script.__hasStarted(true);
-				}
-			});
-		}
-	}
+	// start() {
+	// 	if (this.hasScripts()) {
+	// 		this.scripts.forEach(({ script, enabled }) => {
+	// 			if (enabled) {
+	// 				script.start(this);
+	// 				script.__hasStarted(true);
+	// 			}
+	// 		});
+	// 	}
+	// }
 
 	update(dt) {
-		console.log('entity update');
 		return new Promise((resolve) => {
 			if (this.hasScripts()) {
 				this.scripts.forEach(({ script, enabled }) => {

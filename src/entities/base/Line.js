@@ -1,5 +1,5 @@
-import Mesh from '../Mesh';
-import { ENTITY_TYPES } from '../entity';
+import BaseMesh from '../BaseMesh';
+import { ENTITY_TYPES } from '../BaseEntity';
 
 import {
     LineBasicMaterial,
@@ -7,7 +7,7 @@ import {
     Vector3
 } from 'three';
 
-export default class Line extends Mesh {
+export default class Line extends BaseMesh {
 
 	constructor(points, options = {}) {
 		super(options);
@@ -30,4 +30,3 @@ export default class Line extends Mesh {
         this.mesh.geometry.verticesNeedUpdate = true;
     }
 }
-s

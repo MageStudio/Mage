@@ -1,4 +1,4 @@
-import Entity, { ENTITY_TYPES } from '../entities/entity';
+import BaseEntity, { ENTITY_TYPES } from '../entities/BaseEntity';
 
 import Lights from './Lights';
 import Models from '../models/Models';
@@ -9,7 +9,7 @@ import {
 
 const LAMP_COLOR = 0Xf1c40f;
 
-export default class Light extends Entity {
+export default class Light extends BaseEntity {
 
 	constructor({ color, intensity, name }) {
 		super({ name });

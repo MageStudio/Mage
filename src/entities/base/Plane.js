@@ -1,5 +1,5 @@
-import { ENTITY_TYPES } from '../entity';
-import Mesh from '../Mesh';
+import { ENTITY_TYPES } from '../BaseEntity';
+import BaseMesh from '../BaseMesh';
 
 import {
     PlaneGeometry,
@@ -11,7 +11,7 @@ import {
 const UP = new Vector3(0, 1, 0);
 const DOWN = new Vector3(0, -1, 0);
 
-export default class Plane extends Mesh {
+export default class Plane extends BaseMesh {
 
 	constructor(height, width, options = {}) {
 		super(options);

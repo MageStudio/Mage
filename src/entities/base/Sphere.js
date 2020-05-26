@@ -1,4 +1,4 @@
-import Mesh from '../Mesh';
+import BaseMesh from '../BaseMesh';
 import {
     SphereGeometry,
     MeshBasicMaterial
@@ -16,7 +16,7 @@ export default class Sphere {
             ...options
 		});
 
-		this.mesh = new Mesh(this.geometry, this.material, options);
+		this.mesh = new BaseMesh(this.geometry, this.material, options);
 
         return this.mesh;
     }
