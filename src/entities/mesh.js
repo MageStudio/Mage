@@ -1,8 +1,3 @@
-import Entity from './Entity';
-import Line from './Line';
-import Config from '../base/config';
-import Scene from '../base/Scene';
-import Images from '../images/Images';
 import {
 	Mesh as THREEMesh,
 	RepeatWrapping,
@@ -14,8 +9,16 @@ import {
 	Raycaster,
 	Color
 } from 'three';
+
+import { MESH_NOT_SET, ANIMATION_HANDLER_NOT_FOUND } from '../lib/messages';
+import Images from '../images/Images';
+import Entity, { ENTITY_TYPES } from './entity';
+import AnimationHandler from './animations/AnimationHandler';
+//import Line from './base/Line';
+import Config from '../core/config';
+import Scene from '../core/Scene';
 import { COLLISION_EVENT, FRONT } from '../lib/constants';
-import Universe from '../base/Universe';
+import Universe from '../core/Universe';
 import Physics from '../physics/physics';
 import { getDescriptionForMesh } from '../physics/utils';
 import Box from './base/Box';
@@ -23,38 +26,91 @@ import Box from './base/Box';
 const BOUNDING_BOX_COLOR = 0Xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
 
+console.log('Entity super', Entity);
+
 export default class Mesh extends Entity {
 
 	constructor(geometry, material, options = {}) {
 		super(options);
 
 		const {
-			addUniverse = true,
-			name = `default_${Math.random()}`,
+			name = `default_${Math.random()}`
 		} = options;
 
 		this.texture = undefined;
 		this.options = options;
-		this.geometry = geometry;
-		this.material = material;
-		this.mesh = new THREEMesh(this.geometry, this.material);
 
-		this.mesh.geometry.computeBoundingBox();
-		this.boundingBox = this.mesh.geometry.boundingBox;
+		this.setMesh({ geometry, material });
 
 		this.colliders = [];
 		this.collisionsEnabled = true;
 		this.children = [];
 
+		this.AnimationHandler = undefined;
+
 		this.setName(name);
+		this.setEntityType(ENTITY_TYPES.MESH);
+	}
+
+	hasMesh() {
+		return !!this.mesh;
+	}
+
+	getMesh() {
+		return this.mesh;
+	}
+
+	setMesh({ mesh, geometry, material }) {
+		if (mesh) {
+			this.mesh = mesh;
+		} else if (geometry && material) {
+			this.geometry = geometry;
+			this.material = material;
+			this.mesh = new THREEMesh(this.geometry, this.material);
+		}
+
+		if (this.hasMesh()) {
+			this.postMeshCreation();
+			this.addToScene();
+		}
+	}
+
+	postMeshCreation() {
+		this.mesh.geometry.computeBoundingBox();
+		this.boundingBox = this.mesh.geometry.boundingBox;
 
 		if (Config.lights().shadows) {
 			this.mesh.castShadow = true;
 			this.mesh.receiveShadow = true;
 		}
+	}
 
-		this.setMesh();
-		Scene.add(this.mesh, this, addUniverse);
+	addToScene() {
+		const {
+			addUniverse = false,
+		} = this.options;
+
+		if (this.hasMesh()) {
+			Scene.add(this.getMesh(), this, addUniverse);
+		} else {
+			console.warn(MESH_NOT_SET);
+		}
+	}
+
+	addAnimationHandler(animations) {
+		this.animationHandler = new AnimationHandler(this.getMesh(), animations);
+	}
+
+	hasAnimationHandler() {
+		return !!this.animationHandler;
+	}
+
+	playAnimation(id) {
+		if (this.hasAnimationHandler()) {
+			this.animationHandler.playAnimation(id);
+		} else {
+			console.warn(ANIMATION_HANDLER_NOT_FOUND);
+		}
 	}
 
 	enablePhysics(options) {
@@ -95,6 +151,11 @@ export default class Mesh extends Entity {
 		if (this.hasRayColliders() && this.areCollisionsEnabled()) {
 			this.updateRayColliders();
 			this.checkCollisions();
+		}
+
+		console.log('mesh update');
+		if (this.hasAnimationHandler()) {
+			this.animationHandler.update(dt);
 		}
 	}
 

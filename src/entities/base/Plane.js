@@ -1,10 +1,9 @@
-import Entity from './Entity';
-import Scene from '../base/Scene';
+import { ENTITY_TYPES } from '../entity';
+import Mesh from '../Mesh';
 
 import {
     PlaneGeometry,
     DoubleSide,
-    Mesh,
     Vector3,
     MeshBasicMaterial
 } from 'three';
@@ -12,7 +11,7 @@ import {
 const UP = new Vector3(0, 1, 0);
 const DOWN = new Vector3(0, -1, 0);
 
-export default class Plane extends Entity {
+export default class Plane extends Mesh {
 
 	constructor(height, width, options = {}) {
 		super(options);
@@ -23,14 +22,11 @@ export default class Plane extends Entity {
             opacity = 1
         } = options;
 
-        this.material = new MeshBasicMaterial({ color, side: DoubleSide, transparent, opacity });
-		this.geometry = new PlaneGeometry(width, height);
+        material = new MeshBasicMaterial({ color, side: DoubleSide, transparent, opacity });
+		geometry = new PlaneGeometry(width, height);
 
-		this.mesh = new Mesh(this.geometry, this.material);
-
-		const { addUniverse = true } = options;
-
-		Scene.add(this.mesh, this, addUniverse);
+        this.setMesh({ geometry, material });
+        this.setEntityType(ENTITY_TYPES.MESH);
 	}
 
     static get UP() { return UP; }
@@ -41,12 +37,4 @@ export default class Plane extends Entity {
 
         this.mesh.lookAt(vector);
     }
-
-	toJSON() {
-		return {
-			mesh: this.mesh.toJSON(),
-			script: this.script && this.script.toJSON(),
-			texture: this.texture
-		}
-	}
 }

@@ -1,7 +1,7 @@
 import { Mesh } from 'three';
 import Shader from '../fx/shaders/Shader';
-import Scene from '../base/Scene';
-import Entity from './Entity';
+import Scene from '../core/Scene';
+import Entity from './entity';
 
 export default class ShaderMesh extends Entity {
 

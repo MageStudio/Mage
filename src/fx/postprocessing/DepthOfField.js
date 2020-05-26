@@ -1,5 +1,5 @@
-import Scene from '../../base/Scene';
-import config from '../../base/config';
+import Scene from '../../core/Scene';
+import config from '../../core/config';
 
 import BokehPass from './BokehPass';
 

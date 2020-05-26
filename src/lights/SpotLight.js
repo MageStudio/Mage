@@ -1,13 +1,13 @@
 import Light from './Light';
-import Config from '../base/config';
-import Mesh from '../entities/mesh';
+import Config from '../core/config';
+import Mesh from '../entities/Mesh';
 import {
     SpotLight as THREESpotLight,
     MeshBasicMaterial,
     SphereGeometry,
     DirectionalLightHelper
 } from 'three';
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 
 export default class SpotLight extends Light {
 

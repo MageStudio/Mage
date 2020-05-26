@@ -1,13 +1,13 @@
 import Light from './Light';
-import Config from '../base/config';
-import Mesh from '../entities/mesh';
+import Config from '../core/config';
+import Mesh from '../entities/Mesh';
 import {
     DirectionalLight as THREEDirectionalLight,
     MeshBasicMaterial,
     SphereGeometry,
     DirectionalLightHelper
 } from 'three';
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 import { SUNLIGHT } from './Lights';
 
 const DEFAULT_NEAR = 0.1;

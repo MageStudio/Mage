@@ -1,7 +1,7 @@
 import {
 	Vector3
 } from 'three';
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 
 const TIME_FOR_UPDATE = 150;
 

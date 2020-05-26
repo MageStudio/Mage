@@ -1,4 +1,4 @@
-// import Assets from './base/Assets';
+// import Assets from './core/Assets';
 import Audio from './audio/Audio';
 import AmbientSound from './audio/AmbientSound';
 import BackgroundSound from './audio/BackgroundSound';
@@ -9,8 +9,8 @@ import Sound from './audio/Sound';
 import {
     Vector3,
 } from 'three';
-import BaseScene, { author } from './base/BaseScene';
-import Universe from './base/Universe';
+import BaseScene, { author } from './core/BaseScene';
+import Universe from './core/Universe';
 import Color from './lib/Color';
 
 import util from './lib/util';
@@ -19,10 +19,10 @@ import * as strings from './lib/strings';
 import * as uuid from './lib/uuid';
 import * as workers from './lib/workers';
 
-import Stats from './base/Stats';
-import Config from './base/config';
+import Stats from './core/Stats';
+import Config from './core/config';
 import Router from './router/Router';
-import Scene from './base/Scene';
+import Scene from './core/Scene';
 import Scripts from './scripts/Scripts';
 import Controls from './controls/Controls';
 import Physics from './physics/physics';
@@ -35,12 +35,12 @@ import * as functions from './lib/functions';
 
 import BaseScript from './scripts/BaseScript';
 
-import Input from './base/input/Input';
+import Input from './core/input/Input';
 
-import Entity from './entities/Entity';
+import Entity, { ENTITY_TYPES } from './entities/entity';
 import Mesh from './entities/Mesh';
-import Line from './entities/line';
-import Plane from './entities/plane';
+import Line from './entities/base/Line';
+import Plane from './entities/base/Plane';
 import Box from './entities/base/Box';
 import Cube from './entities/base/Cube';
 import Sphere from './entities/base/Sphere';
@@ -113,6 +113,7 @@ export {
     Input,
 
     Entity,
+    ENTITY_TYPES,
     Mesh,
     Line,
     Plane,

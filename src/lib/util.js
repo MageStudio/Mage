@@ -1,4 +1,4 @@
-import Config from '../base/config';
+import Config from '../core/config';
 
 export const FEATURES = {
     WEBGL: 'webgl',

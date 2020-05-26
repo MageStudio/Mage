@@ -2,18 +2,24 @@ import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
 import { EventDispatcher, Quaternion, Euler, Vector3 } from 'three';
 
-import Config from '../base/config';
+import Config from '../core/config';
 import Scripts from '../scripts/Scripts';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 import Physics from '../physics/physics';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
 const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
 const DEFAULT_ANGULAR_VELOCITY = { x: 0, y: 0, z: 0 };
 const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
+
+export const ENTITY_TYPES = {
+	MESH: 0,
+	LIGHT: 1,
+	MODEL: 2
+};
 
 export default class Entity extends EventDispatcher {
 
@@ -50,6 +56,7 @@ export default class Entity extends EventDispatcher {
 	}
 
 	update(dt) {
+		console.log('entity update');
 		return new Promise((resolve) => {
 			if (this.hasScripts()) {
 				this.scripts.forEach(({ script, enabled }) => {
@@ -171,24 +178,21 @@ export default class Entity extends EventDispatcher {
 		this.scriptsEnabled = false;
 	}
 
-	setMesh() {
-		this._isMesh = true;
-		this._isLight = false;
-		this._isModel = false;
+	setEntityType(type) {
+		switch (type) {
+			case ENTITY_TYPES.MESH:
+				this._isMesh = true;
+				break;
+			case ENTITY_TYPES.LIGHT:
+				this._isLight = true;
+				break;
+			case ENTITY_TYPES.MODEL:
+				this._isModel = true;
+				break;
+			default:
+				break;
+		}
 	}
-
-	setLight() {
-		this._isMesh = false;
-		this._isLight = true;
-		this._isModel = false;
-	}
-
-	setModel() {
-		this._isMesh = false;
-		this._isLight = false;
-		this._isModel = true;
-	}
-
 
 	isMesh() { return this._isMesh; }
 	isLight() { return this._isLight; }

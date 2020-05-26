@@ -1,5 +1,5 @@
 import { GridHelper } from 'three'
-import Scene from '../../base/Scene';
+import Scene from '../../core/Scene';
 
 export default class Grid {
 

@@ -1,5 +1,5 @@
 import Light from './Light';
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 import { POINTLIGHT } from './Lights';
 
 import {

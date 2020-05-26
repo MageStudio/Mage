@@ -9,7 +9,7 @@ import {
 } from 'three';
 
 import Images from '../../images/Images';
-import Scene from '../../base/Scene';
+import Scene from '../../core/Scene';
 
 export default class Skybox {
 

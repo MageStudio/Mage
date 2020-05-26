@@ -1,4 +1,4 @@
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 import Orbit from './Orbit';
 import Transform from './Transform';
 import FirstPersonControl from './FirstPersonControl';

@@ -1,4 +1,4 @@
-import BaseScene from '../base/BaseScene';
+import BaseScene from '../core/BaseScene';
 import { subscribeScene, unsubScribeScene } from '../store/Store';
 import storage from '../storage/storage';
 import { PATH_NOT_FOUND } from '../lib/messages';

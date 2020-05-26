@@ -1,5 +1,5 @@
-import Entity from '../entities/Entity';
-import Mesh from '../entities/mesh';
+import Entity, { ENTITY_TYPES } from '../entities/entity';
+
 import Lights from './Lights';
 import Models from '../models/Models';
 import {
@@ -26,7 +26,7 @@ export default class Light extends Entity {
 		// target mesh for the light (only used by directional light)
 		this.target = undefined;
 
-		this.setLight();
+		this.setEntityType(ENTITY_TYPES.LIGHT);
 
 		Lights.add(this);
 	}

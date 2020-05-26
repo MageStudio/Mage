@@ -10,7 +10,7 @@ import {
     Raycaster
 } from 'three';
 
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 
 const CHANGE_EVENT = { type: 'change' };
 const LOCK_EVENT = { type: 'lock' };
