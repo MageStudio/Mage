@@ -14,7 +14,7 @@ const DOWN = new Vector3(0, -1, 0);
 export default class Plane extends BaseMesh {
 
 	constructor(height, width, options = {}) {
-		super(options);
+		super(null, null, options);
 
         const {
             color = 0xfffffff,

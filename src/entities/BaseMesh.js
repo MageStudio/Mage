@@ -21,7 +21,7 @@ import { COLLISION_EVENT, FRONT } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics/physics';
 import { getDescriptionForMesh } from '../physics/utils';
-import Box from './base/Box';
+//import Box from './base/Box';
 
 const BOUNDING_BOX_COLOR = 0Xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
@@ -73,9 +73,23 @@ export default class BaseMesh extends BaseEntity {
 		}
 	}
 
+	evaluateBoundingBox() {
+		if (this.mesh.geometry) {
+			this.mesh.geometry.computeBoundingBox();
+			this.boundingBox = this.mesh.geometry.boundingBox;
+		} else {
+			this.mesh.children.forEach(child => {
+				if (child.geometry) {
+					child.geometry.computeBoundingBox();
+					this.boundingBox = child.geometry.boundingBox;
+					return;
+				}
+			})
+		}
+	}
+
 	postMeshCreation() {
-		this.mesh.geometry.computeBoundingBox();
-		this.boundingBox = this.mesh.geometry.boundingBox;
+		this.evaluateBoundingBox();
 
 		if (Config.lights().shadows) {
 			this.mesh.castShadow = true;
@@ -85,14 +99,33 @@ export default class BaseMesh extends BaseEntity {
 
 	addToScene() {
 		const {
-			addUniverse = false,
+			addUniverse = true,
 		} = this.options;
 
 		if (this.hasMesh()) {
+			console.log('adding to uni', this.name, this.getMesh());
 			Scene.add(this.getMesh(), this, addUniverse);
 		} else {
 			console.warn(MESH_NOT_SET);
 		}
+	}
+
+	setName(name, { replace = false } = {}) {
+		super.setName(name);
+
+		if (this.hasMesh()) {
+			if (replace) this.dispose();
+
+			this.mesh.name = name;
+
+			if (replace) Scene.add(this.mesh, this, true);
+		}
+	}
+
+	setArmature(armature) {
+		this.armature = armature;
+
+		Scene.add(this.armature, null, false);
 	}
 
 	addAnimationHandler(animations) {
@@ -145,12 +178,13 @@ export default class BaseMesh extends BaseEntity {
 	}
 
 	update(dt) {
+		super.update(dt);
+		
 		if (this.hasRayColliders() && this.areCollisionsEnabled()) {
 			this.updateRayColliders();
 			this.checkCollisions();
 		}
 
-		console.log('mesh update');
 		if (this.hasAnimationHandler()) {
 			this.animationHandler.update(dt);
 		}

@@ -10,7 +10,7 @@ import {
 export default class Line extends BaseMesh {
 
 	constructor(points, options = {}) {
-		super(options);
+		super(null, null, options);
 
         const color = options.color || 0xffffff;
         const material = new LineBasicMaterial({ color });

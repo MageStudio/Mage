@@ -91,7 +91,7 @@ export default class SpotLight extends Light {
             wireframe: true
         });
 
-        this.holder = new Mesh(geometry, material);
+        this.holder = new BaseMesh(geometry, material);
     }
 
     hasTarget() {

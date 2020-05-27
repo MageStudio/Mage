@@ -3,21 +3,23 @@ import {
     SphereGeometry,
     MeshBasicMaterial
 } from 'three';
+import { ENTITY_TYPES } from '../BaseEntity';
 
-export default class Sphere {
+export default class Sphere extends BaseMesh {
 
     constructor(radius = 10, color, options = {}) {
+        super(null, null, options);
+
         const segments = 32;
         
-        this.geometry = new SphereGeometry(radius, segments, segments);
-		this.material = new MeshBasicMaterial({
+        const geometry = new SphereGeometry(radius, segments, segments);
+		const material = new MeshBasicMaterial({
 			color: color,
 			wireframe: false,
             ...options
 		});
 
-		this.mesh = new BaseMesh(this.geometry, this.material, options);
-
-        return this.mesh;
+        this.setMesh({ geometry, material });
+        this.setEntityType(ENTITY_TYPES.MESH);
     }
 }

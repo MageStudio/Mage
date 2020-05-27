@@ -44,16 +44,16 @@ export default class BaseEntity extends EventDispatcher {
 		}
 	}
 
-	// start() {
-	// 	if (this.hasScripts()) {
-	// 		this.scripts.forEach(({ script, enabled }) => {
-	// 			if (enabled) {
-	// 				script.start(this);
-	// 				script.__hasStarted(true);
-	// 			}
-	// 		});
-	// 	}
-	// }
+	start() {
+		if (this.hasScripts()) {
+			this.scripts.forEach(({ script, enabled }) => {
+				if (enabled) {
+					script.start(this);
+					script.__hasStarted(true);
+				}
+			});
+		}
+	}
 
 	update(dt) {
 		return new Promise((resolve) => {
@@ -361,7 +361,7 @@ export default class BaseEntity extends EventDispatcher {
 		return new Promise((resolve) => 
 			new Between({ x, y, z}, position)
 				.time(time)
-				.on('update', value => this.position(value))
+				.on('update', value => this.setPosition(value))
 				.on('complete', resolve)
 		);
 	}
@@ -382,14 +382,7 @@ export default class BaseEntity extends EventDispatcher {
 		}
 	}
 
-	setName(name, { replace = false } = {}) {
-		if (name && this.mesh) {
-			if (replace) this.dispose();
-
-			this.name = name;
-			this.mesh.name = name;
-
-			if (replace) Scene.add(this.mesh, this, true);
-		}
+	setName(name) {
+		this.name = name;
 	}
 }

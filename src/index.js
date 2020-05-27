@@ -10,6 +10,9 @@ import {
     Vector3,
 } from 'three';
 import BaseScene, { author } from './core/BaseScene';
+import BaseMesh from './entities/BaseMesh';
+
+
 import Universe from './core/Universe';
 import Color from './lib/Color';
 
@@ -37,7 +40,6 @@ import BaseScript from './scripts/BaseScript';
 
 import Input from './core/input/Input';
 
-import Mesh from './entities/BaseMesh';
 import Line from './entities/base/Line';
 import Plane from './entities/base/Plane';
 import Box from './entities/base/Box';
@@ -79,8 +81,9 @@ import PostProcessing from './fx/postprocessing/PostProcessing';
 
 export {
     author,
-
+    BaseMesh,
     BaseScene,
+
     Config,
     Scene,
     Universe,
@@ -110,7 +113,6 @@ export {
 
     Input,
 
-    Mesh,
     Line,
     Plane,
     Box,

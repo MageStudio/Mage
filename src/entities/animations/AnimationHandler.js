@@ -25,7 +25,6 @@ export default class AnimationHandler {
     }
 
     update(dt) {
-        console.log('updating', dt);
         this.mixer.update(dt);
     }
 }

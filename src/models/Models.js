@@ -40,15 +40,23 @@ const gltfParser = (gltf) => {
 const glbParser = (glb) => { model: glb.scene.children[0] };
 const defaultParser = model => { model };
 const colladaParser = ({ animations, scene }) => {
-	const model = scene.children.filter(c => c.geometry && c.material)[0];
+	// const model = scene.children.filter(c => c.geometry && c.material)[0];
 
-	if (model.isSkinnedMesh) {
-		model.frustumCulled = false;
-	}
+	// console.log(scene);
+
+	// if (model.isSkinnedMesh) {
+	// 	model.frustumCulled = false;
+	// }
+
+	scene.traverse(node => {
+		if (node.isSkinnedMesh) {
+			node.frustumCulled = false;
+		}
+	});
 
 	return {
 		animations,
-		model
+		model: scene
 	}
 };
 
@@ -76,7 +84,7 @@ class Models {
 				name
 			};
 			const mesh = new BaseMesh(null, null, meshOptions);
-			mesh.setMesh(model);
+			mesh.setMesh({ mesh: model });
 			mesh.setEntityType(ENTITY_TYPES.MODEL);
 
 			if (animations) {
