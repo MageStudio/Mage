@@ -1,6 +1,6 @@
 import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
-import { EventDispatcher, Quaternion, Euler, Vector3 } from 'three';
+import { EventDispatcher, Vector3 } from 'three';
 
 import Config from '../core/config';
 import Scripts from '../scripts/Scripts';
@@ -384,5 +384,9 @@ export default class BaseEntity extends EventDispatcher {
 
 	setName(name) {
 		this.name = name;
+	}
+
+	getName() {
+		return this.name;
 	}
 }

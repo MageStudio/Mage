@@ -54,7 +54,12 @@ export default class BaseMesh extends BaseEntity {
 		return !!this.mesh;
 	}
 
-	getMesh() {
+	getMesh({ name } = {}) {
+		if (name && this.hasMesh()) {
+			const mesh = this.mesh.getObjectByName(name);
+			return mesh ? mesh : this.mesh;
+		}
+
 		return this.mesh;
 	}
 
@@ -103,7 +108,6 @@ export default class BaseMesh extends BaseEntity {
 		} = this.options;
 
 		if (this.hasMesh()) {
-			console.log('adding to uni', this.name, this.getMesh());
 			Scene.add(this.getMesh(), this, addUniverse);
 		} else {
 			console.warn(MESH_NOT_SET);
@@ -118,7 +122,7 @@ export default class BaseMesh extends BaseEntity {
 
 			this.mesh.name = name;
 
-			if (replace) Scene.add(this.mesh, this, true);
+			if (replace) this.addToScene();
 		}
 	}
 

@@ -17,8 +17,6 @@ export default class Cube extends BaseMesh {
             ...options
         });
         
-        console.log('creating cube');
-
         this.setMesh({ geometry, material });
         this.setEntityType(ENTITY_TYPES.MESH);
     }

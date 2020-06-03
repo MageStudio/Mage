@@ -1,12 +1,12 @@
 import { ENTITY_TYPES } from '../entities/BaseEntity';
 import BaseMesh from '../entities/BaseMesh';
 import {
-	MeshLambertMaterial,
 	ObjectLoader
 } from 'three';
 
 import GLTFLoader from '../loaders/GLTFLoader';
 import ColladaLoader from '../loaders/ColladaLoader';
+import SkeletonUtils from './SkeletonUtils';
 
 const EXTENSIONS = {
 	JSON: 'json',
@@ -27,27 +27,21 @@ const loaders = {
 const extractExtension = (path) => path.split(FULL_STOP).slice(-1);
 const getLoaderFromExtension = (extension) => loaders[extension] || new ObjectLoader();
 
-const gltfParser = (gltf) => {
-	let mesh;
-	gltf.scene.traverse(m => {
-		if (m.isMesh) {
-			mesh = m;
+const glbParser = ({ scene, animations }) => {
+	scene.traverse((object) => {
+		if (object.isMesh) {
+			object.castShadow = true;
 		}
 	});
 
-	return mesh;
+	return {
+		animations,
+		scene
+	}
 }
-const glbParser = (glb) => { model: glb.scene.children[0] };
-const defaultParser = model => { model };
-const colladaParser = ({ animations, scene }) => {
-	// const model = scene.children.filter(c => c.geometry && c.material)[0];
-
-	// console.log(scene);
-
-	// if (model.isSkinnedMesh) {
-	// 	model.frustumCulled = false;
-	// }
-
+const gltfParser = ({ scene, animations }) => ({ scene, animations });
+const defaultParser = scene => ({ scene });
+const colladaParser = ({ animations, scene, rawSceneData, buildVisualScene }) => {
 	scene.traverse(node => {
 		if (node.isSkinnedMesh) {
 			node.frustumCulled = false;
@@ -56,7 +50,9 @@ const colladaParser = ({ animations, scene }) => {
 
 	return {
 		animations,
-		model: scene
+		scene,
+		rawSceneData,
+		buildVisualScene
 	}
 };
 
@@ -76,14 +72,22 @@ class Models {
 	}
 
 	getModel = (name, options = {}) => {
-		const { model, animations } = this.map[name] || false;
+		const { scene, animations, extension } = this.map[name] || false;
 
-		if (model) {
+		if (scene) {
 			const meshOptions = {
-				...options,
-				name
+				name,
+				...options
 			};
+
+			let model = scene;
+			if (extension !== EXTENSIONS.COLLADA) {
+				// we have no idea how to clone collada for the time being
+				model = SkeletonUtils.clone(scene);
+			}
+
 			const mesh = new BaseMesh(null, null, meshOptions);
+
 			mesh.setMesh({ mesh: model });
 			mesh.setEntityType(ENTITY_TYPES.MODEL);
 
@@ -93,10 +97,12 @@ class Models {
 
 			return mesh;
 		}
+
 		return false;
 	}
 
-	storeModel = (name, model) => {
+	storeModel = (name, model, extension) => {
+		model.extension = extension;
 		this.map[name] = model;
 	}
 
@@ -123,7 +129,7 @@ class Models {
 				const parsedModel = parser(model);
 
 				if (parsedModel) {
-					this.storeModel(id, parsedModel);
+					this.storeModel(id, parsedModel, extension);
 				} 
 				
 				resolve();
