@@ -1,5 +1,5 @@
 import Universe from './Universe';
-import Camera from '../entities/Camera';
+import { Camera } from '../entities';
 import Config from './config';
 import { getWindow } from './window';
 import {
@@ -56,8 +56,8 @@ export class Scene {
     add(mesh, element, addUniverse = true) {
 		this.scene.add(mesh);
         if (addUniverse) {
-            Universe.set(element.name, element);
-            Universe.storeUUIDToElementNameReference(mesh.uuid, element.name);
+            Universe.set(element.getName(), element);
+            Universe.storeUUIDToElementNameReference(mesh.uuid, element.getName());
         }
 	}
 

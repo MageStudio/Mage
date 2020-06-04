@@ -1,5 +1,5 @@
-import Entity from '../entities/Entity';
-import Mesh from '../entities/mesh';
+import { BaseEntity, ENTITY_TYPES } from '../entities';
+
 import Lights from './Lights';
 import Models from '../models/Models';
 import {
@@ -9,7 +9,7 @@ import {
 
 const LAMP_COLOR = 0Xf1c40f;
 
-export default class Light extends Entity {
+export default class Light extends BaseEntity {
 
 	constructor({ color, intensity, name }) {
 		super({ name });
@@ -26,7 +26,7 @@ export default class Light extends Entity {
 		// target mesh for the light (only used by directional light)
 		this.target = undefined;
 
-		this.setLight();
+		this.setEntityType(ENTITY_TYPES.LIGHT);
 
 		Lights.add(this);
 	}

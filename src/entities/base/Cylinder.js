@@ -1,23 +1,24 @@
-import Mesh from '../Mesh';
 import {
     CylinderGeometry,
     MeshBasicMaterial
 } from 'three';
+import { BaseMesh, ENTITY_TYPES } from '../index';
 
-export default class Cylinder {
+export default class Cylinder extends BaseMesh {
 
     constructor(radiusTop = 10, radiusBottom = 10, height, color, options = {}) {
+        super(null, null, options);
+
         const segments = 32;
 
-        this.geometry = new CylinderGeometry(radiusTop, radiusBottom, height, segments );
-		this.material = new MeshBasicMaterial({
+        const geometry = new CylinderGeometry(radiusTop, radiusBottom, height, segments );
+		const material = new MeshBasicMaterial({
 			color: color,
 			wireframe: false,
             ...options
 		});
 
-		this.mesh = new Mesh(this.geometry, this.material, options);
-
-        return this.mesh;
+        this.setMesh({ geometry, material });
+        this.setEntityType(ENTITY_TYPES.MESH);
     }
 }

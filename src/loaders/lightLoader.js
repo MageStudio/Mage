@@ -1,5 +1,5 @@
 import Loader from './Loader';
-import Config from '../base/config';
+import Config from '../core/config';
 import SunLight from '../lights/SunLight';
 import AmbientLight from '../lights/AmbientLight';
 import PointLight from '../lights/PointLight';

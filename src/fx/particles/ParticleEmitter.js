@@ -1,6 +1,6 @@
 import { EventDispatcher } from "three";
 import { ParticlesSystem } from 'mage-engine.particles';
-import Scene from '../../base/Scene';
+import Scene from '../../core/Scene';
 
 export default class ParticleEmitter extends EventDispatcher {
 

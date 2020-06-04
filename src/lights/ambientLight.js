@@ -1,5 +1,5 @@
 import Light from './Light';
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 import { AmbientLight as THREEAmbientLight } from 'three';
 import { AMBIENTLIGHT } from './Lights';
 

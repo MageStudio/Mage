@@ -1,7 +1,7 @@
 import BaseScript from './BaseScript';
-import Input from '../base/input/Input';
+import Input from '../core/input/Input';
 import { fetch } from 'whatwg-fetch';
-import Assets from "../base/Assets";
+import Assets from "../core/Assets";
 
 export class Scripts {
 

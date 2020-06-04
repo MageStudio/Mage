@@ -1,9 +1,9 @@
 import {
     EventDispatcher
 } from 'three';
-import Scene from '../base/Scene';
-import Universe from '../base/Universe';
-import Config from '../base/config';
+import Scene from '../core/Scene';
+import Universe from '../core/Universe';
+import Config from '../core/config';
 import worker from './worker';
 
 import {

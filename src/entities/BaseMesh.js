@@ -1,10 +1,5 @@
-import Entity from './Entity';
-import Line from './Line';
-import Config from '../base/config';
-import Scene from '../base/Scene';
-import Images from '../images/Images';
 import {
-	Mesh as THREEMesh,
+	Mesh,
 	RepeatWrapping,
 	MeshBasicMaterial,
 	MeshLambertMaterial,
@@ -14,47 +9,141 @@ import {
 	Raycaster,
 	Color
 } from 'three';
-import { COLLISION_EVENT, FRONT } from '../lib/constants';
-import Universe from '../base/Universe';
+import { BaseEntity, ENTITY_TYPES, Line, Box } from './index';
+
+import { MESH_NOT_SET, ANIMATION_HANDLER_NOT_FOUND } from '../lib/messages';
+import Images from '../images/Images';
+import AnimationHandler from './animations/AnimationHandler';
+import Config from '../core/config';
+import Scene from '../core/Scene';
+import { COLLISION_EVENT } from '../lib/constants';
+import Universe from '../core/Universe';
 import Physics from '../physics/physics';
 import { getDescriptionForMesh } from '../physics/utils';
-import Box from './base/Box';
 
-const BOUNDING_BOX_COLOR = 0Xf368e0;
+const BOUNDING_BOX_COLOR = 0xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
 
-export default class Mesh extends Entity {
+export default class BaseMesh extends BaseEntity {
 
 	constructor(geometry, material, options = {}) {
 		super(options);
 
 		const {
-			addUniverse = true,
-			name = `default_${Math.random()}`,
+			name = `default_${Math.random()}`
 		} = options;
 
 		this.texture = undefined;
 		this.options = options;
-		this.geometry = geometry;
-		this.material = material;
-		this.mesh = new THREEMesh(this.geometry, this.material);
 
-		this.mesh.geometry.computeBoundingBox();
-		this.boundingBox = this.mesh.geometry.boundingBox;
+		this.setMesh({ geometry, material });
 
 		this.colliders = [];
 		this.collisionsEnabled = true;
 		this.children = [];
 
+		this.animationHandler = undefined;
+
 		this.setName(name);
+		this.setEntityType(ENTITY_TYPES.MESH);
+	}
+
+	hasMesh() {
+		return !!this.mesh;
+	}
+
+	getMesh({ name } = {}) {
+		if (name && this.hasMesh()) {
+			const mesh = this.mesh.getObjectByName(name);
+			return mesh ? mesh : this.mesh;
+		}
+
+		return this.mesh;
+	}
+
+	setMesh({ mesh, geometry, material }) {
+		if (mesh) {
+			this.mesh = mesh;
+		} else if (geometry && material) {
+			this.geometry = geometry;
+			this.material = material;
+			this.mesh = new Mesh(this.geometry, this.material);
+		}
+
+		if (this.hasMesh()) {
+			this.postMeshCreation();
+			this.addToScene();
+		}
+	}
+
+	evaluateBoundingBox() {
+		if (this.mesh.geometry) {
+			this.mesh.geometry.computeBoundingBox();
+			this.boundingBox = this.mesh.geometry.boundingBox;
+		} else {
+			this.mesh.children.forEach(child => {
+				if (child.geometry) {
+					child.geometry.computeBoundingBox();
+					this.boundingBox = child.geometry.boundingBox;
+					return;
+				}
+			})
+		}
+	}
+
+	postMeshCreation() {
+		this.evaluateBoundingBox();
 
 		if (Config.lights().shadows) {
 			this.mesh.castShadow = true;
 			this.mesh.receiveShadow = true;
 		}
+	}
 
-		this.setMesh();
-		Scene.add(this.mesh, this, addUniverse);
+	addToScene() {
+		const {
+			addUniverse = true,
+		} = this.options;
+
+		if (this.hasMesh()) {
+			Scene.add(this.getMesh(), this, addUniverse);
+		} else {
+			console.warn(MESH_NOT_SET);
+		}
+	}
+
+	setName(name, { replace = false } = {}) {
+		super.setName(name);
+
+		if (this.hasMesh()) {
+			if (replace) this.dispose();
+
+			this.mesh.name = name;
+
+			if (replace) this.addToScene();
+		}
+	}
+
+	setArmature(armature) {
+		this.armature = armature;
+
+		Scene.add(this.armature, null, false);
+	}
+
+	addAnimationHandler(animations) {
+		this.animationHandler = new AnimationHandler(this.getMesh(), animations);
+	}
+
+	hasAnimationHandler() {
+		return !!this.animationHandler;
+	}
+
+	playAnimation(id) {
+		if (this.hasAnimationHandler()) {
+			this.animationHandler.playAnimation(id);
+		} else {
+			console.warn(ANIMATION_HANDLER_NOT_FOUND);
+		}
 	}
 
 	enablePhysics(options) {
@@ -92,9 +181,14 @@ export default class Mesh extends Entity {
 
 	update(dt) {
 		super.update(dt);
+		
 		if (this.hasRayColliders() && this.areCollisionsEnabled()) {
 			this.updateRayColliders();
 			this.checkCollisions();
+		}
+
+		if (this.hasAnimationHandler()) {
+			this.animationHandler.update(dt);
 		}
 	}
 
@@ -160,7 +254,9 @@ export default class Mesh extends Entity {
 		return [origin, end];
 	};
 
-	createColliderHelper = (ray) => new Line(this.getPointsFromRayCollider(ray));
+	createColliderHelper = (ray) => {
+		this.colliderHelper = new Line(this.getPointsFromRayCollider(ray));
+	}
 
 	createRayColliderFromVector = ({ type, vector }, near, far, debug) => {
 

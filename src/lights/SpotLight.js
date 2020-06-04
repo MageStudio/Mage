@@ -1,13 +1,13 @@
 import Light from './Light';
-import Config from '../base/config';
-import Mesh from '../entities/mesh';
+import Config from '../core/config';
+import { BaseMesh } from '../entities';
 import {
     SpotLight as THREESpotLight,
     MeshBasicMaterial,
     SphereGeometry,
     DirectionalLightHelper
 } from 'three';
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 
 export default class SpotLight extends Light {
 
@@ -47,7 +47,7 @@ export default class SpotLight extends Light {
             wireframe: true
         });
 
-        const target = new Mesh(geometry, material);
+        const target = new BaseMesh(geometry, material);
 
         target.position(initialPosition);
 
@@ -91,7 +91,7 @@ export default class SpotLight extends Light {
             wireframe: true
         });
 
-        this.holder = new Mesh(geometry, material);
+        this.holder = new BaseMesh(geometry, material);
     }
 
     hasTarget() {

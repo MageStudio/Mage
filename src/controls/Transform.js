@@ -13,7 +13,7 @@ import {
     OrthographicCamera
 } from 'three';
 
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 
 import Gizmo from './TransformGizmo';
 import Plane from './TransformPlane';

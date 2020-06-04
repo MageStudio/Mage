@@ -2,7 +2,7 @@ import EffectComposer from './effects/EffectComposer';
 
 import RenderPass from './effects/RenderPass';
 
-import Scene from '../../base/Scene';
+import Scene from '../../core/Scene';
 import HueSaturationEffect from './HueSaturationEffect';
 import SepiaEffect from './SepiaEffect';
 import BloomPass from './BloomPass';

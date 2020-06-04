@@ -23,7 +23,7 @@ import {
     BoxBufferGeometry
 } from 'three';
 
-import Scene from '../../base/Scene';
+import Scene from '../../core/Scene';
 
 export class SkyShader {
 

@@ -1,7 +1,7 @@
 import GameRunner from '../runner/GameRunner';
-import Assets from "../base/Assets";
+import Assets from "../core/Assets";
 import util from '../lib/util';
-import Config from "../base/config";
+import Config from "../core/config";
 
 import { toQueryString, parseQuery } from '../lib/query';
 

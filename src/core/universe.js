@@ -51,11 +51,11 @@ export class Universe {
 		});
 	};
 
-	update(delta) {
+	update(dt) {
 		return new Promise(resolve => {
 			Object
 				.keys(this.reality)
-				.map(k => this.reality[k].update(delta))
+				.forEach(k => this.reality[k].update(dt))
 			resolve();
 		});
 	}

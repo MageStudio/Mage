@@ -30,7 +30,7 @@ import {
 
 import Mirror from './Mirror';
 import Images from '../../images/Images';
-import Scene from '../../base/Scene';
+import Scene from '../../core/Scene';
 
 export class WaterShader extends Mirror {
 

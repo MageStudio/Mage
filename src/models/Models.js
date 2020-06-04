@@ -1,15 +1,17 @@
-import Mesh from '../entities/Mesh';
+import { BaseMesh, ENTITY_TYPES } from '../entities';
 import {
-	MeshLambertMaterial,
 	ObjectLoader
 } from 'three';
 
 import GLTFLoader from '../loaders/GLTFLoader';
+import ColladaLoader from '../loaders/ColladaLoader';
+import SkeletonUtils from './SkeletonUtils';
 
 const EXTENSIONS = {
 	JSON: 'json',
 	GLB: 'glb',
-	GLTF: 'gltf'
+	GLTF: 'gltf',
+	COLLADA: 'dae'
 };
 
 const FULL_STOP = '.';
@@ -17,76 +19,118 @@ const FULL_STOP = '.';
 const loaders = {
 	[EXTENSIONS.JSON]: new ObjectLoader(),
 	[EXTENSIONS.GLB]: new GLTFLoader(),
-	[EXTENSIONS.GLTF]: new GLTFLoader()
+	[EXTENSIONS.GLTF]: new GLTFLoader(),
+	[EXTENSIONS.COLLADA]: new ColladaLoader()
 };
 
 const extractExtension = (path) => path.split(FULL_STOP).slice(-1);
 const getLoaderFromExtension = (extension) => loaders[extension] || new ObjectLoader();
 
-const gltfParser = (gltf) => {
-	let mesh;
-	gltf.scene.traverse(m => {
-		if (m.isMesh) {
-			mesh = m;
+const glbParser = ({ scene, animations }) => {
+	scene.traverse((object) => {
+		if (object.isMesh) {
+			object.castShadow = true;
 		}
 	});
 
-	return mesh;
+	return {
+		animations,
+		scene
+	}
 }
-const glbParser = (glb) => glb.scene.children[0];
-const defaultParser = m => m;
+const gltfParser = ({ scene, animations }) => ({ scene, animations });
+const defaultParser = scene => ({ scene });
+const colladaParser = ({ animations, scene, rawSceneData, buildVisualScene }) => {
+	scene.traverse(node => {
+		if (node.isSkinnedMesh) {
+			node.frustumCulled = false;
+		}
+	});
+
+	return {
+		animations,
+		scene,
+		rawSceneData,
+		buildVisualScene
+	}
+};
 
 const parsers = {
 	[EXTENSIONS.JSON]: defaultParser,
 	[EXTENSIONS.GLB]: glbParser,
-	[EXTENSIONS.GLTF]: gltfParser
+	[EXTENSIONS.GLTF]: gltfParser,
+	[EXTENSIONS.COLLADA]: colladaParser
 };
 const getModelParserFromExtension = (extension) => parsers[extension] || defaultParser;
 
-const Models = {
+class Models {
 
-	map: {},
+	constructor() {
+		this.map = {};
+		this.models = {};
+	}
 
-	models: {},
+	getModel = (name, options = {}) => {
+		const { scene, animations, extension } = this.map[name] || false;
 
-	getModel: (name, options = {}) => {
-		const model = Models.map[name] || false;
-
-		if (model) {
-			model.material.wireframe = false;
+		if (scene) {
 			const meshOptions = {
-				...options,
-				name
+				name,
+				...options
 			};
-			const mesh = new Mesh(model.geometry, model.material, meshOptions);
-			mesh.setModel();
+
+			let model = scene;
+			if (extension !== EXTENSIONS.COLLADA) {
+				// we have no idea how to clone collada for the time being
+				model = SkeletonUtils.clone(scene);
+			}
+
+			const mesh = new BaseMesh(null, null, meshOptions);
+
+			mesh.setMesh({ mesh: model });
+			mesh.setEntityType(ENTITY_TYPES.MODEL);
+
+			if (animations) {
+				mesh.addAnimationHandler(animations);
+			}
 
 			return mesh;
 		}
+
 		return false;
-	},
+	}
 
-	loadModels: (models) => {
-		Models.models = models;
+	storeModel = (name, model, extension) => {
+		model.extension = extension;
+		this.map[name] = model;
+	}
 
-		const keys = Object.keys(Models.models);
+	loadModels = (models) => {
+		this.models = models;
+
+		const keys = Object.keys(this.models);
 
 		if (!keys.length) {
 			return Promise.resolve('models');
 		}
 
-		return Promise.all(keys.map(Models.loadSingleFile));
-	},
+		return Promise.all(keys.map(this.loadSingleFile));
+	}
 
-	loadSingleFile: (id) => {
-		const path = Models.models[id];
+	loadSingleFile = (id) => {
+		const path = this.models[id];
 		const extension = extractExtension(path);
 		const loader = getLoaderFromExtension(extension);
 		const parser = getModelParserFromExtension(extension);
 
 		return new Promise(resolve => {
 			loader.load(path, model => {
-				Models.map[id] = parser(model);
+				const parsedModel = parser(model);
+
+				if (parsedModel) {
+					this.storeModel(id, parsedModel, extension);
+				} 
+				
 				resolve();
 			});
 		});
@@ -94,4 +138,4 @@ const Models = {
 
 }
 
-export default Models;
+export default new Models();

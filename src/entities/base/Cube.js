@@ -1,21 +1,22 @@
-import Mesh from '../Mesh';
 import {
     CubeGeometry,
     MeshBasicMaterial
 } from 'three';
+import { BaseMesh, ENTITY_TYPES } from '../index';
 
-export default class Cube {
+export default class Cube extends BaseMesh {
 
     constructor(side = 10, color, options = {}) {
-        this.geometry = new CubeGeometry(side, side, side);
-		this.material = new MeshBasicMaterial({
+        super(null, null, options);
+
+        const geometry = new CubeGeometry(side, side, side);
+		const material = new MeshBasicMaterial({
 			color: color,
 			wireframe: false,
             ...options
-		});
-
-		this.mesh = new Mesh(this.geometry, this.material, options);
-
-        return this.mesh;
+        });
+        
+        this.setMesh({ geometry, material });
+        this.setEntityType(ENTITY_TYPES.MESH);
     }
 }

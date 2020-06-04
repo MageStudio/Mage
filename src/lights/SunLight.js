@@ -1,13 +1,13 @@
 import Light from './Light';
-import Config from '../base/config';
-import Mesh from '../entities/mesh';
+import Config from '../core/config';
+import { BaseMesh } from '../entities';
 import {
     DirectionalLight as THREEDirectionalLight,
     MeshBasicMaterial,
     SphereGeometry,
     DirectionalLightHelper
 } from 'three';
-import Scene from '../base/Scene';
+import Scene from '../core/Scene';
 import { SUNLIGHT } from './Lights';
 
 const DEFAULT_NEAR = 0.1;
@@ -61,7 +61,7 @@ export default class SunLight extends Light {
             wireframe: true
         });
 
-        const target = new Mesh(geometry, material);
+        const target = new BaseMesh(geometry, material);
 
         target.position(initialPosition);
 
