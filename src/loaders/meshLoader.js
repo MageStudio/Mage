@@ -1,11 +1,5 @@
-import BaseMesh from '../entities/BaseMesh';
-import ShaderMesh from '../entities/ShaderMesh';
-import Images from '../images/Images'
+import { BaseMesh } from '../entities';
 import Loader from './Loader';
-import Scripts from '../scripts/Scripts';
-import {
-    RepeatWrapping
-} from 'three';
 
 export class MeshLoader extends Loader {
 

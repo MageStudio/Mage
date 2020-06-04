@@ -12,7 +12,7 @@ export default {
     output: {
         file: './dist/mage.js',
         format: 'esm',
-        compact: true,
+        compact: false,
         minifyInternalExports: false,
         name: 'M'
     },
@@ -30,7 +30,7 @@ export default {
                 'vivus': []
             }
         }),
-        terser(),
+        //terser(),
         json()
     ]
 }

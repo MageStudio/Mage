@@ -1,4 +1,4 @@
-import BaseEntity, { ENTITY_TYPES } from '../entities/BaseEntity';
+import { BaseEntity, ENTITY_TYPES } from '../entities';
 
 import Lights from './Lights';
 import Models from '../models/Models';

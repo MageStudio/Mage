@@ -9,21 +9,19 @@ import {
 	Raycaster,
 	Color
 } from 'three';
-import BaseEntity, { ENTITY_TYPES } from './baseEntity';
+import { BaseEntity, ENTITY_TYPES, Line, Box } from './index';
 
 import { MESH_NOT_SET, ANIMATION_HANDLER_NOT_FOUND } from '../lib/messages';
 import Images from '../images/Images';
 import AnimationHandler from './animations/AnimationHandler';
-//import Line from './base/Line';
 import Config from '../core/config';
 import Scene from '../core/Scene';
-import { COLLISION_EVENT, FRONT } from '../lib/constants';
+import { COLLISION_EVENT } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics/physics';
 import { getDescriptionForMesh } from '../physics/utils';
-//import Box from './base/Box';
 
-const BOUNDING_BOX_COLOR = 0Xf368e0;
+const BOUNDING_BOX_COLOR = 0xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
 
 export default class BaseMesh extends BaseEntity {
@@ -256,7 +254,9 @@ export default class BaseMesh extends BaseEntity {
 		return [origin, end];
 	};
 
-	createColliderHelper = (ray) => new Line(this.getPointsFromRayCollider(ray));
+	createColliderHelper = (ray) => {
+		this.colliderHelper = new Line(this.getPointsFromRayCollider(ray));
+	}
 
 	createRayColliderFromVector = ({ type, vector }, near, far, debug) => {
 

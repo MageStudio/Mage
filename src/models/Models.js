@@ -1,5 +1,4 @@
-import { ENTITY_TYPES } from '../entities/BaseEntity';
-import BaseMesh from '../entities/BaseMesh';
+import { BaseMesh, ENTITY_TYPES } from '../entities';
 import {
 	ObjectLoader
 } from 'three';

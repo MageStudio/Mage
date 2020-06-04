@@ -4,6 +4,7 @@ import Sphere from './Sphere';
 import Cylinder from './Cylinder';
 import Line from './Line';
 import Plane from './Plane';
+import Box from './Box';
 
 export {
     Sphere,
@@ -11,5 +12,6 @@ export {
     Cube,
     Cylinder,
     Line,
-    Plane
+    Plane,
+    Box
 };

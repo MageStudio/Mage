@@ -1,5 +1,4 @@
-import { ENTITY_TYPES } from '../BaseEntity';
-import BaseMesh from '../BaseMesh';
+import { BaseMesh, ENTITY_TYPES } from '../index';
 
 import {
     PlaneGeometry,

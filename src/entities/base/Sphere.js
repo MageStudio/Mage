@@ -1,9 +1,8 @@
-import BaseMesh from '../BaseMesh';
 import {
     SphereGeometry,
     MeshBasicMaterial
 } from 'three';
-import { ENTITY_TYPES } from '../BaseEntity';
+import { BaseMesh, ENTITY_TYPES } from '../index';
 
 export default class Sphere extends BaseMesh {
 

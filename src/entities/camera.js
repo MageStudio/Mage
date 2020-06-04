@@ -1,4 +1,4 @@
-import BaseEntity from './BaseEntity';
+import { BaseEntity } from './index';
 import { PerspectiveCamera } from 'three';
 
 export default class Camera extends BaseEntity {

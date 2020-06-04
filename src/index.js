@@ -1,4 +1,16 @@
 // import Assets from './core/Assets';
+import {
+    BaseMesh,
+    Camera,
+    Line,
+    Plane,
+    Box,
+    Cube,
+    Sphere,
+    Cylinder,
+    Grid
+} from './entities';
+
 import Audio from './audio/Audio';
 import AmbientSound from './audio/AmbientSound';
 import BackgroundSound from './audio/BackgroundSound';
@@ -10,8 +22,6 @@ import {
     Vector3,
 } from 'three';
 import BaseScene, { author } from './core/BaseScene';
-import BaseMesh from './entities/BaseMesh';
-
 
 import Universe from './core/Universe';
 import Color from './lib/Color';
@@ -39,17 +49,6 @@ import * as functions from './lib/functions';
 import BaseScript from './scripts/BaseScript';
 
 import Input from './core/input/Input';
-
-import Line from './entities/base/Line';
-import Plane from './entities/base/Plane';
-import Box from './entities/base/Box';
-import Cube from './entities/base/Cube';
-import Sphere from './entities/base/Sphere';
-import Cylinder from './entities/base/Cylinder';
-import Grid from './entities/base/Grid';
-//import AnimatedMesh from './entities/AnimatedMesh';
-//import ShaderMesh from './entities/ShaderMesh';
-import Camera from './entities/Camera';
 
 import AmbientLight from './lights/AmbientLight';
 import SunLight from './lights/SunLight';

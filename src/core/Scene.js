@@ -1,5 +1,5 @@
 import Universe from './Universe';
-import Camera from '../entities/Camera';
+import { Camera } from '../entities';
 import Config from './config';
 import { getWindow } from './window';
 import {

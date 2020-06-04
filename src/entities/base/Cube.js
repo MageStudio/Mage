@@ -1,9 +1,8 @@
-import BaseMesh from '../BaseMesh';
 import {
     CubeGeometry,
     MeshBasicMaterial
 } from 'three';
-import { ENTITY_TYPES } from '../BaseEntity';
+import { BaseMesh, ENTITY_TYPES } from '../index';
 
 export default class Cube extends BaseMesh {
 

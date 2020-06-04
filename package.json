@@ -12,7 +12,7 @@
         "version": "npm run build",
         "postversion:push": "git push --no-verify && git push --tags --no-verify",
         "postversion": "npm run postversion:push && npm publish",
-        "prebuild:rollup": "rimraf dist/",
+        "prebuild": "rimraf dist/",
         "build": "rollup --config config/index.js",
         "test": "echo you should test"
     },

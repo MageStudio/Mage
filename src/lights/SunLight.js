@@ -1,6 +1,6 @@
 import Light from './Light';
 import Config from '../core/config';
-import BaseMesh from '../entities/BaseMesh';
+import { BaseMesh } from '../entities';
 import {
     DirectionalLight as THREEDirectionalLight,
     MeshBasicMaterial,
