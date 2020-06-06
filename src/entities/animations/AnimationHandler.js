@@ -8,7 +8,7 @@ export default class AnimationHandler {
         this.animations = animations;
     }
 
-    playAnimation(id) {
+    getAction(id) {
         let action;
 
         if (typeof id === 'number') {
@@ -17,11 +17,39 @@ export default class AnimationHandler {
             action = AnimationClip.findByName(this.animations, id);
         }
 
-        if (action) {
-            this.mixer.clipAction(action).play();
+        return action;
+    }
+
+    getAvailableAnimations() {
+        return this.animations.map(({ name }) => name);
+    }
+
+    playAnimation(id, options) {
+        const action = this.getAction(id);
+
+        if (this.currentAction) {
+            this.fadeToAnimation(action, options);
+        } else if (action) {
+            this.currentAction = this.mixer.clipAction(action).play();
         } else {
             console.warn(ANIMATION_NOT_FOUND);
         }
+    }
+
+    fadeToAnimation(action, { duration = 0.2 }) {
+        const previousAction = this.currentAction;
+        this.currentAction = this.mixer.clipAction(action);
+
+        if (previousAction !== this.currentAction) {
+            previousAction.fadeOut(duration);
+        }
+
+        this.currentAction
+            .reset()
+            .setEffectiveTimeScale(1)
+            .setEffectiveWeight(1)
+            .fadeIn(duration)
+            .play();
     }
 
     update(dt) {

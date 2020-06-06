@@ -100,18 +100,24 @@ export default class BaseEntity extends EventDispatcher {
 	startStateMachine() {
 		if (this.hasStateMachine()) {
 			this.stateMachine.start();
+		} else {
+			console.log(STATE_MACHINE_NOT_AVAILABLE);
 		}
 	}
 
 	stopStateMachine() {
 		if (this.hasStateMachine()) {
 			this.stateMachine.stop();
+		} else {
+			console.log(STATE_MACHINE_NOT_AVAILABLE);
 		}
 	}
 
 	changeState(event) {
 		if (this.hasStateMachine()) {
 			this.stateMachine.send(event);
+		} else {
+			console.log(STATE_MACHINE_NOT_AVAILABLE);
 		}
 	}
 

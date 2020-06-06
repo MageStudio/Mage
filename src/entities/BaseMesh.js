@@ -138,12 +138,22 @@ export default class BaseMesh extends BaseEntity {
 		return !!this.animationHandler;
 	}
 
-	playAnimation(id) {
+	playAnimation(id, options) {
 		if (this.hasAnimationHandler()) {
-			this.animationHandler.playAnimation(id);
+			this.animationHandler.playAnimation(id, options);
 		} else {
 			console.warn(ANIMATION_HANDLER_NOT_FOUND);
 		}
+	}
+
+	getAvailableAnimations() {
+		if (this.hasAnimationHandler()) {
+			return this.animationHandler.getAvailableAnimations();
+		} else {
+			console.warn(ANIMATION_HANDLER_NOT_FOUND);
+		}
+
+		return [];
 	}
 
 	enablePhysics(options) {
