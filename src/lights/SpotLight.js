@@ -3,41 +3,37 @@ import Config from '../core/config';
 import { BaseMesh } from '../entities';
 import {
     SpotLight as THREESpotLight,
+    SpotLightHelper,
+    CameraHelper,
     MeshBasicMaterial,
-    SphereGeometry,
-    DirectionalLightHelper
+    SphereGeometry
 } from 'three';
 import Scene from '../core/Scene';
+import { SPOTLIGHT } from './Lights';
+
+const DEFAULT_NEAR = 0.1;
+const DEFAULT_FAR = 100;
+
+const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
+const DEFAULT_TARGET_POSITION = { x: 0, y: 0, z: 0 };
+const DEFAULT_INTENSITY = 0.5;
+const DEFAULT_MAP_SIZE = 2048;
+const DEFAULT_BIAS = -0.0001;
+const WHITE = 0xffffff;
+const GREEN = 0x2ecc71;
 
 export default class SpotLight extends Light {
 
-    constructor({ color, intensity, target, name }) {
+    constructor(options) {
+        const {
+            color = WHITE,
+            intensity = DEFAULT_INTENSITY,
+            name
+        } = options;
+        
         super({ color, intensity, name });
-
-        this.light = new THREESpotLight(color, intensity);
-
-        if (target && target instanceof Object) {
-            this.target = target;
-            const { x = 0, y = 0, z = 0 } = target;
-            this.light.target.position.set(x, y, z);
-        }
-
-        if (Config.lights().shadows) {
-            this.light.castShadow = true;
-            this.light.shadow.mapSize.width = 2048;
-            this.light.shadow.mapSize.height = 2048;
-
-            const d = 300;
-
-            this.light.shadow.camera.left = -d;
-            this.light.shadow.camera.right = d;
-            this.light.shadow.camera.top = d;
-            this.light.shadow.camera.bottom = -d;
-
-            this.light.shadow.camera.far = 1000;
-        }
-
-        Scene.add(this.light, this);
+        this.options = options;
+        this.setLight({ color, intensity });
     }
 
     getTargetMesh(initialPosition) {
@@ -54,61 +50,106 @@ export default class SpotLight extends Light {
         return target;
     }
 
-    targetPosition(options) {
-        if (this.target && options === undefined) {
-            return {
-                ...this.target.getPosition()
-            };
+    setLight({
+        light,
+        color = WHITE,
+        intensity = DEFAULT_INTENSITY
+    }) {
+        if (light) {
+            this.light = light;
+        } else {
+            this.light = new THREESpotLight(color, intensity);
         }
 
-        if (!this.target) {
-            this.target = this.getTargetMesh(options);
-        }
-
-        const { x, y, z } = this.target.getPosition();
-
-        const position = {
-            x: options.x === undefined ? x : options.x,
-            y: options.y === undefined ? y : options.y,
-            z: options.x === undefined ? z : options.z
-        };
-
-        if (this.target) {
-            this.target.position(position);
-            this.light.target.position.set(position.x, position.y, position.z);
+        if (this.hasLight()) {
+            this.postLightCreation();
         }
     }
 
+    postLightCreation() {
+        const {
+            position = DEFAULT_POSITION,
+            target = DEFAULT_TARGET_POSITION
+        } = this.options;
+
+        this.setPosition(position);
+        this.setTargetPosition(target);
+        this.setLightShadows();
+        this.addToScene();
+    }
+
+    setLightShadows() {
+        const {
+            near = DEFAULT_NEAR,
+            far = DEFAULT_FAR,
+            mapSize = DEFAULT_MAP_SIZE,
+            bias = DEFAULT_BIAS
+        } = this.options;
+
+        if (Config.lights().shadows) {
+            this.light.castShadow = true;
+
+            const d = far/2;
+
+            this.light.shadow.mapSize.height = mapSize;
+            this.light.shadow.mapSize.width = mapSize;
+
+            this.light.shadow.camera.left = -d;
+            this.light.shadow.camera.right = d;
+            this.light.shadow.camera.top = d;
+            this.light.shadow.camera.bottom = -d;
+
+            this.light.shadow.camera.near = near;
+            this.light.shadow.camera.far = far;
+
+            this.light.shadow.bias = bias;
+        }
+    }
+
+    setTargetPosition(position = {}) {
+        this.target = {
+            ...this.target,
+            ...position
+        };
+
+        const { x = 0, y = 0, z = 0 } = this.target;
+        this.light.target.position.set(x, y, z);
+    }
+
+    getTargetPosition() {
+        return this.target;
+    }
+
     addHelper() {
-        this.helper = new DirectionalLightHelper(this.light, 10);
+        this.helper = new SpotLightHelper(this.light, GREEN);
+        this.shadowHelper = new CameraHelper(this.light.shadow.camera);
+
         Scene.add(this.helper, null, false);
+        Scene.add(this.shadowHelper, null, false);
 
-        const segments = 8;
-        const radius = 5;
-        const geometry = new SphereGeometry(radius, segments, segments);
-        const material = new MeshBasicMaterial({
-            color: 0xff0000,
-            wireframe: true
-        });
-
-        this.holder = new BaseMesh(geometry, material);
+        this.addHolder();
     }
 
     hasTarget() {
         return !!this.target;
     }
 
-    // overriding from base class
     update(dt) {
         super.update(dt);
-        //  setting position if the light is using a helper.
         if (this.hasHelper()) {
-            //this.position(this.holder.getPosition());
-            const { x = 0, y = 0, z = 0 } = this.holder.getPosition();
-            this.light.position.set(x, y, z);
-
             this.helper.update();
+            this.shadowHelper.update();
         }
 
+        if (this.hasHolder()) {
+            this.setPosition(this.holder.getPosition(), { updateHolder: false });
+        }
+    }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            type: SPOTLIGHT
+        }
     }
 }

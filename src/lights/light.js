@@ -2,10 +2,8 @@ import { BaseEntity, ENTITY_TYPES } from '../entities';
 
 import Lights from './Lights';
 import Models from '../models/Models';
-import {
-	ObjectLoader,
-	MeshBasicMaterial
-} from 'three';
+import Scene from '../core/Scene';
+import { MATERIALS } from '../lib/constants';
 
 const LAMP_COLOR = 0Xf1c40f;
 
@@ -31,12 +29,18 @@ export default class Light extends BaseEntity {
 		Lights.add(this);
 	}
 
-	addHolder = (name = 'lightholder') => {
+	addToScene() {
+        if (this.hasLight()) {
+            Scene.add(this.light, this);
+        }
+    }
+
+	addHolder =(name = 'lightholder') => {
 		const mesh = Models.getModel(name);
 
 		if (mesh) {
 			this.holder = mesh;
-			this.holder.setMaterial(MeshBasicMaterial, { wireframe: true, color: LAMP_COLOR });
+			this.holder.setMaterialFromName(MATERIALS.BASIC, { wireframe: true, color: LAMP_COLOR });
 			this.holder.serializable = false;
 			this.holder.setPosition({
 				x: this.light.position.x,
@@ -48,22 +52,42 @@ export default class Light extends BaseEntity {
 		}
 	};
 
-	hasHelper() {
-		return !!this.helper && !!this.holder;
+	hasLight() {
+		return !!this.light;
 	}
 
-	// overriding from Entity base class
-	position(position = {}, updateHolder = true) {
-		const { x = 0, y = 0, z = 0 } = position;
+	hasHelper() {
+		return !!this.helper;
+	}
+
+	hasHolder() {
+		return !!this.holder;
+	}
+
+	getPosition() {
+		return {
+			x: this.light.position.x,
+			y: this.light.position.y,
+			z: this.light.position.z
+		};
+	}
+
+	setPosition(where, { updateHolder = true } = {}) {
+		const position = {
+			...this.getPosition(),
+			...where
+		};
+
+		const { x, y, z } = position;
 
 		if (this.light) {
 	        this.light.position.set(x, y, z);
 		}
 
-		if (updateHolder && this.holder) {
+		if (this.hasHolder() & updateHolder) {
 			this.holder.setPosition({ x, y, z });
 		}
-	}
+	}	
 
 	isAlreadyOn() {
 		return this.light && this.light.intensity === this.intensity;

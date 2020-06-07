@@ -7,6 +7,8 @@ import GLTFLoader from '../loaders/GLTFLoader';
 import ColladaLoader from '../loaders/ColladaLoader';
 import SkeletonUtils from './SkeletonUtils';
 
+import { prepareModel } from '../lib/meshUtils';
+
 const EXTENSIONS = {
 	JSON: 'json',
 	GLB: 'glb',
@@ -87,7 +89,7 @@ class Models {
 
 			const mesh = new BaseMesh(null, null, meshOptions);
 
-			mesh.setMesh({ mesh: model });
+			mesh.setMesh({ mesh: prepareModel(model) });
 			mesh.setEntityType(ENTITY_TYPES.MODEL);
 
 			if (animations) {

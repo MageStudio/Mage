@@ -53,6 +53,8 @@ import Input from './core/input/Input';
 import AmbientLight from './lights/AmbientLight';
 import SunLight from './lights/SunLight';
 import PointLight from './lights/PointLight';
+import SpotLight from './lights/SpotLight';
+import HemisphereLight from './lights/HemisphereLight';
 
 import LightLoader from './loaders/LightLoader';
 import MeshLoader from './loaders/MeshLoader';
@@ -131,6 +133,8 @@ export {
     AmbientLight,
     SunLight,
     PointLight,
+    SpotLight,
+    HemisphereLight,
 
     Atmosphere,
     Mirror,

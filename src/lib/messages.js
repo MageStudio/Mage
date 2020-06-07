@@ -20,5 +20,6 @@ export const ANIMATION_NOT_FOUND = `${PREFIX} Required animation can't be found.
 export const ANIMATION_HANDLER_NOT_FOUND = `${PREFIX} AnimationHander hasn't been defined yet.`;
 
 export const MESH_NOT_SET = `${PREFIX} Mesh hasn't been defined yet.`;
+export const MESH_NO_MATERIAL_SET = `${PREFIX} This mesh doesn't have a material.`;
 
 export const STATE_MACHINE_NOT_AVAILABLE = `${PREFIX} State Machine is not enabled.`;
