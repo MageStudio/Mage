@@ -1,6 +1,8 @@
 export const POINTLIGHT = 'pointlight';
 export const AMBIENTLIGHT = 'ambientlight';
 export const SUNLIGHT = 'sunlight';
+export const SPOTLIGHT = 'spotlight';
+export const HEMISPHERELIGHT = 'hemisphere';
 
 const TIME_TO_UPDATE = 100;
 

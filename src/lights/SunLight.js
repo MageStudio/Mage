@@ -5,42 +5,79 @@ import {
     DirectionalLight as THREEDirectionalLight,
     MeshBasicMaterial,
     SphereGeometry,
-    DirectionalLightHelper
+    DirectionalLightHelper,
+    CameraHelper
 } from 'three';
 import Scene from '../core/Scene';
 import { SUNLIGHT } from './Lights';
 
 const DEFAULT_NEAR = 0.1;
-const DEFAULT_FAR = 40;
+const DEFAULT_FAR = 100;
+
+const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
+const DEFAULT_TARGET_POSITION = { x: 0, y: 0, z: 0 };
+const DEFAULT_INTENSITY = 0.5;
+const DEFAULT_MAP_SIZE = 2048;
+const DEFAULT_BIAS = -0.0001;
+const WHITE = 0xffffff;
 
 export default class SunLight extends Light {
 
-    constructor({
-        color,
-        intensity,
-        position = {},
-        target = {},
-        name,
-        near = DEFAULT_NEAR,
-        far = DEFAULT_FAR
+    constructor(options) {
+        const {
+            color = WHITE,
+            intensity = DEFAULT_INTENSITY,
+            name,
+        } = options;
+
+        super({ color, intensity, name });
+        this.options = options;
+        this.setLight({ color, intensity });
+    }
+
+    setLight({
+        light,
+        color = WHITE,
+        intensity = DEFAULT_INTENSITY
     }) {
-        super({ name });
-
-        this.light = new THREEDirectionalLight(color, intensity);
-
-        const { x = 0, y = 1, z = 0 } = position;
-        this.light.position.set(x, y, z);
-
-        if (target) {
-            this.target = target;
-            const { x = 0, y = 0, z = 0 } = target;
-            this.light.target.position.set(x, y, z);
+        if (light) {
+            this.light = light;
+        } else {
+            this.light = new THREEDirectionalLight(color, intensity);
         }
+
+        if (this.hasLight()) {
+            this.postLightCreation();
+        }
+    }
+
+    postLightCreation() {
+        const {
+            position = DEFAULT_POSITION,
+            target = DEFAULT_TARGET_POSITION
+        } = this.options;
+
+        this.setPosition(position);
+        this.setTargetPosition(target);
+        this.setLightShadows();
+        this.addToScene();
+    }
+
+    setLightShadows() {
+        const {
+            near = DEFAULT_NEAR,
+            far = DEFAULT_FAR,
+            mapSize = DEFAULT_MAP_SIZE,
+            bias = DEFAULT_BIAS
+        } = this.options;
 
         if (Config.lights().shadows) {
             this.light.castShadow = true;
 
             const d = far/2;
+
+            this.light.shadow.mapSize.height = mapSize;
+            this.light.shadow.mapSize.width = mapSize;
 
             this.light.shadow.camera.left = -d;
             this.light.shadow.camera.right = d;
@@ -49,9 +86,9 @@ export default class SunLight extends Light {
 
             this.light.shadow.camera.near = near;
             this.light.shadow.camera.far = far;
-        }
 
-        Scene.add(this.light, this);
+            this.light.shadow.bias = bias;
+        }
     }
 
     getTargetMesh(initialPosition) {
@@ -68,47 +105,39 @@ export default class SunLight extends Light {
         return target;
     }
 
-    targetPosition(options) {
-        if (this.target && options === undefined) {
-            return {
-                ...this.target.getPosition()
-            };
-        }
-
-        if (!this.target) {
-            this.target = this.getTargetMesh(options);
-        }
-
-        const { x, y, z } = this.target.getPosition();
-
-        const position = {
-            x: options.x === undefined ? x : options.x,
-            y: options.y === undefined ? y : options.y,
-            z: options.x === undefined ? z : options.z
+    setTargetPosition(position = {}) {
+        this.target = {
+            ...this.target,
+            ...position
         };
 
-        if (this.target) {
-            this.target.position(position);
-            this.light.target.position.set(position.x, position.y, position.z);
-        }
+        const { x = 0, y = 0, z = 0 } = this.target;
+        this.light.target.position.set(x, y, z);
+    }
+
+    getTargetPosition() {
+        return this.target;
     }
 
     addHelper() {
-        this.helper = new DirectionalLightHelper(this.light, 10);
-        Scene.add(this.helper, null, false);
-        this.addHolder();
-    }
+        this.helper = new DirectionalLightHelper(this.light, 5);
+        this.shadowHelper = new CameraHelper(this.light.shadow.camera);
 
-    hasTarget() {
-        return !!this.target && !!this.holder;
+        Scene.add(this.helper, null, false);
+        Scene.add(this.shadowHelper, null, false);
+
+        this.addHolder();
     }
 
     update(dt) {
         super.update(dt);
         if (this.hasHelper()) {
-            this.position(this.holder.getPosition(), false);
-
             this.helper.update();
+            this.shadowHelper.update();
+        }
+
+        if (this.hasHolder()) {
+            this.setPosition(this.holder.getPosition(), { updateHolder: false });
         }
     }
 

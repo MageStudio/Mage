@@ -1,11 +1,6 @@
 import {
 	Mesh,
 	RepeatWrapping,
-	MeshBasicMaterial,
-	MeshLambertMaterial,
-	MeshPhongMaterial,
-	MeshDepthMaterial,
-	MeshStandardMaterial,
 	Raycaster,
 	Color
 } from 'three';
@@ -20,6 +15,8 @@ import { COLLISION_EVENT } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics/physics';
 import { getDescriptionForMesh } from '../physics/utils';
+
+import { changeMaterialByName, hasMaterial } from '../lib/meshUtils';
 
 const BOUNDING_BOX_COLOR = 0xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
@@ -94,10 +91,8 @@ export default class BaseMesh extends BaseEntity {
 	postMeshCreation() {
 		this.evaluateBoundingBox();
 
-		if (Config.lights().shadows) {
-			this.mesh.castShadow = true;
-			this.mesh.receiveShadow = true;
-		}
+		this.mesh.castShadow = Config.lights().shadows;
+		this.mesh.receiveShadow = Config.lights().shadows;
 	}
 
 	addToScene() {
@@ -370,37 +365,10 @@ export default class BaseMesh extends BaseEntity {
 		}
 	}
 
-	setMaterialFromName(materialName) {
-		switch(materialName) {
-			case 'lambert':
-				this.setMaterial(MeshLambertMaterial);
-				break;
-			case 'phong':
-				this.setMaterial(MeshPhongMaterial);
-				break;
-			case 'depth':
-				this.setMaterial(MeshDepthMaterial);
-				break;
-			case 'standard':
-				this.setMaterial(MeshStandardMaterial);
-				break;
-			case 'basic':
-			default:
-				this.setMaterial(MeshBasicMaterial);
-				break;
+	setMaterialFromName(materialName, options = {}) {
+		if (hasMaterial(this.getMesh())) {
+			changeMaterialByName(materialName, this.getMesh(), options);
 		}
-	}
-
-	setMaterial(MeshMaterial, options = {}) {
-		const material = new MeshMaterial({
-			map: this.mesh.material.map,
-			color: this.mesh.material.color,
-			transparent: this.mesh.material.transparent,
-			opacity: this.mesh.material.opacity,
-			...options
-		});
-
-		this.mesh.material = material;
 	}
 
 	setOpacity(value = 1.0) {

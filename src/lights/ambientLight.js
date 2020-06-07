@@ -1,19 +1,48 @@
 import Light from './Light';
-import Scene from '../core/Scene';
 import { AmbientLight as THREEAmbientLight } from 'three';
 import { AMBIENTLIGHT } from './Lights';
 
+const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
+const DEFAULT_INTENSITY = 0.5;
+const WHITE = 0xffffff;
+
 export default class LightAmbient extends Light {
 
-    constructor({ color, intensity = 1, position = {}, name }) {
+    constructor(options) {
+        const {
+            color = WHITE,
+            intensity = DEFAULT_INTENSITY,
+            name
+        } = options;
         super({ color, intensity, name });
 
-        this.light = new THREEAmbientLight(color);
+        this.options = options;
+        this.setLight({ color, intensity });
+    }
 
-        const { x = 0, y = 0, z = 0 } = position;
-        this.light.position.set(x, y, z);
+    setLight({
+        light,
+        color = WHITE,
+        intensity = DEFAULT_INTENSITY
+    }) {
+        if (light) {
+            this.light = light;
+        } else {
+            this.light = new THREEAmbientLight(color, intensity);
+        }
 
-        Scene.add(this.light, this);
+        if (this.hasLight()) {
+            this.postLightCreation();
+        }
+    }
+
+    postLightCreation() {
+        const {
+            position = DEFAULT_POSITION
+        } = this.options;
+
+        this.setPosition(position);
+        this.addToScene();
     }
 
     addHelper() {
@@ -24,7 +53,7 @@ export default class LightAmbient extends Light {
     update(dt) {
         super.update(dt);
         if (this.hasHelper()) {
-            this.position(this.holder.getPosition())
+            this.setPosition(this.holder.getPosition(), { updateHolder: false });
         }
     }
 
