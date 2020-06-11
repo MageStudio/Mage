@@ -1,5 +1,6 @@
 import Fountain from './Fountain';
 import Explosion from './Explosion';
+import Fire from './Fire';
 import { INVALID_EMITTER_ID } from '../../lib/messages';
 
 export class Particles {
@@ -7,10 +8,11 @@ export class Particles {
 	constructor() {
 		this.map = {
 			'Explosion': Explosion,
-			'Fountain': Fountain
+			'Fountain': Fountain,
+			'Fire': Fire
 		};
 
-		this.emitters= [];
+		this.emitters = [];
 	}
 
 	get(name) {
