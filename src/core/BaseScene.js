@@ -115,6 +115,14 @@ export class BaseScene extends EventDispatcher {
 
     onResize = () => Scene.onResize();
 
+    requestNextAnimationFrame = () => {
+        this.requestAnimationFrameId = requestAnimFrame(this.render.bind(this));
+    }
+
+    cancelNextAnimationFrame = () => {
+        cancelAnimationFrame(this.requestAnimationFrameId);
+    }
+
     render = () => {
         const dt = Scene.clock.getDelta();
 
@@ -128,7 +136,7 @@ export class BaseScene extends EventDispatcher {
         Controls.update(dt);
         Input.update(dt);
 
-        requestAnimFrame(this.render.bind(this));
+        this.requestNextAnimationFrame();
     }
 
     init = () => {
@@ -151,6 +159,8 @@ export class BaseScene extends EventDispatcher {
         this.disableUI();
         Universe.bigfreeze();
         Scene.dispose();
+        Controls.dispose();
+        this.cancelNextAnimationFrame();
     };
 
     load = () => {
