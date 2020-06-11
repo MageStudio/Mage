@@ -4,25 +4,45 @@ import Transform from './Transform';
 import FirstPersonControl from './FirstPersonControl';
 import FlyControl from './FlyControl';
 
+const CONTROLS = {
+    ORBIT: 'orbit',
+    TRANSFORM: 'transform',
+    FPS: 'fps',
+    FLY: 'fly'
+};
+
+const AVAILABLE_CONTROLS = Object.keys(CONTROLS);
+
+const EVENTS = {
+    CHANGE: 'change',
+    DRAGGING_CHANGE: 'dragging-changed'
+};
+
 export class Controls {
 
     constructor() {
 
         this.controls = {
-            orbit: undefined,
-            transform: undefined,
-            fps: undefined,
-            fly: undefined
+            [CONTROLS.ORBIT]: undefined,
+            [CONTROLS.TRANSFORM]: undefined,
+            [CONTROLS.FPS]: undefined,
+            [CONTROLS.FLY]: undefined
         };
     }
 
     disposePreviousControls(controls = []) {
-        controls.forEach(c => {
-            if (this.controls[c] && this.controls[c].dispose) {
-                this.controls[c].dispose();
-                delete this.controls[c];
-            }
-        })
+        controls.forEach(this.disposeSingleControls.bind(this));
+    }
+
+    disposeSingleControls = control => {
+        if (this.controls[control] && this.controls[control].dispose) {
+            this.controls[control].dispose();
+            delete this.controls[control];
+        }
+    }
+
+    dispose() {
+        AVAILABLE_CONTROLS.forEach(this.disposeSingleControls.bind(this));
     }
 
     getControl(control) {
@@ -40,22 +60,22 @@ export class Controls {
     }
 
     setOrbitControl() {
-        this.disposePreviousControls(['pointerlock', 'fly']);
-        this.controls.orbit = new Orbit(Scene.getCameraObject(), Scene.renderer.domElement);
-        this.controls.orbit.init();
+        this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY]);
+        this.controls[CONTROLS.ORBIT] = new Orbit(Scene.getCameraObject(), Scene.renderer.domElement);
+        this.controls[CONTROLS.ORBIT].init();
 
-        this.controls.orbit.addEventListener('change', Scene.render);
+        this.controls[CONTROLS.ORBIT].addEventListener(EVENTS.CHANGE, Scene.render);
 
-        return this.controls.orbit;
+        return this.controls[CONTROLS.ORBIT];
     }
 
     setTransformControl() {
-        this.controls.transform = new Transform(Scene.getCameraObject(), Scene.renderer.domElement);
-        this.controls.transform.init();
-		this.controls.transform.addEventListener('change', Scene.render);
-		this.controls.transform.addEventListener('dragging-changed', (event) => {
-            if (this.controls.orbit) {
-                this.controls.orbit.enabled = !event.value;
+        this.controls[CONTROLS.TRANSFORM] = new Transform(Scene.getCameraObject(), Scene.renderer.domElement);
+        this.controls[CONTROLS.TRANSFORM].init();
+		this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.CHANGE, Scene.render);
+		this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.DRAGGING_CHANGE, (event) => {
+            if (this.controls[CONTROLS.ORBIT]) {
+                this.controls[CONTROLS.ORBIT].enabled = !event.value;
             }
 		});
 
@@ -63,17 +83,17 @@ export class Controls {
     }
 
     setFirstPersonControl() {
-        this.controls.fps = new FirstPersonControl(Scene.getCameraObject(), document.body);
-        this.controls.fps.init();
+        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCameraObject(), document.body);
+        this.controls[CONTROLS.FPS].init();
 
-        return this.controls.fps;
+        return this.controls[CONTROLS.FPS];
     }
 
     setFlyControl() {
-        this.controls.fly = new FlyControl(Scene.getCameraObject(), document.body);
-        this.controls.fly.init();
+        this.controls[CONTROLS.FLY] = new FlyControl(Scene.getCameraObject(), document.body);
+        this.controls[CONTROLS.FLY].init();
 
-        return this.controls.fly;
+        return this.controls[CONTROLS.FLY];
     }
 }
 
