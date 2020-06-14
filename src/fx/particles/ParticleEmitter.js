@@ -33,6 +33,40 @@ export default class ParticleEmitter extends EventDispatcher {
         });
     }
 
+    setPosition(where) {
+        const position = {
+			...this.getPosition(),
+			...where
+        };
+
+        this.system.particleSystem.position.set(position.x, position.y, position.z);
+    }
+
+    getPosition() {
+        return {
+            x: this.system.particleSystem.position.x,
+            y: this.system.particleSystem.position.y,
+            z: this.system.particleSystem.position.z
+        };
+    }
+
+    setRotation(howmuch) {
+        const rotation = {
+			...this.getRotation(),
+			...howmuch
+        };
+
+        this.system.particleSystem.rotation.set(rotation.x, rotation.y, rotation.z);
+    }
+
+    getRotation() {
+        return {
+            x: this.system.particleSystem.rotation.x,
+            y: this.system.particleSystem.rotation.y,
+            z: this.system.particleSystem.rotation.z
+        };
+    }
+
     start() {
         if (this.hasSystem()) {
             this.system.start();
