@@ -1,15 +1,28 @@
 import Fountain from './Fountain';
 import Explosion from './Explosion';
 import Fire from './Fire';
+import Rain from './Rain';
+import Snow from './Snow';
+
 import { INVALID_EMITTER_ID } from '../../lib/messages';
+
+export const PARTICLES = {
+	RAIN: 'rain',
+	EXPLOSION: 'explosion',
+	FOUNTAIN: 'fountain',
+	FIRE: 'fire',
+	SNOW: 'snow'
+};
 
 export class Particles {
 
 	constructor() {
 		this.map = {
-			'Explosion': Explosion,
-			'Fountain': Fountain,
-			'Fire': Fire
+			[PARTICLES.RAIN]: Rain,
+			[PARTICLES.EXPLOSION]: Explosion,
+			[PARTICLES.FOUNTAIN]: Fountain,
+			[PARTICLES.FIRE]: Fire,
+			[PARTICLES.SNOW]: Snow
 		};
 
 		this.emitters = [];

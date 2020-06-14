@@ -72,7 +72,8 @@ import Skybox from './fx/scenery/Skybox';
 
 import Shader from './fx/shaders/Shader';
 
-import Particles from './fx/particles/Particles';
+import Particles, { PARTICLES } from './fx/particles/Particles';
+
 import ParticlEmitter from './fx/particles/ParticleEmitter';
 
 import Images from './images/Images';
@@ -103,6 +104,7 @@ export {
     Audio,
     PostProcessing,
     Particles,
+    PARTICLES,
     ParticlEmitter,
     Partykals,
     Physics,
