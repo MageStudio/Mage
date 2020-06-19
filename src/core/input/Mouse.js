@@ -15,6 +15,7 @@ export default class Mouse extends EventDispatcher {
         super();
 
         this.enabled = false;
+        this.mouseMoveIntersectionEnabled = false;
         this.mouse = new Vector2();
 
         this.mouseDownEvent = { type: 'mouseDown' };
@@ -39,8 +40,13 @@ export default class Mouse extends EventDispatcher {
         document.addEventListener('mouseup', this.onMouseUp);
     }
 
+    enableMouseMoveIntersection() {
+        this.mouseMoveIntersectionEnabled = true;
+    }
+
     disable() {
         this.enabled = false;
+        this.mouseMoveIntersectionEnabled = false;
 
         document.removeEventListener('mouseup', this.onMouseUp);
         Scene.renderer.domElement.removeEventListener('mousemove', this.onMouseMove);
@@ -63,7 +69,7 @@ export default class Mouse extends EventDispatcher {
 		this.mouse.y = - (y / h) * 2 + 1;
     }
 
-    getMouseEvent = (event) => {
+    parseMouseEvent = (event) => {
         const { x, y } = this.getRelativeMousePosition(event);
         this.normalizeMouse(x, y);
 
@@ -77,22 +83,26 @@ export default class Mouse extends EventDispatcher {
         if (!this.enabled) return;
         event.preventDefault();
 
-        this.mouseMoveEvent.mouse = this.getMouseEvent(event);
+        this.mouseMoveEvent.mouse = this.parseMouseEvent(event);
 
         this.dispatchEvent(this.mouseMoveEvent);
     }
 
-    isIntersectionAMesh = (o) => o.object instanceof Mesh;
-    getMeshFromUniverse = ({ object: { name } = {} }) => Universe.get(name);
-    meshExists = (m) => !!m;
+    isIntersectionAMesh = (o) => !!o.object.isMesh;
+    getMeshFromUniverse = ({ object: { name } = {}, face, point }) => ({
+        face,
+        position: point,
+        name,
+        mesh: Universe.get(name)
+    });
+    meshExists = ({ mesh }) => !!mesh;
 
     getIntersections = () => {
         this.raycaster.setFromCamera(this.mouse, Scene.getCameraObject());
 
-        const intersects = this.raycaster.intersectObjects(Scene.scene.children);
-        const filtered = intersects.filter(this.isIntersectionAMesh);
-
-        return filtered
+        return this.raycaster
+            .intersectObjects(Scene.getChildren())
+            .filter(this.isIntersectionAMesh)
             .map(this.getMeshFromUniverse)
             .filter(this.meshExists);
     }
@@ -101,7 +111,7 @@ export default class Mouse extends EventDispatcher {
         if (!this.enabled) return;
         event.preventDefault();
 
-        const mouseEvent = this.getMouseEvent(event);
+        const mouseEvent = this.parseMouseEvent(event);
         this.mouseDownEvent.mouse = mouseEvent;
         this.meshClickEvent.mouse = mouseEvent;
 

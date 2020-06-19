@@ -31,7 +31,10 @@ export default class BaseMesh extends BaseEntity {
 		} = options;
 
 		this.texture = undefined;
-		this.options = options;
+		this.options = {
+			name,
+			...options
+		};;
 
 		this.setMesh({ geometry, material });
 
@@ -41,7 +44,6 @@ export default class BaseMesh extends BaseEntity {
 
 		this.animationHandler = undefined;
 
-		this.setName(name);
 		this.setEntityType(ENTITY_TYPES.MESH);
 	}
 
@@ -89,7 +91,10 @@ export default class BaseMesh extends BaseEntity {
 	}
 
 	postMeshCreation() {
+		const { name } = this.options;
+
 		this.evaluateBoundingBox();
+		this.setName(name);
 
 		this.mesh.castShadow = Config.lights().shadows;
 		this.mesh.receiveShadow = Config.lights().shadows;
