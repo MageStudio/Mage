@@ -26,10 +26,12 @@ export const DEFAULT_TAG = 'all';
 
 export default class BaseEntity extends EventDispatcher {
 
-	constructor({ serializable = true, tag = '' }) {
+	constructor({ serializable = true, tag = '', tags = [] }) {
 		super();
 		this.scripts = [];
-		this.tags = [ DEFAULT_TAG, tag ];
+		this.tags = [];
+
+		this.addTags([ DEFAULT_TAG, tag, ...tags ]);
 		this.serializable = serializable;
 	}
 
@@ -38,12 +40,18 @@ export default class BaseEntity extends EventDispatcher {
 		this.tags = [ DEFAULT_TAG ];
 	}
 
-	addTag(tagName = '') {
+	addTag = (tagName) => {
+		if (!tagName) return;
+
 		if (!this.hasTag(tagName)) {
 			this.tags.push(tagName);
 		} else {
 			console.log(TAG_ALREADY_EXISTS, tagName);
 		}
+	}
+
+	addTags(tags = []) {
+		tags.forEach(this.addTag);
 	}
 
 	removeTag(tagName) {
