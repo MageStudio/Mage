@@ -3,6 +3,7 @@ import {
     BaseMesh,
     Camera,
     Line,
+    CurveLine,
     Plane,
     Box,
     Cube,
@@ -117,6 +118,7 @@ export {
     Input,
 
     Line,
+    CurveLine,
     Plane,
     Box,
     Cube,
