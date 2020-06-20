@@ -9,6 +9,7 @@ import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
 import Scene from '../core/Scene';
 import Physics from '../physics/physics';
+import { TAG_ALREADY_EXISTS, TAG_NOT_EXISTING_REMOVAL, TAG_CANT_BE_REMOVED } from '../lib/messages';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
 const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
@@ -21,16 +22,49 @@ export const ENTITY_TYPES = {
 	MODEL: 2
 };
 
+export const DEFAULT_TAG = 'all';
+
 export default class BaseEntity extends EventDispatcher {
 
-	constructor({ serializable = true }) {
+	constructor({ serializable = true, tag = '' }) {
 		super();
 		this.scripts = [];
+		this.tags = [ DEFAULT_TAG, tag ];
 		this.serializable = serializable;
 	}
 
 	reset() {
 		this.scripts = [];
+		this.tags = [ DEFAULT_TAG ];
+	}
+
+	addTag(tagName = '') {
+		if (!this.hasTag(tagName)) {
+			this.tags.push(tagName);
+		} else {
+			console.log(TAG_ALREADY_EXISTS, tagName);
+		}
+	}
+
+	removeTag(tagName) {
+		if (tagName === DEFAULT_TAG) {
+			console.log(TAG_CANT_BE_REMOVED);
+			return;
+		}
+
+		if (this.hasTag(tagName)) {
+			this.tags.splice(this.tags.indexOf(tagName), 1);
+		} else {
+			console.log(TAG_NOT_EXISTING_REMOVAL);
+		}
+	}
+
+	removeAllTags() {
+		this.tags = [ DEFAULT_TAG ] ;
+	}
+
+	hasTag(tagName) {
+		return this.tags.includes(tagName);
 	}
 
 	stopScripts() {

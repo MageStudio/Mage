@@ -18,6 +18,17 @@ export class Universe {
 		}
 	}
 
+	getByTag(tagName) {
+		const elements = [];
+		this.forEach(element => {
+			if (element.hasTag(tagName)) {
+				elements.push(element);
+			}
+		});
+
+		return elements;
+	}
+
 	set(id, value) {
 		this.reality[id] = value;
 	}

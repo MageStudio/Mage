@@ -22,12 +22,17 @@ export default class Line extends BaseMesh {
         const geometry = this.getGeometryFromPoints();
         const mesh = new THREELine(geometry, material);
 
-        if (dashed) {
-            mesh.computeLineDistances();
-        }
-
         this.setMesh({ mesh });
         this.setEntityType(ENTITY_TYPES.MESH);
+    }
+
+    postMeshCreation() {
+        super.postMeshCreation();
+        const { dashed = false } = this.options;
+
+        if (dashed) {
+            this.mesh.computeLineDistances();
+        }
     }
 
     getMaterial() {

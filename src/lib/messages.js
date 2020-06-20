@@ -22,4 +22,8 @@ export const ANIMATION_HANDLER_NOT_FOUND = `${PREFIX} AnimationHander hasn't bee
 export const MESH_NOT_SET = `${PREFIX} Mesh hasn't been defined yet.`;
 export const MESH_NO_MATERIAL_SET = `${PREFIX} This mesh doesn't have a material.`;
 
+export const TAG_CANT_BE_REMOVED = `${PREFIX} The default tag can't be removed.`;
+export const TAG_ALREADY_EXISTS = `${PREFIX} The following tag has already been added: `;
+export const TAG_NOT_EXISTING_REMOVAL= `${PREFIX} The following tag has can't be removed because it hasnt been added: `;
+
 export const STATE_MACHINE_NOT_AVAILABLE = `${PREFIX} State Machine is not enabled.`;
