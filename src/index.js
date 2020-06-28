@@ -21,6 +21,7 @@ import Sound from './audio/Sound';
 //import * as THREE from 'three';
 import {
     Vector3,
+    EventDispatcher
 } from 'three';
 import BaseScene, { author } from './core/BaseScene';
 
@@ -150,6 +151,7 @@ export {
 
     Color,
     Vector3,
+    EventDispatcher,
     util,
     math,
     strings,
