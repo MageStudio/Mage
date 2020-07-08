@@ -62,7 +62,6 @@ export class BaseScene extends EventDispatcher {
         this.inputListenersAreSet = false;
     };
 
-    onStateChange = (state) => {};
 
     enableUI = (RootComponent, _props) => {
         const props = {
@@ -74,11 +73,16 @@ export class BaseScene extends EventDispatcher {
 
     disableUI = () => unmount();
 
-    onCreate() {}
     prepareScene() {}
+
+    onStateChange = (state) => {};
+    onCreate() {}
     onUpdate() {}
     onFailedTest(message, test) {}
     onSuccededTest(message) {}
+    onBeforeDispose() {}
+    onDispose() {}
+    onResize = () => Scene.onResize();
 
     parseScene = ({ meshes = [], models = [], lights = [] }, options = {}) => {
         return new Promise((resolve, reject) => {
@@ -113,7 +117,6 @@ export class BaseScene extends EventDispatcher {
 
     preload = (url = this.getJSONUrl()) => this.loadScene(url);
 
-    onResize = () => Scene.onResize();
 
     requestNextAnimationFrame = () => {
         this.requestAnimationFrameId = requestAnimFrame(this.render.bind(this));
@@ -154,6 +157,8 @@ export class BaseScene extends EventDispatcher {
     };
 
     dispose = () => {
+        this.onBeforeDispose();
+
         this.disableInput();
         Physics.dispose();
         this.disableUI();
@@ -161,6 +166,8 @@ export class BaseScene extends EventDispatcher {
         Scene.dispose();
         Controls.dispose();
         this.cancelNextAnimationFrame();
+
+        this.onDispose();
     };
 
     load = () => {
