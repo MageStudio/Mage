@@ -19,7 +19,8 @@ const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
 export const ENTITY_TYPES = {
 	MESH: 0,
 	LIGHT: 1,
-	MODEL: 2
+    MODEL: 2,
+    SPRITE: 3
 };
 
 export const DEFAULT_TAG = 'all';

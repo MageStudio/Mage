@@ -9,7 +9,8 @@ import {
     Cube,
     Sphere,
     Cylinder,
-    Grid
+    Grid,
+    Sprite
 } from './entities';
 
 import Audio from './audio/Audio';
@@ -126,6 +127,7 @@ export {
     Cylinder,
     Sphere,
     Grid,
+    Sprite,
     //AnimatedMesh,
     //ShaderMesh,
     Camera,

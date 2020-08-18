@@ -6,7 +6,7 @@ import {
 } from 'three';
 import { BaseEntity, ENTITY_TYPES, Line, Box } from './index';
 
-import { MESH_NOT_SET, ANIMATION_HANDLER_NOT_FOUND } from '../lib/messages';
+import { MESH_NOT_SET, ANIMATION_HANDLER_NOT_FOUND, SET_COLOR_MISSING_COLOR } from '../lib/messages';
 import Images from '../images/Images';
 import AnimationHandler from './animations/AnimationHandler';
 import Config from '../core/config';
@@ -347,9 +347,15 @@ export default class BaseMesh extends BaseEntity {
 	}
 
 	setColor(color) {
-		if (color && this.mesh.material.color) {
-			this.mesh.material.color = new Color(color);
-		}
+        if (color) {
+            if (hasMaterial(this.mesh)) {
+                this.mesh.material.color = new Color(color);
+            } else {
+                this.mesh.children[0].material.color = new Color(color);
+            }
+        } else {
+            console.log(SET_COLOR_MISSING_COLOR);
+        }
 	}
 
 	setTextureMap(textureId, options = {}) {
@@ -373,7 +379,9 @@ export default class BaseMesh extends BaseEntity {
 	setMaterialFromName(materialName, options = {}) {
 		if (hasMaterial(this.getMesh())) {
 			changeMaterialByName(materialName, this.getMesh(), options);
-		}
+		} else {
+            changeMaterialByName(materialName, this.mesh.children[0], options);
+        }
 	}
 
 	setOpacity(value = 1.0) {
