@@ -11,9 +11,9 @@ import {
 	WebGLRenderTarget
 } from "three";
 
-import Pass from "./effects/Pass.js";
-import CopyShader from "./shaders/CopyShader.js";
-import ConvolutionShader from "./shaders/ConvolutionShader.js";
+import Pass from "./passes/Pass";
+import CopyShader from "./shaders/CopyShader";
+import ConvolutionShader from "./shaders/ConvolutionShader";
 
 const BLUR_X = new Vector2(0.001953125, 0.0);
 const BLUR_Y = new Vector2(0.0, 0.001953125);

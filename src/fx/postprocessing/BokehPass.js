@@ -12,7 +12,7 @@ import {
 	UniformsUtils,
 	WebGLRenderTarget
 } from 'three';
-import Pass from './effects/Pass';
+import Pass from './passes/Pass';
 
 import BokehShader from './shaders/BokehShader.js';
 

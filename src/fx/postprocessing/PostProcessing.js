@@ -1,31 +1,39 @@
-import EffectComposer from './effects/EffectComposer';
-
-import RenderPass from './effects/RenderPass';
-
+import EffectComposer from './passes/EffectComposer';
+import RenderPass from './passes/RenderPass';
 import Scene from '../../core/Scene';
 import HueSaturationEffect from './HueSaturationEffect';
 import SepiaEffect from './SepiaEffect';
 import BloomPass from './BloomPass';
 import DepthOfField from './DepthOfField';
+import SelectiveOutline from './SelectiveOutline';
+import { EFFECTS } from '../../lib/constants';
+import {
+    EFFECT_COULD_NOT_BE_CREATED,
+    EFFECT_UNAVAILABLE
+} from '../../lib/messages';
 
 export class PostProcessing {
 
     constructor() {
         this.map = {
-            SepiaEffect: {
+            [EFFECTS.SEPIA]: {
                 effect: SepiaEffect,
                 isClass: false
             },
-            HueSaturationEffect: {
+            [EFFECTS.HUE_SATURATION]: {
                 effect: HueSaturationEffect,
                 isClass: false
             },
-            BloomPass: {
+            [EFFECTS.BLOOM]: {
                 effect: BloomPass,
                 isClass: true
             },
-            DepthOfField: {
+            [EFFECTS.DEPTH_OF_FIELD]: {
                 effect: DepthOfField,
+                isClass: true
+            },
+            [EFFECTS.SELECTIVE_OUTLINE]: {
+                effect: SelectiveOutline,
                 isClass: true
             }
         };
@@ -79,7 +87,7 @@ export class PostProcessing {
             if (effectDescription) {
                 effect = PostProcessing.createEffect(effectDescription, options);
             } else {
-                console.error('[Mage] Requested effect is not available');
+                console.error(EFFECT_UNAVAILABLE);
                 return;
             }
         } else {
@@ -92,8 +100,10 @@ export class PostProcessing {
             } else {
                 this.addEffectToCustomEffects(effect);
             }
+
+            return effect;
         } else {
-            console.error('[Mage] Could not create requested effect');
+            console.error(EFFECT_COULD_NOT_BE_CREATED);
         }
     };
 

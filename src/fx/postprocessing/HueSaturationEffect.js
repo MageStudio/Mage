@@ -1,4 +1,4 @@
-import ShaderPass from './effects/ShaderPass';
+import ShaderPass from './passes/ShaderPass';
 
 const HueSaturationShader = {
 
