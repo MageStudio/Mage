@@ -27,3 +27,6 @@ export const TAG_ALREADY_EXISTS = `${PREFIX} The following tag has already been 
 export const TAG_NOT_EXISTING_REMOVAL= `${PREFIX} The following tag has can't be removed because it hasnt been added: `;
 
 export const STATE_MACHINE_NOT_AVAILABLE = `${PREFIX} State Machine is not enabled.`;
+
+export const EFFECT_COULD_NOT_BE_CREATED = `${PREFIX}  Could not create requested effect.`;
+export const EFFECT_UNAVAILABLE = `${PREFIX}  Requested effect is not available.`;

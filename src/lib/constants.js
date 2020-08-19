@@ -22,4 +22,17 @@ export const MATERIALS = {
     BASIC: 4
 };
 
+export const EFFECTS = {
+    SEPIA: 'SEPIAEFFECT',
+    HUE_SATURATION: 'HUESATURATIONEFFECT',
+    BLOOM: 'BLOOM',
+    DEPTH_OF_FIELD: 'DOF',
+    SELECTIVE_OUTLINE: 'SELECTIVEOUTLINE'
+};
+
 export const COLLISION_EVENT = 'COLLISION_EVENT';
+
+export const COLORS = {
+    WHITE: '#ffffff',
+    BLACK: '#000000'
+};
