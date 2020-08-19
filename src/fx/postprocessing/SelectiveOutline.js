@@ -18,6 +18,7 @@ import {
 import Pass from "./passes/Pass";
 import CopyShader from "./shaders/CopyShader";
 import Scene from '../../core/Scene';
+import config from '../../core/config';
 
 const MAX_EDGE_THICKNESS = 4;
 const MAX_EDGE_GLOW = 4;
@@ -228,22 +229,25 @@ const getOverlayMaterial = () => (
 
 export default class SelectiveOutline extends Pass {
 
-    constructor(resolution = {x: 256, y: 256}, selectedObjects = []) {
+    constructor({ resolution = {}, selectedObjects = [] }) {
         super();
+
+        const { w: width, h: height } = config.screen();
+        const { x = width, y = height } = resolution;
 
         this.renderScene = Scene.getScene();
         this.renderCamera = Scene.getCameraObject();
-        this.selectedObjects = selectedObjects;
+        this.setSelectedoObjects(selectedObjects);
         this.visibleEdgeColor = new Color(1, 1, 1);
-        this.hiddenEdgeColor = new Color(0.1, 0.04, 0.02);
+        this.hiddenEdgeColor = new Color(1, 1, 1);
         this.edgeGlow = 0.0;
         this.usePatternTexture = false;
         this.edgeThickness = 1.0;
-        this.edgeStrength = 3.0;
+        this.edgeStrength = 10.0;
         this.downSampleRatio = 2;
         this.pulsePeriod = 0;
 
-        this.resolution = new Vector2(resolution.x, resolution.y);
+        this.resolution = new Vector2(x, y);
 
         const pars = {minFilter: LinearFilter, magFilter: LinearFilter, format: RGBAFormat};
         const resX = Math.round(this.resolution.x / this.downSampleRatio);
