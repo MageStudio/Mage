@@ -20,8 +20,14 @@ import CopyShader from "./shaders/CopyShader";
 import Scene from '../../core/Scene';
 import config from '../../core/config';
 
+import { COLORS } from '../../lib/constants';
+
 const MAX_EDGE_THICKNESS = 4;
 const MAX_EDGE_GLOW = 4;
+
+const DEFAULT_EDGE_GLOW = 0.0;
+const DEFAULT_THICKNESS = 1.0;
+const DEFAULT_EDGE_STRENGTH = 10.0;
 
 const BlurDirectionX = new Vector2(1.0, 0.0);
 const BlurDirectionY = new Vector2(0.0, 1.0);
@@ -238,15 +244,15 @@ export default class SelectiveOutline extends Pass {
         this.renderScene = Scene.getScene();
         this.renderCamera = Scene.getCameraObject();
         this.setSelectedoObjects(selectedObjects);
-        this.visibleEdgeColor = new Color(1, 1, 1);
-        this.hiddenEdgeColor = new Color(1, 1, 1);
-        this.edgeGlow = 0.0;
+        this.visibleEdgeColor = new Color(COLORS.WHITE);
+        this.hiddenEdgeColor = new Color(COLORS.WHITE);
+        this.edgeGlow = DEFAULT_EDGE_GLOW;
         this.usePatternTexture = false;
-        this.edgeThickness = 1.0;
-        this.edgeStrength = 10.0;
+        this.edgeThickness = DEFAULT_THICKNESS;
+        this.edgeStrength = DEFAULT_EDGE_STRENGTH;
         this.downSampleRatio = 2;
         this.pulsePeriod = 0;
-
+ 
         this.resolution = new Vector2(x, y);
 
         const pars = {minFilter: LinearFilter, magFilter: LinearFilter, format: RGBAFormat};
@@ -341,6 +347,26 @@ export default class SelectiveOutline extends Pass {
     setSelectedoObjects = (selection = []) => {
         this.selectedObjects = selection.map(object => object.getMesh());
     };
+
+    setVisibleEdgeColor = (color = COLORS.WHITE) => {
+        this.visibleEdgeColor = new Color(color);
+    }
+
+    setHiddenEdgeColor = (color = COLORS.WHITE) => {
+        this.hiddenEdgeColor = new Color(color);
+    }
+
+    setEdgeGlow = (value = DEFAULT_EDGE_GLOW) => {
+        this.edgeGlow = value;
+    }
+
+    setEdgeThickness = (value = DEFAULT_THICKNESS) => {
+        this.edgeThickness = value;
+    }
+
+    setDefaultEdgeStrength = (value = DEFAULT_EDGE_STRENGTH) => {
+        this.edgeStrength = value;
+    }
 
     setSize(width, height) {
         let resX = Math.round(width / this.downSampleRatio);

@@ -31,3 +31,8 @@ export const EFFECTS = {
 };
 
 export const COLLISION_EVENT = 'COLLISION_EVENT';
+
+export const COLORS = {
+    WHITE: '#ffffff',
+    BLACK: '#000000'
+};
