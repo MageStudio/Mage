@@ -1,10 +1,11 @@
-import { BaseMesh, ENTITY_TYPES } from "./index";
 import { Images } from "../../images/Images";
 
 import {
     SpriteMaterial,
-    Sprite
+    Sprite as THREESprite
 } from 'three';
+import { BaseMesh, ENTITY_TYPES } from '../index';
+
 
 export default class Sprite extends BaseMesh {
 
@@ -16,7 +17,7 @@ export default class Sprite extends BaseMesh {
             ...options
         });
 
-        const mesh = new Sprite(material);
+        const mesh = new THREESprite(material);
         mesh.scale.x = width;
         mesh.scale.y = height;
 

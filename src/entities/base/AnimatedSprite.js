@@ -2,7 +2,7 @@ import { BaseMesh, ENTITY_TYPES } from "./index";
 import { Images } from "../../images/Images";
 
 import {
-    Sprite
+    THREESprite
 } from 'three';
 
 export default class AnimatedSprite extends BaseMesh {
@@ -15,7 +15,7 @@ export default class AnimatedSprite extends BaseMesh {
             ...options
         });
 
-        const mesh = new Sprite(material);
+        const mesh = new THREESprite(material);
         mesh.scale.x = width;
         mesh.scale.y = height;
 

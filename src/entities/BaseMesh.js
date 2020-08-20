@@ -6,7 +6,14 @@ import {
 } from 'three';
 import { BaseEntity, ENTITY_TYPES, Line, Box } from './index';
 
-import { MESH_NOT_SET, ANIMATION_HANDLER_NOT_FOUND, SET_COLOR_MISSING_COLOR } from '../lib/messages';
+import {
+    MESH_NOT_SET,
+    ANIMATION_HANDLER_NOT_FOUND,
+    MESH_SET_COLOR_MISSING_COLOR,
+    MESH_NAME_NOT_PROVIDED,
+    MESH_NO_GEOMETRY_SET,
+    MESH_NO_MATERIAL_CANT_SET_TEXTURE
+} from '../lib/messages';
 import Images from '../images/Images';
 import AnimationHandler from './animations/AnimationHandler';
 import Config from '../core/config';
@@ -16,7 +23,12 @@ import Universe from '../core/Universe';
 import Physics from '../physics/physics';
 import { getDescriptionForMesh } from '../physics/utils';
 
-import { changeMaterialByName, hasMaterial } from '../lib/meshUtils';
+import {
+    changeMaterialByName,
+    hasMaterial,
+    isLine,
+    hasGeometry
+} from '../lib/meshUtils';
 
 const BOUNDING_BOX_COLOR = 0xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
@@ -51,14 +63,21 @@ export default class BaseMesh extends BaseEntity {
 		return !!this.mesh;
 	}
 
-	getMesh({ name } = {}) {
-		if (name && this.hasMesh()) {
-			const mesh = this.mesh.getObjectByName(name);
-			return mesh ? mesh : this.mesh;
-		}
-
+	getMesh() {
 		return this.mesh;
-	}
+    }
+    
+    getMeshByName = (name) => {
+        if (name) {
+            if (this.hasMesh()) {
+                return this.mesh.getObjectByName(name);
+            } else {
+                console.warn(MESH_NOT_SET);
+            }
+        } else {
+            console.warn(MESH_NAME_NOT_PROVIDED);
+        }
+    }
 
 	setMesh({ mesh, geometry, material }) {
 		if (mesh) {
@@ -76,17 +95,18 @@ export default class BaseMesh extends BaseEntity {
 	}
 
 	evaluateBoundingBox() {
-		if (this.mesh.geometry) {
+		if (hasGeometry(this.getMesh())) {
 			this.mesh.geometry.computeBoundingBox();
 			this.boundingBox = this.mesh.geometry.boundingBox;
 		} else {
-			this.mesh.children.forEach(child => {
-				if (child.geometry) {
-					child.geometry.computeBoundingBox();
-					this.boundingBox = child.geometry.boundingBox;
-					return;
-				}
-			})
+			// this.mesh.traverse(child => {
+			// 	if (child.geometry) {
+			// 		child.geometry.computeBoundingBox();
+			// 		this.boundingBox = child.geometry.boundingBox;
+			// 		return;
+			// 	}
+            // })
+            console.warn(MESH_NO_GEOMETRY_SET);
 		}
 	}
 
@@ -224,19 +244,7 @@ export default class BaseMesh extends BaseEntity {
 
 			this.children.splice(index, 1);
 		}
-	}
-
-	getChildByName(name, options = {}) {
-		const { recursive = false } = options;
-		const find = () => this.children.filter(mesh => mesh.name === name)[0];
-
-		if (recursive) {
-			const mesh = find() || null;
-			return mesh ? mesh : this.children.map((c) => c.getChild(name))[0];
-		}
-
-		return find();
-	}
+    }
 
 	hasRayColliders = () => this.colliders.length > 0;
 
@@ -269,7 +277,6 @@ export default class BaseMesh extends BaseEntity {
 	}
 
 	createRayColliderFromVector = ({ type, vector }, near, far, debug) => {
-
 		const position = this.mesh.position.clone();
 		const ray = new Raycaster(position, vector, near, far);
 		const helper = debug && this.createColliderHelper(ray);
@@ -351,15 +358,19 @@ export default class BaseMesh extends BaseEntity {
             if (hasMaterial(this.mesh)) {
                 this.mesh.material.color = new Color(color);
             } else {
-                this.mesh.children[0].material.color = new Color(color);
+                this.mesh.traverse(child => {
+                    if (hasMaterial(child)) {
+                        child.material.color = new Color(color);
+                    }
+                });
             }
         } else {
-            console.log(SET_COLOR_MISSING_COLOR);
+            console.warn(MESH_SET_COLOR_MISSING_COLOR);
         }
 	}
 
 	setTextureMap(textureId, options = {}) {
-		if (textureId && this.mesh && this.mesh.material) {
+		if (textureId && hasMaterial(this.mesh)) {
 			const {
 				repeat = { x: 1, y: 1 },
 				wrap = RepeatWrapping
@@ -373,28 +384,59 @@ export default class BaseMesh extends BaseEntity {
 			texture.repeat.set(repeat.x, repeat.y);
 
 			this.mesh.material.map = texture;
-		}
+        } else {
+            console.warn(MESH_NO_MATERIAL_CANT_SET_TEXTURE);
+        }
 	}
 
 	setMaterialFromName(materialName, options = {}) {
 		if (hasMaterial(this.getMesh())) {
 			changeMaterialByName(materialName, this.getMesh(), options);
 		} else {
-            changeMaterialByName(materialName, this.mesh.children[0], options);
+            this.mesh.traverse(child => {
+                if (hasMaterial(child)) {
+                    changeMaterialByName(materialName, child, options);
+                }
+            });
         }
 	}
 
 	setOpacity(value = 1.0) {
-		this.mesh.material.transparent = true;
-		this.mesh.material.opacity = value;
+        if (hasMaterial(this.getMesh())) {
+            this.mesh.material.transparent = true;
+            this.mesh.material.opacity = value;
+        } else {
+            this.mesh.traverse(child => {
+                if (hasMaterial(child)) {
+                    child.material.transparent = true;
+                    child.material.opacity = value;
+                }
+            })
+        }
 	}
 
 	setWireframe(flag = true) {
-		this.mesh.material.wireframe = flag;
+        if (hasMaterial(this.getMesh())) {
+            this.mesh.material.wireframe = flag;
+        } else {
+            this.mesh.traverse(child => {
+                if (hasMaterial(child)) {
+                    child.material.wireframe = flag;
+                }
+            })
+        }
 	}
 
 	setWireframeLineWidth(width = 1) {
-		this.mesh.material.wireframeLinewidth = width;
+        if (hasMaterial(this.getMesh())) {
+            this.mesh.material.wireframeLinewidth = width;
+        } else {
+            this.mesh.traverse(child => {
+                if (hasMaterial(child)) {
+                    child.material.wireframeLinewidth = width;
+                }
+            })
+        }
 	}
 
 	copyQuaternion = (quaternion) => {
