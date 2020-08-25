@@ -134,6 +134,10 @@ export class Scene {
         return this.camera.object;
     }
 
+    getRenderer() {
+        return this.renderer;
+    }
+
     removeExistingRendererElements() {
         Object
             .keys(this.rendererElements)

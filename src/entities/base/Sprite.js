@@ -1,20 +1,30 @@
-import { Images } from "../../images/Images";
-
+import Images from "../../images/Images";
+import Scene from '../../core/Scene';
 import {
     SpriteMaterial,
     Sprite as THREESprite
 } from 'three';
 import { BaseMesh, ENTITY_TYPES } from '../index';
 
+const validateAnisotropy = (anisotropy) => {
+    const max = Scene.getRenderer().getMaxAnisotropy();
+
+    return anisotropy > max ? max : anisotropy;
+};
 
 export default class Sprite extends BaseMesh {
 
     constructor(width = 20, height = 20, spriteTexture, options = {}) {
         super(null, null, options);
 
+        const { anisotropy = 1, ...rest } = options;
+        const texture = Images.get(spriteTexture);
+
+        texture.anisotropy = validateAnisotropy(anisotropy);
+
         const material = new SpriteMaterial({
-            map: Images.get(spriteTexture),
-            ...options
+            map: texture,
+            ...rest
         });
 
         const mesh = new THREESprite(material);

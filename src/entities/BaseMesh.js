@@ -2,7 +2,9 @@ import {
 	Mesh,
 	RepeatWrapping,
 	Raycaster,
-	Color
+	Color,
+    Vector3,
+    Vector2
 } from 'three';
 import { BaseEntity, ENTITY_TYPES, Line, Box } from './index';
 
@@ -32,6 +34,8 @@ import {
 
 const BOUNDING_BOX_COLOR = 0xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
+
+const DEFAULT_COLLIDER_OFFSET = { x: 0, y: 0, z: 0};
 
 export default class BaseMesh extends BaseEntity {
 
@@ -254,9 +258,12 @@ export default class BaseMesh extends BaseEntity {
 	disableCollisions = () => this.collisionsEnabled = false;
 
 	updateRayColliders = () => {
-		this.colliders.forEach(({ ray, helper }) => {
+		this.colliders.forEach(({ ray, helper, offset = DEFAULT_COLLIDER_OFFSET }) => {
+            const position = this.mesh.position
+                .clone()
+                .add(new Vector3(offset.x, offset.y, offset.z));
 
-			ray.ray.origin.copy(this.mesh.position);
+			ray.ray.origin.copy(position);
 
 			if (helper) {
 				helper.updatePoints(this.getPointsFromRayCollider(ray));
@@ -276,22 +283,29 @@ export default class BaseMesh extends BaseEntity {
 		this.colliderHelper = new Line(this.getPointsFromRayCollider(ray));
 	}
 
-	createRayColliderFromVector = ({ type, vector }, near, far, debug) => {
-		const position = this.mesh.position.clone();
+	createRayColliderFromVector = ({ type, vector }, near, far, offset, debug) => {
+        const position = this.mesh.position
+            .clone()
+            .add(new Vector3(offset.x, offset.y, offset.z));
 		const ray = new Raycaster(position, vector, near, far);
-		const helper = debug && this.createColliderHelper(ray);
+        const helper = debug && this.createColliderHelper(ray);
+        
+        if (this.getEntityType() === ENTITY_TYPES.SPRITE) {
+            ray.setFromCamera(position, Scene.getCameraObject());
+        }
 
 		return {
 			type,
 			ray,
-			helper
+            helper,
+            offset
 		};
 	};
 
 	setColliders = (vectors = [], options = []) => {
 		const colliders = vectors.map((vector, i) => {
-			const { near = 0, far = 10, debug = false } = options[i];
-			return this.createRayColliderFromVector(vector, near, far, debug)
+			const { near = 0, far = 10, debug = false, offset = DEFAULT_COLLIDER_OFFSET } = options[i];
+			return this.createRayColliderFromVector(vector, near, far, offset,  debug)
 		});
 
 		this.colliders = [

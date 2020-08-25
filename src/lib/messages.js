@@ -34,3 +34,5 @@ export const STATE_MACHINE_NOT_AVAILABLE = `${PREFIX} State Machine is not enabl
 
 export const EFFECT_COULD_NOT_BE_CREATED = `${PREFIX}  Could not create requested effect.`;
 export const EFFECT_UNAVAILABLE = `${PREFIX}  Requested effect is not available.`;
+
+export const SCRIPT_NOT_FOUND = `${PREFIX} Could not find desired script.`;
