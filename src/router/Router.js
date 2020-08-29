@@ -12,6 +12,9 @@ const DIVIDER = '/';
 const HASH = '#';
 const EMPTY = '';
 
+const BEFORE_UNLOAD = 'beforeunload';
+const HASH_CHANGE = 'hashchange';
+
 class Router {
 
     constructor() {
@@ -82,7 +85,7 @@ class Router {
 
     setHashChangeListener = () => {
         if (window) {
-            window.addEventListener('hashchange', this.handleHashChange, false);
+            window.addEventListener(HASH_CHANGE, this.handleHashChange, false);
         }
     }
 
@@ -98,7 +101,19 @@ class Router {
             }
     }
 
+    setGlobalWindowEventsListeners() {
+        window.addEventListener(BEFORE_UNLOAD, this.stop);
+    }
+
+    stop() {
+        network.stopListeningToNetworkChanged();
+
+        window.removeEventListener(HASH_CHANGE, this.handleHashChange);
+    }
+
     start(config, assets, selector) {
+        this.setGlobalWindowEventsListeners();
+
         return new Promise((resolve, reject) => {
             Config.setConfig(config);
             Config.setContainer(selector);
