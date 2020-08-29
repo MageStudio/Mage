@@ -13,4 +13,4 @@ export const debounce = (func, wait, immediate, context = this) =>{
     };
 };
 
-export const NOOP = () => {};
+export const NOOP = f => f;

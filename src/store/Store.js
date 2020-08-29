@@ -6,6 +6,7 @@ import {
     info,
     storage,
     input,
+    network,
     createRootReducer
 } from './reducers';
 
@@ -16,7 +17,8 @@ let store;
 const DEFAULT_REDUCERS = {
     info,
     input,
-    storage
+    storage,
+    network
 };
 
 let unsubscribe = NOOP;
@@ -61,7 +63,7 @@ const handleSubscriptions = () => (
         })
 )
 
-export const createStore = (reducers = NOOP, initialState = {}, debug = false) => {
+export const createStore = (reducers = combineReducers(), initialState = {}, debug = false) => {
     if (!store) {
         store = redux.createStore(
             createRootReducer(reducers),

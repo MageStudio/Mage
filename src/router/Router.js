@@ -1,9 +1,11 @@
 import GameRunner from '../runner/GameRunner';
 import Assets from "../core/Assets";
 import util from '../lib/util';
+import * as network from '../lib/network';
 import Config from "../core/config";
 
 import { toQueryString, parseQuery } from '../lib/query';
+import { FEATURE_NOT_SUPPORTED } from '../lib/messages';
 
 const ROOT = '/';
 const DIVIDER = '/';
@@ -62,11 +64,6 @@ class Router {
 
     isValidRoute = (route) => this.routes.includes(route);
 
-    handleFailure() {
-        console.error('[Mage] Error when initialising app');
-    }
-    handleSuccess() {}
-
     handleHashChange = () => {
         const hash = Router.extractLocationHash();
         const query = Router.extractQuery();
@@ -106,11 +103,13 @@ class Router {
             Config.setConfig(config);
             Config.setContainer(selector);
 
+            network.listenToNetworkChanges();
+
             util.start();
             Assets.setAssets(assets);
 
             util.checker
-                .checkFeatures(this.handleSuccess, this.handleFailure)
+                .checkFeatures()
                 .then(Assets.load)
                 .then(() => {
                     this.setHashChangeListener();
@@ -129,7 +128,8 @@ class Router {
                             .start(ROOT, query)
                             .then(resolve);
                     }
-                });
+                })
+                .catch((failures) => console.error(FEATURE_NOT_SUPPORTED.concat(failures)));
         });
     }
 }
