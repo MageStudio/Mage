@@ -10,6 +10,7 @@ import {
 } from './reducers';
 
 import { STORE_DOESNT_EXIST } from '../lib/messages';
+import { NOOP } from '../lib/functions';
 
 let store;
 const DEFAULT_REDUCERS = {
@@ -17,7 +18,8 @@ const DEFAULT_REDUCERS = {
     input,
     storage
 };
-let unsubscribe;
+
+let unsubscribe = NOOP;
 const subscribers = {};
 
 const applyMiddlewares = (mdws, debug) => {
@@ -32,7 +34,7 @@ const applyMiddlewares = (mdws, debug) => {
 
 const defaultMiddleware = () => [thunk];
 
-export const combineReducers = (reducers) => (
+export const combineReducers = (reducers = {}) => (
     redux.combineReducers({
         ...reducers,
         ...DEFAULT_REDUCERS
@@ -59,7 +61,7 @@ const handleSubscriptions = () => (
         })
 )
 
-export const createStore = (reducers = {}, initialState = {}, debug = false) => {
+export const createStore = (reducers = NOOP, initialState = {}, debug = false) => {
     if (!store) {
         store = redux.createStore(
             createRootReducer(reducers),

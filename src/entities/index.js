@@ -1,7 +1,7 @@
 import BaseEntity, { ENTITY_TYPES } from './BaseEntity';
 import BaseMesh from './BaseMesh';
 import Camera from './Camera';
-import { Box, Cube, Cylinder, Grid, Line, CurveLine, Plane, Sphere } from './base';
+import { Box, Cube, Cylinder, Grid, Line, CurveLine, Plane, Sphere, Sprite } from './base';
 
 export {
     BaseMesh,
@@ -15,5 +15,6 @@ export {
     Line,
     CurveLine,
     Plane,
+    Sprite,
     Sphere
 };

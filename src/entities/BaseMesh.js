@@ -1,12 +1,21 @@
 import {
-	Mesh,
-	RepeatWrapping,
-	Raycaster,
-	Color
+    Mesh,
+    RepeatWrapping,
+    Raycaster,
+    Color,
+    Vector3,
+    Vector2
 } from 'three';
 import { BaseEntity, ENTITY_TYPES, Line, Box } from './index';
 
-import { MESH_NOT_SET, ANIMATION_HANDLER_NOT_FOUND } from '../lib/messages';
+import {
+    MESH_NOT_SET,
+    ANIMATION_HANDLER_NOT_FOUND,
+    MESH_SET_COLOR_MISSING_COLOR,
+    MESH_NAME_NOT_PROVIDED,
+    MESH_NO_GEOMETRY_SET,
+    MESH_NO_MATERIAL_CANT_SET_TEXTURE
+} from '../lib/messages';
 import Images from '../images/Images';
 import AnimationHandler from './animations/AnimationHandler';
 import Config from '../core/config';
@@ -16,401 +25,456 @@ import Universe from '../core/Universe';
 import Physics from '../physics/physics';
 import { getDescriptionForMesh } from '../physics/utils';
 
-import { changeMaterialByName, hasMaterial } from '../lib/meshUtils';
+import {
+    changeMaterialByName,
+    hasMaterial,
+    isLine,
+    hasGeometry
+} from '../lib/meshUtils';
 
 const BOUNDING_BOX_COLOR = 0xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
 
+const DEFAULT_COLLIDER_OFFSET = { x: 0, y: 0, z: 0};
+
 export default class BaseMesh extends BaseEntity {
 
-	constructor(geometry, material, options = {}) {
-		super(options);
+    constructor(geometry, material, options = {}) {
+        super(options);
 
-		const {
-			name = `default_${Math.random()}`
-		} = options;
+        const {
+            name = `default_${Math.random()}`
+        } = options;
 
-		this.texture = undefined;
-		this.options = {
-			name,
-			...options
-		};;
+        this.texture = undefined;
+        this.options = {
+            name,
+            ...options
+        };;
 
-		this.setMesh({ geometry, material });
+        this.setMesh({ geometry, material });
 
-		this.colliders = [];
-		this.collisionsEnabled = true;
-		this.children = [];
+        this.colliders = [];
+        this.collisionsEnabled = true;
+        this.children = [];
 
-		this.animationHandler = undefined;
+        this.animationHandler = undefined;
 
-		this.setEntityType(ENTITY_TYPES.MESH);
-	}
+        this.setEntityType(ENTITY_TYPES.MESH);
+    }
 
-	hasMesh() {
-		return !!this.mesh;
-	}
+    hasMesh() {
+        return !!this.mesh;
+    }
 
-	getMesh({ name } = {}) {
-		if (name && this.hasMesh()) {
-			const mesh = this.mesh.getObjectByName(name);
-			return mesh ? mesh : this.mesh;
-		}
+    getMesh() {
+        return this.mesh;
+    }
+    
+    getMeshByName = (name) => {
+        if (name) {
+            if (this.hasMesh()) {
+                return this.mesh.getObjectByName(name);
+            } else {
+                console.warn(MESH_NOT_SET);
+            }
+        } else {
+            console.warn(MESH_NAME_NOT_PROVIDED);
+        }
+    }
 
-		return this.mesh;
-	}
+    setMesh({ mesh, geometry, material }) {
+        if (mesh) {
+            this.mesh = mesh;
+        } else if (geometry && material) {
+            this.geometry = geometry;
+            this.material = material;
+            this.mesh = new Mesh(this.geometry, this.material);
+        }
 
-	setMesh({ mesh, geometry, material }) {
-		if (mesh) {
-			this.mesh = mesh;
-		} else if (geometry && material) {
-			this.geometry = geometry;
-			this.material = material;
-			this.mesh = new Mesh(this.geometry, this.material);
-		}
+        if (this.hasMesh()) {
+            this.postMeshCreation();
+            this.addToScene();
+        }
+    }
 
-		if (this.hasMesh()) {
-			this.postMeshCreation();
-			this.addToScene();
-		}
-	}
+    evaluateBoundingBox() {
+        if (hasGeometry(this.getMesh())) {
+            this.mesh.geometry.computeBoundingBox();
+            this.boundingBox = this.mesh.geometry.boundingBox;
+        } else {
+            // this.mesh.traverse(child => {
+            //     if (child.geometry) {
+            //         child.geometry.computeBoundingBox();
+            //         this.boundingBox = child.geometry.boundingBox;
+            //         return;
+            //     }
+            // })
+            console.warn(MESH_NO_GEOMETRY_SET);
+        }
+    }
 
-	evaluateBoundingBox() {
-		if (this.mesh.geometry) {
-			this.mesh.geometry.computeBoundingBox();
-			this.boundingBox = this.mesh.geometry.boundingBox;
-		} else {
-			this.mesh.children.forEach(child => {
-				if (child.geometry) {
-					child.geometry.computeBoundingBox();
-					this.boundingBox = child.geometry.boundingBox;
-					return;
-				}
-			})
-		}
-	}
+    postMeshCreation() {
+        const { name } = this.options;
 
-	postMeshCreation() {
-		const { name } = this.options;
+        this.evaluateBoundingBox();
+        this.setName(name);
 
-		this.evaluateBoundingBox();
-		this.setName(name);
+        this.mesh.castShadow = Config.lights().shadows;
+        this.mesh.receiveShadow = Config.lights().shadows;
+    }
 
-		this.mesh.castShadow = Config.lights().shadows;
-		this.mesh.receiveShadow = Config.lights().shadows;
-	}
+    addToScene() {
+        const {
+            addUniverse = true,
+        } = this.options;
 
-	addToScene() {
-		const {
-			addUniverse = true,
-		} = this.options;
+        if (this.hasMesh()) {
+            Scene.add(this.getMesh(), this, addUniverse);
+        } else {
+            console.warn(MESH_NOT_SET);
+        }
+    }
 
-		if (this.hasMesh()) {
-			Scene.add(this.getMesh(), this, addUniverse);
-		} else {
-			console.warn(MESH_NOT_SET);
-		}
-	}
+    setName(name, { replace = false } = {}) {
+        super.setName(name);
 
-	setName(name, { replace = false } = {}) {
-		super.setName(name);
+        if (this.hasMesh()) {
+            if (replace) this.dispose();
 
-		if (this.hasMesh()) {
-			if (replace) this.dispose();
+            this.mesh.name = name;
 
-			this.mesh.name = name;
+            if (replace) this.addToScene();
+        }
+    }
 
-			if (replace) this.addToScene();
-		}
-	}
+    setArmature(armature) {
+        this.armature = armature;
 
-	setArmature(armature) {
-		this.armature = armature;
+        Scene.add(this.armature, null, false);
+    }
 
-		Scene.add(this.armature, null, false);
-	}
+    addAnimationHandler(animations) {
+        this.animationHandler = new AnimationHandler(this.getMesh(), animations);
+    }
 
-	addAnimationHandler(animations) {
-		this.animationHandler = new AnimationHandler(this.getMesh(), animations);
-	}
+    hasAnimationHandler() {
+        return !!this.animationHandler;
+    }
 
-	hasAnimationHandler() {
-		return !!this.animationHandler;
-	}
+    playAnimation(id, options) {
+        if (this.hasAnimationHandler()) {
+            this.animationHandler.playAnimation(id, options);
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+        }
+    }
 
-	playAnimation(id, options) {
-		if (this.hasAnimationHandler()) {
-			this.animationHandler.playAnimation(id, options);
-		} else {
-			console.warn(ANIMATION_HANDLER_NOT_FOUND);
-		}
-	}
+    getAvailableAnimations() {
+        if (this.hasAnimationHandler()) {
+            return this.animationHandler.getAvailableAnimations();
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+        }
 
-	getAvailableAnimations() {
-		if (this.hasAnimationHandler()) {
-			return this.animationHandler.getAvailableAnimations();
-		} else {
-			console.warn(ANIMATION_HANDLER_NOT_FOUND);
-		}
+        return [];
+    }
 
-		return [];
-	}
-
-	enablePhysics(options) {
-		if (Config.physics().enabled) {
-			const description = {
+    enablePhysics(options) {
+        if (Config.physics().enabled) {
+            const description = {
                 ...getDescriptionForMesh(this),
                 ...options
-			};
+            };
 
-			if (options.debug) {
-				this.addPhysicsBoundingBox(description);
-			}
-			
-			Physics.add(this, description);
-		}
-	}
+            if (options.debug) {
+                this.addPhysicsBoundingBox(description);
+            }
+            
+            Physics.add(this, description);
+        }
+    }
 
-	addPhysicsBoundingBox({ rot, pos, size }) {
-		const scaledSize = size.map(s => s + BOUNDING_BOX_INCREASE);
-		const box = new Box(scaledSize[0], scaledSize[1], scaledSize[2], BOUNDING_BOX_COLOR);
+    addPhysicsBoundingBox({ rot, pos, size }) {
+        const scaledSize = size.map(s => s + BOUNDING_BOX_INCREASE);
+        const box = new Box(scaledSize[0], scaledSize[1], scaledSize[2], BOUNDING_BOX_COLOR);
 
-		box.setPosition({ x: pos[0], y: pos[1], z: pos[2] });
-		box.setRotation({ x: rot[0], y: rot[1], z: rot[2] });
-		box.setWireframe(true);
-		box.setWireframeLineWidth(2);
+        box.setPosition({ x: pos[0], y: pos[1], z: pos[2] });
+        box.setRotation({ x: rot[0], y: rot[1], z: rot[2] });
+        box.setWireframe(true);
+        box.setWireframeLineWidth(2);
 
-		this.add(box);
-	}
+        this.add(box);
+    }
 
-	applyForce(force) {
-		if (Config.physics().enabled) {
-			Physics.applyForce(this.uuid(), force);
-		}
-	}
+    applyForce(force) {
+        if (Config.physics().enabled) {
+            Physics.applyForce(this.uuid(), force);
+        }
+    }
 
-	update(dt) {
-		super.update(dt);
-		
-		if (this.hasRayColliders() && this.areCollisionsEnabled()) {
-			this.updateRayColliders();
-			this.checkCollisions();
-		}
+    update(dt) {
+        super.update(dt);
+        
+        if (this.hasRayColliders() && this.areCollisionsEnabled()) {
+            this.updateRayColliders();
+            this.checkCollisions();
+        }
 
-		if (this.hasAnimationHandler()) {
-			this.animationHandler.update(dt);
-		}
-	}
+        if (this.hasAnimationHandler()) {
+            this.animationHandler.update(dt);
+        }
+    }
 
-	add(what) {
-		if (this.mesh) {
-			const _add = (mesh) => {
-				this.children.push(mesh);
-				this.mesh.add(mesh.mesh);
-			};
+    add(what) {
+        if (this.mesh) {
+            const _add = (mesh) => {
+                this.children.push(mesh);
+                this.mesh.add(mesh.mesh);
+            };
 
-			if (Array.isArray(what)) {
-				what.forEach(_add);
-			} else {
-				_add(what);
-			}
-		}
-	}
+            if (Array.isArray(what)) {
+                what.forEach(_add);
+            } else {
+                _add(what);
+            }
+        }
+    }
 
-	remove(what) {
-		if (this.mesh) {
-			this.mesh.remove(what.mesh);
-			const index = this.children.findIndex(m => m.equals(what));
+    remove(what) {
+        if (this.mesh) {
+            this.mesh.remove(what.mesh);
+            const index = this.children.findIndex(m => m.equals(what));
 
-			this.children.splice(index, 1);
-		}
-	}
+            this.children.splice(index, 1);
+        }
+    }
 
-	getChildByName(name, options = {}) {
-		const { recursive = false } = options;
-		const find = () => this.children.filter(mesh => mesh.name === name)[0];
+    hasRayColliders = () => this.colliders.length > 0;
 
-		if (recursive) {
-			const mesh = find() || null;
-			return mesh ? mesh : this.children.map((c) => c.getChild(name))[0];
-		}
+    areCollisionsEnabled = () => this.collisionsEnabled;
 
-		return find();
-	}
+    enableCollisions = () => this.collisionsEnabled = true;
+    disableCollisions = () => this.collisionsEnabled = false;
 
-	hasRayColliders = () => this.colliders.length > 0;
+    updateRayColliders = () => {
+        this.colliders.forEach(({ ray, helper, offset = DEFAULT_COLLIDER_OFFSET }) => {
+            const position = this.mesh.position
+                .clone()
+                .add(new Vector3(offset.x, offset.y, offset.z));
 
-	areCollisionsEnabled = () => this.collisionsEnabled;
+            ray.ray.origin.copy(position);
 
-	enableCollisions = () => this.collisionsEnabled = true;
-	disableCollisions = () => this.collisionsEnabled = false;
+            if (helper) {
+                helper.updatePoints(this.getPointsFromRayCollider(ray));
+            }
+        });
+    };
 
-	updateRayColliders = () => {
-		this.colliders.forEach(({ ray, helper }) => {
+    getPointsFromRayCollider = (ray) => {
+        const origin = this.mesh.position.clone();
+        const end = origin.add(ray.ray.direction.clone().multiplyScalar(ray.far));
+        //ray.ray.direction.clone().multiplyScalar(ray.far);
 
-			ray.ray.origin.copy(this.mesh.position);
+        return [origin, end];
+    };
 
-			if (helper) {
-				helper.updatePoints(this.getPointsFromRayCollider(ray));
-			}
-		});
-	};
+    createColliderHelper = (ray) => {
+        this.colliderHelper = new Line(this.getPointsFromRayCollider(ray));
+    }
 
-	getPointsFromRayCollider = (ray) => {
-		const origin = this.mesh.position.clone();
-		const end = origin.add(ray.ray.direction.clone().multiplyScalar(ray.far));
-		//ray.ray.direction.clone().multiplyScalar(ray.far);
+    createRayColliderFromVector = ({ type, vector }, near, far, offset, debug) => {
+        const position = this.mesh.position
+            .clone()
+            .add(new Vector3(offset.x, offset.y, offset.z));
+        const ray = new Raycaster(position, vector, near, far);
+        const helper = debug && this.createColliderHelper(ray);
+        
+        if (this.getEntityType() === ENTITY_TYPES.SPRITE) {
+            ray.setFromCamera(position, Scene.getCameraObject());
+        }
 
-		return [origin, end];
-	};
+        return {
+            type,
+            ray,
+            helper,
+            offset
+        };
+    };
 
-	createColliderHelper = (ray) => {
-		this.colliderHelper = new Line(this.getPointsFromRayCollider(ray));
-	}
+    setColliders = (vectors = [], options = []) => {
+        const colliders = vectors.map((vector, i) => {
+            const { near = 0, far = 10, debug = false, offset = DEFAULT_COLLIDER_OFFSET } = options[i];
+            return this.createRayColliderFromVector(vector, near, far, offset,  debug)
+        });
 
-	createRayColliderFromVector = ({ type, vector }, near, far, debug) => {
+        this.colliders = [
+            ...this.colliders,
+            ...colliders
+        ];
+    };
 
-		const position = this.mesh.position.clone();
-		const ray = new Raycaster(position, vector, near, far);
-		const helper = debug && this.createColliderHelper(ray);
+    checkRayCollider = ({ ray, type }) => {
+        const intersections = ray
+            .intersectObjects(Scene.scene.children)
+            .filter(collision => collision.object.uuid !== this.uuid());
 
-		return {
-			type,
-			ray,
-			helper
-		};
-	};
+        const mapCollision = (collision) => {
+            const { distance, object } = collision;
+            const { uuid } = object;
 
-	setColliders = (vectors = [], options = []) => {
-		const colliders = vectors.map((vector, i) => {
-			const { near = 0, far = 10, debug = false } = options[i];
-			return this.createRayColliderFromVector(vector, near, far, debug)
-		});
+            return {
+                distance,
+                mesh: Universe.getByUUID(uuid)
+            };
+        }
 
-		this.colliders = [
-			...this.colliders,
-			...colliders
-		];
-	};
+        return {
+            collisions: intersections.length ? intersections.map(mapCollision) : [],
+            type
+        };
+    };
 
-	checkRayCollider = ({ ray, type }) => {
-		const intersections = ray
-			.intersectObjects(Scene.scene.children)
-			.filter(collision => collision.object.uuid !== this.uuid());
+    checkCollisions = () => {
+        const collisions = [];
+        this.colliders.forEach((collider) => {
+            const collision = this.checkRayCollider(collider);
 
-		const mapCollision = (collision) => {
-			const { distance, object } = collision;
-			const { uuid } = object;
+            if (collision) {
+                collisions.push(collision);
+            }
+        });
 
-			return {
-				distance,
-				mesh: Universe.getByUUID(uuid)
-			};
-		}
+        if (collisions.length) {
+            this.dispatchEvent({
+                type: COLLISION_EVENT,
+                collisions
+            });
+        }
 
-		return {
-			collisions: intersections.length ? intersections.map(mapCollision) : [],
-			type
-		};
-	};
+        return collisions;
+    };
 
-	checkCollisions = () => {
-		const collisions = [];
-		this.colliders.forEach((collider) => {
-			const collision = this.checkRayCollider(collider);
+    isCollidingOnDirection(direction) {
+        const collider = this.colliders.filter(({ type }) => type === direction)[0];
+        const emptyCollision = {
+            collisions: [],
+            type: direction
+        };
 
-			if (collision) {
-				collisions.push(collision);
-			}
-		});
+        return collider ?
+            this.checkRayCollider(collider) :
+            emptyCollision;
+    }
 
-		if (collisions.length) {
-			this.dispatchEvent({
-				type: COLLISION_EVENT,
-				collisions
-			});
-		}
+    setColor(color) {
+        if (color) {
+            if (hasMaterial(this.mesh)) {
+                this.mesh.material.color = new Color(color);
+            } else {
+                this.mesh.traverse(child => {
+                    if (hasMaterial(child)) {
+                        child.material.color = new Color(color);
+                    }
+                });
+            }
+        } else {
+            console.warn(MESH_SET_COLOR_MISSING_COLOR);
+        }
+    }
 
-		return collisions;
-	};
+    setTextureMap(textureId, options = {}) {
+        if (textureId && hasMaterial(this.mesh)) {
+            const {
+                repeat = { x: 1, y: 1 },
+                wrap = RepeatWrapping
+            } = options;
+            const texture = Images.get(textureId);
 
-	isCollidingOnDirection(direction) {
-		const collider = this.colliders.filter(({ type }) => type === direction)[0];
-		const emptyCollision = {
-			collisions: [],
-			type: direction
-		};
+            this.texture = textureId;
 
-		return collider ?
-			this.checkRayCollider(collider) :
-			emptyCollision;
-	}
+            texture.wrapS = wrap;
+            texture.wrapT = wrap;
+            texture.repeat.set(repeat.x, repeat.y);
 
-	setColor(color) {
-		if (color && this.mesh.material.color) {
-			this.mesh.material.color = new Color(color);
-		}
-	}
+            this.mesh.material.map = texture;
+        } else {
+            console.warn(MESH_NO_MATERIAL_CANT_SET_TEXTURE);
+        }
+    }
 
-	setTextureMap(textureId, options = {}) {
-		if (textureId && this.mesh && this.mesh.material) {
-			const {
-				repeat = { x: 1, y: 1 },
-				wrap = RepeatWrapping
-			} = options;
-			const texture = Images.get(textureId);
+    setMaterialFromName(materialName, options = {}) {
+        if (hasMaterial(this.getMesh())) {
+            changeMaterialByName(materialName, this.getMesh(), options);
+        } else {
+            this.mesh.traverse(child => {
+                if (hasMaterial(child)) {
+                    changeMaterialByName(materialName, child, options);
+                }
+            });
+        }
+    }
 
-			this.texture = textureId;
+    setOpacity(value = 1.0) {
+        if (hasMaterial(this.getMesh())) {
+            this.mesh.material.transparent = true;
+            this.mesh.material.opacity = value;
+        } else {
+            this.mesh.traverse(child => {
+                if (hasMaterial(child)) {
+                    child.material.transparent = true;
+                    child.material.opacity = value;
+                }
+            })
+        }
+    }
 
-			texture.wrapS = wrap;
-			texture.wrapT = wrap;
-			texture.repeat.set(repeat.x, repeat.y);
+    setWireframe(flag = true) {
+        if (hasMaterial(this.getMesh())) {
+            this.mesh.material.wireframe = flag;
+        } else {
+            this.mesh.traverse(child => {
+                if (hasMaterial(child)) {
+                    child.material.wireframe = flag;
+                }
+            })
+        }
+    }
 
-			this.mesh.material.map = texture;
-		}
-	}
+    setWireframeLineWidth(width = 1) {
+        if (hasMaterial(this.getMesh())) {
+            this.mesh.material.wireframeLinewidth = width;
+        } else {
+            this.mesh.traverse(child => {
+                if (hasMaterial(child)) {
+                    child.material.wireframeLinewidth = width;
+                }
+            })
+        }
+    }
 
-	setMaterialFromName(materialName, options = {}) {
-		if (hasMaterial(this.getMesh())) {
-			changeMaterialByName(materialName, this.getMesh(), options);
-		}
-	}
+    copyQuaternion = (quaternion) => {
+        this.mesh.quaternion.copy(quaternion);
+    }
 
-	setOpacity(value = 1.0) {
-		this.mesh.material.transparent = true;
-		this.mesh.material.opacity = value;
-	}
+    copyPosition = (position) => {
+        this.mesh.position.copy(position);
+    }
 
-	setWireframe(flag = true) {
-		this.mesh.material.wireframe = flag;
-	}
+    equals = (object) => (
+        this.name === object.name &&
+        this.mesh.uuid === object.mesh.uuid
+    );
 
-	setWireframeLineWidth(width = 1) {
-		this.mesh.material.wireframeLinewidth = width;
-	}
+    toJSON() {
+        if (this.serializable) {
+            return {
+                mesh: this.mesh.toJSON(),
+                scripts: this.scripts && this.scripts.map(s => s.toJSON()),
+                texture: this.texture,
+                ...this.options
+            }
+        }
 
-	copyQuaternion = (quaternion) => {
-		this.mesh.quaternion.copy(quaternion);
-	}
-
-	copyPosition = (position) => {
-		this.mesh.position.copy(position);
-	}
-
-	equals = (object) => (
-		this.name === object.name &&
-		this.mesh.uuid === object.mesh.uuid
-	);
-
-	toJSON() {
-		if (this.serializable) {
-			return {
-				mesh: this.mesh.toJSON(),
-				scripts: this.scripts && this.scripts.map(s => s.toJSON()),
-				texture: this.texture,
-				...this.options
-			}
-		}
-
-	}
+    }
 }

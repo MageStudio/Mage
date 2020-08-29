@@ -6,6 +6,7 @@ import SepiaEffect from './SepiaEffect';
 import BloomPass from './BloomPass';
 import DepthOfField from './DepthOfField';
 import SelectiveOutline from './SelectiveOutline';
+import GlitchEffect from './GlitchEffect';
 import { EFFECTS } from '../../lib/constants';
 import {
     EFFECT_COULD_NOT_BE_CREATED,
@@ -34,6 +35,10 @@ export class PostProcessing {
             },
             [EFFECTS.SELECTIVE_OUTLINE]: {
                 effect: SelectiveOutline,
+                isClass: true
+            },
+            [EFFECTS.GLITCH]: {
+                effect: GlitchEffect,
                 isClass: true
             }
         };

@@ -6,6 +6,7 @@ import Line from './Line';
 import CurveLine from './CurveLine';
 import Plane from './Plane';
 import Box from './Box';
+import Sprite from './Sprite';
 
 export {
     Sphere,
@@ -15,5 +16,6 @@ export {
     Line,
     CurveLine,
     Plane,
-    Box
+    Box,
+    Sprite
 };

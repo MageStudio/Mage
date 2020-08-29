@@ -14,8 +14,13 @@ const setUpLightsAndShadows = (mesh) => {
     mesh.receiveShadow = Config.lights().shadows;
 } 
 
+export const isMesh = mesh => mesh.isMesh;
+export const isSprite = mesh => mesh.isSprite;
+export const isLine = mesh => mesh.isLine;
+
 const isMeshOrSkinnedMesh = (mesh) => mesh.isMesh || mesh.isSkinnedMesh;
 export const hasMaterial = mesh => Boolean(mesh.material);
+export const hasGeometry = mesh => Boolean(mesh.geometry);
 
 export const changeMaterialByName = (name, mesh, materialOptions) => {
 
