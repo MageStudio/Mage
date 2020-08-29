@@ -12,3 +12,5 @@ export const debounce = (func, wait, immediate, context = this) =>{
         if (callNow) func.apply(context, args);
     };
 };
+
+export const NOOP = () => {};
