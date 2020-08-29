@@ -14,7 +14,7 @@ export const BOUNDINGBOX_NOT_AVAILABLE = `${PREFIX} Selected mesh does not have 
 
 export const INVALID_EMITTER_ID = `${PREFIX} The selected emitter id is not valid.`;
 
-export const FEATURE_NOT_SUPPORTED = `${PREFIX} The following feature is not supported: `;
+export const FEATURE_NOT_SUPPORTED = `${PREFIX} The following features are not supported: `;
 
 export const ANIMATION_NOT_FOUND = `${PREFIX} Required animation can't be found.`;
 export const ANIMATION_HANDLER_NOT_FOUND = `${PREFIX} AnimationHander hasn't been defined yet.`;

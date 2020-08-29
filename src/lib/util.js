@@ -12,23 +12,23 @@ export const FEATURES = {
 
 export class Checker {
 
-	constructor() {
-		this.tests = [
-			FEATURES.WEBGL,
-			FEATURES.WEBAUDIOAPI,
-			FEATURES.WEBWORKER,
-			FEATURES.LOCALSTORAGE,
-			FEATURES.AJAX
+    constructor() {
+        this.tests = [
+            FEATURES.WEBGL,
+            FEATURES.WEBAUDIOAPI,
+            FEATURES.WEBWORKER,
+            FEATURES.LOCALSTORAGE,
+            FEATURES.AJAX
         ];
-	}
+    }
 
-	isFeatureSupported(feature) {
+    isFeatureSupported(feature) {
         return typeof this[feature] === 'function' && this[feature]();
-	}
+    }
 
-	checkFeatures(onSuccess, onFailure) {
+    checkFeatures() {
         const configTests = Config.tests() || [];
-		const tests = [
+        const tests = [
             ...this.tests,
             ...configTests,
         ];
@@ -37,57 +37,70 @@ export class Checker {
             tests.push(FEATURES.WEBGL);
         }
 
-        const hasFailures = tests
+
+        const failures = tests
             .map(test => this[test] && this[test]())
-            .some(result => !result);
+            .reduce((acc, result) => {
+                if (!result.success) {
+                    acc.push(result.name);
+                }
+                return acc;
+            }, []);
 
 
-        if (hasFailures) {
-            onFailure();
-            return Promise.reject();
-        } else {
-            onSuccess();
-            return Promise.resolve();
-        }
-	}
+        return failures.length ? 
+            Promise.reject(failures) :
+            Promise.resolve();
+    }
 
-	localStorage() {
+    localStorage() {
         if (window &&
             window.localStorage &&
             typeof window.localStorage.setItem === 'function' &&
             typeof window.localStorage.getItem === 'function' &&
             typeof window.localStorage.removeItem === 'function' &&
             typeof window.localStorage.clear === 'function') {
-                return true;
+                return {
+                    success: true,
+                    name: FEATURES.LOCALSTORAGE
+                };
             } else {
-                console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.LOCALSTORAGE));
-                return false;
+                return {
+                    success: false,
+                    name: FEATURES.LOCALSTORAGE
+                };
             }
-	}
+    }
 
-	offscreenCanvas() {
+    offscreenCanvas() {
         const hasOffscreenCanvas = !!window.OffscreenCanvas;
 
-        if (hasOffscreenCanvas) {
-            return true;
-        } else {
-            console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.OFFSCREENCANVAS));
-            return false;
-        }
-	}
+        return {
+            success: hasOffscreenCanvas,
+            name: FEATURES.OFFSCREENCANVAS
+        };
+    }
 
-	webgl() {
+    webgl() {
         try {
             const canvas = document.createElement("canvas");
             const context = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
             if (context) {
-                return true;
+                return {
+                    success: true,
+                    name: FEATURES.WEBGL
+                };
             } else {
-                return false;
+                return {
+                    success: false,
+                    name: FEATURES.WEBGL
+                };
             }
         } catch(e) {
-            console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.WEBGL));
-            return false;
+            return {
+                success: false,
+                name: FEATURES.WEBGL
+            };
         }
     }
 
@@ -96,13 +109,21 @@ export class Checker {
             const hasWebAudioApi = !!(window.webkitAudioContext || window.AudioContext);
 
             if (hasWebAudioApi) {
-                return true;
+                return {
+                    success: true,
+                    name: FEATURES.WEBAUDIOAPI
+                };
             } else {
-                console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.WEBAUDIOAPI));
-                return false;
+                return {
+                    success: false,
+                    name: FEATURES.WEBAUDIOAPI
+                };
             }
         } catch(e) {
-            return true;
+            return {
+                success: false,
+                name: FEATURES.WEBAUDIOAPI
+            };
         }
     }
 
@@ -111,13 +132,21 @@ export class Checker {
             const hasWorkers = !!(window.Worker);
 
             if (hasWorkers) {
-                return true;
+                return {
+                    success: true,
+                    name: FEATURES.WEBWORKER
+                };
             } else {
-                console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.WEBWORKER));
-                return false;
+                return {
+                    success: true,
+                    name: FEATURES.WEBWORKER
+                };
             }
         } catch(e) {
-            return true;
+            return {
+                success: false,
+                name: FEATURES.WEBWORKER
+            };
         }
     }
 
@@ -129,13 +158,21 @@ export class Checker {
             try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
 
             if (xhr) {
-                return true;
+                return {
+                    success: true,
+                    name: FEATURES.AJAX
+                };
             } else {
-                console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.AJAX));
-                return false;
+                return {
+                    success: false,
+                    name: FEATURES.AJAX
+                };
             }
         } catch(e) {
-            return true;
+            return {
+                success: false,
+                name: FEATURES.AJAX
+            };
         }
     }
 
@@ -146,42 +183,49 @@ export class Checker {
                 navigator.webkitGetGamepads ) &&
                 window.Gamepad &&
                 window.GamepadButton) {
-                    return true;
+                    return {
+                        success: true,
+                        name: FEATURES.GAMEPADAPI
+                    };
                 } else {
-                    console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.GAMEPADAPI));
-                    return false;
+                    return {
+                        success: true,
+                        name: FEATURES.GAMEPADAPI
+                    };
                 }
         } catch(e) {
-            console.log(FEATURE_NOT_SUPPORTED.concat(FEATURES.GAMEPADAPI));
-            return false;
+            return {
+                success: false,
+                name: FEATURES.GAMEPADAPI
+            };
         }
     }
 }
 
 export class Util {
 
-	constructor() {
-		this.checker = new Checker();
-	}
+    constructor() {
+        this.checker = new Checker();
+    }
 
-	isFeatureSupported(feature) {
-		return this.checker.isFeatureSupported(feature);
-	}
+    isFeatureSupported(feature) {
+        return this.checker.isFeatureSupported(feature);
+    }
 
-	start() {
-		window.requestAnimFrame = (
-			function(){
-				return  window.requestAnimationFrame       ||
-						window.webkitRequestAnimationFrame ||
-						window.mozRequestAnimationFrame    ||
-						window.oRequestAnimationFrame      ||
-						window.msRequestAnimationFrame     ||
-						function(callback, element){
-							window.setTimeout(callback, 1000 / 60);
-						};
-	    	}
-		)();
-	}
+    start() {
+        window.requestAnimFrame = (
+            function() {
+                return  window.requestAnimationFrame       ||
+                        window.webkitRequestAnimationFrame ||
+                        window.mozRequestAnimationFrame    ||
+                        window.oRequestAnimationFrame      ||
+                        window.msRequestAnimationFrame     ||
+                        function(callback, element){
+                            window.setTimeout(callback, 1000 / 60);
+                        };
+            }
+        )();
+    }
 }
 
 export default new Util();
