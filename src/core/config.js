@@ -125,8 +125,10 @@ class Config {
             ...this.config.screen,
             h,
             w,
-            ratio
-        }
+            ratio,
+            devicePixelRatio: window.devicePixelRatio
+        };
+
         return this.config.screen;
     }
 

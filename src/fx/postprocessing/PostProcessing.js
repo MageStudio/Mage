@@ -12,6 +12,8 @@ import {
     EFFECT_COULD_NOT_BE_CREATED,
     EFFECT_UNAVAILABLE
 } from '../../lib/messages';
+import Config from '../../core/config';
+import PixelEffect from './PixelEffect';
 
 export class PostProcessing {
 
@@ -40,6 +42,10 @@ export class PostProcessing {
             [EFFECTS.GLITCH]: {
                 effect: GlitchEffect,
                 isClass: true
+            },
+            [EFFECTS.PIXEL]: {
+                effect: PixelEffect,
+                isClass: true
             }
         };
 
@@ -57,7 +63,15 @@ export class PostProcessing {
     }
 
     onWindowResize = () => {
-        this.composer.setSize(window.innerWidth, window.innerHeight);
+        const { h, w } = Config.screen();
+
+        this.composer.setSize(w, h);
+
+        this.effects.forEach(effect => {
+            if (effect.onWindowResize) {
+                effect.onWindowResize();
+            }
+        })
     }
 
     get(id) {
