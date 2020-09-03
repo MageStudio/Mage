@@ -5,24 +5,25 @@ import Assets from "../core/Assets";
 
 export class Scripts {
 
-	constructor() {
-		this.scripts = {};
-	}
+    constructor() {
+        this.map = {};
+    }
 
-	update() {}
+    update() {}
 
-	load = () => {
-        const keys = Object.keys(Assets.scripts());
+    load = (scripts, level) => {
+        this.scripts = scripts;
+        const keys = Object.keys(scripts);
 
         if (!keys.length) {
             return Promise.resolve('scripts');
         }
 
-        return Promise.all(keys.map(this.loadSingleScript));
+        return Promise.all(keys.map(name => this.loadSingleScript(name, level)));
     }
 
-    loadSingleScript = (id) => {
-        const path = Assets.scripts()[id];
+    loadSingleScript = (name, level) => {
+        const path = this.scripts[name];
 
         return new Promise(resolve => {
 
@@ -35,45 +36,45 @@ export class Scripts {
         });
     }
 
-	set(id, ScriptClass) {
-		this.scripts[id] = ScriptClass;
-	}
+    set(id, ScriptClass) {
+        this.map[id] = ScriptClass;
+    }
 
-	get(id) {
-		const ScriptClass = this.scripts[id];
+    get(id) {
+        const ScriptClass = this.map[id];
 
-		if (ScriptClass) {
-			return new ScriptClass();
-		}
+        if (ScriptClass) {
+            return new ScriptClass();
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	parseScript(content) {
-		// does this mean we can send whatever we want down to the script?
-		return new Function('Script', 'Input', 'return ' + content + ';')(BaseScript, Input);
-	}
+    parseScript(content) {
+        // does this mean we can send whatever we want down to the script?
+        return new Function('Script', 'Input', 'return ' + content + ';')(BaseScript, Input);
+    }
 
-	createFromString(stringContent) {
-		const Script = this.parseScript(stringContent);
-		const s = new Script();
+    createFromString(stringContent) {
+        const Script = this.parseScript(stringContent);
+        const s = new Script();
 
-		this.set(s.name(), s);
-		return s;
-	}
+        this.set(s.name(), s);
+        return s;
+    }
 
-	create(name, ScriptClass) {
-		if (ScriptClass) {
-			const script = new ScriptClass();
-			if (script.__check && script.__check()) {
-				this.set(name, ScriptClass);
-			} else {
-				console.error('[Mage] Script:', name, 'needs to be an instance of Script.');
-			}
-		} else {
-			console.error('[Mage] Script not provided.');
-		}
-	}
+    create(name, ScriptClass) {
+        if (ScriptClass) {
+            const script = new ScriptClass();
+            if (script.__check && script.__check()) {
+                this.set(name, ScriptClass);
+            } else {
+                console.error('[Mage] Script:', name, 'needs to be an instance of Script.');
+            }
+        } else {
+            console.error('[Mage] Script not provided.');
+        }
+    }
 }
 
 export default new Scripts();

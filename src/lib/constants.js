@@ -38,3 +38,22 @@ export const COLORS = {
     WHITE: '#ffffff',
     BLACK: '#000000'
 };
+
+export const ASSETS_TYPES = {
+    AUDIO: 'audio',
+    VIDEO: 'video',
+    IMAGES: 'images',
+    TEXTURES: 'textures',
+    MODELS: 'models',
+    PARTICLES: 'particles',
+    SCRIPTS: 'scripts',
+    SHADERS: 'shaders'
+};
+
+export const ROOT = '/';
+export const DIVIDER = '/';
+export const HASH = '#';
+export const EMPTY = '';
+
+export const BEFORE_UNLOAD = 'beforeunload';
+export const HASH_CHANGE = 'hashchange';

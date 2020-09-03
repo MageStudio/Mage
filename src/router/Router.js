@@ -6,19 +6,21 @@ import Config from "../core/config";
 
 import { toQueryString, parseQuery } from '../lib/query';
 import { FEATURE_NOT_SUPPORTED } from '../lib/messages';
+import {
+    ROOT,
+    DIVIDER,
+    HASH,
+    EMPTY,
+    BEFORE_UNLOAD,
+    HASH_CHANGE
+} from '../lib/constants';
 
-const ROOT = '/';
-const DIVIDER = '/';
-const HASH = '#';
-const EMPTY = '';
-
-const BEFORE_UNLOAD = 'beforeunload';
-const HASH_CHANGE = 'hashchange';
 
 class Router {
 
     constructor() {
         this.routes = [];
+        this.currentLevel = ROOT;
     }
 
     storeConfiguration(configuration) {
@@ -65,6 +67,9 @@ class Router {
         return DIVIDER.concat(cleaned);
     }
 
+    setCurrentLevel = hash => { this.currentLevel = hash; }
+    getCurrentLevel = () => this.currentLevel; 
+
     isValidRoute = (route) => this.routes.includes(route);
 
     handleHashChange = () => {
@@ -72,7 +77,14 @@ class Router {
         const query = Router.extractQuery();
 
         if (this.isValidRoute(hash)) {
-            GameRunner.start(hash, query);
+            this.setCurrentLevel(hash);
+            if (!Assets.areLevelAssetsLoaded(hash)) {
+                Assets
+                    .load(hash)
+                    .then(() => GameRunner.start(hash, query))
+            } else {
+                GameRunner.start(hash, query);
+            }
         }
     };
 
@@ -135,13 +147,22 @@ class Router {
                     const query = Router.extractQuery();
 
                     if (this.isValidRoute(currentHash)) {
-                        GameRunner
-                            .start(currentHash, query)
-                            .then(resolve);
+                        this.setCurrentLevel(currentHash);
+                        Assets
+                            .load(currentHash)
+                            .then(() => {
+                                GameRunner
+                                    .start(currentHash, query)
+                                    .then(resolve);
+                            });
                     } else {
-                        GameRunner
-                            .start(ROOT, query)
-                            .then(resolve);
+                        Assets
+                            .load(ROOT)
+                            .then(() => {
+                                GameRunner
+                                    .start(ROOT, query)
+                                    .then(resolve);
+                            });
                     }
                 })
                 .catch((failures) => console.error(FEATURE_NOT_SUPPORTED.concat(failures)));

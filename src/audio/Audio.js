@@ -1,147 +1,150 @@
 import {
-	Vector3
+    Vector3
 } from 'three';
+import Router from '../router/Router';
 import Scene from '../core/Scene';
+import { buildAssetId } from '../core/Assets';
 
 const TIME_FOR_UPDATE = 150;
 
 export class Audio {
 
-	constructor() {
-		this.DELAY_FACTOR = 0.02;
-		this.DELAY_STEP = 1; //millis
-		this.DELAY_MIN_VALUE = 0.2;
-		this.DELAY_NORMAL_VALUE = 40;
-		this.VOLUME = 20;
-		this._volume = 20;
+    constructor() {
+        this.DELAY_FACTOR = 0.02;
+        this.DELAY_STEP = 1; //millis
+        this.DELAY_MIN_VALUE = 0.2;
+        this.DELAY_NORMAL_VALUE = 40;
+        this.VOLUME = 20;
+        this._volume = 20;
 
-		this.numSound = 0;
-		this.soundLoaded = 0;
-	}
+        this.numSound = 0;
+        this.soundLoaded = 0;
 
-	getVolume() {
-		if (this._volume) {
-			return this._volume;
-		}
-	}
+        this.sounds = [];
+        this.map = {};
+    }
 
-	setVolume(value) {
-		this._volume = value;
-		this.volume.gain.value = this._volume;
-	}
+    createAudioContext() {
+        const AudioContext = window.AudioContext || window.webkitAudioContext || null;
 
-	load = (audio) => {
-		this.map = {};
-		this.sounds = [];
-		this.audio = audio;
+        if (AudioContext) {
+            //creating a new audio context if it's available.
+            this.context = new AudioContext();
+            //creating a gain node to control volume
+            this.volume = this.context.createGain();
+            this.volume.gain.value = this.getVolume();
+            //connecting volume node to context destination
+            this.volume.connect(this.context.destination);
+        } else {
+            console.error("No Audio Context available, sorry.");
+        }
+    }
 
-		if (!window) {
-			return Promise.resolve('audio');
-		}
+    getVolume() {
+        if (this._volume) {
+            return this._volume;
+        }
+    }
 
-		this.AudioContext = window.AudioContext || window.webkitAudioContext || null;
+    setVolume(value) {
+        this._volume = value;
+        this.volume.gain.value = this._volume;
+    }
 
-		if (this.AudioContext) {
-			//creating a new audio context if it's available.
-			this.context = new this.AudioContext();
-			//creating a gain node to control volume
-			this.volume = this.context.createGain();
-			this.volume.gain.value = this.getVolume();
-			//connecting volume node to context destination
-			this.volume.connect(this.context.destination);
-		} else {
-			console.error("No Audio Context available, sorry.");
-		}
+    load = (audio = {}, level) => {
+        this.audio = audio;
+        this.createAudioContext();
 
-		if (Object.keys(this.audio).length === 0) {
-			return Promise.resolve('audio');
-		}
+        if (Object.keys(this.audio).length === 0) {
+            return Promise.resolve('audio');
+        }
 
-		return Promise
-			.all(Object
-				.keys(this.audio)
-				.map(this.loadSingleFile)
-			);
-	}
+        return Promise
+            .all(Object
+                .keys(this.audio)
+                .map(id => this.loadSingleFile(id, level))
+            );
+    }
 
-	get(id) {
-		return this.map[id] || false;
-	}
+    get(id) {
+        const level = Router.getCurrentLevel();
+        return this.map[id] || this.map[buildAssetId(id, level)] || false;
+    }
 
-	loadSingleFile = (id) => {
-		const path = this.audio[id];
-		// Load a sound file using an ArrayBuffer XMLHttpRequest.
-		const request = new XMLHttpRequest();
-		return new Promise(resolve => {
-			request.open("GET", path, true);
-			request.responseType = "arraybuffer";
-			request.onreadystatechange = (e) => {
-				if (request.readyState === 4 && request.status === 200) {
-					this.context.decodeAudioData(request.response,
-						(buffer) => {
-							this.map[id] = buffer;
-							resolve();
-						},
-						() => {
-							this.map[id] = null;
-							resolve();
-							console.error("Decoding the audio buffer failed");
-						});
-				}
-			};
-			request.send();
-		})
-	}
+    loadSingleFile = (name, level) => {
+        const path = this.audio[name];
+        const request = new XMLHttpRequest();
+        const id = buildAssetId(name, level);
 
-	add(sound) {
-		this.sounds.push(sound);
-	}
+        return new Promise(resolve => {
+            request.open("GET", path, true);
+            request.responseType = "arraybuffer";
+            request.onreadystatechange = (e) => {
+                if (request.readyState === 4 && request.status === 200) {
+                    this.context.decodeAudioData(request.response,
+                        buffer => {
+                            this.map[id] = buffer;
+                            resolve();
+                        },
+                        () => {
+                            this.map[id] = null;
+                            resolve();
+                        });
+                }
+            };
+            request.send();
+        })
+    }
 
-	update(dt) {
-		return new Promise(resolve => {
-			const start = new Date();
-			for (var index in this.sounds) {
-				const sound = this.sounds[index];
-				sound.update(dt);
+    add(sound) {
+        this.sounds.push(sound);
+    }
 
-				//now handling listener
-				Scene.getCameraObject().updateMatrixWorld();
-				const p = new Vector3();
-				p.setFromMatrixPosition(Scene.getCameraObject().matrixWorld);
+    update(dt) {
+        return new Promise(resolve => {
+            const start = new Date();
+            for (var index in this.sounds) {
+                const sound = this.sounds[index];
+                sound.update(dt);
 
-				//setting audio engine context listener position on camera position
-				this.context.listener.setPosition(p.x, p.y, p.z);
+                //now handling listener
+                Scene.getCameraObject().updateMatrixWorld();
+                const p = new Vector3();
+                p.setFromMatrixPosition(Scene.getCameraObject().matrixWorld);
 
-				//this is to add up and down vector to our camera
-				// The camera's world matrix is named "matrix".
-				const m = Scene.getCameraObject().matrix;
+                //setting audio engine context listener position on camera position
+                this.context.listener.setPosition(p.x, p.y, p.z);
 
-				const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
-				m.elements[12] = m.elements[13] = m.elements[14] = 0;
+                //this is to add up and down vector to our camera
+                // The camera's world matrix is named "matrix".
+                const m = Scene.getCameraObject().matrix;
 
-				// Multiply the orientation vector by the world matrix of the camera.
-				const vec = new Vector3(0,0,1);
-				vec.applyMatrix4(m);
-				vec.normalize();
+                const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
+                m.elements[12] = m.elements[13] = m.elements[14] = 0;
 
-				// Multiply the up vector by the world matrix.
-				const up = new Vector3(0,-1,0);
-				up.applyMatrix4(m);
-				up.normalize();
+                // Multiply the orientation vector by the world matrix of the camera.
+                const vec = new Vector3(0,0,1);
+                vec.applyMatrix4(m);
+                vec.normalize();
 
-				// Set the orientation and the up-vector for the listener.
-				this.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
+                // Multiply the up vector by the world matrix.
+                const up = new Vector3(0,-1,0);
+                up.applyMatrix4(m);
+                up.normalize();
 
-				m.elements[12] = mx;
-				m.elements[13] = my;
-				m.elements[14] = mz;
+                // Set the orientation and the up-vector for the listener.
+                this.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
 
-				if ((+new Date() - start) > TIME_FOR_UPDATE) break;
-			}
+                m.elements[12] = mx;
+                m.elements[13] = my;
+                m.elements[14] = mz;
 
-			resolve();
-		});
-	}
+                if ((+new Date() - start) > TIME_FOR_UPDATE) break;
+            }
+
+            resolve();
+        });
+    }
 }
 
 export default new Audio();
