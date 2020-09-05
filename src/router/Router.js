@@ -1,6 +1,6 @@
 import GameRunner from '../runner/GameRunner';
 import Assets from "../core/Assets";
-import util from '../lib/util';
+import Features from '../lib/features';
 import * as network from '../lib/network';
 import Config from "../core/config";
 
@@ -67,7 +67,12 @@ class Router {
         return DIVIDER.concat(cleaned);
     }
 
-    setCurrentLevel = hash => { this.currentLevel = hash; }
+    setCurrentLevel = hash => {
+        this.currentLevel = hash;
+
+        Assets.setCurrentLevel(this.currentLevel);
+    };
+
     getCurrentLevel = () => this.currentLevel; 
 
     isValidRoute = (route) => this.routes.includes(route);
@@ -132,11 +137,11 @@ class Router {
 
             network.listenToNetworkChanges();
 
-            util.start();
+            Features.setUpPolyfills();
             Assets.setAssets(assets);
 
-            util.checker
-                .checkFeatures()
+            Features
+                .checkSupportedFeatures()
                 .then(Assets.load)
                 .then(() => {
                     this.setHashChangeListener();
@@ -165,7 +170,11 @@ class Router {
                             });
                     }
                 })
-                .catch((failures) => console.error(FEATURE_NOT_SUPPORTED.concat(failures)));
+                .catch((failures) => {
+                    console.log(failures);
+                    const features = failures.map(({ name }) => name);
+                    console.error(FEATURE_NOT_SUPPORTED.concat(features))
+                });
         });
     }
 }

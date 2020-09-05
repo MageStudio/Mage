@@ -1,5 +1,5 @@
 import { EventDispatcher } from "three";
-import util, { FEATURES } from '../../lib/util';
+import Features, { FEATURES } from '../../lib/features';
 import { gamepadDisconnected, gamepadConnected } from "../../store/actions/input";
 import { dispatch } from '../../store/Store';
 import { GAMEPAD_BUTTON_MAPPINGS, STANDARD } from "./constants";
@@ -77,7 +77,7 @@ export default class Gamepad extends EventDispatcher {
     }
 
     enable() {
-        if (util.isFeatureSupported(FEATURES.GAMEPADAPI)) {
+        if (Features.isFeatureSupported(FEATURES.GAMEPADAPI)) {
             this.enabled = true;
             window.addEventListener(WINDOW_GAMEPAD_CONNECTED_EVENT, this.onGamepadConnected);
             window.addEventListener(WINDOW_GAMEPAD_DISCONNECTED_EVENT, this.onGamepadDisconnected);

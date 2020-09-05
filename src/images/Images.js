@@ -3,6 +3,9 @@ import {
     ImageLoader
 } from 'three';
 
+import { buildAssetId } from '../lib/utils/assets';
+import { ROOT } from '../lib/constants';
+
 export class Images {
 
     constructor() {
@@ -17,7 +20,13 @@ export class Images {
 
         this.images = {};
         this.textures = {};
+
+        this.currentLevel = ROOT;
     }
+
+    setCurrentLevel = level => {
+        this.currentLevel = level;
+    };
 
     load = (images = {}, textures = {}, level) => {
         // extending assets images with our defaults
@@ -41,8 +50,7 @@ export class Images {
     }
 
     get(id) {
-        const level = Router.getCurrentLevel();
-        return this.map[id] || this.map[buildAssetId(id, level)] || false;
+        return this.map[id] || this.map[buildAssetId(id, this.currentLevel)] || false;
     }
 
     loadSingleImage = (name, level) => {

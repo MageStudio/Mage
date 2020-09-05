@@ -5,7 +5,8 @@ import Models from '../models/Models';
 import Particles from '../fx/particles/Particles';
 import Lights from '../lights/Lights';
 import Scripts from '../scripts/Scripts';
-import { ASSETS_TYPES, DIVIDER } from '../lib/constants';
+import { ASSETS_TYPES, ROOT } from '../lib/constants';
+import { isLevelName } from '../lib/utils/assets';
 
 const DEFAULT_COMMON_ASSETS = {
     [ASSETS_TYPES.AUDIO]: {},
@@ -24,13 +25,19 @@ const DEFAULT_ASSETS = {
     levels: {}
 };
 
-export const buildAssetId = (name, level) => level ? `${level}_${name}` : name;
-export const isLevelName = level => level.startsWith(DIVIDER);
-
 export class Assets {
 
     constructor() {
         this.assets = DEFAULT_ASSETS;
+        this.currentLevel = ROOT;
+    }
+
+    setCurrentLevel = level => {
+        this.currentLevel = level;
+
+        Models.setCurrentLevel(level);
+        Audio.setCurrentLevel(level);
+        Images.setCurrentLevel(level);
     }
 
     parseAssets(assets) {
@@ -41,7 +48,14 @@ export class Assets {
             if (validAssetsTypes.includes(lowerCaseType)) {
                 group.common[lowerCaseType] = assets[assetType];
             } else if (isLevelName(lowerCaseType)) {
-                group.levels[lowerCaseType] = assets[assetType] || DEFAULT_COMMON_ASSETS;
+                const levelAssets = assets[assetType] || {};
+                
+                group.levels[lowerCaseType] = {
+                    ...DEFAULT_COMMON_ASSETS,
+                    ...levelAssets
+                };
+
+
             }
             return group;
         };
@@ -50,6 +64,7 @@ export class Assets {
             .keys(assets)
             .reduce(reducer, DEFAULT_ASSETS);
     }
+    
 
     setAssets(assets = DEFAULT_COMMON_ASSETS) {
         this.assets = this.parseAssets(assets);
@@ -69,7 +84,7 @@ export class Assets {
        this.assets.common._isLoaded = loaded;
     }
 
-    areLevelAssetsLoaded = (level) => this.getLevelAssets(level)._isLoaded
+    areLevelAssetsLoaded = (level) => this.getLevelAssets(level)._isLoaded;
 
     areCommonAssetsLoaded = () => this.getCommonAssets()._isLoaded;
 

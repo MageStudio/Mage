@@ -1,9 +1,10 @@
 import {
     Vector3
 } from 'three';
-import Router from '../router/Router';
+// import Router from '../router/Router';
 import Scene from '../core/Scene';
-import { buildAssetId } from '../core/Assets';
+import { buildAssetId } from '../lib/utils/assets';
+import { ROOT } from '../lib/constants';
 
 const TIME_FOR_UPDATE = 150;
 
@@ -22,6 +23,12 @@ export class Audio {
 
         this.sounds = [];
         this.map = {};
+
+        this.currentLevel = ROOT;
+    }
+
+    setCurrentLevel = level => {
+        this.currentLevel = level;
     }
 
     createAudioContext() {
@@ -67,8 +74,7 @@ export class Audio {
     }
 
     get(id) {
-        const level = Router.getCurrentLevel();
-        return this.map[id] || this.map[buildAssetId(id, level)] || false;
+        return this.map[id] || this.map[buildAssetId(id, this.currentLevel)] || false;
     }
 
     loadSingleFile = (name, level) => {

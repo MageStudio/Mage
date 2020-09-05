@@ -8,8 +8,8 @@ import ColladaLoader from '../loaders/ColladaLoader';
 import SkeletonUtils from './SkeletonUtils';
 
 import { prepareModel } from '../lib/meshUtils';
-import { buildAssetId } from '../core/Assets';
-import Router from '../router/Router';
+import { buildAssetId } from '../lib/utils/assets';
+import { ROOT } from '../lib/constants';
 
 const EXTENSIONS = {
     JSON: 'json',
@@ -72,11 +72,19 @@ class Models {
     constructor() {
         this.map = {};
         this.models = {};
+        this.currentLevel = ROOT;
+    }
+
+    setCurrentLevel = level => {
+        this.currentLevel = level;
     }
 
     getModel = (name, options = {}) => {
-        const level = Router.getCurrentLevel();
-        const { scene, animations, extension } = this.map[id] || this.map[buildAssetId(id, level)] || false;
+        const {
+            scene,
+            animations,
+            extension
+        } = this.map[name] ||this.map[buildAssetId(name, this.currentLevel)] || false;
 
         if (scene) {
             const meshOptions = {

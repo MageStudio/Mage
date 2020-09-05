@@ -29,7 +29,7 @@ import BaseScene, { author } from './core/BaseScene';
 import Universe from './core/Universe';
 import Color from './lib/Color';
 
-import util from './lib/util';
+import Features, { FEATURES } from './lib/features';
 import * as math from './lib/math';
 import * as strings from './lib/strings';
 import * as uuid from './lib/uuid';
@@ -89,6 +89,8 @@ export {
     BaseMesh,
     BaseScene,
 
+    FEATURES,
+    Features,
     Config,
     Scene,
     Universe,
@@ -154,7 +156,6 @@ export {
     Color,
     Vector3,
     EventDispatcher,
-    util,
     math,
     strings,
     uuid,
