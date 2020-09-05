@@ -5,10 +5,7 @@ import json from '@rollup/plugin-json';
 import { terser } from 'rollup-plugin-terser';
 
 export default {
-    // input for bundle, same concept as 'entry' in webpack
     input: './src/index.js',
-    // non-relative imports are not included by rollup,
-    // here we explicitly list our external deps
     output: {
         file: './dist/mage.js',
         format: 'esm',
@@ -30,7 +27,7 @@ export default {
                 'vivus': []
             }
         }),
-        // terser(),
+        terser(),
         json()
     ]
 }
