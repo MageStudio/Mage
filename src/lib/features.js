@@ -10,7 +10,7 @@ export const FEATURES = {
     GAMEPADAPI: 'gamepadapi'
 };
 
-export class Checker {
+export class Features {
 
     constructor() {
         this.tests = [
@@ -22,11 +22,32 @@ export class Checker {
         ];
     }
 
-    isFeatureSupported(feature) {
-        return typeof this[feature] === 'function' && this[feature]();
+    setUpPolyfills() {
+        window.requestAnimFrame = (
+            function() {
+                return  window.requestAnimationFrame       ||
+                        window.webkitRequestAnimationFrame ||
+                        window.mozRequestAnimationFrame    ||
+                        window.oRequestAnimationFrame      ||
+                        window.msRequestAnimationFrame     ||
+                        function(callback, element){
+                            window.setTimeout(callback, 1000 / 60);
+                        };
+            }
+        )();
     }
 
-    checkFeatures() {
+    isFeatureSupported(feature) {
+        if (typeof this[feature] === 'function') {
+            const { success } = this[feature]();
+
+            return success;
+        }
+
+        return false;
+    }
+
+    checkSupportedFeatures() {
         const configTests = Config.tests() || [];
         const tests = [
             ...this.tests,
@@ -37,7 +58,6 @@ export class Checker {
             tests.push(FEATURES.WEBGL);
         }
 
-
         const failures = tests
             .map(test => this[test] && this[test]())
             .reduce((acc, result) => {
@@ -46,7 +66,6 @@ export class Checker {
                 }
                 return acc;
             }, []);
-
 
         return failures.length ? 
             Promise.reject(failures) :
@@ -202,30 +221,4 @@ export class Checker {
     }
 }
 
-export class Util {
-
-    constructor() {
-        this.checker = new Checker();
-    }
-
-    isFeatureSupported(feature) {
-        return this.checker.isFeatureSupported(feature);
-    }
-
-    start() {
-        window.requestAnimFrame = (
-            function() {
-                return  window.requestAnimationFrame       ||
-                        window.webkitRequestAnimationFrame ||
-                        window.mozRequestAnimationFrame    ||
-                        window.oRequestAnimationFrame      ||
-                        window.msRequestAnimationFrame     ||
-                        function(callback, element){
-                            window.setTimeout(callback, 1000 / 60);
-                        };
-            }
-        )();
-    }
-}
-
-export default new Util();
+export default new Features();

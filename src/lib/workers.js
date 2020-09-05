@@ -1,5 +1,5 @@
 import { WORKERS_NOT_AVAILABLE } from './messages';
-import util, { FEATURES } from './util';
+import Features, { FEATURES } from './features';
 
 const BLOB_TYPE = 'application/javascript';
 
@@ -8,7 +8,7 @@ export const createBlob = (task) => (
 );
 
 export const createWorker = (task, message) => {
-    if (util.isFeatureSupported(FEATURES.WEBWORKER)) {
+    if (Features.isFeatureSupported(FEATURES.WEBWORKER)) {
         const url = URL.createObjectURL(createBlob(task));
         const worker = new Worker(url);
 
