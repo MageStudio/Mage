@@ -67,8 +67,6 @@ export class Features {
                 return acc;
             }, []);
 
-        console.log(failures);
-
         return failures.length ? 
             Promise.reject(failures) :
             Promise.resolve();

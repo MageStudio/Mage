@@ -170,10 +170,14 @@ class Router {
                             });
                     }
                 })
-                .catch((failures) => {
-                    console.log(failures);
-                    const features = failures.map(({ name }) => name);
-                    console.error(FEATURE_NOT_SUPPORTED.concat(features))
+                .catch((e) => {
+                    if (e instanceof Array) {
+                        const features = e.map(({ name }) => name);
+                        console.error(FEATURE_NOT_SUPPORTED.concat(features))
+                    } else {
+                        console.error(e);
+                    }
+                    
                 });
         });
     }
