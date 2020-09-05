@@ -1,7 +1,6 @@
 import {
     Vector3
 } from 'three';
-// import Router from '../router/Router';
 import Scene from '../core/Scene';
 import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
