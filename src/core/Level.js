@@ -24,7 +24,7 @@ export const author = {
     website: 'http://mage.studio'
 };
 
-export class BaseScene extends EventDispatcher {
+export class Level extends EventDispatcher {
 
     constructor(options) {
         super();
@@ -38,6 +38,24 @@ export class BaseScene extends EventDispatcher {
         this.enableInput();
     }
 
+    prepareScene() {}
+
+    onStateChange = (state) => {};
+    onCreate() {}
+    onUpdate() {}
+    onFailedTest(message, test) {}
+    onSuccededTest(message) {}
+    onBeforeDispose() {}
+    onDispose() {}
+    
+    onInputEnabled() {}
+    onInputDisabled() {}
+
+    onUiEnabled() {}
+    onUiDisabled() {}
+
+    onResize = () => Scene.onResize();
+
     enableInput = () => {
         Input.enable();
         if (!this.inputListenersAreSet) {
@@ -48,6 +66,7 @@ export class BaseScene extends EventDispatcher {
                 }
             });
             this.inputListenersAreSet = true;
+            this.onInputEnabled();
         }
     };
 
@@ -60,6 +79,7 @@ export class BaseScene extends EventDispatcher {
             }
         });
         this.inputListenersAreSet = false;
+        this.onInputDisabled();
     };
 
 
@@ -69,20 +89,14 @@ export class BaseScene extends EventDispatcher {
             ..._props
         };
         mount(RootComponent, props);
+
+        this.onUiEnabled();
     };
 
-    disableUI = () => unmount();
-
-    prepareScene() {}
-
-    onStateChange = (state) => {};
-    onCreate() {}
-    onUpdate() {}
-    onFailedTest(message, test) {}
-    onSuccededTest(message) {}
-    onBeforeDispose() {}
-    onDispose() {}
-    onResize = () => Scene.onResize();
+    disableUI = () => {
+        unmount();
+        this.onUiDisabled();
+    }
 
     parseScene = ({ meshes = [], models = [], lights = [] }, options = {}) => {
         return new Promise((resolve, reject) => {
@@ -119,7 +133,7 @@ export class BaseScene extends EventDispatcher {
 
 
     requestNextAnimationFrame = () => {
-        this.requestAnimationFrameId = requestAnimFrame(this.render.bind(this));
+        this.requestAnimationFrameId = requestNextFrame(this.render.bind(this));
     }
 
     cancelNextAnimationFrame = () => {
@@ -186,4 +200,4 @@ export class BaseScene extends EventDispatcher {
 
 }
 
-export default BaseScene;
+export default Level;

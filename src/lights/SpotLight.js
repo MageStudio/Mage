@@ -1,6 +1,6 @@
 import Light from './Light';
 import Config from '../core/config';
-import { BaseMesh } from '../entities';
+import { Element } from '../entities';
 import {
     SpotLight as THREESpotLight,
     SpotLightHelper,
@@ -43,7 +43,7 @@ export default class SpotLight extends Light {
             wireframe: true
         });
 
-        const target = new BaseMesh(geometry, material);
+        const target = new Element(geometry, material);
 
         target.position(initialPosition);
 

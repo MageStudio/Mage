@@ -32,7 +32,7 @@ export const ENTITY_TYPES = {
 
 export const DEFAULT_TAG = 'all';
 
-export default class BaseEntity extends EventDispatcher {
+export default class Entity extends EventDispatcher {
 
     constructor({ serializable = true, tag = '', tags = [] }) {
         super();
@@ -53,8 +53,10 @@ export default class BaseEntity extends EventDispatcher {
 
         if (!this.hasTag(tagName)) {
             this.tags.push(tagName);
+            return true;
         } else {
             console.log(TAG_ALREADY_EXISTS, tagName);
+            return false;
         }
     }
 

@@ -3,3 +3,5 @@ export const upperCaseFirst = (sentence = '') => (
         `${sentence[0].toUpperCase()}${sentence.slice(1, sentence.length)}` :
         ''
 );
+
+export const removeFirst = sentence => sentence.slice(1, sentence.length);

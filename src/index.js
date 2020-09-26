@@ -1,6 +1,6 @@
 // import Assets from './core/Assets';
 import {
-    BaseMesh,
+    Element,
     Camera,
     Line,
     CurveLine,
@@ -24,7 +24,7 @@ import {
     Vector3,
     EventDispatcher
 } from 'three';
-import BaseScene, { author } from './core/BaseScene';
+import Level, { author } from './core/Level';
 
 import Universe from './core/Universe';
 import Color from './lib/Color';
@@ -86,8 +86,8 @@ import PostProcessing from './fx/postprocessing/PostProcessing';
 
 export {
     author,
-    BaseMesh,
-    BaseScene,
+    Element,
+    Level,
 
     FEATURES,
     Features,

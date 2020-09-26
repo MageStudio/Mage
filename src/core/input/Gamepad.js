@@ -90,18 +90,28 @@ export default class Gamepad extends EventDispatcher {
         window.removeEventListener(WINDOW_GAMEPAD_DISCONNECTED_EVENT, this.onGamepadDisconnected);
     }
 
-    transformGamepdasForEvent = () => (
+    getConnectedGamepads() {
+        return this.gamepads;
+    }
+
+    transformGamepadsForEvent = () => (
         Object
             .keys(this.gamepads)
             .reduce((acc, index) => {
-                const gamepad = this.gamepads[index];
+                const {
+                    index: gamepadIndex,
+                    connected,
+                    timestamp,
+                    id,
+                    mapping
+                } = this.gamepads[index];
 
                 acc[index] = {
-                    index: gamepad.index,
-                    connected: gamepad.connected,
-                    timestamp: gamepad.timestamp,
-                    id: gamepad.id,
-                    mapping: gamepad.mapping
+                    index: gamepadIndex,
+                    connected,
+                    timestamp,
+                    id,
+                    mapping
                 }
                 
                 return acc;
@@ -114,7 +124,7 @@ export default class Gamepad extends EventDispatcher {
             type: GAMEPAD_CONNECTED_EVENT,
             gamepad: e.gamepad
         });
-        dispatch(gamepadConnected(this.transformGamepdasForEvent()));
+        dispatch(gamepadConnected(this.transformGamepadsForEvent()));
     }
     onGamepadDisconnected = (e) => {
         this.removeGamepad(e.gamepad);
@@ -122,7 +132,7 @@ export default class Gamepad extends EventDispatcher {
             type: GAMEPAD_DISCONNECTED_EVENT,
             gamepad: e.gamepad
         });
-        dispatch(gamepadDisconnected(this.transformGamepdasForEvent()));
+        dispatch(gamepadDisconnected(this.transformGamepadsForEvent()));
     }
 
     addGamepad(gamepad) { this.gamepads[gamepad.index] = gamepad; }

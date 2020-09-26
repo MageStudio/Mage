@@ -1,4 +1,4 @@
-import { BaseMesh, ENTITY_TYPES } from '../entities';
+import { Element, ENTITY_TYPES } from '../entities';
 import {
     ObjectLoader
 } from 'three';
@@ -98,7 +98,7 @@ class Models {
                 model = SkeletonUtils.clone(scene);
             }
 
-            const mesh = new BaseMesh(null, null, meshOptions);
+            const mesh = new Element(null, null, meshOptions);
 
             mesh.setMesh({ mesh: prepareModel(model) });
             mesh.setEntityType(ENTITY_TYPES.MODEL);

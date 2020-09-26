@@ -6,7 +6,7 @@ import {
     Vector3,
     Vector2
 } from 'three';
-import { BaseEntity, ENTITY_TYPES, Line, Box } from './index';
+import { Entity, ENTITY_TYPES, Line, Box } from './index';
 
 import {
     MESH_NOT_SET,
@@ -35,9 +35,12 @@ import {
 const BOUNDING_BOX_COLOR = 0xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
 
+const COLLIDER_TAG = 'collider';
+const COLLIDER_COLOR = 0xff0000;
+
 const DEFAULT_COLLIDER_OFFSET = { x: 0, y: 0, z: 0};
 
-export default class BaseMesh extends BaseEntity {
+export default class Element extends Entity {
 
     constructor(geometry, material, options = {}) {
         super(options);
@@ -61,6 +64,13 @@ export default class BaseMesh extends BaseEntity {
         this.animationHandler = undefined;
 
         this.setEntityType(ENTITY_TYPES.MESH);
+    }
+
+    addTag(tag) {
+        super.addTag(tag);
+
+        const existingTags = this.getMesh().userData.tags || [];
+        this.getMesh().userData.tags = [ ...existingTags, tag ];
     }
 
     hasMesh() {
@@ -263,32 +273,43 @@ export default class BaseMesh extends BaseEntity {
                 .clone()
                 .add(new Vector3(offset.x, offset.y, offset.z));
 
+            if (helper) {
+                helper.updatePoints(this.getPointsFromRayCollider(ray, position));
+            }
+
             ray.ray.origin.copy(position);
 
-            if (helper) {
-                helper.updatePoints(this.getPointsFromRayCollider(ray));
-            }
         });
     };
 
-    getPointsFromRayCollider = (ray) => {
-        const origin = this.mesh.position.clone();
-        const end = origin.add(ray.ray.direction.clone().multiplyScalar(ray.far));
+    getPointsFromRayCollider = (ray, position) => {
+        const origin = position.clone();
+        const end = origin.clone().add(ray.ray.direction.clone().multiplyScalar(ray.far));
         //ray.ray.direction.clone().multiplyScalar(ray.far);
 
         return [origin, end];
     };
 
-    createColliderHelper = (ray) => {
-        this.colliderHelper = new Line(this.getPointsFromRayCollider(ray));
-    }
-
     createRayColliderFromVector = ({ type, vector }, near, far, offset, debug) => {
+        const parsedOffset = {
+            ...DEFAULT_COLLIDER_OFFSET,
+            ...offset,
+        };
+
         const position = this.mesh.position
             .clone()
-            .add(new Vector3(offset.x, offset.y, offset.z));
+            .add(new Vector3(parsedOffset.x, parsedOffset.y, parsedOffset.z));
+
         const ray = new Raycaster(position, vector, near, far);
-        const helper = debug && this.createColliderHelper(ray);
+        
+        let helper;
+        if (debug) {
+            const points = this.getPointsFromRayCollider(ray, position);
+            helper = new Line(points);
+            helper.addTag(COLLIDER_TAG);
+            helper.setColor(COLLIDER_COLOR);
+            helper.setThickness(4);
+        }
         
         if (this.getEntityType() === ENTITY_TYPES.SPRITE) {
             ray.setFromCamera(position, Scene.getCameraObject());
@@ -298,14 +319,14 @@ export default class BaseMesh extends BaseEntity {
             type,
             ray,
             helper,
-            offset
+            offset: parsedOffset
         };
     };
 
     setColliders = (vectors = [], options = []) => {
         const colliders = vectors.map((vector, i) => {
             const { near = 0, far = 10, debug = false, offset = DEFAULT_COLLIDER_OFFSET } = options[i];
-            return this.createRayColliderFromVector(vector, near, far, offset,  debug)
+            return this.createRayColliderFromVector(vector, near, far, offset, debug)
         });
 
         this.colliders = [
@@ -315,10 +336,6 @@ export default class BaseMesh extends BaseEntity {
     };
 
     checkRayCollider = ({ ray, type }) => {
-        const intersections = ray
-            .intersectObjects(Scene.scene.children)
-            .filter(collision => collision.object.uuid !== this.uuid());
-
         const mapCollision = (collision) => {
             const { distance, object } = collision;
             const { uuid } = object;
@@ -327,10 +344,16 @@ export default class BaseMesh extends BaseEntity {
                 distance,
                 mesh: Universe.getByUUID(uuid)
             };
-        }
+        };
+
+        const collisions = ray
+            .intersectObjects(Scene.scene.children)
+            .filter(collision => collision.object.uuid !== this.uuid())
+            .map(mapCollision)
+            .filter(({ mesh }) => !mesh.hasTag(COLLIDER_TAG));
 
         return {
-            collisions: intersections.length ? intersections.map(mapCollision) : [],
+            collisions,
             type
         };
     };

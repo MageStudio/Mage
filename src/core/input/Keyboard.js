@@ -1,9 +1,15 @@
 import hotkeys from 'hotkeys-js';
+import {
+    KEYBOARD_COMBO_ALREADY_REGISTERED,
+    KEYBOARD_COMBO_IS_INVALID
+} from '../../lib/messages';
 
 const DEFAULT_OPTIONS = {
     keyup: true,
     keydown: true
 };
+
+const COMBINATION_DIVIDER = '+';
 
 export default class Keyboard {
 
@@ -25,20 +31,31 @@ export default class Keyboard {
     static get KEYDOWN() { return 'keydown'; }
     static get KEYUP() { return 'keyup'; }
 
-    register(combo) {
+    register(combo, handler) {
         if (this.enabled) {
             if (this.combos.includes(combo)) {
-                console.warn('[Mage] Combo already registered');
+                console.warn(KEYBOARD_COMBO_ALREADY_REGISTERED);
                 return;
             }
             this.combos.push(combo);
-            hotkeys(combo, DEFAULT_OPTIONS, this.handler);
+            hotkeys(combo, DEFAULT_OPTIONS, handler || this.handler);
+        }
+    }
+
+    registerCombination(combo = [], handler) {
+        if (combo instanceof Array && combo.length > 1) {
+            this.register(combo.join(COMBINATION_DIVIDER), handler);
+        } else {
+            console.warn(KEYBOARD_COMBO_IS_INVALID, combo);
         }
     }
 
     handler = (event, handler) => {
         if (!this.enabled) return;
         this.listener(event, handler);
+
+        // this stops propagation and deafult OS handling for events like cmd + s, cmd + r
+        return false;
     }
 
     enable(cb = f => f) {

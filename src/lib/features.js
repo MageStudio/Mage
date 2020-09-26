@@ -23,7 +23,9 @@ export class Features {
     }
 
     setUpPolyfills() {
-        window.requestAnimFrame = (
+        const frameRate = Config.screen().frameRate;
+
+        window.requestNextFrame = (
             function() {
                 return  window.requestAnimationFrame       ||
                         window.webkitRequestAnimationFrame ||
@@ -31,7 +33,7 @@ export class Features {
                         window.oRequestAnimationFrame      ||
                         window.msRequestAnimationFrame     ||
                         function(callback, element){
-                            window.setTimeout(callback, 1000 / 60);
+                            window.setTimeout(callback, 1000 / frameRate);
                         };
             }
         )();

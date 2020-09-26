@@ -1,4 +1,4 @@
-import { BaseMesh } from '../entities';
+import { Element } from '../entities';
 import Loader from './Loader';
 
 export class MeshLoader extends Loader {
@@ -24,7 +24,7 @@ export class MeshLoader extends Loader {
 
     loadMesh(parsedMesh, scripts, texture, meshOptions) {
         const { scriptEnabled = true } = this.options;
-        const mesh = new BaseMesh(parsedMesh.geometry, parsedMesh.material, meshOptions);
+        const mesh = new Element(parsedMesh.geometry, parsedMesh.material, meshOptions);
 
         mesh.setPosition({ ...parsedMesh.position });
         mesh.setRotation({ ...parsedMesh.rotation });

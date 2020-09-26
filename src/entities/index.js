@@ -1,11 +1,11 @@
-import BaseEntity, { ENTITY_TYPES } from './BaseEntity';
-import BaseMesh from './BaseMesh';
+import Entity, { ENTITY_TYPES } from './Entity';
+import Element from './Element';
 import Camera from './Camera';
 import { Box, Cube, Cylinder, Grid, Line, CurveLine, Plane, Sphere, Sprite } from './base';
 
 export {
-    BaseMesh,
-    BaseEntity,
+    Element,
+    Entity,
     ENTITY_TYPES,
     Camera,
     Box,

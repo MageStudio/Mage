@@ -25,9 +25,15 @@ export default class Mouse extends EventDispatcher {
         this.meshDeselectEvent = { type: 'meshDeselect' };
     }
 
+    hasRaycaster() {
+        return Boolean(this.raycaster);
+    }
+
     createRayCaster() {
-        this.raycaster = new Raycaster();
-        this.raycaster.setFromCamera(this.mouse, Scene.getCameraObject());
+        if (!this.hasRaycaster()) {
+            this.raycaster = new Raycaster();
+            this.raycaster.setFromCamera(this.mouse, Scene.getCameraObject());
+        }   
     }
 
     enable() {
@@ -79,7 +85,16 @@ export default class Mouse extends EventDispatcher {
         }
     }
 
-    onMouseMove = () => {
+    onMouseMove = event => {
+        if (!this.enabled) return;
+        event.preventDefault();
+
+        this.mouseUpEvent.mouse = this.parseMouseEvent(event);
+
+        this.dispatchEvent(this.mouseUpEvent);
+    }
+
+    onMouseUp = event => {
         if (!this.enabled) return;
         event.preventDefault();
 
@@ -98,13 +113,15 @@ export default class Mouse extends EventDispatcher {
     meshExists = ({ mesh }) => !!mesh;
 
     getIntersections = () => {
-        this.raycaster.setFromCamera(this.mouse, Scene.getCameraObject());
+        if (this.hasRaycaster()) {
+            this.raycaster.setFromCamera(this.mouse, Scene.getCameraObject());
 
-        return this.raycaster
-            .intersectObjects(Scene.getChildren())
-            .filter(this.isIntersectionAMesh)
-            .map(this.getMeshFromUniverse)
-            .filter(this.meshExists);
+            return this.raycaster
+                .intersectObjects(Scene.getChildren())
+                .filter(this.isIntersectionAMesh)
+                .map(this.getMeshFromUniverse)
+                .filter(this.meshExists);
+        }
     }
 
     onMouseDown = (event) => {

@@ -2,9 +2,9 @@ import {
     CubeGeometry,
     MeshBasicMaterial
 } from 'three';
-import { BaseMesh, ENTITY_TYPES } from '../index';
+import { Element, ENTITY_TYPES } from '../index';
 
-export default class Box extends BaseMesh {
+export default class Box extends Element {
 
     constructor(width = 10, height = 10, depth = 10, color, options = {}) {
         super(null, null, options);

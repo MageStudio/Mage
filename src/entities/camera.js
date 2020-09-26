@@ -1,7 +1,7 @@
-import { BaseEntity } from './index';
+import { Entity } from './index';
 import { PerspectiveCamera } from 'three';
 
-export default class Camera extends BaseEntity {
+export default class Camera extends Entity {
 
 	constructor(options) {
 		const name = options.name || 'camera';
