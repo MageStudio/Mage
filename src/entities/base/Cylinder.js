@@ -2,9 +2,9 @@ import {
     CylinderGeometry,
     MeshBasicMaterial
 } from 'three';
-import { BaseMesh, ENTITY_TYPES } from '../index';
+import { Element, ENTITY_TYPES } from '../index';
 
-export default class Cylinder extends BaseMesh {
+export default class Cylinder extends Element {
 
     constructor(radiusTop = 10, radiusBottom = 10, height, color, options = {}) {
         super(null, null, options);

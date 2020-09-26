@@ -4,15 +4,18 @@ import {
     SpriteMaterial,
     Sprite as THREESprite
 } from 'three';
-import { BaseMesh, ENTITY_TYPES } from '../index';
+import { Element, ENTITY_TYPES } from '../index';
 
 const validateAnisotropy = (anisotropy) => {
-    const max = Scene.getRenderer().getMaxAnisotropy();
+    const max = Scene
+        .getRenderer()
+        .capabilities
+        .getMaxAnisotropy();
 
     return anisotropy > max ? max : anisotropy;
 };
 
-export default class Sprite extends BaseMesh {
+export default class Sprite extends Element {
 
     constructor(width = 20, height = 20, spriteTexture, options = {}) {
         super(null, null, options);

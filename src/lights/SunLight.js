@@ -1,6 +1,6 @@
 import Light from './Light';
 import Config from '../core/config';
-import { BaseMesh } from '../entities';
+import { Element } from '../entities';
 import {
     DirectionalLight as THREEDirectionalLight,
     MeshBasicMaterial,
@@ -98,7 +98,7 @@ export default class SunLight extends Light {
             wireframe: true
         });
 
-        const target = new BaseMesh(geometry, material);
+        const target = new Element(geometry, material);
 
         target.position(initialPosition);
 

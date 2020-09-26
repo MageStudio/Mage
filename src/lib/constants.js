@@ -55,5 +55,7 @@ export const DIVIDER = '/';
 export const HASH = '#';
 export const EMPTY = '';
 
+export const DEFAULT_SELECTOR = '#gameContainer';
+
 export const BEFORE_UNLOAD = 'beforeunload';
 export const HASH_CHANGE = 'hashchange';

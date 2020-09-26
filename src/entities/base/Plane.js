@@ -1,4 +1,4 @@
-import { BaseMesh, ENTITY_TYPES } from '../index';
+import { Element, ENTITY_TYPES } from '../index';
 
 import {
     PlaneGeometry,
@@ -10,7 +10,7 @@ import {
 const UP = new Vector3(0, 1, 0);
 const DOWN = new Vector3(0, -1, 0);
 
-export default class Plane extends BaseMesh {
+export default class Plane extends Element {
 
 	constructor(height, width, options = {}) {
 		super(null, null, options);

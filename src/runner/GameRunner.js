@@ -1,4 +1,4 @@
-import BaseScene from '../core/BaseScene';
+import Level from '../core/Level';
 import { subscribeScene, unsubScribeScene } from '../store/Store';
 import storage from '../storage/storage';
 import { PATH_NOT_FOUND } from '../lib/messages';
@@ -35,7 +35,7 @@ export class GameRunner {
             if (GameRunner.isValidClassname(classname)) {
                 this.store[path] = classname;
             } else {
-                this.store[path] = BaseScene;
+                this.store[path] = Level;
             }
             return true;
         } catch(e) {

@@ -12,7 +12,7 @@ import {
     HASH,
     EMPTY,
     BEFORE_UNLOAD,
-    HASH_CHANGE
+    HASH_CHANGE, DEFAULT_SELECTOR
 } from '../lib/constants';
 
 
@@ -128,7 +128,7 @@ class Router {
         window.removeEventListener(HASH_CHANGE, this.handleHashChange);
     }
 
-    start(config, assets, selector) {
+    start(config, assets, selector = DEFAULT_SELECTOR) {
         this.setGlobalWindowEventsListeners();
 
         return new Promise((resolve, reject) => {

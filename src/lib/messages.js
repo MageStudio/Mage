@@ -36,3 +36,6 @@ export const EFFECT_COULD_NOT_BE_CREATED = `${PREFIX}  Could not create requeste
 export const EFFECT_UNAVAILABLE = `${PREFIX}  Requested effect is not available.`;
 
 export const SCRIPT_NOT_FOUND = `${PREFIX} Could not find desired script.`;
+
+export const KEYBOARD_COMBO_ALREADY_REGISTERED = `${PREFIX} Keyboard combo already registered.`;
+export const KEYBOARD_COMBO_IS_INVALID = `${PREFIX} Keyboard combo is not valid.`;
