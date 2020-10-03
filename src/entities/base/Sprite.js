@@ -37,4 +37,12 @@ export default class Sprite extends Element {
         this.setMesh({ mesh });
         this.setEntityType(ENTITY_TYPES.SPRITE);
     }
+
+    getRotation() {
+        return this.mesh.material.rotation;
+    }
+
+    setRotation(rotation = this.getRotation()) {
+        this.mesh.material.rotation = rotation;
+    }
 }
