@@ -89,18 +89,18 @@ export default class Mouse extends EventDispatcher {
         if (!this.enabled) return;
         event.preventDefault();
 
-        this.mouseUpEvent.mouse = this.parseMouseEvent(event);
+        this.mouseMoveEvent.mouse = this.parseMouseEvent(event);
 
-        this.dispatchEvent(this.mouseUpEvent);
+        this.dispatchEvent(this.mouseMoveEvent);
     }
 
     onMouseUp = event => {
         if (!this.enabled) return;
         event.preventDefault();
 
-        this.mouseMoveEvent.mouse = this.parseMouseEvent(event);
+        this.mouseUpEvent.mouse = this.parseMouseEvent(event);
 
-        this.dispatchEvent(this.mouseMoveEvent);
+        this.dispatchEvent(this.mouseUpEvent);
     }
 
     isIntersectionAMeshOrSprite = (o) => !!o.object.isMesh || !!o.object.isSprite;
