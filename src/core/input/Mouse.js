@@ -103,7 +103,7 @@ export default class Mouse extends EventDispatcher {
         this.dispatchEvent(this.mouseMoveEvent);
     }
 
-    isIntersectionAMesh = (o) => !!o.object.isMesh;
+    isIntersectionAMeshOrSprite = (o) => !!o.object.isMesh || !!o.object.isSprite;
     getMeshFromUniverse = ({ object: { name } = {}, face, point }) => ({
         face,
         position: point,
@@ -118,7 +118,7 @@ export default class Mouse extends EventDispatcher {
 
             return this.raycaster
                 .intersectObjects(Scene.getChildren())
-                .filter(this.isIntersectionAMesh)
+                .filter(this.isIntersectionAMeshOrSprite)
                 .map(this.getMeshFromUniverse)
                 .filter(this.meshExists);
         }

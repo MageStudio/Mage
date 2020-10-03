@@ -54,8 +54,6 @@ export class Level extends EventDispatcher {
     onUiEnabled() {}
     onUiDisabled() {}
 
-    onResize = () => Scene.onResize();
-
     enableInput = () => {
         Input.enable();
         if (!this.inputListenersAreSet) {
@@ -130,7 +128,6 @@ export class Level extends EventDispatcher {
     };
 
     preload = (url = this.getJSONUrl()) => this.loadScene(url);
-
 
     requestNextAnimationFrame = () => {
         this.requestAnimationFrameId = requestNextFrame(this.render.bind(this));
