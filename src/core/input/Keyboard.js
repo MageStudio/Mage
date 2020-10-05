@@ -17,9 +17,11 @@ export default class Keyboard {
         this.keys = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'l', 'k', 'j', 'h', 'g', 'f', 'd', 's', 'a', 'z', 'x', 'c', 'v', 'b', 'n', 'm'];
         this.specials = ['esc', 'escape', 'enter', 'space'];
         this.symbols = [];
+        this.numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
         this.combos = [
             ...this.keys,
+            ...this.numbers,
             ...this.specials,
             ...this.symbols
         ];
