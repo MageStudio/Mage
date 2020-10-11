@@ -11,6 +11,10 @@ export const getProportion = (max1, b, max2) => {
     return (max1 * b)/max2;
 }
 
+export const keepWithinBoundaries = (min, max, value) => (
+    value < min ? min : value > max ? max : value
+);
+ 
 export const getDistance = (
     { x: xA = 0, y: yA = 0, z: zA = 0 } = {},
     { x: xB = 0, y: yB = 0, z: zB = 0 } = {}) => (
