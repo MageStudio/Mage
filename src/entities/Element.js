@@ -31,6 +31,7 @@ import {
     isLine,
     hasGeometry
 } from '../lib/meshUtils';
+import { keepWithinBoundaries } from '../lib/math';
 
 const BOUNDING_BOX_COLOR = 0xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
@@ -236,25 +237,25 @@ export default class Element extends Entity {
         }
     }
 
-    add(what) {
-        if (this.mesh) {
+    add(element) {
+        if (this.hasMesh()) {
             const _add = (mesh) => {
                 this.children.push(mesh);
                 this.mesh.add(mesh.mesh);
             };
 
-            if (Array.isArray(what)) {
-                what.forEach(_add);
+            if (Array.isArray(element)) {
+                element.forEach(_add);
             } else {
-                _add(what);
+                _add(element);
             }
         }
     }
 
-    remove(what) {
-        if (this.mesh) {
-            this.mesh.remove(what.mesh);
-            const index = this.children.findIndex(m => m.equals(what));
+    remove(element) {
+        if (this.hasMesh()) {
+            this.mesh.remove(element.mesh);
+            const index = this.children.findIndex(m => m.equals(element));
 
             this.children.splice(index, 1);
         }
@@ -439,14 +440,16 @@ export default class Element extends Entity {
     }
 
     setOpacity(value = 1.0) {
+        const opacity = keepWithinBoundaries(0, 1, value);
+
         if (hasMaterial(this.getMesh())) {
             this.mesh.material.transparent = true;
-            this.mesh.material.opacity = value;
+            this.mesh.material.opacity = opacity;
         } else {
             this.mesh.traverse(child => {
                 if (hasMaterial(child)) {
                     child.material.transparent = true;
-                    child.material.opacity = value;
+                    child.material.opacity = opacity;
                 }
             })
         }

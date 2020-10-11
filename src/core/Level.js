@@ -83,7 +83,7 @@ export class Level extends EventDispatcher {
 
     enableUI = (RootComponent, _props) => {
         const props = {
-            scene: this,
+            level: this,
             ..._props
         };
         mount(RootComponent, props);

@@ -1,4 +1,4 @@
-import { isClassname, isId } from '../lib/dom';
+import { isClassname, isId, createElementFromSelector } from '../lib/dom';
 import { removeFirst } from '../lib/strings';
 import { getWindow } from './window';
 
@@ -75,21 +75,7 @@ class Config {
         let container = document && document.querySelector(this._container);
 
         if (!container) {
-            container = document.createElement('div');
-
-            container.style.position = 'absolute';
-            container.style.height = '100%';
-            container.style.width = '100%';
-            container.style.margin = '0';
-
-            const selector = removeFirst(this._container);
-
-            if (isClassname(this._container)) {
-                container.classname = selector;
-            } else if (isId(this._container)) {
-                container.id = selector;
-            }
-
+            container = createElementFromSelector(this._container);
             document.body.appendChild(container);
         }
 

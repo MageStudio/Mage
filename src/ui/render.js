@@ -12,13 +12,26 @@ export const mount = (UI = BaseUI, options = {}) => {
         ...props
     } = options;
 
-    render(
-        createElement(Provider, {
-            store: getStore(),
-            children: createElement(UI, props)
-        }),
-        document.querySelector(root)
-    );
+    const store = getStore();
+    const uiElement = createElement(UI, props);
+    let rootElement = document.querySelector(root);
+
+    if (!rootElement) {
+        rootElement = createElementFromSelector(root);
+        document.body.appendChild(rootElement);
+    }
+
+    if (store) {
+        render(
+            createElement(Provider, {
+                store: getStore(),
+                children: uiElement
+            }),
+            rootElement
+        );
+    } else {
+        render(uiElement, rootElement)
+    }
 };
 
 
