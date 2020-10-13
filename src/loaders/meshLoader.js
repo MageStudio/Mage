@@ -22,19 +22,20 @@ export class MeshLoader extends Loader {
         return this.loader.parse(mesh);
     }
 
-    loadMesh(parsedMesh, scripts, texture, meshOptions) {
+    loadMesh(parsedMesh, scripts, texture, elementOptions) {
         const { scriptEnabled = true } = this.options;
-        const mesh = new Element(parsedMesh.geometry, parsedMesh.material, meshOptions);
+        const element = new Element(parsedMesh.geometry, parsedMesh.material, elementOptions);
 
-        mesh.setPosition({ ...parsedMesh.position });
-        mesh.setRotation({ ...parsedMesh.rotation });
-        mesh.setScale({ ...parsedMesh.scale });
+        element.setPosition({ ...parsedMesh.position });
+        element.setRotation({ ...parsedMesh.rotation });
+        element.setScale({ ...parsedMesh.scale });
 
         if (scripts && scripts.length) {
-            mesh.setScripts(scripts, scriptEnabled);
+            element.addScripts(scripts.names, scripts.options, scriptEnabled);
+            element.start();
         }
 
-        return mesh;
+        return element;
     }
 }
 

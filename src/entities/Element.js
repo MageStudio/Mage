@@ -114,13 +114,6 @@ export default class Element extends Entity {
             this.mesh.geometry.computeBoundingBox();
             this.boundingBox = this.mesh.geometry.boundingBox;
         } else {
-            // this.mesh.traverse(child => {
-            //     if (child.geometry) {
-            //         child.geometry.computeBoundingBox();
-            //         this.boundingBox = child.geometry.boundingBox;
-            //         return;
-            //     }
-            // })
             console.warn(MESH_NO_GEOMETRY_SET);
         }
     }
@@ -496,7 +489,7 @@ export default class Element extends Entity {
         if (this.serializable) {
             return {
                 mesh: this.mesh.toJSON(),
-                scripts: this.scripts && this.scripts.map(s => s.toJSON()),
+                scripts: this.mapScriptsToJSON(),
                 texture: this.texture,
                 ...this.options
             }
