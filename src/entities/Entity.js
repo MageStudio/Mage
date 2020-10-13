@@ -435,7 +435,7 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    rotateTo(rotation, time) {
+    rotateTo(rotation = this.getRotation(), time = 250) {
         const { x, y, z } = this.getRotation();
 
         return new Promise((resolve) =>
@@ -446,7 +446,7 @@ export default class Entity extends EventDispatcher {
         );
     }
 
-    goTo(position, time) {
+    goTo(position = this.getPosition(), time = 250) {
         const { x, y, z } = this.getPosition();
 
         return new Promise((resolve) => 
