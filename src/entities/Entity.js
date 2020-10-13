@@ -98,9 +98,9 @@ export default class Entity extends EventDispatcher {
 
     start() {
         if (this.hasScripts()) {
-            this.scripts.forEach(({ script, enabled }) => {
+            this.scripts.forEach(({ script, enabled, options }) => {
                 if (enabled) {
-                    script.start(this);
+                    script.start(this, options);
                     script.__hasStarted(true);
                 }
             });
@@ -186,35 +186,29 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    hasScripts = () => this.scripts.length > 0;
-
-    startScript(scriptName) {
-        const script = this.scripts.filter(({ name }) => name === scriptName)[0];
+    getScript(name) {
+        const script = this.scripts.filter(({ name }) => name === name)[0];
 
         if (script) {
-            script.start(this);
+            return script;
         } else {
             console.warn(SCRIPT_NOT_FOUND);
         }
     }
 
-    setScripts(scripts = [], enabled = true) {
-        this.scripts = scripts.map(name => ({
-            script: Scripts.get(name),
-            enabled
-        }));
+    hasScripts = () => this.scripts.length > 0;
 
-        if (enabled) {
-            this.start();
-        }
-    }
-
-    addScripts(scripts = [], enabled = true) {
-        const parsedScripts = scripts.map(name => ({
-            script: Scripts.get(name),
+    parseScripts = (list, options, enabled) => (
+        list.map((name, i) => ({
+            script: Script.get(name),
             name,
-            enabled
-        }));
+            enabled,
+            options: options[i]
+        }))
+    )
+
+    addScripts(scripts = [], options = [], enabled = true) {
+        const parsedScripts = this.parseScripts(scripts, options, enabled);
 
         this.scripts = [
             ...this.scripts,
@@ -222,17 +216,22 @@ export default class Entity extends EventDispatcher {
         ];
 
         if (enabled) {
-            parsedScripts.forEach(({ name }) => this.startScript(name));
+            parsedScripts.forEach(parsed => parsed.start(this, parsed.options));
         }
     }
 
-    addScript(name, enabled = true, options) {
+    addScript(name, options = {}) {
         const script = Scripts.get(name);
+        const {
+            enabled = true
+        } = options;
+
         if (script) {
             this.scripts.push({
                 script,
                 name,
-                enabled
+                enabled,
+                options
             });
             if (enabled) {
                 script.start(this, options);
@@ -447,12 +446,14 @@ export default class Entity extends EventDispatcher {
         );
     }
 
-    uuid(uuid) {
-        if (uuid && this.mesh) {
+    setUuid = (uuid) => {
+        if (uuid) {
             this.mesh.uuid = uuid;
-        } else {
-            return this.mesh.uuid;
         }
+    }
+
+    uuid() {
+        return this.mesh.uuid;
     }
 
     equals(element) {
@@ -469,5 +470,14 @@ export default class Entity extends EventDispatcher {
 
     getName() {
         return this.name;
+    }
+
+    mapScriptsToJSON() {
+        this.scripts.reduce((acc, { name, options = {} }) => {
+            acc.names.push(name);
+            acc.options.push(options);
+            
+            return acc;
+        }, { names: [], options: [] });
     }
 }
