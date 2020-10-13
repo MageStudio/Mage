@@ -435,7 +435,18 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    goTo(position, time) {
+    rotateTo(rotation = this.getRotation(), time = 250) {
+        const { x, y, z } = this.getRotation();
+
+        return new Promise((resolve) =>
+            new Between({ x, y, z}, rotation)
+                .time(time)
+                .on('update', value => this.setRotation(value))
+                .on('complete', resolve)
+        );
+    }
+
+    goTo(position = this.getPosition(), time = 250) {
         const { x, y, z } = this.getPosition();
 
         return new Promise((resolve) => 
