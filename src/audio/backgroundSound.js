@@ -36,7 +36,7 @@ export default class BackgroundSound extends Beat {
         //autoplay option
         const autoplay = options.autoplay || true;
         if (autoplay) {
-            this.start();
+            this.play();
         }
         //adding this sound to Audio
         Audio.add(this);
