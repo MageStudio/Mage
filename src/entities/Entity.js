@@ -325,7 +325,7 @@ export default class Entity extends EventDispatcher {
 
     playSound() {
         if (this.sound && !this.isPlayingSound) {
-            this.sound.start();
+            this.sound.play();
             this.isPlayingSound = true;
         }
     }
