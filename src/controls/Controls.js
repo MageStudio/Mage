@@ -61,7 +61,7 @@ export class Controls {
 
     setOrbitControl() {
         this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY]);
-        this.controls[CONTROLS.ORBIT] = new Orbit(Scene.getCameraObject(), Scene.renderer.domElement);
+        this.controls[CONTROLS.ORBIT] = new Orbit(Scene.getCameraBody(), Scene.renderer.domElement);
         this.controls[CONTROLS.ORBIT].init();
 
         this.controls[CONTROLS.ORBIT].addEventListener(EVENTS.CHANGE, Scene.render);
@@ -70,7 +70,7 @@ export class Controls {
     }
 
     setTransformControl() {
-        this.controls[CONTROLS.TRANSFORM] = new Transform(Scene.getCameraObject(), Scene.renderer.domElement);
+        this.controls[CONTROLS.TRANSFORM] = new Transform(Scene.getCameraBody(), Scene.renderer.domElement);
         this.controls[CONTROLS.TRANSFORM].init();
 		this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.CHANGE, Scene.render);
 		this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.DRAGGING_CHANGE, (event) => {
@@ -83,14 +83,14 @@ export class Controls {
     }
 
     setFirstPersonControl() {
-        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCameraObject(), document.body);
+        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCameraBody(), document.body);
         this.controls[CONTROLS.FPS].init();
 
         return this.controls[CONTROLS.FPS];
     }
 
     setFlyControl() {
-        this.controls[CONTROLS.FLY] = new FlyControl(Scene.getCameraObject(), document.body);
+        this.controls[CONTROLS.FLY] = new FlyControl(Scene.getCameraBody(), document.body);
         this.controls[CONTROLS.FLY].init();
 
         return this.controls[CONTROLS.FLY];

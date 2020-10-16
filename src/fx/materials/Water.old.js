@@ -269,15 +269,15 @@ export default class Water {
 		var width = options.width || 512,
 			height = options.height || 512;
 
-		this.mesh = new Mesh(
+		this.body = new Mesh(
 			new PlaneBufferGeometry(width * 500, height * 500 ),
 			this.water.material
 		);
 
-		this.mesh.add(this.water);
-		this.mesh.rotation.x = - window.Math.PI * 0.5;
+		this.body.add(this.water);
+		this.body.rotation.x = - window.Math.PI * 0.5;
 
-		Scene.add(this.mesh, this);
+		Scene.add(this.body, this);
 	}
 
 	render() {

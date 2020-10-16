@@ -20,18 +20,18 @@ export default class Line extends Element {
 
         const material = this.getMaterial();
         const geometry = this.getGeometryFromPoints();
-        const mesh = new THREELine(geometry, material);
+        const body = new THREELine(geometry, material);
 
-        this.setMesh({ mesh });
+        this.setBody({ body });
         this.setEntityType(ENTITY_TYPES.MESH);
     }
 
-    postMeshCreation() {
-        super.postMeshCreation();
+    postBodyCreation() {
+        super.postBodyCreation();
         const { dashed = false } = this.options;
 
         if (dashed) {
-            this.mesh.computeLineDistances();
+            this.body.computeLineDistances();
         }
     }
 
@@ -56,11 +56,11 @@ export default class Line extends Element {
 
     updatePoints = (points) => {
         const vectors = points.map(({ x, y, z }) => new Vector3(x, y, z));
-        this.mesh.geometry.vertices = vectors;
-        this.mesh.geometry.verticesNeedUpdate = true;
+        this.body.geometry.vertices = vectors;
+        this.body.geometry.verticesNeedUpdate = true;
     }
 
     setThickness(thickness = DEFAULT_LINE_THICKNESS) {
-        this.mesh.material.linewidth = thickness;
+        this.body.material.linewidth = thickness;
     }
 }

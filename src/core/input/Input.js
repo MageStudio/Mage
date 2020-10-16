@@ -3,7 +3,14 @@ import {
 } from 'three';
 
 import Keyboard from './Keyboard';
-import Mouse from './Mouse';
+import Mouse, {
+    MOUSE_DOWN,
+    MOUSE_UP,
+    ELEMENT_CLICK,
+    ELEMENT_DESELECT,
+    MOUSE_MOVE
+} from './Mouse';
+
 import Gamepad, {
     GAMEPAD_DISCONNECTED_EVENT,
     GAMEPAD_CONNECTED_EVENT,
@@ -24,15 +31,19 @@ import {
     gamepadDisabled
 } from '../../store/actions/input';
 
-export const EVENTS = [
-    'keyPress',
-    'keyDown',
-    'keyUp',
-    'mouseDown',
-    'mouseUp',
-    'mouseMove',
-    'meshClick',
-    'meshDeselect',
+export const KEY_PRESS = 'keyPress';
+export const KEY_DOWN = 'keyDown';
+export const KEY_UP = 'keyUp';
+
+export const INPUT_EVENTS = [
+    KEY_PRESS,
+    KEY_DOWN,
+    KEY_UP,
+    MOUSE_DOWN,
+    MOUSE_UP,
+    MOUSE_DOWN,
+    ELEMENT_CLICK,
+    ELEMENT_DESELECT,
     GAMEPAD_CONNECTED_EVENT,
     GAMEPAD_DISCONNECTED_EVENT,
     BUTTON_PRESSED_EVENT,
@@ -45,6 +56,24 @@ export class Input extends EventDispatcher {
     constructor() {
         super();
         this.enabled = false;
+    }
+
+    get EVENTS() {
+        return {
+            KEY_PRESS,
+            KEY_DOWN,
+            KEY_UP,
+            MOUSE_DOWN,
+            MOUSE_UP,
+            MOUSE_DOWN,
+            ELEMENT_CLICK,
+            ELEMENT_DESELECT,
+            GAMEPAD_CONNECTED_EVENT,
+            GAMEPAD_DISCONNECTED_EVENT,
+            BUTTON_PRESSED_EVENT,
+            BUTTON_RELEASED_EVENT,
+            AXIS_CHANGE_EVENT
+        }
     }
 
     enable() {
@@ -91,11 +120,11 @@ export class Input extends EventDispatcher {
         dispatch(mouseEnabled());
 
         this.mouse.enable();
-        this.mouse.addEventListener('mouseDown', this.propagate.bind(this));
-        this.mouse.addEventListener('mouseUp', this.propagate.bind(this));
-        this.mouse.addEventListener('mouseMove', this.propagate.bind(this));
-        this.mouse.addEventListener('meshClick', this.propagate.bind(this));
-        this.mouse.addEventListener('meshDeselect', this.propagate.bind(this));
+        this.mouse.addEventListener(MOUSE_DOWN, this.propagate.bind(this));
+        this.mouse.addEventListener(MOUSE_UP, this.propagate.bind(this));
+        this.mouse.addEventListener(MOUSE_MOVE, this.propagate.bind(this));
+        this.mouse.addEventListener(ELEMENT_CLICK, this.propagate.bind(this));
+        this.mouse.addEventListener(ELEMENT_DESELECT, this.propagate.bind(this));
     }
 
     propagate = (event) => {
@@ -105,7 +134,7 @@ export class Input extends EventDispatcher {
     handleKeyBoardEvent = (event, handler) => {
         if (event.type === Keyboard.KEYDOWN) {
             this.dispatchEvent({
-                type: 'keyDown',
+                type: KEY_DOWN,
                 event: {
                     ...event,
                     ...handler
@@ -115,7 +144,7 @@ export class Input extends EventDispatcher {
 
         if (event.type === Keyboard.KEYUP) {
             this.dispatchEvent({
-                type: 'keyUp',
+                type: KEY_UP,
                 event: {
                     ...event,
                     ...handler
@@ -124,7 +153,7 @@ export class Input extends EventDispatcher {
         }
 
         this.dispatchEvent({
-            type: 'keyPress',
+            type: KEY_PRESS,
             event: {
                 ...event,
                 ...handler
@@ -143,10 +172,11 @@ export class Input extends EventDispatcher {
         dispatch(mouseDisabled());
 
         this.mouse.disable();
-        this.mouse.removeEventListener('mouseDown', this.propagate.bind(this));
-        this.mouse.removeEventListener('mouseUp', this.propagate.bind(this));
-        this.mouse.removeEventListener('mouseMove', this.propagate.bind(this));
-        this.mouse.removeEventListener('meshClick', this.propagate.bind(this));
+        this.mouse.removeEventListener(MOUSE_DOWN, this.propagate.bind(this));
+        this.mouse.removeEventListener(MOUSE_UP, this.propagate.bind(this));
+        this.mouse.removeEventListener(MOUSE_MOVE, this.propagate.bind(this));
+        this.mouse.removeEventListener(ELEMENT_CLICK, this.propagate.bind(this));
+        this.mouse.removeEventListener(ELEMENT_DESELECT, this.propagate.bind(this));
 
         this.mouse = undefined;
     }

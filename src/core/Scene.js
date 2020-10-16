@@ -57,18 +57,18 @@ export class Scene {
         }
     }
 
-    add(mesh, element, addUniverse = true) {
-		this.scene.add(mesh);
+    add(body, element, addUniverse = true) {
+        this.scene.add(body);
         if (addUniverse) {
             Universe.set(element.getName(), element);
-            Universe.storeUUIDToElementNameReference(mesh.uuid, element.getName());
+            Universe.storeUUIDToElementNameReference(body.uuid, element.getName());
         }
-	}
+    }
 
-	remove(mesh) {
-		this.scene.remove(mesh);
-		Universe.remove(mesh.name);
-	}
+    remove(body) {
+        this.scene.remove(body);
+        Universe.remove(body.name);
+    }
 
     setClearColor(value) {
         if (this.renderer) {
@@ -130,8 +130,8 @@ export class Scene {
         return this.camera;
     }
 
-    getCameraObject() {
-        return this.camera.object;
+    getCameraBody() {
+        return this.camera.getBody();
     }
 
     getRenderer() {
@@ -193,8 +193,8 @@ export class Scene {
 
         if (!this.camera || !this.renderer) return;
 
-        this.camera.object.aspect = ratio;
-        this.camera.object.updateProjectionMatrix();
+        this.camera.getBody().aspect = ratio;
+        this.camera.getBody().updateProjectionMatrix();
         this.renderer.setSize(w, h);
     }
 
@@ -202,7 +202,7 @@ export class Scene {
         this.renderer.setClearColor(this.clearColor);
         this.renderer.clear();
         this.renderer.setRenderTarget(null);
-        this.renderer.render(this.scene, this.camera.object);
+        this.renderer.render(this.scene, this.camera.getBody());
     }
 
     fog(color, density) {

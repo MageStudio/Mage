@@ -12,13 +12,13 @@ export default class Cylinder extends Element {
         const segments = 32;
 
         const geometry = new CylinderGeometry(radiusTop, radiusBottom, height, segments );
-		const material = new MeshBasicMaterial({
-			color: color,
-			wireframe: false,
+        const material = new MeshBasicMaterial({
+            color: color,
+            wireframe: false,
             ...options
-		});
+        });
 
-        this.setMesh({ geometry, material });
+        this.setBody({ geometry, material });
         this.setEntityType(ENTITY_TYPES.MESH);
     }
 }

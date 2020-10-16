@@ -9,12 +9,12 @@ import {
 import { Entity, ENTITY_TYPES, Line, Box } from './index';
 
 import {
-    MESH_NOT_SET,
+    ELEMENT_NOT_SET,
     ANIMATION_HANDLER_NOT_FOUND,
-    MESH_SET_COLOR_MISSING_COLOR,
-    MESH_NAME_NOT_PROVIDED,
-    MESH_NO_GEOMETRY_SET,
-    MESH_NO_MATERIAL_CANT_SET_TEXTURE
+    ELEMENT_SET_COLOR_MISSING_COLOR,
+    ELEMENT_NAME_NOT_PROVIDED,
+    ELEMENT_NO_GEOMETRY_SET,
+    ELEMENT_NO_MATERIAL_CANT_SET_TEXTURE
 } from '../lib/messages';
 import Images from '../images/Images';
 import AnimationHandler from './animations/AnimationHandler';
@@ -23,15 +23,17 @@ import Scene from '../core/Scene';
 import { COLLISION_EVENT } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics/physics';
-import { getDescriptionForMesh } from '../physics/utils';
+import { getDescriptionForElement } from '../physics/utils';
 
+import { keepWithinBoundaries } from '../lib/math';
 import {
     changeMaterialByName,
     hasMaterial,
-    isLine,
-    hasGeometry
+    hasGeometry,
+    disposeTextures,
+    disposeMaterial,
+    disposeGeometry
 } from '../lib/meshUtils';
-import { keepWithinBoundaries } from '../lib/math';
 
 const BOUNDING_BOX_COLOR = 0xf368e0;
 const BOUNDING_BOX_INCREASE = .5;
@@ -56,7 +58,7 @@ export default class Element extends Entity {
             ...options
         };;
 
-        this.setMesh({ geometry, material });
+        this.setBody({ geometry, material });
 
         this.colliders = [];
         this.collisionsEnabled = true;
@@ -70,62 +72,54 @@ export default class Element extends Entity {
     addTag(tag) {
         super.addTag(tag);
 
-        const existingTags = this.getMesh().userData.tags || [];
-        this.getMesh().userData.tags = [ ...existingTags, tag ];
+        const existingTags = this.getBody().userData.tags || [];
+        this.getBody().userData.tags = [ ...existingTags, tag ];
     }
 
-    hasMesh() {
-        return !!this.mesh;
-    }
-
-    getMesh() {
-        return this.mesh;
-    }
-    
-    getMeshByName = (name) => {
+    getBodyByName = (name) => {
         if (name) {
-            if (this.hasMesh()) {
-                return this.mesh.getObjectByName(name);
+            if (this.hasBody()) {
+                return this.body.getObjectByName(name);
             } else {
-                console.warn(MESH_NOT_SET);
+                console.warn(ELEMENT_NOT_SET);
             }
         } else {
-            console.warn(MESH_NAME_NOT_PROVIDED);
+            console.warn(ELEMENT_NAME_NOT_PROVIDED);
         }
     }
 
-    setMesh({ mesh, geometry, material }) {
-        if (mesh) {
-            this.mesh = mesh;
+    setBody({ body, geometry, material }) {
+        if (body) {
+            this.body = body;
         } else if (geometry && material) {
             this.geometry = geometry;
             this.material = material;
-            this.mesh = new Mesh(this.geometry, this.material);
+            this.body = new Body(this.geometry, this.material);
         }
 
-        if (this.hasMesh()) {
-            this.postMeshCreation();
+        if (this.hasBody()) {
+            this.postBodyCreation();
             this.addToScene();
         }
     }
 
     evaluateBoundingBox() {
-        if (hasGeometry(this.getMesh())) {
-            this.mesh.geometry.computeBoundingBox();
-            this.boundingBox = this.mesh.geometry.boundingBox;
+        if (hasGeometry(this.getBody())) {
+            this.body.geometry.computeBoundingBox();
+            this.boundingBox = this.body.geometry.boundingBox;
         } else {
-            console.warn(MESH_NO_GEOMETRY_SET);
+            console.warn(ELEMENT_NO_GEOMETRY_SET);
         }
     }
 
-    postMeshCreation() {
+    postBodyCreation() {
         const { name } = this.options;
 
         this.evaluateBoundingBox();
         this.setName(name);
 
-        this.mesh.castShadow = Config.lights().shadows;
-        this.mesh.receiveShadow = Config.lights().shadows;
+        this.body.castShadow = Config.lights().shadows;
+        this.body.receiveShadow = Config.lights().shadows;
     }
 
     addToScene() {
@@ -133,20 +127,20 @@ export default class Element extends Entity {
             addUniverse = true,
         } = this.options;
 
-        if (this.hasMesh()) {
-            Scene.add(this.getMesh(), this, addUniverse);
+        if (this.hasBody()) {
+            Scene.add(this.getBody(), this, addUniverse);
         } else {
-            console.warn(MESH_NOT_SET);
+            console.warn(ELEMENT_NOT_SET);
         }
     }
 
     setName(name, { replace = false } = {}) {
         super.setName(name);
 
-        if (this.hasMesh()) {
+        if (this.hasBody()) {
             if (replace) this.dispose();
 
-            this.mesh.name = name;
+            this.body.name = name;
 
             if (replace) this.addToScene();
         }
@@ -159,7 +153,7 @@ export default class Element extends Entity {
     }
 
     addAnimationHandler(animations) {
-        this.animationHandler = new AnimationHandler(this.getMesh(), animations);
+        this.animationHandler = new AnimationHandler(this.getBody(), animations);
     }
 
     hasAnimationHandler() {
@@ -187,7 +181,7 @@ export default class Element extends Entity {
     enablePhysics(options) {
         if (Config.physics().enabled) {
             const description = {
-                ...getDescriptionForMesh(this),
+                ...getDescriptionForElement(this),
                 ...options
             };
 
@@ -231,10 +225,10 @@ export default class Element extends Entity {
     }
 
     add(element) {
-        if (this.hasMesh()) {
-            const _add = (mesh) => {
-                this.children.push(mesh);
-                this.mesh.add(mesh.mesh);
+        if (this.hasBody()) {
+            const _add = (body) => {
+                this.children.push(body);
+                this.body.add(body.body);
             };
 
             if (Array.isArray(element)) {
@@ -246,8 +240,8 @@ export default class Element extends Entity {
     }
 
     remove(element) {
-        if (this.hasMesh()) {
-            this.mesh.remove(element.mesh);
+        if (this.hasBody()) {
+            this.body.remove(element.body);
             const index = this.children.findIndex(m => m.equals(element));
 
             this.children.splice(index, 1);
@@ -263,7 +257,7 @@ export default class Element extends Entity {
 
     updateRayColliders = () => {
         this.colliders.forEach(({ ray, helper, offset = DEFAULT_COLLIDER_OFFSET }) => {
-            const position = this.mesh.position
+            const position = this.body.position
                 .clone()
                 .add(new Vector3(offset.x, offset.y, offset.z));
 
@@ -290,7 +284,7 @@ export default class Element extends Entity {
             ...offset,
         };
 
-        const position = this.mesh.position
+        const position = this.body.position
             .clone()
             .add(new Vector3(parsedOffset.x, parsedOffset.y, parsedOffset.z));
 
@@ -306,7 +300,7 @@ export default class Element extends Entity {
         }
         
         if (this.getEntityType() === ENTITY_TYPES.SPRITE) {
-            ray.setFromCamera(position, Scene.getCameraObject());
+            ray.setFromCamera(position, Scene.getCameraBody());
         }
 
         return {
@@ -336,7 +330,7 @@ export default class Element extends Entity {
 
             return {
                 distance,
-                mesh: Universe.getByUUID(uuid)
+                body: Universe.getByUUID(uuid)
             };
         };
 
@@ -344,7 +338,7 @@ export default class Element extends Entity {
             .intersectObjects(Scene.scene.children)
             .filter(collision => collision.object.uuid !== this.uuid())
             .map(mapCollision)
-            .filter(({ mesh }) => !mesh.hasTag(COLLIDER_TAG));
+            .filter(({ body }) => !body.hasTag(COLLIDER_TAG));
 
         return {
             collisions,
@@ -386,22 +380,22 @@ export default class Element extends Entity {
 
     setColor(color) {
         if (color) {
-            if (hasMaterial(this.mesh)) {
-                this.mesh.material.color = new Color(color);
+            if (hasMaterial(this.body)) {
+                this.body.material.color = new Color(color);
             } else {
-                this.mesh.traverse(child => {
+                this.body.traverse(child => {
                     if (hasMaterial(child)) {
                         child.material.color = new Color(color);
                     }
                 });
             }
         } else {
-            console.warn(MESH_SET_COLOR_MISSING_COLOR);
+            console.warn(ELEMENT_SET_COLOR_MISSING_COLOR);
         }
     }
 
     setTextureMap(textureId, options = {}) {
-        if (textureId && hasMaterial(this.mesh)) {
+        if (textureId && hasMaterial(this.body)) {
             const {
                 repeat = { x: 1, y: 1 },
                 wrap = RepeatWrapping
@@ -414,17 +408,17 @@ export default class Element extends Entity {
             texture.wrapT = wrap;
             texture.repeat.set(repeat.x, repeat.y);
 
-            this.mesh.material.map = texture;
+            this.body.material.map = texture;
         } else {
-            console.warn(MESH_NO_MATERIAL_CANT_SET_TEXTURE);
+            console.warn(ELEMENT_NO_MATERIAL_CANT_SET_TEXTURE);
         }
     }
 
     setMaterialFromName(materialName, options = {}) {
-        if (hasMaterial(this.getMesh())) {
-            changeMaterialByName(materialName, this.getMesh(), options);
+        if (hasMaterial(this.getBody())) {
+            changeMaterialByName(materialName, this.getBody(), options);
         } else {
-            this.mesh.traverse(child => {
+            this.body.traverse(child => {
                 if (hasMaterial(child)) {
                     changeMaterialByName(materialName, child, options);
                 }
@@ -435,11 +429,11 @@ export default class Element extends Entity {
     setOpacity(value = 1.0) {
         const opacity = keepWithinBoundaries(0, 1, value);
 
-        if (hasMaterial(this.getMesh())) {
-            this.mesh.material.transparent = true;
-            this.mesh.material.opacity = opacity;
+        if (hasMaterial(this.getBody())) {
+            this.body.material.transparent = true;
+            this.body.material.opacity = opacity;
         } else {
-            this.mesh.traverse(child => {
+            this.body.traverse(child => {
                 if (hasMaterial(child)) {
                     child.material.transparent = true;
                     child.material.opacity = opacity;
@@ -449,10 +443,10 @@ export default class Element extends Entity {
     }
 
     setWireframe(flag = true) {
-        if (hasMaterial(this.getMesh())) {
-            this.mesh.material.wireframe = flag;
+        if (hasMaterial(this.getBody())) {
+            this.body.material.wireframe = flag;
         } else {
-            this.mesh.traverse(child => {
+            this.body.traverse(child => {
                 if (hasMaterial(child)) {
                     child.material.wireframe = flag;
                 }
@@ -461,10 +455,10 @@ export default class Element extends Entity {
     }
 
     setWireframeLineWidth(width = 1) {
-        if (hasMaterial(this.getMesh())) {
-            this.mesh.material.wireframeLinewidth = width;
+        if (hasMaterial(this.getBody())) {
+            this.body.material.wireframeLinewidth = width;
         } else {
-            this.mesh.traverse(child => {
+            this.body.traverse(child => {
                 if (hasMaterial(child)) {
                     child.material.wireframeLinewidth = width;
                 }
@@ -473,22 +467,47 @@ export default class Element extends Entity {
     }
 
     copyQuaternion = (quaternion) => {
-        this.mesh.quaternion.copy(quaternion);
+        this.body.quaternion.copy(quaternion);
     }
 
     copyPosition = (position) => {
-        this.mesh.position.copy(position);
+        this.body.position.copy(position);
     }
 
     equals = (object) => (
         this.name === object.name &&
-        this.mesh.uuid === object.mesh.uuid
+        this.body.uuid === object.body.uuid
     );
+
+    disposeBody() {
+        if (hasMaterial(this.body)) {
+            disposeTextures(this.getBody());
+            disposeMaterial(this.getBody());
+            disposeGeometry(this.getBody());
+        } else {
+            this.body.traverse(child => {
+                if (hasMaterial(child)) {
+                    disposeTextures(child);
+                    disposeMaterial(child);
+                    disposeGeometry(child);
+                }
+            });
+        }
+    }
+
+    dispose() {
+        super.dispose();
+
+        if (this.hasBody()) {
+            Scene.remove(this.body);
+            this.disposeBody();
+        }
+    }
 
     toJSON() {
         if (this.serializable) {
             return {
-                mesh: this.mesh.toJSON(),
+                body: this.body.toJSON(),
                 scripts: this.mapScriptsToJSON(),
                 texture: this.texture,
                 ...this.options

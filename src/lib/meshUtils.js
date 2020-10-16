@@ -50,6 +50,18 @@ const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
     });
 }
 
+export const disposeTextures = mesh => {
+    mesh.material.map.dispose();
+};
+
+export const disposeMaterial = mesh => {
+    mesh.material.dispose();
+};
+
+export const disposeGeometry = mesh => {
+    mesh.geometry.dispose();
+};
+
 export const prepareModel = (model) => {
     setUpLightsAndShadows(model);
 

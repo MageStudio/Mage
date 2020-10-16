@@ -77,12 +77,12 @@ export class Universe {
 	}
 
 	toJSON() {
-		const meshes = Object.keys(this.reality)
+		const elements = Object.keys(this.reality)
 			.map(k => this.get(k))
-			.filter(m => m.serializable && m.isMesh())
-			.map(m => m.toJSON());
+			.filter(element => element.serializable && element.isMesh())
+			.map(element => element.toJSON());
 
-		return { meshes }
+		return { elements }
 	}
 }
 

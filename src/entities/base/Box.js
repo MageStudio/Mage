@@ -10,13 +10,13 @@ export default class Box extends Element {
         super(null, null, options);
 
         const geometry = new CubeGeometry(width, height, depth);
-		const material = new MeshBasicMaterial({
-			color: color,
-			wireframe: false,
+        const material = new MeshBasicMaterial({
+            color: color,
+            wireframe: false,
             ...options
-		});
+        });
 
-        this.setMesh({ geometry, material });
+        this.setBody({ geometry, material });
         this.setEntityType(ENTITY_TYPES.MESH);
     }
 }

@@ -33,7 +33,7 @@ export const parseColliderFromDescription = ({ type, vector }, options, mesh, is
     const helper = debug && createColliderHelper(ray, position);
     
     if (isSprite) {
-        ray.setFromCamera(position, Scene.getCameraObject());
+        ray.setFromCamera(position, Scene.getCameraBody());
     }
 
     return {

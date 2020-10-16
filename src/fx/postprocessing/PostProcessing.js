@@ -59,7 +59,7 @@ export class PostProcessing {
         window.addEventListener( 'resize', this.onWindowResize, false );
 
         this.composer = new EffectComposer(Scene.renderer);
-        this.composer.addPass(new RenderPass(Scene.scene, Scene.getCameraObject()));
+        this.composer.addPass(new RenderPass(Scene.scene, Scene.getCameraBody()));
     }
 
     onWindowResize = () => {

@@ -7,10 +7,10 @@ export class MeshLoader extends Loader {
         super();
     }
 
-    load(meshes = [], options = {}) {
+    load(elements = [], options = {}) {
         this.options = options;
         try {
-            meshes.map(({mesh, scripts, texture, ...opts }) => (
+            elements.map(({mesh, scripts, texture, ...opts }) => (
                 this.loadMesh(this.parseMesh(mesh), scripts, texture, opts)
             ));
         } catch(e) {

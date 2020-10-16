@@ -14,8 +14,7 @@ export default class DirectionalSound extends Beat {
         this.sound.volume.connect(this.sound.panner);
         this.sound.panner.connect(Audio.volume);
 
-        //storing mesh
-        this.mesh = options.mesh;
+        this.body = options.body;
         //storing direction
         this.sound.panner.coneInnerAngle = angles.innerAngleInDegrees;
         this.sound.panner.coneOuterAngle = angles.outerAngleInDegrees;
@@ -54,13 +53,13 @@ export default class DirectionalSound extends Beat {
     update(dt) {
 
         var p = new Vector3();
-        p.setFromMatrixPosition(this.mesh.matrixWorld);
+        p.setFromMatrixPosition(this.body.matrixWorld);
         var px = p.x, py = p.y, pz = p.z;
 
-        this.mesh.updateMatrixWorld();
+        this.body.updateMatrixWorld();
 
         var q = new Vector3();
-        q.setFromMatrixPosition(this.mesh.matrixWorld);
+        q.setFromMatrixPosition(this.body.matrixWorld);
         var dx = q.x-px, dy = q.y-py, dz = q.z-pz;
         //setting panner position and velocity using doppler effect.
         this.sound.panner.setPosition(q.x, q.y, q.z);
@@ -68,7 +67,7 @@ export default class DirectionalSound extends Beat {
 
 
         var vec = new Vector3(0,0,1);
-        var m = this.mesh.matrixWorld;
+        var m = this.body.matrixWorld;
 
         // Save the translation column and zero it.
         var mx = m.elements[12], my = m.elements[13], mz = m.elements[14];

@@ -33,7 +33,7 @@ export class Physics extends EventDispatcher {
     constructor() {
         super();
         this.worker = worker;
-        this.meshes = [];
+        this.elements = [];
         this.worker.onmessage = this.handleWorkerMessages;
     };
 
@@ -79,15 +79,15 @@ export class Physics extends EventDispatcher {
     };
 
     handleMeshUpdate = ({ quaternion, position, uuid }) => {
-        const mesh = Universe.getByUUID(uuid);
+        const element = Universe.getByUUID(uuid);
 
-        mesh.copyPosition(position);
-        mesh.copyQuaternion(quaternion);
+        element.copyPosition(position);
+        element.copyQuaternion(quaternion);
     };
 
-    add(mesh, description) {
+    add(element, description) {
         if (Config.physics().enabled) {
-            const uuid = mesh.uuid();
+            const uuid = element.uuid();
 
             this.worker.postMessage({
                 type: ADD_EVENT,

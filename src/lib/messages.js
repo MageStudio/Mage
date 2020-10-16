@@ -10,7 +10,7 @@ export const STORE_DOESNT_EXIST = `${PREFIX} Store hasn't been created yet.`;
 
 export const LOCALSTORAGE_NOT_AVAILABLE = `${PREFIX} localStorage is not available.`;
 export const WORKERS_NOT_AVAILABLE = `${PREFIX} Your browser doesn't support Workers.`;
-export const BOUNDINGBOX_NOT_AVAILABLE = `${PREFIX} Selected mesh does not have a computed bounding box.`;
+export const BOUNDINGBOX_NOT_AVAILABLE = `${PREFIX} Selected element does not have a computed bounding box.`;
 
 export const INVALID_EMITTER_ID = `${PREFIX} The selected emitter id is not valid.`;
 
@@ -19,12 +19,12 @@ export const FEATURE_NOT_SUPPORTED = `${PREFIX} The following features are not s
 export const ANIMATION_NOT_FOUND = `${PREFIX} Required animation can't be found.`;
 export const ANIMATION_HANDLER_NOT_FOUND = `${PREFIX} AnimationHander hasn't been defined yet.`;
 
-export const MESH_NOT_SET = `${PREFIX} Mesh hasn't been defined yet.`;
-export const MESH_NO_MATERIAL_SET = `${PREFIX} This mesh doesn't have a material.`;
-export const MESH_NAME_NOT_PROVIDED = `${PREFIX} Desired mesh name wasn't provided.`;
-export const MESH_NO_GEOMETRY_SET = `${PREFIX} This mesh doesn't have a geometry.`;
-export const MESH_NO_MATERIAL_CANT_SET_TEXTURE = `${PREFIX} This mesh doesn't have a material, can't set texture.`;
-export const MESH_SET_COLOR_MISSING_COLOR = `${PREFIX} Can't set color for this mesh, missing color`;
+export const ELEMENT_NOT_SET = `${PREFIX} Body hasn't been defined yet.`;
+export const ELEMENT_NO_MATERIAL_SET = `${PREFIX} This element doesn't have a material.`;
+export const ELEMENT_NAME_NOT_PROVIDED = `${PREFIX} Desired element name wasn't provided.`;
+export const ELEMENT_NO_GEOMETRY_SET = `${PREFIX} This element doesn't have a geometry.`;
+export const ELEMENT_NO_MATERIAL_CANT_SET_TEXTURE = `${PREFIX} This element doesn't have a material, can't set texture.`;
+export const ELEMENT_SET_COLOR_MISSING_COLOR = `${PREFIX} Can't set color for this element, missing color`;
 
 export const TAG_CANT_BE_REMOVED = `${PREFIX} The default tag can't be removed.`;
 export const TAG_ALREADY_EXISTS = `${PREFIX} The following tag has already been added: `;

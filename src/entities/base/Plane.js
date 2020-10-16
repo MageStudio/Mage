@@ -12,8 +12,8 @@ const DOWN = new Vector3(0, -1, 0);
 
 export default class Plane extends Element {
 
-	constructor(height, width, options = {}) {
-		super(null, null, options);
+    constructor(height, width, options = {}) {
+        super(null, null, options);
 
         const {
             color = 0xfffffff,
@@ -22,11 +22,11 @@ export default class Plane extends Element {
         } = options;
 
         material = new MeshBasicMaterial({ color, side: DoubleSide, transparent, opacity });
-		geometry = new PlaneGeometry(width, height);
+        geometry = new PlaneGeometry(width, height);
 
-        this.setMesh({ geometry, material });
+        this.setBody({ geometry, material });
         this.setEntityType(ENTITY_TYPES.MESH);
-	}
+    }
 
     static get UP() { return UP; }
     static get DOWN() { return DOWN; }
@@ -34,6 +34,6 @@ export default class Plane extends Element {
     face(direction) {
         const vector = new Vector3(direction.x, direction.y, direction.z);
 
-        this.mesh.lookAt(vector);
+        this.body.lookAt(vector);
     }
 }
