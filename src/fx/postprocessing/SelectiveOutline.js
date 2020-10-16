@@ -242,7 +242,7 @@ export default class SelectiveOutline extends Pass {
         const { x = width, y = height } = resolution;
 
         this.renderScene = Scene.getScene();
-        this.renderCamera = Scene.getCameraObject();
+        this.renderCamera = Scene.getCameraBody();
         this.setSelectedoObjects(selectedObjects);
         this.visibleEdgeColor = new Color(COLORS.WHITE);
         this.hiddenEdgeColor = new Color(COLORS.WHITE);

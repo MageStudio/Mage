@@ -16,7 +16,6 @@ import {
     STATE_MACHINE_NOT_AVAILABLE,
     SCRIPT_NOT_FOUND
 } from '../lib/messages';
-import { hasMaterial } from '../lib/meshUtils';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
 const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
@@ -46,6 +45,14 @@ export default class Entity extends EventDispatcher {
     reset() {
         this.scripts = [];
         this.tags = [ DEFAULT_TAG ];
+    }
+
+    hasBody() {
+        return !!this.body;
+    }
+
+    getBody() {
+        return this.body;
     }
 
     addTag = (tagName) => {
@@ -121,28 +128,10 @@ export default class Entity extends EventDispatcher {
     }
 
     dispose() {
-        if (this.mesh) {
-            Scene.remove(this.mesh);
-            
-            this.disposeMesh();
-
+        if (this.body) {
             this.stopStateMachine();
             this.stopScripts();
             this.reset();
-        }
-    }
-    
-    disposeMesh() {
-        if (hasMaterial(this.mesh)) {
-            this.mesh.material.dispose();
-            this.mesh.geometry.dispose();
-        } else {
-            this.mesh.traverse(child => {
-                if (hasMaterial(child)) {
-                    child.material.dispose();
-                    child.geometry.dispose();
-                }
-            });
         }
     }
 
@@ -282,7 +271,7 @@ export default class Entity extends EventDispatcher {
 
         this.isPlayingSound = autoplay;
         this.sound = new Sound(name, {
-            mesh: this.mesh,
+            body: this.body,
             autoplay,
             ...opts
         });
@@ -295,7 +284,7 @@ export default class Entity extends EventDispatcher {
 
         this.isPlayingSound = autoplay;
         this.sound = new DirectionalSound(name, {
-            mesh: this.mesh,
+            body: this.body,
             autoplay,
             ...opts
         });
@@ -308,7 +297,7 @@ export default class Entity extends EventDispatcher {
 
         this.isPlayingSound = autoplay;
         this.sound = new AmbientSound(name, {
-            mesh: this.mesh,
+            body: this.body,
             autoplay,
             ...opts
         });
@@ -339,9 +328,9 @@ export default class Entity extends EventDispatcher {
 
     getScale() {
         return {
-            x: this.mesh.scale.x,
-            y: this.mesh.scale.y,
-            z: this.mesh.scale.z
+            x: this.body.scale.x,
+            y: this.body.scale.y,
+            z: this.body.scale.z
         };
     }
 
@@ -351,15 +340,15 @@ export default class Entity extends EventDispatcher {
             ...howbig
         };
 
-        if (this.mesh) {
-            this.mesh.scale.set(scale.x, scale.y, scale.z);
+        if (this.body) {
+            this.body.scale.set(scale.x, scale.y, scale.z);
         }
     }
 
     getWorldPosition() {
         const vector = new Vector3();
-        if (this.mesh) {
-            const { x, y, z } = this.mesh.getWorldPosition(vector);
+        if (this.body) {
+            const { x, y, z } = this.body.getWorldPosition(vector);
             
             return { x, y, z }
         }
@@ -369,9 +358,9 @@ export default class Entity extends EventDispatcher {
 
     getPosition() {
         return {
-            x: this.mesh.position.x,
-            y: this.mesh.position.y,
-            z: this.mesh.position.z
+            x: this.body.position.x,
+            y: this.body.position.y,
+            z: this.body.position.z
         };
     }
 
@@ -383,16 +372,16 @@ export default class Entity extends EventDispatcher {
 
         if (Config.physics().enabled) {
             Physics.updatePosition(this.uuid(), position);
-        } else if (this.mesh) {
-            this.mesh.position.set(position.x, position.y, position.z);
+        } else if (this.body) {
+            this.body.position.set(position.x, position.y, position.z);
         }
     }
 
     getRotation() {
         return {
-            x: this.mesh.rotation.x,
-            y: this.mesh.rotation.y,
-            z: this.mesh.rotation.z
+            x: this.body.rotation.x,
+            y: this.body.rotation.y,
+            z: this.body.rotation.z
         };
     }
 
@@ -404,8 +393,8 @@ export default class Entity extends EventDispatcher {
 
         if (Config.physics().enabled) {
             Physics.updateRotation(this.uuid(), rotation);
-        } else if (this.mesh) {
-            this.mesh.rotation.set(rotation.x, rotation.y, rotation.z);
+        } else if (this.body) {
+            this.body.rotation.set(rotation.x, rotation.y, rotation.z);
         }
     }
 
@@ -428,10 +417,10 @@ export default class Entity extends EventDispatcher {
     }
 
     translate({ x = 0, y = 0, z = 0}) {
-        if (this.mesh) {
-            this.mesh.translateX(x);
-            this.mesh.translateY(y);
-            this.mesh.translateZ(z);
+        if (this.body) {
+            this.body.translateX(x);
+            this.body.translateY(y);
+            this.body.translateZ(z);
         }
     }
 
@@ -459,17 +448,17 @@ export default class Entity extends EventDispatcher {
 
     setUuid = (uuid) => {
         if (uuid) {
-            this.mesh.uuid = uuid;
+            this.body.uuid = uuid;
         }
     }
 
     uuid() {
-        return this.mesh.uuid;
+        return this.body.uuid;
     }
 
-    equals(element) {
+    equals(entity) {
         try {
-            return element.uuid ? this.uuid() === element.uuid() : false;
+            return entity.uuid ? this.uuid() === entity.uuid() : false;
         } catch(e) {
             return false;
         }

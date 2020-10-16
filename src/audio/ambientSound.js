@@ -16,8 +16,8 @@ export default class AmbientSound extends Beat {
         this.sound.volume.connect(this.sound.panner);
         this.sound.panner.connect(Audio.volume);
 
-        //storing mesh
-        this.mesh = options.mesh;
+        //storing body
+        this.body = options.body;
 
         //if we set up an effect in our options, we need to create a convolver node
         if (options.effect) {
@@ -53,9 +53,9 @@ export default class AmbientSound extends Beat {
     update(dt) {
 
         // In the frame handler function, get the object's position.
-        this.mesh.updateMatrixWorld();
+        this.body.updateMatrixWorld();
         const p = new Vector3();
-        p.setFromMatrixPosition(this.mesh.matrixWorld);
+        p.setFromMatrixPosition(this.body.matrixWorld);
 
         // And copy the position over to the sound of the object.
         this.sound.panner.setPosition(p.x, p.y, p.z);

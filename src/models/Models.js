@@ -87,7 +87,7 @@ class Models {
         } = this.map[name] ||this.map[buildAssetId(name, this.currentLevel)] || false;
 
         if (scene) {
-            const meshOptions = {
+            const elementOptions = {
                 name,
                 ...options
             };
@@ -98,16 +98,16 @@ class Models {
                 model = SkeletonUtils.clone(scene);
             }
 
-            const mesh = new Element(null, null, meshOptions);
+            const element = new Element(null, null, elementOptions);
 
-            mesh.setMesh({ mesh: prepareModel(model) });
-            mesh.setEntityType(ENTITY_TYPES.MODEL);
+            element.setBody({ body: prepareModel(model) });
+            element.setEntityType(ENTITY_TYPES.MODEL);
 
             if (animations) {
-                mesh.addAnimationHandler(animations);
+                element.addAnimationHandler(animations);
             }
 
-            return mesh;
+            return element;
         }
 
         return false;

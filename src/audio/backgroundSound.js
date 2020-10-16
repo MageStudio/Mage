@@ -8,8 +8,8 @@ export default class BackgroundSound extends Beat {
         //use options to choose whether have a loop or not.
         this.sound.source.loop = options.loop || true;
 
-        //storing mesh
-        this.mesh = options.mesh;
+
+        this.body = options.body;
 
         //if we set up an effect in our options, we need to create a convolver node
         if (options.effect) {

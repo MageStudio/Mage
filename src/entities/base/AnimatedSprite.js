@@ -15,11 +15,11 @@ export default class AnimatedSprite extends Element {
             ...options
         });
 
-        const mesh = new THREESprite(material);
-        mesh.scale.x = width;
-        mesh.scale.y = height;
+        const body = new THREESprite(material);
+        body.scale.x = width;
+        body.scale.y = height;
 
-        this.setMesh({ mesh });
+        this.setBody({ body });
         this.setEntityType(ENTITY_TYPES.SPRITE);
     }
 }

@@ -5,7 +5,7 @@ import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 import PostProcessing from '../fx/postprocessing/PostProcessing';
-import Input, { EVENTS } from './input/Input';
+import Input, { INPUT_EVENTS } from './input/Input';
 import Lights from '../lights/Lights';
 import Controls from '../controls/Controls';
 import Physics from '../physics/physics';
@@ -57,7 +57,7 @@ export class Level extends EventDispatcher {
     enableInput = () => {
         Input.enable();
         if (!this.inputListenersAreSet) {
-            EVENTS.forEach((event) => {
+            INPUT_EVENTS.forEach((event) => {
                 const methodName = `on${upperCaseFirst(event)}`;
                 if (typeof this[methodName] === 'function') {
                     Input.addEventListener(event, this[methodName].bind(this));
@@ -70,7 +70,7 @@ export class Level extends EventDispatcher {
 
     disableInput = () => {
         Input.disable();
-        EVENTS.forEach((event) => {
+        INPUT_EVENTS.forEach((event) => {
             const methodName = `on${upperCaseFirst(event)}`;
             if (typeof this[methodName] === 'function') {
                 Input.removeEventListener(event, this[methodName]);
@@ -96,13 +96,13 @@ export class Level extends EventDispatcher {
         this.onUiDisabled();
     }
 
-    parseScene = ({ meshes = [], models = [], lights = [] }, options = {}) => {
+    parseScene = ({ elements = [], models = [], lights = [] }, options = {}) => {
         return new Promise((resolve, reject) => {
-            if (meshes.length) {
+            if (elements.length) {
                 for (let i in models) {
-                    meshes.push(models[i]);
+                    elements.push(models[i]);
                 }
-                MeshLoader.load(meshes, options);
+                MeshLoader.load(elements, options);
             }
 
             if (lights.length) {

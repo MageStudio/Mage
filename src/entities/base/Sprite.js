@@ -30,19 +30,19 @@ export default class Sprite extends Element {
             ...rest
         });
 
-        const mesh = new THREESprite(material);
-        mesh.scale.x = width;
-        mesh.scale.y = height;
+        const body = new THREESprite(material);
+        body.scale.x = width;
+        body.scale.y = height;
 
-        this.setMesh({ mesh });
+        this.setBody({ body });
         this.setEntityType(ENTITY_TYPES.SPRITE);
     }
 
     getRotation() {
-        return this.mesh.material.rotation;
+        return this.body.material.rotation;
     }
 
     setRotation(rotation = this.getRotation()) {
-        this.mesh.material.rotation = rotation;
+        this.body.material.rotation = rotation;
     }
 }

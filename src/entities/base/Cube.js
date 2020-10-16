@@ -10,13 +10,13 @@ export default class Cube extends Element {
         super(null, null, options);
 
         const geometry = new CubeGeometry(side, side, side);
-		const material = new MeshBasicMaterial({
-			color: color,
-			wireframe: false,
+        const material = new MeshBasicMaterial({
+            color: color,
+            wireframe: false,
             ...options
         });
         
-        this.setMesh({ geometry, material });
+        this.setBody({ geometry, material });
         this.setEntityType(ENTITY_TYPES.MESH);
     }
 }

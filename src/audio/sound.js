@@ -8,7 +8,7 @@ export default class Sound extends Beat {
         super(name);
 
         const {
-            mesh = false,
+            body = null,
             loop = false,
             effect = false,
             autoplay = false
@@ -23,11 +23,7 @@ export default class Sound extends Beat {
         this.sound.volume.connect(this.sound.panner);
         this.sound.panner.connect(Audio.volume);
 
-        if (mesh) {
-            this.mesh = mesh;
-        } else {
-            this.update = function() {};
-        }
+        this.body = body;
 
         if (effect) {
             this.convolver = Audio.context.createConvolver();
@@ -59,15 +55,15 @@ export default class Sound extends Beat {
 
     update(dt) {
 
-        if (this.mesh) {
+        if (this.body) {
             var p = new Vector3();
-            p.setFromMatrixPosition(this.mesh.matrixWorld);
+            p.setFromMatrixPosition(this.body.matrixWorld);
             var px = p.x, py = p.y, pz = p.z;
 
-            this.mesh.updateMatrixWorld();
+            this.body.updateMatrixWorld();
 
             var q = new Vector3();
-            q.setFromMatrixPosition(this.mesh.matrixWorld);
+            q.setFromMatrixPosition(this.body.matrixWorld);
             var dx = q.x-px, dy = q.y-py, dz = q.z-pz;
             //setting panner position and velocity using doppler effect.
             try {

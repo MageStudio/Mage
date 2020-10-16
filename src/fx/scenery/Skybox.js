@@ -47,12 +47,12 @@ export default class Skybox {
             side: BackSide
         });
 
-        this.mesh = new Mesh(
+        this.body = new Mesh(
             new BoxGeometry( 1000000, 1000000, 1000000 ),
             skyBoxMaterial
         );
 
-        Scene.add(this.mesh, this);
+        Scene.add(this.body, this);
     }
 
     render() {}
