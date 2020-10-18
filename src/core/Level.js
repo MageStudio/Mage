@@ -51,9 +51,6 @@ export class Level extends EventDispatcher {
     onInputEnabled() {}
     onInputDisabled() {}
 
-    onUiEnabled() {}
-    onUiDisabled() {}
-
     enableInput = () => {
         Input.enable();
         if (!this.inputListenersAreSet) {
@@ -156,20 +153,12 @@ export class Level extends EventDispatcher {
 
         this.disableInput();
         Physics.dispose();
-        this.disableUI();
         Universe.bigfreeze();
         Scene.dispose();
         Controls.dispose();
         this.cancelNextAnimationFrame();
 
         this.onDispose();
-    };
-
-    load = () => {
-        if (!(typeof this.progressAnimation == "function")) {
-            this.progressAnimation = (callback) => callback();
-        }
-        this.progressAnimation(this.init);
     };
 
     toJSON() {
