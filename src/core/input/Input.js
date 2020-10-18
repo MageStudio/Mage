@@ -99,6 +99,10 @@ export class Input extends EventDispatcher {
         }
     }
 
+    isEnabled() {
+        return this.enabled;
+    }
+
     enableGamepad() {
         dispatch(gamepadEnabled());
         
@@ -195,7 +199,8 @@ export class Input extends EventDispatcher {
     }
 
     update() {
-        if (this.gamepad.isEnabled()) {
+        if (this.isEnabled() &&
+            this.gamepad.isEnabled()) {
             this.gamepad.update();
         }
     }

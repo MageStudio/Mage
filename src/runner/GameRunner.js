@@ -91,7 +91,7 @@ export class GameRunner {
                     .then(this.running.parseScene)
                     .then(() => {
                         this.running.prepareScene();
-                        this.running.load();
+                        this.running.init();
                         resolve(this.running);
                     })
             } else {
@@ -99,7 +99,7 @@ export class GameRunner {
                     .preload()
                     .then(() => {
                         this.running.prepareScene();
-                        this.running.load();
+                        this.running.init();
                         resolve(this.running);
                     })
                     .catch(reject);

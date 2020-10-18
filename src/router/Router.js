@@ -12,12 +12,16 @@ import {
     HASH,
     EMPTY,
     BEFORE_UNLOAD,
-    HASH_CHANGE, DEFAULT_SELECTOR
+    HASH_CHANGE,
+    DEFAULT_SELECTOR
 } from '../lib/constants';
 
 import * as UI from '../ui';
-import { dispatch } from '../store';
-import { showLoadingScreen, hideLoadingScreen } from '../store/actions/ui';
+import {
+    setLocationHash,
+    getLocationHash,
+    getLocationSearch
+} from '../lib/location';
 
 class Router {
 
@@ -26,48 +30,24 @@ class Router {
         this.currentLevel = ROOT;
     }
 
-    storeConfiguration(configuration) {
-        this.configuration = configuration;
-    }
-
-    getConfiguration() {
-        return this.configuration;
-    }
-
-    storeSelector(selector) {
-        this.selector = selector;
-    }
-
-    getSelector() {
-        return this.selector;
-    }
-
-    static hasLocation() {
-        return !!window &&
-            !!window.location;
-    }
-
     static extractLocationHash() {
-        if (Router.hasLocation()) {
-            return Router.cleanRoute(location.hash);
-        }
-
-        return Router.cleanRoute(ROOT);
+        return Router.cleanRoute(getLocationHash());
     }
 
     static extractQuery() {
-        if (Router.hasLocation()) {
-            return parseQuery(location.search);
-        }
+        return parseQuery(getLocationSearch());
     }
+
+    static areRoutesIdentical = (routeA, routeB) => (
+        routeA === routeB
+    );
 
     static cleanRoute(route = HASH) {
         if (!route.length) {
             return ROOT;
         }
-        const cleaned = route.split(HASH)[1];
-
-        return DIVIDER.concat(cleaned);
+        
+        return route.split(HASH)[1];
     }
 
     setCurrentLevel = hash => {
@@ -86,22 +66,18 @@ class Router {
     };
 
     on(route, classname) {
-        const path = Router.cleanRoute(route.replace(DIVIDER, HASH));
-        if (GameRunner.register(path, classname)) {
+        if (GameRunner.register(route, classname)) {
             this.routes.push(route);
         }
     }
 
-    goTo(path, options) {
-        if (window &&
-            window.location &&
-            window.location.hash) {
-                const { query } = options;
-                if (query) {
-                    window.location.search = toQueryString(query);
-                }
-                window.location.hash = path.replace(DIVIDER, EMPTY);
+    goTo(path, options = {}, origin = this.getCurrentLevel()) {
+        if (!Router.areRoutesIdentical(origin, path)) {
+            if (options) {
+                setLocationHash(toQueryString(options));
             }
+            setLocationHash(path);
+        }
     }
 
     setGlobalWindowEventsListeners() {
@@ -130,15 +106,13 @@ class Router {
 
         if (this.isValidRoute(hash)) {
             this.setCurrentLevel(hash);
+
             return Assets
                 .load(hash)
                 .then(() => GameRunner.start(hash, query))
                 .then(UI.removeLoadingScreen);
         } else {
-            return Assets
-                .load(ROOT)
-                .then(() => GameRunner.start(ROOT, query))
-                .then(UI.removeLoadingScreen);
+            this.goTo(ROOT, query, hash);
         }
     }
 
@@ -156,8 +130,7 @@ class Router {
             selector = DEFAULT_SELECTOR
         } = config;
 
-        this.storeConfiguration(config);
-        this.storeSelector(selector);
+        setLocationHash(ROOT);
         this.setGlobalWindowEventsListeners();
 
         Config.setConfig(config);
