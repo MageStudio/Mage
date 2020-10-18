@@ -17,7 +17,7 @@ class Config {
             tests: [],
 
             screen: {
-        		frameRate : 60,
+                frameRate : 60,
                 alpha: true
             },
 
@@ -40,12 +40,14 @@ class Config {
                 enabled: false
             },
 
-    		camera : {
-    			//handling useful informations about our camera.
-    			fov : 75,
-    			near : 0.1,
-    			far : 100
-    		}
+            camera : {
+                //handling useful informations about our camera.
+                fov : 75,
+                near : 0.1,
+                far : 100
+            },
+
+            ui: {}
         }
 
         this.isDefault = true;
@@ -139,6 +141,10 @@ class Config {
         };
 
         return this.config.screen;
+    }
+
+    ui() {
+        return this.config.ui;
     }
 
     tween() {

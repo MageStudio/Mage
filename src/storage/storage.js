@@ -25,7 +25,7 @@ export class Storage {
             try {
                 const state = getState();
                 const timestamp = +new Date();
-                const currentScene = GameRunner.getCurrentScene();
+                const currentScene = GameRunner.getCurrentLevel();
                 const currentPath = GameRunner.getCurrentPath();
 
                 const sceneJSON = currentScene.toJSON();

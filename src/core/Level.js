@@ -9,7 +9,7 @@ import Input, { INPUT_EVENTS } from './input/Input';
 import Lights from '../lights/Lights';
 import Controls from '../controls/Controls';
 import Physics from '../physics/physics';
-import { mount, unmount } from '../ui/render';
+import { mount, unmount } from '../ui';
 import {
     EventDispatcher
 } from 'three';
@@ -79,22 +79,6 @@ export class Level extends EventDispatcher {
         this.inputListenersAreSet = false;
         this.onInputDisabled();
     };
-
-
-    enableUI = (RootComponent, _props) => {
-        const props = {
-            level: this,
-            ..._props
-        };
-        mount(RootComponent, props);
-
-        this.onUiEnabled();
-    };
-
-    disableUI = () => {
-        unmount();
-        this.onUiDisabled();
-    }
 
     parseScene = ({ elements = [], models = [], lights = [] }, options = {}) => {
         return new Promise((resolve, reject) => {
