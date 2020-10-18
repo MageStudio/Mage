@@ -81,7 +81,7 @@ class Router {
     isValidRoute = (route) => this.routes.includes(route);
 
     handleHashChange = () => {
-        dispatch(showLoadingScreen());
+        UI.requestLoadingScreen();
         this.startLevel();
     };
 
@@ -133,12 +133,12 @@ class Router {
             return Assets
                 .load(hash)
                 .then(() => GameRunner.start(hash, query))
-                .then(() => dispatch(hideLoadingScreen()));
+                .then(UI.removeLoadingScreen);
         } else {
             return Assets
                 .load(ROOT)
                 .then(() => GameRunner.start(ROOT, query))
-                .then(() => dispatch(hideLoadingScreen()));
+                .then(UI.removeLoadingScreen);
         }
     }
 
@@ -163,8 +163,7 @@ class Router {
         Config.setConfig(config);
         Config.setContainer(selector);
 
-        dispatch(showLoadingScreen());
-
+        UI.requestLoadingScreen();
         UI.mount();
 
         Features.setUpPolyfills();

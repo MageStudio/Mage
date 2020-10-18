@@ -5,6 +5,8 @@ import { getStore } from '../store/Store';
 import BaseUI from './BaseUI';
 import Config from '../core/config';
 import Router from '../router/Router';
+import { dispatch } from '../store';
+import { showLoadingScreen, hideLoadingScreen } from '../store/actions/ui';
 
 const ROOT_ID = '#ui';
 
@@ -21,6 +23,14 @@ const getUIContainer = () => {
     }
 
     return rootElement;
+};
+
+export const requestLoadingScreen = () => {
+    dispatch(showLoadingScreen());
+};
+
+export const removeLoadingScreen = () => {
+    dispatch(hideLoadingScreen());
 };
 
 export const mount = () => {
