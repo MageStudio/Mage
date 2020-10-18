@@ -3,23 +3,30 @@ import { createElement } from 'inferno-create-element';
 import { Provider } from 'inferno-redux';
 import { getStore } from '../store/Store';
 import BaseUI from './BaseUI';
+import Config from '../core/config';
+import Router from '../router/Router';
 
 const ROOT_ID = '#ui';
 
-export const mount = (UI = BaseUI, options = {}) => {
-    const {
-        root = ROOT_ID,
-        ...props
-    } = options;
+const createProps = () => ({
+    level: Router.getCurrentLevel()
+});
 
-    const store = getStore();
-    const uiElement = createElement(UI, props);
-    let rootElement = document.querySelector(root);
+const getUIContainer = () => {
+    let rootElement = document.querySelector(ROOT_ID);
 
     if (!rootElement) {
-        rootElement = createElementFromSelector(root);
+        rootElement = createElementFromSelector(ROOT_ID);
         document.body.appendChild(rootElement);
     }
+
+    return rootElement;
+};
+
+export const mount = () => {
+    const { root = BaseUI } = Config.ui();
+    const store = getStore();
+    const uiElement = createElement(root, createProps());
 
     if (store) {
         render(
@@ -27,16 +34,16 @@ export const mount = (UI = BaseUI, options = {}) => {
                 store: getStore(),
                 children: uiElement
             }),
-            rootElement
+            getUIContainer()
         );
     } else {
-        render(uiElement, rootElement)
+        render(uiElement, getUIContainer())
     }
 };
 
 
-export const unmount = ({ root = ROOT_ID } = {}) => {
+export const unmount = () => {
     // Rendering null will trigger unmount lifecycle hooks for whole vDOM tree and remove global event listeners.
     // https://github.com/infernojs/inferno#tear-down
-    render(null, document.querySelector(root));
+    render(null, document.querySelector(ROOT_ID));
 };

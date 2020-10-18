@@ -11,20 +11,30 @@ export class GameRunner {
     }
 
     has(path) {
-        return Object.keys(this.store).includes(path);
+        return Object
+            .keys(this.store)
+            .includes(path);
     }
 
     get(path) {
         return this.store[path];
     }
 
-    getCurrentScene() {
+    getCurrentLevel() {
         return this.running;
+    }
+
+    setCurrentLevel(level) {
+        this.running = level;
     }
 
     getCurrentPath() {
         return this.currentPath;
     }
+
+    setCurrentPath(path) {
+        this.currentPath = path;
+    } 
 
     static isValidClassname(classname) {
         return typeof classname === 'function';
@@ -60,7 +70,7 @@ export class GameRunner {
         this.running.dispose();
     }
 
-    start(path, options = {}) {
+    start = (path, options = {}) => {
         return new Promise((resolve, reject) => {
             const { loading = false } = options;
 
@@ -72,8 +82,9 @@ export class GameRunner {
                 this.disposeCurrentScene();
             }
 
-            this.currentPath = path;
-            this.running = this.createNewScene(path, options);
+            this.setCurrentPath(path);
+            this.setCurrentLevel(this.createNewScene(path, options));
+
             if (loading) {
                 storage
                     .loadScene()
@@ -84,7 +95,8 @@ export class GameRunner {
                         resolve(this.running);
                     })
             } else {
-                this.running.preload()
+                this.running
+                    .preload()
                     .then(() => {
                         this.running.prepareScene();
                         this.running.load();

@@ -37,6 +37,7 @@ import * as workers from './lib/workers';
 
 import Stats from './core/Stats';
 import Config from './core/config';
+import GameRunner from './runner/GameRunner';
 import Router from './router/Router';
 import Scene from './core/Scene';
 import Scripts from './scripts/Scripts';
@@ -96,6 +97,7 @@ export {
     Universe,
     Scripts,
     Router,
+    GameRunner,
 
     store,
     Provider,

@@ -7,6 +7,7 @@ import {
     storage,
     input,
     network,
+    ui,
     createRootReducer
 } from './reducers';
 
@@ -18,7 +19,8 @@ const DEFAULT_REDUCERS = {
     info,
     input,
     storage,
-    network
+    network,
+    ui
 };
 
 let unsubscribe = NOOP;
@@ -36,7 +38,7 @@ const applyMiddlewares = (mdws, debug) => {
 
 const defaultMiddleware = () => [thunk];
 
-export const combineReducers = (reducers = {}) => (
+const combineReducers = (reducers = {}) => (
     redux.combineReducers({
         ...reducers,
         ...DEFAULT_REDUCERS
@@ -63,10 +65,12 @@ const handleSubscriptions = () => (
         })
 )
 
-export const createStore = (reducers = combineReducers(), initialState = {}, debug = false) => {
+export const createStore = (reducers, initialState = {}, debug = false) => {
+    const storeReducers = combineReducers(reducers);
+
     if (!store) {
         store = redux.createStore(
-            createRootReducer(reducers),
+            createRootReducer(storeReducers),
             initialState,
             applyMiddlewares(defaultMiddleware(), debug)
         );
