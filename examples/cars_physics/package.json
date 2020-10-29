@@ -1,7 +1,7 @@
 {
-    "name": "physics_example",
+    "name": "cars_physics_example",
     "version": "1.0.0",
-    "description": "Ludum Dare 47",
+    "description": "A car driving around",
     "main": "index.js",
     "scripts": {
         "clean": "rimraf dist && rimraf public",

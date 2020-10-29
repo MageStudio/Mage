@@ -132,64 +132,6 @@ export class Physics extends EventDispatcher {
             });
         }
     }
-
-    // applyForce(uuid, force) {
-    //     if (Config.physics().enabled) {
-    //         this.worker.postMessage({
-    //             type: APPLY_FORCE_EVENT,
-    //             uuid,
-    //             force
-    //         });
-    //     }
-    // }
-
-    // updatePosition(uuid, position) {
-    //     if (Config.physics().enabled) {
-    //         this.worker.postMessage({
-    //             type: POSITION_CHANGE_EVENT,
-    //             uuid,
-    //             position
-    //         });
-    //     }
-    // }
-
-    // updateRotation(uuid, rotation) {
-    //     if (Config.physics().enabled) {
-    //         this.worker.postMessage({
-    //             type: ROTATION_CHANGE_EVENT,
-    //             uuid,
-    //             rotation
-    //         });
-    //     }
-    // }
-
-    // updateAngularVelocity(uuid, velocity) {
-    //     if (Config.physics().enabled) {
-    //         this.worker.postMessage({
-    //             type: ANGULAR_VELOCITY_CHANGE_EVENT,
-    //             uuid,
-    //             velocity
-    //         });
-    //     }
-    // }
-
-    // updateLinearVelocity(uuid, velocity) {
-    //     if (Config.physics().enabled) {
-    //         this.worker.postMessage({
-    //             type: LINEAR_VELOCITY_CHANGE_EVENT,
-    //             uuid,
-    //             velocity
-    //         });
-    //     }
-    // }
-
-    // update(dt) {
-    //     if (Config.physics().enabled) {
-    //         this.worker.postMessage({
-    //             type: UPDATE_EVENT
-    //         });
-    //     }
-    // }
 }
 
 export default new Physics();

@@ -46,7 +46,6 @@
         "inferno-create-element": "7.3.3",
         "inferno-redux": "7.4.2",
         "mage-engine.particles": "github:MageStudio/partykals#v2.0.2",
-        "oimo": "github:MageStudio/Oimo.js#v1.0.11",
         "redux": "4.0.5",
         "redux-thunk": "^2.3.0",
         "rxjs": "6.5.3",

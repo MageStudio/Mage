@@ -1,7 +1,7 @@
 {
     "name": "physics_example",
     "version": "1.0.0",
-    "description": "Ludum Dare 47",
+    "description": "Falling cubes",
     "main": "index.js",
     "scripts": {
         "clean": "rimraf dist && rimraf public",

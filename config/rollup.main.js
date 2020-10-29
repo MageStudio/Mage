@@ -27,7 +27,7 @@ export default {
                 'vivus': []
             }
         }),
-        // terser(),
+        terser(),
         json()
     ]
 }
