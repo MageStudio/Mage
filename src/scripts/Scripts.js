@@ -1,12 +1,14 @@
 import BaseScript from './BaseScript';
 import Input from '../core/input/Input';
 import { fetch } from 'whatwg-fetch';
-import Assets from "../core/Assets";
+import BaseCar from './builtin/BaseCar';
 
 export class Scripts {
 
     constructor() {
-        this.map = {};
+        this.map = {
+            'BaseCar': BaseCar
+        };
     }
 
     update() {}

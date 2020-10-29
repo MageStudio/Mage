@@ -20,10 +20,14 @@ import Images from '../images/Images';
 import AnimationHandler from './animations/AnimationHandler';
 import Config from '../core/config';
 import Scene from '../core/Scene';
-import { COLLISION_EVENT } from '../lib/constants';
+import { COLLISION_EVENT, ORIGIN } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics/physics';
-import { getDescriptionForElement } from '../physics/utils';
+import {
+    getDescriptionForElement,
+    extractBoundingBox,
+    extractBiggestBoundingBox
+} from '../physics/utils';
 
 import { keepWithinBoundaries } from '../lib/math';
 import {
@@ -35,8 +39,8 @@ import {
     disposeGeometry
 } from '../lib/meshUtils';
 
-const BOUNDING_BOX_COLOR = 0xf368e0;
-const BOUNDING_BOX_INCREASE = .5;
+const HIT_BOX_COLOR = 0xf368e0;
+const HIT_BOX_INCREASE = .03;
 
 const COLLIDER_TAG = 'collider';
 const COLLIDER_COLOR = 0xff0000;
@@ -94,7 +98,7 @@ export default class Element extends Entity {
         } else if (geometry && material) {
             this.geometry = geometry;
             this.material = material;
-            this.body = new Body(this.geometry, this.material);
+            this.body = new Mesh(this.geometry, this.material);
         }
 
         if (this.hasBody()) {
@@ -105,10 +109,10 @@ export default class Element extends Entity {
 
     evaluateBoundingBox() {
         if (hasGeometry(this.getBody())) {
-            this.body.geometry.computeBoundingBox();
-            this.boundingBox = this.body.geometry.boundingBox;
+            this.boundingBox = extractBoundingBox(this.getBody());
         } else {
-            console.warn(ELEMENT_NO_GEOMETRY_SET);
+            this.boundingBox = extractBiggestBoundingBox(this.getBody());
+            console.log(this.boundingBox);
         }
     }
 
@@ -178,7 +182,7 @@ export default class Element extends Entity {
         return [];
     }
 
-    enablePhysics(options) {
+    enablePhysics(options = {}) {
         if (Config.physics().enabled) {
             const description = {
                 ...getDescriptionForElement(this),
@@ -186,21 +190,29 @@ export default class Element extends Entity {
             };
 
             if (options.debug) {
-                this.addPhysicsBoundingBox(description);
+                this.addHitBox();
             }
             
             Physics.add(this, description);
         }
     }
 
-    addPhysicsBoundingBox({ rot, pos, size }) {
-        const scaledSize = size.map(s => s + BOUNDING_BOX_INCREASE);
-        const box = new Box(scaledSize[0], scaledSize[1], scaledSize[2], BOUNDING_BOX_COLOR);
+    addHitBox() {
+        const size = this.boundingBox.getSize();
+        const quaternion = this.getQuaternion();
 
-        box.setPosition({ x: pos[0], y: pos[1], z: pos[2] });
-        box.setRotation({ x: rot[0], y: rot[1], z: rot[2] });
+        const scaledSize = {
+            x: size.x + HIT_BOX_INCREASE,
+            y: size.y + HIT_BOX_INCREASE,
+            z: size.z + HIT_BOX_INCREASE
+        };
+        const box = new Box(scaledSize.x, scaledSize.y, scaledSize.z, HIT_BOX_COLOR);
+
+        box.setQuaternion(quaternion);
         box.setWireframe(true);
         box.setWireframeLineWidth(2);
+
+        box.setPosition(ORIGIN);
 
         this.add(box);
     }
@@ -378,6 +390,22 @@ export default class Element extends Entity {
             emptyCollision;
     }
 
+    setGeometryRotation(rotation = {}) {
+        const { x = 0, y = 0, z = 0 } = rotation;
+
+        if (x !== 0) {
+            this.getBody().geometry.rotateX(x);
+        }
+
+        if (y !== 0) {
+            this.getBody().geometry.rotateY(y);
+        }
+
+        if (z !== 0) {
+            this.getBody().geometry.rotateZ(z);
+        }
+    }
+
     setColor(color) {
         if (color) {
             if (hasMaterial(this.body)) {
@@ -466,12 +494,9 @@ export default class Element extends Entity {
         }
     }
 
-    copyQuaternion = (quaternion) => {
-        this.body.quaternion.copy(quaternion);
-    }
-
-    copyPosition = (position) => {
-        this.body.position.copy(position);
+    handlePhysicsUpdate = (position, quaternion) => {
+        this.setPosition(position);
+        this.setQuaternion(quaternion);
     }
 
     equals = (object) => (

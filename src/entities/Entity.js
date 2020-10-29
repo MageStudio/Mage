@@ -128,7 +128,7 @@ export default class Entity extends EventDispatcher {
     }
 
     dispose() {
-        if (this.body) {
+        if (this.hasBody()) {
             this.stopStateMachine();
             this.stopScripts();
             this.reset();
@@ -335,25 +335,34 @@ export default class Entity extends EventDispatcher {
     }
 
     setScale(howbig) {
-        const scale = {
-            ...this.getScale(),
-            ...howbig
-        };
-
-        if (this.body) {
+        if (this.hasBody()) {
+            const scale = {
+                ...this.getScale(),
+                ...howbig
+            };
             this.body.scale.set(scale.x, scale.y, scale.z);
         }
     }
 
     getWorldPosition() {
         const vector = new Vector3();
-        if (this.body) {
+        if (this.hasBody()) {
             const { x, y, z } = this.body.getWorldPosition(vector);
             
             return { x, y, z }
         }
 
         return DEFAULT_POSITION;
+    }
+
+    getQuaternion() {
+        if (this.hasBody()) {
+            return this.getBody().quaternion;
+        }
+    }
+
+    setQuaternion = ({ x, y, z, w }) => {
+        this.body.quaternion.set(x, y, z, w);
     }
 
     getPosition() {
@@ -365,14 +374,12 @@ export default class Entity extends EventDispatcher {
     }
 
     setPosition(where) {
-        const position = {
-            ...this.getPosition(),
-            ...where
-        };
+        if (this.hasBody()) {
+            const position = {
+                ...this.getPosition(),
+                ...where
+            };
 
-        if (Config.physics().enabled) {
-            Physics.updatePosition(this.uuid(), position);
-        } else if (this.body) {
             this.body.position.set(position.x, position.y, position.z);
         }
     }
@@ -386,14 +393,12 @@ export default class Entity extends EventDispatcher {
     }
 
     setRotation(how) {
-        const rotation = {
-            ...this.getRotation(),
-            ...how
-        };
+        if (this.hasBody()) {
+            const rotation = {
+                ...this.getRotation(),
+                ...how
+            };
 
-        if (Config.physics().enabled) {
-            Physics.updateRotation(this.uuid(), rotation);
-        } else if (this.body) {
             this.body.rotation.set(rotation.x, rotation.y, rotation.z);
         }
     }
@@ -417,7 +422,7 @@ export default class Entity extends EventDispatcher {
     }
 
     translate({ x = 0, y = 0, z = 0}) {
-        if (this.body) {
+        if (this.hasBody()) {
             this.body.translateX(x);
             this.body.translateY(y);
             this.body.translateZ(z);
