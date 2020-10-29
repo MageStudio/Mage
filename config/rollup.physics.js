@@ -11,7 +11,7 @@ export default {
         format: 'umd',
         compact: true,
         minifyInternalExports: false,
-        name: 'OIMO'
+        name: 'Ammo'
     },
     cache: true,
     perf: true,
@@ -19,7 +19,6 @@ export default {
         resolve(),
         babel({ exclude: ['node_modules/**'] }),
         commonjs(),
-        terser(),
         json()
     ]
 }

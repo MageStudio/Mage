@@ -9,7 +9,6 @@ import Input, { INPUT_EVENTS } from './input/Input';
 import Lights from '../lights/Lights';
 import Controls from '../controls/Controls';
 import Physics from '../physics/physics';
-import { mount, unmount } from '../ui';
 import {
     EventDispatcher
 } from 'three';
@@ -121,7 +120,6 @@ export class Level extends EventDispatcher {
     render = () => {
         const dt = Scene.clock.getDelta();
 
-        Physics.update();
         Scene.render(dt);
         PostProcessing.render(dt);
         this.onUpdate(dt);
@@ -135,17 +133,20 @@ export class Level extends EventDispatcher {
     }
 
     init = () => {
-        Physics.init();
-        PostProcessing.init();
-        Stats.init();
-
-        this.render();
-
-        if (this.onCreate instanceof Function) {
-            this.onCreate();
-        } else {
-            console.log(ONCREATE_NOT_AVAILABLE);
-        }
+        Physics
+            .init()
+            .then(() => {
+                PostProcessing.init();
+                Stats.init();
+        
+                this.render();
+        
+                if (this.onCreate instanceof Function) {
+                    this.onCreate();
+                } else {
+                    console.log(ONCREATE_NOT_AVAILABLE);
+                }
+            })
     };
 
     dispose = () => {

@@ -1,6 +1,8 @@
 node_modules/*
 npm-debug.log
 
+examples/**/node_modules/*
+
 dist/mage.js
 dist/mage.node.js
 

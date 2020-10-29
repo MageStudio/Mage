@@ -1,0 +1,178 @@
+@font-face {
+    font-family: Kamatic;
+    src: url('ka1.ttf');
+}
+
+body {
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    font-family: Kamatic;
+}
+
+.visible {
+    visibility: visible;
+}
+
+.invisible {
+    display: none;
+    visibility: hidden;
+}
+
+canvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    z-index: 101;
+    border-radius: 8px;
+    border: 8px solid white;
+    box-shadow: 0px 1px grey, 1px 0px grey, -1px 0px grey, 0px -1px grey, 0px 9px #CCC3B4;
+}
+
+#gameContainer {
+    z-index: 100;
+    position: relative;
+    margin: 0;
+    height: 550px;
+    width: 900px;
+    margin: auto;
+    margin-top: 8px;
+    /* border: 4px solid #ACABAA; */
+    border-radius: 8px;
+}
+
+#ui {
+    z-index: 101;
+}
+
+.loader {
+    position: absolute;
+    height: 100vh;
+    width: 100vw;
+    z-index: 110;
+    background-color: #E5DECF;
+}
+
+.loader-box {
+    height: 70px;
+    width: 500px;
+    padding: 20px;
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    top: 0;
+    color: black;
+    bottom: 0;
+}
+
+.fadeout {
+    animation: fadeOut 1s;
+}
+
+.loading {
+    letter-spacing: 4px;
+    color: black;
+}
+
+.text-blink {
+    color: black;
+    animation: blink-animation 0.6s steps(3, start) infinite;
+    -webkit-animation: blink-animation 0.6s steps(3, start) infinite;
+}
+
+.text-blink.one {
+    animation-delay: 0.1s;
+}
+
+.text-blink.two {
+    animation-delay: 0.2s;
+}
+
+.text-blink.three {
+    animation-delay: 0.3s;
+}
+
+@keyframes blink-animation {
+    to {
+        visibility: hidden;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+    100% {
+        display: none;
+        opacity: 0;
+    }
+}
+
+@keyframes loader {
+    0% {
+        width: 0;
+    }
+    20% {
+        width: 10%;
+    }
+    25% {
+        width: 24%;
+    }
+    43% {
+        width: 41%;
+    }
+    56% {
+        width: 50%;
+    }
+    66% {
+        width: 52%;
+    }
+    71% {
+        width: 60%;
+    }
+    75% {
+        width: 76%;
+    }
+    94% {
+        width: 86%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+.progress-bar {
+    border-radius: 8px;
+    overflow: hidden;
+    width: 100%;
+    height: 8px;
+    /* margin-top: -4px; */
+    border: 1px solid #B8B2A6;
+}
+
+.progress-bar span {
+    display: block;
+}
+
+.bar {
+    background: #DED7CD;
+}
+
+.progress {
+    animation: loader 8s ease forwards;
+    background: white;
+    color: #dcdde1;
+    padding: 4px;
+    width: 0;
+}

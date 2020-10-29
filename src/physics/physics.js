@@ -1,32 +1,31 @@
 import {
     EventDispatcher
 } from 'three';
-import Scene from '../core/Scene';
 import Universe from '../core/Universe';
 import Config from '../core/config';
 import worker from './worker';
 
 import {
-    INIT_EVENT,
-    MESH_UPDATE,
-    ADD_EVENT,
     TERMINATE_EVENT,
-    POSITION_CHANGE_EVENT,
-    ROTATION_CHANGE_EVENT,
-    UPDATE_EVENT,
-    APPLY_FORCE_EVENT,
-    ANGULAR_VELOCITY_CHANGE_EVENT,
-    LINEAR_VELOCITY_CHANGE_EVENT
+    LOAD_EVENT,
+    UPDATE_BODY_EVENT,
+    READY_EVENT,
+    ADD_BOX_EVENT,
+    ADD_VEHICLE_EVENT
 } from './messages';
+import { getDescriptionForElement } from './utils';
 
-const DEFAULT_WORLD_CONFIG = {
-    iterations: 8,
-    broadphase: 2,
-    worldscale: 1,
-    random: true,
-    info: false,
-    gravity: [0, -9.8, 0]
+export const TYPES = {
+    BOX: 'BOX',
+    VEHICLE: 'VEHICLE'
 };
+
+const mapTypeToAddEvent = (type) => ({
+    [TYPES.BOX]: ADD_BOX_EVENT,
+    [TYPES.VEHICLE]: ADD_VEHICLE_EVENT
+})[type] || ADD_BOX_EVENT;
+
+const WORKER_READY_TIMEOUT = 200;
 
 export class Physics extends EventDispatcher {
 
@@ -34,6 +33,7 @@ export class Physics extends EventDispatcher {
         super();
         this.worker = worker;
         this.elements = [];
+        this.workerReady = false;
         this.worker.onmessage = this.handleWorkerMessages;
     };
 
@@ -47,24 +47,37 @@ export class Physics extends EventDispatcher {
 
     init() {
         if (Config.physics().enabled) {
-            const worldConfig = {
-                ...DEFAULT_WORLD_CONFIG,
-                ...Config.physics(),
-                dt: Scene.clock.getDelta()
-            };
-
             this.worker.postMessage({
-                type: INIT_EVENT,
+                type: LOAD_EVENT,
                 path: Config.physics().path,
-                worldConfig: worldConfig
+            });
+
+            return new Promise(resolve => {
+                const isWorkerReady = () => this.workerReady;
+                const check = () => {
+                    setTimeout(() => {
+                        if (isWorkerReady()) {
+                            resolve();
+                        } else {
+                            check();
+                        }
+                    }, WORKER_READY_TIMEOUT)
+                };
+
+                check();
             });
         }
+        
+        return Promise.resolve();
     }
 
     handleWorkerMessages = ({ data }) => {
         switch (data.type) {
-            case MESH_UPDATE:
-                this.handleMeshUpdate(data);
+            case READY_EVENT:
+                this.workerReady = true;
+                break;
+            case UPDATE_BODY_EVENT:
+                this.handleBodyUpdate(data);
                 break;
             case TERMINATE_EVENT:
                 this.handleTerminateEvent();
@@ -78,79 +91,44 @@ export class Physics extends EventDispatcher {
         this.worker.terminate();
     };
 
-    handleMeshUpdate = ({ quaternion, position, uuid }) => {
+    handleBodyUpdate = ({ quaternion, position, uuid }) => {
         const element = Universe.getByUUID(uuid);
-
-        element.copyPosition(position);
-        element.copyQuaternion(quaternion);
+        element.handlePhysicsUpdate(position, quaternion);
     };
 
     add(element, description) {
         if (Config.physics().enabled) {
             const uuid = element.uuid();
-
             this.worker.postMessage({
-                type: ADD_EVENT,
-                description,
+                type: mapTypeToAddEvent(description.type),
+                ...description,
                 uuid
             })
         }
     }
 
-    applyForce(uuid, force) {
+    addVehicle(element, options) {
         if (Config.physics().enabled) {
+            const uuid = element.uuid();
+            const description = getDescriptionForElement(element);
+
             this.worker.postMessage({
-                type: APPLY_FORCE_EVENT,
+                type: ADD_VEHICLE_EVENT,
                 uuid,
-                force
-            });
+                ...description,
+                ...options
+            })
         }
     }
 
-    updatePosition(uuid, position) {
+    updateBodyState(element, state) {
         if (Config.physics().enabled) {
-            this.worker.postMessage({
-                type: POSITION_CHANGE_EVENT,
-                uuid,
-                position
-            });
-        }
-    }
+            const uuid = element.uuid();
 
-    updateRotation(uuid, rotation) {
-        if (Config.physics().enabled) {
             this.worker.postMessage({
-                type: ROTATION_CHANGE_EVENT,
+                type: UPDATE_BODY_EVENT,
                 uuid,
-                rotation
-            });
-        }
-    }
-
-    updateAngularVelocity(uuid, velocity) {
-        if (Config.physics().enabled) {
-            this.worker.postMessage({
-                type: ANGULAR_VELOCITY_CHANGE_EVENT,
-                uuid,
-                velocity
-            });
-        }
-    }
-
-    updateLinearVelocity(uuid, velocity) {
-        if (Config.physics().enabled) {
-            this.worker.postMessage({
-                type: LINEAR_VELOCITY_CHANGE_EVENT,
-                uuid,
-                velocity
-            });
-        }
-    }
-
-    update(dt) {
-        if (Config.physics().enabled) {
-            this.worker.postMessage({
-                type: UPDATE_EVENT
+                state
             });
         }
     }
