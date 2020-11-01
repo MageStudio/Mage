@@ -11,7 +11,9 @@ import {
     UPDATE_BODY_EVENT,
     READY_EVENT,
     ADD_BOX_EVENT,
-    ADD_VEHICLE_EVENT
+    ADD_VEHICLE_EVENT,
+    DISPATCH_EVENT,
+    PHYSICS_EVENTS
 } from './messages';
 import { getDescriptionForElement } from './utils';
 
@@ -82,6 +84,8 @@ export class Physics extends EventDispatcher {
             case TERMINATE_EVENT:
                 this.handleTerminateEvent();
                 break;
+            case DISPATCH_EVENT:
+                this.handleDispatchEvent(data);
             default:
                 break;
         }
@@ -95,6 +99,14 @@ export class Physics extends EventDispatcher {
         const element = Universe.getByUUID(uuid);
         element.handlePhysicsUpdate(position, quaternion);
     };
+
+    handleDispatchEvent = ({ uuid, eventData, eventName }) => {
+        const element = Universe.getByUUID(uuid);
+        element.dispatchEvent({
+            type: eventName,
+            data: eventData
+        });
+    }
 
     add(element, description) {
         if (Config.physics().enabled) {
@@ -133,5 +145,9 @@ export class Physics extends EventDispatcher {
         }
     }
 }
+
+export { 
+    PHYSICS_EVENTS
+};
 
 export default new Physics();

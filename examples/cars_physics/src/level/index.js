@@ -1,17 +1,21 @@
-import { Level, Box, Scene, Cylinder, Controls, Models, AmbientLight } from '../../../../dist/mage';
-
-function createWheel(index) {
-    return Models.getModel(`wheel${index}`);
-}
-
-function createCar(w, h, l) {
-    return Models.getModel('car');
-}
+import { Level, Box, Scene, Cylinder, Controls, Models, AmbientLight, PHYSICS_EVENTS } from '../../../../dist/mage';
 
 export default class Intro extends Level {
 
     addAmbientLight() {
         this.ambientLight = new AmbientLight({ color: 0xffffff });
+    }
+
+    createWheel(index) {
+        return Models.getModel(`wheel${index}`);
+    }
+
+    createCar(w, h, l) {
+        return Models.getModel('car');
+    }
+
+    handleSpeedChange({ data }) {
+        //console.log(data.speed);
     }
 
     onCreate() {
@@ -25,15 +29,17 @@ export default class Intro extends Level {
         const floor = new Box(50, 1, 50, 0xffffff);
         floor.enablePhysics({ mass: 0, debug: true });
         
-        const car = createCar(1.8, .6, 4);
+        const car = this.createCar(1.8, .6, 4);
         car.setPosition({ y: 14 });
 
         const wheels = [
-            createWheel(1),
-            createWheel(2),
-            createWheel(3),
-            createWheel(4),
+            this.createWheel(1),
+            this.createWheel(2),
+            this.createWheel(3),
+            this.createWheel(4),
         ];
+
+        car.addEventListener(PHYSICS_EVENTS.SPEED_CHANGE_EVENT, this.handleSpeedChange);
 
         car.addScript('BaseCar', {
             wheels,

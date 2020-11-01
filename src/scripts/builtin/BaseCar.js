@@ -1,6 +1,6 @@
 import Input from '../../core/input/Input';
 import BaseScript from '../BaseScript';
-import Physics from '../../physics/physics';
+import Physics from '../../physics';
 
 export default class BaseCar extends BaseScript {
 

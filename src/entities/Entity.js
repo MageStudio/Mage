@@ -8,7 +8,7 @@ import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
 import Scene from '../core/Scene';
-import Physics from '../physics/physics';
+import Physics from '../physics';
 import {
     TAG_ALREADY_EXISTS,
     TAG_NOT_EXISTING_REMOVAL,
