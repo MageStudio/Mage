@@ -61,7 +61,6 @@ export class Scene {
         this.scene.add(body);
         if (addUniverse) {
             Universe.set(element.getName(), element);
-            console.log('storing, ', body.uuid, element.getName())
             Universe.storeUUIDToElementNameReference(body.uuid, element.getName());
         }
     }
