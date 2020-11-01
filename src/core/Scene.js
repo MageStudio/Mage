@@ -50,7 +50,7 @@ export class Scene {
     }
 
     updateChildren() {
-        for (var i in this.scene.children) {
+        for (let i in this.scene.children) {
             if (this.scene.children[i].material) {
                 this.scene.children[i].material.needsUpdate = true;
             }
@@ -61,6 +61,7 @@ export class Scene {
         this.scene.add(body);
         if (addUniverse) {
             Universe.set(element.getName(), element);
+            console.log('storing, ', body.uuid, element.getName())
             Universe.storeUUIDToElementNameReference(body.uuid, element.getName());
         }
     }

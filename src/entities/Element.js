@@ -112,7 +112,6 @@ export default class Element extends Entity {
             this.boundingBox = extractBoundingBox(this.getBody());
         } else {
             this.boundingBox = extractBiggestBoundingBox(this.getBody());
-            console.log(this.boundingBox);
         }
     }
 
@@ -524,7 +523,7 @@ export default class Element extends Entity {
         super.dispose();
 
         if (this.hasBody()) {
-            Scene.remove(this.body);
+            Scene.remove(this.getBody());
             this.disposeBody();
         }
     }

@@ -4,10 +4,7 @@ import Level from './level';
 const assets = {
     models: {
         'car': 'assets/models/buggy.gltf',
-        'wheel1': 'assets/models/wheel.gltf',
-        'wheel2': 'assets/models/wheel.gltf',
-        'wheel3': 'assets/models/wheel.gltf',
-        'wheel4': 'assets/models/wheel.gltf',
+        'wheel': 'assets/models/wheel.gltf'
     }
 }
 

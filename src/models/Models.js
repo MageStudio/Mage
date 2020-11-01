@@ -27,7 +27,7 @@ const loaders = {
     [EXTENSIONS.COLLADA]: new ColladaLoader()
 };
 
-const extractExtension = (path) => path.split(FULL_STOP).slice(-1);
+const extractExtension = (path) => path.split(FULL_STOP).slice(-1).pop();
 const getLoaderFromExtension = (extension) => loaders[extension] || new ObjectLoader();
 
 const glbParser = ({ scene, animations }) => {
@@ -67,6 +67,8 @@ const parsers = {
 };
 const getModelParserFromExtension = (extension) => parsers[extension] || defaultParser;
 
+const hasAnimations = (animations = []) => animations.length > 0;
+
 class Models {
 
     constructor() {
@@ -84,7 +86,7 @@ class Models {
             scene,
             animations,
             extension
-        } = this.map[name] ||this.map[buildAssetId(name, this.currentLevel)] || false;
+        } = this.map[name] || this.map[buildAssetId(name, this.currentLevel)] || {};
 
         if (scene) {
             const elementOptions = {
@@ -92,8 +94,9 @@ class Models {
                 ...options
             };
 
-            let model = scene;
-            if (extension !== EXTENSIONS.COLLADA) {
+            let model = scene.clone();
+
+            if (extension !== EXTENSIONS.COLLADA && hasAnimations(animations)) {
                 // we have no idea how to clone collada for the time being
                 model = SkeletonUtils.clone(scene);
             }
@@ -103,7 +106,7 @@ class Models {
             element.setBody({ body: prepareModel(model) });
             element.setEntityType(ENTITY_TYPES.MODEL);
 
-            if (animations) {
+            if (hasAnimations(animations)) {
                 element.addAnimationHandler(animations);
             }
 
