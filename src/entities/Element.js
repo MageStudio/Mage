@@ -22,7 +22,7 @@ import Config from '../core/config';
 import Scene from '../core/Scene';
 import { COLLISION_EVENT, ORIGIN } from '../lib/constants';
 import Universe from '../core/Universe';
-import Physics from '../physics/physics';
+import Physics from '../physics';
 import {
     getDescriptionForElement,
     extractBoundingBox,

@@ -5,12 +5,15 @@ const worker = createWorker(() => {
     const LIBRARY_NAME = 'ammo.js';
 
     const TERMINATE_EVENT = 'TERMINATE_EVENT';
+    const DISPATCH_EVENT = 'DISPATCH_EVENT';
     const LOAD_EVENT = 'LOAD_EVENT';
     const READY_EVENT = 'READY_EVENT';
     const UPDATE_BODY_EVENT = 'UPDATE_BODY_EVENT';
     const INIT_EVENT = 'INIT_EVENT';
     const ADD_BOX_EVENT = 'ADD_BOX_EVENT';
     const ADD_VEHICLE_EVENT = 'ADD_VEHICLE_EVENT';
+
+    const SPEED_CHANGE_EVENT = 'SPEED_CHANGE_EVENT';
 
     const TYPES = {
         BOX: 'BOX',
@@ -39,8 +42,13 @@ const worker = createWorker(() => {
         }
 
         const sendReadyEvent = () => postMessage({ type: READY_EVENT });
-
         const sendTerminateEvent = () => postMessage({ type: TERMINATE_EVENT });
+        const sendDispatchEvent = (uuid, eventName, eventData) => postMessage({
+            type: DISPATCH_EVENT,
+            uuid,
+            eventName,
+            eventData
+        });
 
         const setBody = data => {
             elements[data.uuid] = Object.assign({}, data);
@@ -50,12 +58,12 @@ const worker = createWorker(() => {
             elements[uuid].state = Object.assign(elements[uuid].state, state);;
         }
  
-        // let collisionConfiguration, dispatcher, solver, world;
+        let collisionConfiguration, dispatcher, solver, world;
         const init = () => {
-            const collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
-            const dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
-            const broadphase = new Ammo.btDbvtBroadphase();
-            const solver = new Ammo.btSequentialImpulseConstraintSolver();
+            collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
+            dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
+            broadphase = new Ammo.btDbvtBroadphase();
+            solver = new Ammo.btSequentialImpulseConstraintSolver();
             world = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
             world.setGravity(GRAVITY);
         };
@@ -82,6 +90,8 @@ const worker = createWorker(() => {
 
         const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE }) => {
             const speed = vehicle.getCurrentSpeedKmHour();
+
+            sendDispatchEvent(uuid, SPEED_CHANGE_EVENT, { speed });
 
             let breakingForce = 0;
             let engineForce = 0;
@@ -296,9 +306,9 @@ const worker = createWorker(() => {
 
         const handleTerminateEvent = () => {
             Ammo.destroy(world);
-            // Ammo.destroy(solver);
-            // Ammo.destroy(dispatcher);
-            // Ammo.destroy(collisionConfiguration);
+            Ammo.destroy(solver);
+            Ammo.destroy(dispatcher);
+            Ammo.destroy(collisionConfiguration);
 
             sendTerminateEvent();
         }

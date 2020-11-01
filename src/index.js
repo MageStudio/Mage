@@ -42,7 +42,7 @@ import Router from './router/Router';
 import Scene from './core/Scene';
 import Scripts from './scripts/Scripts';
 import Controls from './controls/Controls';
-import Physics from './physics/physics';
+import Physics, { PHYSICS_EVENTS } from './physics';
 
 import * as store from './store';
 import { Provider, connect } from 'inferno-redux';
@@ -114,7 +114,9 @@ export {
     PARTICLES,
     ParticlEmitter,
     Partykals,
+
     Physics,
+    PHYSICS_EVENTS,
 
     MeshLoader,
     LightLoader,

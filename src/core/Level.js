@@ -8,7 +8,7 @@ import PostProcessing from '../fx/postprocessing/PostProcessing';
 import Input, { INPUT_EVENTS } from './input/Input';
 import Lights from '../lights/Lights';
 import Controls from '../controls/Controls';
-import Physics from '../physics/physics';
+import Physics from '../physics';
 import {
     EventDispatcher
 } from 'three';
