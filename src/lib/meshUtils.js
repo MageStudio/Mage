@@ -10,8 +10,8 @@ import Config from '../core/config';
 import { MATERIALS } from './constants';
 
 const setUpLightsAndShadows = (mesh) => {
-    mesh.castShadow = Config.lights().shadows;
-    mesh.receiveShadow = Config.lights().shadows;
+    mesh.castShadow = Boolean(Config.lights().shadows);
+    mesh.receiveShadow = Boolean(Config.lights().shadows);
 } 
 
 export const isMesh = mesh => mesh.isMesh;

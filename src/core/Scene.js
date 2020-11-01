@@ -50,7 +50,7 @@ export class Scene {
     }
 
     updateChildren() {
-        for (var i in this.scene.children) {
+        for (let i in this.scene.children) {
             if (this.scene.children[i].material) {
                 this.scene.children[i].material.needsUpdate = true;
             }

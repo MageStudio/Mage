@@ -7,11 +7,11 @@ export default class Intro extends Level {
     }
 
     createWheel(index) {
-        return Models.getModel(`wheel${index}`);
+        return Models.getModel('wheel', { name: `wheel_${index}` });
     }
 
-    createCar(w, h, l) {
-        return Models.getModel('car');
+    createCar(name) {
+        return Models.getModel('car', { name });
     }
 
     handleSpeedChange({ data }) {
@@ -29,7 +29,7 @@ export default class Intro extends Level {
         const floor = new Box(50, 1, 50, 0xffffff);
         floor.enablePhysics({ mass: 0, debug: true });
         
-        const car = this.createCar(1.8, .6, 4);
+        const car = this.createCar('first');
         car.setPosition({ y: 14 });
 
         const wheels = [

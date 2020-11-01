@@ -30,8 +30,6 @@ export const extractBiggestBoundingBox = body => {
         return ((sizeB.x * sizeB.y * sizeB.z) - (sizeA.x * sizeA.y * sizeA.z));
     });
 
-    console.log(boxes);
-
     return sorted[0];
 }
 
