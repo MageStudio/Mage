@@ -13,6 +13,7 @@ const DEFAULT_COMMON_ASSETS = {
     [ASSETS_TYPES.VIDEO]: {},
     [ASSETS_TYPES.IMAGES]: {},
     [ASSETS_TYPES.TEXTURES]: {},
+    [ASSETS_TYPES.CUBETEXTURES]: {},
     [ASSETS_TYPES.MODELS]: {},
     [ASSETS_TYPES.PARTICLES]: {},
     [ASSETS_TYPES.SCRIPTS]: {},
@@ -68,6 +69,7 @@ export class Assets {
 
     setAssets(assets = DEFAULT_COMMON_ASSETS) {
         this.assets = this.parseAssets(assets);
+        console.log('loaded assets', this.assets);
     }
 
     getCommonAssets = () => this.assets.common || DEFAULT_COMMON_ASSETS;
@@ -96,6 +98,8 @@ export class Assets {
 
     textures = (level) => level ? this.getLevelAssets(level).textures : this.getCommonAssets().textures;
 
+    cubeTextures = (level) => level ? this.getLevelAssets(level).cubetextures : this.getCommonAssets().cubetextures;
+
     models = (level) => level ? this.getLevelAssets(level).models : this.getCommonAssets().models;
 
     particles = (level) => level ? this.getLevelAssets(level).particles : this.getCommonAssets().particles;
@@ -105,7 +109,7 @@ export class Assets {
     load = (level) => Promise.all([ 
         Audio.load(this.audio(level), level),
         Video.load(this.video(level), level),
-        Images.load(this.images(level), this.textures(level), level),
+        Images.load(this.images(level), this.textures(level), this.cubeTextures(level), level),
         Models.loadModels(this.models(level), level),
         Scripts.load(this.scripts(level), level)
     ]).then(() => {

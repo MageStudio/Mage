@@ -46,6 +46,7 @@ export const ASSETS_TYPES = {
     VIDEO: 'video',
     IMAGES: 'images',
     TEXTURES: 'textures',
+    CUBETEXTURES:'cubetextures',
     MODELS: 'models',
     PARTICLES: 'particles',
     SCRIPTS: 'scripts',

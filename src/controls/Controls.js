@@ -72,18 +72,18 @@ export class Controls {
     setTransformControl() {
         this.controls[CONTROLS.TRANSFORM] = new Transform(Scene.getCameraBody(), Scene.renderer.domElement);
         this.controls[CONTROLS.TRANSFORM].init();
-		this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.CHANGE, Scene.render);
-		this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.DRAGGING_CHANGE, (event) => {
+        this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.CHANGE, Scene.render);
+        this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.DRAGGING_CHANGE, (event) => {
             if (this.controls[CONTROLS.ORBIT]) {
                 this.controls[CONTROLS.ORBIT].enabled = !event.value;
             }
-		});
+        });
 
         return this.controls.transform;
     }
 
-    setFirstPersonControl() {
-        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCameraBody(), document.body);
+    setFirstPersonControl(options) {
+        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCameraBody(), document.body, options);
         this.controls[CONTROLS.FPS].init();
 
         return this.controls[CONTROLS.FPS];

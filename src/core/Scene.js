@@ -13,6 +13,7 @@ import {
 } from 'three';
 
 import { generateUUID } from '../lib/uuid';
+import Images from '../images/Images';
 
 const SHADOW_TYPES = {
     basic: BasicShadowMap,
@@ -84,6 +85,10 @@ export class Scene {
         }
     }
 
+    setBackground = texture => {
+        this.scene.background = typeof texture === 'string' ? Images.get(texture) : texture;
+    } 
+
     create() {
         this.createScene();
         this.createCamera();
@@ -136,6 +141,10 @@ export class Scene {
 
     getRenderer() {
         return this.renderer;
+    }
+
+    getChildren() {
+        return this.scene.children;
     }
 
     removeExistingRendererElements() {

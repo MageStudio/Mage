@@ -1,0 +1,1 @@
+export const getHostURL = () => `${document.location.protocol}//${document.location.host}`;

@@ -13,9 +13,11 @@ import {
     ADD_BOX_EVENT,
     ADD_VEHICLE_EVENT,
     DISPATCH_EVENT,
-    PHYSICS_EVENTS
+    PHYSICS_EVENTS,
+    ADD_MESH_EVENT
 } from './messages';
-import { getDescriptionForElement } from './utils';
+import { getBoxDescriptionForElement, iterateGeometries, getBaseDescriptionForElement } from './utils';
+import { getHostURL } from '../lib/url';
 
 export const TYPES = {
     BOX: 'BOX',
@@ -52,6 +54,7 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 type: LOAD_EVENT,
                 path: Config.physics().path,
+                host: getHostURL()
             });
 
             return new Promise(resolve => {
@@ -122,7 +125,7 @@ export class Physics extends EventDispatcher {
     addVehicle(element, options) {
         if (Config.physics().enabled) {
             const uuid = element.uuid();
-            const description = getDescriptionForElement(element);
+            const description = getBoxDescriptionForElement(element);
 
             this.worker.postMessage({
                 type: ADD_VEHICLE_EVENT,
@@ -130,6 +133,33 @@ export class Physics extends EventDispatcher {
                 ...description,
                 ...options
             })
+        }
+    }
+
+    addModel(model, options) {
+        if (Config.physics().enabled) {
+            const uuid = model.uuid();
+            const description = getBaseDescriptionForElement(model);
+            const vertices = [];
+            const matrices = [];
+            const indexes = [];
+
+            iterateGeometries(model.getBody(), {}, (vertexArray, matrixArray, indexArray) => {
+                vertices.push(vertexArray);
+                matrices.push(matrixArray);
+                indexes.push(indexArray);
+            });
+
+            this.worker.postMessage({
+                type: ADD_MESH_EVENT,
+                uuid,
+                vertices,
+                matrices,
+                indexes,
+                ...description,
+                ...options
+            })
+
         }
     }
 

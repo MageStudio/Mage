@@ -12,13 +12,25 @@ const worker = createWorker(() => {
     const INIT_EVENT = 'INIT_EVENT';
     const ADD_BOX_EVENT = 'ADD_BOX_EVENT';
     const ADD_VEHICLE_EVENT = 'ADD_VEHICLE_EVENT';
+    const ADD_MESH_EVENT = 'ADD_MESH_EVENT';
 
     const SPEED_CHANGE_EVENT = 'SPEED_CHANGE_EVENT';
 
     const TYPES = {
         BOX: 'BOX',
-        VEHICLE: 'VEHICLE'
+        VEHICLE: 'VEHICLE',
+        MESH: 'MESH'
     };
+
+    const DEFAULT_VEHICLE_STATE = {
+        vehicleSteering: 0,
+        acceleration: false,
+        breaking: false,
+        right: false,
+        left: false
+    };
+
+    const DEFAULT_SCALE = { x: 1, y: 1, z: 1 };
 
     const handleLoadEvent = (Ammo) => {
         let elements = {};
@@ -50,14 +62,9 @@ const worker = createWorker(() => {
             eventData
         });
 
-        const setBody = data => {
-            elements[data.uuid] = Object.assign({}, data);
-        };
+        const setBody = data => elements[data.uuid] = Object.assign({}, data);
+        const updateBodyState = ({ uuid, state }) => elements[uuid].state = Object.assign(elements[uuid].state, state);
 
-        const updateBodyState = ({ uuid, state }) => {
-            elements[uuid].state = Object.assign(elements[uuid].state, state);;
-        }
- 
         let collisionConfiguration, dispatcher, solver, world;
         const init = () => {
             collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
@@ -79,14 +86,6 @@ const worker = createWorker(() => {
                 sendBodyUpdate(uuid, origin, rotation);
             }
         }
-
-        const DEFAULT_VEHICLE_STATE = {
-            vehicleSteering: 0,
-            acceleration: false,
-            breaking: false,
-            right: false,
-            left: false
-        };
 
         const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE }) => {
             const speed = vehicle.getCurrentSpeedKmHour();
@@ -172,6 +171,7 @@ const worker = createWorker(() => {
                         const element = elements[uuid];
                         switch(element.type) {
                             case TYPES.BOX:
+                            case TYPES.MESH:
                                 handleBodyUpdate(element);
                                 break;
                             case TYPES.VEHICLE:
@@ -184,10 +184,7 @@ const worker = createWorker(() => {
             }
         }
 
-        const addBox = (data) => {
-            const { uuid, width, length, height, position, quaternion, mass = 0, friction = 2 } = data;
-
-            const geometry = new Ammo.btBoxShape(new Ammo.btVector3(length * 0.5, height * 0.5, width * 0.5));
+        const createRigidBody = (shape, { position, quaternion, mass, friction }) => {
             const transform = new Ammo.btTransform();
 
             transform.setIdentity();
@@ -196,9 +193,9 @@ const worker = createWorker(() => {
             const motionState = new Ammo.btDefaultMotionState(transform);
 
             const localInertia = new Ammo.btVector3(0, 0, 0);
-            geometry.calculateLocalInertia(mass, localInertia);
+            shape.calculateLocalInertia(mass, localInertia);
 
-            const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, geometry, localInertia);
+            const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
             const body = new Ammo.btRigidBody(rbInfo);
 
             body.setFriction(friction);
@@ -210,6 +207,16 @@ const worker = createWorker(() => {
             }
 
             world.addRigidBody(body);
+
+            return body;
+        }
+
+        const addBox = (data) => {
+            const { uuid, width, length, height, position, quaternion, mass = 0, friction = 2 } = data;
+
+            const geometry = new Ammo.btBoxShape(new Ammo.btVector3(length * 0.5, height * 0.5, width * 0.5));
+            const body = createRigidBody(geometry, { position, quaternion, mass, friction });
+        
             setBody({ uuid, body, type: TYPES.BOX });
         };
 
@@ -304,6 +311,84 @@ const worker = createWorker(() => {
             });
         }
 
+        const applyMatrix4ToVector3 = ({ x = 0, y = 0, z = 0 }, matrix = []) => {
+            const w = 1 / ( matrix[ 3 ] * x + matrix[ 7 ] * y + matrix[ 11 ] * z + matrix[ 15 ] );
+
+            return {
+                x: ( matrix[ 0 ] * x + matrix[ 4 ] * y + matrix[ 8 ] * z + matrix[ 12 ] ) * w,
+                y: ( matrix[ 1 ] * x + matrix[ 5 ] * y + matrix[ 9 ] * z + matrix[ 13 ] ) * w,
+                z: ( matrix[ 2 ] * x + matrix[ 6 ] * y + matrix[ 10 ] * z + matrix[ 14 ] ) * w,
+            }
+        };
+
+        const addMesh = (options) => {
+            const {
+                uuid,
+                vertices,
+                matrices,
+                indexes,
+                position,
+                quaternion,
+                mass = 0,
+                friction = 2
+            } = options;
+
+            const scale = DEFAULT_SCALE;
+
+            const bta = new Ammo.btVector3();
+            const btb = new Ammo.btVector3();
+            const btc = new Ammo.btVector3();
+            const triMesh = new Ammo.btTriangleMesh(true, false);
+
+            for (let i = 0; i < vertices.length; i++) {
+                const components = vertices[i];
+                const index = indexes[i] ? indexes[i] : null;
+                const matrix = Array.from(matrices[i]);
+
+                if (index) {
+                    for (let j = 0; j < index.length; j += 3) {
+                    const ai = index[j] * 3;
+                    const bi = index[j + 1] * 3;
+                    const ci = index[j + 2] * 3;
+
+                    const va = applyMatrix4ToVector3({ x: components[ai], y: components[ai + 1], z: components[ai + 2] }, matrix);
+                    const vb = applyMatrix4ToVector3({ x: components[bi], y: components[bi + 1], z: components[bi + 2] }, matrix);
+                    const vc = applyMatrix4ToVector3({ x: components[ci], y: components[ci + 1], z: components[ci + 2] }, matrix);
+
+                    bta.setValue(va.x, va.y, va.z);
+                    btb.setValue(vb.x, vb.y, vb.z);
+                    btc.setValue(vc.x, vc.y, vc.z);
+                    triMesh.addTriangle(bta, btb, btc, false);
+                    }
+                } else {
+                    for (let j = 0; j < components.length; j += 9) {
+                        const va = applyMatrix4ToVector3({ x: components[j + 0], y: components[j + 1], z: components[j + 2] }, matrix);
+                        const vb = applyMatrix4ToVector3({ x: components[j + 3], y: components[j + 4], z: components[j + 5] }, matrix);
+                        const vc = applyMatrix4ToVector3({ x: components[j + 6], y: components[j + 7], z: components[j + 8] }, matrix);
+
+                        bta.setValue(va.x, va.y, va.z);
+                        btb.setValue(vb.x, vb.y, vb.z);
+                        btc.setValue(vc.x, vc.y, vc.z);
+                        triMesh.addTriangle(bta, btb, btc, false);
+                    }
+                }
+            }
+
+            const localScale = new Ammo.btVector3(scale.x, scale.y, scale.z);
+            triMesh.setScaling(localScale);
+            Ammo.destroy(localScale);
+
+            const collisionShape = new Ammo.btBvhTriangleMeshShape(triMesh, true, true);
+            collisionShape.resources = [triMesh];
+
+            Ammo.destroy(bta);
+            Ammo.destroy(btb);
+            Ammo.destroy(btc);
+
+            const body = createRigidBody(collisionShape, { position, quaternion, mass, friction });
+            setBody({ uuid, body, type: TYPES.MESH });
+        }
+
         const handleTerminateEvent = () => {
             Ammo.destroy(world);
             Ammo.destroy(solver);
@@ -323,6 +408,9 @@ const worker = createWorker(() => {
                     break;
                 case ADD_VEHICLE_EVENT:
                     addVehicle(data);
+                    break;
+                case ADD_MESH_EVENT:
+                    addMesh(data);
                     break;
                 case UPDATE_BODY_EVENT:
                     updateBodyState(data);
@@ -346,9 +434,8 @@ const worker = createWorker(() => {
         sendReadyEvent();
     };
 
-    const loadAmmo = ({ path = LIBRARY_NAME }) => {
-        importScripts(path);
-
+    const loadAmmo = ({ path = LIBRARY_NAME, host }) => {
+        importScripts(host + '/' + path);
         Ammo().then(handleLoadEvent);
     };
 

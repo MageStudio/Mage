@@ -2,19 +2,18 @@ import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
 import { EventDispatcher, Vector3 } from 'three';
 
-import Config from '../core/config';
 import Scripts from '../scripts/Scripts';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
-import Scene from '../core/Scene';
 import Physics from '../physics';
 import {
     TAG_ALREADY_EXISTS,
     TAG_NOT_EXISTING_REMOVAL,
     TAG_CANT_BE_REMOVED,
     STATE_MACHINE_NOT_AVAILABLE,
-    SCRIPT_NOT_FOUND
+    SCRIPT_NOT_FOUND,
+    ENTITY_TYPE_NOT_ALLOWED
 } from '../lib/messages';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
@@ -26,7 +25,8 @@ export const ENTITY_TYPES = {
     MESH: 0,
     LIGHT: 1,
     MODEL: 2,
-    SPRITE: 3
+    SPRITE: 3,
+    UNKNOWN: 999
 };
 
 export const DEFAULT_TAG = 'all';
@@ -239,32 +239,22 @@ export default class Entity extends EventDispatcher {
     }
 
     setEntityType(type) {
-        switch (type) {
-            case ENTITY_TYPES.MESH:
-                this._isMesh = true;
-                break;
-            case ENTITY_TYPES.LIGHT:
-                this._isLight = true;
-                break;
-            case ENTITY_TYPES.MODEL:
-                this._isModel = true;
-                break;
-            case ENTITY_TYPES.SPRITE:
-                this._isSprite = true;
-            default:
-                break;
+        if (Object.values(ENTITY_TYPES).includes(type)) {
+            this.entityType = type;
+        } else {
+            console.log(ENTITY_TYPE_NOT_ALLOWED);
+            this.entityType = ENTITY_TYPES.UNKNOWN;
         }
-        
-        this.entityType = type;
     }
 
     getEntityType() {
         return this.entityType;
     }
 
-    isMesh() { return this._isMesh; }
-    isLight() { return this._isLight; }
-    isModel() { return this._isModel; }
+    isMesh = () => this.getEntityType() === ENTITY_TYPES.MESH;
+    isLight = () =>  this.getEntityType() === ENTITY_TYPES.LIGHT;
+    isModel = () => this.getEntityType() === ENTITY_TYPES.MODEL;
+    isSprite = () => this.getEntityType() === ENTITY_TYPES.SPRITE;
 
     addSound(name, options) {
         const { autoplay = false, ...opts } = options;

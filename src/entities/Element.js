@@ -24,7 +24,7 @@ import { COLLISION_EVENT, ORIGIN } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics';
 import {
-    getDescriptionForElement,
+    getBoxDescriptionForElement,
     extractBoundingBox,
     extractBiggestBoundingBox
 } from '../physics/utils';
@@ -183,16 +183,20 @@ export default class Element extends Entity {
 
     enablePhysics(options = {}) {
         if (Config.physics().enabled) {
-            const description = {
-                ...getDescriptionForElement(this),
-                ...options
-            };
+            if (this.isModel()) {
+                Physics.addModel(this, options);
+            } else {
+                const description = {
+                    ...getBoxDescriptionForElement(this),
+                    ...options
+                };
+
+                Physics.add(this, description);
+            }
 
             if (options.debug) {
                 this.addHitBox();
             }
-            
-            Physics.add(this, description);
         }
     }
 
@@ -210,10 +214,9 @@ export default class Element extends Entity {
         box.setQuaternion(quaternion);
         box.setWireframe(true);
         box.setWireframeLineWidth(2);
-
-        box.setPosition(ORIGIN);
-
         this.add(box);
+        //box.setPosition(ORIGIN);
+
     }
 
     applyForce(force) {

@@ -26,6 +26,11 @@ export const ELEMENT_NO_GEOMETRY_SET = `${PREFIX} This element doesn't have a ge
 export const ELEMENT_NO_MATERIAL_CANT_SET_TEXTURE = `${PREFIX} This element doesn't have a material, can't set texture.`;
 export const ELEMENT_SET_COLOR_MISSING_COLOR = `${PREFIX} Can't set color for this element, missing color`;
 
+export const ENTITY_TYPE_NOT_ALLOWED = `${PREFIX} The desired Entity type is not allowed.`;
+
+export const ERROR_LOADING_TEXTURE = `${PREFIX} Error while loading texture:`;
+export const CUBE_TEXTURES_NOT_LIST = `${PREFIX} CubeTextures have to be defined as array of images`;
+
 export const TAG_CANT_BE_REMOVED = `${PREFIX} The default tag can't be removed.`;
 export const TAG_ALREADY_EXISTS = `${PREFIX} The following tag has already been added: `;
 export const TAG_NOT_EXISTING_REMOVAL= `${PREFIX} The following tag has can't be removed because it hasnt been added: `;

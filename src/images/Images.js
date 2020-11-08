@@ -1,10 +1,12 @@
 import {
     TextureLoader,
-    ImageLoader
+    ImageLoader,
+    CubeTextureLoader
 } from 'three';
 
 import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
+import { ERROR_LOADING_TEXTURE } from '../lib/messages';
 
 export class Images {
 
@@ -17,6 +19,7 @@ export class Images {
         this.numImages = 0;
         this.loader = new TextureLoader();
         this.imageLoader = new ImageLoader();
+        this.cubeTexturesLoader = new CubeTextureLoader();
 
         this.images = {};
         this.textures = {};
@@ -28,23 +31,29 @@ export class Images {
         this.currentLevel = level;
     };
 
-    load = (images = {}, textures = {}, level) => {
+    areThereImagesToLoad = () => (
+        (Object.keys(this.textures).length +
+        Object.keys(this.images).length +
+        Object.keys(this.cubeTextures).length) > 0
+    )
+
+    load = (images = {}, textures = {}, cubeTextures = {}, level) => {
         // extending assets images with our defaults
         this.images = images;
         this.textures = textures;
+        this.cubeTextures = cubeTextures;
 
-        if (!(Object.keys(this.textures).length + Object.keys(this.images).length)) {
+        console.log(cubeTextures, this.cubeTextures);
+
+        if (!this.areThereImagesToLoad()) {
             return Promise.resolve('images');
         }
 
         const promises = Object
             .keys(this.textures)
             .map(name => this.loadSingleTexture(name, level))
-            .concat(
-                Object
-                    .keys(this.images)
-                    .map(name => this.loadSingleImage(name, level))
-            );
+            .concat(Object.keys(this.images).map(name => this.loadSingleImage(name, level)))
+            .concat(Object.keys(this.cubeTextures).map(cubeTexture => this.loadSingleCubeTexture(cubeTexture, level)));
 
         return Promise.all(promises);
     }
@@ -63,12 +72,10 @@ export class Images {
                     this.add(id, image);
                     resolve(image);
                 },
-                () => {},  // displaying progress
-                () => {
-                    resolve();
-                });
+                () => {},
+                resolve);
             } catch (e) {
-                console.log('[MAGE] error loading image ' + id + ' at path ' + path);
+                console.log(ERROR_LOADING_TEXTURE, name, path);
                 reject();
             }
         })
@@ -84,13 +91,42 @@ export class Images {
                     this.add(id, texture);
                     resolve(texture);
                 },
-                () => {},  // displaying progress
+                () => {},
                 () => {
-                    console.log('[Mage] error loading texture ' + id + ' at path ' + path);
+                    console.log(ERROR_LOADING_TEXTURE, name, path);
                     resolve();
                 });
             } catch (e) {
-                console.log('[MAGE] error loading texture ' + id + ' at path ' + path);
+                console.log(ERROR_LOADING_TEXTURE, name, path);
+                reject();
+            }
+        });
+    }
+
+    loadSingleCubeTexture = (name, level) => {
+        const id = buildAssetId(name, level);
+        const paths = this.cubeTextures[name];
+
+        console.log('loading cubetexture,', paths, id);
+
+        return new Promise((resolve, reject) => {
+            try {
+                if (paths instanceof Array) {
+                    this.cubeTexturesLoader.load(paths, texture => {
+                        this.add(id, texture);
+                        resolve(texture);
+                    },
+                    () => {},
+                    () => {
+                        console.log(ERROR_LOADING_TEXTURE, name, paths);
+                        resolve();
+                    })
+                } else {
+                    console.log(CUBE_TEXTURES_NOT_LIST);
+                    reject();
+                }
+            } catch(e) {
+                console.log(ERROR_LOADING_TEXTURE, name, path);
                 reject();
             }
         });
