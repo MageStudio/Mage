@@ -14,10 +14,12 @@ import {
     ADD_VEHICLE_EVENT,
     DISPATCH_EVENT,
     PHYSICS_EVENTS,
-    ADD_MESH_EVENT
+    ADD_MESH_EVENT,
+    PHYSICS_UPDATE_EVENT
 } from './messages';
 import { getBoxDescriptionForElement, iterateGeometries, getBaseDescriptionForElement } from './utils';
 import { getHostURL } from '../lib/url';
+import Scene from '../core/Scene';
 
 export const TYPES = {
     BOX: 'BOX',
@@ -53,7 +55,7 @@ export class Physics extends EventDispatcher {
         if (Config.physics().enabled) {
             this.worker.postMessage({
                 type: LOAD_EVENT,
-                path: Config.physics().path,
+                ...Config.physics(),
                 host: getHostURL()
             });
 
@@ -89,10 +91,18 @@ export class Physics extends EventDispatcher {
                 break;
             case DISPATCH_EVENT:
                 this.handleDispatchEvent(data);
+                break;
+            case PHYSICS_UPDATE_EVENT:
+                this.handlePhysicsUpdate(data);
+                break;
             default:
                 break;
         }
-    }
+    };
+
+    handlePhysicsUpdate = ({ dt }) => {
+        Scene.onPhysicsUpdate(dt);
+    };
 
     handleTerminateEvent = () => {
         this.worker.terminate();
@@ -109,7 +119,7 @@ export class Physics extends EventDispatcher {
             type: eventName,
             data: eventData
         });
-    }
+    };
 
     add(element, description) {
         if (Config.physics().enabled) {

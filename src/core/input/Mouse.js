@@ -47,8 +47,8 @@ export default class Mouse extends EventDispatcher {
 
         this.createRayCaster();
 
-        Scene.renderer.domElement.addEventListener('mousemove', this.onMouseMove);
-        Scene.renderer.domElement.addEventListener('mousedown', this.onMouseDown);
+        Scene.getDOMElement().addEventListener('mousemove', this.onMouseMove);
+        Scene.getDOMElement().addEventListener('mousedown', this.onMouseDown);
         document.addEventListener('mouseup', this.onMouseUp);
     }
 
@@ -61,8 +61,8 @@ export default class Mouse extends EventDispatcher {
         this.mouseMoveIntersectionEnabled = false;
 
         document.removeEventListener('mouseup', this.onMouseUp);
-        Scene.renderer.domElement.removeEventListener('mousemove', this.onMouseMove);
-        Scene.renderer.domElement.removeEventListener('mousedown', this.onMouseDown);
+        Scene.getDOMElement().removeEventListener('mousemove', this.onMouseMove);
+        Scene.getDOMElement().removeEventListener('mousedown', this.onMouseDown);
     }
 
     getRelativeMousePosition(event) {

@@ -23,7 +23,8 @@ const config = {
 
     physics: {
         enabled: true,
-        path: 'http://localhost:8085/dist/ammo.js'
+        path: 'http://localhost:8085/dist/ammo.js',
+        gravity: { x: 0, y: 0, z: 0}
     },
 
     tween: {

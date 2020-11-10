@@ -64,6 +64,9 @@ export default class FlyControl extends EventDispatcher {
     	this.updateRotationVector();
     }
 
+    update() {}
+    physicsUpdate() {}
+
     dispose = () => {
 		this.domElement.removeEventListener('contextmenu', this.onContextMenu, false);
 		this.domElement.removeEventListener('mousedown', this.onMouseDown, false);

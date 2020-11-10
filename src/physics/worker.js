@@ -9,12 +9,12 @@ const worker = createWorker(() => {
     const LOAD_EVENT = 'LOAD_EVENT';
     const READY_EVENT = 'READY_EVENT';
     const UPDATE_BODY_EVENT = 'UPDATE_BODY_EVENT';
-    const INIT_EVENT = 'INIT_EVENT';
     const ADD_BOX_EVENT = 'ADD_BOX_EVENT';
     const ADD_VEHICLE_EVENT = 'ADD_VEHICLE_EVENT';
     const ADD_MESH_EVENT = 'ADD_MESH_EVENT';
 
     const SPEED_CHANGE_EVENT = 'SPEED_CHANGE_EVENT';
+    const PHYSICS_UPDATE_EVENT = 'PHYSICS_UPDATE_EVENT';
 
     const TYPES = {
         BOX: 'BOX',
@@ -32,11 +32,11 @@ const worker = createWorker(() => {
 
     const DEFAULT_SCALE = { x: 1, y: 1, z: 1 };
 
-    const handleLoadEvent = (Ammo) => {
+    const handleLoadEvent = options => Ammo => {
         let elements = {};
         
         const DISABLE_DEACTIVATION = 4;
-        const GRAVITY = new Ammo.btVector3(0, -10, 0);
+        const GRAVITY = { x: 0, y: -10, z: 0 };
         // const TRANSFORM_AUX = new Ammo.btTransform();
 
         const FRONT_LEFT = 0;
@@ -44,14 +44,22 @@ const worker = createWorker(() => {
         const BACK_LEFT = 2;
         const BACK_RIGHT = 3;
 
-        const sendBodyUpdate = (uuid, position, rotation) => {
+        const sendBodyUpdate = (uuid, position, rotation, dt) => {
             postMessage({
                 type: UPDATE_BODY_EVENT,
                 uuid,
                 position: { x: position.x(), y: position.y(), z: position.z() },
-                quaternion: { x: rotation.x(), y: rotation.y(), z: rotation.z(), w: rotation.w() }
+                quaternion: { x: rotation.x(), y: rotation.y(), z: rotation.z(), w: rotation.w() },
+                dt
             });
-        }
+        };
+
+        const sendPhysicsUpdate = dt => {
+            postMessage({
+                type: PHYSICS_UPDATE_EVENT,
+                dt
+            })
+        };
 
         const sendReadyEvent = () => postMessage({ type: READY_EVENT });
         const sendTerminateEvent = () => postMessage({ type: TERMINATE_EVENT });
@@ -67,15 +75,18 @@ const worker = createWorker(() => {
 
         let collisionConfiguration, dispatcher, solver, world;
         const init = () => {
+            const { gravity = GRAVITY } = options;
+
             collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
             dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
             broadphase = new Ammo.btDbvtBroadphase();
             solver = new Ammo.btSequentialImpulseConstraintSolver();
             world = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-            world.setGravity(GRAVITY);
+            world.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
         };
 
-        const handleBodyUpdate = ({ body, uuid }) => {
+        const handleBodyUpdate = ({ body, uuid, state }, dt) => {
+            const { direction, speed } = state;
             const motionState = body.getMotionState();
             const transform = new Ammo.btTransform();
             if (motionState) {
@@ -83,11 +94,11 @@ const worker = createWorker(() => {
                 let origin = transform.getOrigin();
                 let rotation = transform.getRotation();
 
-                sendBodyUpdate(uuid, origin, rotation);
+                sendBodyUpdate(uuid, origin, rotation, dt);
             }
         }
 
-        const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE }) => {
+        const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE }, dt) => {
             const speed = vehicle.getCurrentSpeedKmHour();
 
             sendDispatchEvent(uuid, SPEED_CHANGE_EVENT, { speed });
@@ -150,14 +161,14 @@ const worker = createWorker(() => {
                 q = tm.getRotation();
 
                 const wheelUUID = wheels[i];
-                sendBodyUpdate(wheelUUID, p, q);
+                sendBodyUpdate(wheelUUID, p, q, dt);
             }
 
             tm = vehicle.getChassisWorldTransform();
             p = tm.getOrigin();
             q = tm.getRotation();
 
-            sendBodyUpdate(uuid, p, q);
+            sendBodyUpdate(uuid, p, q, dt);
             updateBodyState({ uuid, state });
         }
 
@@ -172,15 +183,16 @@ const worker = createWorker(() => {
                         switch(element.type) {
                             case TYPES.BOX:
                             case TYPES.MESH:
-                                handleBodyUpdate(element);
+                                handleBodyUpdate(element, dt);
                                 break;
                             case TYPES.VEHICLE:
-                                handleVehicleUpdate(element);
+                                handleVehicleUpdate(element, dt);
                                 break;
                             default:
                                 break;
                         }
                     });
+                sendPhysicsUpdate(dt);
             }
         }
 
@@ -218,6 +230,8 @@ const worker = createWorker(() => {
             const body = createRigidBody(geometry, { position, quaternion, mass, friction });
         
             setBody({ uuid, body, type: TYPES.BOX });
+
+            console.log(body);
         };
 
         const addVehicle = data => {
@@ -400,9 +414,6 @@ const worker = createWorker(() => {
 
         onmessage = ({ data }) => {
             switch(data.type) {
-                case INIT_EVENT:
-                    init();
-                    break;
                 case ADD_BOX_EVENT:
                     addBox(data);
                     break;
@@ -434,9 +445,11 @@ const worker = createWorker(() => {
         sendReadyEvent();
     };
 
-    const loadAmmo = ({ path = LIBRARY_NAME, host }) => {
-        importScripts(host + '/' + path);
-        Ammo().then(handleLoadEvent);
+    const loadAmmo = (options) => {
+        const scriptUrl = options.host + '/' + options.path;
+        importScripts(scriptUrl);
+
+        Ammo().then(handleLoadEvent(options));
     };
 
     onmessage = ({ data }) => {

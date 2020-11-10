@@ -51,6 +51,14 @@ export class Controls {
         }
     }
 
+    onPhysicsUpdate(dt) {
+        Object
+            .keys(this.controls)
+            .forEach(control => {
+                this.controls[control] && this.controls[control].physicsUpdate(dt);
+            });
+    }
+
     update(dt) {
         Object
             .keys(this.controls)
@@ -61,7 +69,7 @@ export class Controls {
 
     setOrbitControl() {
         this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY]);
-        this.controls[CONTROLS.ORBIT] = new Orbit(Scene.getCameraBody(), Scene.renderer.domElement);
+        this.controls[CONTROLS.ORBIT] = new Orbit(Scene.getCameraBody(), Scene.getDOMElement());
         this.controls[CONTROLS.ORBIT].init();
 
         this.controls[CONTROLS.ORBIT].addEventListener(EVENTS.CHANGE, Scene.render);
@@ -70,7 +78,7 @@ export class Controls {
     }
 
     setTransformControl() {
-        this.controls[CONTROLS.TRANSFORM] = new Transform(Scene.getCameraBody(), Scene.renderer.domElement);
+        this.controls[CONTROLS.TRANSFORM] = new Transform(Scene.getCameraBody(), Scene.getDOMElement());
         this.controls[CONTROLS.TRANSFORM].init();
         this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.CHANGE, Scene.render);
         this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.DRAGGING_CHANGE, (event) => {
@@ -83,14 +91,14 @@ export class Controls {
     }
 
     setFirstPersonControl(options) {
-        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCameraBody(), document.body, options);
+        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCameraBody(), Scene.getDOMElement(), options);
         this.controls[CONTROLS.FPS].init();
 
         return this.controls[CONTROLS.FPS];
     }
 
     setFlyControl() {
-        this.controls[CONTROLS.FLY] = new FlyControl(Scene.getCameraBody(), document.body);
+        this.controls[CONTROLS.FLY] = new FlyControl(Scene.getCameraBody(), Scene.getDOMElement());
         this.controls[CONTROLS.FLY].init();
 
         return this.controls[CONTROLS.FLY];

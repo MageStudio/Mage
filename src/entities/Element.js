@@ -29,7 +29,7 @@ import {
     extractBiggestBoundingBox
 } from '../physics/utils';
 
-import { keepWithinBoundaries } from '../lib/math';
+import { clamp } from '../lib/math';
 import {
     changeMaterialByName,
     hasMaterial,
@@ -457,7 +457,7 @@ export default class Element extends Entity {
     }
 
     setOpacity(value = 1.0) {
-        const opacity = keepWithinBoundaries(0, 1, value);
+        const opacity = clamp(value, 0, 1);
 
         if (hasMaterial(this.getBody())) {
             this.body.material.transparent = true;

@@ -7,7 +7,8 @@ import {
     EventDispatcher,
     Vector3,
     Euler,
-    Raycaster
+    Raycaster,
+    Quaternion
 } from 'three';
 
 import Scene from '../core/Scene';
@@ -32,7 +33,10 @@ export default class FirstPersonControl extends EventDispatcher {
             speed = 2,
             slowDownFactor = 20,
             mass = 100,
-            height = 1.8
+            height = 1.8,
+            sensitivity = 0.002,
+            target = null,
+            physicsEnabled = false
         } = options;
 
         this.options = {
@@ -42,14 +46,25 @@ export default class FirstPersonControl extends EventDispatcher {
             jumpSpeed,
             speed,
             slowDownFactor,
+            sensitivity,
             mass,
-            height
+            height,
+            target,
+            physicsEnabled
         };
 
         this.camera = camera;
-        this.camera.position.x = this.options.position.x;
-        this.camera.position.y = this.options.position.y + this.options.height;
-        this.camera.position.z = this.options.position.z;
+        if (!target) {
+            this.camera.position.x = this.options.position.x;
+            this.camera.position.y = this.options.position.y + this.options.height;
+            this.camera.position.z = this.options.position.z;
+        } else {
+            this.camera.position.x = 0;
+            this.camera.position.y = this.options.height;
+            this.camera.position.z = 0; 
+        }
+
+        this.character = target;
 
         this.domElement = domElement || document.body;
         this.isLocked = false;
@@ -58,7 +73,7 @@ export default class FirstPersonControl extends EventDispatcher {
         this.vector = new Vector3();
 
         // downwards raycaster, 0 is close, 10 is far
-        this.raycaster = new Raycaster(new Vector3(), new Vector3(0, - 1, 0), close, far);
+        this.raycaster = new Raycaster(new Vector3(), new Vector3(0, -1, 0), close, far);
         this.headRaycaster = new Raycaster(new Vector3(), new Vector3(0, 1, 0), close, far);
         this.frontRaycaster = new Raycaster(new Vector3(), new Vector3(0, 0, -1), close, far/2);
         this.backRaycaster = new Raycaster(new Vector3(), new Vector3(0, 0, 1), close, far/2);
@@ -95,8 +110,8 @@ export default class FirstPersonControl extends EventDispatcher {
         this.unlock();
     }
 
-    getObject() {
-        return this.camera;
+    getCharacter() {
+        return this.character || this.camera;
     };
 
     getDirection = (() => {
@@ -169,8 +184,8 @@ export default class FirstPersonControl extends EventDispatcher {
 
         this.euler.setFromQuaternion(this.camera.quaternion);
 
-        this.euler.y -= movementX * 0.002;
-        this.euler.x -= movementY * 0.002;
+        this.euler.y -= movementX * this.options.sensitivity;
+        this.euler.x -= movementY * this.options.sensitivity;
 
         this.euler.x = Math.max(-PI_2, Math.min(PI_2, this.euler.x));
 
@@ -196,14 +211,14 @@ export default class FirstPersonControl extends EventDispatcher {
     moveForward(distance) {
         // move forward parallel to the xz-plane
         // assumes camera.up is y-up
-        this.vector.setFromMatrixColumn(this.camera.matrix, 0);
-        this.vector.crossVectors(this.camera.up, this.vector);
-        this.camera.position.addScaledVector(this.vector, distance);
+        this.vector.setFromMatrixColumn(this.getCharacter().matrix, 0);
+        this.vector.crossVectors(this.getCharacter().up, this.vector);
+        this.getCharacter().position.addScaledVector(this.vector, distance);
     };
 
     moveRight(distance) {
-        this.vector.setFromMatrixColumn(this.camera.matrix, 0);
-        this.camera.position.addScaledVector(this.vector, distance);
+        this.vector.setFromMatrixColumn(this.getCharacter().matrix, 0);
+        this.getCharacter().position.addScaledVector(this.vector, distance);
     };
 
     lock() {
@@ -215,16 +230,16 @@ export default class FirstPersonControl extends EventDispatcher {
     };
 
     updateRaycasters = () => {
-        this.raycaster.ray.origin.copy( this.getObject().position );
+        this.raycaster.ray.origin.copy( this.getCharacter().position );
         this.raycaster.ray.origin.y -= this.options.height;
 
-        this.headRaycaster.ray.origin.copy( this.getObject().position );
+        this.headRaycaster.ray.origin.copy( this.getCharacter().position );
         this.headRaycaster.ray.origin.y += this.options.height;
 
-        this.frontRaycaster.ray.origin.copy(this.getObject().position);
-        this.backRaycaster.ray.origin.copy(this.getObject().position);
-        this.leftRaycaster.ray.origin.copy(this.getObject().position);
-        this.rightRaycaster.ray.origin.copy(this.getObject().position);
+        this.frontRaycaster.ray.origin.copy(this.getCharacter().position);
+        this.backRaycaster.ray.origin.copy(this.getCharacter().position);
+        this.leftRaycaster.ray.origin.copy(this.getCharacter().position);
+        this.rightRaycaster.ray.origin.copy(this.getCharacter().position);
     }
 
     calculateCollisions = () => {
@@ -250,8 +265,14 @@ export default class FirstPersonControl extends EventDispatcher {
         this.direction.normalize(); // this ensures consistent movements in all this.directions
     }
 
+    physicsUpdate() {
+        if (this.character && this.options.physicsEnabled) {
+            // apply linear velocity if needed
+        }
+    }
+
     update(dt) {
-        if (this.isLocked) {
+        if (this.isLocked && !this.options.physicsEnabled) {
 
             this.updateRaycasters();
             const { onObject, headCollision, frontCollision, backCollision, rightCollision, leftCollision } = this.calculateCollisions();
@@ -285,11 +306,11 @@ export default class FirstPersonControl extends EventDispatcher {
 
             this.moveRight(- this.velocity.x * dt);
             this.moveForward(- this.velocity.z * dt);
-            this.getObject().position.y += (this.velocity.y * dt); // new behavior
+            this.getCharacter().position.y += (this.velocity.y * dt); // new behavior
 
-            if (this.getObject().position.y < this.options.height) {
+            if (this.getCharacter().position.y < this.options.height) {
                 this.velocity.y = 0;
-                this.getObject().position.y = this.options.height;
+                this.getCharacter().position.y = this.options.height;
                 this.canJump = true;
             }
         }

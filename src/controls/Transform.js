@@ -129,6 +129,7 @@ export default class TransformControls extends Object3D {
 
     render() {}
     update() {}
+    physicsUpdate() {}
 
     setAndDispatch(fieldName, value) {
         this[`_${fieldName}`] = value;
