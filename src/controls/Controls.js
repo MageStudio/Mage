@@ -91,7 +91,7 @@ export class Controls {
     }
 
     setFirstPersonControl(options) {
-        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCameraBody(), Scene.getDOMElement(), options);
+        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCamera(), Scene.getDOMElement(), options);
         this.controls[CONTROLS.FPS].init();
 
         return this.controls[CONTROLS.FPS];

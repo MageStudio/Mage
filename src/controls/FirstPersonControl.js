@@ -12,7 +12,10 @@ import {
 } from 'three';
 
 import Scene from '../core/Scene';
+import { debounce } from '../lib/functions';
+import { PHYSICS_ELEMENT_MISSING } from '../lib/messages';
 
+import Physics from '../physics';
 
 const CHANGE_EVENT = { type: 'change' };
 const LOCK_EVENT = { type: 'lock' };
@@ -55,13 +58,9 @@ export default class FirstPersonControl extends EventDispatcher {
 
         this.camera = camera;
         if (!target) {
-            this.camera.position.x = this.options.position.x;
-            this.camera.position.y = this.options.position.y + this.options.height;
-            this.camera.position.z = this.options.position.z;
+            this.camera.setPosition({ x: this.options.position.x, y: this.options.position.y + this.options.height, z: this.options.position.z});
         } else {
-            this.camera.position.x = 0;
-            this.camera.position.y = this.options.height;
-            this.camera.position.z = 0; 
+            this.camera.setPosition({ x: 0, y: this.options.height, z: 0 });
         }
 
         this.character = target;
@@ -75,15 +74,12 @@ export default class FirstPersonControl extends EventDispatcher {
         // downwards raycaster, 0 is close, 10 is far
         this.raycaster = new Raycaster(new Vector3(), new Vector3(0, -1, 0), close, far);
         this.headRaycaster = new Raycaster(new Vector3(), new Vector3(0, 1, 0), close, far);
-        this.frontRaycaster = new Raycaster(new Vector3(), new Vector3(0, 0, -1), close, far/2);
-        this.backRaycaster = new Raycaster(new Vector3(), new Vector3(0, 0, 1), close, far/2);
-        this.leftRaycaster = new Raycaster(new Vector3(), new Vector3(1, 0, 0), close, far/2);
-        this.rightRaycaster = new Raycaster(new Vector3(), new Vector3(-1, 0, 0), close, far/2);
 
-        this.movingForward = false;
-        this.movingBackward = false;
-        this.movingLeft = false;
-        this.movingRight = false;
+        this.movement = {};
+        this.movement.forward = false;
+        this.movement.backwards = false;
+        this.movement.left = false;
+        this.movement.right = false;
         this.canJump = false;
 
         this.velocity = new Vector3();
@@ -110,7 +106,10 @@ export default class FirstPersonControl extends EventDispatcher {
         this.unlock();
     }
 
+    hasPhysicsEnabled = () => this.options.physicsEnabled;
+
     getCharacter() {
+        // FirstPersonControl will either control a character or the camera.
         return this.character || this.camera;
     };
 
@@ -118,7 +117,7 @@ export default class FirstPersonControl extends EventDispatcher {
         const direction = new Vector3(0, 0, - 1);
 
         return (v) => {
-            return v.copy(direction).applyQuaternion(this.camera.quaternion);
+            return v.copy(direction).applyQuaternion(this.camera.getQuaternion());
         };
 
     })();
@@ -133,19 +132,19 @@ export default class FirstPersonControl extends EventDispatcher {
         switch (event.keyCode) {
             case 38: // up
             case 87: // w
-                this.movingForward = true;
+                this.movement.forward = true;
                 break;
             case 37: // left
             case 65: // a
-                this.movingLeft = true;
+                this.movement.left = true;
                 break;
             case 40: // down
             case 83: // s
-                this.movingBackward = true;
+                this.movement.backwards = true;
                 break;
             case 39: // right
             case 68: // d
-                this.movingRight = true;
+                this.movement.right = true;
                 break;
             case 32: // space
                 if (this.canJump === true ) this.velocity.y += this.options.jumpSpeed;
@@ -158,19 +157,19 @@ export default class FirstPersonControl extends EventDispatcher {
         switch (event.keyCode) {
             case 38: // up
             case 87: // w
-                this.movingForward = false;
+                this.movement.forward = false;
                 break;
             case 37: // left
             case 65: // a
-                this.movingLeft = false;
+                this.movement.left = false;
                 break;
             case 40: // down
             case 83: // s
-                this.movingBackward = false;
+                this.movement.backwards = false;
                 break;
             case 39: // right
             case 68: // d
-                this.movingRight = false;
+                this.movement.right = false;
                 break;
         }
     };
@@ -181,15 +180,18 @@ export default class FirstPersonControl extends EventDispatcher {
 
         const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
         const movementY = event.movementY || event.mozMovementY || event.webkitMovementY || 0;
+        const quaternion = this.camera.getQuaternion();
 
-        this.euler.setFromQuaternion(this.camera.quaternion);
+        this.euler.setFromQuaternion(quaternion);
 
         this.euler.y -= movementX * this.options.sensitivity;
         this.euler.x -= movementY * this.options.sensitivity;
 
         this.euler.x = Math.max(-PI_2, Math.min(PI_2, this.euler.x));
 
-        this.camera.quaternion.setFromEuler(this.euler);
+        quaternion.setFromEuler(this.euler);
+
+        this.camera.setQuaternion(quaternion);
 
         this.dispatchEvent(CHANGE_EVENT);
     }
@@ -211,15 +213,32 @@ export default class FirstPersonControl extends EventDispatcher {
     moveForward(distance) {
         // move forward parallel to the xz-plane
         // assumes camera.up is y-up
-        this.vector.setFromMatrixColumn(this.getCharacter().matrix, 0);
-        this.vector.crossVectors(this.getCharacter().up, this.vector);
-        this.getCharacter().position.addScaledVector(this.vector, distance);
+        const body = this.getCharacter().getBody();
+        this.vector.setFromMatrixColumn(body.matrix, 0);
+        this.vector.crossVectors(body.up, this.vector);
+        body.position.addScaledVector(this.vector, distance);
     };
 
     moveRight(distance) {
-        this.vector.setFromMatrixColumn(this.getCharacter().matrix, 0);
-        this.getCharacter().position.addScaledVector(this.vector, distance);
+        const body = this.getCharacter().getBody();
+
+        this.vector.setFromMatrixColumn(body.matrix, 0);
+        body.position.addScaledVector(this.vector, distance);
     };
+
+    moveUpAndDown(dt) {
+        const position = this.getCharacter().getPosition();
+
+        position.y += (this.velocity.y * dt); // new behavior
+
+        if (position.y < this.options.height) {
+            this.velocity.y = 0;
+            position.y = this.options.height;
+            this.canJump = true;
+        }
+
+        this.getCharacter().setPosition(position);
+    }
 
     lock() {
         this.domElement.requestPointerLock();
@@ -230,88 +249,76 @@ export default class FirstPersonControl extends EventDispatcher {
     };
 
     updateRaycasters = () => {
-        this.raycaster.ray.origin.copy( this.getCharacter().position );
+        this.raycaster.ray.origin.copy( this.getCharacter().getPosition() );
         this.raycaster.ray.origin.y -= this.options.height;
 
-        this.headRaycaster.ray.origin.copy( this.getCharacter().position );
+        this.headRaycaster.ray.origin.copy( this.getCharacter().getPosition() );
         this.headRaycaster.ray.origin.y += this.options.height;
-
-        this.frontRaycaster.ray.origin.copy(this.getCharacter().position);
-        this.backRaycaster.ray.origin.copy(this.getCharacter().position);
-        this.leftRaycaster.ray.origin.copy(this.getCharacter().position);
-        this.rightRaycaster.ray.origin.copy(this.getCharacter().position);
     }
 
-    calculateCollisions = () => {
-        return {
-            onObject: this.raycaster.intersectObjects(Scene.getChildren(), true).length > 0,
-            headCollision: this.headRaycaster.intersectObjects(Scene.getChildren(), true).length > 0,
-            frontCollision: this.frontRaycaster.intersectObjects(Scene.getChildren(), true).length > 0,
-            backCollision: this.backRaycaster.intersectObjects(Scene.getChildren(), true).length > 0,
-            leftCollision: this.leftRaycaster.intersectObjects(Scene.getChildren(), true).length > 0,
-            rightCollision: this.rightRaycaster.intersectObjects(Scene.getChildren(), true).length > 0
-        }
-    }
+    calculateCollisions = () => ({
+        onObject: this.raycaster.intersectObjects(Scene.getChildren(), true).length > 0,
+        headCollision: this.headRaycaster.intersectObjects(Scene.getChildren(), true).length > 0
+    });
 
     updateVelocity = (dt) => {
         this.velocity.x -= this.velocity.x * this.options.slowDownFactor * dt;
         this.velocity.z -= this.velocity.z * this.options.slowDownFactor * dt;
         this.velocity.y -= 9.8 * this.options.mass * dt; // 100.0 = mass
+
+        if ( this.movement.forward || this.movement.backwards ) this.velocity.z -= this.direction.z * this.options.speed * dt;
+        if ( this.movement.left || this.movement.right ) this.velocity.x -= this.direction.x * this.options.speed * dt;
     }
 
-    updateDirection() {
-        this.direction.z = Number( this.movingForward ) - Number( this.movingBackward );
-        this.direction.x = Number( this.movingRight ) - Number( this.movingLeft );
+    updateDirection = () => {
+        this.direction.z = Number( this.movement.forward ) - Number( this.movement.backwards );
+        this.direction.x = Number( this.movement.right ) - Number( this.movement.left );
         this.direction.normalize(); // this ensures consistent movements in all this.directions
     }
 
-    physicsUpdate() {
-        if (this.character && this.options.physicsEnabled) {
-            // apply linear velocity if needed
+    updateVelocityForCollisions = () => {
+        this.updateRaycasters();
+        const { onObject, headCollision } = this.calculateCollisions();
+
+        if (onObject) {
+            this.velocity.y = Math.max( 0, this.velocity.y );
+            this.canJump = true;
+        } else if (headCollision && this.velocity.y > 0) {
+            this.velocity.y = 0;
+        }
+    }
+
+    sendBodyUpdate() {
+        const element = this.getCharacter();
+        if (Physics.hasElement(element)) {
+            const { y, w } = this.camera.getQuaternion();
+
+            Physics.updateBodyState(element, {
+                direction: this.direction,
+                movement: this.movement,
+                quaternion: { x: 0, y, z: 0, w }
+            });
+        } else {
+            debounce(() => {
+                console.log(PHYSICS_ELEMENT_MISSING, element);
+            }, 3000)
         }
     }
 
     update(dt) {
-        if (this.isLocked && !this.options.physicsEnabled) {
+        if (this.isLocked) {
 
-            this.updateRaycasters();
-            const { onObject, headCollision, frontCollision, backCollision, rightCollision, leftCollision } = this.calculateCollisions();
-
-            this.updateVelocity(dt);
             this.updateDirection();
+            this.updateVelocity(dt);
 
-            if ( this.movingForward || this.movingBackward ) this.velocity.z -= this.direction.z * this.options.speed * dt;
-            if ( this.movingLeft || this.movingRight ) this.velocity.x -= this.direction.x * this.options.speed * dt;
-            
-            if (onObject) {
-                this.velocity.y = Math.max( 0, this.velocity.y );
-                this.canJump = true;
-            } else if (headCollision && this.velocity.y > 0) {
-                this.velocity.y = 0;
-            }
-           
-            if (frontCollision && this.velocity.z < 0) {
-                this.velocity.z = 0;
-            } else if (backCollision && this.velocity.z > 0) {
-                this.velocity.z = 0;
-            }
+            if (!this.hasPhysicsEnabled()) {
+                this.updateVelocityForCollisions();
 
-            // if ((frontCollision || backCollision) && this.velocity.z !== 0) {
-            //     this.velocity.z = 0;
-            // }
-
-            // if ((rightCollision || leftCollision) && this.velocity.x !== 0) {
-            //     this.velocity.x = 0;
-            // }
-
-            this.moveRight(- this.velocity.x * dt);
-            this.moveForward(- this.velocity.z * dt);
-            this.getCharacter().position.y += (this.velocity.y * dt); // new behavior
-
-            if (this.getCharacter().position.y < this.options.height) {
-                this.velocity.y = 0;
-                this.getCharacter().position.y = this.options.height;
-                this.canJump = true;
+                this.moveRight(- this.velocity.x * dt);
+                this.moveForward(- this.velocity.z * dt);
+                this.moveUpAndDown(dt);
+            } else {
+                this.sendBodyUpdate()
             }
         }
     }

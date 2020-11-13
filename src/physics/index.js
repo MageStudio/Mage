@@ -20,6 +20,7 @@ import {
 import { getBoxDescriptionForElement, iterateGeometries, getBaseDescriptionForElement } from './utils';
 import { getHostURL } from '../lib/url';
 import Scene from '../core/Scene';
+import { PHYSICS_ELEMENT_ALREADY_STORED } from '../lib/messages';
 
 export const TYPES = {
     BOX: 'BOX',
@@ -48,6 +49,21 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 type: TERMINATE_EVENT
             });
+        }
+    }
+
+    hasElement(element) {
+        const uuid = element.uuid();
+
+        return this.elements.includes(uuid);
+    }
+
+    storeElement(element) {
+        if (!this.hasElement(element)) {
+            const uuid = element.uuid();
+            this.elements.push(uuid);
+        } else {
+            console.log(PHYSICS_ELEMENT_ALREADY_STORED, element);
         }
     }
 
@@ -124,6 +140,9 @@ export class Physics extends EventDispatcher {
     add(element, description) {
         if (Config.physics().enabled) {
             const uuid = element.uuid();
+
+            this.storeElement(element);
+
             this.worker.postMessage({
                 type: mapTypeToAddEvent(description.type),
                 ...description,
@@ -136,6 +155,8 @@ export class Physics extends EventDispatcher {
         if (Config.physics().enabled) {
             const uuid = element.uuid();
             const description = getBoxDescriptionForElement(element);
+
+            this.storeElement(element);
 
             this.worker.postMessage({
                 type: ADD_VEHICLE_EVENT,
@@ -159,6 +180,8 @@ export class Physics extends EventDispatcher {
                 matrices.push(matrixArray);
                 indexes.push(indexArray);
             });
+
+            this.storeElement(model);
 
             this.worker.postMessage({
                 type: ADD_MESH_EVENT,

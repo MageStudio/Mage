@@ -30,7 +30,24 @@ const worker = createWorker(() => {
         left: false
     };
 
+    const DEFAULT_RIGIDBODY_STATE = {
+        velocity: { x: 0, y: 0, z: 0 },
+        movement: {
+            forward: false,
+            backwards: false,
+            left: false,
+            right: false
+        },
+        direction: {
+            x: 0,
+            y: 0,
+            z: 0
+        }
+    }
+
     const DEFAULT_SCALE = { x: 1, y: 1, z: 1 };
+
+    const DEFAULT_QUATERNION = { x: 0, y: 0, z: 0, w: 1 };
 
     const handleLoadEvent = options => Ammo => {
         let elements = {};
@@ -71,7 +88,7 @@ const worker = createWorker(() => {
         });
 
         const setBody = data => elements[data.uuid] = Object.assign({}, data);
-        const updateBodyState = ({ uuid, state }) => elements[uuid].state = Object.assign(elements[uuid].state, state);
+        const updateBodyState = (uuid, state) => elements[uuid].state = Object.assign(elements[uuid].state, state);
 
         let collisionConfiguration, dispatcher, solver, world;
         const init = () => {
@@ -85,14 +102,60 @@ const worker = createWorker(() => {
             world.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
         };
 
-        const handleBodyUpdate = ({ body, uuid, state }, dt) => {
-            const { direction, speed } = state;
+        const handleBodyUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE}, dt) => {
+            const { movement, direction, quaternion, position } = state;
+
+            const MAX_SPEED = 10;
+            const walkVelocity = .1;
+
             const motionState = body.getMotionState();
-            const transform = new Ammo.btTransform();
+
             if (motionState) {
+                const transform = new Ammo.btTransform();
                 motionState.getWorldTransform(transform);
+
+                const linearVelocity = body.getLinearVelocity();
+                const speed = linearVelocity.length();
+
+                console.log(transform.getBasis().getRow(3));
+                
+                const forwardDir = transform.getBasis().getRow(3);
+                forwardDir.normalize();
+                const walkDirection = new Ammo.btVector3(0.0, 0.0, 0.0);
+
+                const walkSpeed = walkVelocity * dt;
+
+                if (movement.forward) {
+                    walkDirection.setX( walkDirection.x() + forwardDir.x());
+                    walkDirection.setY( walkDirection.y() + forwardDir.y());
+                    walkDirection.setZ( walkDirection.z() + forwardDir.z());
+                }
+            
+                if (movement.backwards) {
+                    walkDirection.setX( walkDirection.x() - forwardDir.x());
+                    walkDirection.setY( walkDirection.y() - forwardDir.y());
+                    walkDirection.setZ( walkDirection.z() - forwardDir.z());
+                }
+                    
+
+                console.log(linearVelocity, speed);
+
+                if (!movement.forward && !movement.backwards) {
+                    linearVelocity.setX( linearVelocity.x() * 0.2);
+                    linearVelocity.setZ( linearVelocity.z() * 0.2);
+                } else if (speed < MAX_SPEED) {
+                    linearVelocity.setX( linearVelocity.x() + direction.x * walkSpeed);
+                    linearVelocity.setZ( linearVelocity.z() + direction.z * walkSpeed);
+                }
+
+                body.setLinearVelocity(linearVelocity);
+
+                body.getMotionState().setWorldTransform(transform);
+                body.setCenterOfMassTransform(transform);
+
                 let origin = transform.getOrigin();
                 let rotation = transform.getRotation();
+
 
                 sendBodyUpdate(uuid, origin, rotation, dt);
             }
@@ -169,7 +232,7 @@ const worker = createWorker(() => {
             q = tm.getRotation();
 
             sendBodyUpdate(uuid, p, q, dt);
-            updateBodyState({ uuid, state });
+            updateBodyState(uuid, state);
         }
 
         const simulate = (dt) => {
@@ -229,9 +292,7 @@ const worker = createWorker(() => {
             const geometry = new Ammo.btBoxShape(new Ammo.btVector3(length * 0.5, height * 0.5, width * 0.5));
             const body = createRigidBody(geometry, { position, quaternion, mass, friction });
         
-            setBody({ uuid, body, type: TYPES.BOX });
-
-            console.log(body);
+            setBody({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
         };
 
         const addVehicle = data => {
@@ -400,7 +461,7 @@ const worker = createWorker(() => {
             Ammo.destroy(btc);
 
             const body = createRigidBody(collisionShape, { position, quaternion, mass, friction });
-            setBody({ uuid, body, type: TYPES.MESH });
+            setBody({ uuid, body, type: TYPES.MESH, state: DEFAULT_RIGIDBODY_STATE });
         }
 
         const handleTerminateEvent = () => {
@@ -424,7 +485,7 @@ const worker = createWorker(() => {
                     addMesh(data);
                     break;
                 case UPDATE_BODY_EVENT:
-                    updateBodyState(data);
+                    updateBodyState(data.uuid, data.state);
                     break;
                 case TERMINATE_EVENT:
                     handleTerminateEvent();
