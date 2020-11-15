@@ -292,11 +292,13 @@ export default class FirstPersonControl extends EventDispatcher {
         const element = this.getCharacter();
         if (Physics.hasElement(element)) {
             const { y, w } = this.camera.getQuaternion();
+            const cameraDirection = this.camera.getDirection();
 
             Physics.updateBodyState(element, {
                 direction: this.direction,
                 movement: this.movement,
-                quaternion: { x: 0, y, z: 0, w }
+                quaternion: { x: 0, y, z: 0, w },
+                cameraDirection
             });
         } else {
             debounce(() => {
