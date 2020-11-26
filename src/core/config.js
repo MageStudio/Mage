@@ -36,10 +36,6 @@ class Config {
                 path: './mage.physics.js'
             },
 
-            tween: {
-                enabled: false
-            },
-
             camera : {
                 //handling useful informations about our camera.
                 fov : 75,
@@ -145,10 +141,6 @@ class Config {
 
     ui() {
         return this.config.ui;
-    }
-
-    tween() {
-        return this.config.tween;
     }
 
     physics() {

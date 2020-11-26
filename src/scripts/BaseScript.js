@@ -18,6 +18,8 @@ export default class BaseScript {
 
     update(dt) {}
 
+    physicsUpdate(dt) {}
+
     onDispose() {}
 
     toJSON() {

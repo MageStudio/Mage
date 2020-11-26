@@ -70,6 +70,15 @@ export class Universe {
             resolve();
         });
     }
+    
+    onPhysicsUpdate(dt) {
+        return new Promise(resolve => {
+            Object
+                .keys(this.reality)
+                .forEach(k => this.reality[k].onPhysicsUpdate(dt))
+            resolve();
+        });
+    }
 
     bigfreeze = () => {
         this.forEach(o => o.dispose());

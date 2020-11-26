@@ -127,6 +127,19 @@ export default class Entity extends EventDispatcher {
         });
     }
 
+    onPhysicsUpdate(dt) {
+        return new Promise((resolve) => {
+            if (this.hasScripts()) {
+                this.scripts.forEach(({ script, enabled }) => {
+                    if (script && enabled) {
+                        script.physicsUpdate(dt);
+                    }
+                });
+            }
+            resolve();
+        });
+    }
+
     dispose() {
         if (this.hasBody()) {
             this.stopStateMachine();

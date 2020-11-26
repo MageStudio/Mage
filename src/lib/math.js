@@ -11,7 +11,7 @@ export const getProportion = (max1, b, max2) => {
     return (max1 * b)/max2;
 }
 
-export const keepWithinBoundaries = (min, max, value) => (
+export const clamp = (value, min, max) => (
     value < min ? min : value > max ? max : value
 );
  

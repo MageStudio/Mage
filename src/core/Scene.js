@@ -131,6 +131,12 @@ export class Scene {
         });
     }
 
+    getDOMElement() {
+        if (this.renderer) {
+            return this.renderer.domElement;
+        }
+    }
+
     getCamera() {
         return this.camera;
     }
@@ -228,14 +234,14 @@ export class Scene {
     update(dt) {
         Universe.update(dt);
 
-        if (Config.tween().enabled && TWEEN) {
-            TWEEN.update();
-        }
+        this.getCamera()
+            .update(dt);
+    }
 
-        //updating camera if we need to do so.
-        if (this.camera.update) {
-            this.camera.update(dt);
-        }
+    onPhysicsUpdate(dt) {
+        Universe.onPhysicsUpdate(dt);
+        this.getCamera()
+            .onPhysicsUpdate(dt);
     }
 }
 

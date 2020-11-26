@@ -1,5 +1,5 @@
 import { Entity } from './index';
-import { PerspectiveCamera } from 'three';
+import { PerspectiveCamera, Vector3 } from 'three';
 
 export default class Camera extends Entity {
 
@@ -51,6 +51,17 @@ export default class Camera extends Entity {
 
         if (this.body) {
             this.body.rotation.set(rotation.x, rotation.y, rotation.z);
+        }
+    }
+
+    getDirection() {
+        const vector = new Vector3();
+        const { x, y, z } = this.getBody().getWorldDirection(vector);
+
+        return {
+            x,
+            y,
+            z
         }
     }
 

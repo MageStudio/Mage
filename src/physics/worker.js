@@ -9,17 +9,19 @@ const worker = createWorker(() => {
     const LOAD_EVENT = 'LOAD_EVENT';
     const READY_EVENT = 'READY_EVENT';
     const UPDATE_BODY_EVENT = 'UPDATE_BODY_EVENT';
-    const INIT_EVENT = 'INIT_EVENT';
     const ADD_BOX_EVENT = 'ADD_BOX_EVENT';
     const ADD_VEHICLE_EVENT = 'ADD_VEHICLE_EVENT';
     const ADD_MESH_EVENT = 'ADD_MESH_EVENT';
+    const ADD_PLAYER_EVENT = 'ADD_PLAYER_EVENT';
 
     const SPEED_CHANGE_EVENT = 'SPEED_CHANGE_EVENT';
+    const PHYSICS_UPDATE_EVENT = 'PHYSICS_UPDATE_EVENT';
 
     const TYPES = {
         BOX: 'BOX',
         VEHICLE: 'VEHICLE',
-        MESH: 'MESH'
+        MESH: 'MESH',
+        PLAYER: 'PLAYER'
     };
 
     const DEFAULT_VEHICLE_STATE = {
@@ -30,13 +32,30 @@ const worker = createWorker(() => {
         left: false
     };
 
+    const DEFAULT_RIGIDBODY_STATE = {
+        velocity: { x: 0, y: 0, z: 0 },
+        movement: {
+            forward: false,
+            backwards: false,
+            left: false,
+            right: false
+        },
+        direction: {
+            x: 0,
+            y: 0,
+            z: 0
+        }
+    }
+
     const DEFAULT_SCALE = { x: 1, y: 1, z: 1 };
 
-    const handleLoadEvent = (Ammo) => {
+    const DEFAULT_QUATERNION = { x: 0, y: 0, z: 0, w: 1 };
+
+    const handleLoadEvent = options => Ammo => {
         let elements = {};
         
         const DISABLE_DEACTIVATION = 4;
-        const GRAVITY = new Ammo.btVector3(0, -10, 0);
+        const GRAVITY = { x: 0, y: -10, z: 0 };
         // const TRANSFORM_AUX = new Ammo.btTransform();
 
         const FRONT_LEFT = 0;
@@ -44,50 +63,104 @@ const worker = createWorker(() => {
         const BACK_LEFT = 2;
         const BACK_RIGHT = 3;
 
-        const sendBodyUpdate = (uuid, position, rotation) => {
+        const sendBodyUpdate = (uuid, position, rotation, dt) => {
             postMessage({
-                type: UPDATE_BODY_EVENT,
+                event: UPDATE_BODY_EVENT,
                 uuid,
                 position: { x: position.x(), y: position.y(), z: position.z() },
-                quaternion: { x: rotation.x(), y: rotation.y(), z: rotation.z(), w: rotation.w() }
+                quaternion: { x: rotation.x(), y: rotation.y(), z: rotation.z(), w: rotation.w() },
+                dt
             });
-        }
+        };
 
-        const sendReadyEvent = () => postMessage({ type: READY_EVENT });
-        const sendTerminateEvent = () => postMessage({ type: TERMINATE_EVENT });
+        const sendPhysicsUpdate = dt => {
+            postMessage({
+                event: PHYSICS_UPDATE_EVENT,
+                dt
+            })
+        };
+
+        const sendReadyEvent = () => postMessage({ event: READY_EVENT });
+        const sendTerminateEvent = () => postMessage({ event: TERMINATE_EVENT });
         const sendDispatchEvent = (uuid, eventName, eventData) => postMessage({
-            type: DISPATCH_EVENT,
+            event: DISPATCH_EVENT,
             uuid,
             eventName,
             eventData
         });
 
         const setBody = data => elements[data.uuid] = Object.assign({}, data);
-        const updateBodyState = ({ uuid, state }) => elements[uuid].state = Object.assign(elements[uuid].state, state);
+        const updateBodyState = (uuid, state) => elements[uuid].state = Object.assign(elements[uuid].state, state);
 
         let collisionConfiguration, dispatcher, solver, world;
         const init = () => {
+            const { gravity = GRAVITY } = options;
+
             collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
             dispatcher = new Ammo.btCollisionDispatcher(collisionConfiguration);
             broadphase = new Ammo.btDbvtBroadphase();
             solver = new Ammo.btSequentialImpulseConstraintSolver();
             world = new Ammo.btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-            world.setGravity(GRAVITY);
+            world.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
         };
 
-        const handleBodyUpdate = ({ body, uuid }) => {
+        const handleBodyUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
+            const { movement, direction, cameraDirection, quaternion, position } = state;
+
+            const MAX_SPEED = 1;
+            const walkVelocity = .1;
+
             const motionState = body.getMotionState();
-            const transform = new Ammo.btTransform();
+
             if (motionState) {
+                const transform = new Ammo.btTransform();
                 motionState.getWorldTransform(transform);
+
+                const linearVelocity = body.getLinearVelocity();
+                const speed = linearVelocity.length();
+
+                const forwardDir = transform.getBasis().getRow(2);
+                forwardDir.normalize();
+                const walkDirection = new Ammo.btVector3(0.0, 0.0, 0.0);
+
+                const walkSpeed = walkVelocity * dt;
+
+                if (movement.forward) {
+                    walkDirection.setX( walkDirection.x() + forwardDir.x());
+                    //walkDirection.setY( walkDirection.y() + forwardDir.y());
+                    walkDirection.setZ( walkDirection.z() + forwardDir.z());
+                }
+            
+                if (movement.backwards) {
+                    walkDirection.setX( walkDirection.x() - forwardDir.x());
+                    //walkDirection.setY( walkDirection.y() - forwardDir.y());
+                    walkDirection.setZ( walkDirection.z() - forwardDir.z());
+                }
+
+                console.log(cameraDirection);
+
+                if (!movement.forward && !movement.backwards) {
+                    linearVelocity.setX(linearVelocity.x() * 0.2);
+                    linearVelocity.setZ(linearVelocity.z() * 0.2);
+                } else if (speed < MAX_SPEED) {
+                    linearVelocity.setX(linearVelocity.x() + cameraDirection.x * walkSpeed);
+                    linearVelocity.setZ(linearVelocity.z() + cameraDirection.z * walkSpeed);
+                }
+
+                body.setLinearVelocity(linearVelocity);
+
+                body.getMotionState().setWorldTransform(transform);
+                body.setCenterOfMassTransform(transform);
+
                 let origin = transform.getOrigin();
                 let rotation = transform.getRotation();
 
-                sendBodyUpdate(uuid, origin, rotation);
+
+                sendBodyUpdate(uuid, origin, rotation, dt);
             }
         }
 
-        const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE }) => {
+        const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE }, dt) => {
             const speed = vehicle.getCurrentSpeedKmHour();
 
             sendDispatchEvent(uuid, SPEED_CHANGE_EVENT, { speed });
@@ -150,15 +223,15 @@ const worker = createWorker(() => {
                 q = tm.getRotation();
 
                 const wheelUUID = wheels[i];
-                sendBodyUpdate(wheelUUID, p, q);
+                sendBodyUpdate(wheelUUID, p, q, dt);
             }
 
             tm = vehicle.getChassisWorldTransform();
             p = tm.getOrigin();
             q = tm.getRotation();
 
-            sendBodyUpdate(uuid, p, q);
-            updateBodyState({ uuid, state });
+            sendBodyUpdate(uuid, p, q, dt);
+            updateBodyState(uuid, state);
         }
 
         const simulate = (dt) => {
@@ -172,15 +245,17 @@ const worker = createWorker(() => {
                         switch(element.type) {
                             case TYPES.BOX:
                             case TYPES.MESH:
-                                handleBodyUpdate(element);
+                            case TYPES.PLAYER:
+                                handleBodyUpdate(element, dt);
                                 break;
                             case TYPES.VEHICLE:
-                                handleVehicleUpdate(element);
+                                handleVehicleUpdate(element, dt);
                                 break;
                             default:
                                 break;
                         }
                     });
+                sendPhysicsUpdate(dt);
             }
         }
 
@@ -211,13 +286,29 @@ const worker = createWorker(() => {
             return body;
         }
 
+        const addPlayer = (data) => {
+            const { uuid, width, height, position, quaternion, mass, friction } = data;
+
+            console.log('adding player', data);
+
+            const capsule = new Ammo.btCapsuleShape(width, height);
+            const body = createRigidBody(capsule, { position, quaternion, mass, friction });
+
+            // disabliing rotation for collisions
+            body.setAngularFactor(0);
+
+            world.addRigidBody(body);
+
+            setBody({ uuid, body, type: TYPES.PLAYER, state: DEFAULT_RIGIDBODY_STATE });
+        };
+
         const addBox = (data) => {
             const { uuid, width, length, height, position, quaternion, mass = 0, friction = 2 } = data;
 
             const geometry = new Ammo.btBoxShape(new Ammo.btVector3(length * 0.5, height * 0.5, width * 0.5));
             const body = createRigidBody(geometry, { position, quaternion, mass, friction });
         
-            setBody({ uuid, body, type: TYPES.BOX });
+            setBody({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
         };
 
         const addVehicle = data => {
@@ -386,7 +477,7 @@ const worker = createWorker(() => {
             Ammo.destroy(btc);
 
             const body = createRigidBody(collisionShape, { position, quaternion, mass, friction });
-            setBody({ uuid, body, type: TYPES.MESH });
+            setBody({ uuid, body, type: TYPES.MESH, state: DEFAULT_RIGIDBODY_STATE });
         }
 
         const handleTerminateEvent = () => {
@@ -399,25 +490,33 @@ const worker = createWorker(() => {
         }
 
         onmessage = ({ data }) => {
-            switch(data.type) {
-                case INIT_EVENT:
-                    init();
-                    break;
+            switch(data.event) {
                 case ADD_BOX_EVENT:
+                    console.log('add box');
                     addBox(data);
                     break;
                 case ADD_VEHICLE_EVENT:
+                    console.log('add vehicle');
+
                     addVehicle(data);
                     break;
                 case ADD_MESH_EVENT:
+                    console.log('add mesh');
+
                     addMesh(data);
                     break;
+                case ADD_PLAYER_EVENT:
+                    console.log('add player');
+
+                    addPlayer(data);
+                    break;
                 case UPDATE_BODY_EVENT:
-                    updateBodyState(data);
+                    updateBodyState(data.uuid, data.state);
                     break;
                 case TERMINATE_EVENT:
                     handleTerminateEvent();
                 default:
+                    console.log('unknown', data.event);
                     break;
             }
         }
@@ -434,13 +533,15 @@ const worker = createWorker(() => {
         sendReadyEvent();
     };
 
-    const loadAmmo = ({ path = LIBRARY_NAME, host }) => {
-        importScripts(host + '/' + path);
-        Ammo().then(handleLoadEvent);
+    const loadAmmo = (options) => {
+        const scriptUrl = options.host + '/' + (options.path || LIBRARY_NAME);
+        importScripts(scriptUrl);
+
+        Ammo().then(handleLoadEvent(options));
     };
 
     onmessage = ({ data }) => {
-        switch(data.type) {
+        switch(data.event) {
             case LOAD_EVENT:
                 loadAmmo(data);
                 break;

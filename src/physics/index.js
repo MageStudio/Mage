@@ -14,19 +14,25 @@ import {
     ADD_VEHICLE_EVENT,
     DISPATCH_EVENT,
     PHYSICS_EVENTS,
-    ADD_MESH_EVENT
+    ADD_MESH_EVENT,
+    PHYSICS_UPDATE_EVENT,
+    ADD_PLAYER_EVENT
 } from './messages';
 import { getBoxDescriptionForElement, iterateGeometries, getBaseDescriptionForElement } from './utils';
 import { getHostURL } from '../lib/url';
+import Scene from '../core/Scene';
+import { PHYSICS_ELEMENT_ALREADY_STORED } from '../lib/messages';
 
-export const TYPES = {
+export const PHYSICS_TYPES = {
     BOX: 'BOX',
-    VEHICLE: 'VEHICLE'
+    VEHICLE: 'VEHICLE',
+    PLAYER: 'PLAYER'
 };
 
 const mapTypeToAddEvent = (type) => ({
-    [TYPES.BOX]: ADD_BOX_EVENT,
-    [TYPES.VEHICLE]: ADD_VEHICLE_EVENT
+    [PHYSICS_TYPES.BOX]: ADD_BOX_EVENT,
+    [PHYSICS_TYPES.VEHICLE]: ADD_VEHICLE_EVENT,
+    [PHYSICS_TYPES.PLAYER]: ADD_PLAYER_EVENT
 })[type] || ADD_BOX_EVENT;
 
 const WORKER_READY_TIMEOUT = 200;
@@ -44,16 +50,31 @@ export class Physics extends EventDispatcher {
     dispose() {
         if (Config.physics().enabled) {
             this.worker.postMessage({
-                type: TERMINATE_EVENT
+                event: TERMINATE_EVENT
             });
+        }
+    }
+
+    hasElement(element) {
+        const uuid = element.uuid();
+
+        return this.elements.includes(uuid);
+    }
+
+    storeElement(element) {
+        if (!this.hasElement(element)) {
+            const uuid = element.uuid();
+            this.elements.push(uuid);
+        } else {
+            console.log(PHYSICS_ELEMENT_ALREADY_STORED, element);
         }
     }
 
     init() {
         if (Config.physics().enabled) {
             this.worker.postMessage({
-                type: LOAD_EVENT,
-                path: Config.physics().path,
+                event: LOAD_EVENT,
+                ...Config.physics(),
                 host: getHostURL()
             });
 
@@ -77,7 +98,7 @@ export class Physics extends EventDispatcher {
     }
 
     handleWorkerMessages = ({ data }) => {
-        switch (data.type) {
+        switch (data.event) {
             case READY_EVENT:
                 this.workerReady = true;
                 break;
@@ -89,10 +110,18 @@ export class Physics extends EventDispatcher {
                 break;
             case DISPATCH_EVENT:
                 this.handleDispatchEvent(data);
+                break;
+            case PHYSICS_UPDATE_EVENT:
+                this.handlePhysicsUpdate(data);
+                break;
             default:
                 break;
         }
-    }
+    };
+
+    handlePhysicsUpdate = ({ dt }) => {
+        Scene.onPhysicsUpdate(dt);
+    };
 
     handleTerminateEvent = () => {
         this.worker.terminate();
@@ -109,13 +138,18 @@ export class Physics extends EventDispatcher {
             type: eventName,
             data: eventData
         });
-    }
+    };
 
     add(element, description) {
         if (Config.physics().enabled) {
             const uuid = element.uuid();
+
+            this.storeElement(element);
+
+            console.log('adding, ', description.type);
+
             this.worker.postMessage({
-                type: mapTypeToAddEvent(description.type),
+                event: mapTypeToAddEvent(description.type),
                 ...description,
                 uuid
             })
@@ -127,8 +161,10 @@ export class Physics extends EventDispatcher {
             const uuid = element.uuid();
             const description = getBoxDescriptionForElement(element);
 
+            this.storeElement(element);
+
             this.worker.postMessage({
-                type: ADD_VEHICLE_EVENT,
+                event: ADD_VEHICLE_EVENT,
                 uuid,
                 ...description,
                 ...options
@@ -150,8 +186,10 @@ export class Physics extends EventDispatcher {
                 indexes.push(indexArray);
             });
 
+            this.storeElement(model);
+
             this.worker.postMessage({
-                type: ADD_MESH_EVENT,
+                event: ADD_MESH_EVENT,
                 uuid,
                 vertices,
                 matrices,
@@ -168,7 +206,7 @@ export class Physics extends EventDispatcher {
             const uuid = element.uuid();
 
             this.worker.postMessage({
-                type: UPDATE_BODY_EVENT,
+                event: UPDATE_BODY_EVENT,
                 uuid,
                 state
             });
