@@ -69,7 +69,6 @@ export class Assets {
 
     setAssets(assets = DEFAULT_COMMON_ASSETS) {
         this.assets = this.parseAssets(assets);
-        console.log('loaded assets', this.assets);
     }
 
     getCommonAssets = () => this.assets.common || DEFAULT_COMMON_ASSETS;

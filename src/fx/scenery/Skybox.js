@@ -23,8 +23,6 @@ export default class Skybox extends Element {
 
         this.cubeMap = typeof texture === 'string' ? Images.get(texture) : texture;
 
-        console.log('cubemap', this.cubeMap);
-
         const material = new MeshBasicMaterial({
             envMap: this.cubeMap,
             side: BackSide

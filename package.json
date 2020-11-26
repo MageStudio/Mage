@@ -10,12 +10,13 @@
     "scripts": {
         "preversion": "npm test",
         "version": "npm run build",
-        "dev": "npm run build && npm run start",
+        "dev": "concurrently 'npm:build:live' 'npm:start'",
         "start": "http-server ./ -p 8085",
         "postversion:push": "git push --no-verify && git push --tags --no-verify",
         "postversion": "npm run postversion:push && npm publish",
         "prebuild": "rimraf dist/mage.js",
         "build": "rollup --config config/index.js",
+        "build:live": "rollup --config config/index.js --watch",
         "test": "echo you should test"
     },
     "repository": {
@@ -55,22 +56,25 @@
         "xstate": "^4.8.0"
     },
     "devDependencies": {
-        "@babel/cli": "7.5.0",
-        "@babel/core": "7.5.0",
+        "@babel/cli": "^7.12.7",
+        "@babel/core": "^7.5.0",
         "@babel/node": "7.6.3",
         "@babel/plugin-proposal-class-properties": "7.5.0",
         "@babel/polyfill": "7.4.4",
         "@babel/preset-env": "7.5.0",
         "@babel/register": "7.4.4",
+        "@rollup/plugin-babel": "^5.2.1",
+        "@rollup/plugin-commonjs": "^16.0.0",
         "@rollup/plugin-json": "4.0.1",
+        "@rollup/plugin-node-resolve": "^10.0.0",
+        "@rollup/plugin-replace": "^2.3.4",
         "babel-loader": "8.0.6",
         "babel-plugin-inferno": "6.1.0",
+        "concurrently": "^5.3.0",
         "http-server": "^0.12.3",
         "rimraf": "^3.0.0",
-        "rollup": "1.26.3",
-        "rollup-plugin-babel": "4.3.3",
-        "rollup-plugin-commonjs": "10.1.0",
-        "rollup-plugin-node-resolve": "5.2.0",
-        "rollup-plugin-terser": "5.2.0"
+        "rollup": "^2.33.3",
+        "rollup-plugin-terser": "5.2.0",
+        "rollup-plugin-web-worker-loader": "^1.4.0"
     }
 }
