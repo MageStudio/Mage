@@ -43,8 +43,6 @@ export class Images {
         this.textures = textures;
         this.cubeTextures = cubeTextures;
 
-        console.log(cubeTextures, this.cubeTextures);
-
         if (!this.areThereImagesToLoad()) {
             return Promise.resolve('images');
         }
@@ -106,8 +104,6 @@ export class Images {
     loadSingleCubeTexture = (name, level) => {
         const id = buildAssetId(name, level);
         const paths = this.cubeTextures[name];
-
-        console.log('loading cubetexture,', paths, id);
 
         return new Promise((resolve, reject) => {
             try {

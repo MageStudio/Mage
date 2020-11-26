@@ -3,7 +3,7 @@ import {
 } from 'three';
 import Universe from '../core/Universe';
 import Config from '../core/config';
-import worker from './worker';
+import PhysicsWorker from 'worker:./worker';
 
 import {
     TERMINATE_EVENT,
@@ -41,7 +41,7 @@ export class Physics extends EventDispatcher {
 
     constructor() {
         super();
-        this.worker = worker;
+        this.worker = new PhysicsWorker();
         this.elements = [];
         this.workerReady = false;
         this.worker.onmessage = this.handleWorkerMessages;
@@ -145,8 +145,6 @@ export class Physics extends EventDispatcher {
             const uuid = element.uuid();
 
             this.storeElement(element);
-
-            console.log('adding, ', description.type);
 
             this.worker.postMessage({
                 event: mapTypeToAddEvent(description.type),

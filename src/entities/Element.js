@@ -201,7 +201,8 @@ export default class Element extends Entity {
     }
 
     addHitBox() {
-        const size = this.boundingBox.getSize();
+        const size = new Vector3();
+        this.boundingBox.getSize(size);
         const quaternion = this.getQuaternion();
 
         const scaledSize = {
@@ -211,7 +212,7 @@ export default class Element extends Entity {
         };
         const box = new Box(scaledSize.x, scaledSize.y, scaledSize.z, HIT_BOX_COLOR);
 
-        box.setQuaternion(quaternion);
+        //box.setQuaternion(quaternion);
         box.setWireframe(true);
         box.setWireframeLineWidth(2);
         this.add(box);

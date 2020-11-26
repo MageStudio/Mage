@@ -37,7 +37,11 @@ export const extractBiggestBoundingBox = body => {
 
 export const parseBoundingBoxSize = (boundingBox = {}) => {
     try {
-        const { x: sizeX, y: sizeY, z: sizeZ } = boundingBox.getSize();
+        const size = new Vector3();
+        boundingBox.getSize(size);
+
+        const { x: sizeX, y: sizeY, z: sizeZ } = size;
+
         return {
             x: sizeX,
             y: sizeY,

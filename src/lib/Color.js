@@ -4,13 +4,13 @@ import {
 
 export default class Color {
 
-	static randomColor() {
+	static randomColor(asNumber = false) {
 		const letters = '0123456789ABCDEF'.split('');
-		let color = '#';
+		let color = '';
 		for (let i = 0; i < 6; i++ ) {
 			color += letters[Math.floor(Math.random() * 16)];
 		}
-		return color;
+		return asNumber ? Number(`0x${color}`) : `#${color}`;
 	}
 
 	static componentToHex(c) {
