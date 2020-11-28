@@ -63,9 +63,9 @@ export const getBaseDescriptionForElement = element => {
     const size = parseBoundingBoxSize(element.boundingBox);
 
     return {
-        width: size.z,
+        width: size.x,
         height: size.y,
-        length: size.x,
+        length: size.z,
         size,
         position: { x, y, z },
         quaternion: { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w }

@@ -41,3 +41,8 @@ export const FRONT_LEFT = 0;
 export const FRONT_RIGHT = 1;
 export const BACK_LEFT = 2;
 export const BACK_RIGHT = 3;
+
+export const DEFAULT_STEERING_INCREMENT = .04;
+export const DEFAULT_STEERING_CLAMP = .5;
+export const DEFAULT_MAX_ENGINE_FORCE = 2000;
+export const DEFAULT_MAX_BREAKING_FORCE = 100;
