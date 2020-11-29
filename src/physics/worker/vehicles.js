@@ -5,11 +5,16 @@ import {
     BACK_LEFT,
     BACK_RIGHT,
     FRONT_LEFT,
-    FRONT_RIGHT
+    FRONT_RIGHT,
+    DEFAULT_MAX_ENGINE_FORCE,
+    DEFAULT_MAX_BREAKING_FORCE,
+    DEFAULT_STEERING_CLAMP,
+    DEFAULT_STEERING_INCREMENT
 } from '../constants';
 
 import {
-    SPEED_CHANGE_EVENT
+    SPEED_CHANGE_EVENT,
+    CAR_DIRECTION_CHANGE_EVENT
 } from '../messages';
 
 import world from './world';
@@ -101,11 +106,12 @@ export const addVehicle = data => {
         uuid,
         vehicle: vehicle,
         wheels,
+        options: data,
         state: DEFAULT_VEHICLE_STATE
     });
 }
 
-export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE }, dt) => {
+export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE, options = {} }, dt) => {
     const speed = vehicle.getCurrentSpeedKmHour();
 
     dispatcher.sendDispatchEvent(uuid, SPEED_CHANGE_EVENT, { speed });
@@ -113,10 +119,12 @@ export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEH
     let breakingForce = 0;
     let engineForce = 0;
 
-    const steeringIncrement = .04;
-    const steeringClamp = .5;
-    const maxEngineForce = 2000;
-    const maxBreakingForce = 100;
+    const {
+        steeringClamp = DEFAULT_STEERING_CLAMP,
+        steeringIncrement = DEFAULT_STEERING_INCREMENT,
+        maxEngineForce = DEFAULT_MAX_ENGINE_FORCE,
+        maxBreakingForce = DEFAULT_MAX_BREAKING_FORCE
+    } = options;
 
     if (state.acceleration) {
         if (speed < -1)
@@ -174,6 +182,15 @@ export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEH
     tm = vehicle.getChassisWorldTransform();
     p = tm.getOrigin();
     q = tm.getRotation();
+
+    const direction = vehicle.getForwardVector();
+    dispatcher.sendDispatchEvent(uuid, CAR_DIRECTION_CHANGE_EVENT, {
+        direction: {
+            x: direction.x(),
+            y: direction.y(),
+            z: direction.z()
+        }
+    });
 
     dispatcher.sendBodyUpdate(uuid, p, q, dt);
     world.updateBodyState(uuid, state);

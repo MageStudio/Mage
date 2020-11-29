@@ -46,3 +46,16 @@ export const findPointBetweenAtDistance = (
         z: point.z
     };
 }
+
+export const lerpVectors = (origin, target, speed) => {
+    const originVector = new Vector3(origin.x, origin.y, origin.z);
+    const targetVector = new Vector3(target.x, target.y, target.z);
+
+    originVector.lerp(targetVector, speed);
+
+    return {
+        x: originVector.x,
+        y: originVector.y,
+        z: originVector.z
+    }
+}

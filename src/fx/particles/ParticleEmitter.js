@@ -35,8 +35,8 @@ export default class ParticleEmitter extends EventDispatcher {
 
     setPosition(where) {
         const position = {
-			...this.getPosition(),
-			...where
+            ...this.getPosition(),
+            ...where
         };
 
         this.system.particleSystem.position.set(position.x, position.y, position.z);
@@ -52,8 +52,8 @@ export default class ParticleEmitter extends EventDispatcher {
 
     setRotation(howmuch) {
         const rotation = {
-			...this.getRotation(),
-			...howmuch
+            ...this.getRotation(),
+            ...howmuch
         };
 
         this.system.particleSystem.rotation.set(rotation.x, rotation.y, rotation.z);
