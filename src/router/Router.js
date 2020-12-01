@@ -91,7 +91,7 @@ class Router {
         network.stopListeningToNetworkChanges();
 
         window.removeEventListener(HASH_CHANGE, this.handleHashChange);
-        window,removeEventListener(BEFORE_UNLOAD, this.stop);
+        window.removeEventListener(BEFORE_UNLOAD, this.stop);
     }
 
     stop = () => {

@@ -31,8 +31,9 @@ export const DEFAULT_RIGIDBODY_STATE = {
 };
 
 export const DEFAULT_SCALE = { x: 1, y: 1, z: 1 };
-
 export const DEFAULT_QUATERNION = { x: 0, y: 0, z: 0, w: 1 };
+export const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
+export const DEFAULT_IMPULSE = { x: 0, y: 0, z: 0 };
 
 export const DISABLE_DEACTIVATION = 4;
 export const GRAVITY = { x: 0, y: -10, z: 0 };
