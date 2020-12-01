@@ -9,7 +9,9 @@ import {
     DEFAULT_RIGIDBODY_STATE,
     TYPES,
     DEFAULT_SCALE,
-    DISABLE_DEACTIVATION
+    DISABLE_DEACTIVATION,
+    DEFAULT_LINEAR_VELOCITY,
+    DEFAULT_IMPULSE
 } from '../constants';
 
 export const createRigidBody = (shape, { position, quaternion, mass, friction }) => {
@@ -116,52 +118,33 @@ export const addBox = (data) => {
     world.setBody({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
 };
 
-export const handleRigidbodyUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
-    const { movement, direction, cameraDirection, quaternion, position } = state;
-
-    const MAX_SPEED = 1;
-    const walkVelocity = .1;
-
+export const setLinearVelocity = (data) => {
+    const { uuid, velocity = DEFAULT_LINEAR_VELOCITY } = data;
+    const { body } = world.getElement(uuid);
     const motionState = body.getMotionState();
 
     if (motionState) {
-        const transform = new Ammo.btTransform();
-        motionState.getWorldTransform(transform);
-
-        const linearVelocity = body.getLinearVelocity();
-        const speed = linearVelocity.length();
-
-        const forwardDir = transform.getBasis().getRow(2);
-        forwardDir.normalize();
-        const walkDirection = new Ammo.btVector3(0.0, 0.0, 0.0);
-
-        const walkSpeed = walkVelocity * dt;
-
-        if (movement.forward) {
-            walkDirection.setX( walkDirection.x() + forwardDir.x());
-            //walkDirection.setY( walkDirection.y() + forwardDir.y());
-            walkDirection.setZ( walkDirection.z() + forwardDir.z());
-        }
-    
-        if (movement.backwards) {
-            walkDirection.setX( walkDirection.x() - forwardDir.x());
-            //walkDirection.setY( walkDirection.y() - forwardDir.y());
-            walkDirection.setZ( walkDirection.z() - forwardDir.z());
-        }
-
-        if (!movement.forward && !movement.backwards) {
-            linearVelocity.setX(linearVelocity.x() * 0.2);
-            linearVelocity.setZ(linearVelocity.z() * 0.2);
-        } else if (speed < MAX_SPEED) {
-            linearVelocity.setX(linearVelocity.x() + cameraDirection.x * walkSpeed);
-            linearVelocity.setZ(linearVelocity.z() + cameraDirection.z * walkSpeed);
-        }
-
+        const linearVelocity = new Ammo.btVector3(velocity.x, velocity.y, velocity.z);
         body.setLinearVelocity(linearVelocity);
+    }
+};
 
-        body.getMotionState().setWorldTransform(transform);
-        body.setCenterOfMassTransform(transform);
+export const applyImpuse = data => {
+    const { uuid, impulse = DEFAULT_IMPULSE } = data;
+    const { body } = world.getElement(uuid);
+    const motionState = body.getMotionState();
 
+    if (motionState) {
+        const impulseVector = new Ammo.btVector3(impulse.x, impulse.y, impulse.z);
+        body.applyCentralImpulse(impulseVector);
+    }
+}
+
+export const handleRigidbodyUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
+    const motionState = body.getMotionState();
+    const transform = new Ammo.btTransform();
+    if (motionState) {
+        motionState.getWorldTransform(transform);
         let origin = transform.getOrigin();
         let rotation = transform.getRotation();
 

@@ -59,3 +59,5 @@ export const lerpVectors = (origin, target, speed) => {
         z: originVector.z
     }
 }
+
+export const scaleVector = ({ x = 0, y = 0, z = 0}, scale = 1) => new Vector3(x, y, z).multiplyScalar(scale);

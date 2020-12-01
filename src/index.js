@@ -55,7 +55,7 @@ import * as functions from './lib/functions';
 
 import BaseScript from './scripts/BaseScript';
 
-import Input from './core/input/Input';
+import Input, { INPUT_EVENTS } from './core/input/Input';
 
 import AmbientLight from './lights/AmbientLight';
 import SunLight from './lights/SunLight';
@@ -128,6 +128,7 @@ export {
     BaseScript,
 
     Input,
+    INPUT_EVENTS,
 
     Line,
     CurveLine,

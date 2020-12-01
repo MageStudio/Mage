@@ -16,7 +16,9 @@ import {
     PHYSICS_EVENTS,
     ADD_MESH_EVENT,
     PHYSICS_UPDATE_EVENT,
-    ADD_PLAYER_EVENT
+    ADD_PLAYER_EVENT,
+    SET_LINEAR_VELOCITY_EVENT,
+    APPLY_IMPULSE_EVENT
 } from './messages';
 import { getBoxDescriptionForElement, iterateGeometries, getBaseDescriptionForElement } from './utils';
 import { getHostURL } from '../lib/url';
@@ -52,6 +54,8 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: TERMINATE_EVENT
             });
+
+            this.elements = [];
         }
     }
 
@@ -196,6 +200,30 @@ export class Physics extends EventDispatcher {
                 ...options
             })
 
+        }
+    }
+
+    setLinearVelocity = (element, velocity) => {
+        if (Config.physics().enabled) {
+            const uuid = element.uuid();
+
+            this.worker.postMessage({
+                event: SET_LINEAR_VELOCITY_EVENT,
+                uuid,
+                velocity
+            });
+        }
+    }
+
+    applyImpulse = (element, impulse) => {
+        if (Config.physics().enabled) {
+            const uuid = element.uuid();
+
+            this.worker.postMessage({
+                event: APPLY_IMPULSE_EVENT,
+                uuid,
+                impulse
+            });
         }
     }
 

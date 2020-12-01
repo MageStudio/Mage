@@ -58,8 +58,8 @@ export default class Element extends Entity {
 
         this.texture = undefined;
         this.options = {
-            name,
-            ...options
+            ...options,
+            name
         };;
 
         this.setBody({ geometry, material });

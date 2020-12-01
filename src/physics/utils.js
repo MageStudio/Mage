@@ -25,14 +25,15 @@ export const extractBiggestBoundingBox = body => {
     });
 
     // sorting by volume
-    const sorted = boxes.sort((boxA, boxB) => {
-        const sizeA = boxA.getSize();
-        const sizeB = boxB.getSize();
+    return boxes.sort((boxA, boxB) => {
+        const vectorA = new Vector3();
+        const vectorB = new Vector3();
 
-        return ((sizeB.x * sizeB.y * sizeB.z) - (sizeA.x * sizeA.y * sizeA.z));
-    });
+        boxA.getSize(vectorA);
+        boxB.getSize(vectorB);
 
-    return sorted[0];
+        return ((vectorB.x * vectorB.y * vectorB.z) - (vectorA.x * vectorA.y * vectorA.z));
+    })[0];
 }
 
 export const parseBoundingBoxSize = (boundingBox = {}) => {
@@ -59,13 +60,14 @@ export const parseBoundingBoxSize = (boundingBox = {}) => {
 
 export const getBaseDescriptionForElement = element => {
     const { x, y, z } = element.getPosition();
+    const scale = element.getScale();
     const quaternion = element.getQuaternion();
     const size = parseBoundingBoxSize(element.boundingBox);
 
     return {
-        width: size.x,
-        height: size.y,
-        length: size.z,
+        width: size.x * scale.x,
+        height: size.y * scale.y,
+        length: size.z * scale.z,
         size,
         position: { x, y, z },
         quaternion: { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w }

@@ -5,7 +5,7 @@ import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 import PostProcessing from '../fx/postprocessing/PostProcessing';
-import Input, { INPUT_EVENTS } from './input/Input';
+import Input, { INPUT_EVENTS_LIST } from './input/Input';
 import Lights from '../lights/Lights';
 import Controls from '../controls/Controls';
 import Physics from '../physics';
@@ -53,7 +53,7 @@ export class Level extends EventDispatcher {
     enableInput = () => {
         Input.enable();
         if (!this.inputListenersAreSet) {
-            INPUT_EVENTS.forEach((event) => {
+            INPUT_EVENTS_LIST.forEach((event) => {
                 const methodName = `on${upperCaseFirst(event)}`;
                 if (typeof this[methodName] === 'function') {
                     Input.addEventListener(event, this[methodName].bind(this));
@@ -66,7 +66,7 @@ export class Level extends EventDispatcher {
 
     disableInput = () => {
         Input.disable();
-        INPUT_EVENTS.forEach((event) => {
+        INPUT_EVENTS_LIST.forEach((event) => {
             const methodName = `on${upperCaseFirst(event)}`;
             if (typeof this[methodName] === 'function') {
                 Input.removeEventListener(event, this[methodName]);

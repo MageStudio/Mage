@@ -35,7 +35,7 @@ export const KEY_PRESS = 'keyPress';
 export const KEY_DOWN = 'keyDown';
 export const KEY_UP = 'keyUp';
 
-export const INPUT_EVENTS = [
+export const INPUT_EVENTS_LIST = [
     KEY_PRESS,
     KEY_DOWN,
     KEY_UP,
@@ -50,6 +50,22 @@ export const INPUT_EVENTS = [
     BUTTON_RELEASED_EVENT,
     AXIS_CHANGE_EVENT
 ];
+
+export const INPUT_EVENTS = {
+    KEY_PRESS,
+    KEY_DOWN,
+    KEY_UP,
+    MOUSE_DOWN,
+    MOUSE_UP,
+    MOUSE_DOWN,
+    ELEMENT_CLICK,
+    ELEMENT_DESELECT,
+    GAMEPAD_CONNECTED_EVENT,
+    GAMEPAD_DISCONNECTED_EVENT,
+    BUTTON_PRESSED_EVENT,
+    BUTTON_RELEASED_EVENT,
+    AXIS_CHANGE_EVENT
+};
 
 export class Input extends EventDispatcher {
 

@@ -5,7 +5,9 @@ import {
     ADD_BOX_EVENT,
     ADD_VEHICLE_EVENT,
     ADD_MESH_EVENT,
-    ADD_PLAYER_EVENT
+    ADD_PLAYER_EVENT,
+    SET_LINEAR_VELOCITY_EVENT,
+    APPLY_IMPULSE_EVENT
 } from '../messages';
 
 import {
@@ -13,7 +15,7 @@ import {
 } from '../constants';
 
 import { addVehicle } from './vehicles';
-import { addBox, addMesh } from './bodies';
+import { addBox, addMesh, setLinearVelocity, applyImpuse } from './bodies';
 import { addPlayer } from './player';
 
 import dispatcher from './lib/dispatcher';
@@ -35,6 +37,12 @@ const handleLoadEvent = options => Ammo => {
                 break;
             case ADD_PLAYER_EVENT:
                 addPlayer(data);
+                break;
+            case SET_LINEAR_VELOCITY_EVENT:
+                setLinearVelocity(data);
+                break;
+            case APPLY_IMPULSE_EVENT:
+                applyImpuse(data);
                 break;
             case UPDATE_BODY_EVENT:
                 world.updateBodyState(data.uuid, data.state);

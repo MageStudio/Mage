@@ -7,6 +7,7 @@ import { handleRigidbodyUpdate } from './bodies';
 import { handleVehicleUpdate } from './vehicles';
 
 import dispatcher from './lib/dispatcher';
+import { handlePlayerUpdate } from './player';
 
 export class World {
 
@@ -34,6 +35,8 @@ export class World {
         this.initialised = true;
     };
 
+    getElement = uuid => this.elements[uuid];
+
     isInitialised = () => this.initialised;
 
     getAmmoWorld = () => this.ammoWorld;
@@ -56,13 +59,15 @@ export class World {
         Object
             .keys(this.elements)
             .forEach(uuid => {
-                const element = this.elements[uuid];
+                const element = this.getElement(uuid);
 
                 switch(element.type) {
                     case TYPES.BOX:
                     case TYPES.MESH:
-                    case TYPES.PLAYER:
                         handleRigidbodyUpdate(element, dt);
+                        break;
+                    case TYPES.PLAYER:
+                        handlePlayerUpdate(element, dt);
                         break;
                     case TYPES.VEHICLE:
                         handleVehicleUpdate(element, dt);
