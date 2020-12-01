@@ -7,7 +7,8 @@ import {
     ADD_MESH_EVENT,
     ADD_PLAYER_EVENT,
     SET_LINEAR_VELOCITY_EVENT,
-    APPLY_IMPULSE_EVENT
+    APPLY_IMPULSE_EVENT,
+    DISPOSE_ELEMENT_EVENT
 } from '../messages';
 
 import {
@@ -46,6 +47,9 @@ const handleLoadEvent = options => Ammo => {
                 break;
             case UPDATE_BODY_EVENT:
                 world.updateBodyState(data.uuid, data.state);
+                break;
+            case DISPOSE_ELEMENT_EVENT:
+                world.disposeBody(data.uuid);
                 break;
             case TERMINATE_EVENT:
                 world.terminate();

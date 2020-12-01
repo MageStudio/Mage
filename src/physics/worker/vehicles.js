@@ -101,6 +101,8 @@ export const addVehicle = data => {
     addWheel(false, new Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, axisPositionBack), wheelRadiusBack);
     addWheel(false, new Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, axisPositionBack), wheelRadiusBack);
 
+    vehicle.uuid = uuid;
+
     world.setBody({
         type: TYPES.VEHICLE,
         uuid,

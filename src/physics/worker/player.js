@@ -10,7 +10,7 @@ export const addPlayer = (data) => {
     const { uuid, width, height, position, quaternion, mass, friction } = data;
 
     const capsule = new Ammo.btCapsuleShape(width, height);
-    const body = createRigidBody(capsule, { position, quaternion, mass, friction });
+    const body = createRigidBody(capsule, { uuid, position, quaternion, mass, friction });
 
     // disabliing rotation for collisions
     body.setAngularFactor(0);
