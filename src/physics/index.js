@@ -18,12 +18,16 @@ import {
     PHYSICS_UPDATE_EVENT,
     ADD_PLAYER_EVENT,
     SET_LINEAR_VELOCITY_EVENT,
-    APPLY_IMPULSE_EVENT
+    APPLY_IMPULSE_EVENT,
+    DISPOSE_ELEMENT_EVENT
 } from './messages';
 import { getBoxDescriptionForElement, iterateGeometries, getBaseDescriptionForElement } from './utils';
 import { getHostURL } from '../lib/url';
 import Scene from '../core/Scene';
-import { PHYSICS_ELEMENT_ALREADY_STORED } from '../lib/messages';
+import {
+    PHYSICS_ELEMENT_ALREADY_STORED,
+    PHYSICS_ELEMENT_CANT_BE_REMOVED
+} from '../lib/messages';
 
 export const PHYSICS_TYPES = {
     BOX: 'BOX',
@@ -71,6 +75,15 @@ export class Physics extends EventDispatcher {
             this.elements.push(uuid);
         } else {
             console.log(PHYSICS_ELEMENT_ALREADY_STORED, element);
+        }
+    }
+
+    removeElement(element) {
+        if (this.hasElement(element)) {
+            const uuid = element.uuid();
+            this.elements.splice(this.elements.indexOf(uuid), 1);
+        } else {
+            console.log(PHYSICS_ELEMENT_CANT_BE_REMOVED);
         }
     }
 
@@ -133,7 +146,9 @@ export class Physics extends EventDispatcher {
 
     handleBodyUpdate = ({ quaternion, position, uuid }) => {
         const element = Universe.getByUUID(uuid);
-        element.handlePhysicsUpdate(position, quaternion);
+        if (element) {
+            element.handlePhysicsUpdate(position, quaternion);
+        }
     };
 
     handleDispatchEvent = ({ uuid, eventData, eventName }) => {
@@ -143,6 +158,18 @@ export class Physics extends EventDispatcher {
             data: eventData
         });
     };
+
+    disposeElement(element) {
+        if (Config.physics().enabled && this.hasElement(element)) {
+            const uuid = element.uuid();
+
+            this.removeElement(element);
+            this.worker.postMessage({
+                event: DISPOSE_ELEMENT_EVENT,
+                uuid
+            })
+        }
+    }
 
     add(element, description) {
         if (Config.physics().enabled) {

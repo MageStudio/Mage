@@ -530,6 +530,8 @@ export default class Element extends Entity {
             Scene.remove(this.getBody());
             this.disposeBody();
         }
+
+        Physics.disposeElement(this);
     }
 
     toJSON() {

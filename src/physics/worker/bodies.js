@@ -14,7 +14,7 @@ import {
     DEFAULT_IMPULSE
 } from '../constants';
 
-export const createRigidBody = (shape, { position, quaternion, mass, friction }) => {
+export const createRigidBody = (shape, { uuid, position, quaternion, mass, friction }) => {
     const transform = new Ammo.btTransform();
 
     transform.setIdentity();
@@ -35,6 +35,9 @@ export const createRigidBody = (shape, { position, quaternion, mass, friction })
     if (mass > 0) {
         body.setActivationState(DISABLE_DEACTIVATION);
     }
+
+    // storing uuid for future reference
+    body.uuid = uuid;
 
     world.addRigidBody(body);
 
@@ -105,7 +108,7 @@ export const addMesh = (options) => {
     Ammo.destroy(btb);
     Ammo.destroy(btc);
 
-    const body = createRigidBody(collisionShape, { position, quaternion, mass, friction });
+    const body = createRigidBody(collisionShape, { uuid, position, quaternion, mass, friction });
     world.setBody({ uuid, body, type: TYPES.MESH, state: DEFAULT_RIGIDBODY_STATE });
 }
 
@@ -113,7 +116,7 @@ export const addBox = (data) => {
     const { uuid, width, length, height, position, quaternion, mass = 0, friction = 2 } = data;
 
     const geometry = new Ammo.btBoxShape(new Ammo.btVector3(length * 0.5, height * 0.5, width * 0.5));
-    const body = createRigidBody(geometry, { position, quaternion, mass, friction });
+    const body = createRigidBody(geometry, { uuid, position, quaternion, mass, friction });
 
     world.setBody({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
 };

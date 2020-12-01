@@ -45,5 +45,6 @@ export const SCRIPT_NOT_FOUND = `${PREFIX} Could not find desired script.`;
 export const KEYBOARD_COMBO_ALREADY_REGISTERED = `${PREFIX} Keyboard combo already registered.`;
 export const KEYBOARD_COMBO_IS_INVALID = `${PREFIX} Keyboard combo is not valid.`;
 
+export const PHYSICS_ELEMENT_CANT_BE_REMOVED = `${PREFIX} This element can't be removed from physics world.`;
 export const PHYSICS_ELEMENT_ALREADY_STORED = `${PREFIX} This element has already been added to the world.`;
 export const PHYSICS_ELEMENT_MISSING = `${PREFIX} This element is missing from the world, please use the .enablePhysics(options) method first.`;

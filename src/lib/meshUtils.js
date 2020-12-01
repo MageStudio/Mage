@@ -21,6 +21,7 @@ export const isLine = mesh => mesh.isLine;
 const isMeshOrSkinnedMesh = (mesh) => mesh.isMesh || mesh.isSkinnedMesh;
 export const hasMaterial = mesh => Boolean(mesh.material);
 export const hasGeometry = mesh => Boolean(mesh.geometry);
+export const hasTexture = mesh => hasMaterial(mesh) && mesh.material.map;
 
 export const changeMaterialByName = (name, mesh, materialOptions) => {
 
@@ -51,15 +52,21 @@ const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
 }
 
 export const disposeTextures = mesh => {
-    mesh.material.map.dispose();
+    if (hasTexture(mesh)) {
+        mesh.material.map.dispose();
+    }
 };
 
 export const disposeMaterial = mesh => {
-    mesh.material.dispose();
+    if (hasMaterial(mesh)) {
+        mesh.material.dispose();
+    }
 };
 
 export const disposeGeometry = mesh => {
-    mesh.geometry.dispose();
+    if (hasGeometry(mesh)) {
+        mesh.geometry.dispose();
+    }
 };
 
 export const prepareModel = (model) => {
