@@ -5,13 +5,13 @@ import Scene from '../../core/Scene';
 import ParticleEmitter from './ParticleEmitter';
 
 const getSparksOptions = (options = {}) => {
-    const { particles = {}, system = {}, size = 1, speed = 5 } = options;
+    const { particles = {}, system = {}, size = 1, velocity = 5 } = options;
 
     return {
         particles: {
             globalSize: size,
             ttl: 1.5,
-            velocity: new Randomizers.SphereRandomizer(speed),
+            velocity: new Randomizers.SphereRandomizer(velocity),
             offset: new Vector3(0, 1, 0),
             startAlpha: 1,
             endAlpha: 0,
@@ -34,7 +34,7 @@ const getSparksOptions = (options = {}) => {
 };
 
 const getExplosionOptions = (options = {}) => {
-    const { particles = {}, system = {}, size = 1 }= options;
+    const { particles = {}, system = {}, size = 1, velocity = 8 }= options;
 
     return {
         particles: {
@@ -46,7 +46,7 @@ const getExplosionOptions = (options = {}) => {
             endSize: 2,
             ttl: 1.5,
             gravity: -5,
-            velocity: new Randomizers.SphereRandomizer(8),
+            velocity: new Randomizers.SphereRandomizer(velocity),
             startColor: new Randomizers.ColorsRandomizer(),
             endColor: new Color(0, 0, 0),
             blending: "additive",
@@ -67,13 +67,13 @@ const getExplosionOptions = (options = {}) => {
 };
 
 const getDebrisOptions = (options = {}) => {
-    const { particles = {}, system = {}, size = 1 } = options;
+    const { particles = {}, system = {}, size = 1, velocity = 8 } = options;
     
     return {
         particles: {
             globalSize: size,
             ttl: 1.5,
-            velocity: new Randomizers.SphereRandomizer(8),
+            velocity: new Randomizers.SphereRandomizer(velocity),
             gravity: -5,
             startAlpha: 1,
             endAlpha: 0,
