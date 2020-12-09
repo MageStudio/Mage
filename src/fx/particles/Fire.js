@@ -2,6 +2,7 @@ import { Color, Vector3 } from 'three';
 import { Randomizers, Emitter, ParticlesSystem } from 'mage-engine.particles';
 
 import Scene from '../../core/Scene';
+import ParticleEmitter from './ParticleEmitter';
 
 const SPARKS_OPTIONS = {
     particles: {
@@ -54,7 +55,7 @@ const SYSTEM_OPTIONS = {
     }
 };
 
-export default class Fire {
+export default class Fire extends ParticleEmitter {
 
     constructor(options = {}) {
         const {
@@ -64,10 +65,7 @@ export default class Fire {
             fire = { particles: {}, system: {} }
         } = options;
 
-        this.system = null;
-        this.sparks = null;
-
-        this.options = {
+        const parsedOptions = {
             sparks: {
                 container,
                 autostart,
@@ -94,11 +92,15 @@ export default class Fire {
             }
         };
 
-        this.setSystem();
+        super(parsedOptions);
     }
 
     hasSystem() {
         return !!this.system && !!this.sparks;
+    }
+
+    isSystemDead() {
+        return this.system.finished && this.sparks.finished;
     }
 
     setSystem() {
