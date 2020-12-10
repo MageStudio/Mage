@@ -25,7 +25,7 @@ export class Particles {
             [PARTICLES.SNOW]: Snow
         };
 
-        this.emitters = [];
+        this.emitters = {};
     }
 
     get(name) {
@@ -39,9 +39,10 @@ export class Particles {
     addParticleEmitter(emitterId, options = {}) {
         if (this.isRegisteredEmitter(emitterId)) {
             const Emitter = this.get(emitterId);
+            console.log('creating emitter');
             const emitter = new Emitter(options);
 
-            this.emitters.push(emitter);
+            this.emitters[emitter.getUUID()] = emitter;
             return emitter;
         } else {
             console.log(INVALID_EMITTER_ID);
@@ -52,13 +53,24 @@ export class Particles {
 
     hasEmitters = () => this.emitters.length > 0;
 
-    update() {
-        return new Promise(resolve => {
-            if (this.hasEmitters()) {
-                this.emitters.forEach(e => e.update());
-                resolve();
-            }
-        })
+    update(dt) {
+        const toDispose = [];
+
+        Object
+            .keys(this.emitters)
+            .forEach((uuid) => {
+                const emitter = this.emitters[uuid];
+                emitter.update(dt);
+
+                if (emitter.isSystemDead()) {
+                    toDispose.push(uuid);
+                }
+            })
+
+        toDispose.forEach((uuid) => {
+            this.emitters[uuid].dispose();
+            delete this.emitters[uuid];
+        });
     }
 }
 

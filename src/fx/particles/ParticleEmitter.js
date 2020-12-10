@@ -1,5 +1,7 @@
 import { EventDispatcher } from "three";
 import { ParticlesSystem } from 'mage-engine.particles';
+
+import { generateUUID } from '../../lib/uuid';
 import Scene from '../../core/Scene';
 
 export default class ParticleEmitter extends EventDispatcher {
@@ -7,14 +9,24 @@ export default class ParticleEmitter extends EventDispatcher {
     constructor(options = {}) {
         super();
 
+        this.uuid = generateUUID();
+
         this.system = null;
         this.options = options;
 
         this.setSystem();
     }
 
+    getUUID() {
+        return this.uuid;
+    }
+
     hasSystem() {
         return !!this.system;
+    }
+
+    isSystemDead() {
+        return this.system.finished;
     }
 
     setSystem() {
@@ -71,6 +83,8 @@ export default class ParticleEmitter extends EventDispatcher {
         if (this.hasSystem()) {
             this.system.start();
         }
+
+        return this;
     }
 
     update() {
