@@ -61,3 +61,5 @@ export const lerpVectors = (origin, target, speed) => {
 }
 
 export const scaleVector = ({ x = 0, y = 0, z = 0}, scale = 1) => new Vector3(x, y, z).multiplyScalar(scale);
+
+export const getSphereVolume = (radius) => 4 * Math.PI * Math.pow(radius, 3) / 3;

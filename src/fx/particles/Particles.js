@@ -39,7 +39,6 @@ export class Particles {
     addParticleEmitter(emitterId, options = {}) {
         if (this.isRegisteredEmitter(emitterId)) {
             const Emitter = this.get(emitterId);
-            console.log('creating emitter');
             const emitter = new Emitter(options);
 
             this.emitters[emitter.getUUID()] = emitter;

@@ -84,6 +84,7 @@ export class World {
                 if (element) {
                     switch(element.type) {
                         case TYPES.BOX:
+                        case TYPES.SPHERE:
                         case TYPES.MESH:
                             handleRigidbodyUpdate(element, dt);
                             break;
@@ -158,6 +159,9 @@ export class World {
 
             dispatcher.sendDispatchEvent(rb0.uuid, COLLISION_DETECTION_EVENT, { contacts });
             dispatcher.sendDispatchEvent(rb1.uuid, COLLISION_DETECTION_EVENT, { contacts });
+
+            // Ammo.destroy(rb0);
+            // Ammo.destroy(rb1);
         }
     }
 

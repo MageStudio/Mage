@@ -4,11 +4,12 @@ import {
     UPDATE_BODY_EVENT,
     ADD_BOX_EVENT,
     ADD_VEHICLE_EVENT,
-    ADD_MESH_EVENT,
+    ADD_MODEL_EVENT,
     ADD_PLAYER_EVENT,
     SET_LINEAR_VELOCITY_EVENT,
     APPLY_IMPULSE_EVENT,
-    DISPOSE_ELEMENT_EVENT
+    DISPOSE_ELEMENT_EVENT,
+    ADD_SPHERE_EVENT
 } from '../messages';
 
 import {
@@ -16,7 +17,7 @@ import {
 } from '../constants';
 
 import { addVehicle } from './vehicles';
-import { addBox, addMesh, setLinearVelocity, applyImpuse } from './bodies';
+import { addBox, addMesh, setLinearVelocity, applyImpuse, addSphere } from './bodies';
 import { addPlayer } from './player';
 
 import dispatcher from './lib/dispatcher';
@@ -30,10 +31,13 @@ const handleLoadEvent = options => Ammo => {
             case ADD_BOX_EVENT:
                 addBox(data);
                 break;
+            case ADD_SPHERE_EVENT:
+                addSphere(data);
+                break;
             case ADD_VEHICLE_EVENT:
                 addVehicle(data);
                 break;
-            case ADD_MESH_EVENT:
+            case ADD_MODEL_EVENT:
                 addMesh(data);
                 break;
             case ADD_PLAYER_EVENT:

@@ -44,8 +44,9 @@ import Scripts from './scripts/Scripts';
 import Controls from './controls/Controls';
 import Physics, {
     PHYSICS_EVENTS,
-    PHYSICS_TYPES
 } from './physics';
+
+import { PHYSICS_COLLIDER_TYPES } from './physics/constants';
 
 import * as store from './store';
 import { Provider, connect } from 'inferno-redux';
@@ -69,9 +70,6 @@ import MeshLoader from './loaders/MeshLoader';
 import Atmosphere from './fx/materials/Atmosphere';
 import Mirror from './fx/materials/Mirror';
 import Ocean from './fx/materials/Ocean';
-
-// import Clouds from './fx/particles/Clouds';
-// import Rain from './fx/particles/Rain';
 
 import * as Partykals from 'mage-engine.particles';
 
@@ -120,7 +118,8 @@ export {
 
     Physics,
     PHYSICS_EVENTS,
-    PHYSICS_TYPES,
+    PHYSICS_COLLIDER_TYPES as PHYSICS_TYPES,
+    PHYSICS_COLLIDER_TYPES,
 
     MeshLoader,
     LightLoader,
