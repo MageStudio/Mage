@@ -165,3 +165,9 @@ export const iterateGeometries = (function() {
         });
     };
 })();
+
+export const convertAmmoVector = ({ x, y, z }) => ({
+    x: z,
+    y,
+    z: x
+});

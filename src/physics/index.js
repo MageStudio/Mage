@@ -22,7 +22,7 @@ import {
     DISPOSE_ELEMENT_EVENT,
     ADD_SPHERE_EVENT
 } from './messages';
-import { getBoxDescriptionForElement, iterateGeometries, DEFAULT_DESCRIPTION } from './utils';
+import * as physicsUtils from './utils';
 import { getHostURL } from '../lib/url';
 import Scene from '../core/Scene';
 import {
@@ -33,6 +33,8 @@ import {
 import {
     PHYSICS_COLLIDER_TYPES
 } from './constants';
+
+const { getBoxDescriptionForElement, iterateGeometries, DEFAULT_DESCRIPTION } = physicsUtils;
 
 const mapColliderTypeToAddEvent = (type) => ({
     [PHYSICS_COLLIDER_TYPES.BOX]: ADD_BOX_EVENT,
@@ -267,7 +269,8 @@ export class Physics extends EventDispatcher {
 }
 
 export { 
-    PHYSICS_EVENTS
+    PHYSICS_EVENTS,
+    physicsUtils
 };
 
 export default new Physics();

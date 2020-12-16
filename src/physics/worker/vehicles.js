@@ -19,6 +19,7 @@ import {
 
 import world from './world';
 import dispatcher from './lib/dispatcher';
+import { convertAmmoVector } from '../utils';
 
 export const addVehicle = data => {
     const {
@@ -188,9 +189,9 @@ export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEH
     const direction = vehicle.getForwardVector();
     dispatcher.sendDispatchEvent(uuid, CAR_DIRECTION_CHANGE_EVENT, {
         direction: {
-            x: direction.z(),
+            x: direction.x(),
             y: direction.y(),
-            z: direction.x()
+            z: direction.z()
         }
     });
 

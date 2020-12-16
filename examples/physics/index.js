@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Cube, Scene, Controls, Color } from '../../dist/mage.js';
+import { Router, store, Level, Box, Cube, Sphere, Scene, Controls, Color, PHYSICS_COLLIDER_TYPES } from '../../dist/mage.js';
 
 class Intro extends Level {
 
@@ -23,12 +23,33 @@ class Intro extends Level {
         cube.enablePhysics({ debug: true, mass: 1 });
     }
 
-    spawnCubes(count) {
+    createSphere() {
+        const radius = 2;
+        const color = Color.randomColor(true);
+        const sphere = new Sphere(radius, color);
+        const position = {
+            x: Math.random() * 30 - 15,
+            y: Math.random() * 30 - 15,
+            z: Math.random() * 10 + 10
+        }
+
+        const rotation = {
+            x: Math.random(),
+            y: Math.random(),
+            z: Math.random()
+        }
+
+        sphere.setPosition(position);
+        sphere.setRotation(rotation);
+        sphere.enablePhysics({ debug: true, mass: 1, colliderType: PHYSICS_COLLIDER_TYPES.SPHERE });
+    }
+
+    spawnItems(count) {
         if (count === 0) return;
 
         setTimeout(() => {
-            this.createCube();
-            this.spawnCubes(count - 1);
+            Math.random() >  0.5 ? this.createCube() : this.createSphere();
+            this.spawnItems(count - 1);
         }, 500)
     }
 
@@ -43,7 +64,7 @@ class Intro extends Level {
 
         floor.enablePhysics({ mass: 0, debug: true });
 
-        this.spawnCubes(100);
+        this.spawnItems(100);
     }
 }
 

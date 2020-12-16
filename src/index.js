@@ -44,6 +44,7 @@ import Scripts from './scripts/Scripts';
 import Controls from './controls/Controls';
 import Physics, {
     PHYSICS_EVENTS,
+    physicsUtils
 } from './physics';
 
 import { PHYSICS_COLLIDER_TYPES } from './physics/constants';
@@ -120,6 +121,7 @@ export {
     PHYSICS_EVENTS,
     PHYSICS_COLLIDER_TYPES as PHYSICS_TYPES,
     PHYSICS_COLLIDER_TYPES,
+    physicsUtils,
 
     MeshLoader,
     LightLoader,
