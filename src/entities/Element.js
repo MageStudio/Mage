@@ -207,7 +207,6 @@ export default class Element extends Entity {
                     ...options
                 };
 
-                console.log(description);
                 Physics.add(this, description);
             }
 
