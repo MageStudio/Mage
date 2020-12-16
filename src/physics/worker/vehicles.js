@@ -56,7 +56,7 @@ export const addVehicle = data => {
     const rollInfluence = 0.2;
 
     // Chassis
-    const geometry = new Ammo.btBoxShape(new Ammo.btVector3(length * .5, height * .5, width * .5));
+    const geometry = new Ammo.btBoxShape(new Ammo.btVector3(width * .5, height * .5, length * .5));
     const transform = new Ammo.btTransform();
     transform.setIdentity();
     transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));

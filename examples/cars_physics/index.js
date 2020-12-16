@@ -1,4 +1,16 @@
-import { Router, store, Level, Box, Scene, Cube, Controls, Models, AmbientLight, PHYSICS_EVENTS } from '../../dist/mage.js';
+import {
+    Router,
+    store,
+    Level,
+    Box,
+    Scene,
+    Cube,
+    Controls,
+    Models,
+    AmbientLight,
+    PHYSICS_EVENTS,
+    constants
+} from '../../dist/mage.js';
 
 export default class Intro extends Level {
 
@@ -24,6 +36,13 @@ export default class Intro extends Level {
         //console.log(data.speed);
     }
 
+    createWall() {
+        const wall = new Box(50, 25, 1, 0xeeeeee);
+        wall.setMaterialFromName(constants.MATERIALS.STANDARD)
+        wall.setPosition({ z: -25, y: 0 });
+        wall.enablePhysics({ mass: 0, debug: true });
+    }
+
     onCreate() {
         this.addAmbientLight();
         Controls.setOrbitControl();
@@ -34,6 +53,8 @@ export default class Intro extends Level {
 
         const floor = new Box(50, 1, 50, 0xffffff);
         floor.enablePhysics({ mass: 0, debug: true });
+
+        this.createWall();
         
         const car = this.createCar('first');
         car.setPosition({ y: 14 });

@@ -98,12 +98,12 @@ const extractBoxDescription = element => {
     const size = parseBoundingBoxSize(element.boundingBox);
 
     return {
-        width: size.z * scale.z,
+        width: size.x * scale.x,
         height: size.y * scale.y,
-        length: size.x * scale.x,
+        length: size.z * scale.z,
         size,
-        position: { x: z, y, z: x },
-        quaternion: { x: quaternion.z, y: quaternion.y, z: quaternion.x, w: quaternion.w }
+        position: { x, y, z },
+        quaternion: { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w }
     };
 };
 
@@ -115,8 +115,8 @@ const extractSphereDescription = element => {
     
     return {
         radius,
-        position: { x: z, y, z: x },
-        quaternion: { x: quaternion.z, y: quaternion.y, z: quaternion.x, w: quaternion.w }
+        position: { x, y, z },
+        quaternion: { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w }
     }
 }
 

@@ -125,7 +125,7 @@ export const addMesh = (options) => {
 export const addBox = (data) => {
     const { uuid, width, length, height, position, quaternion, mass = 0, friction = 2 } = data;
 
-    const geometry = new Ammo.btBoxShape(new Ammo.btVector3(length * 0.5, height * 0.5, width * 0.5));
+    const geometry = new Ammo.btBoxShape(new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5));
     const body = createRigidBody(geometry, { uuid, position, quaternion, mass, friction });
 
     world.setBody({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
