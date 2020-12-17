@@ -19,6 +19,7 @@ import {
 
 import world from './world';
 import dispatcher from './lib/dispatcher';
+import { convertAmmoVector } from '../utils';
 
 export const addVehicle = data => {
     const {

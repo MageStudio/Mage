@@ -1,20 +1,36 @@
 import { Matrix4, Vector3 } from 'three';
 
+import { getSphereVolume } from '../lib/math';
+
 import { BOUNDINGBOX_NOT_AVAILABLE } from '../lib/messages';
-const DEFAULT_BOX_DESCRIPTION = {
+import { DEFAULT_QUATERNION, DEFAULT_POSITION } from './constants';
+import { PHYSICS_COLLIDER_TYPES } from './constants';
+
+export const DEFAULT_DESCRIPTION = {
     mass: 1,
     friction: 1,
+    quaternion: DEFAULT_QUATERNION,
+    position: DEFAULT_POSITION
+}
+
+const DEFAULT_BOX_DESCRIPTION = {
+    ...DEFAULT_DESCRIPTION,
     width: 2,
     length: 2,
     height: 2,
-    quaternion: { x : 0, y: 0, z: 0, w: 1 },
-    position: { x: 0, y: 0, z: 0 }
+    collider: PHYSICS_COLLIDER_TYPES.BOX
+};
+
+const DEFAULT_SPHERE_DESCRIPTION = {
+    ...DEFAULT_DESCRIPTION,
+    radius: 2,
+    collider: PHYSICS_COLLIDER_TYPES.SPHERE
 };
 
 export const extractBoundingBox = body => {
     body.geometry.computeBoundingBox();
     return body.geometry.boundingBox;
-}
+};
 
 export const extractBiggestBoundingBox = body => {
     const boxes = [];
@@ -34,7 +50,24 @@ export const extractBiggestBoundingBox = body => {
 
         return ((vectorB.x * vectorB.y * vectorB.z) - (vectorA.x * vectorA.y * vectorA.z));
     })[0];
-}
+};
+
+export const extractBoundingSphere = body => {
+    body.geometry.computeBoundingSphere();
+    return body.geometry.boundingSphere;
+};
+
+export const extractBiggestBoundingSphere = body => {
+    const spheres = [];
+    body.traverse(child => {
+        if (child.geometry) {
+            spheres.push(extractBoundingBox(child));
+        }
+    });
+
+    // sorting by volume
+    return spheres.sort((sphereA, sphereB) => getSphereVolume(sphereB.radius) - getSphereVolume(sphereA.radius))[0];
+};
 
 export const parseBoundingBoxSize = (boundingBox = {}) => {
     try {
@@ -58,7 +91,7 @@ export const parseBoundingBoxSize = (boundingBox = {}) => {
     }
 };
 
-export const getBaseDescriptionForElement = element => {
+const extractBoxDescription = element => {
     const { x, y, z } = element.getPosition();
     const scale = element.getScale();
     const quaternion = element.getQuaternion();
@@ -71,13 +104,36 @@ export const getBaseDescriptionForElement = element => {
         size,
         position: { x, y, z },
         quaternion: { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w }
+    };
+};
+
+const extractSphereDescription = element => {
+    const { x, y, z } = element.getPosition();
+    // const scale = element.getScale();
+    const quaternion = element.getQuaternion();
+    const radius = element.boundingSphere.radius;
+    
+    return {
+        radius,
+        position: { x, y, z },
+        quaternion: { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w }
     }
 }
 
 export const getBoxDescriptionForElement = element => ({
     ...DEFAULT_BOX_DESCRIPTION,
-    ...getBaseDescriptionForElement(element)
+    ...extractBoxDescription(element)
 });
+
+export const getSphereDescriptionForElement = element => ({
+    ...DEFAULT_SPHERE_DESCRIPTION,
+    ...extractSphereDescription(element)
+});
+
+export const mapColliderTypeToDescription = (colliderType = PHYSICS_COLLIDER_TYPES.BOX) => ({
+    [PHYSICS_COLLIDER_TYPES.BOX]: getBoxDescriptionForElement,
+    [PHYSICS_COLLIDER_TYPES.SPHERE]: getSphereDescriptionForElement
+}[colliderType] || getBoxDescriptionForElement)
 
 export const iterateGeometries = (function() {
     const inverse = new Matrix4();
@@ -109,3 +165,9 @@ export const iterateGeometries = (function() {
         });
     };
 })();
+
+export const convertAmmoVector = ({ x, y, z }) => ({
+    x: z,
+    y,
+    z: x
+});

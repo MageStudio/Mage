@@ -14,25 +14,35 @@ import {
     DEFAULT_IMPULSE
 } from '../constants';
 
-export const createRigidBody = (shape, { uuid, position, quaternion, mass, friction }) => {
+export const createRigidBody = (shape, options) => {
+    const {
+        uuid,
+        position,
+        quaternion,
+        mass,
+        friction,
+        restitution = .9,
+        damping = { linear: 0.2, angular: 0.2 }
+    } = options;
+
     const transform = new Ammo.btTransform();
 
     transform.setIdentity();
     transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
     transform.setRotation(new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
     const motionState = new Ammo.btDefaultMotionState(transform);
-
     const localInertia = new Ammo.btVector3(0, 0, 0);
     shape.calculateLocalInertia(mass, localInertia);
 
     const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
     const body = new Ammo.btRigidBody(rbInfo);
 
-    body.setFriction(friction);
-    //body.setRestitution(.9);
-    //body.setDamping(0.2, 0.2);
+    
 
     if (mass > 0) {
+        body.setFriction(friction);
+        body.setRestitution(restitution);
+        body.setDamping(damping.linear, damping.angular);
         body.setActivationState(DISABLE_DEACTIVATION);
     }
 
@@ -115,10 +125,19 @@ export const addMesh = (options) => {
 export const addBox = (data) => {
     const { uuid, width, length, height, position, quaternion, mass = 0, friction = 2 } = data;
 
-    const geometry = new Ammo.btBoxShape(new Ammo.btVector3(length * 0.5, height * 0.5, width * 0.5));
+    const geometry = new Ammo.btBoxShape(new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5));
     const body = createRigidBody(geometry, { uuid, position, quaternion, mass, friction });
 
     world.setBody({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
+};
+
+export const addSphere = data => {
+    const { uuid, radius, position, quaternion, mass = 0, friction = 2 } = data;
+
+    const geometry = new Ammo.btSphereShape(radius);
+    const body = createRigidBody(geometry, { uuid, position, quaternion, mass, friction });
+
+    world.setBody({ uuid, body, type: TYPES.SPHERE, state: DEFAULT_RIGIDBODY_STATE });
 };
 
 export const setLinearVelocity = (data) => {
@@ -129,6 +148,7 @@ export const setLinearVelocity = (data) => {
     if (motionState) {
         const linearVelocity = new Ammo.btVector3(velocity.x, velocity.y, velocity.z);
         body.setLinearVelocity(linearVelocity);
+        Ammo.destroy(linearVelocity);
     }
 };
 
@@ -140,17 +160,21 @@ export const applyImpuse = data => {
     if (motionState) {
         const impulseVector = new Ammo.btVector3(impulse.x, impulse.y, impulse.z);
         body.applyCentralImpulse(impulseVector);
+        Ammo.destroy(impulseVector);
     }
 }
 
 export const handleRigidbodyUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
     const motionState = body.getMotionState();
-    const transform = new Ammo.btTransform();
+
     if (motionState) {
+        const transform = new Ammo.btTransform();
+
         motionState.getWorldTransform(transform);
         let origin = transform.getOrigin();
         let rotation = transform.getRotation();
 
         dispatcher.sendBodyUpdate(uuid, origin, rotation, dt);
+        Ammo.destroy(transform);
     }
 }

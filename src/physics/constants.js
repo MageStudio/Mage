@@ -2,9 +2,17 @@ export const LIBRARY_NAME = 'ammo.js';
 
 export const TYPES = {
     BOX: 'BOX',
+    SPHERE: 'SPHERE',
     VEHICLE: 'VEHICLE',
     MESH: 'MESH',
     PLAYER: 'PLAYER'
+};
+
+export const PHYSICS_COLLIDER_TYPES = {
+    BOX: 'BOX',
+    VEHICLE: 'VEHICLE',
+    PLAYER: 'PLAYER',
+    SPHERE: 'SPHERE'
 };
 
 export const DEFAULT_VEHICLE_STATE = {
@@ -32,6 +40,7 @@ export const DEFAULT_RIGIDBODY_STATE = {
 
 export const DEFAULT_SCALE = { x: 1, y: 1, z: 1 };
 export const DEFAULT_QUATERNION = { x: 0, y: 0, z: 0, w: 1 };
+export const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
 export const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
 export const DEFAULT_IMPULSE = { x: 0, y: 0, z: 0 };
 

@@ -3,8 +3,7 @@ import {
     RepeatWrapping,
     Raycaster,
     Color,
-    Vector3,
-    Vector2
+    Vector3
 } from 'three';
 import { Entity, ENTITY_TYPES, Line, Box } from './index';
 
@@ -23,10 +22,15 @@ import Scene from '../core/Scene';
 import { COLLISION_EVENT, ORIGIN } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics';
+import { PHYSICS_COLLIDER_TYPES } from '../physics/constants';
+
 import {
     getBoxDescriptionForElement,
     extractBoundingBox,
-    extractBiggestBoundingBox
+    extractBiggestBoundingBox,
+    extractBoundingSphere,
+    extractBiggestBoundingSphere,
+    mapColliderTypeToDescription
 } from '../physics/utils';
 
 import { clamp } from '../lib/math';
@@ -38,9 +42,7 @@ import {
     disposeMaterial,
     disposeGeometry
 } from '../lib/meshUtils';
-
-const HIT_BOX_COLOR = 0xf368e0;
-const HIT_BOX_INCREASE = .03;
+import { mapColliderTypeToHitbox } from '../physics/hitbox';
 
 const COLLIDER_TAG = 'collider';
 const COLLIDER_COLOR = 0xff0000;
@@ -115,10 +117,20 @@ export default class Element extends Entity {
         }
     }
 
+    evaluateBoundingSphere() {
+        if (hasGeometry(this.getBody())) {
+            this.boundingSphere = extractBoundingSphere(this.getBody());
+        } else {
+            this.boundingSphere = extractBiggestBoundingSphere(this.getBody());
+        }
+    }
+
     postBodyCreation() {
         const { name } = this.options;
 
         this.evaluateBoundingBox();
+        this.evaluateBoundingSphere();
+
         this.setName(name);
 
         this.body.castShadow = Config.lights().shadows;
@@ -182,12 +194,16 @@ export default class Element extends Entity {
     }
 
     enablePhysics(options = {}) {
+        const {
+            colliderType = PHYSICS_COLLIDER_TYPES.BOX
+        } = options;
+
         if (Config.physics().enabled) {
             if (this.isModel()) {
                 Physics.addModel(this, options);
             } else {
                 const description = {
-                    ...getBoxDescriptionForElement(this),
+                    ...mapColliderTypeToDescription(colliderType)(this),
                     ...options
                 };
 
@@ -195,29 +211,16 @@ export default class Element extends Entity {
             }
 
             if (options.debug) {
-                this.addHitBox();
+                this.addHitBox(colliderType);
             }
         }
     }
 
-    addHitBox() {
-        const size = new Vector3();
-        this.boundingBox.getSize(size);
-        const quaternion = this.getQuaternion();
+    addHitBox(colliderType = PHYSICS_COLLIDER_TYPES.BOX) {
+        const getHitbox = mapColliderTypeToHitbox(colliderType)
 
-        const scaledSize = {
-            x: size.x + HIT_BOX_INCREASE,
-            y: size.y + HIT_BOX_INCREASE,
-            z: size.z + HIT_BOX_INCREASE
-        };
-        const box = new Box(scaledSize.x, scaledSize.y, scaledSize.z, HIT_BOX_COLOR);
-
-        //box.setQuaternion(quaternion);
-        box.setWireframe(true);
-        box.setWireframeLineWidth(2);
-        this.add(box);
+        this.add(getHitbox(this));
         //box.setPosition(ORIGIN);
-
     }
 
     applyForce(force) {

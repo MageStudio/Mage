@@ -14,14 +14,15 @@ import {
     ADD_VEHICLE_EVENT,
     DISPATCH_EVENT,
     PHYSICS_EVENTS,
-    ADD_MESH_EVENT,
+    ADD_MODEL_EVENT,
     PHYSICS_UPDATE_EVENT,
     ADD_PLAYER_EVENT,
     SET_LINEAR_VELOCITY_EVENT,
     APPLY_IMPULSE_EVENT,
-    DISPOSE_ELEMENT_EVENT
+    DISPOSE_ELEMENT_EVENT,
+    ADD_SPHERE_EVENT
 } from './messages';
-import { getBoxDescriptionForElement, iterateGeometries, getBaseDescriptionForElement } from './utils';
+import * as physicsUtils from './utils';
 import { getHostURL } from '../lib/url';
 import Scene from '../core/Scene';
 import {
@@ -29,16 +30,17 @@ import {
     PHYSICS_ELEMENT_CANT_BE_REMOVED
 } from '../lib/messages';
 
-export const PHYSICS_TYPES = {
-    BOX: 'BOX',
-    VEHICLE: 'VEHICLE',
-    PLAYER: 'PLAYER'
-};
+import {
+    PHYSICS_COLLIDER_TYPES
+} from './constants';
 
-const mapTypeToAddEvent = (type) => ({
-    [PHYSICS_TYPES.BOX]: ADD_BOX_EVENT,
-    [PHYSICS_TYPES.VEHICLE]: ADD_VEHICLE_EVENT,
-    [PHYSICS_TYPES.PLAYER]: ADD_PLAYER_EVENT
+const { getBoxDescriptionForElement, iterateGeometries, DEFAULT_DESCRIPTION } = physicsUtils;
+
+const mapColliderTypeToAddEvent = (type) => ({
+    [PHYSICS_COLLIDER_TYPES.BOX]: ADD_BOX_EVENT,
+    [PHYSICS_COLLIDER_TYPES.VEHICLE]: ADD_VEHICLE_EVENT,
+    [PHYSICS_COLLIDER_TYPES.PLAYER]: ADD_PLAYER_EVENT,
+    [PHYSICS_COLLIDER_TYPES.SPHERE]: ADD_SPHERE_EVENT
 })[type] || ADD_BOX_EVENT;
 
 const WORKER_READY_TIMEOUT = 200;
@@ -178,7 +180,7 @@ export class Physics extends EventDispatcher {
             this.storeElement(element);
 
             this.worker.postMessage({
-                event: mapTypeToAddEvent(description.type),
+                event: mapColliderTypeToAddEvent(description.collider),
                 ...description,
                 uuid
             })
@@ -204,7 +206,6 @@ export class Physics extends EventDispatcher {
     addModel(model, options) {
         if (Config.physics().enabled) {
             const uuid = model.uuid();
-            const description = getBaseDescriptionForElement(model);
             const vertices = [];
             const matrices = [];
             const indexes = [];
@@ -218,12 +219,12 @@ export class Physics extends EventDispatcher {
             this.storeElement(model);
 
             this.worker.postMessage({
-                event: ADD_MESH_EVENT,
+                event: ADD_MODEL_EVENT,
                 uuid,
                 vertices,
                 matrices,
                 indexes,
-                ...description,
+                ...DEFAULT_DESCRIPTION,
                 ...options
             })
 
@@ -268,7 +269,8 @@ export class Physics extends EventDispatcher {
 }
 
 export { 
-    PHYSICS_EVENTS
+    PHYSICS_EVENTS,
+    physicsUtils
 };
 
 export default new Physics();

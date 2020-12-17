@@ -200,7 +200,6 @@ export default class Explosion extends ParticleEmitter {
     }
 
     start() {
-        console.log('starting');
         if (this.hasSystem()) {
             Promise.all([
                 this.system.start(),
