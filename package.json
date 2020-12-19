@@ -51,6 +51,7 @@
         "redux-thunk": "^2.3.0",
         "rxjs": "6.5.3",
         "three": "0.117.0",
+        "three.proton.js": "^0.2.3",
         "vivifyjs": "*",
         "whatwg-fetch": "3.0.0",
         "xstate": "^4.8.0"

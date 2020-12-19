@@ -1,4 +1,5 @@
 import { Color, Vector3 } from 'three';
+import Proton from 'three.proton.js';
 import { Randomizers, Emitter, ParticlesSystem } from 'mage-engine.particles';
 
 import Scene from '../../core/Scene';
@@ -138,7 +139,7 @@ export default class Explosion extends ParticleEmitter {
     }
 
     hasSystem() {
-        return !!this.system && !!this.sparks && !!this.debris;
+        return !!this.system;n
     }
 
     isSystemDead() {
@@ -153,28 +154,26 @@ export default class Explosion extends ParticleEmitter {
         } = this.options;
 
         this.system = new ParticlesSystem(explosion);
-        this.sparks = new ParticlesSystem(sparks);
-        this.debris = new ParticlesSystem(debris);
+        // this.sparks = new ParticlesSystem(sparks);
+        // this.debris = new ParticlesSystem(debris);
     }
 
-    setPosition(where) {
+    setPosition(where = {}) {
         const position = {
             ...this.getPosition(),
             ...where
         };
 
-        this.system.particleSystem.position.set(position.x, position.y, position.z);
-        this.sparks.particleSystem.position.set(position.x, position.y, position.z);
-        this.debris.particleSystem.position.set(position.x, position.y, position.z);
+        this.system.p.set(position);
 
         return this;
     }
 
     getPosition() {
         return {
-            x: this.system.particleSystem.position.x,
-            y: this.system.particleSystem.position.y,
-            z: this.system.particleSystem.position.z
+            x: this.system.p.x,
+            y: this.system.p.y,
+            z: this.system.p.z
         };
     }
 
@@ -184,28 +183,22 @@ export default class Explosion extends ParticleEmitter {
             ...howmuch
         };
 
-        this.system.particleSystem.rotation.set(rotation.x, rotation.y, rotation.z);
-        this.sparks.particleSystem.rotation.set(rotation.x, rotation.y, rotation.z);
-        this.debris.particleSystem.rotation.set(rotation.x, rotation.y, rotation.z);
+        this.system.rotation.set(rotation.x, rotation.y, rotation.z);
 
         return this;
     }
 
     getRotation() {
         return {
-            x: this.system.particleSystem.rotation.x,
-            y: this.system.particleSystem.rotation.y,
-            z: this.system.particleSystem.rotation.z
+            x: this.system.rotation.x,
+            y: this.system.rotation.y,
+            z: this.system.rotation.z
         };
     }
 
-    start() {
+    start(duration) {
         if (this.hasSystem()) {
-            Promise.all([
-                this.system.start(),
-                this.sparks.start(),
-                this.debris.start()
-            ]);
+            this.system.emit(duration);
         }
 
         return this;
