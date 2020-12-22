@@ -56,10 +56,14 @@ export class PostProcessing {
     isEnabled = () => !!this.effects.length || !!this.customs.length;
 
     init = () => {
-        window.addEventListener( 'resize', this.onWindowResize, false );
+        window.addEventListener('resize', this.onWindowResize, false);
 
-        this.composer = new EffectComposer(Scene.renderer);
-        this.composer.addPass(new RenderPass(Scene.scene, Scene.getCameraBody()));
+        this.composer = new EffectComposer(Scene.getRenderer());
+        this.composer.addPass(new RenderPass(Scene.getScene(), Scene.getCameraBody()));
+    }
+
+    dispose = () => {
+        window.removeEventListener('resize', this.onWindowResize);
     }
 
     onWindowResize = () => {

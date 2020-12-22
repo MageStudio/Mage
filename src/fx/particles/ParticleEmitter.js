@@ -49,6 +49,10 @@ export default class ParticleEmitter extends EventDispatcher {
         });
     }
 
+    getSystem() {
+        return this.system;
+    }
+
     setPosition(where) {
         const position = {
             ...this.getPosition(),

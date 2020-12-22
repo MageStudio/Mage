@@ -4,6 +4,8 @@ import Fire from './Fire';
 import Rain from './Rain';
 import Snow from './Snow';
 
+import Scene from '../../core/Scene';
+import Proton from 'three.proton.js';
 import { INVALID_EMITTER_ID } from '../../lib/messages';
 
 export const PARTICLES = {
@@ -26,6 +28,12 @@ export class Particles {
         };
 
         this.emitters = {};
+        this.toDispose = [];
+    }
+
+    init() {
+        this.proton = new Proton();
+        this.proton.addRender(new Proton.SpriteRender(Scene.getScene()));
     }
 
     get(name) {
@@ -42,35 +50,69 @@ export class Particles {
             const emitter = new Emitter(options);
 
             this.emitters[emitter.getUUID()] = emitter;
+
+            if (emitter.isProtonEmitter()) {
+                this.addProtonEmitter(emitter);
+            }
+
             return emitter;
         } else {
             console.log(INVALID_EMITTER_ID);
         }
     };
 
+    addProtonEmitter(emitter) {
+        this.proton.addEmitter(emitter.getSystem());
+    }
+
+    removeProtonEmitter(emitter) {
+        this.proton.removeEmitter(emitter.getSystem());
+    }
+
     isRegisteredEmitter = (name) => typeof name === 'string' && name in this.map;
 
     hasEmitters = () => this.emitters.length > 0;
 
-    update(dt) {
-        const toDispose = [];
-
+    updateEmitters = (dt) => {
+        this.toDispose = [];
         Object
             .keys(this.emitters)
-            .forEach((uuid) => {
+            .forEach(uuid => {
                 const emitter = this.emitters[uuid];
-                emitter.update(dt);
+                if (!emitter.isProtonEmitter()) {
+                    emitter.update(dt);
+                }
 
                 if (emitter.isSystemDead()) {
-                    toDispose.push(uuid);
+                    this.toDispose.push(uuid);
                 }
-            })
+            });
+    }
 
-        toDispose.forEach((uuid) => {
-            this.emitters[uuid].dispose();
+    disposeDeadEmitters() {
+        this.toDispose.forEach(uuid => {
+            const emitter = this.emitters[uuid];
+
+            if (emitter.isProtonEmitter()) {
+                this.removeProtonEmitter(emitter);
+            } else {
+                this.emitters[uuid].dispose();
+            }
+
             delete this.emitters[uuid];
-        });
+        })
+    }
+
+    update(dt) {
+        this.proton.update(dt);
+        this.updateEmitters(dt);
+
+        this.disposeDeadEmitters();
+    }
+
+    dispose() {
+        this.proton.destroy();
     }
 }
-
+ 
 export default new Particles();

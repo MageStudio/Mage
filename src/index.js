@@ -19,7 +19,7 @@ import BackgroundSound from './audio/BackgroundSound';
 import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
 
-//import * as THREE from 'three';
+import * as THREE from 'three';
 import {
     Vector3,
     EventDispatcher
@@ -86,6 +86,8 @@ import Images from './images/Images';
 import Models from './models/Models';
 //import Shaders from './fx/shaders/Shaders';
 import PostProcessing from './fx/postprocessing/PostProcessing';
+
+window.THREE = THREE;
 
 export {
     author,
@@ -172,5 +174,7 @@ export {
     workers,
     constants,
     functions,
-    Stats
+    Stats,
+
+    THREE
 };
