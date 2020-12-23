@@ -40,7 +40,8 @@ import {
     hasGeometry,
     disposeTextures,
     disposeMaterial,
-    disposeGeometry
+    disposeGeometry,
+    setUpLightsAndShadows
 } from '../lib/meshUtils';
 import { mapColliderTypeToHitbox } from '../physics/hitbox';
 
@@ -126,15 +127,16 @@ export default class Element extends Entity {
     }
 
     postBodyCreation() {
-        const { name } = this.options;
+        const { name, shadowsEnabled = true } = this.options;
 
         this.evaluateBoundingBox();
         this.evaluateBoundingSphere();
 
         this.setName(name);
 
-        this.body.castShadow = Config.lights().shadows;
-        this.body.receiveShadow = Config.lights().shadows;
+        if (shadowsEnabled) {
+            setUpLightsAndShadows(this.getBody());
+        }
     }
 
     addToScene() {
