@@ -17,6 +17,10 @@ export default class ParticleEmitter extends EventDispatcher {
         this.setSystem();
     }
 
+    isProtonEmitter() {
+        return false;
+    }
+
     getUUID() {
         return this.uuid;
     }
@@ -43,6 +47,10 @@ export default class ParticleEmitter extends EventDispatcher {
             particles,
             system
         });
+    }
+
+    getSystem() {
+        return this.system;
     }
 
     setPosition(where) {

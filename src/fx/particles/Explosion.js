@@ -1,180 +1,94 @@
-import { Color, Vector3 } from 'three';
-import { Randomizers, Emitter, ParticlesSystem } from 'mage-engine.particles';
-
-import Scene from '../../core/Scene';
+import Proton from 'three.proton.js';
+import { SpriteMaterial, Sprite, NormalBlending } from 'three';
 import ParticleEmitter from './ParticleEmitter';
+import Images from '../../images/Images';
 
-const getSparksOptions = (options = {}) => {
-    const { particles = {}, system = {}, size = 1, velocity = 5 } = options;
+const getDefaultInitializers = () => ([
+    new Proton.Mass(0.1),
+    new Proton.Radius(1),
+    new Proton.Life(.4, 1),
+    new Proton.Position(new Proton.SphereZone(1)),
+    new Proton.V(new Proton.Span(3, 5), new Proton.Vector3D(0, .4, 0), 50),
+    new Proton.V(new Proton.Polar3D(2, 1, 1), 300),
+]);
 
-    return {
-        particles: {
-            globalSize: size,
-            ttl: 1.5,
-            velocity: new Randomizers.SphereRandomizer(velocity),
-            offset: new Vector3(0, 1, 0),
-            startAlpha: 1,
-            endAlpha: 0,
-            color: new Randomizers.ColorsRandomizer(new Color(0.5, 0.2, 0), new Color(1, 0.5, 0)),
-            startAlphaChangeAt: 1,
-            blending: "blend",
-            ...particles
-        },
-        system: {
-            particlesCount: 5,
-            emitters: new Emitter({
-                onInterval: new Randomizers.MinMaxRandomizer(10, 50),
-                interval: 2,
-            }),
-            speed: 1.3,
-            ttl: 1.5,
-            ...system
-        }
-    }
-};
+const getDefaultBehaviours = () => ([
+    new Proton.RandomDrift(.1, .1, .1, .05),
+    new Proton.Rotate("random", "random"),
+    new Proton.Scale(1, 0.1)
+]);
 
-const getExplosionOptions = (options = {}) => {
-    const { particles = {}, system = {}, size = 1, velocity = 8 }= options;
-
-    return {
-        particles: {
-            globalSize: size,
-            startAlpha: 1,
-            endAlpha: 0,
-            startAlphaChangeAt: .3,
-            startSize: 1,
-            endSize: 2,
-            ttl: 1.5,
-            gravity: -5,
-            velocity: new Randomizers.SphereRandomizer(velocity),
-            startColor: new Randomizers.ColorsRandomizer(),
-            endColor: new Color(0, 0, 0),
-            blending: "additive",
-            ...particles
-        },
-        system: {
-            particlesCount: 20,
-            depthWrite: true,
-            emitters: new Emitter({
-                onInterval: new Randomizers.MinMaxRandomizer(100, 500),
-                interval: 2,
-            }),
-            speed: 1.3,
-            ttl: 1.5,
-            ...system
-        }
-    }
-};
-
-const getDebrisOptions = (options = {}) => {
-    const { particles = {}, system = {}, size = 1, velocity = 8 } = options;
-    
-    return {
-        particles: {
-            globalSize: size,
-            ttl: 1.5,
-            velocity: new Randomizers.SphereRandomizer(velocity),
-            gravity: -5,
-            startAlpha: 1,
-            endAlpha: 0,
-            startColor: new Randomizers.ColorsRandomizer(),
-            endColor: new Randomizers.ColorsRandomizer(),
-            startAlphaChangeAt: 0,
-            blending: "blend",
-            onUpdate: (particle) => {
-                if (particle.position.y < 0) {
-                    particle.position.y = 0;
-                    particle.velocity.y = -0.5;
-                    particle.velocity.x = 0.5;
-                    particle.velocity.z *= 0.5;
-                }
-            },
-            ...particles
-        },
-        system: {
-            particlesCount: 20,
-            emitters: new Emitter({
-                onInterval: new Randomizers.MinMaxRandomizer(250, 500),
-                interval: 2,
-            }),
-            speed: 1.3,
-            ttl: 1.5,
-            ...system
-        }
-    }
-}
+const DEFAULT_PARTICLE_COLOR = 0xff0000;
 
 export default class Explosion extends ParticleEmitter {
 
     constructor(options = {}) {
         const {
-            container = Scene.getScene(),
-            autostart = false,
-            sparks = { particles: {}, system: {} },
-            explosion = { particles: {}, system: {} },
-            debris = { particles: {}, system: {} }
+            initializers = getDefaultInitializers(),
+            behaviours = getDefaultBehaviours(),
+            texture = false
         } = options;
 
         const parsedOptions = {
-            autostart,
-            sparks: {
-                container,
-                autostart,
-                ...getSparksOptions(sparks)
-            },
-            explosion: {
-                container,
-                autostart,
-                ...getExplosionOptions(explosion)
-            },
-            debris: {
-                container,
-                autostart,
-                ...getDebrisOptions(debris)
-            }
+            initializers,
+            behaviours,
+            texture
         };
 
         super(parsedOptions);
     }
 
-    hasSystem() {
-        return !!this.system && !!this.sparks && !!this.debris;
-    }
+    isProtonEmitter() { return true; }
+    isSystemDead() { return this.system.dead; }
 
-    isSystemDead() {
-        return this.system.finished && this.sparks.finished && this.debris.finished;
+    createBody(texture, color = DEFAULT_PARTICLE_COLOR) {
+        const map = Images.get(texture);
+        const material = new SpriteMaterial({
+            map,
+            color,
+            blending: NormalBlending
+        });
+        return new Sprite(material);
     }
 
     setSystem() {
         const {
-            sparks = {},
-            explosion = {},
-            debris = {}
+            initializers,
+            behaviours,
+            texture,
+            color
         } = this.options;
 
-        this.system = new ParticlesSystem(explosion);
-        this.sparks = new ParticlesSystem(sparks);
-        this.debris = new ParticlesSystem(debris);
+        this.system = new Proton.Emitter();
+        this.system.rate = new Proton.Rate(new Proton.Span(100, 300), new Proton.Span(.05, .07));
+
+        initializers.forEach(initializer => this.system.addInitialize(initializer));
+
+        if (texture) {
+            this.system.addInitialize(new Proton.Body(this.createBody(texture, color)));
+        }
+
+        behaviours.forEach(behaviour => this.system.addBehaviour(behaviour));
     }
 
-    setPosition(where) {
+    setPosition(where = {}) {
         const position = {
             ...this.getPosition(),
             ...where
         };
 
-        this.system.particleSystem.position.set(position.x, position.y, position.z);
-        this.sparks.particleSystem.position.set(position.x, position.y, position.z);
-        this.debris.particleSystem.position.set(position.x, position.y, position.z);
+        this.system.p.x = position.x;
+        this.system.p.y = position.y;
+        this.system.p.z = position.z;
 
         return this;
     }
 
     getPosition() {
         return {
-            x: this.system.particleSystem.position.x,
-            y: this.system.particleSystem.position.y,
-            z: this.system.particleSystem.position.z
+            x: this.system.p.x,
+            y: this.system.p.y,
+            z: this.system.p.z
         };
     }
 
@@ -184,48 +98,26 @@ export default class Explosion extends ParticleEmitter {
             ...howmuch
         };
 
-        this.system.particleSystem.rotation.set(rotation.x, rotation.y, rotation.z);
-        this.sparks.particleSystem.rotation.set(rotation.x, rotation.y, rotation.z);
-        this.debris.particleSystem.rotation.set(rotation.x, rotation.y, rotation.z);
+        this.system.rotation.x = rotation.x;
+        this.system.rotation.y = rotation.y;
+        this.system.rotation.z = rotation.z;
 
         return this;
     }
 
     getRotation() {
         return {
-            x: this.system.particleSystem.rotation.x,
-            y: this.system.particleSystem.rotation.y,
-            z: this.system.particleSystem.rotation.z
+            x: this.system.rotation.x,
+            y: this.system.rotation.y,
+            z: this.system.rotation.z
         };
     }
 
-    start() {
+    start(duration = 'once', life) {
         if (this.hasSystem()) {
-            Promise.all([
-                this.system.start(),
-                this.sparks.start(),
-                this.debris.start()
-            ]);
+            this.system.emit(duration, life);
         }
 
         return this;
-    }
-
-    dispose = () => {
-        if (this.hasSystem()) {
-            this.system.removeAndDisposeIfFinished();
-            this.sparks.removeAndDisposeIfFinished();
-            this.debris.removeAndDisposeIfFinished();
-        }
-    }
-
-    update(dt) {
-        if (this.hasSystem()) {
-            Promise.all([
-                this.system.update(dt),
-                this.sparks.update(dt),
-                this.debris.update(dt),
-            ]);
-        }
     }
 }

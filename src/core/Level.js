@@ -5,6 +5,7 @@ import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 import PostProcessing from '../fx/postprocessing/PostProcessing';
+import Particles from '../fx/particles/Particles';
 import Input, { INPUT_EVENTS_LIST } from './input/Input';
 import Lights from '../lights/Lights';
 import Controls from '../controls/Controls';
@@ -121,6 +122,7 @@ export class Level extends EventDispatcher {
         const dt = Scene.clock.getDelta();
 
         Scene.render(dt);
+        Particles.update(dt);
         PostProcessing.render(dt);
         this.onUpdate(dt);
         Scene.update(dt);
@@ -136,6 +138,7 @@ export class Level extends EventDispatcher {
         Physics
             .init()
             .then(() => {
+                Particles.init();
                 PostProcessing.init();
                 Stats.init();
         
@@ -153,6 +156,8 @@ export class Level extends EventDispatcher {
         this.onBeforeDispose();
 
         this.disableInput();
+        Particles.dispose();
+        PostProcessing.dispose();
         Physics.dispose();
         Universe.bigfreeze();
         Scene.dispose();

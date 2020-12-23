@@ -23,7 +23,7 @@ const WHITE = 0xffffff;
 
 export default class SunLight extends Light {
 
-    constructor(options) {
+    constructor(options = {}) {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,

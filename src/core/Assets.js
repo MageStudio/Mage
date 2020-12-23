@@ -121,7 +121,6 @@ export class Assets {
     update(dt) {
         Audio.update(dt);
         Lights.update(dt);
-        Particles.update(dt);
     }
 }
 

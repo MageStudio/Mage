@@ -4,6 +4,7 @@ import {
     SpriteMaterial,
     Sprite as THREESprite
 } from 'three';
+import { clamp } from '../../lib/math';
 import { Element, ENTITY_TYPES } from '../index';
 
 const validateAnisotropy = (anisotropy) => {
