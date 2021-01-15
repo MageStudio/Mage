@@ -105,18 +105,28 @@ export class Assets {
 
     scripts = (level) => level ? this.getLevelAssets(level).scripts : this.getCommonAssets().scripts;
 
-    load = (level) => Promise.all([ 
-        Audio.load(this.audio(level), level),
-        Video.load(this.video(level), level),
-        Images.load(this.images(level), this.textures(level), this.cubeTextures(level), level),
-        Models.loadModels(this.models(level), level),
-        Scripts.load(this.scripts(level), level)
-    ]).then(() => {
+    postAssetsLoad = level => () => {
         if (level) {
             this.setLoadedLevelState(true, level);
         }
         this.setLoadedCommonState(true);
-    });
+    }
+
+    handleAssetsLoadError = e => {
+        console.log(e);
+    }
+
+    load = (level) => (
+        Promise.all([ 
+            Audio.load(this.audio(level), level),
+            Video.load(this.video(level), level),
+            Images.load(this.images(level), this.textures(level), this.cubeTextures(level), level),
+            Models.loadModels(this.models(level), level),
+            Scripts.load(this.scripts(level), level)
+        ])
+        .then(this.postAssetsLoad(level))
+        .catch(this.handleAssetsLoadError)
+    );
 
     update(dt) {
         Audio.update(dt);

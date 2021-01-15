@@ -6,6 +6,7 @@ import BaseUI from './BaseUI';
 import Config from '../core/config';
 import Router from '../router/Router';
 import { dispatch } from '../store';
+import { createElementFromSelector } from '../lib/dom';
 import { showLoadingScreen, hideLoadingScreen } from '../store/actions/ui';
 
 const ROOT_ID = '#ui';

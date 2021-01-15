@@ -10,6 +10,7 @@ import SkeletonUtils from './SkeletonUtils';
 import { prepareModel } from '../lib/meshUtils';
 import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
+import { ASSETS_MODEL_LOAD_FAIL } from '../lib/messages';
 
 const EXTENSIONS = {
     JSON: 'json',
@@ -131,7 +132,13 @@ class Models {
         }
 
         return Promise
-            .all(keys.map(name => this.loadSingleFile(name, level)));
+            .all(keys.map(name => this.loadSingleFile(name, level)))
+            .catch(e => {
+                console.log(ASSETS_MODEL_LOAD_FAIL);
+                console.log(e);
+                
+                return Promise.resolve();
+            })
     }
 
     loadSingleFile = (name, level) => {

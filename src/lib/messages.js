@@ -48,3 +48,10 @@ export const KEYBOARD_COMBO_IS_INVALID = `${PREFIX} Keyboard combo is not valid.
 export const PHYSICS_ELEMENT_CANT_BE_REMOVED = `${PREFIX} This element can't be removed from physics world.`;
 export const PHYSICS_ELEMENT_ALREADY_STORED = `${PREFIX} This element has already been added to the world.`;
 export const PHYSICS_ELEMENT_MISSING = `${PREFIX} This element is missing from the world, please use the .enablePhysics(options) method first.`;
+
+
+export const ASSETS_AUDIO_LOAD_FAIL = `${PREFIX} Could not load audio.`;
+export const ASSETS_TEXTURE_LOAD_FAIL = `${PREFIX} Could not load texture.`;
+export const ASSETS_IMAGE_LOAD_FAIL = `${PREFIX} Could not load image.`;
+export const ASSETS_VIDEO_LOAD_FAIL = `${PREFIX} Could not load video.`;
+export const ASSETS_MODEL_LOAD_FAIL = `${PREFIX} Could not load model.`;

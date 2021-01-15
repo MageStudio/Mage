@@ -4,6 +4,7 @@ import {
 import Scene from '../core/Scene';
 import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
+import { ASSETS_AUDIO_LOAD_FAIL } from '../lib/messages';
 
 const TIME_FOR_UPDATE = 150;
 
@@ -62,14 +63,20 @@ export class Audio {
         this.createAudioContext();
 
         if (Object.keys(this.audio).length === 0) {
-            return Promise.resolve('audio');
+            return Promise.resolve();
         }
 
         return Promise
             .all(Object
                 .keys(this.audio)
                 .map(id => this.loadSingleFile(id, level))
-            );
+            )
+            .catch(e => {
+                console.log(ASSETS_AUDIO_LOAD_FAIL);
+                console.log(e);
+
+                return Promise.resolve();
+            });
     }
 
     get(id) {

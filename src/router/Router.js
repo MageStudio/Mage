@@ -110,9 +110,13 @@ class Router {
             return Assets
                 .load(hash)
                 .then(() => GameRunner.start(hash, query))
-                .then(UI.removeLoadingScreen);
+                .then(level => {
+                    UI.removeLoadingScreen();
+                    return Promise.resolve(level);
+                });
         } else {
             this.goTo(ROOT, query, hash);
+            return Promise.resolve(null);
         }
     }
 
@@ -142,7 +146,7 @@ class Router {
         Features.setUpPolyfills();
         Assets.setAssets(assets);
 
-        Features
+        return Features
             .checkSupportedFeatures()
             .then(Assets.load)
             .then(this.startLevel)
