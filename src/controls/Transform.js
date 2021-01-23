@@ -246,10 +246,10 @@ export default class TransformControls extends Object3D {
 		this.domElement.removeEventListener("contextmenu", this.onContext);
 	}
 
-    attach({ mesh }) {
-        if (!mesh) return;
+    attach(element) {
+        if (!element) return;
 
-		this.object = mesh;
+		this.object = element.getBody();
 		this.visible = true;
 	}
 
@@ -773,7 +773,15 @@ export default class TransformControls extends Object3D {
 		this.size = size;
 	}
 
+	getSize() {
+		return this.size;
+	}
+
 	setSpace(space) {
 		this.space = space;
+	}
+
+	getSpace() {
+		return this.space;
 	}
 }
