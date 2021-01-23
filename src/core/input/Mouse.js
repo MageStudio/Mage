@@ -142,7 +142,7 @@ export default class Mouse extends EventDispatcher {
         this.dispatchEvent(this.mouseDownEvent);
 
         const elements = this.getIntersections();
-        this.elementClickEvent.elementes = elements;
+        this.elementClickEvent.elements = elements;
 
         if (!elements.length) {
             this.dispatchEvent(this.elementDeselectEvent);
