@@ -542,6 +542,7 @@ export default class Element extends Entity {
     toJSON() {
         if (this.serializable) {
             return {
+                ...super.toJSON(),
                 body: this.body.toJSON(),
                 scripts: this.mapScriptsToJSON(),
                 texture: this.texture,

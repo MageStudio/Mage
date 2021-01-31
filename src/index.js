@@ -1,6 +1,7 @@
 // import Assets from './core/Assets';
 import {
     Element,
+    ENTITY_TYPES,
     Camera,
     Line,
     CurveLine,
@@ -92,6 +93,7 @@ window.THREE = THREE;
 export {
     author,
     Element,
+    ENTITY_TYPES,
     Level,
 
     FEATURES,

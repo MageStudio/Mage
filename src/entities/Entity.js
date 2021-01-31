@@ -22,11 +22,11 @@ const DEFAULT_ANGULAR_VELOCITY = { x: 0, y: 0, z: 0 };
 const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
 
 export const ENTITY_TYPES = {
-    MESH: 0,
-    LIGHT: 1,
-    MODEL: 2,
-    SPRITE: 3,
-    UNKNOWN: 999
+    MESH: 'MESH',
+    LIGHT: 'LIGHT',
+    MODEL: 'MODEL',
+    SPRITE: 'SPRITE',
+    UNKNOWN: 'UNKNOWN'
 };
 
 export const DEFAULT_TAG = 'all';
@@ -90,6 +90,10 @@ export default class Entity extends EventDispatcher {
 
     hasTag(tagName) {
         return this.tags.includes(tagName);
+    }
+
+    getTags() {
+        return this.tags;
     }
 
     stopScripts() {
@@ -487,5 +491,15 @@ export default class Entity extends EventDispatcher {
             
             return acc;
         }, { names: [], options: [] });
+    }
+
+    toJSON() {
+        return {
+            position: this.getPosition(),
+            rotation: this.getRotation(),
+            scale: this.getScale(),
+            entityType: this.getEntityType(),
+            tags: this.getTags()
+        }
     }
 }
