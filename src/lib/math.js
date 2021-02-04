@@ -1,4 +1,4 @@
-import { Vector3 } from 'three';
+import { Vector3, MathUtils } from 'three';
 
 export const PI = Math.PI;
 export const PI_2 = PI/2;
@@ -60,6 +60,49 @@ export const lerpVectors = (origin, target, speed) => {
     }
 }
 
+export const lerp = (x, y, t) => MathUtils.lerp(x, y, t);
+
 export const scaleVector = ({ x = 0, y = 0, z = 0}, scale = 1) => new Vector3(x, y, z).multiplyScalar(scale);
 
 export const getSphereVolume = (radius) => 4 * Math.PI * Math.pow(radius, 3) / 3;
+
+export const repeat = (t, length) => clamp(t - Math.floor(t / length) * length, 0.0, length);
+
+export const deltaAngle = (angle, target) => {
+    let delta = repeat((target - angle), 360.0);
+    if (delta > 180.0)
+        delta -= 360.0;
+    return delta;
+}
+
+export const smoothDamp = (current, target, currentVelocity, smoothTime, maxSpeed = Infinity, dt) => {
+    smoothTime = Math.max(0.0001, smoothTime);
+    const omega = 2 / smoothTime;
+
+    const x = omega * dt;
+    const exp = 1 / (1 + x + 0.48 * x * x + 0.235 * x * x * x);
+    let change = current - target;
+    const originalTo = target;
+
+    // Clamp maximum speed
+    const maxChange = maxSpeed * smoothTime;
+    change = clamp(change, -maxChange, maxChange);
+    target = current - change;
+
+    const temp = (currentVelocity + omega * change) * dt;
+    currentVelocity = (currentVelocity - omega * temp) * exp;
+    let output = target + (change + temp) * exp;
+
+    // Prevent overshooting
+    if (originalTo - current > 0.0 == output > originalTo) {
+        output = originalTo;
+        currentVelocity = (output - originalTo) / dt;
+    }
+
+    return [output, currentVelocity];
+}
+
+export const smoothDampAngle = (current, target, currentVelocity, smoothTime, maxSpeed = Infinity, dt) => {
+    target = current + deltaAngle(current, target);
+    return smoothDamp(current, target, currentVelocity, smoothTime, maxSpeed, dt);
+}

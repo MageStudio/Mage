@@ -373,11 +373,7 @@ export default class Entity extends EventDispatcher {
     }
 
     getPosition() {
-        return {
-            x: this.body.position.x,
-            y: this.body.position.y,
-            z: this.body.position.z
-        };
+        return this.getBody().position.clone();
     }
 
     setPosition(where) {
@@ -392,11 +388,7 @@ export default class Entity extends EventDispatcher {
     }
 
     getRotation() {
-        return {
-            x: this.body.rotation.x,
-            y: this.body.rotation.y,
-            z: this.body.rotation.z
-        };
+        return this.getBody().rotation.clone();
     }
 
     setRotation(how) {
