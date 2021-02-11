@@ -37,6 +37,8 @@ export class Scene {
 
         this.scene = new THREEScene();
 
+        // this.scene.overrideMaterial = null; // should be null by default, but it's not.
+
         if (fog.enabled) {
             this.fog(fog.color, fog.density);
         }

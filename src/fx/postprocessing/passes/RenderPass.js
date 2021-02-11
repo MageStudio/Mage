@@ -6,7 +6,7 @@ import Pass from "./Pass.js";
 
 export default class RenderPass extends Pass {
 
-    constructor(scene, camera, overrideMaterial, clearColor, clearAlpha) {
+    constructor(scene, camera, overrideMaterial = null, clearColor, clearAlpha) {
         super();
 
         this.scene = scene;

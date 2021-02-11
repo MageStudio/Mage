@@ -1,5 +1,5 @@
 import {
-    CubeGeometry,
+    BoxGeometry,
     MeshBasicMaterial
 } from 'three';
 import { Element, ENTITY_TYPES } from '../index';
@@ -9,7 +9,7 @@ export default class Cube extends Element {
     constructor(side = 10, color, options = {}) {
         super(null, null, options);
 
-        const geometry = new CubeGeometry(side, side, side);
+        const geometry = new BoxGeometry(side, side, side);
         const material = new MeshBasicMaterial({
             color: color,
             wireframe: false,

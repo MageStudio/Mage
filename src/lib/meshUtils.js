@@ -7,11 +7,18 @@ import {
 } from 'three';
 
 import Config from '../core/config';
+import Lights from '../lights/Lights';
 import { MATERIALS } from './constants';
 
 export const setUpLightsAndShadows = (mesh) => {
-    mesh.castShadow = Boolean(Config.lights().shadows);
-    mesh.receiveShadow = Boolean(Config.lights().shadows);
+    const shadowsEnabled = Config.lights().shadows;
+
+    mesh.castShadow = Boolean(shadowsEnabled);
+    mesh.receiveShadow = Boolean(shadowsEnabled);
+
+    if (Lights.isUsingCSM() && hasMaterial(mesh)) {
+        Lights.csm.setupMaterial(mesh.material);
+    }
 } 
 
 export const isMesh = mesh => mesh.isMesh;
@@ -49,6 +56,8 @@ const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
         color: clone.color,
         ...options
     });
+
+    setUpLightsAndShadows(mesh);
 }
 
 export const disposeTextures = mesh => {

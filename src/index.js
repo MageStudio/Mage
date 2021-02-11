@@ -65,6 +65,7 @@ import SunLight from './lights/SunLight';
 import PointLight from './lights/PointLight';
 import SpotLight from './lights/SpotLight';
 import HemisphereLight from './lights/HemisphereLight';
+import Lights from './lights/Lights';
 
 import LightLoader from './loaders/LightLoader';
 import MeshLoader from './loaders/MeshLoader';
@@ -158,6 +159,7 @@ export {
     PointLight,
     SpotLight,
     HemisphereLight,
+    Lights,
 
     Atmosphere,
     Mirror,
