@@ -1,3 +1,6 @@
+import { Scene } from "../core/Scene";
+import { CascadeShadowMaps } from "./csm/CascadeShadowMaps";
+
 export const POINTLIGHT = 'pointlight';
 export const AMBIENTLIGHT = 'ambientlight';
 export const SUNLIGHT = 'sunlight';
@@ -17,6 +20,15 @@ export class Lights {
 
         this.map = {};
         this.lights = [];
+        this.csm = undefined;
+    }
+
+    isUsingCSM() {
+        return !!this.csm;
+    }
+
+    setUpCSM(options = {}) {
+        this.csm = new CascadeShadowMaps(options);
     }
 
     add(light) {
@@ -25,6 +37,10 @@ export class Lights {
 
     update(dt) {
         return new Promise(resolve => {
+            if (this.isUsingCSM()) {
+                this.csm.update();
+            }
+
             const start = new Date();
             for (let index in this.lights) {
                 const light = this.lights[index];

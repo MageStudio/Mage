@@ -13,11 +13,11 @@ import { SUNLIGHT } from './Lights';
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
+const DEFAULT_FOV = 75;
 
-const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
-const DEFAULT_TARGET_POSITION = { x: 0, y: 0, z: 0 };
+const DEFAULT_POSITION = { x: 0, y: 1, z: 0 };
 const DEFAULT_INTENSITY = 0.5;
-const DEFAULT_MAP_SIZE = 2048;
+const DEFAULT_MAP_SIZE = 512;
 const DEFAULT_BIAS = -0.0001;
 const WHITE = 0xffffff;
 
@@ -54,11 +54,13 @@ export default class SunLight extends Light {
     postLightCreation() {
         const {
             position = DEFAULT_POSITION,
-            target = DEFAULT_TARGET_POSITION
+            target
         } = this.options;
 
         this.setPosition(position);
-        this.setTargetPosition(target);
+        if (target) {
+            this.setTarget(target);
+        }
         this.setLightShadows();
         this.addToScene();
     }
@@ -68,13 +70,14 @@ export default class SunLight extends Light {
             near = DEFAULT_NEAR,
             far = DEFAULT_FAR,
             mapSize = DEFAULT_MAP_SIZE,
-            bias = DEFAULT_BIAS
+            bias = DEFAULT_BIAS,
+            fov = DEFAULT_FOV
         } = this.options;
 
         if (Config.lights().shadows) {
             this.light.castShadow = true;
 
-            const d = far/2;
+            const d = far / 1.5;
 
             this.light.shadow.mapSize.height = mapSize;
             this.light.shadow.mapSize.width = mapSize;
@@ -86,6 +89,7 @@ export default class SunLight extends Light {
 
             this.light.shadow.camera.near = near;
             this.light.shadow.camera.far = far;
+            this.light.shadow.camera.fov = fov;
 
             this.light.shadow.bias = bias;
         }
@@ -105,14 +109,11 @@ export default class SunLight extends Light {
         return target;
     }
 
-    setTargetPosition(position = {}) {
-        this.target = {
-            ...this.target,
-            ...position
-        };
-
-        const { x = 0, y = 0, z = 0 } = this.target;
-        this.light.target.position.set(x, y, z);
+    setTarget(target) {
+        if (target.position) {
+            this.light.target = target;
+            Scene.add(this.light.target, null, false);
+        }
     }
 
     getTargetPosition() {

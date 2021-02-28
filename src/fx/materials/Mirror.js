@@ -8,7 +8,7 @@ import {
 	Vector3,
 	Vector4,
 	ArrowHelper,
-	Geometry,
+	// Geometry,
 	Line,
 	LineBasicMaterial,
 	PerspectiveCamera,
@@ -106,17 +106,18 @@ export default class Mirror extends Object3D {
 
 		if (debugMode) {
 
-			var arrow = new ArrowHelper(new Vector3(0, 0, 1), new Vector3(0, 0, 0), 10, 0xffff80);
-			var planeGeometry = new Geometry();
-			planeGeometry.vertices.push(new Vector3(- 10, - 10, 0));
-			planeGeometry.vertices.push(new Vector3(10, - 10, 0));
-			planeGeometry.vertices.push(new Vector3(10, 10, 0));
-			planeGeometry.vertices.push(new Vector3(- 10, 10, 0));
-			planeGeometry.vertices.push(planeGeometry.vertices[ 0 ]);
-			var plane = new Line(planeGeometry, new LineBasicMaterial({ color: 0xffff80 }));
+			// var arrow = new ArrowHelper(new Vector3(0, 0, 1), new Vector3(0, 0, 0), 10, 0xffff80);
+			// var planeGeometry = new Geometry();
+			// planeGeometry.vertices.push(new Vector3(- 10, - 10, 0));
+			// planeGeometry.vertices.push(new Vector3(10, - 10, 0));
+			// planeGeometry.vertices.push(new Vector3(10, 10, 0));
+			// planeGeometry.vertices.push(new Vector3(- 10, 10, 0));
+			// planeGeometry.vertices.push(planeGeometry.vertices[ 0 ]);
+			// var plane = new Line(planeGeometry, new LineBasicMaterial({ color: 0xffff80 }));
 
-			this.add(arrow);
-			this.add(plane);
+			// this.add(arrow);
+			// this.add(plane);
+			console.log('[Mage] Mirror is trying to use deprecated geometry.');
 
 		}
 

@@ -7,16 +7,26 @@ import {
 } from 'three';
 
 import Config from '../core/config';
+import Lights from '../lights/Lights';
 import { MATERIALS } from './constants';
 
 export const setUpLightsAndShadows = (mesh) => {
-    mesh.castShadow = Boolean(Config.lights().shadows);
-    mesh.receiveShadow = Boolean(Config.lights().shadows);
+    const shadowsEnabled = Config.lights().shadows;
+
+    mesh.castShadow = Boolean(shadowsEnabled);
+    mesh.receiveShadow = Boolean(shadowsEnabled);
+
+    if (Lights.isUsingCSM() && hasMaterial(mesh)) {
+        Lights.csm.setupMaterial(mesh.material);
+    }
 } 
 
 export const isMesh = mesh => mesh.isMesh;
 export const isSprite = mesh => mesh.isSprite;
 export const isLine = mesh => mesh.isLine;
+export const isScene = mesh => mesh.isScene;
+
+export const notAScene = mesh => !mesh.isScene;
 
 const isMeshOrSkinnedMesh = (mesh) => mesh.isMesh || mesh.isSkinnedMesh;
 export const hasMaterial = mesh => Boolean(mesh.material);
@@ -49,6 +59,8 @@ const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
         color: clone.color,
         ...options
     });
+
+    setUpLightsAndShadows(mesh);
 }
 
 export const disposeTextures = mesh => {
@@ -77,4 +89,18 @@ export const prepareModel = (model) => {
     });
 
     return model;
+}
+
+export const findFirstInScene = (scene, filter) => {
+    let found = false;
+    let toReturn;
+
+    scene.traverse(element => {
+        if (filter(element) && !found) {
+            found = true;
+            toReturn = element;
+        }
+    });
+
+    return toReturn;
 }

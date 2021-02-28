@@ -15,6 +15,7 @@ import {
     SCRIPT_NOT_FOUND,
     ENTITY_TYPE_NOT_ALLOWED
 } from '../lib/messages';
+import { findFirstInScene, isScene, notAScene } from '../lib/meshUtils';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
 const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
@@ -378,8 +379,11 @@ export default class Entity extends EventDispatcher {
 
     setPosition(where) {
         if (this.hasBody()) {
+            const { x, y, z } = this.getPosition();
             const position = {
-                ...this.getPosition(),
+                x,
+                y,
+                z,
                 ...where
             };
 
@@ -393,8 +397,11 @@ export default class Entity extends EventDispatcher {
 
     setRotation(how) {
         if (this.hasBody()) {
+            const { x, y, z } = this.getRotation();
             const rotation = {
-                ...this.getRotation(),
+                x,
+                y,
+                z,
                 ...how
             };
 
