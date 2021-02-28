@@ -31,8 +31,6 @@ export default class BokehPass extends Pass {
             renderToScreen = false
         } = params;
 
-        console.log(focus, aspect, aperture, maxblur, width, height);
-        
         this.scene = scene;
         this.camera = camera;
 
