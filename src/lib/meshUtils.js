@@ -24,6 +24,9 @@ export const setUpLightsAndShadows = (mesh) => {
 export const isMesh = mesh => mesh.isMesh;
 export const isSprite = mesh => mesh.isSprite;
 export const isLine = mesh => mesh.isLine;
+export const isScene = mesh => mesh.isScene;
+
+export const notAScene = mesh => !mesh.isScene;
 
 const isMeshOrSkinnedMesh = (mesh) => mesh.isMesh || mesh.isSkinnedMesh;
 export const hasMaterial = mesh => Boolean(mesh.material);
@@ -86,4 +89,18 @@ export const prepareModel = (model) => {
     });
 
     return model;
+}
+
+export const findFirstInScene = (scene, filter) => {
+    let found = false;
+    let toReturn;
+
+    scene.traverse(element => {
+        if (filter(element) && !found) {
+            found = true;
+            toReturn = element;
+        }
+    });
+
+    return toReturn;
 }

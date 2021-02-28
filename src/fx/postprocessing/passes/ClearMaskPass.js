@@ -10,6 +10,6 @@ export default class ClearMaskPass extends Pass {
 
     render(renderer, writeBuffer, readBuffer, delta, maskActive) {
         renderer.state.buffers.stencil.setLocked( false );
-		renderer.state.buffers.stencil.setTest( false );
+        renderer.state.buffers.stencil.setTest( false );
     }
 }

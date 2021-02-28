@@ -222,7 +222,7 @@ export class Scene {
         this.renderer.render(this.scene, this.camera.getBody());
     }
 
-    fog(color, density) {
+    setFog(color, density) {
         this.scene.fog = new FogExp2(color, density);
         Config.setConfig({
             fog: {
