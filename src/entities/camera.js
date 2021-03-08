@@ -17,41 +17,7 @@ export default class Camera extends Entity {
     }
 
     getPosition() {
-        return {
-            x: this.body.position.x,
-            y: this.body.position.y,
-            z: this.body.position.z
-        };
-    }
-
-    setPosition(where) {
-        const position = {
-            ...this.getPosition(),
-            ...where
-        };
-
-        if (this.body) {
-            this.body.position.set(position.x, position.y, position.z);
-        }
-    }
-
-    getRotation() {
-        return {
-            x: this.body.rotation.x,
-            y: this.body.rotation.y,
-            z: this.body.rotation.z
-        };
-    }
-
-    setRotation(how) {
-        const rotation = {
-            ...this.getRotation(),
-            ...how
-        };
-
-        if (this.body) {
-            this.body.rotation.set(rotation.x, rotation.y, rotation.z);
-        }
+        return this.body.position;
     }
 
     getDirection() {

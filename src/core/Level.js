@@ -156,9 +156,11 @@ export class Level extends EventDispatcher {
         this.onBeforeDispose();
 
         this.disableInput();
+
+        Physics.dispose();
+
         Particles.dispose();
         PostProcessing.dispose();
-        Physics.dispose();
         Universe.bigfreeze();
         Scene.dispose();
         Controls.dispose();

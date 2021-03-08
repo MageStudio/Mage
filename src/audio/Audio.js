@@ -15,8 +15,8 @@ export class Audio {
         this.DELAY_STEP = 1; //millis
         this.DELAY_MIN_VALUE = 0.2;
         this.DELAY_NORMAL_VALUE = 40;
-        this.VOLUME = 20;
-        this._volume = 20;
+        this.VOLUME = 2;
+        this._volume = 2;
 
         this.numSound = 0;
         this.soundLoaded = 0;

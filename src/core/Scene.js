@@ -9,7 +9,8 @@ import {
     BasicShadowMap,
     PCFShadowMap,
     WebGLRenderer,
-    FogExp2
+    FogExp2,
+    LinearToneMapping
 } from 'three';
 
 import { generateUUID } from '../lib/uuid';
@@ -203,6 +204,11 @@ export class Scene {
         } else {
             container.appendChild(this.renderer.domElement);
         }
+    }
+
+    setRendererToneMapping(toneMapping = LinearToneMapping, toneMappingExposure = 1) {
+        this.renderer.toneMapping = toneMapping;
+        this.renderer.toneMappingExposure = toneMappingExposure;
     }
 
     onResize = () => {

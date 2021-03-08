@@ -19,7 +19,10 @@ import {
 
 import world from './world';
 import dispatcher from './lib/dispatcher';
-import { convertAmmoVector } from '../utils';
+
+const DEFAULT_ROLL_INFLUENCE = 0.2;
+const DEFAULT_FRICTION = 1000;
+const DEFAULT_MASS = 800;
 
 export const addVehicle = data => {
     const {
@@ -27,11 +30,12 @@ export const addVehicle = data => {
         quaternion,
         uuid,
         wheels,
-        mass = 800,
+        mass = DEFAULT_MASS,
         width = 1.8,
         height = .6,
         length = 4,
-        friction = 1000,
+        friction = DEFAULT_FRICTION,
+        rollInfluence = DEFAULT_ROLL_INFLUENCE,
         wheelsOptions = {},
         suspensions = {}
     } = data;
@@ -53,7 +57,6 @@ export const addVehicle = data => {
 
     const { stiffness = 20.0, damping = 2.3, compression = 4.4, restLength = 0.6 } = suspensions;
 
-    const rollInfluence = 0.2;
 
     // Chassis
     const geometry = new Ammo.btBoxShape(new Ammo.btVector3(width * .5, height * .5, length * .5));

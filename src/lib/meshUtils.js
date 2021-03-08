@@ -11,14 +11,24 @@ import Lights from '../lights/Lights';
 import { MATERIALS } from './constants';
 
 export const setUpLightsAndShadows = (mesh) => {
-    const shadowsEnabled = Config.lights().shadows;
+    const {
+        textureAnisotropy,
+        shadows
+    } = Config.lights();
 
-    mesh.castShadow = Boolean(shadowsEnabled);
-    mesh.receiveShadow = Boolean(shadowsEnabled);
+    mesh.castShadow = Boolean(shadows);
+    mesh.receiveShadow = Boolean(shadows);
 
-    if (Lights.isUsingCSM() && hasMaterial(mesh)) {
-        Lights.csm.setupMaterial(mesh.material);
+    if (hasMaterial(mesh)) {
+        if (Lights.isUsingCSM()) {
+            Lights.csm.setupMaterial(mesh.material);
+        }
+
+        if (mesh.material.map) {
+            mesh.material.map.anisotropy = textureAnisotropy;
+        }
     }
+    
 } 
 
 export const isMesh = mesh => mesh.isMesh;
