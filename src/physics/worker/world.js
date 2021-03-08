@@ -10,6 +10,26 @@ import dispatcher from './lib/dispatcher';
 import { handlePlayerUpdate } from './player';
 import { COLLISION_DETECTION_EVENT } from '../messages';
 
+class Clock {
+
+    constructor() {
+        this.timestamp = null;
+    }
+
+    getDelta() {
+        const time = Date.now();
+        if (this.timestamp) {
+            const delta = time - this.timestamp;
+            this.timestamp = time;
+
+            return delta;
+        } else {
+            this.timestamp = time;
+
+            return 0;
+        }
+    }
+}
 export class World {
 
     constructor() {
@@ -21,6 +41,9 @@ export class World {
         this.broadphase = undefined;
         this.solver = undefined;
         this.ammoWorld = undefined;
+
+        this.requestAnimationFrameId = null;
+        this.clock = new Clock();
     }
 
     init = (options) => {
@@ -73,7 +96,8 @@ export class World {
         this.ammoWorld.stepSimulation(dt);
     }
 
-    simulate = (dt) => {
+    simulate = () => {
+        const dt = this.clock.getDelta();
         this.stepSimulation(dt);
 
         Object
@@ -104,6 +128,8 @@ export class World {
         this.removeDeletedElements();
 
         dispatcher.sendPhysicsUpdate(dt);
+
+        this.requestAnimationFrameId = requestAnimationFrame(this.simulate.bind(this));
     }
 
     calculateCollisions = () => {
@@ -187,6 +213,8 @@ export class World {
         Ammo.destroy(this.solver);
         Ammo.destroy(this.dispatcher);
         Ammo.destroy(this.collisionConfiguration);
+
+        cancelAnimationFrame(this.requestAnimationFrameId);
 
         dispatcher.sendTerminateEvent();
     }

@@ -60,16 +60,9 @@ const handleLoadEvent = options => Ammo => {
         }
     }
 
-    let last = Date.now();
-    const mainLoop = () => {
-        const now = Date.now();
-        world.simulate(now - last);
-        last = now;
-    }
-
-    setInterval(mainLoop, 1000/60);
     world.init(options);
     dispatcher.sendReadyEvent();
+    world.simulate()
 };
 
 const loadAmmo = (options) => {

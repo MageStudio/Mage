@@ -37,8 +37,12 @@ export default class Beat {
         this.setListeners();
     }
 
+    getVolume() {
+        return this.sound.volume.gain;
+    }
+
     setVolume(value) {
-        this.sound.volume.gain.value = value;
+        this.sound.volume.gain.setValueAtTime(value, Audio.context.currentTime);
     }
 
     hasBuffer() {
@@ -56,34 +60,23 @@ export default class Beat {
         this.sound.source.buffer = buffer;
     }
 
-    play() {
+    play(volume = Audio.getVolume()) {
 
         if (!this.hasBuffer()) {
             this.setBuffer();
         }
 
-        this.sound.volume.gain.value = 0;
+        this.setVolume(0);
         this.sound.source.start(Audio.context.currentTime);
 
-        const delay = () => {
-            this.sound.volume.gain.value = this.sound.volume.gain.value + Audio.DELAY_FACTOR;
-            if (this.sound.volume.gain.value < Audio.getVolume()) {
-                setTimeout(delay, Audio.DELAY_STEP);
-            }
-        }
-        delay();
+        this.sound.volume.gain.linearRampToValueAtTime(volume, 0.5);
     }
 
     stop() {
-        const delay = () => {
-            this.sound.volume.gain.value = this.sound.volume.gain.value - Audio.DELAY_FACTOR;
-            if (this.sound.volume.gain.value > Audio.DELAY_MIN_VALUE) {
-                setTimeout(delay, Audio.DELAY_STEP);
-            } else {
-                this.sound.source.stop();
-            }
-        }
-        delay();
+        this.sound.volume.gain.linearRampToValueAtTime(0, 0.5);
+        setTimeout(() => {
+            this.sound.source.stop();
+        }, 500);
     }
 
     detune(value) {

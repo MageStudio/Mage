@@ -28,7 +28,8 @@ class Config {
             },
 
             lights: {
-                shadows: true
+                shadows: true,
+                textureAnisotropy: 16
             },
 
             physics: {
