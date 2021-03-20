@@ -121,7 +121,6 @@ export class Level extends EventDispatcher {
     render = () => {
         const dt = Scene.clock.getDelta();
 
-        Scene.render(dt);
         Particles.update(dt);
         PostProcessing.render(dt);
         this.onUpdate(dt);

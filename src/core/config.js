@@ -67,7 +67,10 @@ class Config {
                 config
             };
         }
+    }
 
+    getConfig() {
+        return this.config;
     }
 
     container() {
