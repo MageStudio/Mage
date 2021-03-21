@@ -38,10 +38,8 @@ export class Scene {
 
         this.scene = new THREEScene();
 
-        // this.scene.overrideMaterial = null; // should be null by default, but it's not.
-
         if (fog.enabled) {
-            this.fog(fog.color, fog.density);
+            this.setFog(fog.color, fog.density);
         }
     }
 
@@ -221,12 +219,12 @@ export class Scene {
         this.renderer.setSize(w, h);
     }
 
-    render = () => {
-        this.renderer.setClearColor(this.clearColor);
-        this.renderer.clear();
-        this.renderer.setRenderTarget(null);
-        this.renderer.render(this.scene, this.camera.getBody());
-    }
+    // render = () => {
+    //     this.renderer.setClearColor(this.clearColor);
+    //     this.renderer.clear();
+    //     this.renderer.setRenderTarget(null);
+    //     this.renderer.render(this.scene, this.camera.getBody());
+    // }
 
     setFog(color, density) {
         this.scene.fog = new FogExp2(color, density);

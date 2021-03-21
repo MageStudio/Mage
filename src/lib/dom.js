@@ -1,3 +1,4 @@
+import Config from "../core/config";
 import { removeFirst } from "./strings";
 
 export const isClassname = word => word.startsWith('.');
@@ -28,3 +29,12 @@ export const createElementFromSelector = (selector, type = 'div', style = DEFAUL
 
     return element;
 };
+
+export const createOffscreenCanvas = () => {
+    const container = Config.container();
+    const canvas = createElementFromSelector('#offscreenCanvas', 'canvas');
+
+    container.appendElement(canvas);
+
+    return canvas.transferControlToOffscreen();
+}

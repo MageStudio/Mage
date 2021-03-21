@@ -1,7 +1,6 @@
-import Universe from './Universe';
+import Universe from '../core/universe';
 import { Camera } from '../entities';
-import Config from './config';
-import { getWindow } from './window';
+import Config from '../core/config';
 import {
     Clock,
     Scene as THREEScene,
@@ -14,7 +13,8 @@ import {
 } from 'three';
 
 import { generateUUID } from '../lib/uuid';
-import Images from '../images/Images';
+import PostProcessing from './PostProcessing';
+import Particles from './Particles';
 
 const SHADOW_TYPES = {
     basic: BasicShadowMap,
@@ -31,6 +31,9 @@ export class Scene {
         this.clearColor = 0x000000;
 
         this.shadowType = SHADOW_TYPES[DEFAULT_SHADOWTYPE];
+
+        this.postProcessing = new PostProcessing();
+        this.particles = new Particles();
     }
 
     createScene() {
@@ -61,17 +64,20 @@ export class Scene {
         }
     }
 
-    add(body, element, addUniverse = true) {
+    addPostProcessingEffect(effect, options) {
+        this.postProcessing.add(effect, options);
+    }
+
+    addParticleEmitter(emitterId, options) {
+        this.particles.addParticleEmitter(emitterId, options);
+    }
+
+    add(body) {
         this.scene.add(body);
-        if (addUniverse) {
-            Universe.set(element.getName(), element);
-            Universe.storeUUIDToElementNameReference(body.uuid, element.getName());
-        }
     }
 
     remove(body) {
         this.scene.remove(body);
-        Universe.remove(body.name);
     }
 
     setClearColor(value) {
@@ -88,29 +94,19 @@ export class Scene {
         }
     }
 
-    setBackground = texture => {
-        this.scene.background = typeof texture === 'string' ? Images.get(texture) : texture;
+    setBackground = background => {
+        this.scene.background = background;
     } 
 
     create() {
         this.createScene();
         this.createCamera();
         this.createRenderer();
-        this.listenToResizeEvent();
     }
 
-    listenToResizeEvent() {
-        const win = getWindow();
-        if (win) {
-            win.addEventListener('resize', this.onResize);
-        }
-    }
-
-    stopResizeListener() {
-        const win = getWindow();
-        if (win) {
-            win.removeEventListener('resize', this.onResize);
-        }
+    init() {
+        this.postProcessing.init(this.renderer, this.scene, this.camera.getBody());
+        this.particles.init(this.scene);
     }
 
     dispose() {
@@ -118,8 +114,6 @@ export class Scene {
         this.scene.dispose();
         // destroy renderer
         this.renderer.dispose();
-        // remove listener to resize
-        this.stopResizeListener();
     }
 
     createCamera() {
@@ -211,21 +205,19 @@ export class Scene {
         this.renderer.toneMappingExposure = toneMappingExposure;
     }
 
-    onResize = () => {
-        const { h, w, ratio } = Config.screen();
-
+    onResize = (h, w, ratio, devicePixelRatio) => {
         if (!this.camera || !this.renderer) return;
 
         this.camera.getBody().aspect = ratio;
         this.camera.getBody().updateProjectionMatrix();
         this.renderer.setSize(w, h);
+
+        this.postProcessing.onResize(h, w, ratio, devicePixelRatio);
     }
 
-    render = () => {
-        this.renderer.setClearColor(this.clearColor);
-        this.renderer.clear();
-        this.renderer.setRenderTarget(null);
-        this.renderer.render(this.scene, this.camera.getBody());
+    render = (dt) => {
+        this.postProcessing.render(dt);
+        this.particles.update(dt);
     }
 
     setFog(color, density) {

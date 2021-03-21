@@ -17,6 +17,7 @@ import { fetch } from 'whatwg-fetch';
 import { getWindow } from './window';
 import { upperCaseFirst } from '../lib/strings';
 import { ONCREATE_NOT_AVAILABLE } from '../lib/messages';
+import Clock from './Clock';
 
 export const author = {
     name: 'Marco Stagni',
@@ -119,12 +120,15 @@ export class Level extends EventDispatcher {
     }
 
     render = () => {
-        const dt = Scene.clock.getDelta();
+        // render pipeline now has the clock
+        const dt = Clock.getDelta();
 
+        // these guys updated inside renderpipeline
         Particles.update(dt);
         PostProcessing.render(dt);
-        this.onUpdate(dt);
         Scene.update(dt);
+
+        this.onUpdate(dt);
         Assets.update(dt);
         Stats.update(dt);
         Controls.update(dt);
@@ -137,12 +141,15 @@ export class Level extends EventDispatcher {
         Physics
             .init()
             .then(() => {
+
+                // this is happening in the render pipeline
                 Particles.init();
                 PostProcessing.init();
+
                 Stats.init();
-        
+
                 this.render();
-        
+
                 if (this.onCreate instanceof Function) {
                     this.onCreate();
                 } else {

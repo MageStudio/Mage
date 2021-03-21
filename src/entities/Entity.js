@@ -15,7 +15,6 @@ import {
     SCRIPT_NOT_FOUND,
     ENTITY_TYPE_NOT_ALLOWED
 } from '../lib/messages';
-import { findFirstInScene, isScene, notAScene } from '../lib/meshUtils';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
 const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };

@@ -10,8 +10,6 @@ class Config {
 
     constructor() {
 
-        const win = getWindow();
-
         this.default = {
 
             tests: [],

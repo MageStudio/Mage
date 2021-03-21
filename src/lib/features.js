@@ -1,4 +1,5 @@
 import Config from '../core/config';
+import { FEATURE_NOT_SUPPORTED } from './messages';
 
 export const FEATURES = {
     WEBGL: 'webgl',
@@ -46,6 +47,7 @@ export class Features {
             return success;
         }
 
+        console.warn(FEATURE_NOT_SUPPORTED, feature);
         return false;
     }
 

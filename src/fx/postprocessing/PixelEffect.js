@@ -64,9 +64,7 @@ export default class PixelEffect extends ShaderPass {
         this.uniforms["pixelSize"].value = pixelSize;
     }
 
-    onWindowResize() {
-        const { h, w, devicePixelRatio } = Config.screen();
-
+    onResize(h, w, ratio, devicePixelRatio) {
         this.uniforms["resolution"].value.set(w, h).multiplyScalar(devicePixelRatio);
     }
 }

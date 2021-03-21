@@ -41,6 +41,7 @@ import Config from './core/config';
 import GameRunner from './runner/GameRunner';
 import Router from './router/Router';
 import Scene from './core/Scene';
+import RenderPipeline from './render/RenderPipeline';
 import Scripts from './scripts/Scripts';
 import Controls from './controls/Controls';
 import Physics, {
@@ -105,6 +106,8 @@ export {
     Scripts,
     Router,
     GameRunner,
+
+    RenderPipeline,
 
     store,
     Provider,
