@@ -9,9 +9,10 @@ import {
     Scene
 } from "three";
 import OffscreenCamera from './OffscreenCamera';
-import { OFFSCREEN_ADD_PARTICLES, OFFSCREEN_ADD_POSTPROCESSING, OFFSCREEN_CREATE, OFFSCREEN_DISPOSE, OFFSCREEN_INIT, OFFSCREEN_RESIZE_EVENT, OFFSCREEN_SET_CLEARCOLOR, OFFSCREEN_SET_SHADOWTYPE, OFFSCREEN_SET_TONE_MAPPING } from "./events";
+import { OFFSCREEN_ADD_PARTICLES, OFFSCREEN_ADD_POSTPROCESSING, OFFSCREEN_AUDIO_LISTENER_UPDATE_EVENT, OFFSCREEN_CREATE, OFFSCREEN_DISPOSE, OFFSCREEN_INIT, OFFSCREEN_PROXYCAMERA_UPDATE_EVENT, OFFSCREEN_RESIZE_EVENT, OFFSCREEN_SET_CLEARCOLOR, OFFSCREEN_SET_SHADOWTYPE, OFFSCREEN_SET_TONE_MAPPING, OFFSCREEN_UPDATE_POSITION } from "./events";
 import Particles from "./Particles";
 import PostProcessing from "./PostProcessing";
+import { evaluateCameraPosition } from "../lib/camera";
 
 const SHADOW_TYPES = {
     basic: BasicShadowMap,
@@ -137,6 +138,18 @@ class OffscreenScene {
         this.scene.add(body);
     }
 
+    updateRotation({ uuid, rotation }) {
+        const body = this.scene.getObjectByProperty('uuid', uuid);
+
+        body.rotation.set(rotation.x, rotation.y, rotation.z);
+    }
+
+    updatePosition({ uuid, position }) {
+        const body = this.scene.getObjectByProperty('uuid', uuid);
+
+        body.rotation.set(position.x, position.y, position.z);
+    }
+
     onResize = ({ height, width, ratio, devicePixelRatio }) => {
         this.camera.getBody().aspect = ratio;
         this.camera.getBody().updateProjectionMatrix();
@@ -145,6 +158,21 @@ class OffscreenScene {
         this.postProcessing.onResize(h, w, ratio, devicePixelRatio);
     }
 
+    onAudioListenerUpdate = () => (
+        postMessage({
+            event: OFFSCREEN_AUDIO_LISTENER_UPDATE_EVENT,
+            ...evaluateCameraPosition(this.camera.body)
+        })
+    );
+
+    onProxyCameraUpdate = () => (
+        postMessage({
+            event: OFFSCREEN_PROXYCAMERA_UPDATE_EVENT,
+            position: this.camera.getBody().position,
+            quaternion: this.camera.getBody().quaternion
+        })
+    );
+
     render = () => {
         const dt = this.clock.getDelta();
         // using postprocessing here
@@ -152,6 +180,9 @@ class OffscreenScene {
         // updating particles
         this.particles.update(dt);
         // sending back message with camera position for Audio
+        this.onAudioListenerUpdate();
+        // updating proxy camera outside
+        this.onProxyCameraUpdate();
         // probably sending back message for Controls
 
         this.animationFrameId = requestAnimationFrame(this.render);
@@ -198,6 +229,12 @@ onmessage = ({ data }) => {
             break;
         case OFFSCREEN_ADD_ELEMENT:
             offscreenScene.add(data);
+            break;
+        case OFFSCREEN_UPDATE_POSITION:
+            offscreenScene.updatePosition(data);
+            break;
+        case OFFSCREEN_UPDATE_ROTATION:
+            offscreenScene.updateRotation(data);
             break;
         case OFFSCREEN_DISPOSE:
             offscreenScene.dispose();

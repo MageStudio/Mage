@@ -1,7 +1,3 @@
-import {
-    Vector3
-} from 'three';
-import Scene from '../core/Scene';
 import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
 import { ASSETS_AUDIO_LOAD_FAIL } from '../lib/messages';
@@ -112,44 +108,17 @@ export class Audio {
         this.sounds.push(sound);
     }
 
+    updateListener(position, orientation, up) {
+        this.context.listener.setPosition(position.x, position.y, position.z);
+        this.context.listener.setOrientation(orientation.x, orientation.y, orientation.z, up.x, up.y, up.z);
+    }
+
     update(dt) {
         return new Promise(resolve => {
             const start = new Date();
             for (var index in this.sounds) {
                 const sound = this.sounds[index];
                 sound.update(dt);
-
-                //now handling listener
-                Scene.getCameraBody().updateMatrixWorld();
-                const p = new Vector3();
-                p.setFromMatrixPosition(Scene.getCameraBody().matrixWorld);
-
-                //setting audio engine context listener position on camera position
-                this.context.listener.setPosition(p.x, p.y, p.z);
-
-                //this is to add up and down vector to our camera
-                // The camera's world matrix is named "matrix".
-                const m = Scene.getCameraBody().matrix;
-
-                const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
-                m.elements[12] = m.elements[13] = m.elements[14] = 0;
-
-                // Multiply the orientation vector by the world matrix of the camera.
-                const vec = new Vector3(0,0,1);
-                vec.applyMatrix4(m);
-                vec.normalize();
-
-                // Multiply the up vector by the world matrix.
-                const up = new Vector3(0,-1,0);
-                up.applyMatrix4(m);
-                up.normalize();
-
-                // Set the orientation and the up-vector for the listener.
-                this.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
-
-                m.elements[12] = mx;
-                m.elements[13] = my;
-                m.elements[14] = mz;
 
                 if ((+new Date() - start) > TIME_FOR_UPDATE) break;
             }

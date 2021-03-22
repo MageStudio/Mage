@@ -1,4 +1,4 @@
-import Scene from '../core/Scene';
+import RenderPipeline from '../render/RenderPipeline';
 import Orbit from './Orbit';
 import Transform from './Transform';
 import FirstPersonControl from './FirstPersonControl';
@@ -69,18 +69,18 @@ export class Controls {
 
     setOrbitControl() {
         this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY]);
-        this.controls[CONTROLS.ORBIT] = new Orbit(Scene.getCameraBody(), Scene.getDOMElement());
+        this.controls[CONTROLS.ORBIT] = new Orbit(RenderPipeline.getCameraBody(), RenderPipeline.getDOMElement());
         this.controls[CONTROLS.ORBIT].init();
 
-        this.controls[CONTROLS.ORBIT].addEventListener(EVENTS.CHANGE, Scene.render);
+        this.controls[CONTROLS.ORBIT].addEventListener(EVENTS.CHANGE, RenderPipeline.render);
 
         return this.controls[CONTROLS.ORBIT];
     }
 
     setTransformControl() {
-        this.controls[CONTROLS.TRANSFORM] = new Transform(Scene.getCameraBody(), Scene.getDOMElement());
+        this.controls[CONTROLS.TRANSFORM] = new Transform(RenderPipeline.getCameraBody(), RenderPipeline.getDOMElement());
         this.controls[CONTROLS.TRANSFORM].init();
-        this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.CHANGE, Scene.render);
+        this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.CHANGE, RenderPipeline.render);
         this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.DRAGGING_CHANGE, (event) => {
             if (this.controls[CONTROLS.ORBIT]) {
                 this.controls[CONTROLS.ORBIT].enabled = !event.value;
@@ -91,14 +91,14 @@ export class Controls {
     }
 
     setFirstPersonControl(options) {
-        this.controls[CONTROLS.FPS] = new FirstPersonControl(Scene.getCamera(), Scene.getDOMElement(), options);
+        this.controls[CONTROLS.FPS] = new FirstPersonControl(RenderPipeline.getCameraBody(), RenderPipeline.getDOMElement(), options);
         this.controls[CONTROLS.FPS].init();
 
         return this.controls[CONTROLS.FPS];
     }
 
     setFlyControl() {
-        this.controls[CONTROLS.FLY] = new FlyControl(Scene.getCameraBody(), Scene.getDOMElement());
+        this.controls[CONTROLS.FLY] = new FlyControl(RenderPipeline.getCameraBody(), RenderPipeline.getDOMElement());
         this.controls[CONTROLS.FLY].init();
 
         return this.controls[CONTROLS.FLY];

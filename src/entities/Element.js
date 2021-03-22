@@ -50,6 +50,9 @@ const COLLIDER_COLOR = 0xff0000;
 
 const DEFAULT_COLLIDER_OFFSET = { x: 0, y: 0, z: 0};
 
+const DEFAULT_ANGULAR_VELOCITY = { x: 0, y: 0, z: 0 };
+const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
+
 export default class Element extends Entity {
 
     constructor(geometry, material, options = {}) {
@@ -500,6 +503,24 @@ export default class Element extends Entity {
                 }
             })
         }
+    }
+
+    getAngularVelocity() {
+        return this.angularVelocity || DEFAULT_ANGULAR_VELOCITY;
+    }
+
+    setAngularVelocity(velocity) {
+        this.angularVelocity = velocity;
+        Physics.updateAngularVelocity(this.uuid(), velocity);
+    }
+
+    getLinearVelocity() {
+        return this.linearVelocity || DEFAULT_LINEAR_VELOCITY;
+    }
+
+    setLinearVelocity(velocity) {
+        this.linearVelocity = velocity;
+        Physics.updateLinearVelocity(this.uuid(), velocity);
     }
 
     handlePhysicsUpdate = (position, quaternion) => {

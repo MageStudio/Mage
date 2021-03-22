@@ -6,7 +6,6 @@ import Scripts from '../scripts/Scripts';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import AmbientSound from '../audio/AmbientSound';
-import Physics from '../physics';
 import {
     TAG_ALREADY_EXISTS,
     TAG_NOT_EXISTING_REMOVAL,
@@ -15,11 +14,10 @@ import {
     SCRIPT_NOT_FOUND,
     ENTITY_TYPE_NOT_ALLOWED
 } from '../lib/messages';
+import RenderPipeline from '../render/RenderPipeline';
 
 const STATE_CHANGE_EVENT = { type: 'stateChange' };
 const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
-const DEFAULT_ANGULAR_VELOCITY = { x: 0, y: 0, z: 0 };
-const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
 
 export const ENTITY_TYPES = {
     MESH: 'MESH',
@@ -53,6 +51,13 @@ export default class Entity extends EventDispatcher {
 
     getBody() {
         return this.body;
+    }
+
+    alignBodyToOffscreen(position, quaternion) {
+        if (this.hasBody()) {
+            this.body.position.set(position.x, position.y, position.z);
+            this.body.quaternion.set(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+        }
     }
 
     addTag = (tagName) => {
@@ -387,6 +392,8 @@ export default class Entity extends EventDispatcher {
             };
 
             this.body.position.set(position.x, position.y, position.z);
+
+            RenderPipeline.dispatchPositionToOffscreen(this.uuid(), position);
         }
     }
 
@@ -405,25 +412,9 @@ export default class Entity extends EventDispatcher {
             };
 
             this.body.rotation.set(rotation.x, rotation.y, rotation.z);
+
+            RenderPipeline.dispatchRotationToOffscreen(this.uuid(), rotation);
         }
-    }
-
-    getAngularVelocity() {
-        return this.angularVelocity || DEFAULT_ANGULAR_VELOCITY;
-    }
-
-    setAngularVelocity(velocity) {
-        this.angularVelocity = velocity;
-        Physics.updateAngularVelocity(this.uuid(), velocity);
-    }
-
-    getLinearVelocity() {
-        return this.linearVelocity || DEFAULT_LINEAR_VELOCITY;
-    }
-
-    setLinearVelocity(velocity) {
-        this.linearVelocity = velocity;
-        Physics.updateLinearVelocity(this.uuid(), velocity);
     }
 
     translate({ x = 0, y = 0, z = 0}) {
