@@ -8,15 +8,20 @@ import {
     OFFSCREEN_ADD_POSTPROCESSING,
     OFFSCREEN_AUDIO_LISTENER_UPDATE_EVENT,
     OFFSCREEN_CREATE,
+    OFFSCREEN_DISPOSE,
     OFFSCREEN_INIT,
     OFFSCREEN_PROXYCAMERA_UPDATE_EVENT,
+    OFFSCREEN_REMOVE_ELEMENT,
     OFFSCREEN_RESIZE_EVENT,
     OFFSCREEN_SET_CLEARCOLOR,
+    OFFSCREEN_SET_CSM,
     OFFSCREEN_SET_FOG,
     OFFSCREEN_SET_SHADOWTYPE,
     OFFSCREEN_SET_TONE_MAPPING,
     OFFSCREEN_UPDATE_POSITION,
-    OFFSCREEN_UPDATE_ROTATION
+    OFFSCREEN_UPDATE_ROTATION,
+    OFFSCREEN_UPDATE_CAMERA_POSITION,
+    OFFSCREEN_UPDATE_CAMERA_ROTATION
  } from "./events";
 import { createOffscreenCanvas } from "../lib/dom";
 import { getWindow } from "../core/window";
@@ -25,16 +30,20 @@ import Universe from "../core/Universe";
 import Audio from "../audio/Audio";
 import { evaluateCameraPosition } from "../lib/camera";
 import { Camera } from "../entities";
+import { Object3D } from "three";
 class RenderPipeline {
 
     constructor() {
         // create worker here
-        this.offscreenScene = new OffscreenScene();
         this.isOffscreenSupported = Features.isFeatureSupported(FEATURES.OFFSCREENCANVAS);
 
-        this.offscreenScene.onmessage = this.onOffscreenSceneMessage;
+        this.flags = {
+            csm: false
+        };
+    }
 
-        this.createProxyCamera();
+    createProxyRoot() {
+        this.proxyRoot = new Object3D();
     }
 
     createProxyCamera() {
@@ -55,16 +64,27 @@ class RenderPipeline {
         return offscreen && this.isOffscreenSupported;
     }
 
+    createWorker() {
+        this.offscreenScene = new OffscreenScene();
+        this.offscreenScene.onmessage = this.onOffscreenSceneMessage;
+    }
+
     create() {
         if (this.isUsingOffscreen()) {
+            this.createWorker();
+            this.createProxyCamera();
+            this.createProxyRoot();
+
             this.canvas = createOffscreenCanvas();
+            this.offscreenCanvas = this.canvas.transferControlToOffscreen();
+
             this.offscreenScene.postMessage({
                 event: OFFSCREEN_CREATE,
                 config: {
                     ...Config.getConfig()
                 },
-                canvas
-            }, [canvas]);
+                canvas: this.offscreenCanvas
+            }, [this.offscreenCanvas]);
         } else {
             Scene.create();
         }
@@ -87,6 +107,14 @@ class RenderPipeline {
         }
     }
 
+    getChildren() {
+        if (this.isUsingOffscreen()) {
+            return this.proxyRoot.children;
+        } else {
+            return Scene.getChildren();
+        }
+    }
+
     getDOMElement = () => {
         if (this.isUsingOffscreen()) {
             return this.canvas;
@@ -95,9 +123,27 @@ class RenderPipeline {
         }
     }
 
-    getCameraBody() {
+    getMaxAnisotropy() {
+        if (this.isUsingOffscreen()) {
+            return 16;
+        } else {
+            return Scene.getRenderer()
+                .capabilities
+                .getMaxAnisotropy()
+        }
+    }
+
+    getCamera() {
         if (this.isUsingOffscreen()) {
             return this.proxyCamera;
+        } else {
+            return Scene.getCamera();
+        }
+    }
+
+    getCameraBody() {
+        if (this.isUsingOffscreen()) {
+            return this.proxyCamera.body;
         } else {
             return Scene.getCameraBody();
         }
@@ -160,6 +206,23 @@ class RenderPipeline {
         }
     }
 
+    isUsingCSM() {
+        return this.flags.csm;
+    }
+
+    setUpCSM(options = {}) {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_SET_CSM,
+                options
+            });
+        } else {
+            Scene.setUpCSM(options);
+        }
+
+        this.flags.csm = true;
+    }
+
     addPostProcessingEffect(effect, options) {
         if (this.isUsingOffscreen()) {
             this.offscreenScene.postMessage({
@@ -186,6 +249,7 @@ class RenderPipeline {
 
     add(body, element, addUniverse = true) {
         if (this.isUsingOffscreen()) {
+            this.proxyRoot.add(body);
             const json = body.toJSON();
 
             this.offscreenScene.postMessage({
@@ -202,31 +266,64 @@ class RenderPipeline {
         }
     }
 
-    dispatchRotationToOffscreen(uuid, rotation) {
-        this.offscreenScene.postMessage({
-            event: OFFSCREEN_UPDATE_ROTATION,
-            uuid,
-            rotation
-        });
+    dispatchRotationToOffscreen(uuid, { x, y, z }) {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_UPDATE_ROTATION,
+                uuid,
+                rotation: { x, y, z }
+            });
+        }
     }
 
-    dispatchPositionToOffscreen(uuid, position) {
-        this.offscreenScene.postMessage({
-            event: OFFSCREEN_UPDATE_POSITION,
-            uuid,
-            position
-        });
+    dispatchPositionToOffscreen(uuid, { x, y, z }) {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_UPDATE_POSITION,
+                uuid,
+                position: { x, y, z }
+            });
+        }
+    };
+
+    dispatchCameraRotationToOffscreen({ x, y, z }) {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_UPDATE_CAMERA_ROTATION,
+                rotation: { x, y, z }
+            });
+        }
+    }
+
+    dispatchCameraPositionToOffscreen({ x, y, z }) {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_UPDATE_CAMERA_POSITION,
+                position: { x, y, z }
+            });
+        }
     };
 
     remove(body) {
         if (this.isUsingOffscreen()) {
-            // not sure how to remove by UUID
-            console.error('[Mage] offscreen.remove not implemented');
+            this.proxyRoot.remove(body);
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_REMOVE_ELEMENT,
+                uuid: body.uuid
+            })
         } else {
             Scene.remove(body);
         }
 
         Universe.remove(body.name);
+    }
+
+    updateChildren() {
+        if (this.isUsingOffscreen()) {
+            console.error('[Mage] RenderPipeline.updateChildren is not implemented for offscreen');
+        } else {
+            Scene.updateChildren();
+        }
     }
 
     onOffscreenSceneMessage =({ data }) => {
@@ -246,8 +343,9 @@ class RenderPipeline {
         Audio.updateListener(position, orientation, up);
     }
 
-    onProxyCameraUpdate = ({ position, quaternion }) => {
+    onProxyCameraUpdate = ({ position, quaternion, dt }) => {
         this.proxyCamera.alignBodyToOffscreen(position, quaternion);
+        this.proxyCamera.update(dt);
     }
 
     onResize = () => {
@@ -266,11 +364,36 @@ class RenderPipeline {
         }
     }
 
-    render(dt) {
-        // only render Scene if we're not using offscreen
-        if (!this.isUsingOffscreen()) {
+    render = (dt) => {
+        if (this.isUsingOffscreen()) {
+            this.getCamera().update(dt);
+        } else {
             Scene.render(dt);
             this.onAudioListenerUpdate(evaluateCameraPosition(Scene.getCameraBody()));
+        }
+
+        Universe.update(dt);
+    }
+
+    dispose() {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_DISPOSE
+            });
+        } else {
+            Scene.dispose();
+        }
+    }
+
+    onPhysicsUpdate = (dt) => {
+        Universe.onPhysicsUpdate(dt);
+
+        if (this.isUsingOffscreen()) {
+            this.getCamera()
+                .onPhysicsUpdate(dt);
+        } else {
+            Scene.getCamera()
+                .onPhysicsUpdate(dt);
         }
     }
 }

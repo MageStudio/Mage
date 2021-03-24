@@ -1,3 +1,5 @@
+import { Vector3 } from 'three';
+
 export const evaluateCameraPosition = camera => {
     //now handling listener
     camera.updateMatrixWorld();

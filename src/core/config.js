@@ -42,7 +42,11 @@ class Config {
                 far : 100
             },
 
-            ui: {}
+            ui: {},
+
+            beta: {
+                offscreen: false
+            }
         }
 
         this.isDefault = true;
@@ -151,6 +155,10 @@ class Config {
 
     camera() {
         return this.config.camera;
+    }
+
+    beta() {
+        return this.config.beta;
     }
 }
 

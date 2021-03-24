@@ -1,4 +1,3 @@
-import { Scene } from "../core/Scene";
 import { CascadeShadowMaps } from "./csm/CascadeShadowMaps";
 
 export const POINTLIGHT = 'pointlight';
@@ -23,13 +22,13 @@ export class Lights {
         this.csm = undefined;
     }
 
-    isUsingCSM() {
-        return !!this.csm;
-    }
+    // isUsingCSM() {
+    //     return !!this.csm;
+    // }
 
-    setUpCSM(options = {}) {
-        this.csm = new CascadeShadowMaps(options);
-    }
+    // setUpCSM(options = {}) {
+    //     this.csm = new CascadeShadowMaps(options);
+    // }
 
     add(light) {
         this.lights.push(light);
@@ -37,9 +36,9 @@ export class Lights {
 
     update(dt) {
         return new Promise(resolve => {
-            if (this.isUsingCSM()) {
-                this.csm.update();
-            }
+            // if (this.isUsingCSM()) {
+            //     this.csm.update();
+            // }
 
             const start = new Date();
             for (let index in this.lights) {

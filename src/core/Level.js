@@ -1,11 +1,9 @@
 import Assets from './Assets';
 import Universe from './Universe';
-import Scene from './Scene';
+import RenderPipeline from '../render/RenderPipeline';
 import Stats from './Stats';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
-import PostProcessing from '../fx/postprocessing/PostProcessing';
-import Particles from '../fx/particles/Particles';
 import Input, { INPUT_EVENTS_LIST } from './input/Input';
 import Lights from '../lights/Lights';
 import Controls from '../controls/Controls';
@@ -35,7 +33,7 @@ export class Level extends EventDispatcher {
         this.debug = true;
         this.inputListenersAreSet = false;
 
-        Scene.create();
+        RenderPipeline.create();
         this.enableInput();
     }
 
@@ -91,7 +89,7 @@ export class Level extends EventDispatcher {
                 LightLoader.load(lights, options);
             }
 
-            Scene.updateChildren();
+            RenderPipeline.updateChildren();
 
             resolve();
         })
@@ -123,10 +121,7 @@ export class Level extends EventDispatcher {
         // render pipeline now has the clock
         const dt = Clock.getDelta();
 
-        // these guys updated inside renderpipeline
-        Particles.update(dt);
-        PostProcessing.render(dt);
-        Scene.update(dt);
+        RenderPipeline.render(dt);
 
         this.onUpdate(dt);
         Assets.update(dt);
@@ -142,9 +137,7 @@ export class Level extends EventDispatcher {
             .init()
             .then(() => {
 
-                // this is happening in the render pipeline
-                Particles.init();
-                PostProcessing.init();
+                RenderPipeline.init();
 
                 Stats.init();
 
@@ -165,10 +158,8 @@ export class Level extends EventDispatcher {
 
         Physics.dispose();
 
-        Particles.dispose();
-        PostProcessing.dispose();
         Universe.bigfreeze();
-        Scene.dispose();
+        RenderPipeline.dispose();
         Controls.dispose();
         this.cancelNextAnimationFrame();
 

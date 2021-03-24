@@ -17,6 +17,36 @@ export default class OffscreenCamera {
         return this.body.position;
     }
 
+    getRotation() {
+        return this.body.rotation;
+    }
+
+    getQuaternion() {
+        return this.body.quaternion;
+    }
+
+    setPosition(where) {
+        const { x, y, z } = this.getPosition();
+        const position = {
+            x: where.x === undefined ? x : where.x,
+            y: where.y === undefined ? y : where.y,
+            z: where.z === undefined ? z : where.z
+        };
+
+        this.body.position.set(position.x, position.y, position.z);
+    }
+
+    setRotation(how) {
+        const { x, y, z } = this.getRotation();
+        const rotation = {
+            x: how.x === undefined ? x : how.x,
+            y: how.y === undefined ? y : how.y,
+            z: how.z === undefined ? z : how.z
+        };
+
+        this.body.rotation.set(rotation.x, rotation.y, rotation.z);
+    }
+
     getDirection() {
         const vector = new Vector3();
         return this.body.getWorldDirection(vector);

@@ -34,7 +34,7 @@ export const createOffscreenCanvas = () => {
     const container = Config.container();
     const canvas = createElementFromSelector('#offscreenCanvas', 'canvas');
 
-    container.appendElement(canvas);
+    container.appendChild(canvas);
 
-    return canvas.transferControlToOffscreen();
+    return canvas;
 }

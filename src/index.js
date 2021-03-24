@@ -40,7 +40,6 @@ import Stats from './core/Stats';
 import Config from './core/config';
 import GameRunner from './runner/GameRunner';
 import Router from './router/Router';
-import Scene from './core/Scene';
 import RenderPipeline from './render/RenderPipeline';
 import Scripts from './scripts/Scripts';
 import Controls from './controls/Controls';
@@ -81,14 +80,12 @@ import Skybox from './fx/scenery/Skybox';
 
 import Shader from './fx/shaders/Shader';
 
-import Particles, { PARTICLES } from './fx/particles/Particles';
+import { PARTICLES } from './render/Particles';
 
 import ParticlEmitter from './fx/particles/ParticleEmitter';
 
 import Images from './images/Images';
 import Models from './models/Models';
-//import Shaders from './fx/shaders/Shaders';
-import PostProcessing from './fx/postprocessing/PostProcessing';
 
 window.THREE = THREE;
 
@@ -101,13 +98,11 @@ export {
     FEATURES,
     Features,
     Config,
-    Scene,
+    RenderPipeline,
     Universe,
     Scripts,
     Router,
     GameRunner,
-
-    RenderPipeline,
 
     store,
     Provider,
@@ -119,8 +114,6 @@ export {
     Models,
     // Shaders,
     Audio,
-    PostProcessing,
-    Particles,
     PARTICLES,
     ParticlEmitter,
     Partykals,

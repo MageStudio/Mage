@@ -11,7 +11,7 @@ import {
     Quaternion
 } from 'three';
 
-import Scene from '../core/Scene';
+import RenderPipeline from '../render/RenderPipeline';
 import { debounce } from '../lib/functions';
 import { PHYSICS_ELEMENT_MISSING } from '../lib/messages';
 
@@ -256,10 +256,12 @@ export default class FirstPersonControl extends EventDispatcher {
         this.headRaycaster.ray.origin.y += this.options.height;
     }
 
-    calculateCollisions = () => ({
-        onObject: this.raycaster.intersectObjects(Scene.getChildren(), true).length > 0,
-        headCollision: this.headRaycaster.intersectObjects(Scene.getChildren(), true).length > 0
-    });
+    calculateCollisions = () =>  {
+        return ({
+            onObject: this.raycaster.intersectObjects(RenderPipeline.getChildren(), true).length > 0,
+            headCollision: this.headRaycaster.intersectObjects(RenderPipeline.getChildren(), true).length > 0
+        });
+    }
 
     updateVelocity = (dt) => {
         this.velocity.x -= this.velocity.x * this.options.slowDownFactor * dt;

@@ -1,5 +1,5 @@
 import Light from './Light';
-import Scene from '../core/Scene';
+import RenderPipeline from '../render/RenderPipeline';
 import { POINTLIGHT } from './Lights';
 
 import {
@@ -93,8 +93,8 @@ export default class PointLight extends Light {
         this.helper = new PointLightHelper(this.light, 2, GREEN);
         this.shadowHelper = new CameraHelper(this.light.shadow.camera);
 
-        Scene.add(this.helper, null, false);
-        Scene.add(this.shadowHelper, null, false);
+        RenderPipeline.add(this.helper, null, false);
+        RenderPipeline.add(this.shadowHelper, null, false);
 
         this.addHolder();
     }

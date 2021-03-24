@@ -24,7 +24,6 @@ import {
 } from './messages';
 import * as physicsUtils from './utils';
 import { getHostURL } from '../lib/url';
-import Scene from '../core/Scene';
 import {
     PHYSICS_ELEMENT_ALREADY_STORED,
     PHYSICS_ELEMENT_CANT_BE_REMOVED
@@ -33,6 +32,7 @@ import {
 import {
     PHYSICS_COLLIDER_TYPES
 } from './constants';
+import RenderPipeline from '../render/RenderPipeline';
 
 const { getBoxDescriptionForElement, iterateGeometries, DEFAULT_DESCRIPTION } = physicsUtils;
 
@@ -139,7 +139,7 @@ export class Physics extends EventDispatcher {
     };
 
     handlePhysicsUpdate = ({ dt }) => {
-        Scene.onPhysicsUpdate(dt);
+        RenderPipeline.onPhysicsUpdate(dt);
     };
 
     handleTerminateEvent = () => {

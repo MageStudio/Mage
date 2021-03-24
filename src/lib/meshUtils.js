@@ -7,7 +7,7 @@ import {
 } from 'three';
 
 import Config from '../core/config';
-import Lights from '../lights/Lights';
+import RenderPipeline from '../render/RenderPipeline';
 import { MATERIALS } from './constants';
 
 export const setUpLightsAndShadows = (mesh) => {
@@ -20,8 +20,9 @@ export const setUpLightsAndShadows = (mesh) => {
     mesh.receiveShadow = Boolean(shadows);
 
     if (hasMaterial(mesh)) {
-        if (Lights.isUsingCSM()) {
-            Lights.csm.setupMaterial(mesh.material);
+        if (RenderPipeline.isUsingCSM()) {
+            console.error('Mage csm.setupMaterial not implemented');
+            // RenderPipeline.csm.setupMaterial(mesh.material);
         }
 
         if (mesh.material.map) {

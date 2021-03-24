@@ -29,7 +29,7 @@ import {
 } from 'three';
 
 import Images from '../../images/Images';
-import Scene from '../../core/Scene';
+import RenderPipeline from '../../render/RenderPipeline';
 
 const mirrorShader = {
     uniforms: UniformsUtils.merge([
@@ -359,12 +359,12 @@ export default class Water {
 				sunColor: 0xffffff,
 				waterColor: 0x001e0f,
 				distortionScale:  options.distortionScale || 50.0,
-				fog: Scene.scene.fog !== undefined
+				fog: !!options.fog
 			}
 		);
 		this.water.rotation.x = - window.Math.PI / 2;
 
-        Scene.add(this.water, this);
+        RenderPipeline.add(this.water, this);
     }
 
     render = () => {

@@ -1,5 +1,6 @@
 import { Entity } from './index';
 import { PerspectiveCamera, Vector3 } from 'three';
+import RenderPipeline from '../render/RenderPipeline';
 
 export default class Camera extends Entity {
 
@@ -16,8 +17,16 @@ export default class Camera extends Entity {
         );
     }
 
-    getPosition() {
-        return this.body.position;
+    setPosition(position) {
+        super.setPosition(position);
+
+        RenderPipeline.dispatchCameraPositionToOffscreen(position);
+    }
+
+    setRotation(rotation) {
+        super.setRotation(rotation);
+
+        RenderPipeline.dispatchCameraRotationToOffscreen(rotation);
     }
 
     getDirection() {

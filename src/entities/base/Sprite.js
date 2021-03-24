@@ -1,5 +1,5 @@
 import Images from "../../images/Images";
-import Scene from '../../core/Scene';
+import RenderPipeline from '../../render/RenderPipeline';
 import {
     SpriteMaterial,
     Sprite as THREESprite
@@ -8,10 +8,7 @@ import { clamp } from '../../lib/math';
 import { Element, ENTITY_TYPES } from '../index';
 
 const validateAnisotropy = (anisotropy) => {
-    const max = Scene
-        .getRenderer()
-        .capabilities
-        .getMaxAnisotropy();
+    const max = RenderPipeline.getMaxAnisotropy();
 
     return anisotropy > max ? max : anisotropy;
 };

@@ -1,12 +1,11 @@
 import {
     EventDispatcher,
     Raycaster,
-    Vector2,
-    Mesh
+    Vector2
 } from 'three';
 
 import Config from '../config';
-import Scene from '../Scene';
+import RenderPipeline from '../../render/RenderPipeline';
 import Universe from '../Universe';
 
 export const MOUSE_DOWN = 'mouseDown';
@@ -38,7 +37,7 @@ export default class Mouse extends EventDispatcher {
     createRayCaster() {
         if (!this.hasRaycaster()) {
             this.raycaster = new Raycaster();
-            this.raycaster.setFromCamera(this.mouse, Scene.getCameraBody());
+            this.raycaster.setFromCamera(this.mouse, RenderPipeline.getCameraBody());
         }   
     }
 
@@ -47,8 +46,8 @@ export default class Mouse extends EventDispatcher {
 
         this.createRayCaster();
 
-        Scene.getDOMElement().addEventListener('mousemove', this.onMouseMove);
-        Scene.getDOMElement().addEventListener('mousedown', this.onMouseDown);
+        RenderPipeline.getDOMElement().addEventListener('mousemove', this.onMouseMove);
+        RenderPipeline.getDOMElement().addEventListener('mousedown', this.onMouseDown);
         document.addEventListener('mouseup', this.onMouseUp);
     }
 
@@ -61,8 +60,8 @@ export default class Mouse extends EventDispatcher {
         this.mouseMoveIntersectionEnabled = false;
 
         document.removeEventListener('mouseup', this.onMouseUp);
-        Scene.getDOMElement().removeEventListener('mousemove', this.onMouseMove);
-        Scene.getDOMElement().removeEventListener('mousedown', this.onMouseDown);
+        RenderPipeline.getDOMElement().removeEventListener('mousemove', this.onMouseMove);
+        RenderPipeline.getDOMElement().removeEventListener('mousedown', this.onMouseDown);
     }
 
     getRelativeMousePosition(event) {
@@ -121,10 +120,10 @@ export default class Mouse extends EventDispatcher {
 
     getIntersections = () => {
         if (this.hasRaycaster()) {
-            this.raycaster.setFromCamera(this.mouse, Scene.getCameraBody());
+            this.raycaster.setFromCamera(this.mouse, RenderPipeline.getCameraBody());
 
             return this.raycaster
-                .intersectObjects(Scene.getChildren())
+                .intersectObjects(RenderPipeline.getChildren())
                 .filter(this.isIntersectionAMeshOrSprite)
                 .map(this.getMeshFromUniverse)
                 .filter(this.elementExists);

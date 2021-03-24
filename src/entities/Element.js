@@ -18,7 +18,7 @@ import {
 import Images from '../images/Images';
 import AnimationHandler from './animations/AnimationHandler';
 import Config from '../core/config';
-import Scene from '../core/Scene';
+import RenderPipeline from '../render/RenderPipeline';
 import { COLLISION_EVENT, ORIGIN } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics';
@@ -148,7 +148,7 @@ export default class Element extends Entity {
         } = this.options;
 
         if (this.hasBody()) {
-            Scene.add(this.getBody(), this, addUniverse);
+            RenderPipeline.add(this.getBody(), this, addUniverse);
         } else {
             console.warn(ELEMENT_NOT_SET);
         }
@@ -169,7 +169,7 @@ export default class Element extends Entity {
     setArmature(armature) {
         this.armature = armature;
 
-        Scene.add(this.armature, null, false);
+        RenderPipeline.add(this.armature, null, false);
     }
 
     addAnimationHandler(animations) {
@@ -323,7 +323,7 @@ export default class Element extends Entity {
         }
         
         if (this.getEntityType() === ENTITY_TYPES.SPRITE) {
-            ray.setFromCamera(position, Scene.getCameraBody());
+            ray.setFromCamera(position, RenderPipeline.getCameraBody());
         }
 
         return {
@@ -358,7 +358,7 @@ export default class Element extends Entity {
         };
 
         const collisions = ray
-            .intersectObjects(Scene.scene.children)
+            .intersectObjects(RenderPipeline.getChildren())
             .filter(collision => collision.object.uuid !== this.uuid())
             .map(mapCollision)
             .filter(({ body }) => !body.hasTag(COLLIDER_TAG));
@@ -553,7 +553,7 @@ export default class Element extends Entity {
         super.dispose();
 
         if (this.hasBody()) {
-            Scene.remove(this.getBody());
+            RenderPipeline.remove(this.getBody());
             this.disposeBody();
         }
 

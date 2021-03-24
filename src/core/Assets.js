@@ -2,7 +2,6 @@ import Audio from '../audio/Audio';
 import Video from '../video/Video';
 import Images from '../images/Images';
 import Models from '../models/Models';
-import Particles from '../fx/particles/Particles';
 import Lights from '../lights/Lights';
 import Scripts from '../scripts/Scripts';
 import { ASSETS_TYPES, ROOT } from '../lib/constants';

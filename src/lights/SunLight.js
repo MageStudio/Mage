@@ -8,7 +8,7 @@ import {
     DirectionalLightHelper,
     CameraHelper
 } from 'three';
-import Scene from '../core/Scene';
+import RenderPipeline from '../render/RenderPipeline';
 import { SUNLIGHT } from './Lights';
 
 const DEFAULT_NEAR = 0.1;
@@ -112,7 +112,7 @@ export default class SunLight extends Light {
     setTarget(target) {
         if (target.position) {
             this.light.target = target;
-            Scene.add(this.light.target, null, false);
+            RenderPipeline.add(this.light.target, null, false);
         }
     }
 
@@ -124,8 +124,8 @@ export default class SunLight extends Light {
         this.helper = new DirectionalLightHelper(this.light, 5);
         this.shadowHelper = new CameraHelper(this.light.shadow.camera);
 
-        Scene.add(this.helper, null, false);
-        Scene.add(this.shadowHelper, null, false);
+        RenderPipeline.add(this.helper, null, false);
+        RenderPipeline.add(this.shadowHelper, null, false);
 
         this.addHolder();
     }

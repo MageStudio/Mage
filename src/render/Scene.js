@@ -1,4 +1,3 @@
-import Universe from '../core/universe';
 import { Camera } from '../entities';
 import Config from '../core/config';
 import {
@@ -15,6 +14,7 @@ import {
 import { generateUUID } from '../lib/uuid';
 import PostProcessing from './PostProcessing';
 import Particles from './Particles';
+import CascadeShadowMaps from '../lights/csm/CascadeShadowMaps';
 
 const SHADOW_TYPES = {
     basic: BasicShadowMap,
@@ -34,6 +34,8 @@ export class Scene {
 
         this.postProcessing = new PostProcessing();
         this.particles = new Particles();
+
+        this.csm = null;
     }
 
     createScene() {
@@ -46,6 +48,10 @@ export class Scene {
         if (fog.enabled) {
             this.fog(fog.color, fog.density);
         }
+    }
+
+    isUsingCSM() {
+        return !!this.csm;
     }
 
     getScene() {
@@ -69,7 +75,7 @@ export class Scene {
     }
 
     addParticleEmitter(emitterId, options) {
-        this.particles.addParticleEmitter(emitterId, options);
+        this.particles.addParticleEmitter(emitterId, { ...options, container: this.scene });
     }
 
     add(body) {
@@ -96,7 +102,15 @@ export class Scene {
 
     setBackground = background => {
         this.scene.background = background;
-    } 
+    }
+
+    setUpCSM(options = {}) {
+        this.csm = new CascadeShadowMaps({
+            ...options,
+            camera: this.getCameraBody(),
+            parent: this.scene
+        });
+    }
 
     create() {
         this.createScene();
@@ -114,6 +128,9 @@ export class Scene {
         this.scene.dispose();
         // destroy renderer
         this.renderer.dispose();
+
+        this.postProcessing.dispose();
+        this.particles.dispose();
     }
 
     createCamera() {
@@ -218,6 +235,14 @@ export class Scene {
     render = (dt) => {
         this.postProcessing.render(dt);
         this.particles.update(dt);
+
+        this.getCamera()
+            .update(dt);
+
+        if (this.isUsingCSM()) {
+            this.csm.update();
+        }
+
     }
 
     setFog(color, density) {
@@ -229,19 +254,6 @@ export class Scene {
                 density
             }
         });
-    }
-
-    update(dt) {
-        Universe.update(dt);
-
-        this.getCamera()
-            .update(dt);
-    }
-
-    onPhysicsUpdate(dt) {
-        Universe.onPhysicsUpdate(dt);
-        this.getCamera()
-            .onPhysicsUpdate(dt);
     }
 }
 

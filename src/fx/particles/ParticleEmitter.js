@@ -2,7 +2,6 @@ import { EventDispatcher } from "three";
 import { ParticlesSystem } from 'mage-engine.particles';
 
 import { generateUUID } from '../../lib/uuid';
-import Scene from '../../core/Scene';
 
 export default class ParticleEmitter extends EventDispatcher {
 
@@ -35,7 +34,7 @@ export default class ParticleEmitter extends EventDispatcher {
 
     setSystem() {
         const {
-            container = Scene.getScene(),
+            container,
             autostart = false,
             particles = {},
             system = {}

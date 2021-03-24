@@ -1,7 +1,6 @@
 import { Color, Vector3 } from 'three';
 import { Randomizers, Emitter, ParticlesSystem } from 'mage-engine.particles';
 
-import Scene from '../../core/Scene';
 import ParticleEmitter from './ParticleEmitter';
 
 const getSparksOptions = options => {
@@ -71,7 +70,7 @@ export default class Fire extends ParticleEmitter {
 
     constructor(options = {}) {
         const {
-            container = Scene.getScene(),
+            container,
             autostart = false,
             sparks = { particles: {}, system: {} },
             fire = { particles: {}, system: {} }

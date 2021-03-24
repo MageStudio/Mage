@@ -2,7 +2,7 @@ import { Entity, ENTITY_TYPES } from '../entities';
 
 import Lights from './Lights';
 import Models from '../models/Models';
-import Scene from '../core/Scene';
+import RenderPipeline from '../render/RenderPipeline';
 import { MATERIALS } from '../lib/constants';
 
 const LAMP_COLOR = 0Xf1c40f;
@@ -31,7 +31,7 @@ export default class Light extends Entity {
 
     addToScene() {
         if (this.hasLight()) {
-            Scene.add(this.light, this);
+            RenderPipeline.add(this.light, this);
         }
     }
 

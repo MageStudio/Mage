@@ -1,5 +1,5 @@
 import Light from './Light';
-import Scene from '../core/Scene';
+import RenderPipeline from '../render/RenderPipeline';
 import {
     HemisphereLight as THREEHemisphereLight,
     HemisphereLightHelper
@@ -53,7 +53,7 @@ export default class HemisphereLight extends Light {
     addHelper() {
         this.helper = new HemisphereLightHelper(this.light, 2, GREEN);
 
-        Scene.add(this.helper, null, false);
+        RenderPipeline.add(this.helper, null, false);
     }
 
     toJSON() {

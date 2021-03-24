@@ -3,13 +3,14 @@ import {
     store,
     Level,
     Box,
-    Scene,
+    RenderPipeline,
     Cube,
     Controls,
     Models,
     AmbientLight,
     PHYSICS_EVENTS,
-    constants
+    constants,
+    Stats
 } from '../../dist/mage.js';
 
 export default class Intro extends Level {
@@ -44,10 +45,11 @@ export default class Intro extends Level {
     }
 
     onCreate() {
+        Stats.fps.subscribe(console.log);
         this.addAmbientLight();
         Controls.setOrbitControl();
 
-        Scene
+        RenderPipeline
             .getCamera()
             .setPosition({ y: 15, z: 45 });
 
@@ -56,43 +58,43 @@ export default class Intro extends Level {
 
         this.createWall();
         
-        const car = this.createCar('first');
-        car.setPosition({ y: 14 });
+        // const car = this.createCar('first');
+        // car.setPosition({ y: 14 });
 
-        const wheels = [
-            this.createWheel(1),
-            this.createWheel(2),
-            this.createWheel(3),
-            this.createWheel(4),
-        ];
+        // const wheels = [
+        //     this.createWheel(1),
+        //     this.createWheel(2),
+        //     this.createWheel(3),
+        //     this.createWheel(4),
+        // ];
 
-        car.addEventListener(PHYSICS_EVENTS.SPEED_CHANGE_EVENT, this.handleSpeedChange);
+        // car.addEventListener(PHYSICS_EVENTS.SPEED_CHANGE_EVENT, this.handleSpeedChange);
 
-        car.addScript('BaseCar', {
-            wheels,
-            mass: 1000,
-            debug: true,
-            wheelsOptions: {
-                back: {
-                    axisPosition: -1.25,
-                    radius: .35,
-                    halfTrack: 1,
-                    axisHeight: 0
-                },
-                front: {
-                    axisPosition: 1.2,
-                    radius: .35,
-                    halfTrack: 1,
-                    axisHeight: 0
-                }
-            },
-            suspensions: {
-                stiffness: 20.0,
-                damping: 2.3,
-                compression: 4.4,
-                restLength: 0.6
-            }
-        });
+        // car.addScript('BaseCar', {
+        //     wheels,
+        //     mass: 1000,
+        //     debug: true,
+        //     wheelsOptions: {
+        //         back: {
+        //             axisPosition: -1.25,
+        //             radius: .35,
+        //             halfTrack: 1,
+        //             axisHeight: 0
+        //         },
+        //         front: {
+        //             axisPosition: 1.2,
+        //             radius: .35,
+        //             halfTrack: 1,
+        //             axisHeight: 0
+        //         }
+        //     },
+        //     suspensions: {
+        //         stiffness: 20.0,
+        //         damping: 2.3,
+        //         compression: 4.4,
+        //         restLength: 0.6
+        //     }
+        // });
 
         this.createCube(2, 0xff00ff);
     }
@@ -133,6 +135,8 @@ const config = {
         near: 0.1,
         far: 3000000,
     },
+
+    beta: { offscreen: true }
 };
 
 window.addEventListener('load', () => {

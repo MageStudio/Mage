@@ -13,7 +13,7 @@ import {
     OrthographicCamera
 } from 'three';
 
-import Scene from '../core/Scene';
+import RenderPipeline from '../render/RenderPipeline';
 
 import Gizmo from './TransformGizmo';
 import Plane from './TransformPlane';
@@ -124,7 +124,7 @@ export default class TransformControls extends Object3D {
 
 
         this.isTransformControls = true;
-        Scene.add(this, this, false);
+        RenderPipeline.add(this, this, false);
     }
 
     render() {}

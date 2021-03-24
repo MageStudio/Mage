@@ -6,13 +6,36 @@ import {
     ObjectLoader,
     PCFShadowMap,
     PCFSoftShadowMap,
-    Scene
+    Scene,
+    WebGLRenderer
 } from "three";
 import OffscreenCamera from './OffscreenCamera';
-import { OFFSCREEN_ADD_PARTICLES, OFFSCREEN_ADD_POSTPROCESSING, OFFSCREEN_AUDIO_LISTENER_UPDATE_EVENT, OFFSCREEN_CREATE, OFFSCREEN_DISPOSE, OFFSCREEN_INIT, OFFSCREEN_PROXYCAMERA_UPDATE_EVENT, OFFSCREEN_RESIZE_EVENT, OFFSCREEN_SET_CLEARCOLOR, OFFSCREEN_SET_SHADOWTYPE, OFFSCREEN_SET_TONE_MAPPING, OFFSCREEN_UPDATE_POSITION } from "./events";
+import {
+    OFFSCREEN_ADD_PARTICLES,
+    OFFSCREEN_ADD_POSTPROCESSING,
+    OFFSCREEN_ADD_ELEMENT,
+    OFFSCREEN_REMOVE_ELEMENT,
+    OFFSCREEN_AUDIO_LISTENER_UPDATE_EVENT,
+    OFFSCREEN_CREATE,
+    OFFSCREEN_DISPOSE,
+    OFFSCREEN_INIT,
+    OFFSCREEN_PROXYCAMERA_UPDATE_EVENT,
+    OFFSCREEN_RESIZE_EVENT,
+    OFFSCREEN_SET_CLEARCOLOR,
+    OFFSCREEN_SET_CSM,
+    OFFSCREEN_SET_SHADOWTYPE,
+    OFFSCREEN_SET_TONE_MAPPING,
+    OFFSCREEN_UPDATE_POSITION,
+    OFFSCREEN_UPDATE_ROTATION,
+    OFFSCREEN_UPDATE_CAMERA_POSITION,
+    OFFSCREEN_UPDATE_CAMERA_ROTATION,
+    OFFSCREEN_SET_FOG
+} from "./events";
 import Particles from "./Particles";
 import PostProcessing from "./PostProcessing";
 import { evaluateCameraPosition } from "../lib/camera";
+import CascadeShadowMaps from '../lights/csm/CascadeShadowMaps';
+
 
 const SHADOW_TYPES = {
     basic: BasicShadowMap,
@@ -32,6 +55,9 @@ class OffscreenScene {
         this.objectLoader = new ObjectLoader();
         this.postProcessing = new PostProcessing();
         this.particles = new Particles();
+
+        this.csm = null;
+        this.elements = {};
     }
 
     create({ config, canvas }) {
@@ -46,13 +72,18 @@ class OffscreenScene {
     init() {
         this.postProcessing.init(this.renderer, this.scene, this.camera.getBody());
         this.particles.init(this.scene);
+
+        this.render();
+    }
+
+    isUsingCSM() {
+        return !!this.csm;
     }
 
     createScene() {
         const { fog } = this.config;
 
         this.scene = new Scene();
-
 
         if (fog.enabled) {
             this.fog(fog.color, fog.density);
@@ -72,12 +103,21 @@ class OffscreenScene {
         });
     }
 
+    getCamera() {
+        return this.camera;
+    }
+
+    getCameraBody() {
+        return this.camera.body;
+    }
+
     createRenderer() {
         const { lights, screen } = this.config;
         const { shadows } = lights;
         const { alpha, w, h, devicePixelRatio } = screen;
 
-        this.renderer = new WebGLRenderer({ alpha, antialias: true });
+        this.canvas.style = { width: 0, height: 0 }; // this is likely needed by three
+        this.renderer = new WebGLRenderer({ alpha, antialias: true, canvas: this.canvas });
 
         if (shadows) {
             this.setRendererShadowMap();
@@ -87,7 +127,7 @@ class OffscreenScene {
         this.renderer.setSize(w, h);
     }
 
-    setFog({ color, density }) {
+    setFog = ({ color, density }) => {
         this.scene.fog = new FogExp2(color, density);
     }
 
@@ -97,14 +137,14 @@ class OffscreenScene {
         this.renderer.sortObjects = false;
     }
 
-    setClearColor({ color }) {
+    setClearColor = ({ color }) => {
         if (this.renderer) {
             this.clearColor = color;
             this.renderer.setClearColor(color);
         }
     }
 
-    setShadowType({ shadowType = DEFAULT_SHADOWTYPE }) {
+    setShadowType = ({ shadowType = DEFAULT_SHADOWTYPE }) => {
         if (Object.keys(SHADOW_TYPES).includes(shadowType)) {
             this.shadowMap = SHADOW_TYPES[shadowType];
             this.setRendererShadowMap();
@@ -115,40 +155,67 @@ class OffscreenScene {
         this.scene.background = background;
     }
 
-    setRendererToneMapping({ toneMapping = LinearToneMapping, toneMappingExposure = 1 }) {
+    setRendererToneMapping = ({ toneMapping = LinearToneMapping, toneMappingExposure = 1 }) => {
         this.renderer.toneMapping = toneMapping;
         this.renderer.toneMappingExposure = toneMappingExposure;
     }
     
-    setFog({ color, density }) {
+    setFog = ({ color, density }) => {
         this.scene.fog = new FogExp2(color, density);
     }
 
-    addPostProcessingEffect({ effect, options }) {
+    setUpCSM = ({ options = {}}) => {
+        this.csm = new CascadeShadowMaps({
+            ...options,
+            camera: this.getCameraBody(),
+            parent: this.scene
+        });
+    }
+
+    addPostProcessingEffect = ({ effect, options }) => {
         this.postProcessing.add(effect, options);
     }
 
-    addParticleEmitter({ emitterId, options }) {
-        this.particles.addParticleEmitter(emitterId, options);
+    addParticleEmitter = ({ emitterId, options }) => {
+        this.particles.addParticleEmitter(emitterId, { ...options, container: this.scene });
     }
 
-    add({ json }) {
+    add = ({ json }) => {
         const body = this.objectLoader.parse(json);
+
+        this.elements[body.uuid] = body;
 
         this.scene.add(body);
     }
 
-    updateRotation({ uuid, rotation }) {
-        const body = this.scene.getObjectByProperty('uuid', uuid);
-
-        body.rotation.set(rotation.x, rotation.y, rotation.z);
+    remove = ({ uuid }) => {
+        const body = this.elements[uuid];
+        if (body) {
+            this.scene.remove(body);
+        }
     }
 
-    updatePosition({ uuid, position }) {
-        const body = this.scene.getObjectByProperty('uuid', uuid);
-
-        body.rotation.set(position.x, position.y, position.z);
+    updateRotation = ({ uuid, rotation }) => {
+        const body = this.elements[uuid];
+        if (body) {
+            body.rotation.set(rotation.x, rotation.y, rotation.z);
+        }
     }
+
+    updateCameraRotation = ({ rotation }) => {
+        this.camera.setRotation(rotation);
+    };
+
+    updatePosition = ({ uuid, position }) => {
+        const body = this.elements[uuid];
+        if (body) {
+            body.position.set(position.x, position.y, position.z);
+        }
+    }
+
+    updateCameraPosition = ({ position }) => {
+        this.camera.setPosition(position);
+    };
 
     onResize = ({ height, width, ratio, devicePixelRatio }) => {
         this.camera.getBody().aspect = ratio;
@@ -165,13 +232,27 @@ class OffscreenScene {
         })
     );
 
-    onProxyCameraUpdate = () => (
-        postMessage({
-            event: OFFSCREEN_PROXYCAMERA_UPDATE_EVENT,
-            position: this.camera.getBody().position,
-            quaternion: this.camera.getBody().quaternion
-        })
-    );
+    onProxyCameraUpdate = (dt) => {
+        const position = this.camera.getPosition().clone();
+        const quaternion = this.camera.getQuaternion().clone();
+        return (
+            postMessage({
+                event: OFFSCREEN_PROXYCAMERA_UPDATE_EVENT,
+                position: {
+                    x: position.x,
+                    y: position.y,
+                    z: position.z
+                },
+                quaternion: {
+                    x: quaternion.x,
+                    y: quaternion.y,
+                    z: quaternion.z,
+                    w: quaternion.w,
+                },
+                dt
+            })
+        );
+    }
 
     render = () => {
         const dt = this.clock.getDelta();
@@ -182,10 +263,14 @@ class OffscreenScene {
         // sending back message with camera position for Audio
         this.onAudioListenerUpdate();
         // updating proxy camera outside
-        this.onProxyCameraUpdate();
+        this.onProxyCameraUpdate(dt);
         // probably sending back message for Controls
 
-        this.animationFrameId = requestAnimationFrame(this.render);
+        if (this.isUsingCSM()) {
+            this.csm.update();
+        }
+
+        this.animationFrameId = requestAnimationFrame(this.render.bind(this));
     }
 
     dispose = () => {
@@ -193,6 +278,9 @@ class OffscreenScene {
 
         this.scene.dispose();
         this.renderer.dispose();
+
+        this.postProcessing.dispose();
+        this.particles.dispose();
     }
 
 };
@@ -209,6 +297,9 @@ onmessage = ({ data }) => {
         case OFFSCREEN_INIT:
             offscreenScene.init(data);
             break;
+        case OFFSCREEN_DISPOSE:
+            offscreenScene.dispose();
+            break;
         case OFFSCREEN_SET_CLEARCOLOR:
             offscreenScene.setClearColor(data);
             break;
@@ -221,6 +312,9 @@ onmessage = ({ data }) => {
         case OFFSCREEN_SET_FOG:
             offscreenScene.setFog(data);
             break;
+        case OFFSCREEN_SET_CSM:
+            offscreenScene.setUpCSM(data);
+            break;
         case OFFSCREEN_ADD_POSTPROCESSING:
             offscreenScene.addPostProcessingEffect(data);
             break;
@@ -230,14 +324,20 @@ onmessage = ({ data }) => {
         case OFFSCREEN_ADD_ELEMENT:
             offscreenScene.add(data);
             break;
+        case OFFSCREEN_REMOVE_ELEMENT:
+            offscreenScene.remove(data);
+            break;
         case OFFSCREEN_UPDATE_POSITION:
             offscreenScene.updatePosition(data);
             break;
         case OFFSCREEN_UPDATE_ROTATION:
             offscreenScene.updateRotation(data);
             break;
-        case OFFSCREEN_DISPOSE:
-            offscreenScene.dispose();
+        case OFFSCREEN_UPDATE_CAMERA_POSITION:
+            offscreenScene.updateCameraPosition(data);
+            break;
+        case OFFSCREEN_UPDATE_CAMERA_ROTATION:
+            offscreenScene.updateCameraRotation(data);
             break;
         case OFFSCREEN_RESIZE_EVENT:
             offscreenScene.onResize(data);

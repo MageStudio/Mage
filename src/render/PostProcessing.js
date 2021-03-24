@@ -54,6 +54,10 @@ export class PostProcessing {
     isEnabled = () => !!this.effects.length || !!this.customs.length;
 
     init = (renderer, scene, camera) => {
+        this.renderer = renderer;
+        this.scene = scene;
+        this.camera = camera;
+
         this.composer = new EffectComposer(renderer);
         this.composer.addPass(new RenderPass(scene, camera));
     }
@@ -72,12 +76,12 @@ export class PostProcessing {
         return this.map[id] || null;
     }
 
-    static createEffect({ effect, isClass }, options) {
+    createEffect({ effect, isClass }, options) {
         let pass;
         if (effect && !isClass) {
-            pass = effect(options);
+            pass = effect(options, this.renderer, this.scene, this.camera);
         } else if (effect && isClass) {
-            pass = new effect(options);
+            pass = new effect(options, this.renderer, this.scene, this.camera);
         }
 
         return pass;
@@ -98,13 +102,13 @@ export class PostProcessing {
         if (typeof desiredEffect === 'string') {
             const effectDescription = this.get(desiredEffect);
             if (effectDescription) {
-                effect = PostProcessing.createEffect(effectDescription, options);
+                effect = this.createEffect(effectDescription, options);
             } else {
                 console.error(EFFECT_UNAVAILABLE);
                 return;
             }
         } else {
-            effect = PostProcessing.createEffect(desiredEffect, options);
+            effect = this.createEffect(desiredEffect, options);
         }
 
         if (effect) {

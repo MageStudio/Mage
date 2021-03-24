@@ -8,7 +8,7 @@ import {
     MeshBasicMaterial,
     SphereGeometry
 } from 'three';
-import Scene from '../core/Scene';
+import RenderPipeline from '../render/RenderPipeline';
 import { SPOTLIGHT } from './Lights';
 
 const DEFAULT_NEAR = 0.1;
@@ -124,8 +124,8 @@ export default class SpotLight extends Light {
         this.helper = new SpotLightHelper(this.light, GREEN);
         this.shadowHelper = new CameraHelper(this.light.shadow.camera);
 
-        Scene.add(this.helper, null, false);
-        Scene.add(this.shadowHelper, null, false);
+        RenderPipeline.add(this.helper, null, false);
+        RenderPipeline.add(this.shadowHelper, null, false);
 
         this.addHolder();
     }

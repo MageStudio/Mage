@@ -7,7 +7,6 @@ import {
     Matrix4,
     Box3
 } from 'three';
-import Scene from '../../core/Scene.js';
 import Frustum from './Frustum.js';
 import Shader from './Shader.js';
 
@@ -28,11 +27,13 @@ const DEFAULT_NEAR = 1;
 const DEFAULT_FAR = 2000;
 const DEFAULT_MARGIN = 200;
 
-export class CascadeShadowMaps {
+
+
+export default class CascadeShadowMaps {
 
     constructor({
-        camera = Scene.getCameraBody(),
-        parent = Scene.getScene(),
+        camera,
+        parent,
         cascades = DEFAULT_CASCADE,
         maxFar = DEFAULT_MAX_FAR,
         mode = DEFAULT_MODE,
