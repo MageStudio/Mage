@@ -21,7 +21,8 @@ import {
     OFFSCREEN_UPDATE_POSITION,
     OFFSCREEN_UPDATE_ROTATION,
     OFFSCREEN_UPDATE_CAMERA_POSITION,
-    OFFSCREEN_UPDATE_CAMERA_ROTATION
+    OFFSCREEN_UPDATE_CAMERA_ROTATION,
+    OFFSCREEN_FORCE_RENDER
  } from "./events";
 import { createOffscreenCanvas } from "../lib/dom";
 import { getWindow } from "../core/window";
@@ -83,6 +84,8 @@ class RenderPipeline {
                 config: {
                     ...Config.getConfig()
                 },
+                height: this.canvas.clientHeight,
+                width: this.canvas.clientWidth,
                 canvas: this.offscreenCanvas
             }, [this.offscreenCanvas]);
         } else {
@@ -112,6 +115,14 @@ class RenderPipeline {
             return this.proxyRoot.children;
         } else {
             return Scene.getChildren();
+        }
+    }
+
+    getScene() {
+        if (this.isUsingOffscreen()) {
+            return this.proxyRoot;
+        } else {
+            return Scene.getScene();
         }
     }
 
@@ -373,6 +384,16 @@ class RenderPipeline {
         }
 
         Universe.update(dt);
+    }
+
+    forceRender = (dt) => {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_FORCE_RENDER
+            });
+        } else {
+            Scene.render(dt);
+        }
     }
 
     dispose() {

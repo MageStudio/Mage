@@ -232,7 +232,7 @@ export class Scene {
         this.postProcessing.onResize(h, w, ratio, devicePixelRatio);
     }
 
-    render = (dt) => {
+    render = (dt = 0.1) => {
         this.postProcessing.render(dt);
         this.particles.update(dt);
 

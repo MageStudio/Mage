@@ -29,7 +29,8 @@ import {
     OFFSCREEN_UPDATE_ROTATION,
     OFFSCREEN_UPDATE_CAMERA_POSITION,
     OFFSCREEN_UPDATE_CAMERA_ROTATION,
-    OFFSCREEN_SET_FOG
+    OFFSCREEN_SET_FOG,
+    OFFSCREEN_FORCE_RENDER
 } from "./events";
 import Particles from "./Particles";
 import PostProcessing from "./PostProcessing";
@@ -60,13 +61,13 @@ class OffscreenScene {
         this.elements = {};
     }
 
-    create({ config, canvas }) {
+    create({ config, canvas, height, width }) {
         this.config = config;
         this.canvas = canvas;
 
         this.createScene();
-        this.createCamera();
-        this.createRenderer();
+        this.createCamera(height, width);
+        this.createRenderer(height, width);
     }
 
     init() {
@@ -90,14 +91,14 @@ class OffscreenScene {
         }
     }
 
-    createCamera() {
+    createCamera(height, width) {
         const { screen, camera } = this.config;
         const { ratio } = screen;
         const { fov, near, far } = camera;
 
         this.camera = new OffscreenCamera({
             fov,
-            ratio,
+            ratio: width / height,
             near,
             far
         });
@@ -111,12 +112,12 @@ class OffscreenScene {
         return this.camera.body;
     }
 
-    createRenderer() {
+    createRenderer(height, width) {
         const { lights, screen } = this.config;
         const { shadows } = lights;
-        const { alpha, w, h, devicePixelRatio } = screen;
+        const { alpha, devicePixelRatio } = screen;
 
-        this.canvas.style = { width: 0, height: 0 }; // this is likely needed by three
+        // this.canvas.style = { width, height }; // this is likely needed by three
         this.renderer = new WebGLRenderer({ alpha, antialias: true, canvas: this.canvas });
 
         if (shadows) {
@@ -124,7 +125,7 @@ class OffscreenScene {
         }
 
         this.renderer.setPixelRatio(devicePixelRatio);
-        this.renderer.setSize(w, h);
+        this.renderer.setSize(width, height, false);
     }
 
     setFog = ({ color, density }) => {
@@ -299,6 +300,9 @@ onmessage = ({ data }) => {
             break;
         case OFFSCREEN_DISPOSE:
             offscreenScene.dispose();
+            break;
+        case OFFSCREEN_FORCE_RENDER:
+            offscreenScene.render();
             break;
         case OFFSCREEN_SET_CLEARCOLOR:
             offscreenScene.setClearColor(data);

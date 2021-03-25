@@ -192,7 +192,7 @@ export default class Orbit extends EventDispatcher {
 		this.spherical.setFromVector3(this.offset);
 
 		if (this.autoRotate && this.state === STATE.NONE) {
-			rotateLeft(getAutoRotationAngle());
+			this.rotateLeft(this.getAutoRotationAngle());
 		}
 
 		this.spherical.theta += this.sphericalDelta.theta;
