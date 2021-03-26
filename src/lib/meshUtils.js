@@ -92,12 +92,20 @@ export const disposeGeometry = mesh => {
     }
 };
 
+export const updateMatrix = body => {
+    body.updateMatrix();
+    body.updateMatrixWorld(true);
+    body.updateWorldMatrix(true, true);
+}
+
 export const prepareModel = (model) => {
     setUpLightsAndShadows(model);
 
     model.traverse(mesh => {
         setUpLightsAndShadows(mesh);
     });
+
+    updateMatrix(model);
 
     return model;
 }

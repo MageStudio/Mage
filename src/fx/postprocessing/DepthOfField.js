@@ -5,7 +5,8 @@ import BokehPass from './BokehPass';
 export default class DepthOfField extends BokehPass {
 
     constructor(params, renderer, scene, camera) {
-        const { w: width, h: height, ratio: aspect } = config.screen();
+        const { screen } = params;
+        const { w: width, h: height, ratio: aspect } = screen;
         super(
             scene,
             camera,

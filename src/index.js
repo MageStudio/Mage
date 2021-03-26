@@ -99,6 +99,7 @@ export {
     Features,
     Config,
     RenderPipeline,
+    RenderPipeline as RP,
     Universe,
     Scripts,
     Router,

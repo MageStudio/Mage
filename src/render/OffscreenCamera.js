@@ -47,6 +47,14 @@ export default class OffscreenCamera {
         this.body.rotation.set(rotation.x, rotation.y, rotation.z);
     }
 
+    setZoom(zoom) {
+        this.body.zoom = zoom;
+    }
+
+    getZoom() {
+        return this.body.zoom;
+    }
+
     getDirection() {
         const vector = new Vector3();
         return this.body.getWorldDirection(vector);

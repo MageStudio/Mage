@@ -17,7 +17,6 @@ import {
 } from 'three';
 import Pass from "./passes/Pass";
 import CopyShader from "./shaders/CopyShader";
-import config from '../../core/config';
 
 import { COLORS } from '../../lib/constants';
 
@@ -234,11 +233,10 @@ const getOverlayMaterial = () => (
 
 export default class SelectiveOutline extends Pass {
 
-    constructor({ resolution = {}, selectedObjects = [] }, renderer, scene, camera) {
+    constructor({ resolution = {}, selectedObjects = [], screen }, renderer, scene, camera) {
         super();
 
-        throw new Error('[Mage] SelectiveOutline needs config as parameter');
-        const { w: width, h: height } = config.screen();
+        const { w: width, h: height } = screen;
         const { x = width, y = height } = resolution;
 
         this.renderScene = scene;

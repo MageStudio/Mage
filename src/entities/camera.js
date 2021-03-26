@@ -40,8 +40,18 @@ export default class Camera extends Entity {
         }
     }
 
+    getZoom() {
+        return this.getBody().zoom;
+    }
+
+    setZoom(zoom) {
+        this.getBody().zoom = zoom;
+    }
+
     lookAt(position = {}) {
         const { x = 0, y = 0, z = 0 } = position;
         this.body.lookAt(x, y, z);
+
+        RenderPipeline.dispatchCameraLookAtToOffscreen(position);
     }
 }

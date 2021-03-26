@@ -1,6 +1,6 @@
 import Entity, { ENTITY_TYPES } from './Entity';
 import Element from './Element';
-import Camera from './Camera';
+import Camera from './camera';
 import { Box, Cube, Cylinder, Grid, Line, CurveLine, Plane, Sphere, Sprite } from './base';
 
 export {

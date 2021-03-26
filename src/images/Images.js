@@ -1,7 +1,7 @@
 import {
     TextureLoader,
-    ImageLoader,
-    CubeTextureLoader
+    CubeTextureLoader,
+    ImageBitmapLoader
 } from 'three';
 
 import { buildAssetId } from '../lib/utils/assets';
@@ -14,11 +14,10 @@ export class Images {
         this.defaults = {};
 
         this.imagesDefault = {};
-
         this.map = {};
         this.numImages = 0;
         this.loader = new TextureLoader();
-        this.imageLoader = new ImageLoader();
+        this.imageLoader = new ImageBitmapLoader();
         this.cubeTexturesLoader = new CubeTextureLoader();
 
         this.images = {};

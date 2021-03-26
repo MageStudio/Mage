@@ -91,8 +91,8 @@ export default class Orbit extends EventDispatcher {
 
     	// for reset
     	this.target0 = this.target.clone();
-    	this.position0 = this.object.position.clone();
-    	this.zoom0 = this.object.zoom;
+    	this.position0 = this.object.getPosition();
+    	this.zoom0 = this.object.getZoom();
 
     	this.changeEvent = { type: 'change' };
     	this.startEvent = { type: 'start' };
@@ -129,7 +129,7 @@ export default class Orbit extends EventDispatcher {
         this.offset = new Vector3();
 
 		// so camera.up is the orbit axis
-		this.quat = new Quaternion().setFromUnitVectors(this.object.up, new Vector3(0, 1, 0));
+		this.quat = new Quaternion().setFromUnitVectors(this.object.getBody().up, new Vector3(0, 1, 0));
 		this.quatInverse = this.quat.clone().inverse();
 
 		this.lastPosition = new Vector3();
@@ -162,14 +162,14 @@ export default class Orbit extends EventDispatcher {
 
     saveState() {
         this.target0.copy(this.target);
-		this.position0.copy(this.object.position);
-		this.zoom0 = this.object.zoom;
+		this.position0.copy(this.object.getPosition());
+		this.zoom0 = this.object.getZoom();
     }
 
     reset() {
         this.target.copy(this.target0);
-		this.object.position.copy(this.position0);
-		this.object.zoom = this.zoom0;
+		this.object.setPosition(this.position0);
+		this.object.setZoom(this.zoom0);
 
 		this.object.updateProjectionMatrix();
 		this.dispatchEvent(this.changeEvent);

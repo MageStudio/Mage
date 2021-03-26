@@ -1,6 +1,8 @@
 import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
 import { ASSETS_AUDIO_LOAD_FAIL } from '../lib/messages';
+import { evaluateCameraPosition } from '../lib/camera';
+import RenderPipeline from '../render/RenderPipeline';
 
 const TIME_FOR_UPDATE = 150;
 
@@ -108,12 +110,15 @@ export class Audio {
         this.sounds.push(sound);
     }
 
-    updateListener(position, orientation, up) {
+    updateListener() {
+        const { position, orientation, up } = evaluateCameraPosition(RenderPipeline.getCameraBody());
         this.context.listener.setPosition(position.x, position.y, position.z);
         this.context.listener.setOrientation(orientation.x, orientation.y, orientation.z, up.x, up.y, up.z);
     }
 
     update(dt) {
+        this.updateListener();
+
         return new Promise(resolve => {
             const start = new Date();
             for (var index in this.sounds) {

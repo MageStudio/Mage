@@ -1,7 +1,7 @@
-import Config from "../core/config";
+import Config from '../core/config';
 import Scene from './Scene';
 import OffscreenScene from 'worker:./OffscreenScene';
-import Features, { FEATURES } from "../lib/features";
+import Features, { FEATURES } from '../lib/features';
 import {
     OFFSCREEN_ADD_ELEMENT,
     OFFSCREEN_ADD_PARTICLES,
@@ -22,16 +22,20 @@ import {
     OFFSCREEN_UPDATE_ROTATION,
     OFFSCREEN_UPDATE_CAMERA_POSITION,
     OFFSCREEN_UPDATE_CAMERA_ROTATION,
-    OFFSCREEN_FORCE_RENDER
- } from "./events";
-import { createOffscreenCanvas } from "../lib/dom";
-import { getWindow } from "../core/window";
+    OFFSCREEN_FORCE_RENDER,
+    OFFSCREEN_UPDATE_CAMERA_LOOKAT,
+    OFFSCREEN_UPDATE_SCALE,
+    OFFSCREEN_UPDATE_QUATERNION,
+    OFFSCREEN_RENDER
+ } from './events';
+import { createOffscreenCanvas } from '../lib/dom';
+import { getWindow } from '../core/window';
 
-import Universe from "../core/Universe";
-import Audio from "../audio/Audio";
-import { evaluateCameraPosition } from "../lib/camera";
-import { Camera } from "../entities";
-import { Object3D } from "three";
+import Universe from '../core/Universe';
+import Audio from '../audio/Audio';
+import { evaluateCameraPosition } from '../lib/camera';
+import { Camera } from '../entities';
+import { Object3D } from 'three';
 class RenderPipeline {
 
     constructor() {
@@ -259,6 +263,9 @@ class RenderPipeline {
     }
 
     add(body, element, addUniverse = true) {
+        console.log('inside RP.add');
+        console.log(body);
+
         if (this.isUsingOffscreen()) {
             this.proxyRoot.add(body);
             const json = body.toJSON();
@@ -297,6 +304,26 @@ class RenderPipeline {
         }
     };
 
+    dispatchScaleToOffscreen(uuid, scale) {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_UPDATE_SCALE,
+                uuid,
+                scale
+            });
+        }
+    };
+
+    dispatchQuaternionToOffscreen(uuid, quaternion) {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_UPDATE_QUATERNION,
+                uuid,
+                quaternion
+            });
+        }
+    }
+
     dispatchCameraRotationToOffscreen({ x, y, z }) {
         if (this.isUsingOffscreen()) {
             this.offscreenScene.postMessage({
@@ -314,6 +341,15 @@ class RenderPipeline {
             });
         }
     };
+
+    dispatchCameraLookAtToOffscreen({ x, y, z }) {
+        if (this.isUsingOffscreen()) {
+            this.offscreenScene.postMessage({
+                event: OFFSCREEN_UPDATE_CAMERA_LOOKAT,
+                position: { x, y, z }
+            });
+        }
+    }
 
     remove(body) {
         if (this.isUsingOffscreen()) {
@@ -378,6 +414,10 @@ class RenderPipeline {
     render = (dt) => {
         if (this.isUsingOffscreen()) {
             this.getCamera().update(dt);
+            // this.offscreenScene.postMessage({
+            //     event: OFFSCREEN_RENDER,
+            //     dt
+            // })
         } else {
             Scene.render(dt);
             this.onAudioListenerUpdate(evaluateCameraPosition(Scene.getCameraBody()));

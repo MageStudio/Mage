@@ -69,7 +69,7 @@ export class Controls {
 
     setOrbitControl() {
         this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY]);
-        this.controls[CONTROLS.ORBIT] = new Orbit(RenderPipeline.getCameraBody(), RenderPipeline.getDOMElement());
+        this.controls[CONTROLS.ORBIT] = new Orbit(RenderPipeline.getCamera(), RenderPipeline.getDOMElement());
         this.controls[CONTROLS.ORBIT].init();
 
         this.controls[CONTROLS.ORBIT].addEventListener(EVENTS.CHANGE, RenderPipeline.render);

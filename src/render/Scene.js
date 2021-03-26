@@ -3,9 +3,6 @@ import Config from '../core/config';
 import {
     Clock,
     Scene as THREEScene,
-    PCFSoftShadowMap,
-    BasicShadowMap,
-    PCFShadowMap,
     WebGLRenderer,
     FogExp2,
     LinearToneMapping
@@ -15,13 +12,7 @@ import { generateUUID } from '../lib/uuid';
 import PostProcessing from './PostProcessing';
 import Particles from './Particles';
 import CascadeShadowMaps from '../lights/csm/CascadeShadowMaps';
-
-const SHADOW_TYPES = {
-    basic: BasicShadowMap,
-    soft: PCFSoftShadowMap,
-    hard: PCFShadowMap
-};
-const DEFAULT_SHADOWTYPE = 'soft';
+import { DEFAULT_SHADOWTYPE, SHADOW_TYPES } from '../lib/constants';
 
 export class Scene {
 
@@ -71,7 +62,11 @@ export class Scene {
     }
 
     addPostProcessingEffect(effect, options) {
-        this.postProcessing.add(effect, options);
+        const extendedOptions = {
+            ...options,
+            screen: Config.screen()
+        }
+        this.postProcessing.add(effect, extendedOptions);
     }
 
     addParticleEmitter(emitterId, options) {

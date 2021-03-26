@@ -1,4 +1,9 @@
-import { Vector3 } from 'three';
+import {
+    Vector3,
+    BasicShadowMap,
+    PCFSoftShadowMap,
+    PCFShadowMap
+} from 'three';
 
 export const UP = 'UP';
 export const DOWN = 'DOWN';
@@ -52,6 +57,14 @@ export const ASSETS_TYPES = {
     SCRIPTS: 'scripts',
     SHADERS: 'shaders'
 };
+
+export const SHADOW_TYPES = {
+    basic: BasicShadowMap,
+    soft: PCFSoftShadowMap,
+    hard: PCFShadowMap
+};
+
+export const DEFAULT_SHADOWTYPE = 'soft';
 
 export const ROOT = '/';
 export const DIVIDER = '/';

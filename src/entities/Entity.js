@@ -353,6 +353,8 @@ export default class Entity extends EventDispatcher {
                 ...howbig
             };
             this.body.scale.set(scale.x, scale.y, scale.z);
+
+            RenderPipeline.dispatchScaleToOffscreen(this.uuid(), scale);
         }
     }
 
@@ -373,8 +375,11 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    setQuaternion = ({ x, y, z, w }) => {
+    setQuaternion = (quaternion) => {
+        const { x, y, z, w } = quaternion;
         this.body.quaternion.set(x, y, z, w);
+
+        RenderPipeline.dispatchQuaternionToOffscreen(this.uuid(), quaternion);
     }
 
     getPosition() {
