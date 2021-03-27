@@ -146,9 +146,11 @@ class Router {
         Features.setUpPolyfills();
         Assets.setAssets(assets);
 
+        const hash = Router.extractLocationHash();
+
         return Features
             .checkSupportedFeatures()
-            .then(Assets.load)
+            .then(() => Assets.load(hash))
             .then(this.startLevel)
             .catch(this.handleStartError);
     }

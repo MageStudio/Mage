@@ -2,7 +2,6 @@ import Audio from '../audio/Audio';
 import Video from '../video/Video';
 import Images from '../images/Images';
 import Models from '../models/Models';
-import Particles from '../fx/particles/Particles';
 import Lights from '../lights/Lights';
 import Scripts from '../scripts/Scripts';
 import { ASSETS_TYPES, ROOT } from '../lib/constants';
@@ -75,19 +74,34 @@ export class Assets {
 
     getLevelAssets = level => this.assets.levels[level] || DEFAULT_COMMON_ASSETS;
 
-    setLoadedLevelState = (loaded, level) => {
+    setLevelAssetsLoadedState = (loaded, level) => {
         if (this.assets.levels[level]) {
             this.assets.levels[level]._isLoaded = loaded;
         }
     }
 
-    setLoadedCommonState = (loaded) => {
+    setLevelAssetsLoadingState = (loading, level) => {
+        if (this.assets.levels[level]) {
+            this.assets.levels[level]._isLoading = loading;
+        }
+    }
+
+    getLevelAssetsLoadedState = (level) => level && this.assets.levels[level] && this.assets.levels[level]._isLoaded;
+    getLevelAssetsLoadingState = (level) => level && this.assets.levels[level] && this.assets.levels[level]._isLoading;
+
+    setCommonAssetsLoadedState = (loaded) => {
        this.assets.common._isLoaded = loaded;
     }
 
-    areLevelAssetsLoaded = (level) => this.getLevelAssets(level)._isLoaded;
+    setCommonAssetsLoadingState = loading => {
+        this.assets.common._isLoading = loading;
+    }
 
-    areCommonAssetsLoaded = () => this.getCommonAssets()._isLoaded;
+    getCommonAssetsLoadedState = () => this.assets.common._isLoaded;
+    getCommonAssetsLoadingState = () => this.assets.common._isLoading;
+
+    getAsssetsLoadedState = level => level ? this.getLevelAssetsLoadedState(level) : this.getCommonAssetsLoadedState();
+    getAssetsLoadingstate = level => level ? this.getLevelAssetsLoadingState(level) : this.getCommonAssetsLoadingState();
 
     audio = (level) => level ? this.getLevelAssets(level).audio : this.getCommonAssets().audio;
 
@@ -107,17 +121,34 @@ export class Assets {
 
     postAssetsLoad = level => () => {
         if (level) {
-            this.setLoadedLevelState(true, level);
+            this.setLevelAssetsLoadedState(true, level);
         }
-        this.setLoadedCommonState(true);
+        this.setCommonAssetsLoadedState(true);
+    }
+
+    preAssetsLoad = level => () => {
+        if (level) {
+            this.setLevelAssetsLoadingState(true, level);
+        } else {
+            this.setCommonAssetsLoadingState(true);
+        }
     }
 
     handleAssetsLoadError = e => {
         console.log(e);
     }
 
-    load = (level) => (
-        Promise.all([ 
+    load = (level) => {
+        console.log('loading assets', level, this.assets);
+
+        if (this.getAsssetsLoadedState(level) || this.getAssetsLoadingstate(level)) {
+            // we already loaded this assets, or we're still loading them
+            return Promise.resolve();
+        }
+
+        this.preAssetsLoad(level);
+
+        return Promise.all([ 
             Audio.load(this.audio(level), level),
             Video.load(this.video(level), level),
             Images.load(this.images(level), this.textures(level), this.cubeTextures(level), level),
@@ -126,7 +157,7 @@ export class Assets {
         ])
         .then(this.postAssetsLoad(level))
         .catch(this.handleAssetsLoadError)
-    );
+    }
 
     update(dt) {
         Audio.update(dt);
