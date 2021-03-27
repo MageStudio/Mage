@@ -99,9 +99,11 @@ export default class Intro extends Level {
 }
 
 const assets = {
-    models: {
-        'car': 'assets/models/buggy.gltf',
-        'wheel': 'assets/models/wheel.gltf'
+    '/': {
+        models: {
+            'car': 'assets/models/buggy.gltf',
+            'wheel': 'assets/models/wheel.gltf'
+        }
     }
 }
 
