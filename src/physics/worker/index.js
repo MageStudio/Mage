@@ -57,6 +57,7 @@ const handleLoadEvent = options => Ammo => {
                 break;
             case TERMINATE_EVENT:
                 world.terminate();
+                break;
         }
     }
 

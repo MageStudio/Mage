@@ -23,4 +23,6 @@ export const NETWORK_CHANGED = 'NETWORK_CHANGED';
 
 export const UI_LOADING_SCREEN = 'UI_LOADING_SCREEN';
 
+export const LOCATION_PATH_CHANGE = 'LOCATION_PATH_CHANGE';
+
 export const RESET = 'RESET';

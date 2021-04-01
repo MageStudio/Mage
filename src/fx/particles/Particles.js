@@ -36,6 +36,10 @@ export class Particles {
         this.proton.addRender(new Proton.SpriteRender(Scene.getScene()));
     }
 
+    isInitialised() {
+        return !!this.proton;
+    }
+
     get(name) {
         return this.map[name] || null;
     }
@@ -111,7 +115,10 @@ export class Particles {
     }
 
     dispose() {
-        this.proton.destroy();
+        if (this.isInitialised()) {
+            this.proton.destroy();
+            this.proton = null;
+        }
     }
 }
  

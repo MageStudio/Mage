@@ -139,8 +139,6 @@ export class Assets {
     }
 
     load = (level) => {
-        console.log('loading assets', level, this.assets);
-
         if (this.getAsssetsLoadedState(level) || this.getAssetsLoadingstate(level)) {
             // we already loaded this assets, or we're still loading them
             return Promise.resolve();

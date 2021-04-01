@@ -8,6 +8,7 @@ import Router from '../router/Router';
 import { dispatch } from '../store';
 import { createElementFromSelector } from '../lib/dom';
 import { showLoadingScreen, hideLoadingScreen } from '../store/actions/ui';
+import { locationPathChange } from '../store/actions/location';
 
 const ROOT_ID = '#ui';
 
@@ -26,13 +27,10 @@ const getUIContainer = () => {
     return rootElement;
 };
 
-export const requestLoadingScreen = () => {
-    dispatch(showLoadingScreen());
-};
+export const requestLoadingScreen = () => dispatch(showLoadingScreen());
+export const removeLoadingScreen = () => dispatch(hideLoadingScreen());
 
-export const removeLoadingScreen = () => {
-    dispatch(hideLoadingScreen());
-};
+export const dispatchLocationPathChange = path => dispatch(locationPathChange(path));
 
 export const mount = () => {
     const { root = BaseUI } = Config.ui();

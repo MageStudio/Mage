@@ -2,29 +2,15 @@
 import * as redux from 'redux';
 import thunk from 'redux-thunk';
 
-import {
-    info,
-    storage,
-    input,
-    network,
-    ui,
-    createRootReducer
-} from './reducers';
+import createRootReducer, * as DEFAULT_REDUCERS from './reducers';
 
 import { STORE_DOESNT_EXIST } from '../lib/messages';
 import { NOOP } from '../lib/functions';
 
 let store;
-const DEFAULT_REDUCERS = {
-    info,
-    input,
-    storage,
-    network,
-    ui
-};
 
 let unsubscribe = NOOP;
-const subscribers = {};
+const subscribers = [];
 
 const applyMiddlewares = (mdws, debug) => {
     if (debug) {
@@ -56,11 +42,10 @@ export const getState = () => {
 export const getStore = () => store;
 
 const handleSubscriptions = () => (
-    Object
-        .keys(subscribers)
-        .forEach((path) => {
-            if (subscribers[path] && subscribers[path].onStateChange) {
-                subscribers[path].onStateChange(getState());
+    subscribers
+        .forEach((subscriber) => {
+            if (subscriber.onStateChange) {
+                subscriber.onStateChange(getState());
             }
         })
 )
@@ -78,9 +63,11 @@ export const createStore = (reducers, initialState = {}, debug = false) => {
     }
 };
 
-export const subscribeScene = (path, scene) => subscribers[path] = scene;
-export const unsubScribeScene = (path) => delete subscribers[path];
-export const unsubscribeAll = () => unsubscribe();
+export const subscribe = subscriber => subscribers.push(subscriber);
+export const unsubscribeAll = () => {
+    unsubscribe();
+    subscribers = [];
+}
 
 export const dispatch = (action) => {
     if (store && action) {
