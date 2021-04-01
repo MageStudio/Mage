@@ -10,7 +10,7 @@ import { NOOP } from '../lib/functions';
 let store;
 
 let unsubscribe = NOOP;
-const subscribers = [];
+let subscribers = [];
 
 const applyMiddlewares = (mdws, debug) => {
     if (debug) {

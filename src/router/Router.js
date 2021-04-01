@@ -8,9 +8,7 @@ import { toQueryString, parseQuery } from '../lib/query';
 import { FEATURE_NOT_SUPPORTED } from '../lib/messages';
 import {
     ROOT,
-    DIVIDER,
     HASH,
-    EMPTY,
     BEFORE_UNLOAD,
     HASH_CHANGE,
     DEFAULT_SELECTOR
