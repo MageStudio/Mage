@@ -114,8 +114,6 @@ export class Scene {
     }
 
     dispose() {
-        // destroy scene
-        this.scene.dispose();
         // destroy renderer
         this.renderer.dispose();
         // remove listener to resize

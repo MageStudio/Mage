@@ -1,5 +1,5 @@
 import Level from '../core/Level';
-import { subscribeScene, unsubScribeScene } from '../store/Store';
+import * as Store from '../store/Store';
 import storage from '../storage/storage';
 import { PATH_NOT_FOUND } from '../lib/messages';
 
@@ -60,13 +60,13 @@ export class GameRunner {
             path
         });
 
-        subscribeScene(path, scene);
+        Store.subscribe(scene);
 
         return scene;
     }
 
-    disposeCurrentScene = (path) => {
-        unsubScribeScene(path);
+    disposeCurrentScene = () => {
+        Store.unsubscribeAll();
         this.running.dispose();
     }
 
@@ -88,19 +88,19 @@ export class GameRunner {
             if (loading) {
                 storage
                     .loadScene()
-                    .then(this.running.parseScene)
+                    .then(this.getCurrentLevel().parseScene)
                     .then(() => {
-                        this.running.prepareScene();
-                        this.running.init();
-                        resolve(this.running);
+                        this.getCurrentLevel().prepareScene();
+                        this.getCurrentLevel().init();
+                        resolve(this.getCurrentLevel());
                     })
             } else {
-                this.running
+                this.getCurrentLevel()
                     .preload()
                     .then(() => {
-                        this.running.prepareScene();
-                        this.running.init();
-                        resolve(this.running);
+                        this.getCurrentLevel().prepareScene();
+                        this.getCurrentLevel().init();
+                        resolve(this.getCurrentLevel());
                     })
                     .catch(reject);
             }

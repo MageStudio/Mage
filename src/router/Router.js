@@ -20,7 +20,8 @@ import * as UI from '../ui';
 import {
     setLocationHash,
     getLocationHash,
-    getLocationSearch
+    getLocationSearch,
+    setLocationSearch
 } from '../lib/location';
 
 class Router {
@@ -71,10 +72,10 @@ class Router {
         }
     }
 
-    goTo(path, options = {}, origin = this.getCurrentLevel()) {
+    goTo(path, options, origin = this.getCurrentLevel()) {
         if (!Router.areRoutesIdentical(origin, path)) {
             if (options) {
-                setLocationHash(toQueryString(options));
+                setLocationSearch(toQueryString(options));
             }
             setLocationHash(path);
         }
@@ -103,6 +104,8 @@ class Router {
     startLevel = () => {
         const hash = Router.extractLocationHash();
         const query = Router.extractQuery();
+
+        UI.dispatchLocationPathChange(hash);
 
         if (this.isValidRoute(hash)) {
             this.setCurrentLevel(hash);
@@ -134,7 +137,11 @@ class Router {
             selector = DEFAULT_SELECTOR
         } = config;
 
-        setLocationHash(ROOT);
+        const hash = Router.extractLocationHash();
+        if (!this.isValidRoute(hash)) {
+            setLocationHash(ROOT);
+        }
+
         this.setGlobalWindowEventsListeners();
 
         Config.setConfig(config);
@@ -145,8 +152,6 @@ class Router {
 
         Features.setUpPolyfills();
         Assets.setAssets(assets);
-
-        const hash = Router.extractLocationHash();
 
         return Features
             .checkSupportedFeatures()

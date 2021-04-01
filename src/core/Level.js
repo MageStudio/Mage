@@ -33,9 +33,6 @@ export class Level extends EventDispatcher {
         this.name = this.constructor.name;
         this.debug = true;
         this.inputListenersAreSet = false;
-
-        Scene.create();
-        this.enableInput();
     }
 
     prepareScene() {}
@@ -135,15 +132,18 @@ export class Level extends EventDispatcher {
     }
 
     init = () => {
+        Scene.create();
+        this.enableInput();
+
         Physics
             .init()
             .then(() => {
                 Particles.init();
                 PostProcessing.init();
                 Stats.init();
-        
+
                 this.render();
-        
+
                 if (this.onCreate instanceof Function) {
                     this.onCreate();
                 } else {

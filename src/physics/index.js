@@ -49,11 +49,14 @@ export class Physics extends EventDispatcher {
 
     constructor() {
         super();
-        this.worker = new PhysicsWorker();
         this.elements = [];
+    };
+
+    createWorker() {
+        this.worker = new PhysicsWorker();
         this.workerReady = false;
         this.worker.onmessage = this.handleWorkerMessages;
-    };
+    }
 
     dispose() {
         if (Config.physics().enabled) {
@@ -91,6 +94,8 @@ export class Physics extends EventDispatcher {
 
     init() {
         if (Config.physics().enabled) {
+            this.createWorker();
+
             this.worker.postMessage({
                 event: LOAD_EVENT,
                 ...Config.physics(),
@@ -155,10 +160,12 @@ export class Physics extends EventDispatcher {
 
     handleDispatchEvent = ({ uuid, eventData, eventName }) => {
         const element = Universe.getByUUID(uuid);
-        element.dispatchEvent({
-            type: eventName,
-            data: eventData
-        });
+        if(element) {
+            element.dispatchEvent({
+                type: eventName,
+                data: eventData
+            });
+        }
     };
 
     disposeElement(element) {
