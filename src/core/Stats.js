@@ -2,6 +2,9 @@
  * @author mrdoob / http://mrdoob.com/
  */
 import { Subject } from 'rxjs';
+import features, { FEATURES } from '../lib/features';
+
+const ONE_MB = 1048576;
 
 class Stats {
 
@@ -14,8 +17,11 @@ class Stats {
         this._fpsMax = 100;
         this.fps = new Subject();
 
-        this.memory = performance.memory.usedJSHeapSize / 1048576;
-        this.memoryMax = performance.memory.jsHeapSizeLimit / 1048576;
+        this.hasMemoryUsage = features.isFeatureSupported(FEATURES.MEMORY);
+
+        if (this.hasMemoryUsage) {
+            this.collectMemoryUsage();
+        }
     }
 
     init() {
@@ -38,6 +44,11 @@ class Stats {
         return this._fps;
     }
 
+    collectMemoryUsage() {
+        this.memory = performance.memory.usedJSHeapSize / ONE_MB;
+        this.memoryMax = performance.memory.jsHeapSizeLimit / ONE_MB;
+    }
+
     getMemory() {
         this.frames++;
         const time = (performance || Date).now();
@@ -45,8 +56,7 @@ class Stats {
         if (time >= this.prevTime + 1000) {
             this.prevTime = time;
             this.frames = 0;
-            this.memory = performance.memory.usedJSHeapSize / 1048576;
-            this.memoryMax = performance.memory.jsHeapSizeLimit / 1048576;
+            this.collectMemoryUsage();
         }
 
         this.beginTime = time;
@@ -54,7 +64,9 @@ class Stats {
 
     update() {
         this.getFPS();
-        this.getMemory();
+        if (this.hasMemoryUsage) {
+            this.getMemory();
+        }
     }
 }
 

@@ -7,7 +7,8 @@ export const FEATURES = {
     LOCALSTORAGE: 'localStorage',
     AJAX: 'ajax',
     OFFSCREENCANVAS: 'offscreenCanvas',
-    GAMEPADAPI: 'gamepadapi'
+    GAMEPADAPI: 'gamepadapi',
+    MEMORY: 'memory'
 };
 
 export class Features {
@@ -159,7 +160,7 @@ export class Features {
                 };
             } else {
                 return {
-                    success: true,
+                    success: false,
                     name: FEATURES.WEBWORKER
                 };
             }
@@ -210,7 +211,7 @@ export class Features {
                     };
                 } else {
                     return {
-                        success: true,
+                        success: false,
                         name: FEATURES.GAMEPADAPI
                     };
                 }
@@ -218,6 +219,30 @@ export class Features {
             return {
                 success: false,
                 name: FEATURES.GAMEPADAPI
+            };
+        }
+    }
+
+    memory() {
+        try {
+            if (performance && 
+                performance.memory &&
+                performance.memory.usedJSHeapSize &&
+                performance.memory.jsHeapSizeLimit) {
+                    return {
+                        success: true,
+                        name: FEATURES.MEMORY
+                    };
+                } else {
+                    return {
+                        success: false,
+                        name: FEATURES.MEMORY
+                    };
+                }
+        } catch(e) {
+            return {
+                success: false,
+                name: FEATURES.MEMORY
             };
         }
     }
