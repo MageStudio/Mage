@@ -196,20 +196,13 @@ export default class Element extends Entity {
     }
 
     enablePhysics(options = {}) {
-        const {
-            colliderType = PHYSICS_COLLIDER_TYPES.BOX
-        } = options;
+        const { mass, colliderType }= options;
 
         if (Config.physics().enabled) {
-            if (this.isModel()) {
+            if (this.isModel() && mass === 0) {
                 Physics.addModel(this, options);
             } else {
-                const description = {
-                    ...mapColliderTypeToDescription(colliderType)(this),
-                    ...options
-                };
-
-                Physics.add(this, description);
+                Physics.add(this, options);
             }
 
             if (options.debug) {
@@ -223,12 +216,6 @@ export default class Element extends Entity {
 
         this.add(getHitbox(this));
         //box.setPosition(ORIGIN);
-    }
-
-    applyForce(force) {
-        if (Config.physics().enabled) {
-            Physics.applyForce(this.uuid(), force);
-        }
     }
 
     update(dt) {
