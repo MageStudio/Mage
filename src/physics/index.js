@@ -34,7 +34,13 @@ import {
     PHYSICS_COLLIDER_TYPES
 } from './constants';
 
-const { getBoxDescriptionForElement, iterateGeometries, DEFAULT_DESCRIPTION } = physicsUtils;
+const {
+    getBoxDescriptionForElement,
+    extractPositionAndQuaternion,
+    mapColliderTypeToDescription,
+    iterateGeometries,
+    DEFAULT_DESCRIPTION
+} = physicsUtils;
 
 const mapColliderTypeToAddEvent = (type) => ({
     [PHYSICS_COLLIDER_TYPES.BOX]: ADD_BOX_EVENT,
@@ -180,9 +186,17 @@ export class Physics extends EventDispatcher {
         }
     }
 
-    add(element, description) {
+    add(element, options = {}) {
         if (Config.physics().enabled) {
+            const {
+                colliderType = PHYSICS_COLLIDER_TYPES.BOX
+            } = options;
+
             const uuid = element.uuid();
+            const description = {
+                ...mapColliderTypeToDescription(colliderType)(element),
+                ...options
+            };
 
             this.storeElement(element);
 
@@ -232,6 +246,7 @@ export class Physics extends EventDispatcher {
                 matrices,
                 indexes,
                 ...DEFAULT_DESCRIPTION,
+                ...extractPositionAndQuaternion(model),
                 ...options
             })
 
