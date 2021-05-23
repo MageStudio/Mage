@@ -194,7 +194,7 @@ export default class Entity extends EventDispatcher {
     }
 
     getScript(name) {
-        const script = this.scripts.filter(({ name }) => name === name)[0];
+        const script = this.scripts.filter(script => script.name === name)[0];
 
         if (script) {
             return script;
