@@ -4,7 +4,13 @@ import { getSphereVolume } from '../lib/math';
 
 import { BOUNDINGBOX_NOT_AVAILABLE } from '../lib/messages';
 import { DEFAULT_QUATERNION, DEFAULT_POSITION } from './constants';
-import { PHYSICS_COLLIDER_TYPES } from './constants';
+import { COLLIDER_TYPES } from './constants';
+import {
+    ADD_BOX_EVENT,
+    ADD_PLAYER_EVENT,
+    ADD_SPHERE_EVENT,
+    ADD_VEHICLE_EVENT
+} from './messages';
 
 export const DEFAULT_DESCRIPTION = {
     mass: 1,
@@ -18,14 +24,21 @@ const DEFAULT_BOX_DESCRIPTION = {
     width: 2,
     length: 2,
     height: 2,
-    collider: PHYSICS_COLLIDER_TYPES.BOX
+    collider: COLLIDER_TYPES.BOX
 };
 
 const DEFAULT_SPHERE_DESCRIPTION = {
     ...DEFAULT_DESCRIPTION,
     radius: 2,
-    collider: PHYSICS_COLLIDER_TYPES.SPHERE
+    collider: COLLIDER_TYPES.SPHERE
 };
+
+export const mapColliderTypeToAddEvent = (type) => ({
+    [COLLIDER_TYPES.BOX]: ADD_BOX_EVENT,
+    [COLLIDER_TYPES.VEHICLE]: ADD_VEHICLE_EVENT,
+    [COLLIDER_TYPES.PLAYER]: ADD_PLAYER_EVENT,
+    [COLLIDER_TYPES.SPHERE]: ADD_SPHERE_EVENT
+})[type] || ADD_BOX_EVENT;
 
 export const extractBoundingBox = body => {
     body.geometry.computeBoundingBox();
@@ -101,7 +114,7 @@ export const extractPositionAndQuaternion = element => {
     }
 }
 
-const extractBoxDescription = element => {
+export const extractBoxDescription = element => {
     const scale = element.getScale();
     const size = parseBoundingBoxSize(element.boundingBox);
 
@@ -114,7 +127,7 @@ const extractBoxDescription = element => {
     };
 };
 
-const extractSphereDescription = element => {
+export const extractSphereDescription = element => {
     const radius = element.boundingSphere.radius;
     
     return {
@@ -133,9 +146,9 @@ export const getSphereDescriptionForElement = element => ({
     ...extractSphereDescription(element)
 });
 
-export const mapColliderTypeToDescription = (colliderType = PHYSICS_COLLIDER_TYPES.BOX) => ({
-    [PHYSICS_COLLIDER_TYPES.BOX]: getBoxDescriptionForElement,
-    [PHYSICS_COLLIDER_TYPES.SPHERE]: getSphereDescriptionForElement
+export const mapColliderTypeToDescription = (colliderType = COLLIDER_TYPES.BOX) => ({
+    [COLLIDER_TYPES.BOX]: getBoxDescriptionForElement,
+    [COLLIDER_TYPES.SPHERE]: getSphereDescriptionForElement
 }[colliderType] || getBoxDescriptionForElement)
 
 export const iterateGeometries = (function() {

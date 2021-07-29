@@ -8,7 +8,7 @@ export const TYPES = {
     PLAYER: 'PLAYER'
 };
 
-export const PHYSICS_COLLIDER_TYPES = {
+export const COLLIDER_TYPES = {
     BOX: 'BOX',
     VEHICLE: 'VEHICLE',
     PLAYER: 'PLAYER',
