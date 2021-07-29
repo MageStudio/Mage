@@ -30,24 +30,18 @@ import {
     PHYSICS_ELEMENT_CANT_BE_REMOVED
 } from '../lib/messages';
 
-import {
-    PHYSICS_COLLIDER_TYPES
-} from './constants';
+import * as PHYSICS_CONSTANTS from './constants';
+
+const { COLLIDER_TYPES } = PHYSICS_CONSTANTS;
 
 const {
     getBoxDescriptionForElement,
     extractPositionAndQuaternion,
     mapColliderTypeToDescription,
     iterateGeometries,
+    mapColliderTypeToAddEvent,
     DEFAULT_DESCRIPTION
 } = physicsUtils;
-
-const mapColliderTypeToAddEvent = (type) => ({
-    [PHYSICS_COLLIDER_TYPES.BOX]: ADD_BOX_EVENT,
-    [PHYSICS_COLLIDER_TYPES.VEHICLE]: ADD_VEHICLE_EVENT,
-    [PHYSICS_COLLIDER_TYPES.PLAYER]: ADD_PLAYER_EVENT,
-    [PHYSICS_COLLIDER_TYPES.SPHERE]: ADD_SPHERE_EVENT
-})[type] || ADD_BOX_EVENT;
 
 const WORKER_READY_TIMEOUT = 200;
 
@@ -189,7 +183,7 @@ export class Physics extends EventDispatcher {
     add(element, options = {}) {
         if (Config.physics().enabled) {
             const {
-                colliderType = PHYSICS_COLLIDER_TYPES.BOX
+                colliderType = COLLIDER_TYPES.BOX
             } = options;
 
             const uuid = element.uuid();
@@ -292,7 +286,8 @@ export class Physics extends EventDispatcher {
 
 export { 
     PHYSICS_EVENTS,
-    physicsUtils
+    PHYSICS_CONSTANTS,
+    physicsUtils,
 };
 
 export default new Physics();

@@ -1,6 +1,6 @@
 import { Vector3 } from 'three';
 import { Box, Sphere } from '../entities';
-import { PHYSICS_COLLIDER_TYPES } from './constants';
+import { COLLIDER_TYPES } from './constants';
 
 const HIT_BOX_COLOR = 0xf368e0;
 const HIT_BOX_INCREASE = .03;
@@ -41,7 +41,7 @@ export const getSphereHitbox = element => {
     return sphere;
 };
 
-export const mapColliderTypeToHitbox = (colliderType = PHYSICS_COLLIDER_TYPES.BOX) => ({
-    [PHYSICS_COLLIDER_TYPES.BOX]: getBoxHitbox,
-    [PHYSICS_COLLIDER_TYPES.SPHERE]: getSphereHitbox
+export const mapColliderTypeToHitbox = (colliderType = COLLIDER_TYPES.BOX) => ({
+    [COLLIDER_TYPES.BOX]: getBoxHitbox,
+    [COLLIDER_TYPES.SPHERE]: getSphereHitbox
 }[colliderType] || getBoxHitbox);

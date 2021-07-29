@@ -45,10 +45,9 @@ import Scripts from './scripts/Scripts';
 import Controls from './controls/Controls';
 import Physics, {
     PHYSICS_EVENTS,
+    PHYSICS_CONSTANTS,
     physicsUtils
 } from './physics';
-
-import { PHYSICS_COLLIDER_TYPES } from './physics/constants';
 
 import * as store from './store';
 import { Provider, connect } from 'inferno-redux';
@@ -124,8 +123,7 @@ export {
 
     Physics,
     PHYSICS_EVENTS,
-    PHYSICS_COLLIDER_TYPES as PHYSICS_TYPES,
-    PHYSICS_COLLIDER_TYPES,
+    PHYSICS_CONSTANTS,
     physicsUtils,
 
     MeshLoader,

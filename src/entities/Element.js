@@ -22,7 +22,7 @@ import Scene from '../core/Scene';
 import { COLLISION_EVENT, ORIGIN } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics';
-import { PHYSICS_COLLIDER_TYPES } from '../physics/constants';
+import { COLLIDER_TYPES } from '../physics/constants';
 
 import {
     getBoxDescriptionForElement,
@@ -211,7 +211,7 @@ export default class Element extends Entity {
         }
     }
 
-    addHitBox(colliderType = PHYSICS_COLLIDER_TYPES.BOX) {
+    addHitBox(colliderType = COLLIDER_TYPES.BOX) {
         const getHitbox = mapColliderTypeToHitbox(colliderType)
 
         this.add(getHitbox(this));
