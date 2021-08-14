@@ -21,7 +21,9 @@ export const MATERIALS = {
     PHONG: 1,
     DEPTH: 2,
     STANDARD: 3,
-    BASIC: 4
+    BASIC: 4,
+    TOON: 5,
+    THREE_TOON: 6
 };
 
 export const EFFECTS = {

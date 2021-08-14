@@ -31,7 +31,7 @@ export default class LightAmbient extends Light {
             this.light = new THREEAmbientLight(color, intensity);
         }
 
-        if (this.hasLight()) {
+        if (this.hasBody()) {
             this.postLightCreation();
         }
     }

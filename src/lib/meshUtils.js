@@ -3,11 +3,13 @@ import {
 	MeshLambertMaterial,
 	MeshPhongMaterial,
 	MeshDepthMaterial,
-	MeshStandardMaterial
+	MeshStandardMaterial,
+    MeshToonMaterial
 } from 'three';
 
 import Config from '../core/config';
 import Lights from '../lights/Lights';
+import ToonMaterial from '../materials/Toon';
 import { MATERIALS } from './constants';
 
 export const setUpLightsAndShadows = (mesh) => {
@@ -56,6 +58,10 @@ export const changeMaterialByName = (name, mesh, materialOptions) => {
             return cloneMaterial(MeshDepthMaterial, mesh, materialOptions);
         case MATERIALS.STANDARD:
             return cloneMaterial(MeshStandardMaterial, mesh, materialOptions);
+        case MATERIALS.TOON:
+            return cloneMaterial(ToonMaterial, mesh, materialOptions);
+        case MATERIALS.THREE_TOON:
+            return cloneMaterial(MeshToonMaterial, mesh, materialOptions);
         case MATERIALS.BASIC:
         default:
             return cloneMaterial(MeshBasicMaterial, mesh, materialOptions);

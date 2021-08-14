@@ -1,5 +1,6 @@
 import Light from './Light';
 import Scene from '../core/Scene';
+import Config from '../core/config';
 import { POINTLIGHT } from './Lights';
 
 import {
@@ -13,7 +14,8 @@ const DEFAULT_FAR = 100;
 
 const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
 const DEFAULT_INTENSITY = 0.5;
-const DEFAULT_DISTANCE = 10;
+const DEFAULT_DISTANCE = 0;
+const DEFAULT_DECAY = 1;
 const DEFAULT_MAP_SIZE = 2048;
 const DEFAULT_BIAS = -0.0001;
 const WHITE = 0xffffff;
@@ -26,27 +28,29 @@ export default class PointLight extends Light {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
             name,
-            distance
+            distance,
+            decay
         } = options;
 
         super({ color, intensity, name });
         this.options = options;
-        this.setLight({ color, intensity, distance });
+        this.setLight({ color, intensity, distance, decay });
     }
 
     setLight({
         light,
         color = WHITE,
         intensity = DEFAULT_INTENSITY,
-        distance = DEFAULT_DISTANCE
+        distance = DEFAULT_DISTANCE,
+        decay = DEFAULT_DECAY
     }) {
         if (light) {
-            this.light = light;
+            this.body = light;
         } else {
-            this.light = new THREEPointLight(color, intensity, distance);
+            this.body = new THREEPointLight(color, intensity, distance, decay);
         }
 
-        if (this.hasLight()) {
+        if (this.hasBody()) {
             this.postLightCreation();
         }
     }
@@ -70,28 +74,28 @@ export default class PointLight extends Light {
         } = this.options;
 
         if (Config.lights().shadows) {
-            this.light.castShadow = true;
+            this.body.castShadow = true;
 
             const d = far/2;
 
-            this.light.shadow.mapSize.height = mapSize;
-            this.light.shadow.mapSize.width = mapSize;
+            this.body.shadow.mapSize.height = mapSize;
+            this.body.shadow.mapSize.width = mapSize;
 
-            this.light.shadow.camera.left = -d;
-            this.light.shadow.camera.right = d;
-            this.light.shadow.camera.top = d;
-            this.light.shadow.camera.bottom = -d;
+            this.body.shadow.camera.left = -d;
+            this.body.shadow.camera.right = d;
+            this.body.shadow.camera.top = d;
+            this.body.shadow.camera.bottom = -d;
 
-            this.light.shadow.camera.near = near;
-            this.light.shadow.camera.far = far;
+            this.body.shadow.camera.near = near;
+            this.body.shadow.camera.far = far;
 
-            this.light.shadow.bias = bias;
+            this.body.shadow.bias = bias;
         }
     }
 
     addHelper() {
-        this.helper = new PointLightHelper(this.light, 2, GREEN);
-        this.shadowHelper = new CameraHelper(this.light.shadow.camera);
+        this.helper = new PointLightHelper(this.body, 2, GREEN);
+        this.shadowHelper = new CameraHelper(this.body.shadow.camera);
 
         Scene.add(this.helper, null, false);
         Scene.add(this.shadowHelper, null, false);
