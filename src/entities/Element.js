@@ -510,6 +510,10 @@ export default class Element extends Entity {
         this.body.uuid === object.body.uuid
     );
 
+    traverse = (cb) => {
+        this.body.traverse(cb);
+    }
+
     disposeBody() {
         if (hasMaterial(this.body)) {
             disposeTextures(this.getBody());
