@@ -41,12 +41,12 @@ export default class SunLight extends Light {
         intensity = DEFAULT_INTENSITY
     }) {
         if (light) {
-            this.light = light;
+            this.body = light;
         } else {
-            this.light = new THREEDirectionalLight(color, intensity);
+            this.body = new THREEDirectionalLight(color, intensity);
         }
 
-        if (this.hasLight()) {
+        if (this.hasBody()) {
             this.postLightCreation();
         }
     }
@@ -75,23 +75,23 @@ export default class SunLight extends Light {
         } = this.options;
 
         if (Config.lights().shadows) {
-            this.light.castShadow = true;
+            this.body.castShadow = true;
 
             const d = far / 1.5;
 
-            this.light.shadow.mapSize.height = mapSize;
-            this.light.shadow.mapSize.width = mapSize;
+            this.body.shadow.mapSize.height = mapSize;
+            this.body.shadow.mapSize.width = mapSize;
 
-            this.light.shadow.camera.left = -d;
-            this.light.shadow.camera.right = d;
-            this.light.shadow.camera.top = d;
-            this.light.shadow.camera.bottom = -d;
+            this.body.shadow.camera.left = -d;
+            this.body.shadow.camera.right = d;
+            this.body.shadow.camera.top = d;
+            this.body.shadow.camera.bottom = -d;
 
-            this.light.shadow.camera.near = near;
-            this.light.shadow.camera.far = far;
-            this.light.shadow.camera.fov = fov;
+            this.body.shadow.camera.near = near;
+            this.body.shadow.camera.far = far;
+            this.body.shadow.camera.fov = fov;
 
-            this.light.shadow.bias = bias;
+            this.body.shadow.bias = bias;
         }
     }
 
@@ -111,8 +111,8 @@ export default class SunLight extends Light {
 
     setTarget(target) {
         if (target.position) {
-            this.light.target = target;
-            Scene.add(this.light.target, null, false);
+            this.body.target = target;
+            Scene.add(this.body.target, null, false);
         }
     }
 
@@ -121,8 +121,8 @@ export default class SunLight extends Light {
     }
 
     addHelper() {
-        this.helper = new DirectionalLightHelper(this.light, 5);
-        this.shadowHelper = new CameraHelper(this.light.shadow.camera);
+        this.helper = new DirectionalLightHelper(this.body, 5);
+        this.shadowHelper = new CameraHelper(this.body.shadow.camera);
 
         Scene.add(this.helper, null, false);
         Scene.add(this.shadowHelper, null, false);

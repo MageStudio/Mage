@@ -88,6 +88,17 @@ export default class Element extends Entity {
             if (this.hasBody()) {
                 return this.body.getObjectByName(name);
             } else {
+                let body;
+                this.body.traverse(element => {
+                    if (element.name === name) {
+                        body = element;
+                    };
+                });
+
+                if (body) {
+                    return body;
+                }
+
                 console.warn(ELEMENT_NOT_SET);
             }
         } else {
@@ -498,6 +509,10 @@ export default class Element extends Entity {
         this.name === object.name &&
         this.body.uuid === object.body.uuid
     );
+
+    traverse = (cb) => {
+        this.body.traverse(cb);
+    }
 
     disposeBody() {
         if (hasMaterial(this.body)) {

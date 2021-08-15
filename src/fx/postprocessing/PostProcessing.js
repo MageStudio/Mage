@@ -14,6 +14,7 @@ import {
 } from '../../lib/messages';
 import Config from '../../core/config';
 import PixelEffect from './PixelEffect';
+import OutlineEffect from './OutlineEffect';
 
 export class PostProcessing {
 
@@ -35,16 +36,20 @@ export class PostProcessing {
                 effect: DepthOfField,
                 isClass: true
             },
-            [EFFECTS.SELECTIVE_OUTLINE]: {
-                effect: SelectiveOutline,
-                isClass: true
-            },
+            // [EFFECTS.SELECTIVE_OUTLINE]: {
+            //     effect: SelectiveOutline,
+            //     isClass: true
+            // },
             [EFFECTS.GLITCH]: {
                 effect: GlitchEffect,
                 isClass: true
             },
             [EFFECTS.PIXEL]: {
                 effect: PixelEffect,
+                isClass: true
+            },
+            [EFFECTS.OUTLINE]: {
+                effect: OutlineEffect,
                 isClass: true
             }
         };
@@ -132,7 +137,7 @@ export class PostProcessing {
 
     render = (dt) => {
         this.composer.render(dt);
-        this.customs.forEach(e => e.render());
+        this.customs.forEach(e => e.render(Scene.getScene(), Scene.getCameraBody(), dt));
     }
 }
 

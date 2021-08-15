@@ -56,12 +56,12 @@ export default class SpotLight extends Light {
         intensity = DEFAULT_INTENSITY
     }) {
         if (light) {
-            this.light = light;
+            this.body = light;
         } else {
-            this.light = new THREESpotLight(color, intensity);
+            this.body = new THREESpotLight(color, intensity);
         }
 
-        if (this.hasLight()) {
+        if (this.hasBody()) {
             this.postLightCreation();
         }
     }
@@ -87,22 +87,22 @@ export default class SpotLight extends Light {
         } = this.options;
 
         if (Config.lights().shadows) {
-            this.light.castShadow = true;
+            this.body.castShadow = true;
 
             const d = far/2;
 
-            this.light.shadow.mapSize.height = mapSize;
-            this.light.shadow.mapSize.width = mapSize;
+            this.body.shadow.mapSize.height = mapSize;
+            this.body.shadow.mapSize.width = mapSize;
 
-            this.light.shadow.camera.left = -d;
-            this.light.shadow.camera.right = d;
-            this.light.shadow.camera.top = d;
-            this.light.shadow.camera.bottom = -d;
+            this.body.shadow.camera.left = -d;
+            this.body.shadow.camera.right = d;
+            this.body.shadow.camera.top = d;
+            this.body.shadow.camera.bottom = -d;
 
-            this.light.shadow.camera.near = near;
-            this.light.shadow.camera.far = far;
+            this.body.shadow.camera.near = near;
+            this.body.shadow.camera.far = far;
 
-            this.light.shadow.bias = bias;
+            this.body.shadow.bias = bias;
         }
     }
 
@@ -113,7 +113,7 @@ export default class SpotLight extends Light {
         };
 
         const { x = 0, y = 0, z = 0 } = this.target;
-        this.light.target.position.set(x, y, z);
+        this.body.target.position.set(x, y, z);
     }
 
     getTargetPosition() {
@@ -121,8 +121,8 @@ export default class SpotLight extends Light {
     }
 
     addHelper() {
-        this.helper = new SpotLightHelper(this.light, GREEN);
-        this.shadowHelper = new CameraHelper(this.light.shadow.camera);
+        this.helper = new SpotLightHelper(this.body, GREEN);
+        this.shadowHelper = new CameraHelper(this.body.shadow.camera);
 
         Scene.add(this.helper, null, false);
         Scene.add(this.shadowHelper, null, false);

@@ -12,22 +12,19 @@ export default class Beat {
 
         this.buffer = null;
 
-        //setting listeners
-        this.setListeners();
-
         // Connect the sound source to the volume control.
         this.sound.source.connect(this.sound.volume);
         // Hook up the sound volume control to the main volume.
         this.sound.volume.connect(Audio.volume);
     }
 
-    setListeners() {
-        //setting listeners
-        this.sound.source._caller = this;
-        //this.sound.source.onended = this.onEnd;
-        //this.sound.source.loopEnd = this.onLoopEnd;
-        //this.sound.source.loopStart = this.onLoopstart;
-    }
+    // setListeners() {
+    //     //setting listeners
+    //     this.sound.source._caller = this;
+    //     //this.sound.source.onended = this.onEnd;
+    //     //this.sound.source.loopEnd = this.onLoopEnd;
+    //     //this.sound.source.loopStart = this.onLoopstart;
+    // }
 
     reset() {
         this.sound.source.disconnect();
@@ -85,23 +82,23 @@ export default class Beat {
         }
     }
 
-    onEnd() {
-        if (this._caller.onEndCallback) {
-            this._caller.onEndCallback();
-        }
-        this._caller.reset();
-    }
+    // onEnd() {
+    //     if (this._caller.onEndCallback) {
+    //         this._caller.onEndCallback();
+    //     }
+    //     this._caller.reset();
+    // }
 
-    onLoopEnd() {
-        if (this._caller.onLoopEndCallback) {
-            this._caller.onLoopEndCallback();
-        }
-    }
+    // onLoopEnd() {
+    //     if (this._caller.onLoopEndCallback) {
+    //         this._caller.onLoopEndCallback();
+    //     }
+    // }
 
-    onLoopStart() {
-        if (this._caller.onLoopStartCallback) {
-            this._caller.onLoopStartCallback();
-        }
-    }
+    // onLoopStart() {
+    //     if (this._caller.onLoopStartCallback) {
+    //         this._caller.onLoopStartCallback();
+    //     }
+    // }
 
 }

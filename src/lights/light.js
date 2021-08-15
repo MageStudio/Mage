@@ -30,8 +30,8 @@ export default class Light extends Entity {
     }
 
     addToScene() {
-        if (this.hasLight()) {
-            Scene.add(this.light, this);
+        if (this.hasBody()) {
+            Scene.add(this.body, this);
         }
     }
 
@@ -43,18 +43,14 @@ export default class Light extends Entity {
             this.holder.setMaterialFromName(MATERIALS.BASIC, { wireframe: true, color: LAMP_COLOR });
             this.holder.serializable = false;
             this.holder.setPosition({
-                x: this.light.position.x,
-                y: this.light.position.y,
-                z: this.light.position.z
+                x: this.body.position.x,
+                y: this.body.position.y,
+                z: this.body.position.z
             });
         } else {
             console.warn('[Mage] Couldnt load the lamp holder.');
         }
     };
-
-    hasLight() {
-        return !!this.light;
-    }
 
     hasHelper() {
         return !!this.helper;
@@ -66,9 +62,9 @@ export default class Light extends Entity {
 
     getPosition() {
         return {
-            x: this.light.position.x,
-            y: this.light.position.y,
-            z: this.light.position.z
+            x: this.body.position.x,
+            y: this.body.position.y,
+            z: this.body.position.z
         };
     }
 
@@ -80,8 +76,8 @@ export default class Light extends Entity {
 
         const { x, y, z } = position;
 
-        if (this.light) {
-            this.light.position.set(x, y, z);
+        if (this.body) {
+            this.body.position.set(x, y, z);
         }
 
         if (this.hasHolder() & updateHolder) {
@@ -90,16 +86,16 @@ export default class Light extends Entity {
     }    
 
     isAlreadyOn() {
-        return this.light && this.light.intensity === this.intensity;
+        return this.body && this.body.intensity === this.intensity;
     }
 
     isAlreadyOff() {
-        return this.light && this.light.intensity <= 0;
+        return this.body && this.body.intensity <= 0;
     }
 
     setIntensity(value) {
-        if (this.light) {
-            this.light.intensity = value;
+        if (this.body) {
+            this.body.intensity = value;
         }
     }
 
@@ -109,10 +105,10 @@ export default class Light extends Entity {
     }
 
     on() {
-        if (this.light) {
+        if (this.body) {
             const delay = () => {
-                this.light.intensity += Lights.delayFactor;
-                if (this.light.intensity < this.intensity) {
+                this.body.intensity += Lights.delayFactor;
+                if (this.body.intensity < this.intensity) {
                     setTimeout(delay, Lights.delayStep);
                 } else {
                     this.isLightOn = true;
@@ -125,10 +121,10 @@ export default class Light extends Entity {
     }
 
     off() {
-        if (this.light) {
+        if (this.body) {
             const delay = () => {
-                this.light.intensity -= Lights.delayFactor;
-                if (this.light.intensity > 0) {
+                this.body.intensity -= Lights.delayFactor;
+                if (this.body.intensity > 0) {
                     setTimeout(delay, Lights.delayStep);
                 } else {
                     this.isLightOn = false;
@@ -141,7 +137,7 @@ export default class Light extends Entity {
     }
 
     toJSON() {
-        const { x, y, z } = this.light.position;
+        const { x, y, z } = this.body.position;
 
         return {
             position: { x, y, z },
