@@ -7,6 +7,7 @@ import Snow from './Snow';
 import Scene from '../../core/Scene';
 import Proton from 'three.proton.js';
 import { INVALID_EMITTER_ID } from '../../lib/messages';
+import { PARTICLE_EMITTER_TYPES } from './constants';
 
 export const PARTICLES = {
     RAIN: 'rain',
@@ -16,6 +17,7 @@ export const PARTICLES = {
     SNOW: 'snow'
 };
 
+const { SINGLE, GROUP } = PARTICLE_EMITTER_TYPES;
 export class Particles {
 
     constructor() {
@@ -55,8 +57,12 @@ export class Particles {
 
             this.emitters[emitter.getUUID()] = emitter;
 
-            if (emitter.isProtonEmitter()) {
-                this.addProtonEmitter(emitter);
+            if (emitter.getType() === GROUP) {
+                emitter.forEach(singleEmitter => {
+                    this.handleSingleParticleEmitterCreation(singleEmitter)
+                })
+            } else {
+                this.handleSingleParticleEmitterCreation(emitter);
             }
 
             return emitter;
@@ -64,6 +70,12 @@ export class Particles {
             console.log(INVALID_EMITTER_ID);
         }
     };
+
+    handleSingleParticleEmitterCreation(emitter) {
+        if (emitter.isProtonEmitter()) {
+            this.addProtonEmitter(emitter);
+        }
+    }
 
     addProtonEmitter(emitter) {
         this.proton.addEmitter(emitter.getSystem());
@@ -83,14 +95,23 @@ export class Particles {
             .keys(this.emitters)
             .forEach(uuid => {
                 const emitter = this.emitters[uuid];
-                if (!emitter.isProtonEmitter()) {
-                    emitter.update(dt);
-                }
 
-                if (emitter.isSystemDead()) {
-                    this.toDispose.push(uuid);
+                if (emitter.getType() === GROUP) {
+                    emitter.forEach(emitter => this.updateSingleEmitter(emitter, dt));
+                } else {
+                    this.updateSingleEmitter(emitter, dt);
                 }
             });
+    }
+
+    updateSingleEmitter(emitter, dt) {
+        if (!emitter.isProtonEmitter()) {
+            emitter.update(dt);
+        }
+
+        if (emitter.isSystemDead()) {
+            this.toDispose.push(uuid);
+        }
     }
 
     disposeDeadEmitters() {

@@ -1,123 +1,79 @@
 import Proton from 'three.proton.js';
-import { SpriteMaterial, Sprite, NormalBlending } from 'three';
-import ParticleEmitter from './ParticleEmitter';
-import Images from '../../images/Images';
+import ParticleEmitterGroup from './ParticleEmitterGroup';
+import ProtonParticleEmitter from './ProtonParticleEmitter';
 
-const getDefaultInitializers = () => ([
+const DEFAULT_SIZE = 4;
+
+const getSparksInitializers = (size = DEFAULT_SIZE) => ([
     new Proton.Mass(0.1),
-    new Proton.Radius(1),
-    new Proton.Life(.4, 1),
-    new Proton.Position(new Proton.SphereZone(1)),
-    new Proton.V(new Proton.Span(3, 5), new Proton.Vector3D(0, .4, 0), 50),
-    new Proton.V(new Proton.Polar3D(2, 1, 1), 300),
+    new Proton.Radius(size * .3),
+    new Proton.Life(1),
+    new Proton.Position(new Proton.SphereZone(size * 1.5))
 ]);
 
-const getDefaultBehaviours = () => ([
-    new Proton.RandomDrift(.1, .1, .1, .05),
-    new Proton.Rotate("random", "random"),
+const getSparksBehaviours = (size = DEFAULT_SIZE) => ([
+    new Proton.RandomDrift(size * 0.75, size * 0.75, size * 0.75, .5),
+    new Proton.Color('#ffffff'),
     new Proton.Scale(1, 0.1)
 ]);
 
-const DEFAULT_PARTICLE_COLOR = 0xff0000;
+const getSparksRate = () => new Proton.Rate(50, .5);
+const getDebrisRate = () => new Proton.Rate(10, .4);
+const getFireRate = () => new Proton.Rate(10, .4);
 
-export default class Explosion extends ParticleEmitter {
+const getDebrisInitializers = (size = DEFAULT_SIZE) => ([
+    new Proton.Mass(10),
+    new Proton.Radius(size * .25),
+    new Proton.Life(2),
+    new Proton.Position(new Proton.SphereZone(size * .75))
+]);
+
+const getDebrisBehaviours = (size = DEFAULT_SIZE) => {
+    const zone = new Proton.BoxZone(0, 50, 0, 300, 100, 300)
+    zone.friction = 0.95;
+    zone.max = 7;
+    return ([
+        new Proton.CrossZone(zone, "bound"),
+        new Proton.Repulsion(new Proton.Vector3D(0, 0, 0), size * 12.5, size * 1.5),
+        new Proton.G(3),
+        new Proton.Color('#95a5a6', '#000000')
+    ])
+};
+
+const getFireInitializers = (size = DEFAULT_SIZE) => ([
+    new Proton.Mass(1),
+    new Proton.Radius(size * 1.5),
+    new Proton.Life(.2, .5),
+    new Proton.Position(new Proton.SphereZone(size * 1.25))
+]);
+
+const getFireBehaviours = () => ([
+    new Proton.Scale(1, 2),
+    new Proton.Color('#c0392b', '#f1c40f')
+]);
+export default class Explosion extends ParticleEmitterGroup {
 
     constructor(options = {}) {
         const {
-            initializers = getDefaultInitializers(),
-            behaviours = getDefaultBehaviours(),
-            texture = false
+            texture = false,
+            hasDebris = false,
+            size = DEFAULT_SIZE
         } = options;
 
-        const parsedOptions = {
-            initializers,
-            behaviours,
-            texture
-        };
+        const sparks = new ProtonParticleEmitter({ rate: getSparksRate(), texture, initializers: getSparksInitializers(size), behaviours: getSparksBehaviours(size)});
+        const fire = new ProtonParticleEmitter({ rate: getFireRate(), texture, initializers: getFireInitializers(size), behaviours: getFireBehaviours(size) });
 
-        super(parsedOptions);
-    }
+        const system = [
+            sparks,
+            fire
+        ];
 
-    isProtonEmitter() { return true; }
-    isSystemDead() { return this.system.dead; }
-
-    createBody(texture, color = DEFAULT_PARTICLE_COLOR) {
-        const map = Images.get(texture);
-        const material = new SpriteMaterial({
-            map,
-            color,
-            blending: NormalBlending
-        });
-        return new Sprite(material);
-    }
-
-    setSystem() {
-        const {
-            initializers,
-            behaviours,
-            texture,
-            color
-        } = this.options;
-
-        this.system = new Proton.Emitter();
-        this.system.rate = new Proton.Rate(new Proton.Span(100, 300), new Proton.Span(.05, .07));
-
-        initializers.forEach(initializer => this.system.addInitialize(initializer));
-
-        if (texture) {
-            this.system.addInitialize(new Proton.Body(this.createBody(texture, color)));
+        if (hasDebris) {
+            system.push(new ProtonParticleEmitter({ rate: getDebrisRate(), texture, initializers: getDebrisInitializers(size), behaviours: getDebrisBehaviours(size) }))
         }
 
-        behaviours.forEach(behaviour => this.system.addBehaviour(behaviour));
-    }
+        const name = 'ExplosionGroup';
 
-    setPosition(where = {}) {
-        const position = {
-            ...this.getPosition(),
-            ...where
-        };
-
-        this.system.p.x = position.x;
-        this.system.p.y = position.y;
-        this.system.p.z = position.z;
-
-        return this;
-    }
-
-    getPosition() {
-        return {
-            x: this.system.p.x,
-            y: this.system.p.y,
-            z: this.system.p.z
-        };
-    }
-
-    setRotation(howmuch) {
-        const rotation = {
-            ...this.getRotation(),
-            ...howmuch
-        };
-
-        this.system.rotation.x = rotation.x;
-        this.system.rotation.y = rotation.y;
-        this.system.rotation.z = rotation.z;
-
-        return this;
-    }
-
-    getRotation() {
-        return {
-            x: this.system.rotation.x,
-            y: this.system.rotation.y,
-            z: this.system.rotation.z
-        };
-    }
-
-    start(duration = 'once', life) {
-        if (this.hasSystem()) {
-            this.system.emit(duration, life);
-        }
-
-        return this;
+        super({ system, name });
     }
 }

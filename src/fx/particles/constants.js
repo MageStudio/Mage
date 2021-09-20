@@ -1,0 +1,4 @@
+export const PARTICLE_EMITTER_TYPES = {
+    SINGLE: 'SINGLE',
+    GROUP: 'GROUP'
+};

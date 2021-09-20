@@ -3,13 +3,17 @@ import { ParticlesSystem } from 'mage-engine.particles';
 
 import { generateUUID } from '../../lib/uuid';
 import Scene from '../../core/Scene';
+import { PARTICLE_EMITTER_TYPES } from "./constants";
 
 export default class ParticleEmitter extends EventDispatcher {
 
     constructor(options = {}) {
         super();
 
+        const { name } = options;
+
         this.uuid = generateUUID();
+        this.name = name || `emitter_${this.uuid.slice(0, 4)}`;
 
         this.system = null;
         this.options = options;
@@ -21,8 +25,20 @@ export default class ParticleEmitter extends EventDispatcher {
         return false;
     }
 
+    getType() {
+        return PARTICLE_EMITTER_TYPES.SINGLE;
+    }
+
     getUUID() {
         return this.uuid;
+    }
+
+    getName() {
+        return this.name;
+    }
+
+    setName(name) {
+        this.name = name;
     }
 
     hasSystem() {
@@ -95,9 +111,9 @@ export default class ParticleEmitter extends EventDispatcher {
         return this;
     }
 
-    update() {
+    update(dt) {
         if (this.hasSystem()) {
-            this.system.update();
+            this.system.update(dt);
         }
     }
 }

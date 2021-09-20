@@ -9,7 +9,7 @@ export default class Intro extends Level {
     createFloor() {
         const floor = new Box(50, 1, 50, 0xffffff);
 
-        floor.setPosition({ y: -1 });
+        floor.setPosition({ y: -5 });
     }
 
     explode(position = { x: 0, y: 0, z: 0 }) {
@@ -43,7 +43,8 @@ export default class Intro extends Level {
 
 const assets = {
     textures: {
-        'dot': 'dot.png'
+        'dot': 'dot.png',
+        'fire': 'fire.png'
     }
 };
 
