@@ -13,6 +13,7 @@ export const WORKERS_NOT_AVAILABLE = `${PREFIX} Your browser doesn't support Wor
 export const BOUNDINGBOX_NOT_AVAILABLE = `${PREFIX} Selected element does not have a computed bounding box.`;
 
 export const INVALID_EMITTER_ID = `${PREFIX} The selected emitter id is not valid.`;
+export const EMITTER_NOT_FOUND = `${PREFIX} The requested emitter could not be found`;
 
 export const FEATURE_NOT_SUPPORTED = `${PREFIX} The following features are not supported: `;
 
