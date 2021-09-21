@@ -17,6 +17,8 @@ export const EMITTER_NOT_FOUND = `${PREFIX} The requested emitter could not be f
 
 export const FEATURE_NOT_SUPPORTED = `${PREFIX} The following features are not supported: `;
 
+export const METHOD_NOT_SUPPORTED = `${PREFIX} This method is not supported.`;
+
 export const ANIMATION_NOT_FOUND = `${PREFIX} Required animation can't be found.`;
 export const ANIMATION_HANDLER_NOT_FOUND = `${PREFIX} AnimationHander hasn't been defined yet.`;
 
@@ -50,9 +52,11 @@ export const PHYSICS_ELEMENT_CANT_BE_REMOVED = `${PREFIX} This element can't be 
 export const PHYSICS_ELEMENT_ALREADY_STORED = `${PREFIX} This element has already been added to the world.`;
 export const PHYSICS_ELEMENT_MISSING = `${PREFIX} This element is missing from the world, please use the .enablePhysics(options) method first.`;
 
-
 export const ASSETS_AUDIO_LOAD_FAIL = `${PREFIX} Could not load audio.`;
 export const ASSETS_TEXTURE_LOAD_FAIL = `${PREFIX} Could not load texture.`;
 export const ASSETS_IMAGE_LOAD_FAIL = `${PREFIX} Could not load image.`;
 export const ASSETS_VIDEO_LOAD_FAIL = `${PREFIX} Could not load video.`;
 export const ASSETS_MODEL_LOAD_FAIL = `${PREFIX} Could not load model.`;
+
+export const AUDIO_CONTEXT_NOT_AVAILABLE = `${PREFIX} No Audio Context available, sorry.`;
+export const AUDIO_UNABLE_TO_LOAD_SOUND = `${PREFIX} Unable to load sound, sorry.`;
