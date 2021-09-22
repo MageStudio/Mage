@@ -1,89 +1,52 @@
-import Audio from './Audio';
-import Beat from './Beat';
 import { Vector3 } from 'three';
+import Sound from './sound';
 
-export default class DirectionalSound extends Beat {
+export default class DirectionalSound extends Sound {
 
     constructor(name, angles, options) {
         super(name);
 
-        //creating panner, we need to update on object movements.
-        this.sound.panner = Audio.context.createPanner();
-        //disconnecting from main volume, then connecting to panner and main volume again
-        this.sound.volume.disconnect();
-        this.sound.volume.connect(this.sound.panner);
-        this.sound.panner.connect(Audio.volume);
+        const {
+            target
+        } = options;
 
-        this.body = options.body;
-        //storing direction
-        this.sound.panner.coneInnerAngle = angles.innerAngleInDegrees;
-        this.sound.panner.coneOuterAngle = angles.outerAngleInDegrees;
-        this.sound.panner.coneOuterGain = angles.outerGainFactor;
-
-        if (options.effect) {
-
-            this.convolver = Audio.context.createConvolver();
-            this.mixer = Audio.createGain();
-            this.sound.panner.disconnect();
-            this.sound.panner.connect(this.mixer);
-            //creating gains
-            this.plainGain = Audio.context.createGain();
-            this.convolverGain = Audio.context.createGain();
-            //connect mixer to new gains
-            this.mixer.connect(plainGain);
-            this.mixer.connect(convolverGain);
-
-            this.plainGain.connect(Audio.volume);
-            this.convolverGain.connect(Audio.volume);
-
-            this.convolver.buffer = Audio.get(options.effect);
-            this.convolverGain.gain.value = 0.7;
-            this.plainGain.gain.value = 0.3;
-
+        if (target) {
+            this.setTarget(target);
+            this.setPannerAngles(angles);
         }
-        //autoplay option
-        var autoplay = options.autoplay || false;
-        if (autoplay) {
-            this.play();
+    }
+
+    setPannerAngles(angles) {
+        this.pannerNode.coneInnerAngle = angles.innerAngleInDegrees;
+        this.pannerNode.coneOuterAngle = angles.outerAngleInDegrees;
+        this.pannerNode.coneOuterGain = angles.outerGainFactor;
+    }
+
+    setPannerOrientation() {
+        if (this.hasPannerNode()) {
+            let vec = new Vector3(0,0,1);
+            let m = this.target.getBody().matrixWorld;
+    
+            // Save the translation column and zero it.
+            let mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
+            m.elements[12] = m.elements[13] = m.elements[14] = 0;
+    
+            // Multiply the 0,0,1 vector by the world matrix and normalize the result.
+            vec.applyProjection(m);
+            vec.normalize();
+    
+            this.pannerNode.setOrientation(vec.x, vec.y, vec.z);
+    
+            // Restore the translation column.
+            m.elements[12] = mx;
+            m.elements[13] = my;
+            m.elements[14] = mz;
         }
-        //adding this sound to Audio
-        Audio.add(this);
     }
 
     update(dt) {
-
-        var p = new Vector3();
-        p.setFromMatrixPosition(this.body.matrixWorld);
-        var px = p.x, py = p.y, pz = p.z;
-
-        this.body.updateMatrixWorld();
-
-        var q = new Vector3();
-        q.setFromMatrixPosition(this.body.matrixWorld);
-        var dx = q.x-px, dy = q.y-py, dz = q.z-pz;
-        //setting panner position and velocity using doppler effect.
-        this.sound.panner.setPosition(q.x, q.y, q.z);
-        this.sound.panner.setVelocity(dx/dt, dy/dt, dz/dt);
-
-
-        var vec = new Vector3(0,0,1);
-        var m = this.body.matrixWorld;
-
-        // Save the translation column and zero it.
-        var mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
-        m.elements[12] = m.elements[13] = m.elements[14] = 0;
-
-        // Multiply the 0,0,1 vector by the world matrix and normalize the result.
-        vec.applyProjection(m);
-        vec.normalize();
-
-        this.sound.panner.setOrientation(vec.x, vec.y, vec.z);
-
-        // Restore the translation column.
-        m.elements[12] = mx;
-        m.elements[13] = my;
-        m.elements[14] = mz;
-
+        super.update(dt);
+        this.setPannerOrientation();
     }
 
 }

@@ -148,7 +148,7 @@ export {
     Camera,
 
     Sound,
-    AmbientSound,
+    // AmbientSound,
     BackgroundSound,
     DirectionalSound,
 

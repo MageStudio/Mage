@@ -7,14 +7,14 @@ export default class AmbientSound extends Beat {
     constructor(name, options) {
         super(name);
         //use options to choose whether have a loop or not.
-        this.sound.source.loop = options.loop || false;
+        this.source.loop = options.loop || false;
 
         //creating panner, we need to update on object movements.
-        this.sound.panner = Audio.context.createPanner();
+        this.panner = Audio.context.createPanner();
         //disconnecting from main volume, then connecting to panner and main volume again
-        this.sound.volume.disconnect();
-        this.sound.volume.connect(this.sound.panner);
-        this.sound.panner.connect(Audio.volume);
+        this.volumeNode.disconnect();
+        this.volumeNode.connect(this.panner);
+        this.panner.connect(Audio.volume);
 
         //storing body
         this.body = options.body;
@@ -24,8 +24,8 @@ export default class AmbientSound extends Beat {
 
             this.convolver = Audio.context.createConvolver();
             this.mixer = Audio.context.createGain();
-            this.sound.panner.disconnect();
-            this.sound.panner.connect(this.mixer);
+            this.panner.disconnect();
+            this.panner.connect(this.mixer);
             //creating gains
             this.plainGain = Audio.context.createGain();
             this.convolverGain = Audio.context.createGain();
@@ -58,7 +58,7 @@ export default class AmbientSound extends Beat {
         p.setFromMatrixPosition(this.body.matrixWorld);
 
         // And copy the position over to the sound of the object.
-        this.sound.panner.setPosition(p.x, p.y, p.z);
+        this.panner.setPosition(p.x, p.y, p.z);
     }
 
 }

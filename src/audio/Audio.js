@@ -4,19 +4,24 @@ import {
 import Scene from '../core/Scene';
 import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
-import { ASSETS_AUDIO_LOAD_FAIL } from '../lib/messages';
+import { ASSETS_AUDIO_LOAD_FAIL, AUDIO_CONTEXT_NOT_AVAILABLE } from '../lib/messages';
 
 const TIME_FOR_UPDATE = 150;
+const DELAY_FACTOR = 0.02;
+const DELAY_STEP = 1;
+const DELAY_MIN_VALUE = 0.2;
+const DELAY_NORMAL_VALUE = 40;
+const VOLUME = 2;
+
+export const AUDIO_EVENTS = {
+    ENDED: 'ended'
+};
 
 export class Audio {
 
     constructor() {
-        this.DELAY_FACTOR = 0.02;
-        this.DELAY_STEP = 1; //millis
-        this.DELAY_MIN_VALUE = 0.2;
-        this.DELAY_NORMAL_VALUE = 40;
-        this.VOLUME = 2;
-        this._volume = 2;
+        this.masterVolumeNode = null;
+        this.context = null;
 
         this.numSound = 0;
         this.soundLoaded = 0;
@@ -31,31 +36,48 @@ export class Audio {
         this.currentLevel = level;
     }
 
+    hasContext() {
+        return !!this.context;
+    }
+
     createAudioContext() {
         const AudioContext = window.AudioContext || window.webkitAudioContext || null;
 
-        if (AudioContext) {
-            //creating a new audio context if it's available.
-            this.context = new AudioContext();
-            //creating a gain node to control volume
-            this.volume = this.context.createGain();
-            this.volume.gain.value = this.getVolume();
-            //connecting volume node to context destination
-            this.volume.connect(this.context.destination);
-        } else {
-            console.error("No Audio Context available, sorry.");
+        if (!this.hasContext()) {
+            if (AudioContext) {
+                this.context = new AudioContext();
+                this.createMasterVolumeNode();
+            } else {
+                console.error(AUDIO_CONTEXT_NOT_AVAILABLE);
+            }
+        }
+    }
+
+    createMasterVolumeNode() {
+        this.masterVolumeNode = this.context.createGain();
+        this.setVolume(VOLUME);
+
+        this.masterVolumeNode.connect(this.getDestination());
+    }
+
+    getDestination() {
+        if (this.context) {
+            return this.context.destination;
         }
     }
 
     getVolume() {
-        if (this._volume) {
-            return this._volume;
+        if (this.masterVolumeNode) {
+            return this.masterVolumeNode.gain.value;
         }
     }
 
+    getMasterVolumeNode() {
+        return this.masterVolumeNode;
+    }
+
     setVolume(value) {
-        this._volume = value;
-        this.volume.gain.value = this._volume;
+        this.masterVolumeNode.gain.setValueAtTime(value, this.context.currentTime);
     }
 
     load = (audio = {}, level) => {
@@ -112,50 +134,55 @@ export class Audio {
         this.sounds.push(sound);
     }
 
+    updateListenerPosition() {
+        //now handling listener
+        Scene.getCameraBody().updateMatrixWorld();
+        const p = new Vector3();
+        p.setFromMatrixPosition(Scene.getCameraBody().matrixWorld);
+
+        //setting audio engine context listener position on camera position
+        this.context.listener.setPosition(p.x, p.y, p.z);
+    }
+
+    updatelistenerOrientation() {
+        //this is to add up and down vector to our camera
+        // The camera's world matrix is named "matrix".
+        const m = Scene.getCameraBody().matrix;
+
+        const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
+        m.elements[12] = m.elements[13] = m.elements[14] = 0;
+
+        // Multiply the orientation vector by the world matrix of the camera.
+        const vec = new Vector3(0,0,1);
+        vec.applyMatrix4(m);
+        vec.normalize();
+
+        // Multiply the up vector by the world matrix.
+        const up = new Vector3(0,-1,0);
+        up.applyMatrix4(m);
+        up.normalize();
+
+        // Set the orientation and the up-vector for the listener.
+        this.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
+
+        m.elements[12] = mx;
+        m.elements[13] = my;
+        m.elements[14] = mz;
+    }
+
     update(dt) {
-        return new Promise(resolve => {
-            const start = new Date();
-            for (var index in this.sounds) {
-                const sound = this.sounds[index];
-                sound.update(dt);
+        if (!this.hasContext()) return;
 
-                //now handling listener
-                Scene.getCameraBody().updateMatrixWorld();
-                const p = new Vector3();
-                p.setFromMatrixPosition(Scene.getCameraBody().matrixWorld);
+        const start = new Date();
+        for (var index in this.sounds) {
+            const sound = this.sounds[index];
+            sound.update(dt);
 
-                //setting audio engine context listener position on camera position
-                this.context.listener.setPosition(p.x, p.y, p.z);
+            this.updateListenerPosition();
+            this.updatelistenerOrientation();
 
-                //this is to add up and down vector to our camera
-                // The camera's world matrix is named "matrix".
-                const m = Scene.getCameraBody().matrix;
-
-                const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
-                m.elements[12] = m.elements[13] = m.elements[14] = 0;
-
-                // Multiply the orientation vector by the world matrix of the camera.
-                const vec = new Vector3(0,0,1);
-                vec.applyMatrix4(m);
-                vec.normalize();
-
-                // Multiply the up vector by the world matrix.
-                const up = new Vector3(0,-1,0);
-                up.applyMatrix4(m);
-                up.normalize();
-
-                // Set the orientation and the up-vector for the listener.
-                this.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
-
-                m.elements[12] = mx;
-                m.elements[13] = my;
-                m.elements[14] = mz;
-
-                if ((+new Date() - start) > TIME_FOR_UPDATE) break;
-            }
-
-            resolve();
-        });
+            if ((+new Date() - start) > TIME_FOR_UPDATE) break;
+        }
     }
 }
 

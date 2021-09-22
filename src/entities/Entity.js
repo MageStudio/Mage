@@ -120,29 +120,23 @@ export default class Entity extends EventDispatcher {
     }
 
     update(dt) {
-        return new Promise((resolve) => {
-            if (this.hasScripts()) {
-                this.scripts.forEach(({ script, enabled }) => {
-                    if (script && enabled) {
-                        script.update(dt);
-                    }
-                });
-            }
-            resolve();
-        });
+        if (this.hasScripts()) {
+            this.scripts.forEach(({ script, enabled }) => {
+                if (script && enabled) {
+                    script.update(dt);
+                }
+            });
+        }
     }
 
     onPhysicsUpdate(dt) {
-        return new Promise((resolve) => {
-            if (this.hasScripts()) {
-                this.scripts.forEach(({ script, enabled }) => {
-                    if (script && enabled) {
-                        script.physicsUpdate(dt);
-                    }
-                });
-            }
-            resolve();
-        });
+        if (this.hasScripts()) {
+            this.scripts.forEach(({ script, enabled }) => {
+                if (script && enabled) {
+                    script.physicsUpdate(dt);
+                }
+            });
+        }
     }
 
     dispose() {
@@ -279,10 +273,11 @@ export default class Entity extends EventDispatcher {
 
         this.isPlayingSound = autoplay;
         this.sound = new Sound(name, {
-            body: this.body,
             autoplay,
             ...opts
         });
+
+        this.sound.setTarget(this);
 
         return this.sound;
     }
@@ -292,26 +287,27 @@ export default class Entity extends EventDispatcher {
 
         this.isPlayingSound = autoplay;
         this.sound = new DirectionalSound(name, {
-            body: this.body,
             autoplay,
             ...opts
         });
 
-        return this.sound;
-    }
-
-    addAmbientSound(name, options) {
-        const { autoplay = false, ...opts } = options;
-
-        this.isPlayingSound = autoplay;
-        this.sound = new AmbientSound(name, {
-            body: this.body,
-            autoplay,
-            ...opts
-        });
+        this.sound.setTarget(this);
 
         return this.sound;
     }
+
+    // addAmbientSound(name, options) {
+    //     const { autoplay = false, ...opts } = options;
+
+    //     this.isPlayingSound = autoplay;
+    //     this.sound = new AmbientSound(name, {
+    //         body: this.body,
+    //         autoplay,
+    //         ...opts
+    //     });
+
+    //     return this.sound;
+    // }
 
     addLight(light) {
         const { x, y, z } = this.getPosition();
