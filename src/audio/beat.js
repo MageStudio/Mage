@@ -3,10 +3,13 @@ import Audio, { AUDIO_EVENTS } from './Audio';
 
 export default class Beat {
 
-    constructor(name) {
+    constructor(name, options = {}) {
         this.name = name;
         this.buffer = null;
         this.connected = false;
+        this.playing = false;
+
+        this.options = options;
 
         this.init();
         this.connect();
@@ -47,9 +50,15 @@ export default class Beat {
     }
 
     reset() {
+        this.playing = false;
+        const { reconnectOnReset } = this.options;
+
         this.disconnect();
-        this.init();
-        this.connect();
+
+        if (reconnectOnReset) {
+            this.init();
+            this.connect();
+        }
     }
 
     getVolume() {
@@ -77,9 +86,11 @@ export default class Beat {
     }
 
     play(volume = this.getVolume()) {
+        if (this.playing) return;
+
         this.setVolume(0);
         this.source.start();
-
+        this.playing = true;
         this.volumeNode.gain.linearRampToValueAtTime(volume, Audio.context.currentTime + 0.1);
     }
 

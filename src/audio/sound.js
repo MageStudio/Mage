@@ -5,19 +5,24 @@ import { Vector3 } from 'three';
 export default class Sound extends Beat {
 
     constructor(name, options = {}) {
-        super(name);
-
+        
         const {
             loop = false,
-            effect = false,
-            autoplay = false
+            autoplay = false,
+            reconnectOnReset = false
         } = options;
 
+        super(name, {
+            loop,
+            autoplay,
+            reconnectOnReset
+        });
+        
         this.source.loop = loop;
         this.target = null;
         this.pannerNode = null;
         this.convolverNode = null;
-
+        
         if (autoplay) {
             this.play();
         }
