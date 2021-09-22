@@ -21,9 +21,6 @@ export default class Beat {
         this.setBuffer();
 
         this.source.addEventListener(AUDIO_EVENTS.ENDED, this.onSoundEnded.bind(this));
-
-        console.log(this.volumeNode);
-        console.log(this.source);
     }
 
     createVolumeNode() {
