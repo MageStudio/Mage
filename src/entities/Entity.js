@@ -120,29 +120,23 @@ export default class Entity extends EventDispatcher {
     }
 
     update(dt) {
-        return new Promise((resolve) => {
-            if (this.hasScripts()) {
-                this.scripts.forEach(({ script, enabled }) => {
-                    if (script && enabled) {
-                        script.update(dt);
-                    }
-                });
-            }
-            resolve();
-        });
+        if (this.hasScripts()) {
+            this.scripts.forEach(({ script, enabled }) => {
+                if (script && enabled) {
+                    script.update(dt);
+                }
+            });
+        }
     }
 
     onPhysicsUpdate(dt) {
-        return new Promise((resolve) => {
-            if (this.hasScripts()) {
-                this.scripts.forEach(({ script, enabled }) => {
-                    if (script && enabled) {
-                        script.physicsUpdate(dt);
-                    }
-                });
-            }
-            resolve();
-        });
+        if (this.hasScripts()) {
+            this.scripts.forEach(({ script, enabled }) => {
+                if (script && enabled) {
+                    script.physicsUpdate(dt);
+                }
+            });
+        }
     }
 
     dispose() {

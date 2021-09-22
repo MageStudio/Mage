@@ -36,19 +36,16 @@ export class Lights {
     }
 
     update(dt) {
-        return new Promise(resolve => {
-            if (this.isUsingCSM()) {
-                this.csm.update();
-            }
+        if (this.isUsingCSM()) {
+            this.csm.update();
+        }
 
-            const start = new Date();
-            for (let index in this.lights) {
-                const light = this.lights[index];
-                light.update(dt);
-                if ((+new Date() - start) > TIME_TO_UPDATE) break;
-            }
-            resolve();
-        });
+        const start = new Date();
+        for (let index in this.lights) {
+            const light = this.lights[index];
+            light.update(dt);
+            if ((+new Date() - start) > TIME_TO_UPDATE) break;
+        }
     }
 
     toJSON() {

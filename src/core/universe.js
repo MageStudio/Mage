@@ -63,21 +63,15 @@ export class Universe {
     };
 
     update(dt) {
-        return new Promise(resolve => {
-            Object
-                .keys(this.reality)
-                .forEach(k => this.reality[k].update(dt))
-            resolve();
-        });
+        Object
+            .keys(this.reality)
+            .forEach(k => this.reality[k].update(dt))
     }
     
     onPhysicsUpdate(dt) {
-        return new Promise(resolve => {
-            Object
-                .keys(this.reality)
-                .forEach(k => this.reality[k].onPhysicsUpdate(dt))
-            resolve();
-        });
+        Object
+            .keys(this.reality)
+            .forEach(k => this.reality[k].onPhysicsUpdate(dt));
     }
 
     bigfreeze = () => {
