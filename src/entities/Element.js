@@ -25,12 +25,10 @@ import Physics from '../physics';
 import { COLLIDER_TYPES } from '../physics/constants';
 
 import {
-    getBoxDescriptionForElement,
     extractBoundingBox,
     extractBiggestBoundingBox,
     extractBoundingSphere,
     extractBiggestBoundingSphere,
-    mapColliderTypeToDescription
 } from '../physics/utils';
 
 import { clamp } from '../lib/math';
@@ -63,7 +61,8 @@ export default class Element extends Entity {
         this.options = {
             ...options,
             name
-        };;
+        };
+        this.physicsOptions = {};
 
         this.setBody({ geometry, material });
 
@@ -74,6 +73,13 @@ export default class Element extends Entity {
         this.animationHandler = undefined;
 
         this.setEntityType(ENTITY_TYPES.MESH);
+    }
+
+    static get EVENTS() {
+        return {
+            COLLISION_EVENT: 'COLLISION_EVENT',
+            PHYSICS_UPDATE: 'PHYSICS_UPDATE'
+        };
     }
 
     addTag(tag) {
@@ -204,6 +210,14 @@ export default class Element extends Entity {
         }
 
         return [];
+    }
+
+    setPhysicsOptions(options) {
+        this.physicsOptions = options;
+    }
+
+    getPhysicsOptions(option) {
+        return option ? this.physicsOptions[option] : this.physicsOptions;
     }
 
     enablePhysics(options = {}) {

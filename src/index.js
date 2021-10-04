@@ -41,7 +41,7 @@ import Config from './core/config';
 import GameRunner from './runner/GameRunner';
 import Router from './router/Router';
 import Scene from './core/Scene';
-import Scripts from './scripts/Scripts';
+import Scripts, { BUILTIN } from './scripts/Scripts';
 import Controls from './controls/Controls';
 import Physics, {
     PHYSICS_EVENTS,
@@ -102,6 +102,7 @@ export {
     Scene,
     Universe,
     Scripts,
+    BUILTIN,
     Router,
     GameRunner,
 

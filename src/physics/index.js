@@ -20,7 +20,9 @@ import {
     SET_LINEAR_VELOCITY_EVENT,
     APPLY_IMPULSE_EVENT,
     DISPOSE_ELEMENT_EVENT,
-    ADD_SPHERE_EVENT
+    ADD_SPHERE_EVENT,
+    SET_POSITION_EVENT,
+    SET_CAR_POSITION_EVENT
 } from './messages';
 import * as physicsUtils from './utils';
 import { getHostURL } from '../lib/url';
@@ -31,6 +33,7 @@ import {
 } from '../lib/messages';
 
 import * as PHYSICS_CONSTANTS from './constants';
+import { Element } from '../entities';
 
 const { COLLIDER_TYPES } = PHYSICS_CONSTANTS;
 
@@ -74,8 +77,9 @@ export class Physics extends EventDispatcher {
         return this.elements.includes(uuid);
     }
 
-    storeElement(element) {
+    storeElement(element, options) {
         if (!this.hasElement(element)) {
+            element.setPhysicsOptions(options);
             const uuid = element.uuid();
             this.elements.push(uuid);
         } else {
@@ -153,8 +157,17 @@ export class Physics extends EventDispatcher {
 
     handleBodyUpdate = ({ quaternion, position, uuid }) => {
         const element = Universe.getByUUID(uuid);
+ 
         if (element) {
-            element.handlePhysicsUpdate(position, quaternion);
+            if (element.getPhysicsOptions('applyPhysicsUpdate')) {
+                element.handlePhysicsUpdate(position, quaternion);
+            } else {
+                element.dispatchEvent({
+                    type: Element.EVENTS.PHYSICS_UPDATE,
+                    position,
+                    quaternion
+                });
+            }
         }
     };
 
@@ -192,7 +205,7 @@ export class Physics extends EventDispatcher {
                 ...options
             };
 
-            this.storeElement(element);
+            this.storeElement(element, options);
 
             this.worker.postMessage({
                 event: mapColliderTypeToAddEvent(description.collider),
@@ -207,7 +220,7 @@ export class Physics extends EventDispatcher {
             const uuid = element.uuid();
             const description = getBoxDescriptionForElement(element);
 
-            this.storeElement(element);
+            this.storeElement(element, options);
 
             this.worker.postMessage({
                 event: ADD_VEHICLE_EVENT,
@@ -231,7 +244,7 @@ export class Physics extends EventDispatcher {
                 indexes.push(indexArray);
             });
 
-            this.storeElement(model);
+            this.storeElement(model, options);
 
             this.worker.postMessage({
                 event: ADD_MODEL_EVENT,
@@ -256,6 +269,30 @@ export class Physics extends EventDispatcher {
                 uuid,
                 velocity
             });
+        }
+    }
+
+    setPosition = (element, position) => {
+        if (Config.physics().enabled) {
+            const uuid = element.uuid();
+
+            this.worker.postMessage({
+                event: SET_POSITION_EVENT,
+                uuid,
+                position
+            });
+        }
+    }
+
+    setCarPosition = (car, position) => {
+        if (Config.physics().enabled) {
+            const uuid = car.uuid();
+
+            this.worker.postMessage({
+                event: SET_CAR_POSITION_EVENT,
+                uuid,
+                position
+            })
         }
     }
 
