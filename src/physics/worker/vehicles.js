@@ -117,6 +117,21 @@ export const addVehicle = data => {
     });
 }
 
+export const setVehiclePosition = data => {
+    const { uuid, position } = data;
+    const element = world.getElement(uuid);
+
+    if (element.type === TYPES.VEHICLE) {
+        const body = element.vehicle.getRigidBody();
+        const transform = new Ammo.btTransform();
+
+        body.getWorldTransform(transform);
+        transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z ));
+
+        body.setWorldTransform(transform);
+    }
+}
+
 export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE, options = {} }, dt) => {
     const speed = vehicle.getCurrentSpeedKmHour();
 

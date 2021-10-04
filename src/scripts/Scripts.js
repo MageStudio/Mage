@@ -3,11 +3,14 @@ import Input from '../core/input/Input';
 import { fetch } from 'whatwg-fetch';
 import BaseCar from './builtin/BaseCar';
 
+export const BUILTIN = {
+    BASECAR: 'BaseCar'
+};
 export class Scripts {
 
     constructor() {
         this.map = {
-            'BaseCar': BaseCar
+            [BUILTIN.BASECAR] : BaseCar
         };
     }
 

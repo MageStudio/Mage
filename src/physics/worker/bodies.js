@@ -152,6 +152,18 @@ export const setLinearVelocity = (data) => {
     }
 };
 
+export const setPosition = data => {
+    const { uuid, position } = data;
+    const { body } = world.getElement(uuid);
+
+    const transform = new Ammo.btTransform();
+
+    body.getWorldTransform(transform);
+    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z ));
+
+    body.setWorldTransform(transform);
+}
+
 export const applyImpuse = data => {
     const { uuid, impulse = DEFAULT_IMPULSE } = data;
     const { body } = world.getElement(uuid);

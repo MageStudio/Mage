@@ -361,7 +361,7 @@ export default class Entity extends EventDispatcher {
 
     getQuaternion() {
         if (this.hasBody()) {
-            return this.getBody().quaternion;
+            return this.getBody().quaternion.clone();
         }
     }
 
