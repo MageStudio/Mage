@@ -11,14 +11,16 @@ import {
     APPLY_IMPULSE_EVENT,
     DISPOSE_ELEMENT_EVENT,
     ADD_SPHERE_EVENT,
-    SET_CAR_POSITION_EVENT
+    SET_CAR_POSITION_EVENT,
+    SET_CAR_QUATERNION_EVENT,
+    RESET_CAR_EVENT
 } from '../messages';
 
 import {
     LIBRARY_NAME
 } from '../constants';
 
-import { addVehicle, setVehiclePosition } from './vehicles';
+import { addVehicle, resetCar, setVehiclePosition, setVehicleQuaternion } from './vehicles';
 import { addBox, addMesh, setLinearVelocity, applyImpuse, addSphere, setPosition } from './bodies';
 import { addPlayer } from './player';
 
@@ -53,6 +55,12 @@ const handleLoadEvent = options => Ammo => {
                 break;
             case SET_CAR_POSITION_EVENT:
                 setVehiclePosition(data);
+                break;
+            case SET_CAR_QUATERNION_EVENT:
+                setVehicleQuaternion(data);
+                break;
+            case RESET_CAR_EVENT:
+                resetCar(data);
                 break;
             case APPLY_IMPULSE_EVENT:
                 applyImpuse(data);
