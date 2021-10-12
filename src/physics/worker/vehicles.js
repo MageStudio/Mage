@@ -130,6 +130,39 @@ export const setVehiclePosition = data => {
 
         body.setWorldTransform(transform);
     }
+};
+
+export const setVehicleQuaternion = data => {
+    const { uuid, quaternion } = data;
+    const element = world.getElement(uuid);
+
+    if (element.type === TYPES.VEHICLE) {
+        const body = element.vehicle.getRigidBody();
+        const transform = new Ammo.btTransform();
+
+        body.getWorldTransform(transform);
+        transform.setRotation(new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+
+        body.setWorldTransform(transform);
+    }
+};
+
+export const resetCar = data => {
+    const { uuid, quaternion, position } = data;
+    const element = world.getElement(uuid);
+
+    if (element.type === TYPES.VEHICLE) {
+        const body = element.vehicle.getRigidBody();
+        const transform = new Ammo.btTransform();
+        
+        body.getWorldTransform(transform);
+
+        transform.setIdentity();
+        transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z ));
+        transform.setRotation(new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+
+        body.setWorldTransform(transform);
+    }
 }
 
 export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE, options = {} }, dt) => {
