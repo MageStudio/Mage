@@ -13,8 +13,7 @@ import {
 } from '../constants';
 
 import {
-    SPEED_CHANGE_EVENT,
-    CAR_DIRECTION_CHANGE_EVENT
+    PHYSICS_EVENTS
 } from '../messages';
 
 import world from './world';
@@ -147,7 +146,7 @@ export const setVehicleQuaternion = data => {
     }
 };
 
-export const resetCar = data => {
+export const resetVehicle = data => {
     const { uuid, quaternion, position } = data;
     const element = world.getElement(uuid);
 
@@ -168,7 +167,7 @@ export const resetCar = data => {
 export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE, options = {} }, dt) => {
     const speed = vehicle.getCurrentSpeedKmHour();
 
-    dispatcher.sendDispatchEvent(uuid, SPEED_CHANGE_EVENT, { speed });
+    dispatcher.sendDispatchEvent(uuid, PHYSICS_EVENTS.VEHICLE.SPEED, { speed });
 
     let breakingForce = 0;
     let engineForce = 0;
@@ -238,7 +237,7 @@ export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEH
     q = tm.getRotation();
 
     const direction = vehicle.getForwardVector();
-    dispatcher.sendDispatchEvent(uuid, CAR_DIRECTION_CHANGE_EVENT, {
+    dispatcher.sendDispatchEvent(uuid, PHYSICS_EVENTS.VEHICLE.DIRECTION, {
         direction: {
             x: direction.x(),
             y: direction.y(),

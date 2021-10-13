@@ -1,19 +1,13 @@
-import {
-    UPDATE_BODY_EVENT,
-    READY_EVENT,
-    TERMINATE_EVENT,
-    DISPATCH_EVENT,
-    PHYSICS_UPDATE_EVENT
-} from '../../messages';
+import { PHYSICS_EVENTS } from '../../messages';
 
 export class Dispatcher {
 
-    sendPhysicsUpdate = dt => postMessage({ event: PHYSICS_UPDATE_EVENT, dt })
-    sendReadyEvent = () => postMessage({ event: READY_EVENT });
-    sendTerminateEvent = () => postMessage({ event: TERMINATE_EVENT });
+    sendPhysicsUpdate = dt => postMessage({ event: PHYSICS_EVENTS.UPDATE, dt })
+    sendReadyEvent = () => postMessage({ event: PHYSICS_EVENTS.READY });
+    sendTerminateEvent = () => postMessage({ event: PHYSICS_EVENTS.TERMINATE });
 
     sendBodyUpdate = (uuid, position, rotation, dt) => postMessage({
-        event: UPDATE_BODY_EVENT,
+        event: PHYSICS_EVENTS.ELEMENT.UPDATE,
         uuid,
         position: { x: position.x(), y: position.y(), z: position.z() },
         quaternion: { x: rotation.x(), y: rotation.y(), z: rotation.z(), w: rotation.w() },
@@ -21,7 +15,7 @@ export class Dispatcher {
     });
 
     sendDispatchEvent = (uuid, eventName, eventData) => postMessage({
-        event: DISPATCH_EVENT,
+        event: PHYSICS_EVENTS.DISPATCH,
         uuid,
         eventName,
         eventData

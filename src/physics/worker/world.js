@@ -3,12 +3,12 @@ import {
     TYPES
 } from '../constants';
 
-import { handleRigidbodyUpdate } from './bodies';
+import { handleRigidbodyUpdate } from './elements';
 import { handleVehicleUpdate } from './vehicles';
 
 import dispatcher from './lib/dispatcher';
 import { handlePlayerUpdate } from './player';
-import { COLLISION_DETECTION_EVENT } from '../messages';
+import { PHYSICS_EVENTS } from '../messages';
 
 class Clock {
 
@@ -183,8 +183,8 @@ export class World {
                 });
             }
 
-            dispatcher.sendDispatchEvent(rb0.uuid, COLLISION_DETECTION_EVENT, { contacts });
-            dispatcher.sendDispatchEvent(rb1.uuid, COLLISION_DETECTION_EVENT, { contacts });
+            dispatcher.sendDispatchEvent(rb0.uuid, PHYSICS_EVENTS.ELEMENT.COLLISION, { contacts });
+            dispatcher.sendDispatchEvent(rb1.uuid, PHYSICS_EVENTS.ELEMENT.COLLISION, { contacts });
 
             // Ammo.destroy(rb0);
             // Ammo.destroy(rb1);

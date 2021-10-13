@@ -1,16 +1,11 @@
 import { Matrix4, Vector3 } from 'three';
+import { PHYSICS_EVENTS } from './messages';
 
 import { getSphereVolume } from '../lib/math';
 
 import { BOUNDINGBOX_NOT_AVAILABLE } from '../lib/messages';
 import { DEFAULT_QUATERNION, DEFAULT_POSITION } from './constants';
 import { COLLIDER_TYPES } from './constants';
-import {
-    ADD_BOX_EVENT,
-    ADD_PLAYER_EVENT,
-    ADD_SPHERE_EVENT,
-    ADD_VEHICLE_EVENT
-} from './messages';
 
 export const DEFAULT_DESCRIPTION = {
     mass: 1,
@@ -34,11 +29,11 @@ const DEFAULT_SPHERE_DESCRIPTION = {
 };
 
 export const mapColliderTypeToAddEvent = (type) => ({
-    [COLLIDER_TYPES.BOX]: ADD_BOX_EVENT,
-    [COLLIDER_TYPES.VEHICLE]: ADD_VEHICLE_EVENT,
-    [COLLIDER_TYPES.PLAYER]: ADD_PLAYER_EVENT,
-    [COLLIDER_TYPES.SPHERE]: ADD_SPHERE_EVENT
-})[type] || ADD_BOX_EVENT;
+    [COLLIDER_TYPES.BOX]: PHYSICS_EVENTS.ADD.BOX,
+    [COLLIDER_TYPES.VEHICLE]: PHYSICS_EVENTS.ADD.VEHICLE,
+    [COLLIDER_TYPES.PLAYER]: PHYSICS_EVENTS.ADD.PLAYER,
+    [COLLIDER_TYPES.SPHERE]: PHYSICS_EVENTS.ADD.SPHERE
+})[type] || PHYSICS_EVENTS.ADD.BOX;
 
 export const extractBoundingBox = body => {
     body.geometry.computeBoundingBox();

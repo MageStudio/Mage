@@ -6,23 +6,7 @@ import Config from '../core/config';
 import PhysicsWorker from 'worker:./worker';
 
 import {
-    TERMINATE_EVENT,
-    LOAD_EVENT,
-    UPDATE_BODY_EVENT,
-    READY_EVENT,
-    ADD_BOX_EVENT,
-    ADD_VEHICLE_EVENT,
-    DISPATCH_EVENT,
-    PHYSICS_EVENTS,
-    ADD_MODEL_EVENT,
-    PHYSICS_UPDATE_EVENT,
-    ADD_PLAYER_EVENT,
-    SET_LINEAR_VELOCITY_EVENT,
-    APPLY_IMPULSE_EVENT,
-    DISPOSE_ELEMENT_EVENT,
-    ADD_SPHERE_EVENT,
-    SET_POSITION_EVENT,
-    SET_CAR_POSITION_EVENT
+    PHYSICS_EVENTS
 } from './messages';
 import * as physicsUtils from './utils';
 import { getHostURL } from '../lib/url';
@@ -64,7 +48,7 @@ export class Physics extends EventDispatcher {
     dispose() {
         if (Config.physics().enabled) {
             this.worker.postMessage({
-                event: TERMINATE_EVENT
+                event: PHYSICS_EVENTS.TERMINATE
             });
 
             this.elements = [];
@@ -101,7 +85,7 @@ export class Physics extends EventDispatcher {
             this.createWorker();
 
             this.worker.postMessage({
-                event: LOAD_EVENT,
+                event: PHYSICS_EVENTS.LOAD.AMMO,
                 ...Config.physics(),
                 host: getHostURL()
             });
@@ -127,19 +111,19 @@ export class Physics extends EventDispatcher {
 
     handleWorkerMessages = ({ data }) => {
         switch (data.event) {
-            case READY_EVENT:
+            case PHYSICS_EVENTS.READY:
                 this.workerReady = true;
                 break;
-            case UPDATE_BODY_EVENT:
+            case PHYSICS_EVENTS.ELEMENT.UPDATE:
                 this.handleBodyUpdate(data);
                 break;
-            case TERMINATE_EVENT:
+            case PHYSICS_EVENTS.TERMINATE:
                 this.handleTerminateEvent();
                 break;
-            case DISPATCH_EVENT:
+            case PHYSICS_EVENTS.DISPATCH:
                 this.handleDispatchEvent(data);
                 break;
-            case PHYSICS_UPDATE_EVENT:
+            case PHYSICS_EVENTS.UPDATE:
                 this.handlePhysicsUpdate(data);
                 break;
             default:
@@ -163,7 +147,7 @@ export class Physics extends EventDispatcher {
                 element.handlePhysicsUpdate(position, quaternion);
             } else {
                 element.dispatchEvent({
-                    type: Element.EVENTS.PHYSICS_UPDATE,
+                    type: PHYSICS_EVENTS.ELEMENT.UPDATE,
                     position,
                     quaternion
                 });
@@ -187,7 +171,7 @@ export class Physics extends EventDispatcher {
 
             this.removeElement(element);
             this.worker.postMessage({
-                event: DISPOSE_ELEMENT_EVENT,
+                event: PHYSICS_EVENTS.ELEMENT.DISPOSE,
                 uuid
             })
         }
@@ -223,7 +207,7 @@ export class Physics extends EventDispatcher {
             this.storeElement(element, options);
 
             this.worker.postMessage({
-                event: ADD_VEHICLE_EVENT,
+                event: PHYSICS_EVENTS.ADD.VEHICLE,
                 uuid,
                 ...description,
                 ...options
@@ -247,7 +231,7 @@ export class Physics extends EventDispatcher {
             this.storeElement(model, options);
 
             this.worker.postMessage({
-                event: ADD_MODEL_EVENT,
+                event: PHYSICS_EVENTS.ADD.MODEL,
                 uuid,
                 vertices,
                 matrices,
@@ -265,7 +249,7 @@ export class Physics extends EventDispatcher {
             const uuid = element.uuid();
 
             this.worker.postMessage({
-                event: SET_LINEAR_VELOCITY_EVENT,
+                event: PHYSICS_EVENTS.ELEMENT.SET.LINEAR_VELOCITY,
                 uuid,
                 velocity
             });
@@ -277,22 +261,47 @@ export class Physics extends EventDispatcher {
             const uuid = element.uuid();
 
             this.worker.postMessage({
-                event: SET_POSITION_EVENT,
+                event: PHYSICS_EVENTS.ELEMENT.SET.POSITION,
                 uuid,
                 position
             });
         }
     }
 
-    setCarPosition = (car, position) => {
+    setVehiclePosition = (vehicle, position) => {
         if (Config.physics().enabled) {
-            const uuid = car.uuid();
+            const uuid = vehicle.uuid();
 
             this.worker.postMessage({
-                event: SET_CAR_POSITION_EVENT,
+                event: PHYSICS_EVENTS.VEHICLE.SET.POSITION,
                 uuid,
                 position
             })
+        }
+    }
+
+    setVehicleQuaternion = (vehicle, quaternion) => {
+        if (Config.physics().enabled) {
+            const uuid = vehicle.uuid();
+
+            this.worker.postMessage({
+                event: PHYSICS_EVENTS.VEHICLE.SET.QUATERNION,
+                uuid,
+                quaternion
+            });
+        }
+    }
+
+    resetVehicle = (vehicle, position, quaternion) => {
+        if (Config.physics().enabled) {
+            const uuid = vehicle.uuid();
+
+            this.worker.postMessage({
+                event: PHYSICS_EVENTS.VEHICLE.RESET,
+                uuid,
+                quaternion,
+                position
+            });
         }
     }
 
@@ -301,7 +310,7 @@ export class Physics extends EventDispatcher {
             const uuid = element.uuid();
 
             this.worker.postMessage({
-                event: APPLY_IMPULSE_EVENT,
+                event: PHYSICS_EVENTS.ELEMENT.APPLY.IMPULSE,
                 uuid,
                 impulse
             });
@@ -313,7 +322,7 @@ export class Physics extends EventDispatcher {
             const uuid = element.uuid();
 
             this.worker.postMessage({
-                event: UPDATE_BODY_EVENT,
+                event: PHYSICS_EVENTS.ELEMENT.UPDATE,
                 uuid,
                 state
             });

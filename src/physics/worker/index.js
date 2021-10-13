@@ -1,77 +1,60 @@
 import {
-    TERMINATE_EVENT,
-    LOAD_EVENT,
-    UPDATE_BODY_EVENT,
-    ADD_BOX_EVENT,
-    ADD_VEHICLE_EVENT,
-    ADD_MODEL_EVENT,
-    ADD_PLAYER_EVENT,
-    SET_LINEAR_VELOCITY_EVENT,
-    SET_POSITION_EVENT,
-    APPLY_IMPULSE_EVENT,
-    DISPOSE_ELEMENT_EVENT,
-    ADD_SPHERE_EVENT,
-    SET_CAR_POSITION_EVENT,
-    SET_CAR_QUATERNION_EVENT,
-    RESET_CAR_EVENT
-} from '../messages';
-
-import {
     LIBRARY_NAME
 } from '../constants';
 
-import { addVehicle, resetCar, setVehiclePosition, setVehicleQuaternion } from './vehicles';
-import { addBox, addMesh, setLinearVelocity, applyImpuse, addSphere, setPosition } from './bodies';
+import { addVehicle, resetVehicle, setVehiclePosition, setVehicleQuaternion } from './vehicles';
+import { addBox, addModel, setLinearVelocity, applyImpuse, addSphere, setPosition } from './elements';
 import { addPlayer } from './player';
 
 import dispatcher from './lib/dispatcher';
 import world from './world';
+import { PHYSICS_EVENTS } from '../messages';
 
 const handleLoadEvent = options => Ammo => {
     self.Ammo = Ammo;
 
     onmessage = ({ data }) => {
         switch(data.event) {
-            case ADD_BOX_EVENT:
+            case PHYSICS_EVENTS.ADD.BOX:
                 addBox(data);
                 break;
-            case ADD_SPHERE_EVENT:
+            case PHYSICS_EVENTS.ADD.SPHERE:
                 addSphere(data);
                 break;
-            case ADD_VEHICLE_EVENT:
+            case PHYSICS_EVENTS.ADD.VEHICLE:
                 addVehicle(data);
                 break;
-            case ADD_MODEL_EVENT:
-                addMesh(data);
+            case PHYSICS_EVENTS.ADD.MODEL:
+                addModel(data);
                 break;
-            case ADD_PLAYER_EVENT:
+            case PHYSICS_EVENTS.ADD.PLAYER:
                 addPlayer(data);
                 break;
-            case SET_LINEAR_VELOCITY_EVENT:
+            case PHYSICS_EVENTS.ELEMENT.SET.LINEAR_VELOCITY:
                 setLinearVelocity(data);
                 break;
-            case SET_POSITION_EVENT:
+            case PHYSICS_EVENTS.ELEMENT.SET.POSITION:
                 setPosition(data);
                 break;
-            case SET_CAR_POSITION_EVENT:
+            case PHYSICS_EVENTS.VEHICLE.SET.POSITION:
                 setVehiclePosition(data);
                 break;
-            case SET_CAR_QUATERNION_EVENT:
+            case PHYSICS_EVENTS.VEHICLE.SET.QUATERNION:
                 setVehicleQuaternion(data);
                 break;
-            case RESET_CAR_EVENT:
-                resetCar(data);
+            case PHYSICS_EVENTS.VEHICLE.RESET:
+                resetVehicle(data);
                 break;
-            case APPLY_IMPULSE_EVENT:
+            case PHYSICS_EVENTS.ELEMENT.APPLY.IMPULSE:
                 applyImpuse(data);
                 break;
-            case UPDATE_BODY_EVENT:
+            case PHYSICS_EVENTS.ELEMENT.UPDATE:
                 world.updateBodyState(data.uuid, data.state);
                 break;
-            case DISPOSE_ELEMENT_EVENT:
+            case PHYSICS_EVENTS.ELEMENT.DISPOSE:
                 world.disposeBody(data.uuid);
                 break;
-            case TERMINATE_EVENT:
+            case PHYSICS_EVENTS.TERMINATE:
                 world.terminate();
                 break;
         }
@@ -91,7 +74,7 @@ const loadAmmo = (options) => {
 
 onmessage = ({ data }) => {
     switch(data.event) {
-        case LOAD_EVENT:
+        case PHYSICS_EVENTS.LOAD.AMMO:
             loadAmmo(data);
             break;
         default:
