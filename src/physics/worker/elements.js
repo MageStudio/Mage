@@ -54,7 +54,7 @@ export const createRigidBody = (shape, options) => {
     return body;
 }
 
-export const addMesh = (options) => {
+export const addModel = (options) => {
     const {
         uuid,
         vertices,

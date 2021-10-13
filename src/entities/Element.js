@@ -75,13 +75,6 @@ export default class Element extends Entity {
         this.setEntityType(ENTITY_TYPES.MESH);
     }
 
-    static get EVENTS() {
-        return {
-            COLLISION_EVENT: 'COLLISION_EVENT',
-            PHYSICS_UPDATE: 'PHYSICS_UPDATE'
-        };
-    }
-
     addTag(tag) {
         super.addTag(tag);
 
@@ -212,8 +205,12 @@ export default class Element extends Entity {
         return [];
     }
 
-    setPhysicsOptions(options) {
-        this.physicsOptions = options;
+    setPhysicsOptions({ applyPhysicsUpdate = true, ...rest }) {
+        const parsedOptions = {
+            applyPhysicsUpdate,
+            ...rest
+        };
+        this.physicsOptions = parsedOptions;
     }
 
     getPhysicsOptions(option) {

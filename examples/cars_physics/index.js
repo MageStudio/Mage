@@ -66,7 +66,7 @@ export default class Intro extends Level {
             this.createWheel(4),
         ];
 
-        car.addEventListener(PHYSICS_EVENTS.SPEED_CHANGE_EVENT, this.handleSpeedChange);
+        car.addEventListener(PHYSICS_EVENTS.VEHICLE.SPEED, this.handleSpeedChange);
 
         car.addScript('BaseCar', {
             wheels,

@@ -1,51 +1,45 @@
-export const TERMINATE_EVENT = 'TERMINATE_EVENT';
-export const DISPATCH_EVENT = 'DISPATCH_EVENT';
-export const LOAD_EVENT = 'LOAD_EVENT';
-export const READY_EVENT = 'READY_EVENT';
-export const UPDATE_BODY_EVENT = 'UPDATE_BODY_EVENT';
-export const INIT_EVENT = 'INIT_EVENT';
-
-export const ADD_BOX_EVENT = 'ADD_BOX_EVENT';
-export const ADD_VEHICLE_EVENT = 'ADD_VEHICLE_EVENT';
-export const ADD_MODEL_EVENT = 'ADD_MODEL_EVENT';
-export const ADD_PLAYER_EVENT = 'ADD_PLAYER_EVENT';
-export const ADD_SPHERE_EVENT = 'ADD_SPHERE_EVENT';
-
-export const DISPOSE_ELEMENT_EVENT = 'DISPOSE_ELEMENT_EVENT';
-
-export const PHYSICS_UPDATE_EVENT = 'PHYSICS_UPDATE_EVENT';
-
-export const SPEED_CHANGE_EVENT = 'SPEED_CHANGE_EVENT';
-export const CAR_DIRECTION_CHANGE_EVENT = 'CAR_DIRECTION_CHANGE_EVENT';
-export const COLLISION_DETECTION_EVENT = 'COLLISION_DETECTION_EVENT';
-export const SET_LINEAR_VELOCITY_EVENT = 'SET_LINEAR_VELOCITY_EVENT';
-export const SET_POSITION_EVENT = 'SET_POSITION_EVENT';
-export const SET_CAR_POSITION_EVENT = 'SET_CAR_POSITION_EVENT';
-export const SET_CAR_QUATERNION_EVENT = 'SET_CAR_QUATERNION_EVENT';
-export const RESET_CAR_EVENT = 'RESET_CAR_EVENT';
-export const APPLY_IMPULSE_EVENT = 'APPLY_IMPULSE_EVENT';
-
 export const PHYSICS_EVENTS = {
-    SPEED_CHANGE_EVENT,
-    CAR_DIRECTION_CHANGE_EVENT,
-    SET_LINEAR_VELOCITY_EVENT,
-    SET_POSITION_EVENT,
-    SET_CAR_POSITION_EVENT,
-    SET_CAR_QUATERNION_EVENT,
-    RESET_CAR_EVENT,
-    APPLY_IMPULSE_EVENT,
-    COLLISION_DETECTION_EVENT,
-    TERMINATE_EVENT,
-    DISPATCH_EVENT,
-    LOAD_EVENT,
-    READY_EVENT,
-    UPDATE_BODY_EVENT,
-    INIT_EVENT,
-    ADD_BOX_EVENT,
-    ADD_VEHICLE_EVENT,
-    ADD_MODEL_EVENT,
-    ADD_PLAYER_EVENT,
-    ADD_SPHERE_EVENT,
-    DISPOSE_ELEMENT_EVENT,
-    PHYSICS_UPDATE_EVENT
+    DISPATCH: 'physics:dispatch',
+    TERMINATE: 'physics:terminate',
+    LOAD: {
+        AMMO: 'physics:load:ammo',
+    },
+    READY: 'physics:ready',
+    INIT: 'physics:init',
+    UPDATE: 'physics:update',
+    
+    ADD: {
+        BOX: 'physics:add:box',
+        VEHICLE: 'physics:add:vehicle',
+        MODEL: 'physics:add:model',
+        PLAYER: 'physics:add:player',
+        SPHERE: 'physics:add:sphere',
+    },
+
+    ELEMENT: {
+        DISPOSE: 'physics:element:dispose',
+        COLLISION: 'physics:element:collision',
+        UPDATE: 'physics:element:update',
+
+        SET: {
+            POSITION: 'physics:element:set:position',
+            QUATERNION: 'physics:element:set:quaternion',
+            LINEAR_VELOCITY: 'physics:element:set:linear_velocity'
+        },
+
+        APPLY: {
+            IMPULSE: 'physics:element:apply:impulse'
+        }
+    },
+
+    VEHICLE: {
+        SET: {
+            POSITION: 'physics:vehicle:set:position',
+            QUATERNION: 'physics:vehicle:set:quaternion'
+        },
+        RESET: 'physics:vehicle:reset',
+        
+        SPEED: 'physics:vehicle:speed',
+        DIRECTION: 'physics:vehicle:direction'
+    }
 };

@@ -1,4 +1,4 @@
-import { createRigidBody } from './bodies';
+import { createRigidBody } from './elements';
 import world from './world';
 
 import {
