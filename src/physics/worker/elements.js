@@ -164,8 +164,7 @@ export const setPosition = data => {
     body.setWorldTransform(transform);
 }
 
-export const applyImpuse = data => {
-    const { uuid, impulse = DEFAULT_IMPULSE } = data;
+export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
     const { body } = world.getElement(uuid);
     const motionState = body.getMotionState();
 

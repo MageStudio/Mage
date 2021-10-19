@@ -73,7 +73,7 @@ export const addVehicle = data => {
 
     // Raycast Vehicle
     const tuning = new Ammo.btVehicleTuning();
-    const rayCaster = new Ammo.btDefaultVehicleRaycaster(world.getAmmoWorld());
+    const rayCaster = new Ammo.btDefaultVehicleRaycaster(world.getDynamicsWorld());
     const vehicle = new Ammo.btRaycastVehicle(tuning, chassis, rayCaster);
     vehicle.setCoordinateSystem(0, 1, 2);
     world.addAction(vehicle);
