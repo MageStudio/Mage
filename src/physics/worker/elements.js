@@ -175,7 +175,7 @@ export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
     }
 }
 
-export const handleRigidbodyUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
+export const handleElementUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
     const motionState = body.getMotionState();
 
     if (motionState) {

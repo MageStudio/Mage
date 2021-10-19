@@ -3,11 +3,11 @@ import {
     TYPES
 } from '../constants';
 
-import { handleRigidbodyUpdate } from './elements';
+import { handleElementUpdate } from './elements';
 import { handleVehicleUpdate } from './vehicles';
+import { handlePlayerUpdate } from './player';
 
 import dispatcher from './lib/dispatcher';
-import { handlePlayerUpdate } from './player';
 import { PHYSICS_EVENTS } from '../messages';
 
 class Clock {
