@@ -20,6 +20,7 @@ export const PHYSICS_EVENTS = {
         DISPOSE: 'physics:element:dispose',
         COLLISION: 'physics:element:collision',
         UPDATE: 'physics:element:update',
+        CREATED: 'physics:element:created',
 
         SET: {
             POSITION: 'physics:element:set:position',
@@ -41,5 +42,9 @@ export const PHYSICS_EVENTS = {
         
         SPEED: 'physics:vehicle:speed',
         DIRECTION: 'physics:vehicle:direction'
+    },
+
+    EFFECTS: {
+        EXPLOSION: 'physics:effects:explosion'
     }
 };

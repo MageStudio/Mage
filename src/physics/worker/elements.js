@@ -164,8 +164,7 @@ export const setPosition = data => {
     body.setWorldTransform(transform);
 }
 
-export const applyImpuse = data => {
-    const { uuid, impulse = DEFAULT_IMPULSE } = data;
+export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
     const { body } = world.getElement(uuid);
     const motionState = body.getMotionState();
 
@@ -176,7 +175,7 @@ export const applyImpuse = data => {
     }
 }
 
-export const handleRigidbodyUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
+export const handleElementUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
     const motionState = body.getMotionState();
 
     if (motionState) {

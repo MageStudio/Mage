@@ -56,3 +56,19 @@ export const DEFAULT_STEERING_INCREMENT = .04;
 export const DEFAULT_STEERING_CLAMP = .5;
 export const DEFAULT_MAX_ENGINE_FORCE = 2000;
 export const DEFAULT_MAX_BREAKING_FORCE = 100;
+
+export const EXPLOSION_SIZES = {
+    SMALL: 4,
+    MEDIUM: 6,
+    LARGE: 8,
+    MASSIVE: 12
+};
+
+export const EXPLOSION_STRENGTHS = {
+    VERY_WEAK: 2,
+    WEAK: 4,
+    MEDIUM: 8,
+    LARGE: 16,
+    MASSIVE: 32,
+    OK_NO: 64
+};

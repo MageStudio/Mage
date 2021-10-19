@@ -3,11 +3,11 @@ import {
     TYPES
 } from '../constants';
 
-import { handleRigidbodyUpdate } from './elements';
+import { handleElementUpdate } from './elements';
 import { handleVehicleUpdate } from './vehicles';
+import { handlePlayerUpdate } from './player';
 
 import dispatcher from './lib/dispatcher';
-import { handlePlayerUpdate } from './player';
 import { PHYSICS_EVENTS } from '../messages';
 
 class Clock {
@@ -40,7 +40,7 @@ export class World {
         this.dispatcher = undefined;
         this.broadphase = undefined;
         this.solver = undefined;
-        this.ammoWorld = undefined;
+        this.dynamicsWorld = undefined;
 
         this.requestAnimationFrameId = null;
         this.clock = new Clock();
@@ -53,8 +53,14 @@ export class World {
         this.dispatcher = new Ammo.btCollisionDispatcher(this.collisionConfiguration);
         this.broadphase = new Ammo.btDbvtBroadphase();
         this.solver = new Ammo.btSequentialImpulseConstraintSolver();
-        this.ammoWorld = new Ammo.btDiscreteDynamicsWorld(this.dispatcher, this.broadphase, this.solver, this.collisionConfiguration);
-        this.ammoWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
+        this.dynamicsWorld = new Ammo.btDiscreteDynamicsWorld(this.dispatcher, this.broadphase, this.solver, this.collisionConfiguration);
+        this.dynamicsWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
+
+        // this is needed for ghostObject collisions
+        this.dynamicsWorld
+            .getBroadphase()
+            .getOverlappingPairCache()
+            .setInternalGhostPairCallback(new Ammo.btGhostPairCallback())
 
         this.initialised = true;
     };
@@ -82,18 +88,22 @@ export class World {
 
     isInitialised = () => this.initialised;
 
-    getAmmoWorld = () => this.ammoWorld;
+    getDynamicsWorld = () => this.dynamicsWorld;
 
     addRigidBody = body => {
-        this.ammoWorld.addRigidBody(body);
+        this.dynamicsWorld.addRigidBody(body);
     }
 
     addAction = action => {
-        this.ammoWorld.addAction(action);
+        this.dynamicsWorld.addAction(action);
+    }
+
+    addCollisionObject = collisionObject => {
+        this.dynamicsWorld.addCollisionObject(collisionObject);
     }
 
     stepSimulation = dt => {
-        this.ammoWorld.stepSimulation(dt);
+        this.dynamicsWorld.stepSimulation(dt);
     }
 
     simulate = () => {
@@ -110,7 +120,7 @@ export class World {
                         case TYPES.BOX:
                         case TYPES.SPHERE:
                         case TYPES.MESH:
-                            handleRigidbodyUpdate(element, dt);
+                            handleElementUpdate(element, dt);
                             break;
                         case TYPES.PLAYER:
                             handlePlayerUpdate(element, dt);
@@ -133,7 +143,7 @@ export class World {
     }
 
     calculateCollisions = () => {
-        let ammoDispatcher = this.ammoWorld.getDispatcher();
+        let ammoDispatcher = this.dynamicsWorld.getDispatcher();
         let numManifolds = ammoDispatcher.getNumManifolds();
 
         for (let i = 0; i < numManifolds; i++) {
@@ -185,31 +195,30 @@ export class World {
 
             dispatcher.sendDispatchEvent(rb0.uuid, PHYSICS_EVENTS.ELEMENT.COLLISION, { contacts });
             dispatcher.sendDispatchEvent(rb1.uuid, PHYSICS_EVENTS.ELEMENT.COLLISION, { contacts });
-
-            // Ammo.destroy(rb0);
-            // Ammo.destroy(rb1);
         }
     }
 
-    setBody = data => {
+    addElement = data => {
         this.elements[data.uuid] = data;
     }
 
-    updateBodyState = (uuid, state) => {
+    updateBodyState = ({ uuid, state }) => {
         this.elements[uuid].state = {
             ...this.elements[uuid].state,
             ...state
         };
     }
 
-    disposeBody(uuid) {
+    disposeBody({ uuid }) {
         const element = this.getElement(uuid);
-        this.ammoWorld.removeRigidBody(element.body);
+        this.dynamicsWorld.removeRigidBody(element.body);
         this.removeElement(uuid);
+
+        dispatcher.sendElementDisposed({ uuid });
     }
 
     terminate = () => {
-        Ammo.destroy(this.ammoWorld);
+        Ammo.destroy(this.dynamicsWorld);
         Ammo.destroy(this.solver);
         Ammo.destroy(this.dispatcher);
         Ammo.destroy(this.collisionConfiguration);
@@ -219,5 +228,6 @@ export class World {
         dispatcher.sendTerminateEvent();
     }
 };
+
 
 export default new World();

@@ -4,6 +4,7 @@ import {
 
 import { addVehicle, resetVehicle, setVehiclePosition, setVehicleQuaternion } from './vehicles';
 import { addBox, addModel, setLinearVelocity, applyImpuse, addSphere, setPosition } from './elements';
+import { createExplosion } from './effects';
 import { addPlayer } from './player';
 
 import dispatcher from './lib/dispatcher';
@@ -49,10 +50,13 @@ const handleLoadEvent = options => Ammo => {
                 applyImpuse(data);
                 break;
             case PHYSICS_EVENTS.ELEMENT.UPDATE:
-                world.updateBodyState(data.uuid, data.state);
+                world.updateBodyState(data);
                 break;
             case PHYSICS_EVENTS.ELEMENT.DISPOSE:
-                world.disposeBody(data.uuid);
+                world.disposeBody(data);
+                break;
+            case PHYSICS_EVENTS.EFFECTS.EXPLOSION:
+                createExplosion(data);
                 break;
             case PHYSICS_EVENTS.TERMINATE:
                 world.terminate();
