@@ -29,6 +29,7 @@ export class Scene {
         this.clock = new Clock();
         this.rendererElements = {};
         this.clearColor = 0x000000;
+        this.alpha = 1.0;
 
         this.shadowType = SHADOW_TYPES[DEFAULT_SHADOWTYPE];
     }
@@ -74,10 +75,11 @@ export class Scene {
         Universe.remove(body.name);
     }
 
-    setClearColor(value) {
+    setClearColor(value, alpha = 1.0) {
         if (this.renderer) {
             this.clearColor = value;
-            this.renderer.setClearColor(value);
+            this.alpha = alpha;
+            this.renderer.setClearColor(value, alpha);
         }
     }
 
@@ -182,10 +184,10 @@ export class Scene {
 
     createRenderer() {
         const { shadows } = Config.lights();
-        const { alpha, w, h } = Config.screen();
+        const { alpha = true, antialias = true, w, h } = Config.screen();
         let container = Config.container();
 
-        this.renderer = new WebGLRenderer({alpha, antialias: true});
+        this.renderer = new WebGLRenderer({ alpha, antialias });
 
         if (shadows) {
             this.setRendererShadowMap();
@@ -220,7 +222,7 @@ export class Scene {
     }
 
     render = () => {
-        this.renderer.setClearColor(this.clearColor);
+        this.renderer.setClearColor(this.clearColor, this.alpha);
         this.renderer.clear();
         this.renderer.setRenderTarget(null);
         this.renderer.render(this.scene, this.camera.getBody());
