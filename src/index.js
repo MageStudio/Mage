@@ -14,7 +14,7 @@ import {
     Sprite
 } from './entities';
 
-import Audio from './audio/Audio';
+import Audio, { AUDIO_RAMPS } from './audio/Audio';
 import AmbientSound from './audio/AmbientSound';
 import BackgroundSound from './audio/BackgroundSound';
 import DirectionalSound from './audio/DirectionalSound';
@@ -149,6 +149,7 @@ export {
     Camera,
 
     Sound,
+    AUDIO_RAMPS,
     // AmbientSound,
     BackgroundSound,
     DirectionalSound,

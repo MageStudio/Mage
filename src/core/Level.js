@@ -2,6 +2,7 @@ import Assets from './Assets';
 import Universe from './Universe';
 import Scene from './Scene';
 import Stats from './Stats';
+import Audio from '../audio/Audio';
 import MeshLoader from '../loaders/MeshLoader';
 import LightLoader from '../loaders/LightLoader';
 import PostProcessing from '../fx/postprocessing/PostProcessing';
@@ -158,7 +159,7 @@ export class Level extends EventDispatcher {
         this.disableInput();
 
         Physics.dispose();
-
+        Audio.dispose();
         Particles.dispose();
         PostProcessing.dispose();
         Universe.bigfreeze();

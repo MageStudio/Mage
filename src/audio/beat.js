@@ -1,5 +1,5 @@
 import { AUDIO_UNABLE_TO_LOAD_SOUND } from '../lib/messages';
-import Audio, { AUDIO_EVENTS } from './Audio';
+import Audio, { AUDIO_EVENTS, AUDIO_RAMPS } from './Audio';
 
 export default class Beat {
 
@@ -58,6 +58,11 @@ export default class Beat {
         }
     }
 
+    dispose() {
+        this.stop();
+        this.disconnect();
+    }
+
     getVolume() {
         return this.volumeNode.gain.value;
     }
@@ -82,24 +87,34 @@ export default class Beat {
         this.source.buffer = buffer;
     }
 
-    play(volume = this.getVolume()) {
+    play(volume = this.getVolume(), delay = 0.1, ramp = AUDIO_RAMPS.LINEAR) {
         if (this.playing) return;
 
         this.setVolume(0);
         this.source.start();
         this.playing = true;
-        this.volumeNode.gain.linearRampToValueAtTime(volume, Audio.context.currentTime + 0.1);
+
+        if (ramp === AUDIO_RAMPS.LINEAR) {
+            this.volumeNode.gain.linearRampToValueAtTime(volume, Audio.context.currentTime + delay);
+        } else {
+            this.volumeNode.gain.exponentialRampToValueAtTime(volume, Audio.context.currentTime + delay);
+        }
     }
 
     onSoundEnded() {
         this.reset();
     }
 
-    stop() {
-        this.volumeNode.gain.linearRampToValueAtTime(0, Audio.context.currentTime + 0.1);
+    stop(delay = 0.1, ramp = AUDIO_RAMPS.LINEAR) {
+        if (ramp === AUDIO_RAMPS.LINEAR) {
+            this.volumeNode.gain.linearRampToValueAtTime(0, Audio.context.currentTime + delay);
+        }  else {
+            this.volumeNode.gain.exponentialRampToValueAtTime(0, Audio.context.currentTime + delay);
+        }
+
         setTimeout(() => {
             this.source.stop();
-        }, 100);
+        }, delay);
     }
 
     detune(value) {

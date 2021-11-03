@@ -17,19 +17,25 @@ export const AUDIO_EVENTS = {
     ENDED: 'ended'
 };
 
+export const AUDIO_RAMPS = {
+    LINEAR: 'LINEAR',
+    EXPONENTIAL: 'EXPONENTIAL'
+};
+
 export class Audio {
 
     constructor() {
         this.masterVolumeNode = null;
         this.context = null;
 
-        this.numSound = 0;
-        this.soundLoaded = 0;
-
         this.sounds = [];
         this.map = {};
 
         this.currentLevel = ROOT;
+    }
+
+    reset() {
+        this.sounds = [];
     }
 
     setCurrentLevel = level => {
@@ -168,6 +174,15 @@ export class Audio {
         m.elements[12] = mx;
         m.elements[13] = my;
         m.elements[14] = mz;
+    }
+
+    dispose() {
+        for (var index in this.sounds) {
+            const sound = this.sounds[index];
+            sound.dispose();
+        }
+
+        this.reset();
     }
 
     update(dt) {
