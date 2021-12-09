@@ -1,15 +1,19 @@
 # Mage
 
-![npm](https://img.shields.io/npm/v/mage-engine?color=%232ecc71&style=for-the-badge)
-![npm](https://img.shields.io/npm/dy/mage-engine?color=%23e67e22&style=for-the-badge)
-![npm bundle size](https://img.shields.io/bundlephobia/min/mage-engine?&style=for-the-badge)
-![GitHub repo size](https://img.shields.io/github/repo-size/MageStudio/Mage?&style=for-the-badge)
+![npm](https://img.shields.io/npm/v/mage-engine?color=%232ecc71)
+![npm](https://img.shields.io/npm/dy/mage-engine?color=%23e67e22)
+![npm bundle size](https://img.shields.io/bundlephobia/min/mage-engine)
+![GitHub repo size](https://img.shields.io/github/repo-size/MageStudio/Mage)
+![Discord](https://badgen.net/discord/members/NR5ZDGFG5j)
 
 ---
 
 Mage is a game engine built on top of THREEJS. It features all you need to create fully interactive 3D application that can be distributed via web, desktop or mobile.
 
-[Documentation](https://magestudio.github.io/docs/#/)
+[Documentation](https://www.mage.studio/docs)
+
+## Development
+The engine is under heavy development. The best way to stay up to date with changes, new features and bug fixes is to [join the Discord server](https://discord.gg/NR5ZDGFG5j).
 
 ---
 
