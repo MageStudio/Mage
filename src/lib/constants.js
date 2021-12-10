@@ -1,4 +1,4 @@
-import { Vector3 } from 'three';
+import { BasicShadowMap, PCFShadowMap, PCFSoftShadowMap, Vector3 } from 'three';
 
 export const UP = 'UP';
 export const DOWN = 'DOWN';

@@ -28,7 +28,9 @@ import {
 import Level, { author } from './core/Level';
 
 import Universe from './core/Universe';
+
 import Color from './lib/Color';
+import PALETTES from './lib/palettes';
 
 import Features, { FEATURES } from './lib/features';
 import * as math from './lib/math';
@@ -52,7 +54,7 @@ import Physics, {
 import * as store from './store';
 import { Provider, connect } from 'inferno-redux';
 
-import * as constants from './lib/constants';
+import * as lib_constants from './lib/constants';
 import * as functions from './lib/functions';
 
 import BaseScript from './scripts/BaseScript';
@@ -65,6 +67,7 @@ import PointLight from './lights/PointLight';
 import SpotLight from './lights/SpotLight';
 import HemisphereLight from './lights/HemisphereLight';
 import Lights from './lights/Lights';
+import * as light_contants from './lights/constants';
 
 import LightLoader from './loaders/LightLoader';
 import MeshLoader from './loaders/MeshLoader';
@@ -88,7 +91,10 @@ import Models from './models/Models';
 //import Shaders from './fx/shaders/Shaders';
 import PostProcessing from './fx/postprocessing/PostProcessing';
 
-window.THREE = THREE;
+const constants = {
+    ...lib_constants,
+    ...light_contants
+};
 
 export {
     author,
@@ -170,6 +176,8 @@ export {
     Shader,
 
     Color,
+    PALETTES,
+
     Vector3,
     EventDispatcher,
     math,

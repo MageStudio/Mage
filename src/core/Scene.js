@@ -5,24 +5,36 @@ import { getWindow } from './window';
 import {
     Clock,
     Scene as THREEScene,
-    PCFSoftShadowMap,
-    BasicShadowMap,
-    PCFShadowMap,
     WebGLRenderer,
     FogExp2,
-    LinearToneMapping
+    LinearToneMapping,
+    LinearEncoding,
+    sRGBEncoding,
+    GammaEncoding,
+    RGBEEncoding,
+    RGBM7Encoding,
+    RGBM16Encoding,
+    RGBDEncoding,
+    BasicDepthPacking,
+    RGBADepthPacking
 } from 'three';
 
 import { generateUUID } from '../lib/uuid';
 import Images from '../images/Images';
+import { DEFAULT_SHADOWTYPE, SHADOW_TYPES } from '../lights/constants';
+import { mapShadowTypeToShadowMap } from '../lights/utils';
 
-const SHADOW_TYPES = {
-    basic: BasicShadowMap,
-    soft: PCFSoftShadowMap,
-    hard: PCFShadowMap
-};
-const DEFAULT_SHADOWTYPE = 'soft';
-
+const ENCODINGS = [
+    LinearEncoding,
+    sRGBEncoding,
+    GammaEncoding,
+    RGBEEncoding,
+    RGBM7Encoding,
+    RGBM16Encoding,
+    RGBDEncoding,
+    BasicDepthPacking,
+    RGBADepthPacking
+];
 export class Scene {
 
     constructor() {
@@ -31,7 +43,7 @@ export class Scene {
         this.clearColor = 0x000000;
         this.alpha = 1.0;
 
-        this.shadowType = SHADOW_TYPES[DEFAULT_SHADOWTYPE];
+        this.shadowType = mapShadowTypeToShadowMap(DEFAULT_SHADOWTYPE);
     }
 
     createScene() {
@@ -85,8 +97,14 @@ export class Scene {
 
     setShadowType = (type = DEFAULT_SHADOWTYPE) => {
         if (Object.keys(SHADOW_TYPES).includes(type)) {
-            this.shadowMap = SHADOW_TYPES[type];
+            this.shadowType = mapShadowTypeToShadowMap(type);
             this.setRendererShadowMap();
+        }
+    }
+
+    setRendererOuputEncoding = (encoding = LinearEncoding) => {
+        if (ENCODINGS.includes(encoding)) {
+            this.renderer.outputEncoding = encoding;
         }
     }
 
@@ -183,13 +201,14 @@ export class Scene {
     }
 
     createRenderer() {
-        const { shadows } = Config.lights();
+        const { shadows, shadowType = DEFAULT_SHADOWTYPE } = Config.lights();
         const { alpha = true, antialias = true, w, h } = Config.screen();
         let container = Config.container();
 
         this.renderer = new WebGLRenderer({ alpha, antialias });
 
         if (shadows) {
+            this.setShadowType(shadowType);
             this.setRendererShadowMap();
         }
 
