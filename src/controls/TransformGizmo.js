@@ -539,7 +539,7 @@ export default class Gizmo extends Object3D {
 					handle.position.copy(this.worldPositionStart);
 					handle.quaternion.copy(this.worldQuaternionStart);
 					this.tempVector.set(1e-10, 1e-10, 1e-10).add(this.worldPositionStart).sub(this.worldPosition).multiplyScalar(-1);
-					this.tempVector.applyQuaternion(this.worldQuaternionStart.clone().inverse());
+					this.tempVector.applyQuaternion(this.worldQuaternionStart.clone().invert());
 					handle.scale.copy(this.tempVector);
 					handle.visible = this.dragging;
 
@@ -655,7 +655,7 @@ export default class Gizmo extends Object3D {
 				// Align handles to current local or world rotation
 
 				this.tempQuaternion2.copy(quaternion);
-				this.alignVector.copy(this.eye).applyQuaternion(this.tempQuaternion.copy(quaternion).inverse());
+				this.alignVector.copy(this.eye).applyQuaternion(this.tempQuaternion.copy(quaternion).invert());
 
 				if (handle.name.search("E") !== - 1) {
 

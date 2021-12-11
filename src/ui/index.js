@@ -33,7 +33,9 @@ export const removeLoadingScreen = () => dispatch(hideLoadingScreen());
 export const dispatchLocationPathChange = path => dispatch(locationPathChange(path));
 
 export const mount = () => {
-    const { root = BaseUI } = Config.ui();
+    const { root = BaseUI, enabled = true } = Config.ui();
+    if (!enabled) return;
+
     const store = getStore();
     const uiElement = createElement(root, createProps());
 
@@ -52,6 +54,9 @@ export const mount = () => {
 
 
 export const unmount = () => {
+    const { enabled = true } = Config.ui();
+    if (!enabled) return;
+
     // Rendering null will trigger unmount lifecycle hooks for whole vDOM tree and remove global event listeners.
     // https://github.com/infernojs/inferno#tear-down
     render(null, document.querySelector(ROOT_ID));

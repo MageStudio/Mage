@@ -44,7 +44,9 @@ class Config {
                 far : 100
             },
 
-            ui: {}
+            ui: {
+                enabled: true
+            }
         }
 
         this.isDefault = true;
