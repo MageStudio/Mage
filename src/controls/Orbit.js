@@ -130,7 +130,7 @@ export default class Orbit extends EventDispatcher {
 
 		// so camera.up is the orbit axis
 		this.quat = new Quaternion().setFromUnitVectors(this.object.up, new Vector3(0, 1, 0));
-		this.quatInverse = this.quat.clone().inverse();
+		this.quatInverse = this.quat.clone().invert();
 
 		this.lastPosition = new Vector3();
 		this.lastQuaternion = new Quaternion();

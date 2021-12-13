@@ -212,13 +212,20 @@ export class Scene {
     }
 
     onResize = () => {
-        const { h, w, ratio } = Config.screen();
-
         if (!this.camera || !this.renderer) return;
+
+        const { h, w } = Config.screen();
+        this.resize(w, h);
+    }
+
+    resize(width, height) {
+        if (!width || !height) return;
+
+        const ratio = width / height;
 
         this.camera.getBody().aspect = ratio;
         this.camera.getBody().updateProjectionMatrix();
-        this.renderer.setSize(w, h);
+        this.renderer.setSize(width, height);
     }
 
     render = () => {

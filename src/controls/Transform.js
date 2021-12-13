@@ -334,7 +334,7 @@ export default class TransformControls extends Object3D {
 				this.pointStart.copy(planeIntersect.point).sub(this.worldPositionStart);
 
 				if (space === 'local') {
-                    this.pointStart.applyQuaternion(this.worldQuaternionStart.clone().inverse());
+                    this.pointStart.applyQuaternion(this.worldQuaternionStart.clone().invert());
                 }
 
 			}
@@ -370,7 +370,7 @@ export default class TransformControls extends Object3D {
 
 		this.pointEnd.copy(planeIntersect.point).sub(this.worldPositionStart);
 
-		if (space === 'local') this.pointEnd.applyQuaternion(this.worldQuaternionStart.clone().inverse());
+		if (space === 'local') this.pointEnd.applyQuaternion(this.worldQuaternionStart.clone().invert());
 
 		if (mode === 'translate') {
 
@@ -399,7 +399,7 @@ export default class TransformControls extends Object3D {
 			if (this.translationSnap) {
 
 				if (space === 'local') {
-					object.position.applyQuaternion(this._tempQuaternion.copy(this._quaternionStart).inverse());
+					object.position.applyQuaternion(this._tempQuaternion.copy(this._quaternionStart).invert());
 
 					if (axis.search('X') !== -1) {
 						object.position.x = Math.round(object.position.x / this.translationSnap) * this.translationSnap;
@@ -532,7 +532,7 @@ export default class TransformControls extends Object3D {
 
 		this.pointEnd.copy(planeIntersect.point).sub(this.worldPositionStart);
 
-		if (space === 'local') this.pointEnd.applyQuaternion(this.worldQuaternionStart.clone().inverse());
+		if (space === 'local') this.pointEnd.applyQuaternion(this.worldQuaternionStart.clone().invert());
 
 		if (mode === 'translate') {
 
@@ -562,7 +562,7 @@ export default class TransformControls extends Object3D {
 
 				if (space === 'local') {
 
-					object.position.applyQuaternion(this._tempQuaternion.copy(this._quaternionStart).inverse());
+					object.position.applyQuaternion(this._tempQuaternion.copy(this._quaternionStart).invert());
 
 					if (axis.search('X') !== -1) {
 						object.position.x = Math.round(object.position.x / this.translationSnap) * this.translationSnap;
