@@ -82,7 +82,7 @@ export class Scene {
         }
     }
 
-    setRendererOuputEncoding = (encoding = DEFAULT_OUTPUT_ENCODING) => {
+    setRendererOutputEncoding = (encoding = DEFAULT_OUTPUT_ENCODING) => {
         if (Object.keys(OUTPUT_ENCODINGS).includes(encoding)) {
             this.renderer.outputEncoding = OUTPUT_ENCODINGS[encoding];
         }
