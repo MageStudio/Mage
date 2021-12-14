@@ -1,4 +1,7 @@
-import { Vector3 } from 'three';
+import {
+    LinearEncoding,
+    Vector3
+} from 'three';
 
 export const UP = 'UP';
 export const DOWN = 'DOWN';
@@ -55,6 +58,20 @@ export const ASSETS_TYPES = {
     SCRIPTS: 'scripts',
     SHADERS: 'shaders'
 };
+
+export const OUTPUT_ENCODINGS = {
+    LINEAR: LinearEncoding,
+    SRGB: sRGBEncoding,
+    GAMMA: GammaEncoding,
+    RGBE: RGBEEncoding,
+    RGBM7: RGBM7Encoding,
+    RGBM16: RGBM16Encoding,
+    RGBD: RGBDEncoding,
+    BASICDEPTH: BasicDepthPacking,
+    RGBADEPTH: RGBADepthPacking
+};
+
+export const DEFAULT_OUTPUT_ENCODING = OUTPUT_ENCODINGS.LINEAR;
 
 export const ROOT = '/';
 export const DIVIDER = '/';

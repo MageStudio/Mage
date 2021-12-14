@@ -4,7 +4,8 @@ import {
 } from 'three';
 
 import GLTFLoader from '../loaders/GLTFLoader';
-import ColladaLoader from '../loaders/ColladaLoader';
+// import ColladaLoader from '../loaders/ColladaLoader';
+// import { FBXLoader } from '../loaders/FBXLoader';
 import SkeletonUtils from './SkeletonUtils';
 
 import { prepareModel } from '../lib/meshUtils';
@@ -16,7 +17,8 @@ const EXTENSIONS = {
     JSON: 'json',
     GLB: 'glb',
     GLTF: 'gltf',
-    COLLADA: 'dae'
+    // COLLADA: 'dae',
+    // FBX: 'fbx'
 };
 
 const FULL_STOP = '.';
@@ -25,7 +27,8 @@ const loaders = {
     [EXTENSIONS.JSON]: new ObjectLoader(),
     [EXTENSIONS.GLB]: new GLTFLoader(),
     [EXTENSIONS.GLTF]: new GLTFLoader(),
-    [EXTENSIONS.COLLADA]: new ColladaLoader()
+    // [EXTENSIONS.COLLADA]: new ColladaLoader(),
+    // [EXTENSIONS.FBX]: new FBXLoader()
 };
 
 const extractExtension = (path) => path.split(FULL_STOP).slice(-1).pop();
@@ -60,13 +63,12 @@ const colladaParser = ({ animations, scene, rawSceneData, buildVisualScene }) =>
     }
 };
 
-const parsers = {
+const getModelParserFromExtension = (extension) => ({
     [EXTENSIONS.JSON]: defaultParser,
     [EXTENSIONS.GLB]: glbParser,
     [EXTENSIONS.GLTF]: gltfParser,
     [EXTENSIONS.COLLADA]: colladaParser
-};
-const getModelParserFromExtension = (extension) => parsers[extension] || defaultParser;
+})[extension] || defaultParser;
 
 const hasAnimations = (animations = []) => animations.length > 0;
 

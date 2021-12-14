@@ -1,5 +1,5 @@
-import { isClassname, isId, createElementFromSelector } from '../lib/dom';
-import { removeFirst } from '../lib/strings';
+import { SHADOW_TYPES } from '../lights/constants';
+import { createElementFromSelector } from '../lib/dom';
 import { getWindow } from './window';
 
 const DEFAULT_HEIGHT = 600;
@@ -29,6 +29,7 @@ class Config {
 
             lights: {
                 shadows: true,
+                shadowType: SHADOW_TYPES.BASIC,
                 textureAnisotropy: 16
             },
 
