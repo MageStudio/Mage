@@ -7,34 +7,14 @@ import {
     Scene as THREEScene,
     WebGLRenderer,
     FogExp2,
-    LinearToneMapping,
-    LinearEncoding,
-    sRGBEncoding,
-    GammaEncoding,
-    RGBEEncoding,
-    RGBM7Encoding,
-    RGBM16Encoding,
-    RGBDEncoding,
-    BasicDepthPacking,
-    RGBADepthPacking
+    LinearToneMapping
 } from 'three';
 
 import { generateUUID } from '../lib/uuid';
 import Images from '../images/Images';
 import { DEFAULT_SHADOWTYPE, SHADOW_TYPES } from '../lights/constants';
 import { mapShadowTypeToShadowMap } from '../lights/utils';
-
-const ENCODINGS = [
-    LinearEncoding,
-    sRGBEncoding,
-    GammaEncoding,
-    RGBEEncoding,
-    RGBM7Encoding,
-    RGBM16Encoding,
-    RGBDEncoding,
-    BasicDepthPacking,
-    RGBADepthPacking
-];
+import { DEFAULT_OUTPUT_ENCODING, OUTPUT_ENCODINGS } from '../lib/constants';
 export class Scene {
 
     constructor() {
@@ -102,9 +82,9 @@ export class Scene {
         }
     }
 
-    setRendererOuputEncoding = (encoding = LinearEncoding) => {
-        if (ENCODINGS.includes(encoding)) {
-            this.renderer.outputEncoding = encoding;
+    setRendererOuputEncoding = (encoding = DEFAULT_OUTPUT_ENCODING) => {
+        if (Object.keys(OUTPUT_ENCODINGS).includes(encoding)) {
+            this.renderer.outputEncoding = OUTPUT_ENCODINGS[encoding];
         }
     }
 
