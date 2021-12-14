@@ -1,5 +1,13 @@
 import {
+    BasicDepthPacking,
+    GammaEncoding,
     LinearEncoding,
+    RGBADepthPacking,
+    RGBDEncoding,
+    RGBEEncoding,
+    RGBM16Encoding,
+    RGBM7Encoding,
+    sRGBEncoding,
     Vector3
 } from 'three';
 
