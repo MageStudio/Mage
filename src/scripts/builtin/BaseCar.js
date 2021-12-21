@@ -50,7 +50,7 @@ export default class BaseCar extends BaseScript {
     }
 
     sendCarUpdate() {
-        Physics.updateBodyState(this.car, this.state);
+        Physics.updateElementState(this.car, this.state);
     }
 
     update(dt) {

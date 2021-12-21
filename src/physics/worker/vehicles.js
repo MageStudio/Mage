@@ -106,7 +106,7 @@ export const addVehicle = data => {
 
     vehicle.uuid = uuid;
 
-    world.setBody({
+    world.addElement({
         type: TYPES.VEHICLE,
         uuid,
         vehicle: vehicle,
@@ -167,7 +167,7 @@ export const resetVehicle = data => {
 export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE, options = {} }, dt) => {
     const speed = vehicle.getCurrentSpeedKmHour();
 
-    dispatcher.sendDispatchEvent(uuid, PHYSICS_EVENTS.VEHICLE.SPEED, { speed });
+    // dispatcher.sendDispatchEvent(uuid, PHYSICS_EVENTS.VEHICLE.SPEED, { speed });
 
     let breakingForce = 0;
     let engineForce = 0;
@@ -229,7 +229,7 @@ export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEH
         q = tm.getRotation();
 
         const wheelUUID = wheels[i];
-        dispatcher.sendBodyUpdate(wheelUUID, p, q, dt);
+        dispatcher.sendElementUpdate(wheelUUID, p, q, {}, dt);
     }
 
     tm = vehicle.getChassisWorldTransform();
@@ -237,14 +237,23 @@ export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEH
     q = tm.getRotation();
 
     const direction = vehicle.getForwardVector();
-    dispatcher.sendDispatchEvent(uuid, PHYSICS_EVENTS.VEHICLE.DIRECTION, {
+    // dispatcher.sendDispatchEvent(uuid, PHYSICS_EVENTS.VEHICLE.DIRECTION, {
+    //     direction: {
+    //         x: direction.x(),
+    //         y: direction.y(),
+    //         z: direction.z()
+    //     }
+    // });
+
+    const extra = {
         direction: {
             x: direction.x(),
             y: direction.y(),
             z: direction.z()
-        }
-    });
+        },
+        speed
+    }
 
-    dispatcher.sendBodyUpdate(uuid, p, q, dt);
-    world.updateBodyState(uuid, state);
+    dispatcher.sendElementUpdate(uuid, p, q, extra, dt);
+    world.updateElementState(uuid, state);
 }

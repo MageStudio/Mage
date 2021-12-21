@@ -50,7 +50,7 @@ const handleLoadEvent = options => Ammo => {
                 applyImpuse(data);
                 break;
             case PHYSICS_EVENTS.ELEMENT.UPDATE:
-                world.updateBodyState(data);
+                world.updateElementState(data);
                 break;
             case PHYSICS_EVENTS.ELEMENT.DISPOSE:
                 world.disposeBody(data);

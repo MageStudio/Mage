@@ -47,7 +47,10 @@ export class World {
     }
 
     init = (options) => {
-        const { gravity = GRAVITY } = options;
+        const { gravity = GRAVITY, fixedUpdate = false } = options;
+
+        this.options = options;
+        this.fixedUpdate = fixedUpdate;
 
         this.collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
         this.dispatcher = new Ammo.btCollisionDispatcher(this.collisionConfiguration);
@@ -139,7 +142,9 @@ export class World {
 
         dispatcher.sendPhysicsUpdate(dt);
 
-        this.requestAnimationFrameId = requestAnimationFrame(this.simulate.bind(this));
+        this.requestAnimationFrameId = this.fixedUpdate ?
+            setTimeout(this.simulate.bind(this), 1000/this.fixedUpdate) :
+            requestAnimationFrame(this.simulate.bind(this));
     }
 
     calculateCollisions = () => {
@@ -202,9 +207,12 @@ export class World {
         this.elements[data.uuid] = data;
     }
 
-    updateBodyState = ({ uuid, state }) => {
+    updateElementState = ({ uuid, state }) => {
+        if (!this.hasElement(uuid)) return;
+
+        const { state: existingState = {} } = this.elements[uuid] || {};
         this.elements[uuid].state = {
-            ...this.elements[uuid].state,
+            ...existingState,
             ...state
         };
     }

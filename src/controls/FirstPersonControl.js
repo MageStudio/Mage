@@ -294,7 +294,7 @@ export default class FirstPersonControl extends EventDispatcher {
             const { y, w } = this.camera.getQuaternion();
             const cameraDirection = this.camera.getDirection();
 
-            Physics.updateBodyState(element, {
+            Physics.updateElementState(element, {
                 direction: this.direction,
                 movement: this.movement,
                 quaternion: { x: 0, y, z: 0, w },

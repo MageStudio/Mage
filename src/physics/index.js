@@ -139,7 +139,7 @@ export class Physics extends EventDispatcher {
         this.worker.terminate();
     };
 
-    handleBodyUpdate = ({ quaternion, position, uuid }) => {
+    handleBodyUpdate = ({ quaternion, position, uuid, ...rest }) => {
         const element = Universe.getByUUID(uuid);
  
         if (element) {
@@ -149,7 +149,8 @@ export class Physics extends EventDispatcher {
                 element.dispatchEvent({
                     type: PHYSICS_EVENTS.ELEMENT.UPDATE,
                     position,
-                    quaternion
+                    quaternion,
+                    ...rest
                 });
             }
         }
@@ -317,7 +318,7 @@ export class Physics extends EventDispatcher {
         }
     }
 
-    updateBodyState(element, state) {
+    updateElementState(element, state) {
         if (Config.physics().enabled) {
             const uuid = element.uuid();
 
