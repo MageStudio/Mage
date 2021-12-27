@@ -300,8 +300,8 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.VEHICLE.RESET,
                 uuid,
-                quaternion,
-                position
+                quaternion: { x: quaternion.x, y: quaternion.y, z: quaternion.z, w: quaternion.w },
+                position: { x: position.x, y: position.y, z: position.z },
             });
         }
     }

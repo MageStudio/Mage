@@ -120,7 +120,7 @@ export const setVehiclePosition = data => {
     const { uuid, position } = data;
     const element = world.getElement(uuid);
 
-    if (element.type === TYPES.VEHICLE) {
+    if (element && element.type === TYPES.VEHICLE) {
         const body = element.vehicle.getRigidBody();
         const transform = new Ammo.btTransform();
 
@@ -135,7 +135,7 @@ export const setVehicleQuaternion = data => {
     const { uuid, quaternion } = data;
     const element = world.getElement(uuid);
 
-    if (element.type === TYPES.VEHICLE) {
+    if (element && element.type === TYPES.VEHICLE) {
         const body = element.vehicle.getRigidBody();
         const transform = new Ammo.btTransform();
 
@@ -150,7 +150,7 @@ export const resetVehicle = data => {
     const { uuid, quaternion, position } = data;
     const element = world.getElement(uuid);
 
-    if (element.type === TYPES.VEHICLE) {
+    if (element && element.type === TYPES.VEHICLE) {
         const body = element.vehicle.getRigidBody();
         const transform = new Ammo.btTransform();
         
