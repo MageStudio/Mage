@@ -35,7 +35,8 @@ export default {
         }),
         commonjs(), 
         webWorkerLoader({
-            pattern: /worker:(.+)/
+            pattern: /worker:(.+)/,
+            targetPlatform: 'browser'
         }),
         // terser(),
         json()

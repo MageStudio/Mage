@@ -58,6 +58,7 @@ export const INPUT_EVENTS = {
     MOUSE_DOWN,
     MOUSE_UP,
     MOUSE_DOWN,
+    MOUSE_MOVE,
     ELEMENT_CLICK,
     ELEMENT_DESELECT,
     GAMEPAD_CONNECTED_EVENT,
@@ -75,21 +76,7 @@ export class Input extends EventDispatcher {
     }
 
     get EVENTS() {
-        return {
-            KEY_PRESS,
-            KEY_DOWN,
-            KEY_UP,
-            MOUSE_DOWN,
-            MOUSE_UP,
-            MOUSE_DOWN,
-            ELEMENT_CLICK,
-            ELEMENT_DESELECT,
-            GAMEPAD_CONNECTED_EVENT,
-            GAMEPAD_DISCONNECTED_EVENT,
-            BUTTON_PRESSED_EVENT,
-            BUTTON_RELEASED_EVENT,
-            AXIS_CHANGE_EVENT
-        }
+        return INPUT_EVENTS;
     }
 
     enable() {

@@ -2,15 +2,18 @@ import BaseScript from './BaseScript';
 import Input from '../core/input/Input';
 import { fetch } from 'whatwg-fetch';
 import BaseCar from './builtin/BaseCar';
+import Trails from './builtin/Trails';
 
 export const BUILTIN = {
-    BASECAR: 'BaseCar'
+    BASECAR: 'BaseCar',
+    TRAILS: 'Trails'
 };
 export class Scripts {
 
     constructor() {
         this.map = {
-            [BUILTIN.BASECAR] : BaseCar
+            [BUILTIN.BASECAR] : BaseCar,
+            [BUILTIN.TRAILS]: Trails
         };
     }
 

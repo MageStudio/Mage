@@ -2,6 +2,7 @@
 import {
     Element,
     ENTITY_TYPES,
+    ENTITY_EVENTS,
     Camera,
     Line,
     CurveLine,
@@ -75,9 +76,11 @@ import MeshLoader from './loaders/MeshLoader';
 import Atmosphere from './fx/materials/Atmosphere';
 import Mirror from './fx/materials/Mirror';
 import Ocean from './fx/materials/Ocean';
+import Water from './fx/materials/Water';
 
 import * as Partykals from 'mage-engine.particles';
 
+import Sky from './fx/scenery/Sky';
 import Skybox from './fx/scenery/Skybox';
 
 import Shader from './fx/shaders/Shader';
@@ -100,6 +103,7 @@ export {
     author,
     Element,
     ENTITY_TYPES,
+    ENTITY_EVENTS,
     Level,
 
     FEATURES,
@@ -170,8 +174,10 @@ export {
     Atmosphere,
     Mirror,
     Ocean,
+    Water,
 
     Skybox,
+    Sky,
 
     Shader,
 

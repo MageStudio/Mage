@@ -10,6 +10,17 @@ export class Universe {
         return this.reality[id];
     }
 
+    find(element) {
+        let found;
+        this.forEach(el => {
+            if (el.has(element) && !found) {
+                found = el;
+            }
+        });
+
+        return found;
+    }
+
     getByUUID(uuid) {
         const id = this.realityUUID[uuid.toString()];
 

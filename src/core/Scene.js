@@ -26,10 +26,11 @@ export class Scene {
         this.shadowType = mapShadowTypeToShadowMap(DEFAULT_SHADOWTYPE);
     }
 
-    createScene() {
+    createScene(name) {
         const fog = Config.fog();
 
         this.scene = new THREEScene();
+        this.scene.name = name;
 
         // this.scene.overrideMaterial = null; // should be null by default, but it's not.
 
@@ -92,8 +93,8 @@ export class Scene {
         this.scene.background = typeof texture === 'string' ? Images.get(texture) : texture;
     } 
 
-    create() {
-        this.createScene();
+    create(name) {
+        this.createScene(name);
         this.createCamera();
         this.createRenderer();
         this.listenToResizeEvent();

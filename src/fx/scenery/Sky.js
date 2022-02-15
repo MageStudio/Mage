@@ -22,8 +22,7 @@ import {
     Mesh,
     BoxBufferGeometry
 } from 'three';
-
-import Scene from '../../core/Scene';
+import { Element, ENTITY_TYPES } from '../../entities';
 
 export class SkyShader {
 
@@ -220,43 +219,75 @@ export class SkyShader {
     }
 }
 
-export default class Sky {
+const DEFAULT_SCALE = 10000;
+const DEFAULT_TURBIDITY = 10;
+const DEFAULT_RALEIGH = .8;
+const DEFAULT_MIE_COEFFICIENT = 0.005;
+const DEFAULT_MIE_DIRECTIONAL_G = .8;
+const DEFAULT_SUN_INCLINATION = .49;
+const DEFAULT_SUN_AZIMUTH = 0.205;
+const DEFAULT_SUN_DISTANCE = 100;
 
-    constructor(options) {
+export default class Sky  extends Element {
+
+    constructor(options = {}) {
+        super(null, null, options);
+        const {
+            scale = DEFAULT_SCALE,
+            turbidity = DEFAULT_TURBIDITY,
+            rayleigh = DEFAULT_RALEIGH,
+            mieCoefficient = DEFAULT_MIE_COEFFICIENT,
+            mieDirectionalG = DEFAULT_MIE_DIRECTIONAL_G,
+            sunInclination = DEFAULT_SUN_INCLINATION,
+            sunAzimuth = DEFAULT_SUN_AZIMUTH,
+            sunDistance = DEFAULT_SUN_DISTANCE
+        } = options;
+
         const material = new ShaderMaterial({
             fragmentShader: SkyShader.fragmentShader(),
             vertexShader: SkyShader.vertexShader(),
             uniforms: UniformsUtils.clone(SkyShader.uniforms()),
             side: BackSide
         });
-        this.position = new Vector3(0, 0, 0);
 
-        this.body = new Mesh(new BoxBufferGeometry( 1, 1, 1 ), material);
+        const body = new Mesh(new BoxBufferGeometry( 1, 1, 1 ), material);
 
-        Scene.add(this.body, this);
+        this.setBody({ body });
+        this.setEntityType(ENTITY_TYPES.MESH);
+
+        this.setScale({ x: scale, y: scale, z: scale });
+        this.seTurbidity(turbidity);
+        this.setRayleigh(rayleigh);
+        this.setMieCoefficient(mieCoefficient);
+        this.setMieDirectionalG(mieDirectionalG);
+        this.setSun(
+            sunInclination,
+            sunAzimuth,
+            sunDistance
+        );
     }
 
-    turbidity(value) {
-        this.body.material.uniforms.turbidity.value = value;
+    seTurbidity(value) {
+        this.getBody().material.uniforms.turbidity.value = value;
     }
 
-    rayleigh(value) {
-        this.body.material.uniforms.rayleigh.value = value;
+    setRayleigh(value) {
+        this.getBody().material.uniforms.rayleigh.value = value;
     }
 
-    luminance(value) {
-        this.body.material.uniforms.luminance.value = value;
+    setLuminance(value) {
+        this.getBody().material.uniforms.luminance.value = value;
     }
 
-    mieCoefficient(value) {
-        this.body.material.uniforms.mieCoefficient.value = value;
+    setMieCoefficient(value) {
+        this.getBody().material.uniforms.mieCoefficient.value = value;
     }
 
-    mieDirectionalG(value) {
-        this.body.material.uniforms.mieDirectionalG.value = value;
+    setMieDirectionalG(value) {
+        this.getBody().material.uniforms.mieDirectionalG.value = value;
     }
 
-    sun(inclination, azimuth, distance) {
+    setSun(inclination, azimuth, distance) {
         const theta = Math.PI * (inclination - 0.5);
         const phi = 2 * Math.PI * (azimuth - 0.5);
 
@@ -264,14 +295,9 @@ export default class Sky {
         const y = distance * Math.sin(phi) * Math.sin(theta);
         const z = distance * Math.sin(phi) * Math.cos(theta);
 
-        this.position.set(x, y, z);
+        // this.position.set(x, y, z);
+        const position = new Vector3(x, y, z);
 
-        this.body.material.uniforms.sunPosition.value.copy(this.position);
+        this.getBody().material.uniforms.sunPosition.value.copy(position);
     }
-
-    scale(amount) {
-        this.body.scale.setScalar(amount);
-    }
-
-    render() {}
 }

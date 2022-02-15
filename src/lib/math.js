@@ -3,6 +3,8 @@ import { Vector3, MathUtils } from 'three';
 export const PI = Math.PI;
 export const PI_2 = PI/2;
 
+export const pickRandom = list => list.length && list[Math.floor(Math.random() * list.length)];
+
 export const degToRad = (angle) => {
     return angle * (PI / 180);
 }

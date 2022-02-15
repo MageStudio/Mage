@@ -3,6 +3,7 @@ import Explosion from './Explosion';
 import Fire from './Fire';
 import Rain from './Rain';
 import Snow from './Snow';
+import Trail from './Trail';
 
 import Scene from '../../core/Scene';
 import Proton from 'three.proton.js';
@@ -14,7 +15,8 @@ export const PARTICLES = {
     EXPLOSION: 'explosion',
     FOUNTAIN: 'fountain',
     FIRE: 'fire',
-    SNOW: 'snow'
+    SNOW: 'snow',
+    TRAIL: 'trail'
 };
 
 const { SINGLE, GROUP } = PARTICLE_EMITTER_TYPES;
@@ -26,7 +28,8 @@ export class Particles {
             [PARTICLES.EXPLOSION]: Explosion,
             [PARTICLES.FOUNTAIN]: Fountain,
             [PARTICLES.FIRE]: Fire,
-            [PARTICLES.SNOW]: Snow
+            [PARTICLES.SNOW]: Snow,
+            [PARTICLES.TRAIL]: Trail
         };
 
         this.emitters = {};
@@ -96,11 +99,12 @@ export class Particles {
             .forEach(uuid => {
                 const emitter = this.emitters[uuid];
 
-                if (emitter.getType() === GROUP) {
-                    emitter.forEach(emitter => this.updateSingleEmitter(emitter, dt));
-                } else {
-                    this.updateSingleEmitter(emitter, dt);
-                }
+                // if (emitter.getType() === GROUP) {
+                //     emitter.forEach(emitter => this.updateSingleEmitter(emitter, dt));
+                // } else {
+                //     this.updateSingleEmitter(emitter, dt);
+                // }
+                this.updateSingleEmitter(emitter, dt);
             });
     }
 
@@ -110,7 +114,7 @@ export class Particles {
         }
 
         if (emitter.isSystemDead()) {
-            this.toDispose.push(uuid);
+            this.toDispose.push(emitter.uuid);
         }
     }
 

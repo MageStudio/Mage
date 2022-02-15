@@ -103,9 +103,9 @@ export default class ParticleEmitter extends EventDispatcher {
         };
     }
 
-    start() {
+    start(...options) {
         if (this.hasSystem()) {
-            this.system.start();
+            this.system.start(...options);
         }
 
         return this;

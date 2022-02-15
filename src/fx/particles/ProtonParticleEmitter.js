@@ -1,9 +1,20 @@
 import Proton from 'three.proton.js';
-import { SpriteMaterial, Sprite, AdditiveBlending, NormalBlending } from 'three';
+import {
+    SpriteMaterial,
+    Sprite,
+    AdditiveBlending,
+    NotEqualDepth,
+    GreaterDepth,
+    LessEqualDepth,
+    LessDepth,
+    EqualDepth,
+    NeverDepth
+} from 'three';
 import ParticleEmitter from './ParticleEmitter';
 import Images from '../../images/Images';
+import PALETTES from '../../lib/palettes';
 
-const DEFAULT_PARTICLE_COLOR = 0xff00ff;
+const DEFAULT_PARTICLE_COLOR = PALETTES.BASE.BLACK;
 
 export default class ProtonParticleEmitter extends ParticleEmitter {
 
@@ -30,12 +41,13 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
     isProtonEmitter() { return true; }
     isSystemDead() { return this.system.dead; }
 
-    createBody(texture) {
+    createBody(texture, color) {
         return new Sprite(new SpriteMaterial({
             map: Images.get(texture),
             transparent: true,
-            // color,
-            // blending: AdditiveBlending,
+            color,
+            blending: AdditiveBlending,
+            depthWrite: false,
             fog: true
         }));
     }
@@ -109,5 +121,10 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
         }
 
         return this;
+    }
+
+    dispose() {
+        this.system.stopEmit();
+        this.system.destroy();
     }
 }

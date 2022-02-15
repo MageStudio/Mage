@@ -2,6 +2,10 @@
  * THANKS TO https://flatuicolors.com/ for providing the palettes below.
  */
 
+const BASE = {
+    BLACK: 0x000000
+};
+
 
 const FRENCH_PALETTE = {
     /**
@@ -35,5 +39,6 @@ const FRENCH_PALETTE = {
 };
 
 export default {
+    BASE,
     FRENCH_PALETTE
 };

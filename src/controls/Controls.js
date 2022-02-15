@@ -3,6 +3,7 @@ import Orbit from './Orbit';
 import Transform from './Transform';
 import FirstPersonControl from './FirstPersonControl';
 import FlyControl from './FlyControl';
+import { Vector3 } from 'three';
 
 const CONTROLS = {
     ORBIT: 'orbit',
@@ -67,10 +68,11 @@ export class Controls {
             });
     }
 
-    setOrbitControl() {
+    setOrbitControl({ target = new Vector3() } = {}) {
         this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY]);
         this.controls[CONTROLS.ORBIT] = new Orbit(Scene.getCameraBody(), Scene.getDOMElement());
         this.controls[CONTROLS.ORBIT].init();
+        this.controls[CONTROLS.ORBIT].setTarget(target);
 
         this.controls[CONTROLS.ORBIT].addEventListener(EVENTS.CHANGE, Scene.render);
 

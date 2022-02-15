@@ -7,7 +7,8 @@ import createRootReducer, * as DEFAULT_REDUCERS from './reducers';
 import { STORE_DOESNT_EXIST } from '../lib/messages';
 import { NOOP } from '../lib/functions';
 
-let store;
+let store,
+    latestAction;
 
 let unsubscribe = NOOP;
 let subscribers = [];
@@ -41,11 +42,11 @@ export const getState = () => {
 
 export const getStore = () => store;
 
-const handleSubscriptions = () => (
+const handleSubscriptions = (...args) => (
     subscribers
         .forEach((subscriber) => {
             if (subscriber.onStateChange) {
-                subscriber.onStateChange(getState());
+                subscriber.onStateChange(getState(), latestAction);
             }
         })
 )
@@ -72,5 +73,6 @@ export const unsubscribeAll = () => {
 export const dispatch = (action) => {
     if (store && action) {
         store.dispatch(action);
+        latestAction = action;
     }
 }

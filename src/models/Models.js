@@ -5,20 +5,22 @@ import {
 
 import GLTFLoader from '../loaders/GLTFLoader';
 // import ColladaLoader from '../loaders/ColladaLoader';
-// import { FBXLoader } from '../loaders/FBXLoader';
+import { FBXLoader } from '../loaders/FBXLoader';
 import SkeletonUtils from './SkeletonUtils';
 
 import { prepareModel } from '../lib/meshUtils';
 import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
 import { ASSETS_MODEL_LOAD_FAIL } from '../lib/messages';
+import OBJMTLLoader from '../loaders/OBJMTLLoader';
 
 const EXTENSIONS = {
     JSON: 'json',
     GLB: 'glb',
     GLTF: 'gltf',
     // COLLADA: 'dae',
-    // FBX: 'fbx'
+    FBX: 'fbx',
+    OBJ: 'obj'
 };
 
 const FULL_STOP = '.';
@@ -28,7 +30,8 @@ const loaders = {
     [EXTENSIONS.GLB]: new GLTFLoader(),
     [EXTENSIONS.GLTF]: new GLTFLoader(),
     // [EXTENSIONS.COLLADA]: new ColladaLoader(),
-    // [EXTENSIONS.FBX]: new FBXLoader()
+    [EXTENSIONS.FBX]: new FBXLoader(),
+    [EXTENSIONS.OBJ]: new OBJMTLLoader()
 };
 
 const extractExtension = (path) => path.split(FULL_STOP).slice(-1).pop();
@@ -62,12 +65,22 @@ const colladaParser = ({ animations, scene, rawSceneData, buildVisualScene }) =>
         buildVisualScene
     }
 };
+const fbxParser = scene => {
+    scene.traverse(node => {
+        if (node.isSkinnedMesh) {
+            node.material.skinning = true;
+        }
+    });
+    
+    return ({ scene, animations: scene.animations })
+}
 
 const getModelParserFromExtension = (extension) => ({
     [EXTENSIONS.JSON]: defaultParser,
     [EXTENSIONS.GLB]: glbParser,
     [EXTENSIONS.GLTF]: gltfParser,
-    [EXTENSIONS.COLLADA]: colladaParser
+    [EXTENSIONS.COLLADA]: colladaParser,
+    [EXTENSIONS.FBX]: fbxParser
 })[extension] || defaultParser;
 
 const hasAnimations = (animations = []) => animations.length > 0;
