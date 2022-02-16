@@ -22,15 +22,20 @@ export const setUpLightsAndShadows = (mesh) => {
     mesh.receiveShadow = Boolean(shadows);
 
     if (hasMaterial(mesh)) {
-        if (Lights.isUsingCSM()) {
-            Lights.csm.setupMaterial(mesh.material);
+        const setUpMaterial = material => {
+            if (Lights.isUsingCSM()) {
+                Lights.csm.setupMaterial(material);
+            }
+    
+            if (material.map) {
+                material.map.anisotropy = textureAnisotropy;
+            }
+
+            return material;
         }
 
-        if (mesh.material.map) {
-            mesh.material.map.anisotropy = textureAnisotropy;
-        }
+        mesh.material = processMaterial(mesh.material, setUpMaterial);
     }
-    
 } 
 
 export const isMesh = mesh => mesh.isMesh;
@@ -45,9 +50,11 @@ export const hasMaterial = mesh => Boolean(mesh.material);
 export const hasGeometry = mesh => Boolean(mesh.geometry);
 export const hasTexture = mesh => hasMaterial(mesh) && mesh.material.map;
 
+export const processMaterial = (material, callback) => Array.isArray(material) ? material.map(callback) : callback(material);
+
 export const changeMaterialByName = (name, mesh, materialOptions) => {
 
-    if (!hasMaterial(mesh)) return; 
+    if (!hasMaterial(mesh)) return;
 
     switch(name) {
         case MATERIALS.LAMBERT:
@@ -69,19 +76,29 @@ export const changeMaterialByName = (name, mesh, materialOptions) => {
 }
 
 const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
-    const clone = mesh.material.clone();
-    mesh.material = new MeshMaterial({
-        map: clone.map,
-        color: clone.color,
-        ...options
-    });
+    const _cloneMaterial = material => {
+        const clone = material.clone();
+        const newMaterial = new MeshMaterial({
+            map: clone.map,
+            color: clone.color,
+            ...options
+        });
+
+        newMaterial.skinning = true;
+        return newMaterial;
+    }
+
+    mesh.material = processMaterial(mesh.material, _cloneMaterial);
 
     setUpLightsAndShadows(mesh);
 }
 
 export const disposeTextures = mesh => {
-    if (hasTexture(mesh)) {
-        mesh.material.map.dispose();
+    if (hasMaterial(mesh)) {
+        const _disposeTexture = (material) => {
+            material.map && material.dispose();
+        }
+        processMaterial(mesh.material, _disposeTexture);
     }
 };
 

@@ -5,7 +5,6 @@ import { EventDispatcher, Vector3 } from 'three';
 import Scripts from '../scripts/Scripts';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
-import AmbientSound from '../audio/AmbientSound';
 import Physics from '../physics';
 import {
     TAG_ALREADY_EXISTS,
@@ -13,11 +12,12 @@ import {
     TAG_CANT_BE_REMOVED,
     STATE_MACHINE_NOT_AVAILABLE,
     SCRIPT_NOT_FOUND,
-    ENTITY_TYPE_NOT_ALLOWED
+    ENTITY_TYPE_NOT_ALLOWED,
+    USER_DATA_IS_MISSING,
+    KEY_IS_MISSING,
+    KEY_VALUE_IS_MISSING
 } from '../lib/messages';
-import { findFirstInScene, isScene, notAScene } from '../lib/meshUtils';
 
-const STATE_CHANGE_EVENT = { type: 'stateChange' };
 const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
 const DEFAULT_ANGULAR_VELOCITY = { x: 0, y: 0, z: 0 };
 const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
@@ -30,6 +30,17 @@ export const ENTITY_TYPES = {
     UNKNOWN: 'UNKNOWN'
 };
 
+export const ENTITY_EVENTS = {
+    DISPOSE: 'DISPOSE',
+    STATE_MACHINE: {
+        CHANGE: 'STATE_MACHINE_CHANGE',
+    },
+    ANIMATION: {
+        LOOP: 'LOOP',
+        FINISHED: 'FINISHED'
+    }
+};
+
 export const DEFAULT_TAG = 'all';
 
 export default class Entity extends EventDispatcher {
@@ -38,6 +49,8 @@ export default class Entity extends EventDispatcher {
         super();
         this.scripts = [];
         this.tags = [];
+        this.children = [];
+        this.isMage = true;
 
         this.addTags([ DEFAULT_TAG, tag, ...tags ]);
         this.serializable = serializable;
@@ -54,6 +67,47 @@ export default class Entity extends EventDispatcher {
 
     getBody() {
         return this.body;
+    }
+
+    add(element) {
+        if (this.hasBody()) {
+            const _add = (toAdd) => {
+                this.children.push(toAdd);
+                this.body.add(toAdd.getBody());
+            };
+
+            if (Array.isArray(element)) {
+                element.forEach(_add);
+            } else {
+                _add(element);
+            }
+        }
+    }
+
+    isParentOf(element) {
+        let comparator = child => !!child.getBody().getObjectById(element.id);
+        if (element.isMage) {
+            comparator = child => child.getBody().getObjectById(element.id());
+        }
+
+        return this.children.filter(comparator).length > 0;
+    }
+
+    has(element) {
+        if (element.isMage) {
+            return this.equals(element) || this.isParentOf(element);
+        } else {
+            return this.getBody().getObjectById(element.id);
+        }
+    }
+
+    remove(element) {
+        if (this.hasBody() && this.has(element)) {
+            this.body.remove(element.body);
+            const index = this.children.findIndex(m => m.equals(element));
+
+            this.children.splice(index, 1);
+        }
     }
 
     addTag = (tagName) => {
@@ -145,6 +199,10 @@ export default class Entity extends EventDispatcher {
             this.stopScripts();
             this.reset();
         }
+
+        this.dispatchEvent({
+            type: ENTITY_EVENTS.DISPOSE
+        })
     }
 
     hasStateMachine = () => !!this.stateMachine;
@@ -153,7 +211,7 @@ export default class Entity extends EventDispatcher {
         this.stateMachine = interpret(createMachine(description))
             .onTransition(state => {
                 this.dispatchEvent({
-                    STATE_CHANGE_EVENT,
+                    type: ENTITY_EVENTS.STATE_MACHINE.CHANGE,
                     state
                 });
             });
@@ -174,8 +232,6 @@ export default class Entity extends EventDispatcher {
     stopStateMachine() {
         if (this.hasStateMachine()) {
             this.stateMachine.stop();
-        } else {
-            console.log(STATE_MACHINE_NOT_AVAILABLE);
         }
     }
 
@@ -188,7 +244,7 @@ export default class Entity extends EventDispatcher {
     }
 
     getScript(name) {
-        const script = this.scripts.filter(script => script.name === name)[0];
+        const { script } = this.scripts.filter(script => script.name === name)[0];
 
         if (script) {
             return script;
@@ -463,6 +519,18 @@ export default class Entity extends EventDispatcher {
         return this.body.uuid;
     }
 
+    setId() {
+        return this.body.id;
+    }
+
+    id() {
+        return this.body.id;
+    }
+
+    setVisible(flag = true) {
+        this.getBody().visible = flag;
+    }
+
     equals(entity) {
         try {
             return entity.uuid ? this.uuid() === entity.uuid() : false;
@@ -477,6 +545,30 @@ export default class Entity extends EventDispatcher {
 
     getName() {
         return this.name;
+    }
+
+    setData(key, value) {
+        if (this.getBody().userData) {
+            if (key && value) {
+                this.getBody().userData[key] = value;
+            } else {
+                console.log(KEY_VALUE_IS_MISSING);
+            }
+        } else {
+            console.log(USER_DATA_IS_MISSING)
+        }
+    }
+
+    getData(key) {
+        if (this.getBody().userData) {
+            if (key) {
+                return this.getBody().userData[key];
+            } else {
+                console.log(KEY_IS_MISSING);
+            }
+        } else {
+            console.log(USER_DATA_IS_MISSING)
+        }
     }
 
     mapScriptsToJSON() {

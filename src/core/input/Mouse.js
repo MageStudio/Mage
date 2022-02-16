@@ -77,8 +77,10 @@ export default class Mouse extends EventDispatcher {
     normalizeMouse(x, y) {
         const { w, h } = Config.screen();
 
-        this.mouse.x = (x / w) * 2 - 1;
-		this.mouse.y = - (y / h) * 2 + 1;
+        this.mouse.set(
+            (x / w) * 2 - 1,
+            -(y / h) * 2 + 1
+        )
     }
 
     parseMouseEvent = (event) => {
@@ -109,25 +111,26 @@ export default class Mouse extends EventDispatcher {
         this.dispatchEvent(this.mouseUpEvent);
     }
 
-    isIntersectionAMeshOrSprite = (o) => !!o.object.isMesh || !!o.object.isSprite;
-    getMeshFromUniverse = ({ object: { name } = {}, face, point }) => ({
+    // isIntersectionAMeshOrSprite = (o) => !!o.object.isMesh || !!o.object.isSprite;
+    parseIntersection = ({ object, face, point }) => ({
         face,
         position: point,
-        name,
-        element: Universe.get(name)
+        element: Universe.find(object)
     });
 
     elementExists = ({ element }) => !!element;
+    elementHasTag = tag => ({ element }) => element.hasTag(tag);
 
-    getIntersections = () => {
+    getIntersections = (recursive = false, tag) => {
         if (this.hasRaycaster()) {
             this.raycaster.setFromCamera(this.mouse, Scene.getCameraBody());
 
             return this.raycaster
-                .intersectObjects(Scene.getChildren())
-                .filter(this.isIntersectionAMeshOrSprite)
-                .map(this.getMeshFromUniverse)
-                .filter(this.elementExists);
+                .intersectObjects(Scene.getChildren(), recursive)
+                // .filter(this.isIntersectionAMeshOrSprite)
+                .map(this.parseIntersection)
+                .filter(this.elementExists)
+                .filter(this.elementHasTag(tag))
         }
     }
 

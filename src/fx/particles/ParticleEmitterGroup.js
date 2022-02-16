@@ -22,7 +22,8 @@ export default class ParticleEmitterGroup extends EventDispatcher {
     }
 
     isProtonEmitter() {
-        return true;
+        Object.keys(this.system)
+                .forEach(emitterId => this.system[emitterId].isProtonEmitter());
     }
 
     getType() {
@@ -46,7 +47,8 @@ export default class ParticleEmitterGroup extends EventDispatcher {
     }
 
     isSystemDead() {
-        return this.system.every(emitter => emitter.isSystemDead());
+        Object.keys(this.system)
+                .forEach(emitterId => this.system[emitterId].isSystemDead());
     }
 
     setSystem(system = []) {
@@ -129,10 +131,10 @@ export default class ParticleEmitterGroup extends EventDispatcher {
                 .forEach(emitterId => this.system[emitterId].dispose());
     }
 
-    update() {
+    update(dt) {
         if (this.hasSystem()) {
             Object.keys(this.system)
-                .forEach(emitterId => this.system[emitterId].update());
+                .forEach(emitterId => this.system[emitterId].update(dt));
         }
     }
 }

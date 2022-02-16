@@ -133,7 +133,11 @@ export class Level extends EventDispatcher {
     }
 
     init = () => {
-        Scene.create();
+        const {
+            path
+        } = this.options;
+
+        Scene.create(path);
         this.enableInput();
 
         Physics

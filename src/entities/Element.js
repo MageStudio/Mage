@@ -5,21 +5,25 @@ import {
     Color,
     Vector3
 } from 'three';
-import { Entity, ENTITY_TYPES, Line, Box } from './index';
+import Between from 'between.js';
 
+import {
+    Entity,
+    ENTITY_TYPES,
+    Line,
+    Box
+} from './index';
 import {
     ELEMENT_NOT_SET,
     ANIMATION_HANDLER_NOT_FOUND,
     ELEMENT_SET_COLOR_MISSING_COLOR,
-    ELEMENT_NAME_NOT_PROVIDED,
-    ELEMENT_NO_GEOMETRY_SET,
-    ELEMENT_NO_MATERIAL_CANT_SET_TEXTURE
+    ELEMENT_NAME_NOT_PROVIDED
 } from '../lib/messages';
 import Images from '../images/Images';
 import AnimationHandler from './animations/AnimationHandler';
 import Config from '../core/config';
 import Scene from '../core/Scene';
-import { COLLISION_EVENT, ORIGIN } from '../lib/constants';
+import { COLLISION_EVENT } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics';
 import { COLLIDER_TYPES } from '../physics/constants';
@@ -42,6 +46,7 @@ import {
     setUpLightsAndShadows
 } from '../lib/meshUtils';
 import { mapColliderTypeToHitbox } from '../physics/hitbox';
+import { ENTITY_EVENTS } from './Entity';
 
 const COLLIDER_TAG = 'collider';
 const COLLIDER_COLOR = 0xff0000;
@@ -58,6 +63,7 @@ export default class Element extends Entity {
         } = options;
 
         this.texture = undefined;
+        this.opacity = 1;
         this.options = {
             ...options,
             name
@@ -68,9 +74,9 @@ export default class Element extends Entity {
 
         this.colliders = [];
         this.collisionsEnabled = true;
-        this.children = [];
 
         this.animationHandler = undefined;
+        this.animations = [];
 
         this.setEntityType(ENTITY_TYPES.MESH);
     }
@@ -173,21 +179,55 @@ export default class Element extends Entity {
         }
     }
 
+    toggleShadows(flag = false) {
+        if (this.isModel()) {
+            this.getBody().castShadow = flag;
+            this.getBody().receiveShadow = flag;
+
+            this.getBody().traverse(child => {
+                child.castShadow = flag;
+                child.receiveShadow = flag;
+            });
+        }
+    }
+
     setArmature(armature) {
         this.armature = armature;
 
         Scene.add(this.armature, null, false);
     }
 
-    addAnimationHandler(animations) {
+    addAnimationHandler(animations = []) {
+        this.animations = animations;
         this.animationHandler = new AnimationHandler(this.getBody(), animations);
+        this.addAnimationHandlerListeners();
+    }
+
+    handleAnimationHandlerEvents = (e) => {
+        this.dispatchEvent(e);
+    }
+
+    addAnimationHandlerListeners() {
+        this.animationHandler.addEventListener(ENTITY_EVENTS.ANIMATION.LOOP, this.handleAnimationHandlerEvents);
+        this.animationHandler.addEventListener(ENTITY_EVENTS.ANIMATION.FINISHED, this.handleAnimationHandlerEvents);
+    }
+
+    removeAnimationHandlerListeners() {
+        this.animationHandler.removeEventListener(ENTITY_EVENTS.ANIMATION.LOOP, this.handleAnimationHandlerEvents);
+        this.animationHandler.removeEventListener(ENTITY_EVENTS.ANIMATION.FINISHED, this.handleAnimationHandlerEvents);
     }
 
     hasAnimationHandler() {
         return !!this.animationHandler;
     }
 
-    playAnimation(id, options) {
+    hasAnimations() {
+        return !!this.animations.length;
+    }
+
+    playAnimation(id, options = {}) {
+        if (!this.hasAnimations()) return;
+
         if (this.hasAnimationHandler()) {
             this.animationHandler.playAnimation(id, options);
         } else {
@@ -195,7 +235,29 @@ export default class Element extends Entity {
         }
     }
 
+    stopAllAnimations() {
+        if (!this.hasAnimations()) return;
+
+        if (this.hasAnimationHandler()) {
+            this.animationHandler.stopAll();
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+        }
+    }
+
+    stopAnimation() {
+        if (!this.hasAnimations()) return;
+
+        if (this.hasAnimationHandler()) {
+            this.animationHandler.stopCurrentAnimation();
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+        }
+    }
+
     getAvailableAnimations() {
+        if (!this.hasAnimations()) return [];
+
         if (this.hasAnimationHandler()) {
             return this.animationHandler.getAvailableAnimations();
         } else {
@@ -237,44 +299,6 @@ export default class Element extends Entity {
         const getHitbox = mapColliderTypeToHitbox(colliderType)
 
         this.add(getHitbox(this));
-        //box.setPosition(ORIGIN);
-    }
-
-    update(dt) {
-        super.update(dt);
-        
-        if (this.hasRayColliders() && this.areCollisionsEnabled()) {
-            this.updateRayColliders();
-            this.checkCollisions();
-        }
-
-        if (this.hasAnimationHandler()) {
-            this.animationHandler.update(dt);
-        }
-    }
-
-    add(element) {
-        if (this.hasBody()) {
-            const _add = (body) => {
-                this.children.push(body);
-                this.body.add(body.body);
-            };
-
-            if (Array.isArray(element)) {
-                element.forEach(_add);
-            } else {
-                _add(element);
-            }
-        }
-    }
-
-    remove(element) {
-        if (this.hasBody()) {
-            this.body.remove(element.body);
-            const index = this.children.findIndex(m => m.equals(element));
-
-            this.children.splice(index, 1);
-        }
     }
 
     hasRayColliders = () => this.colliders.length > 0;
@@ -425,11 +449,12 @@ export default class Element extends Entity {
 
     setColor(color) {
         if (color) {
-            if (hasMaterial(this.body)) {
+            if (hasMaterial(this.getBody())) {
                 this.body.material.color = new Color(color);
             } else {
                 this.body.traverse(child => {
-                    if (hasMaterial(child)) {
+                    debugger;
+                    if (hasMaterial(child) && !this.isParentOf(child)) {
                         child.material.color = new Color(color);
                     }
                 });
@@ -439,23 +464,48 @@ export default class Element extends Entity {
         }
     }
 
-    setTextureMap(textureId, options = {}) {
-        if (textureId && hasMaterial(this.body)) {
+    getColor() {
+        if (hasMaterial(this.getBody())) {
+            return this.body.material.color;
+        } else {
+            let found;
+            this.body.traverse(child => {
+                if (hasMaterial(child) && !found) {
+                    found = child.material.color;
+                }
+            });
+            return found;
+        }
+    }
+
+    setTextureMap = (textureId, options = {}) => {
+        if (textureId) {
             const {
                 repeat = { x: 1, y: 1 },
                 wrap = RepeatWrapping
             } = options;
-            const texture = Images.get(textureId);
 
-            this.texture = textureId;
+            const applyTextureTo = (element) => {
+                const texture = Images.get(textureId);
 
-            texture.wrapS = wrap;
-            texture.wrapT = wrap;
-            texture.repeat.set(repeat.x, repeat.y);
+                this.texture = textureId;
 
-            this.body.material.map = texture;
-        } else {
-            console.warn(ELEMENT_NO_MATERIAL_CANT_SET_TEXTURE);
+                texture.wrapS = wrap;
+                texture.wrapT = wrap;
+                texture.repeat.set(repeat.x, repeat.y);
+
+                element.material.map = texture;
+            }
+
+            if (hasMaterial(this.getBody())) {
+                applyTextureTo(this.getBody());
+            } else {
+                this.getBody().traverse(child => {
+                    if (hasMaterial(child)) {
+                        applyTextureTo(child);
+                    }
+                })
+            }
         }
     }
 
@@ -473,18 +523,28 @@ export default class Element extends Entity {
 
     setOpacity(value = 1.0) {
         const opacity = clamp(value, 0, 1);
+        this.opacity = opacity;
 
         if (hasMaterial(this.getBody())) {
             this.body.material.transparent = true;
             this.body.material.opacity = opacity;
         } else {
             this.body.traverse(child => {
-                if (hasMaterial(child)) {
+                if (hasMaterial(child) && !this.isParentOf(child)) {
                     child.material.transparent = true;
                     child.material.opacity = opacity;
                 }
             })
         }
+    }
+
+    fadeTo(opacity, time) {
+        return new Promise((resolve) => 
+            new Between(this.opacity, opacity)
+                .time(time)
+                .on('update', value => this.setOpacity(value))
+                .on('complete', resolve)
+        );
     }
 
     setWireframe(flag = true) {
@@ -508,6 +568,13 @@ export default class Element extends Entity {
                     child.material.wireframeLinewidth = width;
                 }
             })
+        }
+    }
+
+    lookAt = ({ x = 0, y = 0, z = 0 } = {}) => {
+        const body = this.getBody();
+        if (body.lookAt) {
+            body.lookAt(x, y, z);
         }
     }
 
@@ -541,12 +608,28 @@ export default class Element extends Entity {
         }
     }
 
+    update(dt) {
+        super.update(dt);
+        
+        if (this.hasRayColliders() && this.areCollisionsEnabled()) {
+            this.updateRayColliders();
+            this.checkCollisions();
+        }
+
+        if (this.hasAnimationHandler()) {
+            this.animationHandler.update(dt);
+        }
+    }
+
     dispose() {
         super.dispose();
 
         if (this.hasBody()) {
             Scene.remove(this.getBody());
             this.disposeBody();
+        }
+        if (this.hasAnimationHandler()) {
+            this.removeAnimationHandlerListeners();
         }
 
         Physics.disposeElement(this);

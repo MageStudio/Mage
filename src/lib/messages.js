@@ -38,6 +38,10 @@ export const TAG_CANT_BE_REMOVED = `${PREFIX} The default tag can't be removed.`
 export const TAG_ALREADY_EXISTS = `${PREFIX} The following tag has already been added: `;
 export const TAG_NOT_EXISTING_REMOVAL= `${PREFIX} The following tag has can't be removed because it hasnt been added: `;
 
+export const USER_DATA_IS_MISSING = `${PREFIX} This entity cannot hold custom data.`;
+export const KEY_IS_MISSING = `${PREFIX} You need to provide a valid key`;
+export const KEY_VALUE_IS_MISSING = `${PREFIX} You need to provide a valid key/value pair`;
+
 export const STATE_MACHINE_NOT_AVAILABLE = `${PREFIX} State Machine is not enabled.`;
 
 export const EFFECT_COULD_NOT_BE_CREATED = `${PREFIX}  Could not create requested effect.`;

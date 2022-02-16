@@ -76,6 +76,18 @@ export default class BokehPass extends Pass {
         this.renderToScreen = renderToScreen;
     }
 
+    setFocus(focus) {
+        this.uniforms.focus.value = focus;
+    }
+
+    setAperture(aperture) {
+        this.uniforms.aperture.value = aperture;
+    }
+
+    setMaxBlur(maxblur) {
+        this.uniforms.maxblur.value = maxblur;
+    }
+
     render(renderer, writeBuffer, readBuffer/*, deltaTime, maskActive*/) {
         this.scene.overrideMaterial = this.materialDepth;
 
