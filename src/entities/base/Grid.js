@@ -1,15 +1,22 @@
 import { GridHelper } from 'three'
-import Scene from '../../core/Scene';
+import { Element, ENTITY_TYPES } from '../index';
 
-export default class Grid {
+export default class Grid extends Element {
 
     constructor(size, division, color1, color2) {
+        const options = {
+            size,
+            division,
+            color1,
+            color2
+        };
+
+        super(null, null, options);
         this.body = new GridHelper(size, division, color1, color2);
 
-        Scene.add(this.body, this, false);
+        this.setBody({ body });
+        this.setEntityType(ENTITY_TYPES.MESH);
     }
 
     update() {}
-
-	render() {}
 }

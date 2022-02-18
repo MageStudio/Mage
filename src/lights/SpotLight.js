@@ -56,9 +56,9 @@ export default class SpotLight extends Light {
         intensity = DEFAULT_INTENSITY
     }) {
         if (light) {
-            this.body = light;
+            this.setBody(light);
         } else {
-            this.body = new THREESpotLight(color, intensity);
+            this.setBody(new THREESpotLight(color, intensity));
         }
 
         if (this.hasBody()) {

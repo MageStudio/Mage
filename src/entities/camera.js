@@ -8,12 +8,12 @@ export default class Camera extends Entity {
         super({ name });
 
         this.options = options;
-        this.body = new PerspectiveCamera(
+        this.setBody(new PerspectiveCamera(
             options.fov,
             options.ratio,
             options.near,
             options.far
-        );
+        ));
     }
 
     getPosition() {

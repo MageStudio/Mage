@@ -6,7 +6,7 @@ const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
 const DEFAULT_INTENSITY = 0.5;
 const WHITE = 0xffffff;
 
-export default class LightAmbient extends Light {
+export default class AmbientLight extends Light {
 
     constructor(options) {
         const {
@@ -26,9 +26,9 @@ export default class LightAmbient extends Light {
         intensity = DEFAULT_INTENSITY
     }) {
         if (light) {
-            this.light = light;
+            this.setBody(light);
         } else {
-            this.light = new THREEAmbientLight(color, intensity);
+            this.setBody(new THREEAmbientLight(color, intensity))
         }
 
         if (this.hasBody()) {
@@ -42,6 +42,7 @@ export default class LightAmbient extends Light {
         } = this.options;
 
         this.setPosition(position);
+        console.log('about to add ambientlight to scene', this.body);
         this.addToScene();
     }
 

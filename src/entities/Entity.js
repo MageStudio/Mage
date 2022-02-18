@@ -69,6 +69,10 @@ export default class Entity extends EventDispatcher {
         return this.body;
     }
 
+    setBody(body) {
+        this.body = body;
+    }
+
     add(element) {
         if (this.hasBody()) {
             const _add = (toAdd) => {

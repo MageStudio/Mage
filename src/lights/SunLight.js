@@ -41,9 +41,9 @@ export default class SunLight extends Light {
         intensity = DEFAULT_INTENSITY
     }) {
         if (light) {
-            this.body = light;
+            this.setBody(light);
         } else {
-            this.body = new THREEDirectionalLight(color, intensity);
+            this.setBody(new THREEDirectionalLight(color, intensity));
         }
 
         if (this.hasBody()) {

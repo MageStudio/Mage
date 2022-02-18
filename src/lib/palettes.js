@@ -3,7 +3,21 @@
  */
 
 const BASE = {
-    BLACK: 0x000000
+    WHITE: 0XFFFFFF,
+    BLACK: 0x000000,
+    RED: 0xFF0000,
+    GREEN: 0x00FF00,
+    BLUE: 0x0000FF,
+    YELLOW: 0xFFFF00,
+    CYAN: 0x00FFFF,
+    MAGENTA: 0xFF00FF,
+    SILVER: 0xC0C0C0,
+    GRAY: 0x808080,
+    MAROON: 0x800000,
+    OLIVE: 0x808000,
+    PURPLE: 0x800080,
+    TEAL: 0x008080,
+    NAVY: 0x000080,
 };
 
 
@@ -40,5 +54,6 @@ const FRENCH_PALETTE = {
 
 export default {
     BASE,
-    FRENCH_PALETTE
+    FRENCH_PALETTE,
+    FRENCH: FRENCH_PALETTE,
 };

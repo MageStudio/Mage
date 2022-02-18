@@ -45,9 +45,9 @@ export default class PointLight extends Light {
         decay = DEFAULT_DECAY
     }) {
         if (light) {
-            this.body = light;
+            this.setBody(light)
         } else {
-            this.body = new THREEPointLight(color, intensity, distance, decay);
+            this.setBody(new THREEPointLight(color, intensity, distance, decay));
         }
 
         if (this.hasBody()) {
