@@ -119,7 +119,7 @@ export const addModel = (options) => {
     Ammo.destroy(btc);
 
     const body = createRigidBody(collisionShape, { uuid, position, quaternion, mass, friction });
-    world.setBody({ uuid, body, type: TYPES.MESH, state: DEFAULT_RIGIDBODY_STATE });
+    world.addElement({ uuid, body, type: TYPES.MESH, state: DEFAULT_RIGIDBODY_STATE });
 }
 
 export const addBox = (data) => {
@@ -128,7 +128,7 @@ export const addBox = (data) => {
     const geometry = new Ammo.btBoxShape(new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5));
     const body = createRigidBody(geometry, { uuid, position, quaternion, mass, friction });
 
-    world.setBody({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
+    world.addElement({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
 };
 
 export const addSphere = data => {
@@ -137,7 +137,7 @@ export const addSphere = data => {
     const geometry = new Ammo.btSphereShape(radius);
     const body = createRigidBody(geometry, { uuid, position, quaternion, mass, friction });
 
-    world.setBody({ uuid, body, type: TYPES.SPHERE, state: DEFAULT_RIGIDBODY_STATE });
+    world.addElement({ uuid, body, type: TYPES.SPHERE, state: DEFAULT_RIGIDBODY_STATE });
 };
 
 export const setLinearVelocity = (data) => {

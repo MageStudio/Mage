@@ -106,7 +106,7 @@ export const addVehicle = data => {
 
     vehicle.uuid = uuid;
 
-    world.setBody({
+    world.addElement({
         type: TYPES.VEHICLE,
         uuid,
         vehicle: vehicle,

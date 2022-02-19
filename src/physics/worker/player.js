@@ -16,7 +16,7 @@ export const addPlayer = (data) => {
     body.setAngularFactor(0);
 
     world.addRigidBody(body);
-    world.setBody({ uuid, body, type: TYPES.PLAYER, state: DEFAULT_RIGIDBODY_STATE });
+    world.addElement({ uuid, body, type: TYPES.PLAYER, state: DEFAULT_RIGIDBODY_STATE });
 };
 
 export const handlePlayerUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
