@@ -16,7 +16,11 @@ export const getProportion = (max1, b, max2) => {
 export const clamp = (value, min, max) => (
     value < min ? min : value > max ? max : value
 );
- 
+
+export const randomIntFromInterval = (min, max) => { // min and max included 
+    return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 export const getDistance = (
     { x: xA = 0, y: yA = 0, z: zA = 0 } = {},
     { x: xB = 0, y: yB = 0, z: zB = 0 } = {}) => (

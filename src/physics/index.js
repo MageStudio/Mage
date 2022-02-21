@@ -139,17 +139,16 @@ export class Physics extends EventDispatcher {
         this.worker.terminate();
     };
 
-    handleBodyUpdate = ({ quaternion, position, uuid }) => {
+    handleBodyUpdate = ({ uuid, ...data }) => {
         const element = Universe.getByUUID(uuid);
  
         if (element) {
             if (element.getPhysicsOptions('applyPhysicsUpdate')) {
-                element.handlePhysicsUpdate(position, quaternion);
+                element.handlePhysicsUpdate(data);
             } else {
                 element.dispatchEvent({
                     type: PHYSICS_EVENTS.ELEMENT.UPDATE,
-                    position,
-                    quaternion
+                    ...data
                 });
             }
         }

@@ -237,14 +237,15 @@ export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEH
     q = tm.getRotation();
 
     const direction = vehicle.getForwardVector();
-    dispatcher.sendDispatchEvent(uuid, PHYSICS_EVENTS.VEHICLE.DIRECTION, {
+    const extraData = {
         direction: {
             x: direction.x(),
             y: direction.y(),
             z: direction.z()
         }
-    });
+    }
 
-    dispatcher.sendBodyUpdate(uuid, p, q, dt);
+
+    dispatcher.sendBodyUpdate(uuid, p, q, dt, extraData);
     world.updateBodyState(uuid, state);
 }

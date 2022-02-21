@@ -9,7 +9,8 @@ import {
     Models,
     AmbientLight,
     PHYSICS_EVENTS,
-    constants
+    constants,
+    Scripts
 } from '../../dist/mage.js';
 
 export default class Intro extends Level {
@@ -45,20 +46,15 @@ export default class Intro extends Level {
 
     onCreate() {
         this.addAmbientLight();
-        Controls.setOrbitControl();
-
-        Scene
-            .getCamera()
-            .setPosition({ y: 15, z: 45 });
-
+        
         const floor = new Box(50, 1, 50, 0xffffff);
         floor.enablePhysics({ mass: 0, debug: true });
-
+        
         this.createWall();
         
         const car = this.createCar('first');
         car.setPosition({ y: 14 });
-
+        
         const wheels = [
             this.createWheel(1),
             this.createWheel(2),
@@ -66,9 +62,11 @@ export default class Intro extends Level {
             this.createWheel(4),
         ];
 
+        window.car = car;
+        
         car.addEventListener(PHYSICS_EVENTS.VEHICLE.SPEED, this.handleSpeedChange);
-
-        car.addScript('BaseCar', {
+        
+        car.addScript(Scripts.BUILTIN.BASECAR, {
             wheels,
             mass: 1000,
             debug: true,
@@ -93,8 +91,9 @@ export default class Intro extends Level {
                 restLength: 0.6
             }
         });
-
+        
         this.createCube(2, 0xff00ff);
+        Scene.getCamera().addScript(Scripts.BUILTIN.SMOOTH_CAR_FOLLOW, { target: car });
     }
 }
 
