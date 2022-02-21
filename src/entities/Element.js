@@ -53,6 +53,10 @@ const COLLIDER_COLOR = 0xff0000;
 
 const DEFAULT_COLLIDER_OFFSET = { x: 0, y: 0, z: 0};
 
+const DEFAULT_PHYSICS_OPTIONS = {
+    applyPhysicsUpdate: true
+};
+
 export default class Element extends Entity {
 
     constructor(geometry, material, options = {}) {
@@ -68,7 +72,8 @@ export default class Element extends Entity {
             ...options,
             name
         };
-        this.physicsOptions = {};
+        this.physicsOptions = DEFAULT_PHYSICS_OPTIONS;
+        this.physicsState = {};
 
         this.setBody({ geometry, material });
 
@@ -267,7 +272,7 @@ export default class Element extends Entity {
         return [];
     }
 
-    setPhysicsOptions({ applyPhysicsUpdate = true, ...rest }) {
+    setPhysicsOptions({ applyPhysicsUpdate = true, ...rest } = DEFAULT_PHYSICS_OPTIONS) {
         const parsedOptions = {
             applyPhysicsUpdate,
             ...rest
@@ -277,6 +282,19 @@ export default class Element extends Entity {
 
     getPhysicsOptions(option) {
         return option ? this.physicsOptions[option] : this.physicsOptions;
+    }
+
+    setPhysicsState({ dt, event, ...data } = {}) {
+        const physicsState = {
+            ...this.physicsState,
+            ...data
+        };
+
+        this.physicsState = physicsState;
+    }
+
+    getPhysicsState(key) {
+        return key ? this.physicsState[key] : this.physicsState;
     }
 
     enablePhysics(options = {}) {
@@ -578,9 +596,10 @@ export default class Element extends Entity {
         }
     }
 
-    handlePhysicsUpdate = (position, quaternion) => {
+    handlePhysicsUpdate = ({ position, quaternion, ...data }) => {
         this.setPosition(position);
         this.setQuaternion(quaternion);
+        this.setPhysicsState(data);
     }
 
     equals = (object) => (

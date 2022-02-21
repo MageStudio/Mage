@@ -3,18 +3,25 @@ import Input from '../core/input/Input';
 import { fetch } from 'whatwg-fetch';
 import BaseCar from './builtin/BaseCar';
 import Trails from './builtin/Trails';
+import SmoothCarFollow from './builtin/SmoothCarFollow';
 
 export const BUILTIN = {
     BASECAR: 'BaseCar',
-    TRAILS: 'Trails'
+    TRAILS: 'Trails',
+    SMOOTH_CAR_FOLLOW: 'SmoothCarFollow'
 };
 export class Scripts {
 
     constructor() {
         this.map = {
             [BUILTIN.BASECAR] : BaseCar,
-            [BUILTIN.TRAILS]: Trails
+            [BUILTIN.TRAILS]: Trails,
+            [BUILTIN.SMOOTH_CAR_FOLLOW]: SmoothCarFollow
         };
+    }
+
+    get BUILTIN() {
+        return BUILTIN;
     }
 
     update() {}

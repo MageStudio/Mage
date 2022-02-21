@@ -203,10 +203,12 @@ export class World {
     }
 
     updateBodyState = ({ uuid, state }) => {
-        this.elements[uuid].state = {
-            ...this.elements[uuid].state,
-            ...state
-        };
+        if (this.hasElement(uuid)) {
+            this.elements[uuid].state = {
+                ...this.elements[uuid].state,
+                ...state
+            };
+        }
     }
 
     disposeBody({ uuid }) {
