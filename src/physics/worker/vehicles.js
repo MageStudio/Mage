@@ -165,10 +165,6 @@ export const resetVehicle = data => {
 }
 
 export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEHICLE_STATE, options = {} }, dt) => {
-    const speed = vehicle.getCurrentSpeedKmHour();
-
-    dispatcher.sendDispatchEvent(uuid, PHYSICS_EVENTS.VEHICLE.SPEED, { speed });
-
     let breakingForce = 0;
     let engineForce = 0;
 
@@ -237,12 +233,15 @@ export const handleVehicleUpdate = ({ vehicle, wheels, uuid, state = DEFAULT_VEH
     q = tm.getRotation();
 
     const direction = vehicle.getForwardVector();
+    const speed = vehicle.getCurrentSpeedKmHour();
+
     const extraData = {
         direction: {
             x: direction.x(),
             y: direction.y(),
             z: direction.z()
-        }
+        },
+        speed
     }
 
 
