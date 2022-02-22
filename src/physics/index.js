@@ -267,26 +267,26 @@ export class Physics extends EventDispatcher {
         }
     }
 
-    setVehiclePosition = (vehicle, position) => {
+    setVehiclePosition = (vehicle, { x, y, z }) => {
         if (Config.physics().enabled) {
             const uuid = vehicle.uuid();
 
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.VEHICLE.SET.POSITION,
                 uuid,
-                position
+                position: { x, y, z }
             })
         }
     }
 
-    setVehicleQuaternion = (vehicle, quaternion) => {
+    setVehicleQuaternion = (vehicle, { x, y, z, w }) => {
         if (Config.physics().enabled) {
             const uuid = vehicle.uuid();
 
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.VEHICLE.SET.QUATERNION,
                 uuid,
-                quaternion
+                quaternion: { x, y, z, w }
             });
         }
     }
@@ -298,8 +298,17 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.VEHICLE.RESET,
                 uuid,
-                quaternion,
-                position
+                quaternion: {
+                    x: quaternion.x,
+                    y: quaternion.y,
+                    z: quaternion.z,
+                    w: quaternion.w
+                },
+                position: {
+                    x: position.x,
+                    y: position.y,
+                    z: position.z
+                }
             });
         }
     }
