@@ -471,7 +471,6 @@ export default class Element extends Entity {
                 this.body.material.color = new Color(color);
             } else {
                 this.body.traverse(child => {
-                    debugger;
                     if (hasMaterial(child) && !this.isParentOf(child)) {
                         child.material.color = new Color(color);
                     }
