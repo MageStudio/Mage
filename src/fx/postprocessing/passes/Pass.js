@@ -1,7 +1,8 @@
 import {
     Mesh,
     OrthographicCamera,
-    PlaneBufferGeometry
+    BufferGeometry,
+    Float32BufferAttribute
 } from 'three';
 
 export default class Pass {
@@ -30,41 +31,34 @@ export default class Pass {
 }
 
 // Helper for passes that need to fill the viewport with a single quad.
-Pass.FullScreenQuad = (function () {
 
-    const camera = new OrthographicCamera(- 1, 1, 1, - 1, 0, 1);
-    const geometry = new PlaneBufferGeometry(2, 2);
+const _camera = new OrthographicCamera( - 1, 1, 1, - 1, 0, 1 );
 
-    const FullScreenQuad = function (material) {
+// https://github.com/mrdoob/three.js/pull/21358
 
-        this._mesh = new Mesh(geometry, material);
+const _geometry = new BufferGeometry();
+_geometry.setAttribute( 'position', new Float32BufferAttribute( [ - 1, 3, 0, - 1, - 1, 0, 3, - 1, 0 ], 3 ) );
+_geometry.setAttribute( 'uv', new Float32BufferAttribute( [ 0, 2, 0, 0, 2, 0 ], 2 ) );
 
-    };
+export class FullScreenQuad {
+    constructor( material ) {
+        this._mesh = new Mesh( _geometry, material );
+    }
 
-    Object.defineProperty(FullScreenQuad.prototype, 'material', {
+    dispose() {
+        this._mesh.geometry.dispose();
+    }
 
-        get: function () {
-            return this._mesh.material;
-        },
+    render( renderer ) {
+        renderer.render( this._mesh, _camera );
+    }
 
-        set: function (value) {
-            this._mesh.material = value;
-        }
+    get material() {
+        return this._mesh.material;
+    }
 
-    });
+    set material( value ) {
+        this._mesh.material = value;
+    }
 
-    Object.assign(FullScreenQuad.prototype, {
-
-        dispose: function () {
-            this._mesh.geometry.dispose();
-        },
-
-        render: function (renderer) {
-            renderer.render(this._mesh, camera);
-        }
-
-    });
-
-    return FullScreenQuad;
-
-})();
+}

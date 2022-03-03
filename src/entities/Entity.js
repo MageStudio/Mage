@@ -77,7 +77,8 @@ export default class Entity extends EventDispatcher {
         if (this.hasBody()) {
             const _add = (toAdd) => {
                 this.children.push(toAdd);
-                this.body.add(toAdd.getBody());
+                this.getBody()
+                    .add(toAdd.getBody());
             };
 
             if (Array.isArray(element)) {

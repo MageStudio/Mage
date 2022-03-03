@@ -12,7 +12,7 @@ import {
     UniformsUtils,
     WebGLRenderTarget
 } from 'three';
-import Pass from './passes/Pass';
+import Pass, { FullScreenQuad } from './passes/Pass';
 
 import BokehShader from './shaders/BokehShader.js';
 
@@ -70,7 +70,7 @@ export default class BokehPass extends Pass {
         this.uniforms = bokehUniforms;
         this.needsSwap = false;
 
-        this.fsQuad = new Pass.FullScreenQuad(this.materialBokeh);
+        this.fsQuad = new FullScreenQuad(this.materialBokeh);
 
         this._oldClearColor = new Color();
         this.renderToScreen = renderToScreen;

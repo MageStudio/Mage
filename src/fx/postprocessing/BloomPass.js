@@ -11,7 +11,7 @@ import {
 	WebGLRenderTarget
 } from "three";
 
-import Pass from "./passes/Pass";
+import Pass, { FullScreenQuad } from "./passes/Pass";
 import CopyShader from "./shaders/CopyShader";
 import ConvolutionShader from "./shaders/ConvolutionShader";
 
@@ -60,7 +60,7 @@ export default class BloomPass extends Pass {
 		});
 
 		this.needsSwap = false;
-		this.fsQuad = new Pass.FullScreenQuad(null);
+		this.fsQuad = new FullScreenQuad(null);
 
 		this.renderToScreen = renderToScreen;
 	}

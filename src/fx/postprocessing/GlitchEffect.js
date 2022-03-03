@@ -6,7 +6,7 @@ import {
 	ShaderMaterial,
 	UniformsUtils
 } from 'three';
-import Pass from "./passes/Pass.js";
+import Pass, { FullScreenQuad } from "./passes/Pass.js";
 import DigitalGlitch from "./shaders/DigitalGlitchShader";
 
 export default class GlitchEffect extends Pass {
@@ -24,7 +24,7 @@ export default class GlitchEffect extends Pass {
             fragmentShader: DigitalGlitch.fragmentShader
         });
 
-        this.fsQuad = new Pass.FullScreenQuad(this.material);
+        this.fsQuad = new FullScreenQuad(this.material);
 
         this.goWild = false;
         this.curF = 0;
