@@ -17,6 +17,10 @@ export const clamp = (value, min, max) => (
     value < min ? min : value > max ? max : value
 );
 
+export const isWithin = (value, min, max) => {
+    return value >= min && value < max;
+};
+
 export const randomIntFromInterval = (min, max) => { // min and max included 
     return Math.floor(Math.random() * (max - min + 1) + min)
 }

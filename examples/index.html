@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        body {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: nowrap;
+            align-content: stretch;
+            justify-content: flex-start;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        .menu {
+            margin: 16px;
+            padding: 0;
+            display: flex;
+            flex: 1 1 auto;
+            flex-direction: column;
+            flex-wrap: nowrap;
+            align-content: flex-start;
+            justify-content: flex-start;
+        }
+
+        .example-frame {
+            flex: 10 1 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <ul class='menu'>
+        <li class='example' data-src='./cars_physics/index.html'>Hello Cube</li>
+        <li class='example' data-src='./cube-scripts/index.html'>Scripts</li>
+        <li class='example' data-src='./cube-texture/index.html'>Textures</li>
+        <li class='example' data-src='./lights/index.html'>Lights and skybox</li>
+        <li class='example' data-src='./physics/index.html'>physics</li>
+        <li class='example' data-src='./physics_many/index.html'>physics many</li>
+        <li class='example' data-src='./physics_car/index.html'>physics car</li>
+        <li class='example' data-src='./physics_car_ui/index.html'>physics car UI</li>
+    </ul>
+    <iframe class='example-frame'></iframe>
+
+    <script>
+        document.querySelectorAll('.example').forEach(el => el.addEventListener('click', e => {
+            document.querySelector('iframe').src = e.target.dataset.src;
+        }));
+    </script>
+</body>
+
+</html>

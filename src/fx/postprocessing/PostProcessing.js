@@ -36,10 +36,10 @@ export class PostProcessing {
                 effect: DepthOfField,
                 isClass: true
             },
-            // [EFFECTS.SELECTIVE_OUTLINE]: {
-            //     effect: SelectiveOutline,
-            //     isClass: true
-            // },
+            [EFFECTS.SELECTIVE_OUTLINE]: {
+                effect: SelectiveOutline,
+                isClass: true
+            },
             [EFFECTS.GLITCH]: {
                 effect: GlitchEffect,
                 isClass: true

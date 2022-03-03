@@ -6,7 +6,7 @@ import {
 	ShaderMaterial,
 	UniformsUtils
 } from "three";
-import Pass from "./Pass";
+import Pass, { FullScreenQuad } from "./Pass";
 
 export default class ShaderPass extends Pass {
 
@@ -33,7 +33,7 @@ export default class ShaderPass extends Pass {
     		});
     	}
 
-    	this.fsQuad = new Pass.FullScreenQuad(this.material);
+    	this.fsQuad = new FullScreenQuad(this.material);
     }
 
     render(renderer, writeBuffer, readBuffer) {
