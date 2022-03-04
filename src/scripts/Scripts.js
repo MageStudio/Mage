@@ -2,6 +2,7 @@ import BaseScript from './BaseScript';
 import Input from '../core/input/Input';
 import { fetch } from 'whatwg-fetch';
 import BaseCar from './builtin/BaseCar';
+console.log('inside Scripts, importing Trails');
 import Trails from './builtin/Trails';
 import SmoothCarFollow from './builtin/SmoothCarFollow';
 
@@ -55,11 +56,11 @@ export class Scripts {
         this.map[id] = ScriptClass;
     }
 
-    get(id) {
-        const ScriptClass = this.map[id];
+    get(name) {
+        const ScriptClass = this.map[name];
 
         if (ScriptClass) {
-            return new ScriptClass();
+            return new ScriptClass(name);
         }
 
         return false;

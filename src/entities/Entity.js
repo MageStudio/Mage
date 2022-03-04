@@ -1,8 +1,6 @@
 import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
 import { EventDispatcher, Vector3 } from 'three';
-
-import Scripts from '../scripts/Scripts';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import Physics from '../physics';
@@ -27,6 +25,7 @@ export const ENTITY_TYPES = {
     LIGHT: 'LIGHT',
     MODEL: 'MODEL',
     SPRITE: 'SPRITE',
+    PARTICLE: 'PARTICLE',
     UNKNOWN: 'UNKNOWN'
 };
 
@@ -43,6 +42,7 @@ export const ENTITY_EVENTS = {
 
 export const DEFAULT_TAG = 'all';
 
+console.log('defining Entity class');
 export default class Entity extends EventDispatcher {
 
     constructor({ serializable = true, tag = '', tags = [] }) {
@@ -261,9 +261,9 @@ export default class Entity extends EventDispatcher {
     hasScripts = () => this.scripts.length > 0;
 
     parseScripts = (list, options, enabled) => (
-        list.map((name, i) => ({
-            script: Script.get(name),
-            name,
+        list.map((script, i) => ({
+            script,
+            name: script.getName(),
             enabled,
             options: options[i]
         }))
@@ -282,8 +282,7 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    addScript(name, options = {}) {
-        const script = Scripts.get(name);
+    addScript(script, options = {}) {
         const {
             enabled = true
         } = options;

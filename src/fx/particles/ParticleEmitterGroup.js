@@ -1,24 +1,25 @@
-import { EventDispatcher } from "three";
-
-import { generateUUID } from '../../lib/uuid';
-import Scene from '../../core/Scene';
 import { EMITTER_NOT_FOUND } from "../../lib/messages";
 import { PARTICLE_EMITTER_TYPES } from "./constants";
+import { Entity, ENTITY_TYPES } from "../../entities";
 
-export default class ParticleEmitterGroup extends EventDispatcher {
+export default class ParticleEmitterGroup extends Entity {
 
     constructor(options = {}) {
-        super();
+        super({ tag: 'particle '});
 
-        const { name, system } = options;
+        const {
+            name = `emitter_${Math.random()}`,
+            system
+        } = options;
 
-        this.uuid = generateUUID();
-        this.name = name || `emitter_group_${this.uuid.slice(0, 4)}`;
-
-        this.system = {};
-        this.options = options;
+        this.options = {
+            ...options,
+            name
+        };
 
         this.setSystem(system);
+        this.setBody({ body: new Object3D() });
+        this.setEntityType(ENTITY_TYPES.PARTICLE);
     }
 
     isProtonEmitter() {
@@ -28,18 +29,6 @@ export default class ParticleEmitterGroup extends EventDispatcher {
 
     getType() {
         return PARTICLE_EMITTER_TYPES.GROUP;
-    }
-
-    getUUID() {
-        return this.uuid;
-    }
-
-    getName() {
-        return this.name;
-    }
-
-    setName(name) {
-        this.name = name;
     }
 
     hasSystem() {
@@ -72,69 +61,45 @@ export default class ParticleEmitterGroup extends EventDispatcher {
         }
     }
 
-    forEach(cb) {
-        Object.keys(this.system)
-            .forEach((emitterId, i) => cb(this.system[emitterId], i));
-    }
-
-    setPosition(where) {
-        if (this.hasSystem()) {
-            const position = {
-                ...this.getPosition(),
-                ...where
-            };
-
-            Object.keys(this.system)
-                .forEach(emitterId => this.system[emitterId].setPosition(position));
-        }
-
-        return this;
-    }
-
-    getPosition() {
-        if (this.hasSystem()) {
-            const first = Object.keys(this.system)[0];
-            return this.system[first].getPosition();
-        }
-    }
-
-    setRotation(howmuch) {
-        if (this.hasSystem()) {
-            const rotation = {
-                ...this.getRotation(),
-                ...howmuch
-            };
-
-            Object.keys(this.system)
-                .forEach(emitterId => this.system[emitterId].setRotation(rotation));
-        }
-
-        return this;
-    }
-
-    getRotation() {
-        if (this.hasSystem()) {
-            const first = Object.keys(this.system)[0];
-            return this.system[first].getRotation();
-        }
-    }
-
-    start(...options) {
+    emit(...options) {
         if (this.hasSystem()) {
             Object.keys(this.system)
                 .forEach(emitterId => this.system[emitterId].start(...options));
         }
     }
 
+    stop() {
+        if (this.hasSystem()) {
+            Object.keys(this.system)
+                .forEach(emitterId => this.system[emitterId].stop());
+        }
+    }
+
     dispose() {
+        super.dispose();
         Object.keys(this.system)
                 .forEach(emitterId => this.system[emitterId].dispose());
     }
 
+    syncParticleEmitter() {
+        if (this.hasSystem()) {
+            const { position, rotation } = this.getBody();
+
+            Object.keys(this.system)
+                .forEach(emitterId => this.system[emitterId].setPosition(position));
+            Object.keys(this.system)
+                .forEach(emitterId => this.system[emitterId].setRotation(rotation));
+        }
+    }
+
     update(dt) {
+        super.update(dt);
+
         if (this.hasSystem()) {
             Object.keys(this.system)
                 .forEach(emitterId => this.system[emitterId].update(dt));
         }
+
+        this.syncParticleEmitter();
     }
 }

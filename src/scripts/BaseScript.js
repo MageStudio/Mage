@@ -10,7 +10,7 @@ export default class BaseScript {
         this.options = {};
     }
 
-    name() {
+    getName() {
         return this.__name;
     }
 

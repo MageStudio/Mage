@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES, Cube, BaseScript, Scripts } from '../../dist/mage.js';
+import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES, Cube, BaseScript, Scripts, THREE, ProtonParticleEmitter, Proton } from '../../dist/mage.js';
 
 class SimpleScript extends BaseScript {
     constructor() { super('SimpleScript'); }
@@ -16,6 +16,46 @@ class SimpleScript extends BaseScript {
     }
 }
 
+const { Vector3 } = THREE;
+
+const getRate = () => new Proton.Rate(new Proton.Span(10, 15), new Proton.Span(.05, .1));
+
+const getInitializers = (direction, strength, size) => ([
+    new Proton.Mass(1),
+    new Proton.Life(1, 2),
+    new Proton.Radius(size / 2, size / 1.5, 'center'),
+    new Proton.Position(new Proton.SphereZone(size)),
+    new Proton.V(new Proton.Span(strength, strength * 2), new Proton.Vector3D(direction.x, direction.y, direction.z), 5), //new Proton.Span(200, 500)
+]);
+
+const getBehaviours = (direction, strength) => ([
+    new Proton.Scale(new Proton.Span(2, 2.5), 0),
+    new Proton.G(strength / 100),
+    new Proton.Color('#3c6382', ['#82ccdd', '#60a3bc'], Infinity, Proton.easeOutSine),
+    new Proton.RandomDrift(direction.x / 100, direction.y / 100, direction.z / 100, 2.5)
+]);
+
+class CustomParticleEmitter extends ProtonParticleEmitter {
+
+    constructor(options) {
+        const  {
+            texture,
+            direction = new Vector3(0, 1, 0),
+            size = 20,
+            strength = 100
+        } = options;
+
+        const fireOptions = {
+            rate: getRate(),
+            texture,
+            initializers: getInitializers(direction, strength, size),
+            behaviours: getBehaviours(direction, strength)
+        }
+
+        super(fireOptions);
+    }
+}
+
 export default class Intro extends Level {
 
     addAmbientLight() {
@@ -30,12 +70,12 @@ export default class Intro extends Level {
 
     startFire() {
         console.log('starting fire');
-        const fire = Particles.addParticleEmitter(PARTICLES.FIRE, {
+        const fire = Particles.addParticleEmitter(new CustomParticleEmitter({
             texture: 'fire',
             strength: 50,
             size: 5,
             direction: { x: 0, y: 1, z: 0}
-        });
+        }));
 
         fire.emit(Infinity);
         

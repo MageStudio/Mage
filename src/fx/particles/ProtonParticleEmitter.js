@@ -3,16 +3,13 @@ import {
     SpriteMaterial,
     Sprite,
     AdditiveBlending,
-    NotEqualDepth,
-    GreaterDepth,
-    LessEqualDepth,
-    LessDepth,
-    EqualDepth,
-    NeverDepth
+    Euler
 } from 'three';
 import ParticleEmitter from './ParticleEmitter';
 import Images from '../../images/Images';
 import PALETTES from '../../lib/palettes';
+import { Vector3 } from 'three';
+import { Quaternion } from 'three';
 
 const DEFAULT_PARTICLE_COLOR = PALETTES.BASE.BLACK;
 
@@ -41,7 +38,7 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
     isProtonEmitter() { return true; }
     isSystemDead() { return this.system.dead; }
 
-    createBody(texture, color) {
+    createParticleBody(texture, color) {
         return new Sprite(new SpriteMaterial({
             map: Images.get(texture),
             transparent: true,
@@ -67,55 +64,13 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
         initializers.forEach(initializer => this.system.addInitialize(initializer));
 
         if (texture) {
-            this.system.addInitialize(new Proton.Body(this.createBody(texture, color)));
+            this.system.addInitialize(new Proton.Body(this.createParticleBody(texture, color)));
         }
 
         behaviours.forEach(behaviour => this.system.addBehaviour(behaviour));
     }
 
-    setPosition(where = {}) {
-        const position = {
-            ...this.getPosition(),
-            ...where
-        };
-
-        this.system.p.x = position.x;
-        this.system.p.y = position.y;
-        this.system.p.z = position.z;
-
-        return this;
-    }
-
-    getPosition() {
-        return {
-            x: this.system.p.x,
-            y: this.system.p.y,
-            z: this.system.p.z
-        };
-    }
-
-    setRotation(howmuch) {
-        const rotation = {
-            ...this.getRotation(),
-            ...howmuch
-        };
-
-        this.system.rotation.x = rotation.x;
-        this.system.rotation.y = rotation.y;
-        this.system.rotation.z = rotation.z;
-
-        return this;
-    }
-
-    getRotation() {
-        return {
-            x: this.system.rotation.x,
-            y: this.system.rotation.y,
-            z: this.system.rotation.z
-        };
-    }
-
-    start(duration = 'once', life) {
+    emit(duration = 'once', life) {
         if (this.hasSystem()) {
             this.system.emit(duration, life);
         }
@@ -123,7 +78,32 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
         return this;
     }
 
+    stop() {
+        if (this.hasSystem()) {
+            this.system.stopEmit();
+        }
+    }
+
+    syncParticleEmitter() {
+        const position = this.getBody().getWorldPosition(new Vector3());
+        const rotation = new Euler(0, 0, 0, 'XYZ')
+            .setFromQuaternion(
+                this.getBody()
+                    .getWorldQuaternion(new Quaternion(0, 0, 0, 1)), 'XYZ'
+            );
+
+        this.system.rotation.x = rotation.x;
+        this.system.rotation.y = rotation.y;
+        this.system.rotation.z = rotation.z;
+
+        this.system.p.x = position.x;
+        this.system.p.y = position.y;
+        this.system.p.z = position.z;
+    }
+
     dispose() {
+        super.dispose();
+
         this.system.stopEmit();
         this.system.destroy();
     }

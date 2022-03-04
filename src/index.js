@@ -1,6 +1,7 @@
 // import Assets from './core/Assets';
 import {
     Element,
+    Entity,
     ENTITY_TYPES,
     ENTITY_EVENTS,
     Camera,
@@ -14,6 +15,8 @@ import {
     Grid,
     Sprite
 } from './entities';
+
+import Proton from 'three.proton.js';
 
 import Audio, { AUDIO_RAMPS } from './audio/Audio';
 import AmbientSound from './audio/AmbientSound';
@@ -87,7 +90,8 @@ import Shader from './fx/shaders/Shader';
 
 import Particles, { PARTICLES } from './fx/particles/Particles';
 
-import ParticlEmitter from './fx/particles/ParticleEmitter';
+import ParticleEmitter from './fx/particles/ParticleEmitter';
+import ProtonParticleEmitter from './fx/particles/ProtonParticleEmitter';
 
 import Images from './images/Images';
 import Models from './models/Models';
@@ -101,6 +105,7 @@ const constants = {
 
 export {
     author,
+    Entity,
     Element,
     ENTITY_TYPES,
     ENTITY_EVENTS,
@@ -129,7 +134,9 @@ export {
     PostProcessing,
     Particles,
     PARTICLES,
-    ParticlEmitter,
+    ParticleEmitter,
+    ProtonParticleEmitter,
+    Proton,
     Partykals,
 
     Physics,
