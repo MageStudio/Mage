@@ -1,6 +1,6 @@
 import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
-import { EventDispatcher, Vector3 } from 'three';
+import { EventDispatcher, Vector3, Quaternion, Euler } from 'three';
 import Sound from '../audio/Sound';
 import DirectionalSound from '../audio/DirectionalSound';
 import Physics from '../physics';
@@ -290,7 +290,7 @@ export default class Entity extends EventDispatcher {
         if (script) {
             this.scripts.push({
                 script,
-                name,
+                name: script.getName(),
                 enabled,
                 options
             });
@@ -408,17 +408,6 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    getWorldPosition() {
-        const vector = new Vector3();
-        if (this.hasBody()) {
-            const { x, y, z } = this.body.getWorldPosition(vector);
-            
-            return { x, y, z }
-        }
-
-        return DEFAULT_POSITION;
-    }
-
     getQuaternion() {
         if (this.hasBody()) {
             return this.getBody().quaternion.clone();
@@ -462,6 +451,18 @@ export default class Entity extends EventDispatcher {
             };
 
             this.body.rotation.set(rotation.x, rotation.y, rotation.z);
+        }
+    }
+
+    getWorldTransform() {
+        const position = this.getBody().getWorldPosition(new Vector3());
+        const quaternion = this.getBody().getWorldQuaternion(new Quaternion(0, 0, 0, 1));
+        const rotation = new Euler(0, 0, 0, 'XYZ').setFromQuaternion(quaternion, 'XYZ');
+        
+        return {
+            position,
+            rotation,
+            quaternion
         }
     }
 

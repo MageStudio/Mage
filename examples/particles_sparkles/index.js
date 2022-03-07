@@ -1,38 +1,43 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES, Cube, BaseScript, Scripts, THREE, ProtonParticleEmitter, Proton } from '../../dist/mage.js';
+import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES, Cube, BaseScript, Scripts, THREE, ProtonParticleEmitter, Proton, ParticleEmitterGroup } from '../../dist/mage.js';
 
 class SimpleScript extends BaseScript {
     constructor() { super('SimpleScript'); }
 
-    start(element) {
+    start(element, { offset }) {
         this.element = element;
-        this.angle = 0;
+        this.angle = offset;
     }
 
     update(dt) {
-        this.angle += 5 * dt;
+        this.angle += 10 * dt;
 
-        this.element.setPosition({ x: Math.sin(this.angle) * 10 });
-        this.element.setRotation({ x: Math.sin(this.angle) });
+        // this.element.setPosition({ x: Math.sin(this.angle) * 10 });
+        this.element.setPosition({
+            x: 2 * Math.cos(this.angle),
+            y: 2 * Math.sin(this.angle)
+        });
     }
 }
 
 const { Vector3 } = THREE;
 
-const getRate = () => new Proton.Rate(new Proton.Span(1, 2), new Proton.Span(.05, .1));
+const getRate = () => new Proton.Rate(new Proton.Span(15, 20), new Proton.Span(.01, .02));
 
 const getInitializers = (direction, strength, size) => ([
     new Proton.Mass(1),
-    new Proton.Life(1, 2),
+    new Proton.Life(0.5, 1),
     new Proton.Radius(size / 2, size / 1.5, 'center'),
     new Proton.Position(new Proton.SphereZone(size)),
-    new Proton.V(new Proton.Span(strength, strength * 2), new Proton.Vector3D(direction.x, direction.y, direction.z), 5), //new Proton.Span(200, 500)
+    // new Proton.V(new Proton.Span(strength, strength * 2), new Proton.Vector3D(direction.x, direction.y, direction.z), 5), //new Proton.Span(200, 500)
 ]);
 
 const getBehaviours = (direction, strength) => ([
-    new Proton.Scale(new Proton.Span(2, 2.5), 0),
+    new Proton.Scale(new Proton.Span(2, 1), 0),
     // new Proton.G(strength / 100),
     new Proton.Color('#3c6382', ['#82ccdd', '#60a3bc'], Infinity, Proton.easeOutSine),
-    new Proton.RandomDrift(direction.x / 100, direction.y / 100, direction.z / 100, 2.5)
+    // new Proton.RandomDrift(direction.x / 100, direction.y / 100, direction.z / 100, 2.5),
+    // new Proton.Force(0, 10, 0, Infinity),
+    new Proton.Attraction(new Proton.Vector3D(0, 0, 0), -strength, 2, Infinity)
 ]);
 
 class CustomParticleEmitter extends ProtonParticleEmitter {
@@ -56,6 +61,50 @@ class CustomParticleEmitter extends ProtonParticleEmitter {
     }
 }
 
+class Sparkler extends ParticleEmitterGroup {
+
+    constructor(options = {}) {
+        const system = [
+            new CustomParticleEmitter({
+                texture: 'fire',
+                strength: 100,
+                size: .1,
+                direction: { x: 0, y: 1, z: 0}
+            }),
+            new CustomParticleEmitter({
+                texture: 'fire',
+                strength: 100,
+                size: .1,
+                direction: { x: 0, y: 1, z: 0}
+            }),
+            new CustomParticleEmitter({
+                texture: 'fire',
+                strength: 100,
+                size: .1,
+                direction: { x: 0, y: 1, z: 0}
+            }),
+            new CustomParticleEmitter({
+                texture: 'fire',
+                strength: 100,
+                size: .1,
+                direction: { x: 0, y: 1, z: 0}
+            }),
+            new CustomParticleEmitter({
+                texture: 'fire',
+                strength: 100,
+                size: .1,
+                direction: { x: 0, y: 1, z: 0}
+            })
+        ];
+
+        system.forEach(emitter => emitter.addScript(Scripts.get('simple'), { offset: Math.random() }));
+
+        const name = 'Sparkler';
+
+        super({ system, name });
+    }
+}
+
 export default class Intro extends Level {
 
     addAmbientLight() {
@@ -70,12 +119,7 @@ export default class Intro extends Level {
 
     startFire() {
         console.log('starting fire');
-        const fire = Particles.addParticleEmitter(new CustomParticleEmitter({
-            texture: 'fire',
-            strength: 10,
-            size: 10,
-            direction: { x: 0, y: 1, z: 0}
-        }));
+        const fire = Particles.addParticleEmitter(new Sparkler());
 
         fire.emit(Infinity);
         
@@ -85,6 +129,7 @@ export default class Intro extends Level {
         // cube.add(fire);
         // cube.addScript(Scripts.get('simple'));
         fire.setPosition({ y: 1 });
+        // fire.addScript(Scripts.get('simple'));
 
         // window.cube = cube;
     }
@@ -113,7 +158,7 @@ export default class Intro extends Level {
 const assets = {
     textures: {
         'dot': 'dot.png',
-        'fire': 'green_energy.png'
+        'fire': 'fire.png'
     }
 };
 

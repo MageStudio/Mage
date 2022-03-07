@@ -38,6 +38,7 @@
         <li class='example' data-src='./particles_explosion/index.html'>Explosion</li>
         <li class='example' data-src='./particles_fire/index.html'>Fire</li>
         <li class='example' data-src='./particles_custom_emitter/index.html'>Custom Emitter</li>
+        <li class='example' data-src='./particles_sparkles/index.html'>Sparkles</li>
         <li class='example' data-src='./physics/index.html'>Physics</li>
         <li class='example' data-src='./sound/index.html'>Clicky Sound</li>
         <li class='example' data-src='./trails/index.html'>Trails particles</li>
@@ -45,8 +46,10 @@
     <iframe class='example-frame'></iframe>
 
     <script>
+        const iframe = document.querySelector('iframe');
+        iframe.addEventListener('load', () => iframe.contentWindow.focus());
         document.querySelectorAll('.example').forEach(el => el.addEventListener('click', e => {
-            document.querySelector('iframe').src = e.target.dataset.src;
+            iframe.src = e.target.dataset.src;
         }));
     </script>
 </body>

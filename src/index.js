@@ -92,6 +92,7 @@ import Particles, { PARTICLES } from './fx/particles/Particles';
 
 import ParticleEmitter from './fx/particles/ParticleEmitter';
 import ProtonParticleEmitter from './fx/particles/ProtonParticleEmitter';
+import ParticleEmitterGroup from './fx/particles/ParticleEmitterGroup';
 
 import Images from './images/Images';
 import Models from './models/Models';
@@ -136,6 +137,7 @@ export {
     PARTICLES,
     ParticleEmitter,
     ProtonParticleEmitter,
+    ParticleEmitterGroup,
     Proton,
     Partykals,
 

@@ -85,12 +85,7 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
     }
 
     syncParticleEmitter() {
-        const position = this.getBody().getWorldPosition(new Vector3());
-        const rotation = new Euler(0, 0, 0, 'XYZ')
-            .setFromQuaternion(
-                this.getBody()
-                    .getWorldQuaternion(new Quaternion(0, 0, 0, 1)), 'XYZ'
-            );
+        const { position, rotation } = this.getWorldTransform();
 
         this.system.rotation.x = rotation.x;
         this.system.rotation.y = rotation.y;

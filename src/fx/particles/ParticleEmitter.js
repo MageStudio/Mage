@@ -96,7 +96,7 @@ export default class ParticleEmitter extends Entity {
 
     syncParticleEmitter() {
         if (this.hasSystem()) {
-            const { position, rotation } = this.getBody();
+            const { position, rotation } = this.getWorldTransform();
 
             this.system.particleSystem.position.set(position.x, position.y, position.z);
             this.system.particleSystem.rotation.set(rotation.x, rotation.y, rotation.z);
