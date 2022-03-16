@@ -1,9 +1,15 @@
-import { Entity, ENTITY_TYPES } from '../entities';
+import Between from 'between.js';
+import { ENTITY_TYPES } from '../entities/constants';
+import Entity from '../entities/Entity';
 
 import Lights from './Lights';
 import Models from '../models/Models';
 import Scene from '../core/Scene';
 import { MATERIALS } from '../lib/constants';
+import {
+    LIGHT_HOLDER_MODEL_NOT_FOUND,
+    LIGHT_NOT_FOUND
+} from '../lib/messages';
 
 const LAMP_COLOR = 0Xf1c40f;
 
@@ -48,7 +54,7 @@ export default class Light extends Entity {
                 z: this.body.position.z
             });
         } else {
-            console.warn('[Mage] Couldnt load the lamp holder.');
+            console.warn(LIGHT_HOLDER_MODEL_NOT_FOUND);
         }
     };
 
@@ -76,7 +82,7 @@ export default class Light extends Entity {
 
         const { x, y, z } = position;
 
-        if (this.body) {
+        if (this.hasBody()) {
             this.body.position.set(x, y, z);
         }
 
@@ -86,61 +92,58 @@ export default class Light extends Entity {
     }    
 
     isAlreadyOn() {
-        return this.body && this.body.intensity === this.intensity;
+        return this.hasBody() && this.body.intensity === this.intensity;
     }
 
     isAlreadyOff() {
-        return this.body && this.body.intensity <= 0;
+        return this.hasBody() && this.body.intensity <= 0;
     }
 
     setIntensity(value) {
-        if (this.body) {
+        if (this.hasBody()) {
             this.body.intensity = value;
         }
     }
 
-    dim(value, speed, factor) {
-        // goes to value decreasing by factor. It takes speed ms to get to value.
-        console.warn('[Mage] Not implemented.', value, speed, factor);
-    }
-
-    on() {
-        if (this.body) {
-            const delay = () => {
-                this.body.intensity += Lights.delayFactor;
-                if (this.body.intensity < this.intensity) {
-                    setTimeout(delay, Lights.delayStep);
-                } else {
-                    this.isLightOn = true;
-                }
-            }
-            delay();
-        } else {
-            console.log("[Mage] You should create your light, first");
+    getIntensity() {
+        if (this.hasBody()) {
+            return this.body.intensity;
         }
     }
 
-    off() {
-        if (this.body) {
-            const delay = () => {
-                this.body.intensity -= Lights.delayFactor;
-                if (this.body.intensity > 0) {
-                    setTimeout(delay, Lights.delayStep);
-                } else {
-                    this.isLightOn = false;
-                }
-            }
-            delay();
+    dim(value = this.getIntensity(), time) {
+        const intensity = this.getIntensity();
+        return new Promise((resolve) => 
+            new Between(intensity, value)
+                .time(time)
+                .on('update', value => this.setIntensity(value))
+                .on('complete', resolve)
+        );
+    }
+
+    on(time = 500) {
+        if (this.hasBody()) {
+            this.dim(this.intensity, time)
+                .then(() => this.isLightOn = true);
         } else {
-            console.log("[Mage] You should create your light, first");
+            console.log(LIGHT_NOT_FOUND);
+        }
+    }
+
+    off(time = 500) {
+        if (this.hasBody()) {
+            this.dim(0, time)
+                .then(() => this.isLightOn = false)
+        } else {
+            console.log(LIGHT_NOT_FOUND);
         }
     }
 
     toJSON() {
-        const { x, y, z } = this.body.position;
+        const { x, y, z } = this.body.position;
 
         return {
-            position: { x, y, z },
+            position: { x, y, z },
             color: this.color,
             intensity: this.intensity,
             name: this.name

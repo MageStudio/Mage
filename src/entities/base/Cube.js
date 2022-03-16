@@ -2,7 +2,8 @@ import {
     BoxGeometry,
     MeshBasicMaterial
 } from 'three';
-import { Element, ENTITY_TYPES } from '../index';
+import Element from '../Element';
+import { ENTITY_TYPES }  from '../constants';
 
 export default class Cube extends Element {
 

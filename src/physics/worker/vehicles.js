@@ -150,8 +150,6 @@ export const resetVehicle = data => {
     const { uuid, quaternion, position } = data;
     const element = world.getElement(uuid);
 
-    console.log(quaternion);
-
     if (element.type === TYPES.VEHICLE) {
         const body = element.vehicle.getRigidBody();
         const transform = new Ammo.btTransform();

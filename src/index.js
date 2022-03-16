@@ -1,9 +1,9 @@
 // import Assets from './core/Assets';
+import Entity from './entities/Entity';
+import Element from './entities/Element';
+import Camera from './entities/camera';
+
 import {
-    Element,
-    ENTITY_TYPES,
-    ENTITY_EVENTS,
-    Camera,
     Line,
     CurveLine,
     Plane,
@@ -14,6 +14,14 @@ import {
     Grid,
     Sprite
 } from './entities';
+
+
+import {
+    ENTITY_TYPES,
+    ENTITY_EVENTS,
+} from './entities/constants';
+
+import Proton from 'three.proton.js';
 
 import Audio, { AUDIO_RAMPS } from './audio/Audio';
 import AmbientSound from './audio/AmbientSound';
@@ -49,8 +57,10 @@ import Controls from './controls/Controls';
 import Physics, {
     PHYSICS_EVENTS,
     PHYSICS_CONSTANTS,
-    physicsUtils
+    physicsUtils,
 } from './physics';
+
+import * as hitboxUtils from './physics/hitbox';
 
 import * as store from './store';
 import { Provider, connect } from 'inferno-redux';
@@ -87,7 +97,9 @@ import Shader from './fx/shaders/Shader';
 
 import Particles, { PARTICLES } from './fx/particles/Particles';
 
-import ParticlEmitter from './fx/particles/ParticleEmitter';
+import ParticleEmitter from './fx/particles/ParticleEmitter';
+import ProtonParticleEmitter from './fx/particles/ProtonParticleEmitter';
+import ParticleEmitterGroup from './fx/particles/ParticleEmitterGroup';
 
 import Images from './images/Images';
 import Models from './models/Models';
@@ -101,6 +113,7 @@ const constants = {
 
 export {
     author,
+    Entity,
     Element,
     ENTITY_TYPES,
     ENTITY_EVENTS,
@@ -129,13 +142,17 @@ export {
     PostProcessing,
     Particles,
     PARTICLES,
-    ParticlEmitter,
+    ParticleEmitter,
+    ProtonParticleEmitter,
+    ParticleEmitterGroup,
+    Proton,
     Partykals,
 
     Physics,
     PHYSICS_EVENTS,
     PHYSICS_CONSTANTS,
     physicsUtils,
+    hitboxUtils,
 
     MeshLoader,
     LightLoader,

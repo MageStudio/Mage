@@ -9,6 +9,9 @@ import Scene from '../../core/Scene';
 import Proton from 'three.proton.js';
 import { INVALID_EMITTER_ID } from '../../lib/messages';
 import { PARTICLE_EMITTER_TYPES } from './constants';
+import ParticleEmitter from './ParticleEmitter';
+import ParticleEmitterGroup from './ParticleEmitterGroup';
+import ProtonParticleEmitter from './ProtonParticleEmitter';
 
 export const PARTICLES = {
     RAIN: 'rain',
@@ -53,25 +56,36 @@ export class Particles {
         this.map[key] = Emitter;
     }
 
-    addParticleEmitter(emitterId, options = {}) {
-        if (this.isRegisteredEmitter(emitterId)) {
-            const Emitter = this.get(emitterId);
-            const emitter = new Emitter(options);
+    isValidEmitter(emitter) {
+        return emitter instanceof ParticleEmitter ||
+            emitter instanceof ParticleEmitterGroup ||
+            emitter instanceof ProtonParticleEmitter;
+    }
 
-            this.emitters[emitter.getUUID()] = emitter;
+    addParticleEmitter(_emitter, options = {}) {
 
-            if (emitter.getType() === GROUP) {
-                emitter.forEach(singleEmitter => {
-                    this.handleSingleParticleEmitterCreation(singleEmitter)
-                })
-            } else {
-                this.handleSingleParticleEmitterCreation(emitter);
-            }
-
-            return emitter;
+        let emitter;
+        if (this.isRegisteredEmitter(_emitter)) {
+            const Emitter = this.get(_emitter);
+            emitter = new Emitter(options);
+        } else if (this.isValidEmitter(_emitter)) {
+            emitter = _emitter;
         } else {
             console.log(INVALID_EMITTER_ID);
+            return;
         }
+
+        this.emitters[emitter.uuid()] = emitter;
+
+        if (emitter.getType() === GROUP) {
+            emitter.forEach(singleEmitter => {
+                this.handleSingleParticleEmitterCreation(singleEmitter)
+            })
+        } else {
+            this.handleSingleParticleEmitterCreation(emitter);
+        }
+
+        return emitter;
     };
 
     handleSingleParticleEmitterCreation(emitter) {
@@ -135,7 +149,6 @@ export class Particles {
     update(dt) {
         this.proton.update(dt);
         this.updateEmitters(dt);
-
         this.disposeDeadEmitters();
     }
 

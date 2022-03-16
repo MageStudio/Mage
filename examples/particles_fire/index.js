@@ -1,4 +1,20 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES, Cube } from '../../dist/mage.js';
+import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES, Cube, BaseScript, Scripts } from '../../dist/mage.js';
+
+class SimpleScript extends BaseScript {
+    constructor() { super('SimpleScript'); }
+
+    start(element) {
+        this.element = element;
+        this.angle = 0;
+    }
+
+    update(dt) {
+        this.angle += 5 * dt;
+
+        this.element.setPosition({ x: Math.sin(this.angle) * 10 });
+        this.element.setRotation({ x: Math.sin(this.angle) });
+    }
+}
 
 export default class Intro extends Level {
 
@@ -19,11 +35,16 @@ export default class Intro extends Level {
             strength: 50,
             size: 5,
             direction: { x: 0, y: 1, z: 0}
-        }).start(Infinity);
-        fire.setPosition({ z: -30 });
+        });
 
+        fire.emit(Infinity);
+        
         const cube = new Cube(30, 0xff0000);
         cube.setPosition({ z: -20 });
+        
+        cube.add(fire);
+        cube.addScript('simple');
+        fire.setPosition({ y: 1 });
 
         window.cube = cube;
     }
@@ -38,12 +59,14 @@ export default class Intro extends Level {
     onCreate() {
         this.addAmbientLight();
         Controls.setOrbitControl();
+        Scripts.create('simple', SimpleScript);
 
         Scene
             .getCamera()
             .setPosition({ y: 15, z: 45 });
 
         // this.createFloor();
+        this.startFire();
     }
 }
 

@@ -1,4 +1,6 @@
-import { Element, ENTITY_TYPES } from '../entities';
+import Element from '../entities/Element';
+import { ENTITY_TYPES } from '../entities/constants';
+
 import {
     ObjectLoader
 } from 'three';

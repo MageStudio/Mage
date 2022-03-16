@@ -32,21 +32,34 @@
 
 <body>
     <ul class='menu'>
-        <li class='example' data-src='./cars_physics/index.html'>Hello Cube</li>
-        <li class='example' data-src='./cube-scripts/index.html'>Scripts</li>
-        <li class='example' data-src='./cube-texture/index.html'>Textures</li>
-        <li class='example' data-src='./lights/index.html'>Lights and skybox</li>
-        <li class='example' data-src='./physics/index.html'>physics</li>
-        <li class='example' data-src='./physics_many/index.html'>physics many</li>
-        <li class='example' data-src='./physics_car/index.html'>physics car</li>
-        <li class='example' data-src='./physics_car_ui/index.html'>physics car UI</li>
+        <li class='example' data-src='./cars_physics'>Physics Car</li>
+        <li class='example' data-src='./cars_physics_ui'>Physics Car with UI</li>
+        <li class='example' data-src='./material_test'>Material test</li>
+        <li class='example' data-src='./particles_explosion'>Explosion</li>
+        <li class='example' data-src='./particles_fire'>Fire</li>
+        <li class='example' data-src='./particles_custom_emitter'>Custom Emitter</li>
+        <li class='example' data-src='./particles_sparkles'>Sparkles</li>
+        <li class='example' data-src='./physics'>Physics</li>
+        <li class='example' data-src='./sound'>Clicky Sound</li>
+        <li class='example' data-src='./trails'>Trails particles</li>
     </ul>
     <iframe class='example-frame'></iframe>
 
     <script>
-        document.querySelectorAll('.example').forEach(el => el.addEventListener('click', e => {
-            document.querySelector('iframe').src = e.target.dataset.src;
-        }));
+        const iframe = document.querySelector('iframe');
+        const examples = document.querySelectorAll('.example');
+
+        const handleExampleClick = e => {
+            iframe.src = e.target.dataset.src;
+            location.hash = e.target.dataset.src;
+        };
+
+        iframe.addEventListener('load', () => iframe.contentWindow.focus());
+        examples.forEach(el => el.addEventListener('click', handleExampleClick));
+
+        if (location.hash) {
+            iframe.src = location.hash.replace('#', '');
+        }
     </script>
 </body>
 

@@ -7,12 +7,10 @@ import {
 } from 'three';
 import Between from 'between.js';
 
-import {
-    Entity,
-    ENTITY_TYPES,
-    Line,
-    Box
-} from './index';
+// import Line from './base/Line';
+import Entity from "../entities/Entity";
+import { ENTITY_TYPES, ENTITY_EVENTS } from '../entities/constants';
+
 import {
     ELEMENT_NOT_SET,
     ANIMATION_HANDLER_NOT_FOUND,
@@ -26,7 +24,7 @@ import Scene from '../core/Scene';
 import { COLLISION_EVENT } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics';
-import { COLLIDER_TYPES } from '../physics/constants';
+import { DEFAULT_ANGULAR_VELOCITY, DEFAULT_LINEAR_VELOCITY } from '../physics/constants';
 
 import {
     extractBoundingBox,
@@ -45,8 +43,6 @@ import {
     disposeGeometry,
     setUpLightsAndShadows
 } from '../lib/meshUtils';
-import { mapColliderTypeToHitbox } from '../physics/hitbox';
-import { ENTITY_EVENTS } from './Entity';
 
 const COLLIDER_TAG = 'collider';
 const COLLIDER_COLOR = 0xff0000;
@@ -298,7 +294,8 @@ export default class Element extends Entity {
     }
 
     enablePhysics(options = {}) {
-        const { mass, colliderType }= options;
+        const { mass }= options;
+        this.setPhysicsOptions(options);
 
         if (Config.physics().enabled) {
             if (this.isModel() && mass === 0) {
@@ -306,17 +303,25 @@ export default class Element extends Entity {
             } else {
                 Physics.add(this, options);
             }
-
-            if (options.debug) {
-                this.addHitBox(colliderType);
-            }
         }
     }
 
-    addHitBox(colliderType = COLLIDER_TYPES.BOX) {
-        const getHitbox = mapColliderTypeToHitbox(colliderType)
+    getAngularVelocity() {
+        return this.angularVelocity || DEFAULT_ANGULAR_VELOCITY;
+    }
 
-        this.add(getHitbox(this));
+    setAngularVelocity(velocity) {
+        this.angularVelocity = velocity;
+        Physics.updateAngularVelocity(this.uuid(), velocity);
+    }
+
+    getLinearVelocity() {
+        return this.linearVelocity || DEFAULT_LINEAR_VELOCITY;
+    }
+
+    setLinearVelocity(velocity) {
+        this.linearVelocity = velocity;
+        Physics.updateLinearVelocity(this.uuid(), velocity);
     }
 
     hasRayColliders = () => this.colliders.length > 0;
@@ -349,6 +354,7 @@ export default class Element extends Entity {
         return [origin, end];
     };
 
+    //TODO: ray colliders need refactoring
     createRayColliderFromVector = ({ type, vector }, near, far, offset, debug) => {
         const parsedOffset = {
             ...DEFAULT_COLLIDER_OFFSET,
@@ -362,13 +368,13 @@ export default class Element extends Entity {
         const ray = new Raycaster(position, vector, near, far);
         
         let helper;
-        if (debug) {
-            const points = this.getPointsFromRayCollider(ray, position);
-            helper = new Line(points);
-            helper.addTag(COLLIDER_TAG);
-            helper.setColor(COLLIDER_COLOR);
-            helper.setThickness(4);
-        }
+        // if (debug) {
+        //     const points = this.getPointsFromRayCollider(ray, position);
+        //     helper = new Line(points);
+        //     helper.addTag(COLLIDER_TAG);
+        //     helper.setColor(COLLIDER_COLOR);
+        //     helper.setThickness(4);
+        // }
         
         if (this.getEntityType() === ENTITY_TYPES.SPRITE) {
             ray.setFromCamera(position, Scene.getCameraBody());

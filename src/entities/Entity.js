@@ -1,11 +1,6 @@
 import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
-import { EventDispatcher, Vector3 } from 'three';
-
-import Scripts from '../scripts/Scripts';
-import Sound from '../audio/Sound';
-import DirectionalSound from '../audio/DirectionalSound';
-import Physics from '../physics';
+import { EventDispatcher, Vector3, Quaternion, Euler } from 'three';
 import {
     TAG_ALREADY_EXISTS,
     TAG_NOT_EXISTING_REMOVAL,
@@ -17,31 +12,13 @@ import {
     KEY_IS_MISSING,
     KEY_VALUE_IS_MISSING
 } from '../lib/messages';
+import Scripts from '../scripts/Scripts';
 
-const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
-const DEFAULT_ANGULAR_VELOCITY = { x: 0, y: 0, z: 0 };
-const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
-
-export const ENTITY_TYPES = {
-    MESH: 'MESH',
-    LIGHT: 'LIGHT',
-    MODEL: 'MODEL',
-    SPRITE: 'SPRITE',
-    UNKNOWN: 'UNKNOWN'
-};
-
-export const ENTITY_EVENTS = {
-    DISPOSE: 'DISPOSE',
-    STATE_MACHINE: {
-        CHANGE: 'STATE_MACHINE_CHANGE',
-    },
-    ANIMATION: {
-        LOOP: 'LOOP',
-        FINISHED: 'FINISHED'
-    }
-};
-
-export const DEFAULT_TAG = 'all';
+import {
+    DEFAULT_TAG,
+    ENTITY_EVENTS,
+    ENTITY_TYPES
+} from './constants';
 
 export default class Entity extends EventDispatcher {
 
@@ -261,9 +238,9 @@ export default class Entity extends EventDispatcher {
     hasScripts = () => this.scripts.length > 0;
 
     parseScripts = (list, options, enabled) => (
-        list.map((name, i) => ({
-            script: Script.get(name),
-            name,
+        list.map((script, i) => ({
+            script,
+            name: script.getName(),
             enabled,
             options: options[i]
         }))
@@ -298,8 +275,10 @@ export default class Entity extends EventDispatcher {
             if (enabled) {
                 script.start(this, options);
             }
+        } else {
+            console.log(SCRIPT_NOT_FOUND);
         }
-        
+
         return script;
     }
 
@@ -329,33 +308,34 @@ export default class Entity extends EventDispatcher {
     isModel = () => this.getEntityType() === ENTITY_TYPES.MODEL;
     isSprite = () => this.getEntityType() === ENTITY_TYPES.SPRITE;
 
-    addSound(name, options) {
-        const { autoplay = false, ...opts } = options;
+    // TODO: sounds should become like particle emitters
+    // addSound(name, options) {
+    //     const { autoplay = false, ...opts } = options;
 
-        this.isPlayingSound = autoplay;
-        this.sound = new Sound(name, {
-            autoplay,
-            ...opts
-        });
+    //     this.isPlayingSound = autoplay;
+    //     this.sound = new Sound(name, {
+    //         autoplay,
+    //         ...opts
+    //     });
 
-        this.sound.setTarget(this);
+    //     this.sound.setTarget(this);
 
-        return this.sound;
-    }
+    //     return this.sound;
+    // }
 
-    addDirectionalSound(name, options) {
-        const { autoplay = false, ...opts } = options;
+    // addDirectionalSound(name, options) {
+    //     const { autoplay = false, ...opts } = options;
 
-        this.isPlayingSound = autoplay;
-        this.sound = new DirectionalSound(name, {
-            autoplay,
-            ...opts
-        });
+    //     this.isPlayingSound = autoplay;
+    //     this.sound = new DirectionalSound(name, {
+    //         autoplay,
+    //         ...opts
+    //     });
 
-        this.sound.setTarget(this);
+    //     this.sound.setTarget(this);
 
-        return this.sound;
-    }
+    //     return this.sound;
+    // }
 
     // addAmbientSound(name, options) {
     //     const { autoplay = false, ...opts } = options;
@@ -409,17 +389,6 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    getWorldPosition() {
-        const vector = new Vector3();
-        if (this.hasBody()) {
-            const { x, y, z } = this.body.getWorldPosition(vector);
-            
-            return { x, y, z }
-        }
-
-        return DEFAULT_POSITION;
-    }
-
     getQuaternion() {
         if (this.hasBody()) {
             return this.getBody().quaternion.clone();
@@ -466,22 +435,16 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    getAngularVelocity() {
-        return this.angularVelocity || DEFAULT_ANGULAR_VELOCITY;
-    }
-
-    setAngularVelocity(velocity) {
-        this.angularVelocity = velocity;
-        Physics.updateAngularVelocity(this.uuid(), velocity);
-    }
-
-    getLinearVelocity() {
-        return this.linearVelocity || DEFAULT_LINEAR_VELOCITY;
-    }
-
-    setLinearVelocity(velocity) {
-        this.linearVelocity = velocity;
-        Physics.updateLinearVelocity(this.uuid(), velocity);
+    getWorldTransform() {
+        const position = this.getBody().getWorldPosition(new Vector3());
+        const quaternion = this.getBody().getWorldQuaternion(new Quaternion(0, 0, 0, 1));
+        const rotation = new Euler(0, 0, 0, 'XYZ').setFromQuaternion(quaternion, 'XYZ');
+        
+        return {
+            position,
+            rotation,
+            quaternion
+        }
     }
 
     translate({ x = 0, y = 0, z = 0}) {

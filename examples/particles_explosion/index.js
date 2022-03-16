@@ -13,13 +13,11 @@ export default class Intro extends Level {
     }
 
     explode(position = { x: 0, y: 0, z: 0 }) {
+        console.log('exploding');
         Particles.addParticleEmitter(PARTICLES.EXPLOSION, {
-            texture: 'dot'
-            // autostart: true,
-            // sparks: { size: 0.4, system: { particlesCount: 100 } },
-            // explosion: { size: 2, system: { particlesCount: 100 } },
-            // debris: { size: 1, system: { particlesCount: 50 } },
-        }).start('once');
+            texture: 'dot',
+            hasDebris: true
+        }).emit('once');
     }
 
     onKeyDown({ event }) {
@@ -37,7 +35,7 @@ export default class Intro extends Level {
             .getCamera()
             .setPosition({ y: 15, z: 45 });
 
-        // this.createFloor();
+        this.createFloor();
     }
 }
 

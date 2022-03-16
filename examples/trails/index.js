@@ -25,7 +25,12 @@ export default class Intro extends Level {
         const cube = new Cube(1, 0xeeeaaa);
 
         cube.addScript('SimpleScript');
-        cube.addScript(BUILTIN.TRAILS, { trailLength: 1500, texture: 'particle' });
+        const trail = Particles.addParticleEmitter(PARTICLES.TRAIL, { texture: 'particle' });
+        trail.emit(Infinity);
+        cube.add(trail);
+
+        // trail.addScript('SimpleScript');
+
 
         cube.setWireframe(true);
     }

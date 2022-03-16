@@ -22,7 +22,8 @@ import {
     Mesh,
     BoxBufferGeometry
 } from 'three';
-import { Element, ENTITY_TYPES } from '../../entities';
+import { ENTITY_TYPES } from '../../entities/constants';
+import Element from '../../entities/Element';
 
 export class SkyShader {
 

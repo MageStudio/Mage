@@ -8,7 +8,7 @@ import {
 
 import { generateUUID } from '../../lib/uuid'; 
 import Images from '../../images/Images';
-import { Element } from '../../entities';
+import Element from '../../entities/Element';
 
 export default class Skybox extends Element {
 

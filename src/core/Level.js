@@ -18,6 +18,7 @@ import { fetch } from 'whatwg-fetch';
 import { getWindow } from './window';
 import { upperCaseFirst } from '../lib/strings';
 import { ONCREATE_NOT_AVAILABLE } from '../lib/messages';
+import Camera from '../entities/camera';
 
 export const author = {
     name: 'Marco Stagni',
@@ -138,6 +139,7 @@ export class Level extends EventDispatcher {
         } = this.options;
 
         Scene.create(path);
+        Scene.createCamera(new Camera());
         this.enableInput();
 
         Physics

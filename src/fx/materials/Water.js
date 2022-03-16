@@ -31,7 +31,8 @@ import {
 
 import Images from '../../images/Images';
 import Scene from '../../core/Scene';
-import { Element, ENTITY_TYPES } from '../../entities';
+import { ENTITY_TYPES } from '../../entities/constants';
+import Element from '../../entities/Element';
 import { clamp } from '../../lib/math';
 
 var WaterMesh = function ( geometry, options ) {
