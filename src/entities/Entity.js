@@ -278,6 +278,8 @@ export default class Entity extends EventDispatcher {
         } else {
             console.log(SCRIPT_NOT_FOUND);
         }
+
+        return script;
     }
 
     enableScripts() {
