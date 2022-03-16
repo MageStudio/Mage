@@ -9,7 +9,6 @@ import Scene from '../../core/Scene';
 import Proton from 'three.proton.js';
 import { INVALID_EMITTER_ID } from '../../lib/messages';
 import { PARTICLE_EMITTER_TYPES } from './constants';
-console.log('inside Particles, importing ParticleEmitter');
 import ParticleEmitter from './ParticleEmitter';
 import ParticleEmitterGroup from './ParticleEmitterGroup';
 import ProtonParticleEmitter from './ProtonParticleEmitter';

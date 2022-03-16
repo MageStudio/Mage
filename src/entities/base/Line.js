@@ -1,4 +1,5 @@
-import { Element, ENTITY_TYPES } from '../index';
+import Element from '../Element';
+import { ENTITY_TYPES }  from '../constants';
 
 import {
     LineBasicMaterial,

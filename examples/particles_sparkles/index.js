@@ -97,7 +97,7 @@ class Sparkler extends ParticleEmitterGroup {
             })
         ];
 
-        system.forEach(emitter => emitter.addScript(Scripts.get('simple'), { offset: Math.random() }));
+        system.forEach(emitter => emitter.addScript('simple', { offset: Math.random() }));
 
         const name = 'Sparkler';
 
@@ -127,9 +127,9 @@ export default class Intro extends Level {
         // cube.setPosition({ z: -20 });
         
         // cube.add(fire);
-        // cube.addScript(Scripts.get('simple'));
+        // cube.addScript('simple');
         fire.setPosition({ y: 1 });
-        // fire.addScript(Scripts.get('simple'));
+        // fire.addScript('simple');
 
         // window.cube = cube;
     }

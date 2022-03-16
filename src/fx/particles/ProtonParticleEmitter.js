@@ -2,14 +2,11 @@ import Proton from 'three.proton.js';
 import {
     SpriteMaterial,
     Sprite,
-    AdditiveBlending,
-    Euler
+    AdditiveBlending
 } from 'three';
 import ParticleEmitter from './ParticleEmitter';
 import Images from '../../images/Images';
 import PALETTES from '../../lib/palettes';
-import { Vector3 } from 'three';
-import { Quaternion } from 'three';
 
 const DEFAULT_PARTICLE_COLOR = PALETTES.BASE.BLACK;
 

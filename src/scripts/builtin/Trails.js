@@ -1,4 +1,3 @@
-console.log('inside Trails, importing Particles');
 import Particles, { PARTICLES } from "../../fx/particles/Particles";
 
 import BaseScript from "../BaseScript"

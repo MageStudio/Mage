@@ -13,7 +13,7 @@ export default class Example extends Level {
     }
 
     playSound() {
-        this.sound.play();
+        new Sound('click').play();
     }
 
     onKeyDown({ event }) {
@@ -32,8 +32,6 @@ export default class Example extends Level {
             .setPosition({ y: 15, z: 45 });
 
         // this.createFloor();/
-
-        this.sound = new Sound('click');
     }
 }
 

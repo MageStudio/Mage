@@ -1,5 +1,9 @@
 export const PREFIX = '[Mage]';
 
+export const DEPRECATIONS = {
+    SCRIPTS_CREATE: `${PREFIX} [DEPRECATED] Scripts.create is deprecated, use Scripts.register instead. Will be removed in next major release.`,
+};
+
 export const MALFORMED_ONCREATE_FUNCTION = `${PREFIX} Something wrong in your onCreate method.`;
 export const ONCREATE_NOT_AVAILABLE = `${PREFIX} Your scene needs a onCreate method.`;
 
@@ -64,3 +68,6 @@ export const ASSETS_MODEL_LOAD_FAIL = `${PREFIX} Could not load model.`;
 
 export const AUDIO_CONTEXT_NOT_AVAILABLE = `${PREFIX} No Audio Context available, sorry.`;
 export const AUDIO_UNABLE_TO_LOAD_SOUND = `${PREFIX} Unable to load sound, sorry.`;
+
+export const LIGHT_NOT_FOUND = `${PREFIX} This light was not created properly.`;
+export const LIGHT_HOLDER_MODEL_NOT_FOUND = `${PREFIX} This light holder model can't be found.`;

@@ -1,9 +1,6 @@
 import Between from 'between.js';
 import { createMachine, interpret } from 'xstate';
 import { EventDispatcher, Vector3, Quaternion, Euler } from 'three';
-import Sound from '../audio/Sound';
-import DirectionalSound from '../audio/DirectionalSound';
-import Physics from '../physics';
 import {
     TAG_ALREADY_EXISTS,
     TAG_NOT_EXISTING_REMOVAL,
@@ -15,34 +12,14 @@ import {
     KEY_IS_MISSING,
     KEY_VALUE_IS_MISSING
 } from '../lib/messages';
+import Scripts from '../scripts/Scripts';
 
-const DEFAULT_POSITION =  { x: 0, y: 0, z: 0 };
-const DEFAULT_ANGULAR_VELOCITY = { x: 0, y: 0, z: 0 };
-const DEFAULT_LINEAR_VELOCITY = { x: 0, y: 0, z: 0 };
+import {
+    DEFAULT_TAG,
+    ENTITY_EVENTS,
+    ENTITY_TYPES
+} from './constants';
 
-export const ENTITY_TYPES = {
-    MESH: 'MESH',
-    LIGHT: 'LIGHT',
-    MODEL: 'MODEL',
-    SPRITE: 'SPRITE',
-    PARTICLE: 'PARTICLE',
-    UNKNOWN: 'UNKNOWN'
-};
-
-export const ENTITY_EVENTS = {
-    DISPOSE: 'DISPOSE',
-    STATE_MACHINE: {
-        CHANGE: 'STATE_MACHINE_CHANGE',
-    },
-    ANIMATION: {
-        LOOP: 'LOOP',
-        FINISHED: 'FINISHED'
-    }
-};
-
-export const DEFAULT_TAG = 'all';
-
-console.log('defining Entity class');
 export default class Entity extends EventDispatcher {
 
     constructor({ serializable = true, tag = '', tags = [] }) {
@@ -282,7 +259,8 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    addScript(script, options = {}) {
+    addScript(name, options = {}) {
+        const script = Scripts.get(name);
         const {
             enabled = true
         } = options;
@@ -290,16 +268,16 @@ export default class Entity extends EventDispatcher {
         if (script) {
             this.scripts.push({
                 script,
-                name: script.getName(),
+                name,
                 enabled,
                 options
             });
             if (enabled) {
                 script.start(this, options);
             }
+        } else {
+            console.log(SCRIPT_NOT_FOUND);
         }
-        
-        return script;
     }
 
     enableScripts() {
@@ -328,33 +306,34 @@ export default class Entity extends EventDispatcher {
     isModel = () => this.getEntityType() === ENTITY_TYPES.MODEL;
     isSprite = () => this.getEntityType() === ENTITY_TYPES.SPRITE;
 
-    addSound(name, options) {
-        const { autoplay = false, ...opts } = options;
+    // TODO: sounds should become like particle emitters
+    // addSound(name, options) {
+    //     const { autoplay = false, ...opts } = options;
 
-        this.isPlayingSound = autoplay;
-        this.sound = new Sound(name, {
-            autoplay,
-            ...opts
-        });
+    //     this.isPlayingSound = autoplay;
+    //     this.sound = new Sound(name, {
+    //         autoplay,
+    //         ...opts
+    //     });
 
-        this.sound.setTarget(this);
+    //     this.sound.setTarget(this);
 
-        return this.sound;
-    }
+    //     return this.sound;
+    // }
 
-    addDirectionalSound(name, options) {
-        const { autoplay = false, ...opts } = options;
+    // addDirectionalSound(name, options) {
+    //     const { autoplay = false, ...opts } = options;
 
-        this.isPlayingSound = autoplay;
-        this.sound = new DirectionalSound(name, {
-            autoplay,
-            ...opts
-        });
+    //     this.isPlayingSound = autoplay;
+    //     this.sound = new DirectionalSound(name, {
+    //         autoplay,
+    //         ...opts
+    //     });
 
-        this.sound.setTarget(this);
+    //     this.sound.setTarget(this);
 
-        return this.sound;
-    }
+    //     return this.sound;
+    // }
 
     // addAmbientSound(name, options) {
     //     const { autoplay = false, ...opts } = options;
@@ -464,24 +443,6 @@ export default class Entity extends EventDispatcher {
             rotation,
             quaternion
         }
-    }
-
-    getAngularVelocity() {
-        return this.angularVelocity || DEFAULT_ANGULAR_VELOCITY;
-    }
-
-    setAngularVelocity(velocity) {
-        this.angularVelocity = velocity;
-        Physics.updateAngularVelocity(this.uuid(), velocity);
-    }
-
-    getLinearVelocity() {
-        return this.linearVelocity || DEFAULT_LINEAR_VELOCITY;
-    }
-
-    setLinearVelocity(velocity) {
-        this.linearVelocity = velocity;
-        Physics.updateLinearVelocity(this.uuid(), velocity);
     }
 
     translate({ x = 0, y = 0, z = 0}) {

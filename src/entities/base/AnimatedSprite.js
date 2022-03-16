@@ -1,8 +1,10 @@
-import { Element, ENTITY_TYPES } from "./index";
+import Element from '../Element';
+import { ENTITY_TYPES }  from '../constants';
 import { Images } from "../../images/Images";
 
 import {
-    THREESprite
+    THREESprite,
+    SpriteNodeMaterial
 } from 'three';
 
 export default class AnimatedSprite extends Element {

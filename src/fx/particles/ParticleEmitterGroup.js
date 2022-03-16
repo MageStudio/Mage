@@ -1,7 +1,8 @@
 import { Object3D } from "three";
 import { EMITTER_NOT_FOUND } from "../../lib/messages";
 import { PARTICLE_EMITTER_TYPES } from "./constants";
-import { Entity, ENTITY_TYPES } from "../../entities";
+import Entity from "../../entities/Entity";
+import { ENTITY_TYPES } from '../../entities/constants';
 import Scene from "../../core/Scene";
 
 export default class ParticleEmitterGroup extends Entity {
@@ -19,10 +20,10 @@ export default class ParticleEmitterGroup extends Entity {
             name
         };
 
-        this.setSystem(system);
         this.setBody({ body: new Object3D() });
         this.setName(name);
         this.setEntityType(ENTITY_TYPES.PARTICLE);
+        this.setSystem(system);
     }
 
     setBody({ body }) {
@@ -47,7 +48,7 @@ export default class ParticleEmitterGroup extends Entity {
 
     isProtonEmitter() {
         Object.keys(this.system)
-                .forEach(emitterId => this.system[emitterId].isProtonEmitter());
+            .forEach(emitterId => this.system[emitterId].isProtonEmitter());
     }
 
     getType() {
@@ -60,7 +61,7 @@ export default class ParticleEmitterGroup extends Entity {
 
     isSystemDead() {
         Object.keys(this.system)
-                .forEach(emitterId => this.system[emitterId].isSystemDead());
+            .forEach(emitterId => this.system[emitterId].isSystemDead());
     }
 
     setSystem(system = []) {

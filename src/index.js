@@ -1,10 +1,9 @@
 // import Assets from './core/Assets';
+import Entity from './entities/Entity';
+import Element from './entities/Element';
+import Camera from './entities/camera';
+
 import {
-    Element,
-    Entity,
-    ENTITY_TYPES,
-    ENTITY_EVENTS,
-    Camera,
     Line,
     CurveLine,
     Plane,
@@ -15,6 +14,12 @@ import {
     Grid,
     Sprite
 } from './entities';
+
+
+import {
+    ENTITY_TYPES,
+    ENTITY_EVENTS,
+} from './entities/constants';
 
 import Proton from 'three.proton.js';
 
@@ -52,8 +57,10 @@ import Controls from './controls/Controls';
 import Physics, {
     PHYSICS_EVENTS,
     PHYSICS_CONSTANTS,
-    physicsUtils
+    physicsUtils,
 } from './physics';
+
+import * as hitboxUtils from './physics/hitbox';
 
 import * as store from './store';
 import { Provider, connect } from 'inferno-redux';
@@ -145,6 +152,7 @@ export {
     PHYSICS_EVENTS,
     PHYSICS_CONSTANTS,
     physicsUtils,
+    hitboxUtils,
 
     MeshLoader,
     LightLoader,

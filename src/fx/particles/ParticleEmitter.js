@@ -1,7 +1,8 @@
 import { ParticlesSystem } from 'mage-engine.particles';
 import { Object3D } from "three";
 import { PARTICLE_EMITTER_TYPES } from "./constants";
-import { Entity, ENTITY_TYPES } from "../../entities";
+import Entity from "../../entities/Entity";
+import { ENTITY_TYPES } from '../../entities/constants';
 import Scene from '../../core/Scene';
 
 export default class ParticleEmitter extends Entity {

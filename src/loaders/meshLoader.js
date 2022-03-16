@@ -1,4 +1,4 @@
-import { Element } from '../entities';
+import Element from '../entities/Element';
 import Loader from './Loader';
 
 export class MeshLoader extends Loader {

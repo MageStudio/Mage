@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES, Cube, BaseScript, Scripts, THREE, ProtonParticleEmitter, Proton } from '../../dist/mage.js';
+import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, Models, Cube, BaseScript, Scripts, THREE, ProtonParticleEmitter, Proton } from '../../dist/mage.js';
 
 class SimpleScript extends BaseScript {
     constructor() { super('SimpleScript'); }
@@ -16,23 +16,23 @@ class SimpleScript extends BaseScript {
     }
 }
 
-const { Vector3 } = THREE;
-
-const getRate = () => new Proton.Rate(new Proton.Span(1, 2), new Proton.Span(.05, .1));
+const getRate = () => new Proton.Rate(new Proton.Span(2, 5), new Proton.Span(2, 2.1));
 
 const getInitializers = (direction, strength, size) => ([
     new Proton.Mass(1),
     new Proton.Life(1, 2),
-    new Proton.Radius(size / 2, size / 1.5, 'center'),
-    new Proton.Position(new Proton.SphereZone(size)),
+    // new Proton.Radius(size / 2, size / 1.5, 'center'),
+    new Proton.Position(new Proton.SphereZone(.5)),
     new Proton.V(new Proton.Span(strength, strength * 2), new Proton.Vector3D(direction.x, direction.y, direction.z), 5), //new Proton.Span(200, 500)
 ]);
 
 const getBehaviours = (direction, strength) => ([
-    new Proton.Scale(new Proton.Span(2, 2.5), 0),
-    // new Proton.G(strength / 100),
-    new Proton.Color('#3c6382', ['#82ccdd', '#60a3bc'], Infinity, Proton.easeOutSine),
-    new Proton.RandomDrift(direction.x / 100, direction.y / 100, direction.z / 100, 2.5)
+    new Proton.Scale(new Proton.Span(1.3, 1.2), 0.5),
+    // new Proton.Scale(2, 0),
+    new Proton.Alpha(1, 0),
+    // new Proton.G(-.01),
+    new Proton.Color('#FF0026', ['#ffff00', '#ffff11'], Infinity, Proton.easeOutSine)
+    // new Proton.RandomDrift(direction.x / 100, direction.y / 100, direction.z / 100, 2.5)
 ]);
 
 class CustomParticleEmitter extends ProtonParticleEmitter {
@@ -66,14 +66,16 @@ export default class Intro extends Level {
         const floor = new Box(50, 1, 50, 0xffffff);
 
         floor.setPosition({ y: -5 });
+
+        return floor;
     }
 
-    startFire() {
+    startFire(floor) {
         console.log('starting fire');
         const fire = Particles.addParticleEmitter(new CustomParticleEmitter({
             texture: 'fire',
             strength: 10,
-            size: 10,
+            size: .2,
             direction: { x: 0, y: 1, z: 0}
         }));
 
@@ -81,10 +83,14 @@ export default class Intro extends Level {
         
         // const cube = new Cube(30, 0xff0000);
         // cube.setPosition({ z: -20 });
+        // cube.setWireframe(true);
         
         // cube.add(fire);
-        // cube.addScript(Scripts.get('simple'));
-        fire.setPosition({ y: 1 });
+
+        const tile = Models.getModel('tile');
+        tile.add(fire);
+        // cube.addScript('simple');
+        // fire.setPosition({ y: 1 });
 
         // window.cube = cube;
     }
@@ -105,8 +111,8 @@ export default class Intro extends Level {
             .getCamera()
             .setPosition({ y: 15, z: 45 });
 
-        // this.createFloor();
-        this.startFire();
+        const f = this.createFloor();
+        this.startFire(f);
     }
 }
 
@@ -114,6 +120,9 @@ const assets = {
     textures: {
         'dot': 'dot.png',
         'fire': 'green_energy.png'
+    },
+    models: {
+        tile: 'hex_forest_roadB.gltf.glb'
     }
 };
 

@@ -2,9 +2,8 @@ import BaseScript from './BaseScript';
 import Input from '../core/input/Input';
 import { fetch } from 'whatwg-fetch';
 import BaseCar from './builtin/BaseCar';
-console.log('inside Scripts, importing Trails');
-import Trails from './builtin/Trails';
 import SmoothCarFollow from './builtin/SmoothCarFollow';
+import { DEPRECATIONS } from '../lib/messages';
 
 export const BUILTIN = {
     BASECAR: 'BaseCar',
@@ -16,7 +15,6 @@ export class Scripts {
     constructor() {
         this.map = {
             [BUILTIN.BASECAR] : BaseCar,
-            [BUILTIN.TRAILS]: Trails,
             [BUILTIN.SMOOTH_CAR_FOLLOW]: SmoothCarFollow
         };
     }
@@ -80,6 +78,11 @@ export class Scripts {
     }
 
     create(name, ScriptClass) {
+        console.warn(DEPRECATIONS.SCRIPTS_CREATE);
+        this.register(name, ScriptClass);
+    }
+
+    register(name, ScriptClass) {
         if (ScriptClass) {
             const script = new ScriptClass();
             if (script.__check && script.__check()) {

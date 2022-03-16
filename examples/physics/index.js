@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Cube, Sphere, Scene, Controls, Color, PHYSICS_COLLIDER_TYPES } from '../../dist/mage.js';
+import { Router, store, Level, Box, Cube, Sphere, Scene, Controls, Color, PHYSICS_CONSTANTS } from '../../dist/mage.js';
 
 class Intro extends Level {
 
@@ -41,7 +41,7 @@ class Intro extends Level {
 
         sphere.setPosition(position);
         sphere.setRotation(rotation);
-        sphere.enablePhysics({ debug: true, mass: 1, colliderType: PHYSICS_COLLIDER_TYPES.SPHERE });
+        sphere.enablePhysics({ debug: true, mass: 1, colliderType: PHYSICS_CONSTANTS.COLLIDER_TYPES.SPHERE });
     }
 
     spawnItems(count) {

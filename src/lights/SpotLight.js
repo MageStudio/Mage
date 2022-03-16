@@ -1,6 +1,6 @@
 import Light from './Light';
 import Config from '../core/config';
-import { Element } from '../entities';
+import Element from '../entities/Element';
 import {
     SpotLight as THREESpotLight,
     SpotLightHelper,

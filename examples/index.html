@@ -32,25 +32,34 @@
 
 <body>
     <ul class='menu'>
-        <li class='example' data-src='./cars_physics/index.html'>Physics Car</li>
-        <li class='example' data-src='./cars_physics_ui/index.html'>Physics Car with UI</li>
-        <li class='example' data-src='./material_test/index.html'>Material test</li>
-        <li class='example' data-src='./particles_explosion/index.html'>Explosion</li>
-        <li class='example' data-src='./particles_fire/index.html'>Fire</li>
-        <li class='example' data-src='./particles_custom_emitter/index.html'>Custom Emitter</li>
-        <li class='example' data-src='./particles_sparkles/index.html'>Sparkles</li>
-        <li class='example' data-src='./physics/index.html'>Physics</li>
-        <li class='example' data-src='./sound/index.html'>Clicky Sound</li>
-        <li class='example' data-src='./trails/index.html'>Trails particles</li>
+        <li class='example' data-src='./cars_physics'>Physics Car</li>
+        <li class='example' data-src='./cars_physics_ui'>Physics Car with UI</li>
+        <li class='example' data-src='./material_test'>Material test</li>
+        <li class='example' data-src='./particles_explosion'>Explosion</li>
+        <li class='example' data-src='./particles_fire'>Fire</li>
+        <li class='example' data-src='./particles_custom_emitter'>Custom Emitter</li>
+        <li class='example' data-src='./particles_sparkles'>Sparkles</li>
+        <li class='example' data-src='./physics'>Physics</li>
+        <li class='example' data-src='./sound'>Clicky Sound</li>
+        <li class='example' data-src='./trails'>Trails particles</li>
     </ul>
     <iframe class='example-frame'></iframe>
 
     <script>
         const iframe = document.querySelector('iframe');
-        iframe.addEventListener('load', () => iframe.contentWindow.focus());
-        document.querySelectorAll('.example').forEach(el => el.addEventListener('click', e => {
+        const examples = document.querySelectorAll('.example');
+
+        const handleExampleClick = e => {
             iframe.src = e.target.dataset.src;
-        }));
+            location.hash = e.target.dataset.src;
+        };
+
+        iframe.addEventListener('load', () => iframe.contentWindow.focus());
+        examples.forEach(el => el.addEventListener('click', handleExampleClick));
+
+        if (location.hash) {
+            iframe.src = location.hash.replace('#', '');
+        }
     </script>
 </body>
 

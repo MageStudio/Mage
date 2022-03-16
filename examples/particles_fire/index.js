@@ -43,7 +43,7 @@ export default class Intro extends Level {
         cube.setPosition({ z: -20 });
         
         cube.add(fire);
-        cube.addScript(Scripts.get('simple'));
+        cube.addScript('simple');
         fire.setPosition({ y: 1 });
 
         window.cube = cube;

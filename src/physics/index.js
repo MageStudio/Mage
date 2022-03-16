@@ -10,14 +10,12 @@ import {
 } from './messages';
 import * as physicsUtils from './utils';
 import { getHostURL } from '../lib/url';
-import Scene from '../core/Scene';
 import {
     PHYSICS_ELEMENT_ALREADY_STORED,
     PHYSICS_ELEMENT_CANT_BE_REMOVED
 } from '../lib/messages';
 
 import * as PHYSICS_CONSTANTS from './constants';
-import { Element } from '../entities';
 
 const { COLLIDER_TYPES } = PHYSICS_CONSTANTS;
 
@@ -63,7 +61,6 @@ export class Physics extends EventDispatcher {
 
     storeElement(element, options) {
         if (!this.hasElement(element)) {
-            element.setPhysicsOptions(options);
             const uuid = element.uuid();
             this.elements.push(uuid);
         } else {
@@ -132,7 +129,10 @@ export class Physics extends EventDispatcher {
     };
 
     handlePhysicsUpdate = ({ dt }) => {
-        Scene.onPhysicsUpdate(dt);
+        this.dispatchEvent({
+            type: PHYSICS_EVENTS.UPDATE,
+            dt
+        })
     };
 
     handleTerminateEvent = () => {
@@ -365,7 +365,7 @@ export class Physics extends EventDispatcher {
 export { 
     PHYSICS_EVENTS,
     PHYSICS_CONSTANTS,
-    physicsUtils,
+    physicsUtils
 };
 
 export default new Physics();

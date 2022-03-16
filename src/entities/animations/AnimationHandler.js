@@ -1,5 +1,5 @@
 import { AnimationMixer, AnimationClip, LoopRepeat, EventDispatcher } from 'three';
-import { ENTITY_EVENTS } from '..';
+import { ENTITY_EVENTS } from '../constants';
 import { ANIMATION_NOT_FOUND } from '../../lib/messages';
 
 export default class AnimationHandler extends EventDispatcher {

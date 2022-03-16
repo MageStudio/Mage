@@ -1,5 +1,6 @@
-import { Line } from '../index';
+
 import { Vector3, CatmullRomCurve3 } from 'three';
+import Line from './Line';
 
 const DEFAULT_CURVE_LINE_DIVISIONS = 20;
 

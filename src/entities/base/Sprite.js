@@ -4,8 +4,8 @@ import {
     SpriteMaterial,
     Sprite as THREESprite
 } from 'three';
-import { clamp } from '../../lib/math';
-import { Element, ENTITY_TYPES } from '../index';
+import Element from '../Element';
+import { ENTITY_TYPES }  from '../constants';
 
 const validateAnisotropy = (anisotropy) => {
     const max = Scene

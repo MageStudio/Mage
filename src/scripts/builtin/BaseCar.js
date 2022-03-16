@@ -36,10 +36,6 @@ export default class BaseCar extends BaseScript {
 
         Input.enable();
         Physics.addVehicle(this.car, { wheels: wheels.map(w => w.uuid()), ...physicsOptions });
-
-        if (debug) {
-            this.car.addHitBox();
-        }
     }
 
     handleInput() {

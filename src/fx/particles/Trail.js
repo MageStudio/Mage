@@ -29,15 +29,13 @@ export default class Trail extends ParticleEmitterGroup {
             size = DEFAULT_SIZE
         } = options;
 
-        const sparks = new ProtonParticleEmitter({
-            rate: getTrailRate(),
-            texture,
-            initializers: getTrailInitialisers(size),
-            behaviours: getTrailBehaviour(size)
-        });
-
         const system = [
-            sparks
+            new ProtonParticleEmitter({
+                rate: getTrailRate(),
+                texture,
+                initializers: getTrailInitialisers(size),
+                behaviours: getTrailBehaviour(size)
+            })
         ];
 
         const name = 'TrailGroup';

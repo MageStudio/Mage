@@ -1,5 +1,4 @@
 import Universe from './Universe';
-import { Camera } from '../entities';
 import Config from './config';
 import { getWindow } from './window';
 import {
@@ -15,6 +14,8 @@ import Images from '../images/Images';
 import { DEFAULT_SHADOWTYPE, SHADOW_TYPES } from '../lights/constants';
 import { mapShadowTypeToShadowMap } from '../lights/utils';
 import { DEFAULT_OUTPUT_ENCODING, OUTPUT_ENCODINGS } from '../lib/constants';
+import Physics from '../physics';
+import { PHYSICS_EVENTS } from '../physics/messages';
 export class Scene {
 
     constructor() {
@@ -95,9 +96,26 @@ export class Scene {
 
     create(name) {
         this.createScene(name);
-        this.createCamera();
         this.createRenderer();
+        this.attachListeners();
+    }
+
+    attachListeners() {
         this.listenToResizeEvent();
+        this.listenToPhysicsUpdate();
+    }
+
+    detachListeners() {
+        this.stopResizeListener();
+        this.stopPhysicsUpdateListener();
+    }
+
+    listenToPhysicsUpdate() {
+        Physics.addEventListener(PHYSICS_EVENTS.UPDATE, this.onPhysicsUpdate);
+    }
+
+    stopPhysicsUpdateListener() {
+        Physics.removeEventListener(PHYSICS_EVENTS.UPDATE, this.onPhysicsUpdate);
     }
 
     listenToResizeEvent() {
@@ -118,19 +136,11 @@ export class Scene {
         // destroy renderer
         this.renderer.dispose();
         // remove listener to resize
-        this.stopResizeListener();
+        this.detachListeners();
     }
 
-    createCamera() {
-        const { ratio } = Config.screen();
-        const { fov, near, far } = Config.camera();
-
-        this.camera = new Camera({
-            fov,
-            ratio,
-            near,
-            far
-        });
+    createCamera(camera) {
+        this.camera = camera;
     }
 
     getDOMElement() {
@@ -253,7 +263,7 @@ export class Scene {
             .update(dt);
     }
 
-    onPhysicsUpdate(dt) {
+    onPhysicsUpdate = ({ dt }) => {
         Universe.onPhysicsUpdate(dt);
         this.getCamera()
             .onPhysicsUpdate(dt);

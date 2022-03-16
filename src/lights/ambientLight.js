@@ -42,7 +42,6 @@ export default class AmbientLight extends Light {
         } = this.options;
 
         this.setPosition(position);
-        console.log('about to add ambientlight to scene', this.body);
         this.addToScene();
     }
 
