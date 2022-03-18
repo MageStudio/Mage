@@ -13,7 +13,7 @@ export default class Grid extends Element {
         };
 
         super(null, null, options);
-        this.body = new GridHelper(size, division, color1, color2);
+        const body = new GridHelper(size, division, color1, color2);
 
         this.setBody({ body });
         this.setEntityType(ENTITY_TYPES.MESH);
