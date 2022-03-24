@@ -9,14 +9,15 @@ export default class Grid extends Element {
             size,
             division,
             color1,
-            color2
+            color2,
+            name: `GridHelper_${Math.random()}`
         };
 
         super(null, null, options);
         const body = new GridHelper(size, division, color1, color2);
 
         this.setBody({ body });
-        this.setEntityType(ENTITY_TYPES.MESH);
+        this.setEntityType(ENTITY_TYPES.HELPER.GRID);
     }
 
     update() {}

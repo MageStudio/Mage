@@ -1,5 +1,6 @@
 import { PerspectiveCamera, Vector3 } from 'three';
 import config from '../core/config';
+import { ENTITY_TYPES } from './constants';
 import Entity from './Entity';
 
 export default class Camera extends Entity {
@@ -22,6 +23,8 @@ export default class Camera extends Entity {
             near,
             far
         ));
+        this.setEntityType(ENTITY_TYPES.CAMERA);
+        this.setName(name);
     }
 
     getPosition() {

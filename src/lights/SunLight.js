@@ -10,6 +10,7 @@ import {
 } from 'three';
 import Scene from '../core/Scene';
 import { SUNLIGHT } from './Lights';
+import { ENTITY_TYPES } from '../entities/constants';
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
@@ -27,12 +28,14 @@ export default class SunLight extends Light {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name,
+            name = `SunLight_${Math.random()}`,
         } = options;
 
         super({ color, intensity, name });
         this.options = options;
         this.setLight({ color, intensity });
+        this.setEntityType(ENTITY_TYPES.LIGHT.SUN);
+        this.setName(name);
     }
 
     setLight({

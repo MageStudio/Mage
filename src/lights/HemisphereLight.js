@@ -5,6 +5,7 @@ import {
     HemisphereLightHelper
 } from 'three';
 import { HEMISPHERELIGHT } from './Lights';
+import { ENTITY_TYPES } from '../entities/constants';
 
 const DEFAULT_INTENSITY = 0.5;
 
@@ -22,12 +23,14 @@ export default class HemisphereLight extends Light {
                 ground: DEFAULT_GROUND_COLOR,
             },
             intensity = DEFAULT_INTENSITY,
-            name,
+            name = `HemisphereLight_${Math.random()}`,
         } = options;
 
         super({ color, intensity, name });
         this.options = options;
         this.setLight({ color, intensity });
+        this.setEntityType(ENTITY_TYPES.LIGHT.HEMISPHERE);
+        this.setName(name);
     }
 
     setLight({

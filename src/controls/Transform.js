@@ -124,7 +124,7 @@ export default class TransformControls extends Object3D {
 
 
         this.isTransformControls = true;
-        Scene.add(this, this, false);
+        Scene.add(this, null, false);
     }
 
     render() {}

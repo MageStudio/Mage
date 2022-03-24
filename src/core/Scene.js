@@ -16,18 +16,24 @@ import { mapShadowTypeToShadowMap } from '../lights/utils';
 import { DEFAULT_OUTPUT_ENCODING, OUTPUT_ENCODINGS } from '../lib/constants';
 import Physics from '../physics';
 import { PHYSICS_EVENTS } from '../physics/messages';
+import { ENTITY_TYPES } from '../entities/constants';
 export class Scene {
 
     constructor() {
         this.clock = new Clock();
         this.rendererElements = {};
+        this.elements = [];
         this.clearColor = 0x000000;
         this.alpha = 1.0;
 
         this.shadowType = mapShadowTypeToShadowMap(DEFAULT_SHADOWTYPE);
     }
 
-    createScene(name) {
+    getEntityType() {
+        return ENTITY_TYPES.SCENE;
+    }
+
+    createScene(name = `LevelScene_${Math.random()}`) {
         const fog = Config.fog();
 
         this.scene = new THREEScene();
@@ -38,6 +44,14 @@ export class Scene {
         if (fog.enabled) {
             this.fog(fog.color, fog.density);
         }
+    }
+
+    uuid() {
+        return this.scene.uuid;
+    }
+
+    getName() {
+        return this.scene.name;
     }
 
     getScene() {
@@ -58,10 +72,27 @@ export class Scene {
 
     add(body, element, addUniverse = true) {
         this.scene.add(body);
-        if (addUniverse) {
-            Universe.set(element.getName(), element);
-            Universe.storeUUIDToElementNameReference(body.uuid, element.getName());
+        if (element) {
+            this.elements.push(element);
         }
+
+        if (addUniverse) {
+            const name = element.getName();
+            Universe.set(name, element);
+            Universe.storeUUIDToElementNameReference(body.uuid, name);
+        }
+    }
+
+    getHierarchy() {
+        return [{
+            element: this,
+            children: [
+                this.getCamera().getHierarchy(),
+                ...(this.elements
+                    .filter(e => !e.hasParent() && !e.isHelper())
+                    .map(e => e.getHierarchy()))
+            ]
+        }];
     }
 
     remove(body) {
