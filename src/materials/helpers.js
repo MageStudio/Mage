@@ -62,7 +62,7 @@ const MATERIAL_TEXTURE_MAP = {
 };
 
 
-export const isTextureMapAllowedForMaterial = (materialType, textureMap) => (
+export const isTextureMapAllowedForMaterial = (materialType, textureType) => (
     MATERIAL_TEXTURE_MAP[materialType] &&
-    MATERIAL_TEXTURE_MAP[materialType].includes(textureMap)
+    MATERIAL_TEXTURE_MAP[materialType].includes(textureType)
 )
