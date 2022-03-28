@@ -30,14 +30,30 @@ export const ORIGIN = new Vector3(0, 0, 0);
 export const ZERO_QUATERNION = new Quaternion().identity();
 
 export const MATERIALS = {
-    LAMBERT: 0,
-    PHONG: 1,
-    DEPTH: 2,
-    STANDARD: 3,
-    BASIC: 4,
-    TOON: 5,
-    THREE_TOON: 6
+    BASIC: 'BASIC',
+    LAMBERT: 'LAMBERT',
+    PHONG: 'PHONG',
+    DEPTH: 'DEPTH',
+    STANDARD: 'STANDARD',
+    TOON: 'TOOM',
+    THREE_TOON: 'THREE_TOON'
 };
+
+export const TEXTURES = {
+    ALPHA: 'alphaMap',
+    AO: 'aoMap',
+    ENV: 'envMap',
+    MAP: 'map',
+    LIGHT: 'lightMap',
+    SPECULAR: 'specularMap',
+    EMISSIVE: 'emissiveMap',
+    BUMP: 'bumpMap',
+    DISPLACEMENT: 'displacementMap',
+    NORMAL: 'normalMap',
+    METALNESS: 'metalnessMap',
+    ROUGHNESS: 'roughnessMap',
+    GRADIENT: 'gradientMap'
+}
 
 export const EFFECTS = {
     SEPIA: 'SEPIAEFFECT',

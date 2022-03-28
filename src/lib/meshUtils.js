@@ -1,9 +1,9 @@
 import {
-	MeshBasicMaterial,
-	MeshLambertMaterial,
-	MeshPhongMaterial,
-	MeshDepthMaterial,
-	MeshStandardMaterial,
+    MeshBasicMaterial,
+    MeshLambertMaterial,
+    MeshPhongMaterial,
+    MeshDepthMaterial,
+    MeshStandardMaterial,
     MeshToonMaterial
 } from 'three';
 

@@ -15,13 +15,15 @@ import {
     ELEMENT_NOT_SET,
     ANIMATION_HANDLER_NOT_FOUND,
     ELEMENT_SET_COLOR_MISSING_COLOR,
-    ELEMENT_NAME_NOT_PROVIDED
+    ELEMENT_NAME_NOT_PROVIDED,
+    ELEMENT_MATERIAL_NO_SUPPORT_FOR_TEXTURE,
+    DEPRECATIONS
 } from '../lib/messages';
 import Images from '../images/Images';
 import AnimationHandler from './animations/AnimationHandler';
 import Config from '../core/config';
 import Scene from '../core/Scene';
-import { COLLISION_EVENT } from '../lib/constants';
+import { COLLISION_EVENT, MATERIALS, TEXTURES } from '../lib/constants';
 import Universe from '../core/Universe';
 import Physics from '../physics';
 import { DEFAULT_ANGULAR_VELOCITY, DEFAULT_LINEAR_VELOCITY } from '../physics/constants';
@@ -43,6 +45,7 @@ import {
     disposeGeometry,
     setUpLightsAndShadows
 } from '../lib/meshUtils';
+import { isTextureMapAllowedForMaterial } from '../materials/helpers';
 
 const COLLIDER_TAG = 'collider';
 const COLLIDER_COLOR = 0xff0000;
@@ -62,12 +65,13 @@ export default class Element extends Entity {
             name = `default_${Math.random()}`
         } = options;
 
-        this.texture = undefined;
+        this.textures = {};
         this.opacity = 1;
         this.options = {
             ...options,
             name
         };
+
         this.physicsOptions = DEFAULT_PHYSICS_OPTIONS;
         this.physicsState = {};
 
@@ -79,7 +83,16 @@ export default class Element extends Entity {
         this.animationHandler = undefined;
         this.animations = [];
 
+        this.setMaterialType();
         this.setEntityType(ENTITY_TYPES.MESH);
+    }
+
+    getMaterialType() {
+        return this.materialType;
+    }
+
+    setMaterialType(materialType = MATERIALS.BASIC) {
+        this.materialType = materialType;
     }
 
     addTag(tag) {
@@ -501,23 +514,37 @@ export default class Element extends Entity {
         }
     }
 
+    recordTexture(textureId, textureType) {
+        this.textures[textureType] = textureId;
+    }
+
     setTextureMap = (textureId, options = {}) => {
+        console.warn(DEPRECATIONS.ELEMENT_SET_TEXTURE_MAP);
+        return this.setTexture(textureId, TEXTURES.MAP, options);
+    }
+
+    setTexture(textureId, textureType = TEXTURES.MAP, options = {}) {
+        if (!isTextureMapAllowedForMaterial(this.getMaterialType(), textureType)) {
+            console.log(ELEMENT_MATERIAL_NO_SUPPORT_FOR_TEXTURE, textureType, this.getMaterialType());
+            return;
+        }
+
         if (textureId) {
             const {
                 repeat = { x: 1, y: 1 },
                 wrap = RepeatWrapping
             } = options;
 
+            this.recordTexture(textureId, textureType);
+
             const applyTextureTo = (element) => {
                 const texture = Images.get(textureId);
-
-                this.texture = textureId;
 
                 texture.wrapS = wrap;
                 texture.wrapT = wrap;
                 texture.repeat.set(repeat.x, repeat.y);
 
-                element.material.map = texture;
+                element.material[textureType] = texture;
             }
 
             if (hasMaterial(this.getBody())) {
@@ -533,10 +560,12 @@ export default class Element extends Entity {
     }
 
     setMaterialFromName(materialName, options = {}) {
+        this.setMaterialType(materialName);
+
         if (hasMaterial(this.getBody())) {
             changeMaterialByName(materialName, this.getBody(), options);
         } else {
-            this.body.traverse(child => {
+            this.getBody().traverse(child => {
                 if (hasMaterial(child)) {
                     changeMaterialByName(materialName, child, options);
                 }
@@ -665,7 +694,7 @@ export default class Element extends Entity {
                 ...super.toJSON(),
                 body: this.body.toJSON(),
                 scripts: this.mapScriptsToJSON(),
-                texture: this.texture,
+                textures: this.textures,
                 ...this.options
             }
         }
