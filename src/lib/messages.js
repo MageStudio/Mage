@@ -2,6 +2,7 @@ export const PREFIX = '[Mage]';
 
 export const DEPRECATIONS = {
     SCRIPTS_CREATE: `${PREFIX} [DEPRECATED] Scripts.create is deprecated, use Scripts.register instead. Will be removed in next major release.`,
+    ELEMENT_SET_TEXTURE_MAP: `${PREFIX} [DEPRECATED] Element.setTextureMap is deprecated, use Element.setTexture() instead. Will be removed in next major release.`,
 };
 
 export const MALFORMED_ONCREATE_FUNCTION = `${PREFIX} Something wrong in your onCreate method.`;
@@ -32,6 +33,7 @@ export const ELEMENT_NAME_NOT_PROVIDED = `${PREFIX} Desired element name wasn't 
 export const ELEMENT_NO_GEOMETRY_SET = `${PREFIX} This element doesn't have a geometry.`;
 export const ELEMENT_NO_MATERIAL_CANT_SET_TEXTURE = `${PREFIX} This element doesn't have a material, can't set texture.`;
 export const ELEMENT_SET_COLOR_MISSING_COLOR = `${PREFIX} Can't set color for this element, missing color`;
+export const ELEMENT_MATERIAL_NO_SUPPORT_FOR_TEXTURE = `${PREFIX} This element's material does not support texture: `;
 
 export const ENTITY_TYPE_NOT_ALLOWED = `${PREFIX} The desired Entity type is not allowed.`;
 
