@@ -8,6 +8,7 @@ import {
     PointLightHelper,
     CameraHelper
 } from 'three';
+import { ENTITY_TYPES } from '../entities/constants';
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
@@ -27,7 +28,7 @@ export default class PointLight extends Light {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name,
+            name = `PointLight_${Math.random()}`,
             distance,
             decay
         } = options;
@@ -35,6 +36,8 @@ export default class PointLight extends Light {
         super({ color, intensity, name });
         this.options = options;
         this.setLight({ color, intensity, distance, decay });
+        this.setEntityType(ENTITY_TYPES.LIGHT.POINT);
+        this.setName(name);
     }
 
     setLight({

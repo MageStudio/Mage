@@ -1,6 +1,7 @@
 import Light from './Light';
 import { AmbientLight as THREEAmbientLight } from 'three';
 import { AMBIENTLIGHT } from './Lights';
+import { ENTITY_TYPES } from '../entities/constants';
 
 const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
 const DEFAULT_INTENSITY = 0.5;
@@ -12,12 +13,14 @@ export default class AmbientLight extends Light {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name
+            name = `AmbientLight_${Math.random()}`
         } = options;
         super({ color, intensity, name });
 
         this.options = options;
         this.setLight({ color, intensity });
+        this.setEntityType(ENTITY_TYPES.LIGHT.AMBIENT);
+        this.setName(name);
     }
 
     setLight({

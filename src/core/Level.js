@@ -37,6 +37,10 @@ export class Level extends EventDispatcher {
         this.inputListenersAreSet = false;
     }
 
+    getName() {
+        return this.name;
+    }
+
     prepareScene() {}
 
     onStateChange = (state) => {};
@@ -138,7 +142,7 @@ export class Level extends EventDispatcher {
             path
         } = this.options;
 
-        Scene.create(path);
+        Scene.create(this.getName());
         Scene.createCamera(new Camera());
         this.enableInput();
 

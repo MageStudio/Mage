@@ -254,7 +254,7 @@ export default class Sky  extends Element {
         const body = new Mesh(new BoxBufferGeometry( 1, 1, 1 ), material);
 
         this.setBody({ body });
-        this.setEntityType(ENTITY_TYPES.MESH);
+        this.setEntityType(ENTITY_TYPES.EFFECT.SCENERY);
 
         this.setScale({ x: scale, y: scale, z: scale });
         this.seTurbidity(turbidity);

@@ -49,7 +49,7 @@ export default class Gizmo extends Object3D {
     	this.scaleHandleGeometry = new BoxBufferGeometry(0.125, 0.125, 0.125);
 
     	this.lineGeometry = new BufferGeometry();
-    	this.lineGeometry.addAttribute('position', new Float32BufferAttribute([0, 0, 0,	1, 0, 0], 3));
+    	this.lineGeometry.setAttribute('position', new Float32BufferAttribute([0, 0, 0,	1, 0, 0], 3));
 
     	// Make unique material for each axis/color
     	this.matInvisible = this.gizmoMaterial.clone();
@@ -152,7 +152,7 @@ export default class Gizmo extends Object3D {
 			vertices.push(0, Math.cos(i / 32 * Math.PI) * radius, Math.sin(i / 32 * Math.PI) * radius);
 		}
 
-		geometry.addAttribute('position', new Float32BufferAttribute(vertices, 3));
+		geometry.setAttribute('position', new Float32BufferAttribute(vertices, 3));
 
 		return geometry;
 	}
@@ -161,7 +161,7 @@ export default class Gizmo extends Object3D {
 
 		const geometry = new BufferGeometry()
 
-		geometry.addAttribute('position', new Float32BufferAttribute([0, 0, 0, 1, 1, 1], 3));
+		geometry.setAttribute('position', new Float32BufferAttribute([0, 0, 0, 1, 1, 1], 3));
 
 		return geometry;
 	}
@@ -424,7 +424,7 @@ export default class Gizmo extends Object3D {
 				object.updateMatrix();
 
 				var tempGeometry = object.geometry.clone();
-				tempGeometry.applyMatrix(object.matrix);
+				tempGeometry.applyMatrix4(object.matrix);
 				object.geometry = tempGeometry;
 
 				object.position.set(0, 0, 0);

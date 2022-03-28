@@ -30,7 +30,7 @@ export default class Light extends Entity {
         // target body for the light (only used by directional light)
         this.target = undefined;
 
-        this.setEntityType(ENTITY_TYPES.LIGHT);
+        this.setEntityType(ENTITY_TYPES.LIGHT.DEFAULT);
 
         Lights.add(this);
     }

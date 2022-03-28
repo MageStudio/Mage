@@ -17,7 +17,8 @@ import Scripts from '../scripts/Scripts';
 import {
     DEFAULT_TAG,
     ENTITY_EVENTS,
-    ENTITY_TYPES
+    ENTITY_TYPES,
+    FLAT_ENTITY_TYPES
 } from './constants';
 
 export default class Entity extends EventDispatcher {
@@ -50,10 +51,23 @@ export default class Entity extends EventDispatcher {
         this.body = body;
     }
 
+    hasParent() {
+        return !!this.parent;
+    }
+
+    getParent() {
+        return this.parent;
+    }
+
+    setParent(parent) {
+        this.parent = parent;
+    }
+
     add(element) {
         if (this.hasBody()) {
             const _add = (toAdd) => {
                 this.children.push(toAdd);
+                toAdd.setParent(this);
                 this.getBody()
                     .add(toAdd.getBody());
             };
@@ -89,6 +103,13 @@ export default class Entity extends EventDispatcher {
             const index = this.children.findIndex(m => m.equals(element));
 
             this.children.splice(index, 1);
+        }
+    }
+
+    getHierarchy() {
+        return {
+            element: this,
+            children: this.children.map(e => e.getHierarchy())
         }
     }
 
@@ -291,7 +312,7 @@ export default class Entity extends EventDispatcher {
     }
 
     setEntityType(type) {
-        if (Object.values(ENTITY_TYPES).includes(type)) {
+        if (FLAT_ENTITY_TYPES.includes(type)) {
             this.entityType = type;
         } else {
             console.log(ENTITY_TYPE_NOT_ALLOWED);
@@ -304,11 +325,13 @@ export default class Entity extends EventDispatcher {
     }
 
     isMesh = () => this.getEntityType() === ENTITY_TYPES.MESH;
-    isLight = () =>  this.getEntityType() === ENTITY_TYPES.LIGHT;
     isModel = () => this.getEntityType() === ENTITY_TYPES.MODEL;
     isSprite = () => this.getEntityType() === ENTITY_TYPES.SPRITE;
+    isLight = () =>  Object.values(ENTITY_TYPES.LIGHT).includes(this.getEntityType());
+    isHelper = () => Object.values(ENTITY_TYPES.HELPER).includes(this.getEntityType());
+    isEffect = () => Object.values(ENTITY_TYPES.EFFECT).includes(this.getEntityType());
 
-    // TODO: sounds should become like particle emitters
+    // TODO: sounds should become entities
     // addSound(name, options) {
     //     const { autoplay = false, ...opts } = options;
 
