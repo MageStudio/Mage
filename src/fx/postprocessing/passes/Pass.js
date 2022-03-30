@@ -23,11 +23,12 @@ export default class Pass {
         this.isPass = true;
     }
 
-    setSize(width, height) {}
+    setSize( /* width, height */ ) {}
 
-    render(renderer, writeBuffer, readBuffer, delta, maskActive) {
-        console.error('Pass: .render() must be implemented in derived pass.');
+    render( /* renderer, writeBuffer, readBuffer, deltaTime, maskActive */ ) {
+        console.error( 'THREE.Pass: .render() must be implemented in derived pass.' );
     }
+
 }
 
 // Helper for passes that need to fill the viewport with a single quad.
@@ -41,6 +42,7 @@ _geometry.setAttribute( 'position', new Float32BufferAttribute( [ - 1, 3, 0, - 1
 _geometry.setAttribute( 'uv', new Float32BufferAttribute( [ 0, 2, 0, 0, 2, 0 ], 2 ) );
 
 export class FullScreenQuad {
+
     constructor( material ) {
         this._mesh = new Mesh( _geometry, material );
     }
@@ -60,5 +62,4 @@ export class FullScreenQuad {
     set material( value ) {
         this._mesh.material = value;
     }
-
 }

@@ -119,9 +119,11 @@ class Models {
                 model = SkeletonUtils.clone(scene);
             }
 
-            const element = new Element(null, null, elementOptions);
+            const element = new Element({
+                body: prepareModel(model), 
+                ...elementOptions
+            });
 
-            element.setBody({ body: prepareModel(model) });
             element.setEntityType(ENTITY_TYPES.MODEL);
 
             if (hasAnimations(animations)) {

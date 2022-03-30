@@ -8,7 +8,7 @@ import { ENTITY_TYPES }  from '../constants';
 export default class Box extends Element {
 
     constructor(width = 10, height = 10, depth = 10, color, options = {}) {
-        super(null, null, options);
+        super(options);
 
         const geometry = new BoxGeometry(width, height, depth);
         const material = new MeshBasicMaterial({

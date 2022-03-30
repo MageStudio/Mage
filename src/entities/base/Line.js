@@ -15,7 +15,7 @@ const DEFAULT_LINE_THICKNESS = 2;
 export default class Line extends Element {
 
 	constructor(points = [], options = {}) {
-        super(null, null, options);
+        super(options);
         
         this.points = points;
 

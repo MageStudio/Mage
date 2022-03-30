@@ -6,7 +6,7 @@ import Pass from "./Pass.js";
 
 export default class RenderPass extends Pass {
 
-    constructor(scene, camera, overrideMaterial = null, clearColor, clearAlpha = 0) {
+    constructor(scene, camera, overrideMaterial, clearColor, clearAlpha) {
         super();
 
         this.scene = scene;
@@ -15,7 +15,7 @@ export default class RenderPass extends Pass {
         this.overrideMaterial = overrideMaterial;
 
         this.clearColor = clearColor;
-        this.clearAlpha = clearAlpha;
+        this.clearAlpha = (clearAlpha !== undefined) ? clearAlpha : 0;
 
         this.clear = true;
         this.clearDepth = false;
@@ -23,8 +23,9 @@ export default class RenderPass extends Pass {
         this._oldClearColor = new Color();
     }
 
-    render(renderer, writeBuffer, readBuffer) {
-		let oldAutoClear = renderer.autoClear;
+    render(renderer, writeBuffer, readBuffer /*, deltaTime, maskActive */) {
+
+        const oldAutoClear = renderer.autoClear;
         renderer.autoClear = false;
 
         let oldClearAlpha, oldOverrideMaterial;

@@ -8,7 +8,7 @@ import { ENTITY_TYPES }  from '../constants';
 export default class Cylinder extends Element {
 
     constructor(radiusTop = 10, radiusBottom = 10, height, color, options = {}) {
-        super(null, null, options);
+        super(options);
 
         const segments = 32;
 

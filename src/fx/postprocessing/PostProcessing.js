@@ -83,7 +83,7 @@ export class PostProcessing {
         })
     }
 
-    get(id) {
+    get(id) {
         return this.map[id] || null;
     }
 

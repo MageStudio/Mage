@@ -8,7 +8,7 @@ import { ENTITY_TYPES }  from '../constants';
 export default class Cube extends Element {
 
     constructor(side = 10, color, options = {}) {
-        super(null, null, options);
+        super(options);
 
         const geometry = new BoxGeometry(side, side, side);
         const material = new MeshBasicMaterial({
