@@ -37,7 +37,7 @@ export class LightLoader extends Loader {
         }
     }
 
-    createSunlight({ color, intensity, position, target, name }) {
+    createSunlight({ color, intensity, position, target, name }) {
         return new SunLight({
             color,
             intensity,

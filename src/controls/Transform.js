@@ -20,7 +20,7 @@ import Plane from './TransformPlane';
 
 export default class TransformControls extends Object3D {
 
-    constructor(camera, domElement) {
+    constructor(camera, domElement) {
         super();
 
         this.domElement = (domElement !== undefined) ? domElement : document;
@@ -156,20 +156,20 @@ export default class TransformControls extends Object3D {
     set axis(value) { this.setAndDispatch('axis', value); } // si
     get axis() { return this.getPrivateField('axis'); }
 
-    set mode(value) { this.setAndDispatch('mode', value); } // si
+    set mode(value) { this.setAndDispatch('mode', value); } // si
     get mode() { return this.getPrivateField('mode'); }
 
-    set translationSnap(value) { this.setAndDispatch('translationSnap', value); } // no
+    set translationSnap(value) { this.setAndDispatch('translationSnap', value); } // no
     get translationSnap() { return this.getPrivateField('translationSnap'); }
 
     set rotationSnap(value) { this.setAndDispatch('rotationSnap', value); } // no
     get rotationSnap() { return this.getPrivateField('rotationSnap'); }
 
-    set space(value) { this.setAndDispatch('space', value); } // si
+    set space(value) { this.setAndDispatch('space', value); } // si
     get space() { return this.getPrivateField('space'); }
 
     set size(value) { this.setAndDispatch('size', value); } // si
-    get size() { return this.getPrivateField('size'); }
+    get size() { return this.getPrivateField('size'); }
 
     set dragging(value) { this.setAndDispatch('dragging', value); } // si
     get dragging() { return this.getPrivateField('dragging'); }

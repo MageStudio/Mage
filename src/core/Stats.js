@@ -44,6 +44,12 @@ class Stats {
         return this._fps;
     }
 
+    subscribe(handler) {
+        this.fps.subscribe(handler);
+
+        return () => this.fps.unsubscribe(handler);
+    }
+
     collectMemoryUsage() {
         this.memory = performance.memory.usedJSHeapSize / ONE_MB;
         this.memoryMax = performance.memory.jsHeapSizeLimit / ONE_MB;

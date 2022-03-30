@@ -56,15 +56,24 @@ export class PostProcessing {
 
         this.effects = [];
         this.customs = [];
+        this.enabled = false;
     }
 
-    isEnabled = () => !!this.effects.length || !!this.customs.length;
+    isEnabled = () => (
+        this.enabled &&
+        (!!this.effects.length || !!this.customs.length)
+    );
 
     init = () => {
-        window.addEventListener('resize', this.onWindowResize, false);
+        const { enabled = false } = Config.postprocessing();
+        this.enabled = enabled;
 
-        this.composer = new EffectComposer(Scene.getRenderer());
-        this.composer.addPass(new RenderPass(Scene.getScene(), Scene.getCameraBody()));
+        if (enabled) {
+            window.addEventListener('resize', this.onWindowResize, false);
+    
+            this.composer = new EffectComposer(Scene.getRenderer());
+            this.composer.addPass(new RenderPass(Scene.getScene(), Scene.getCameraBody()));
+        }
     }
 
     dispose = () => {

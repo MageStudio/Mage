@@ -10,8 +10,16 @@ import {
     AmbientLight,
     PHYSICS_EVENTS,
     constants,
-    Scripts
+    Scripts,
+    Stats,
+    PostProcessing
 } from '../../dist/mage.js';
+
+const { EFFECTS } = constants;
+
+const SATURATION_OPTIONS = {
+    saturation: 0.4
+};
 
 export default class Intro extends Level {
 
@@ -94,6 +102,14 @@ export default class Intro extends Level {
         
         this.createCube(2, 0xff00ff);
         Scene.getCamera().addScript(Scripts.BUILTIN.SMOOTH_CAR_FOLLOW, { target: car });
+
+        const txt = document.querySelector('#txt');
+        const changeFPS = (fps) => {
+            txt.innerText = fps;
+        };
+        Stats.subscribe(changeFPS);
+
+        PostProcessing.add(EFFECTS.HUE_SATURATION, SATURATION_OPTIONS);
     }
 }
 
@@ -113,6 +129,10 @@ const config = {
         ratio: window ? window.innerWidth / window.innerHeight : 600 / 800,
         frameRate: 60,
         alpha: true,
+    },
+
+    postprocessing: {
+        enabled: true
     },
 
     lights: {

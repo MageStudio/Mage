@@ -124,9 +124,15 @@ export class Level extends EventDispatcher {
     render = () => {
         const dt = Scene.clock.getDelta();
 
-        Scene.render(dt);
+        if (PostProcessing.isEnabled()) {
+            console.log('postprocessing rendering');
+            PostProcessing.render(dt);
+        } else {
+            console.log('Scene rendering');
+            Scene.render(dt);
+        }
+
         Particles.update(dt);
-        PostProcessing.render(dt);
         this.onUpdate(dt);
         Scene.update(dt);
         Assets.update(dt);
