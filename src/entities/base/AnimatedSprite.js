@@ -10,7 +10,7 @@ import {
 export default class AnimatedSprite extends Element {
 
     constructor(width = 20, height = 20, spriteTexture, options = {}) {
-        super(null, null, options);
+        super(options);
 
         const material = new SpriteNodeMaterial({
             map: Images.get(spriteTexture),

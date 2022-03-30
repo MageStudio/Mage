@@ -24,7 +24,7 @@ import PALETTES from '../../lib/palettes';
 const MAX_EDGE_THICKNESS = 4;
 const MAX_EDGE_GLOW = 4;
 const DEFAULT_EDGE_GLOW = 0.0;
-const DEFAULT_THICKNES = 1.0;
+const DEFAULT_EDGE_THICKNES = 1.0;
 const DEFAULT_EDGE_STRENGTH = 10.0;
 
 
@@ -40,25 +40,28 @@ export default class SelectiveOutline extends Pass {
 
     constructor({
         resolution = {},
-        selectedObjects,
+        selectedObjects = [],
         visibleEdgeColor = PALETTES.BASE.WHITE,
-        hiddenEdgeColor = PALETTES.BASE.BLACK
+        hiddenEdgeColor = PALETTES.BASE.WHITE
     }) {
 
         super();
+
+        this.isPass = true;
 
         const { h: height, w: width } = config.screen();
         const { x : resolutionX = width, y: resolutionY = height } = resolution;
 
         this.renderScene = Scene.getScene();
         this.renderCamera = Scene.getCameraBody();
-        this.selectedObjects = selectedObjects !== undefined ? selectedObjects : [];
-        this.visibleEdgeColor = visibleEdgeColor;
-        this.hiddenEdgeColor = hiddenEdgeColor;
-        this.edgeGlow = 0.0;
+        this.selectedObjects = selectedObjects;
+        this.visibleEdgeColor = new Color(visibleEdgeColor);
+        this.hiddenEdgeColor = new Color(hiddenEdgeColor);
+
+        this.edgeGlow = DEFAULT_EDGE_GLOW;
         this.usePatternTexture = false;
-        this.edgeThickness = 1.0;
-        this.edgeStrength = 3.0;
+        this.edgeThickness = DEFAULT_EDGE_THICKNES;
+        this.edgeStrength = DEFAULT_EDGE_STRENGTH;
         this.downSampleRatio = 2;
         this.pulsePeriod = 0;
 
@@ -151,6 +154,26 @@ export default class SelectiveOutline extends Pass {
 
     setSelectedObjects(selectedObjects = []) {
         this.selectedObjects = selectedObjects.map(o => o.getBody());
+    }
+
+    setVisibleEdgeColor(color = PALETTES.BASE.WHITE) {
+        this.visibleEdgeColor = new Color(color);
+    }
+
+    setHiddenEdgeColor(color = PALETTES.BASE.WHITE) {
+        this.hiddenEdgeColor = new Color(color);
+    }
+
+    setEdgeGlow(glow = DEFAULT_EDGE_GLOW) {
+        this.edgeGlow = glow;
+    }
+
+    setEdgeStrength(strength = DEFAULT_EDGE_STRENGTH) {
+        this.edgeStrength = strength;
+    }
+
+    setEdgeThickness(thickness = DEFAULT_EDGE_THICKNES) {
+        this.edgeThickness = thickness;
     }
 
     dispose() {
@@ -306,7 +329,6 @@ export default class SelectiveOutline extends Pass {
     }
 
     render(renderer, writeBuffer, readBuffer, deltaTime, maskActive) {
-
         if (this.selectedObjects.length > 0) {
 
             renderer.getClearColor(this._oldClearColor);
@@ -375,8 +397,8 @@ export default class SelectiveOutline extends Pass {
             this.fsQuad.material = this.edgeDetectionMaterial;
             this.edgeDetectionMaterial.uniforms['maskTexture'].value = this.renderTargetMaskDownSampleBuffer.texture;
             this.edgeDetectionMaterial.uniforms['texSize'].value.set(this.renderTargetMaskDownSampleBuffer.width, this.renderTargetMaskDownSampleBuffer.height);
-            this.edgeDetectionMaterial.uniforms['visibleEdgeColor'].value = this.tempPulseColor1;
-            this.edgeDetectionMaterial.uniforms['hiddenEdgeColor'].value = this.tempPulseColor2;
+            this.edgeDetectionMaterial.uniforms['visibleEdgeColor'].value.set(this.tempPulseColor1.getHex());
+            this.edgeDetectionMaterial.uniforms['hiddenEdgeColor'].value.set(this.tempPulseColor2.getHex());
             renderer.setRenderTarget(this.renderTargetEdgeBuffer1);
             renderer.clear();
             this.fsQuad.render(renderer);
@@ -499,8 +521,8 @@ export default class SelectiveOutline extends Pass {
             uniforms: {
                 'maskTexture': { value: null },
                 'texSize': { value: new Vector2(0.5, 0.5) },
-                'visibleEdgeColor': { value: new Vector3(1.0, 1.0, 1.0) },
-                'hiddenEdgeColor': { value: new Vector3(1.0, 1.0, 1.0) },
+                'visibleEdgeColor': { value: new Color(1.0, 1.0, 1.0) },
+                'hiddenEdgeColor': { value: new Color(1.0, 1.0, 1.0) },
             },
 
             vertexShader:

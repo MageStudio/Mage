@@ -379,7 +379,7 @@ const DEFAULT_WATER_DISTORTION_SCALE = 3.7;
 export default class Water extends Element {
 
     constructor(options = {}) {
-        super(null, null, options);
+        super(options);
         const {
             texture,
             textureNormalName,

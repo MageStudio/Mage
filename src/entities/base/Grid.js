@@ -13,7 +13,7 @@ export default class Grid extends Element {
             name: `GridHelper_${Math.random()}`
         };
 
-        super(null, null, options);
+        super(options);
         const body = new GridHelper(size, division, color1, color2);
 
         this.setBody({ body });

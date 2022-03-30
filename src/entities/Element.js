@@ -58,11 +58,14 @@ const DEFAULT_PHYSICS_OPTIONS = {
 
 export default class Element extends Entity {
 
-    constructor(geometry, material, options = {}) {
+    constructor(options = {}) {
         super(options);
 
         const {
-            name = `default_${Math.random()}`
+            name = `default_${Math.random()}`,
+            geometry,
+            material,
+            body
         } = options;
 
         this.textures = {};
@@ -75,7 +78,7 @@ export default class Element extends Entity {
         this.physicsOptions = DEFAULT_PHYSICS_OPTIONS;
         this.physicsState = {};
 
-        this.setBody({ geometry, material });
+        this.setBody({ geometry, material, body });
 
         this.colliders = [];
         this.collisionsEnabled = true;

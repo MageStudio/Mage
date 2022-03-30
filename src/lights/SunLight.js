@@ -105,7 +105,7 @@ export default class SunLight extends Light {
             wireframe: true
         });
 
-        const target = new Element(geometry, material);
+        const target = new Element({ geometry, material });
 
         target.position(initialPosition);
 

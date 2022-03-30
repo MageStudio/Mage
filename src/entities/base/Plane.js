@@ -14,7 +14,7 @@ const DOWN = new Vector3(0, -1, 0);
 export default class Plane extends Element {
 
     constructor(height, width, options = {}) {
-        super(null, null, options);
+        super(options);
 
         const {
             color = 0xfffffff,

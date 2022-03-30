@@ -19,7 +19,7 @@ export default class Skybox extends Element {
             ...rest
         } = options;
 
-        super(null, null, { name, texture, ...rest });
+        super({ name, texture, ...rest });
 
         this.cubeMap = typeof texture === 'string' ? Images.get(texture) : texture;
 

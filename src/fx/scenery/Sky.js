@@ -232,7 +232,7 @@ const DEFAULT_SUN_DISTANCE = 100;
 export default class Sky  extends Element {
 
     constructor(options = {}) {
-        super(null, null, options);
+        super(options);
         const {
             scale = DEFAULT_SCALE,
             turbidity = DEFAULT_TURBIDITY,

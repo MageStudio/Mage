@@ -19,7 +19,7 @@ const validateAnisotropy = (anisotropy) => {
 export default class Sprite extends Element {
 
     constructor(width = 20, height = 20, spriteTexture, options = {}) {
-        super(null, null, options);
+        super(options);
 
         const { anisotropy = 1, ...rest } = options;
         const texture = Images.get(spriteTexture);

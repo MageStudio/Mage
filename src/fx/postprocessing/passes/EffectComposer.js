@@ -4,8 +4,6 @@
 
 import {
     Clock,
-    LinearFilter,
-    RGBAFormat,
     Vector2,
     WebGLRenderTarget
 } from "three";
@@ -18,21 +16,16 @@ import ClearMaskPass from './ClearMaskPass';
 export default class EffectComposer {
 
     constructor(renderer, renderTarget) {
+
         this.renderer = renderer;
 
         if (renderTarget === undefined) {
-            const parameters = {
-                minFilter: LinearFilter,
-                magFilter: LinearFilter,
-                format: RGBAFormat
-            };
-
             const size = renderer.getSize(new Vector2());
             this._pixelRatio = renderer.getPixelRatio();
             this._width = size.width;
             this._height = size.height;
 
-            renderTarget = new WebGLRenderTarget(this._width * this._pixelRatio, this._height * this._pixelRatio, parameters);
+            renderTarget = new WebGLRenderTarget(this._width * this._pixelRatio, this._height * this._pixelRatio);
             renderTarget.texture.name = 'EffectComposer.rt1';
         } else {
             this._pixelRatio = 1;
@@ -54,14 +47,15 @@ export default class EffectComposer {
         // dependencies
 
         if (CopyShader === undefined) {
-            console.error('EffectComposer relies on CopyShader');
+            console.error('THREE.EffectComposer relies on CopyShader');
         }
 
         if (ShaderPass === undefined) {
-            console.error('EffectComposer relies on ShaderPass');
+            console.error('THREE.EffectComposer relies on ShaderPass');
         }
 
         this.copyPass = new ShaderPass(CopyShader);
+
         this.clock = new Clock();
     }
 
@@ -78,13 +72,12 @@ export default class EffectComposer {
 
     ensureLastPassIsRendered = () => {
         this.passes.forEach((pass, index) =>
-            pass.renderToScreen = index === (this.passes.length - 1)
-        );
+            pass.renderToScreen = index === (this.passes.length - 1));
     };
 
     insertPass(pass, index) {
         this.passes.splice(index, 0, pass);
-        pass.setSize( this._width * this._pixelRatio, this._height * this._pixelRatio );
+        pass.setSize(this._width * this._pixelRatio, this._height * this._pixelRatio);
     }
 
     removePass(pass) {
@@ -110,15 +103,13 @@ export default class EffectComposer {
             deltaTime = this.clock.getDelta();
         }
 
-        var currentRenderTarget = this.renderer.getRenderTarget();
+        const currentRenderTarget = this.renderer.getRenderTarget();
 
-        var maskActive = false;
+        let maskActive = false;
 
-        var pass, i, il = this.passes.length;
+        for (let i = 0, il = this.passes.length; i < il; i ++) {
 
-        for (i = 0; i < il; i ++) {
-
-            pass = this.passes[i];
+            const pass = this.passes[ i ];
 
             if (pass.enabled === false) continue;
 
@@ -138,6 +129,7 @@ export default class EffectComposer {
                     //context.stencilFunc(context.EQUAL, 1, 0xffffffff);
                     stencil.setFunc(context.EQUAL, 1, 0xffffffff);
                 }
+
                 this.swapBuffers();
             }
 
@@ -149,6 +141,7 @@ export default class EffectComposer {
                 }
             }
         }
+
         this.renderer.setRenderTarget(currentRenderTarget);
     }
 
@@ -173,7 +166,6 @@ export default class EffectComposer {
     }
 
     setSize(width, height) {
-
         this._width = width;
         this._height = height;
 
@@ -183,7 +175,7 @@ export default class EffectComposer {
         this.renderTarget1.setSize(effectiveWidth, effectiveHeight);
         this.renderTarget2.setSize(effectiveWidth, effectiveHeight);
 
-        for (var i = 0; i < this.passes.length; i ++) {
+        for (let i = 0; i < this.passes.length; i ++) {
             this.passes[ i ].setSize(effectiveWidth, effectiveHeight);
         }
     }

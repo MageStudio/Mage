@@ -8,7 +8,7 @@ import { ENTITY_TYPES }  from '../constants';
 export default class Sphere extends Element {
 
     constructor(radius = 10, color, options = {}) {
-        super(null, null, options);
+        super(options);
 
         const segments = 32;
         
