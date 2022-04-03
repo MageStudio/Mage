@@ -6,7 +6,7 @@ import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
 import { ASSETS_AUDIO_LOAD_FAIL, AUDIO_CONTEXT_NOT_AVAILABLE } from '../lib/messages';
 
-const TIME_FOR_UPDATE = 150;
+const TIME_FOR_UPDATE = 5;
 const DELAY_FACTOR = 0.02;
 const DELAY_STEP = 1;
 const DELAY_MIN_VALUE = 0.2;

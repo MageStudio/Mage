@@ -35,6 +35,8 @@ export class Level extends EventDispatcher {
         this.name = this.constructor.name;
         this.debug = true;
         this.inputListenersAreSet = false;
+
+        this.render = this.render.bind(this);
     }
 
     getName() {
@@ -53,32 +55,6 @@ export class Level extends EventDispatcher {
     
     onInputEnabled() {}
     onInputDisabled() {}
-
-    enableInput = () => {
-        Input.enable();
-        if (!this.inputListenersAreSet) {
-            INPUT_EVENTS_LIST.forEach((event) => {
-                const methodName = `on${upperCaseFirst(event)}`;
-                if (typeof this[methodName] === 'function') {
-                    Input.addEventListener(event, this[methodName].bind(this));
-                }
-            });
-            this.inputListenersAreSet = true;
-            this.onInputEnabled();
-        }
-    };
-
-    disableInput = () => {
-        Input.disable();
-        INPUT_EVENTS_LIST.forEach((event) => {
-            const methodName = `on${upperCaseFirst(event)}`;
-            if (typeof this[methodName] === 'function') {
-                Input.removeEventListener(event, this[methodName]);
-            }
-        });
-        this.inputListenersAreSet = false;
-        this.onInputDisabled();
-    };
 
     parseScene = ({ elements = [], models = [], lights = [] }, options = {}) => {
         return new Promise((resolve, reject) => {
@@ -113,22 +89,20 @@ export class Level extends EventDispatcher {
 
     preload = (url = this.getJSONUrl()) => this.loadScene(url);
 
-    requestNextAnimationFrame = () => {
-        this.requestAnimationFrameId = requestNextFrame(this.render.bind(this));
+    requestNextAnimationFrame() {
+        this.requestAnimationFrameId = requestNextFrame(this.render);
     }
 
     cancelNextAnimationFrame = () => {
         cancelAnimationFrame(this.requestAnimationFrameId);
     }
 
-    render = () => {
+    render() {
         const dt = Scene.clock.getDelta();
 
         if (PostProcessing.isEnabled()) {
-            console.log('postprocessing rendering');
             PostProcessing.render(dt);
         } else {
-            console.log('Scene rendering');
             Scene.render(dt);
         }
 
@@ -150,7 +124,6 @@ export class Level extends EventDispatcher {
 
         Scene.create(this.getName());
         Scene.createCamera(new Camera());
-        this.enableInput();
 
         Physics
             .init()
@@ -171,8 +144,6 @@ export class Level extends EventDispatcher {
 
     dispose = () => {
         this.onBeforeDispose();
-
-        this.disableInput();
 
         Physics.dispose();
         Audio.dispose();

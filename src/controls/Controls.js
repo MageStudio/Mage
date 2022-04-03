@@ -74,8 +74,6 @@ export class Controls {
         this.controls[CONTROLS.ORBIT].init();
         this.controls[CONTROLS.ORBIT].setTarget(target);
 
-        this.controls[CONTROLS.ORBIT].addEventListener(EVENTS.CHANGE, Scene.render);
-
         return this.controls[CONTROLS.ORBIT];
     }
 

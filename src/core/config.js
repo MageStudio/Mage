@@ -65,8 +65,6 @@ class Config {
                 ...this.default,
                 ...config
             };
-            console.log(config);
-            console.log(this.config);
         } else {
             this.config = {
                 ...this.config,

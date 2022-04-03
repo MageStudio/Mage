@@ -112,12 +112,6 @@ export class Particles {
             .keys(this.emitters)
             .forEach(uuid => {
                 const emitter = this.emitters[uuid];
-
-                // if (emitter.getType() === GROUP) {
-                //     emitter.forEach(emitter => this.updateSingleEmitter(emitter, dt));
-                // } else {
-                //     this.updateSingleEmitter(emitter, dt);
-                // }
                 this.updateSingleEmitter(emitter, dt);
             });
     }

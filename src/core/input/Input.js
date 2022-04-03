@@ -2,7 +2,12 @@ import {
     EventDispatcher
 } from 'three';
 
-import Keyboard from './Keyboard';
+import Keyboard, {
+    KEY_DOWN,
+    KEY_PRESS,
+    KEY_UP
+} from './Keyboard';
+
 import Mouse, {
     MOUSE_DOWN,
     MOUSE_UP,
@@ -30,10 +35,6 @@ import {
     mouseDisabled,
     gamepadDisabled
 } from '../../store/actions/input';
-
-export const KEY_PRESS = 'keyPress';
-export const KEY_DOWN = 'keyDown';
-export const KEY_UP = 'keyUp';
 
 export const INPUT_EVENTS_LIST = [
     KEY_PRESS,
@@ -120,7 +121,10 @@ export class Input extends EventDispatcher {
 
     enableKeyboard() {
         dispatch(keyboardEnabled());
-        this.keyboard.enable(this.handleKeyBoardEvent.bind(this));
+        this.keyboard.enable();
+
+        this.keyboard.addEventListener(KEY_DOWN, this.propagate.bind(this));
+        this.keyboard.addEventListener(KEY_UP, this.propagate.bind(this));
     }
 
     enableMouse() {
@@ -138,40 +142,13 @@ export class Input extends EventDispatcher {
         this.dispatchEvent(event);
     }
 
-    handleKeyBoardEvent = (event, handler) => {
-        if (event.type === Keyboard.KEYDOWN) {
-            this.dispatchEvent({
-                type: KEY_DOWN,
-                event: {
-                    ...event,
-                    ...handler
-                }
-            });
-        }
-
-        if (event.type === Keyboard.KEYUP) {
-            this.dispatchEvent({
-                type: KEY_UP,
-                event: {
-                    ...event,
-                    ...handler
-                }
-            });
-        }
-
-        this.dispatchEvent({
-            type: KEY_PRESS,
-            event: {
-                ...event,
-                ...handler
-            }
-        });
-    }
-
     disableKeyboard() {
         dispatch(keyboardDisabled());
 
         this.keyboard.disable();
+        this.keyboard.removeEventListener(KEY_DOWN, this.propagate.bind(this));
+        this.keyboard.removeEventListener(KEY_UP, this.propagate.bind(this));
+
         this.keyboard = undefined;
     }
 
@@ -202,8 +179,7 @@ export class Input extends EventDispatcher {
     }
 
     update() {
-        if (this.isEnabled() &&
-            this.gamepad.isEnabled()) {
+        if (this.isEnabled() && this.gamepad.isEnabled()) {
             this.gamepad.update();
         }
     }

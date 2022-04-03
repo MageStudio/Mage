@@ -28,16 +28,27 @@ const EXTENSIONS = {
 const FULL_STOP = '.';
 
 const loaders = {
-    [EXTENSIONS.JSON]: new ObjectLoader(),
-    [EXTENSIONS.GLB]: new GLTFLoader(),
-    [EXTENSIONS.GLTF]: new GLTFLoader(),
-    // [EXTENSIONS.COLLADA]: new ColladaLoader(),
-    [EXTENSIONS.FBX]: new FBXLoader(),
-    [EXTENSIONS.OBJ]: new OBJMTLLoader()
+    [EXTENSIONS.JSON]: ObjectLoader,
+    [EXTENSIONS.GLB]: GLTFLoader,
+    [EXTENSIONS.GLTF]: GLTFLoader,
+    // [EXTENSIONS.COLLADA]: new ColladaLoader,
+    [EXTENSIONS.FBX]: FBXLoader,
+    [EXTENSIONS.OBJ]: OBJMTLLoader
 };
 
+const loaderInstances = {}
+
 const extractExtension = (path) => path.split(FULL_STOP).slice(-1).pop();
-const getLoaderFromExtension = (extension) => loaders[extension] || new ObjectLoader();
+const getLoaderFromExtension = (extension) => {
+    let instance = loaderInstances[extension];
+    if (!instance) {
+        const LoaderClass =  loaders[extension] || ObjectLoader;
+        instance = new LoaderClass();
+        loaderInstances[extension] = instance;
+    }
+
+    return instance;
+}
 
 const glbParser = ({ scene, animations }) => {
     scene.traverse((object) => {

@@ -27,17 +27,14 @@ export class Features {
         const frameRate = Config.screen().frameRate;
 
         window.requestNextFrame = (
-            function() {
-                return  window.requestAnimationFrame       ||
-                        window.webkitRequestAnimationFrame ||
-                        window.mozRequestAnimationFrame    ||
-                        window.oRequestAnimationFrame      ||
-                        window.msRequestAnimationFrame     ||
-                        function(callback, element){
-                            window.setTimeout(callback, 1000 / frameRate);
-                        };
-            }
-        )();
+            window.requestAnimationFrame       ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            window.oRequestAnimationFrame      ||
+            window.msRequestAnimationFrame     ||
+            function(callback, element){
+                window.setTimeout(callback, 1000 / frameRate);
+            });
     }
 
     isFeatureSupported(feature) {

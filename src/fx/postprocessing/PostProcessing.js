@@ -144,9 +144,12 @@ export class PostProcessing {
         }
     };
 
-    render = (dt) => {
+    render(dt) {
+        const scene = Scene.getScene();
+        const camera = Scene.getCameraBody();
+
         this.composer.render(dt);
-        this.customs.forEach(e => e.render(Scene.getScene(), Scene.getCameraBody(), dt));
+        this.customs.forEach(e => e.render(scene, camera, dt));
     }
 }
 

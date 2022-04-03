@@ -7,7 +7,7 @@ export const SUNLIGHT = 'sunlight';
 export const SPOTLIGHT = 'spotlight';
 export const HEMISPHERELIGHT = 'hemisphere';
 
-const TIME_TO_UPDATE = 100;
+const TIME_TO_UPDATE = 5;
 
 export class Lights {
 
