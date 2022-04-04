@@ -1,7 +1,7 @@
 import GameRunner from '../runner/GameRunner';
-import { getState } from '../store';
+import { getState } from '../store';
 
-import { LOCALSTORAGE_NOT_AVAILABLE } from '../lib/messages';
+import { LOCALSTORAGE_NOT_AVAILABLE } from '../lib/messages';
 
 const CURRENT_SCENE_NAME = 'CURRENT_SCENE_NAME';
 const STATE_SNAPSHOT = 'STATE_SNAPSHOT';

@@ -4,6 +4,10 @@ import {
     KEYBOARD_COMBO_IS_INVALID
 } from '../../lib/messages';
 
+import {
+    EventDispatcher
+} from 'three';
+
 const DEFAULT_OPTIONS = {
     keyup: true,
     keydown: true
@@ -11,27 +15,19 @@ const DEFAULT_OPTIONS = {
 
 const COMBINATION_DIVIDER = '+';
 
-export default class Keyboard {
+export const KEY_PRESS = 'keyPress';
+export const KEY_DOWN = 'keyDown';
+export const KEY_UP = 'keyUp';
+
+export default class Keyboard extends EventDispatcher {
 
     constructor() {
-        this.keys = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'l', 'k', 'j', 'h', 'g', 'f', 'd', 's', 'a', 'z', 'x', 'c', 'v', 'b', 'n', 'm'];
-        this.specials = ['esc', 'escape', 'enter', 'space'];
-        this.symbols = [];
-        this.numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
-
-        this.combos = [
-            ...this.keys,
-            ...this.numbers,
-            ...this.specials,
-            ...this.symbols
-        ];
+        super();
+        
+        this.combos = [];
 
         this.enabled = false;
-        this.listener = undefined;
     }
-
-    static get KEYDOWN() { return 'keydown'; }
-    static get KEYUP() { return 'keyup'; }
 
     register(combo, handler) {
         if (this.enabled) {
@@ -40,40 +36,46 @@ export default class Keyboard {
                 return;
             }
             this.combos.push(combo);
-            hotkeys(combo, DEFAULT_OPTIONS, handler || this.handler);
+            hotkeys(combo, DEFAULT_OPTIONS, handler);
         }
     }
 
-    registerCombination(combo = [], handler) {
-        if (combo instanceof Array && combo.length > 1) {
-            this.register(combo.join(COMBINATION_DIVIDER), handler);
-        } else {
-            console.warn(KEYBOARD_COMBO_IS_INVALID, combo);
-        }
+
+    handleKeydown = event => {
+        this.dispatchEvent({
+            type: KEY_DOWN,
+            event
+        });
     }
 
-    handler = (event, handler) => {
-        if (!this.enabled) return;
-        this.listener(event, handler);
+    handleKeyup = event => {
+        this.dispatchEvent({
+            type: KEY_UP,
+            event
+        });
+    }
 
-        // this stops propagation and deafult OS handling for events like cmd + s, cmd + r
-        return false;
+    handleKeypress = event => {
+        this.dispatchEvent({
+            type: KEY_PRESS,
+            event
+        });
     }
 
     enable(cb = f => f) {
         this.enabled = true;
-        this.listener = cb;
-        this.combos.forEach(combo => {
-            hotkeys(combo, DEFAULT_OPTIONS, this.handler);
-        });
+
+        window.addEventListener(KEY_DOWN, this.handleKeydown.bind(this));
+        window.addEventListener(KEY_UP, this.handleKeyup.bind(this));
+        window.addEventListener(KEY_PRESS, this.handleKeypress.bind(this));
     }
 
     disable() {
         this.enabled = false;
-        this.listener = undefined;
-        this.combos.forEach(combo => {
-            hotkeys.unbind(combo);
-        });
+
+        window.removeEventListener(KEY_DOWN, this.handleKeydown.bind(this));
+        window.removeEventListener(KEY_UP, this.handleKeyup.bind(this));
+        window.removeEventListener(KEY_PRESS, this.handleKeypress.bind(this));
     }
 
     isPressed(key) {

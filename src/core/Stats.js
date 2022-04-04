@@ -16,12 +16,6 @@ class Stats {
         this._fps = 0;
         this._fpsMax = 100;
         this.fps = new Subject();
-
-        this.hasMemoryUsage = features.isFeatureSupported(FEATURES.MEMORY);
-
-        if (this.hasMemoryUsage) {
-            this.collectMemoryUsage();
-        }
     }
 
     init() {
@@ -44,29 +38,21 @@ class Stats {
         return this._fps;
     }
 
-    collectMemoryUsage() {
-        this.memory = performance.memory.usedJSHeapSize / ONE_MB;
-        this.memoryMax = performance.memory.jsHeapSizeLimit / ONE_MB;
+    subscribe(handler) {
+        this.fps.subscribe(handler);
+
+        return () => this.fps.unsubscribe(handler);
     }
 
-    getMemory() {
-        this.frames++;
-        const time = (performance || Date).now();
-
-        if (time >= this.prevTime + 1000) {
-            this.prevTime = time;
-            this.frames = 0;
-            this.collectMemoryUsage();
+    getMemoryUsage() {
+        if (features.isFeatureSupported(FEATURES.MEMORY)) {
+            this.memory = performance.memory.usedJSHeapSize / ONE_MB;
+            this.memoryMax = performance.memory.jsHeapSizeLimit / ONE_MB;
         }
-
-        this.beginTime = time;
     }
 
     update() {
         this.getFPS();
-        if (this.hasMemoryUsage) {
-            this.getMemory();
-        }
     }
 }
 

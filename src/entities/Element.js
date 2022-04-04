@@ -672,7 +672,7 @@ export default class Element extends Entity {
             this.checkCollisions();
         }
 
-        if (this.hasAnimationHandler()) {
+        if (this.hasAnimationHandler() && this.animationHandler.isPlayingAnimation) {
             this.animationHandler.update(dt);
         }
     }

@@ -56,15 +56,24 @@ export class PostProcessing {
 
         this.effects = [];
         this.customs = [];
+        this.enabled = false;
     }
 
-    isEnabled = () => !!this.effects.length || !!this.customs.length;
+    isEnabled = () => (
+        this.enabled &&
+        (!!this.effects.length || !!this.customs.length)
+    );
 
     init = () => {
-        window.addEventListener('resize', this.onWindowResize, false);
+        const { enabled = false } = Config.postprocessing();
+        this.enabled = enabled;
 
-        this.composer = new EffectComposer(Scene.getRenderer());
-        this.composer.addPass(new RenderPass(Scene.getScene(), Scene.getCameraBody()));
+        if (enabled) {
+            window.addEventListener('resize', this.onWindowResize, false);
+    
+            this.composer = new EffectComposer(Scene.getRenderer());
+            this.composer.addPass(new RenderPass(Scene.getScene(), Scene.getCameraBody()));
+        }
     }
 
     dispose = () => {
@@ -135,9 +144,12 @@ export class PostProcessing {
         }
     };
 
-    render = (dt) => {
+    render(dt) {
+        const scene = Scene.getScene();
+        const camera = Scene.getCameraBody();
+
         this.composer.render(dt);
-        this.customs.forEach(e => e.render(Scene.getScene(), Scene.getCameraBody(), dt));
+        this.customs.forEach(e => e.render(scene, camera, dt));
     }
 }
 

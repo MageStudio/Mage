@@ -1,6 +1,6 @@
 import { SHADOW_TYPES } from '../lights/constants';
 import { createElementFromSelector } from '../lib/dom';
-import { getWindow } from './window';
+import { getWindow } from './window';
 
 const DEFAULT_HEIGHT = 600;
 const DEFAULT_WIDTH = 800;
@@ -9,9 +9,6 @@ const DEFAULT_RATIO = DEFAULT_WIDTH / DEFAULT_HEIGHT;
 class Config {
 
     constructor() {
-
-        const win = getWindow();
-
         this.default = {
 
             tests: [],
@@ -19,6 +16,10 @@ class Config {
             screen: {
                 frameRate : 60,
                 alpha: true
+            },
+
+            postprocessing: {
+                enabled: false
             },
 
             fog: {
@@ -119,7 +120,7 @@ class Config {
         return { h: height, w: width, ratio };
     }
 
-    getDefaults() {
+    getScreenDefaults() {
         return {
             h: DEFAULT_HEIGHT,
             w: DEFAULT_WIDTH,
@@ -130,7 +131,7 @@ class Config {
     screen() {
         const { h, w, ratio } = this.getContainerSize() ||
             this.getWindowSize() ||
-            this.getDefaults();
+            this.getScreenDefaults();
 
         this.config.screen = {
             ...this.config.screen,
@@ -141,6 +142,10 @@ class Config {
         };
 
         return this.config.screen;
+    }
+
+    postprocessing() {
+        return this.config.postprocessing;
     }
 
     ui() {

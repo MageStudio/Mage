@@ -227,7 +227,11 @@ export class Scene {
         const { alpha = true, antialias = true, w, h } = Config.screen();
         let container = Config.container();
 
-        this.renderer = new WebGLRenderer({ alpha, antialias });
+        this.renderer = new WebGLRenderer({
+            alpha,
+            antialias,
+            powerPreference: 'high-performance'
+        });
 
         if (shadows) {
             this.setShadowType(shadowType);
@@ -269,7 +273,7 @@ export class Scene {
         this.renderer.setSize(width, height);
     }
 
-    render = () => {
+    render() {
         this.renderer.setClearColor(this.clearColor, this.alpha);
         this.renderer.clear();
         this.renderer.setRenderTarget(null);
