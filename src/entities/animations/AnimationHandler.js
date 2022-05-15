@@ -8,7 +8,7 @@ export default class AnimationHandler extends EventDispatcher {
         super();
         this.mixer = new AnimationMixer(mesh);
         this.animations = animations;
-        this.isPlayingAnimation = false;
+        this.isPlaying = false;
         this.addEventsListeners();
     }
 
@@ -43,7 +43,7 @@ export default class AnimationHandler extends EventDispatcher {
 
     stopAll() {
         this.mixer.stopAllAction();
-        this.isPlayingAnimation = false;
+        this.isPlaying = false;
     }
 
     stopCurrentAnimation() {
@@ -51,13 +51,13 @@ export default class AnimationHandler extends EventDispatcher {
             this.currentAction.stop();
         }
 
-        this.isPlayingAnimation = false;
+        this.isPlaying = false;
     }
 
     playAnimation(id, options) {
         const action = this.getAction(id);
         const { loop = LoopRepeat } = options;
-        this.isPlayingAnimation = true;
+        this.isPlaying = true;
 
         if (this.currentAction) {
             this.fadeToAnimation(action, options);

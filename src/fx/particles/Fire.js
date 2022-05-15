@@ -1,7 +1,7 @@
 import Proton from 'three.proton.js';
 import { Vector3 } from 'three';
 import ProtonParticleEmitter from "./ProtonParticleEmitter";
-
+import PALETTES from '../../lib/palettes';
 const getFireRate = () => new Proton.Rate(new Proton.Span(10, 15), new Proton.Span(.05, .1));
 
 const getFireInitializers = (direction, strength, size) => ([
@@ -12,10 +12,10 @@ const getFireInitializers = (direction, strength, size) => ([
     new Proton.V(new Proton.Span(strength, strength * 2), new Proton.Vector3D(direction.x, direction.y, direction.z), 5), //new Proton.Span(200, 500)
 ]);
 
-const getFireBehaviours = (direction, strength) => ([
+const getFireBehaviours = (direction, strength, colors = [PALETTES.FRENCH.MANDARIN_RED, PALETTES.FRENCH.MELON_MELODY]) => ([
     new Proton.Scale(new Proton.Span(2, 2.5), 0),
     new Proton.G(strength / 100),
-    new Proton.Color('#FF0026', ['#ffff00', '#ffff11'], Infinity, Proton.easeOutSine),
+    new Proton.Color(colors[0], colors[1], Infinity, Proton.easeOutSine),
     new Proton.RandomDrift(direction.x / 100, direction.y / 100, direction.z / 100, 2.5)
 ]);
 
@@ -26,14 +26,17 @@ export default class Fire extends ProtonParticleEmitter {
             texture,
             direction = new Vector3(0, 1, 0),
             size = 20,
-            strength = 100
+            strength = 100,
+            colors,
+            ...rest
         } = options;
 
         const fireOptions = {
             rate: getFireRate(),
             texture,
             initializers: getFireInitializers(direction, strength, size),
-            behaviours: getFireBehaviours(direction, strength)
+            behaviours: getFireBehaviours(direction, strength, colors),
+            ...rest
         }
 
         super(fireOptions);

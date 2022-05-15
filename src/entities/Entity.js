@@ -10,7 +10,10 @@ import {
     ENTITY_TYPE_NOT_ALLOWED,
     USER_DATA_IS_MISSING,
     KEY_IS_MISSING,
-    KEY_VALUE_IS_MISSING
+    KEY_VALUE_IS_MISSING,
+    ENTITY_CANT_ADD_NOT_ENTITY,
+    ENTITY_CHILD_IS_NOT_ENTITY,
+    ENTITY_NOT_SET
 } from '../lib/messages';
 import Scripts from '../scripts/Scripts';
 
@@ -23,19 +26,31 @@ import {
 
 export default class Entity extends EventDispatcher {
 
-    constructor({ serializable = true, tag = '', tags = [] }) {
+    constructor({ serializable = true, tag = '', tags = [] } = {}) {
         super();
         this.scripts = [];
         this.tags = [];
         this.children = [];
         this.isMage = true;
+        this.parent = false;
 
         this.addTags([ DEFAULT_TAG, tag, ...tags ]);
         this.serializable = serializable;
     }
 
+    static create(options = {}) {
+        return new this(options);
+    }
+
+    isSerializable() {
+        return !!this.serializable;
+    }
+
     reset() {
         this.scripts = [];
+        this.children = [];
+        this.isMage = true;
+        this.parent = false;
         this.tags = [ DEFAULT_TAG ];
     }
 
@@ -45,6 +60,14 @@ export default class Entity extends EventDispatcher {
 
     getBody() {
         return this.body;
+    }
+
+    getBodyByName = (name) => {
+        if (name && this.hasBody()) {
+            return this.getBody().getObjectByName(name);
+        }
+
+        console.warn(ELEMENT_NAME_NOT_PROVIDED);
     }
 
     setBody(body) {
@@ -63,46 +86,66 @@ export default class Entity extends EventDispatcher {
         this.parent = parent;
     }
 
-    add(element) {
+    add(child, container = this.getBody()) {
         if (this.hasBody()) {
             const _add = (toAdd) => {
-                this.children.push(toAdd);
-                toAdd.setParent(this);
-                this.getBody()
-                    .add(toAdd.getBody());
+                if (toAdd instanceof Entity) {
+                    this.children.push(toAdd);
+                    toAdd.setParent(this);
+                    container.add(toAdd.getBody());
+                } else {
+                    console.log(ENTITY_CANT_ADD_NOT_ENTITY);
+                }
             };
 
-            if (Array.isArray(element)) {
-                element.forEach(_add);
+            if (Array.isArray(child)) {
+                child.forEach(_add);
             } else {
-                _add(element);
+                _add(child);
             }
+        } else {
+            console.log(ENTITY_NOT_SET)
         }
     }
 
-    isParentOf(element) {
-        let comparator = child => !!child.getBody().getObjectById(element.id);
-        if (element.isMage) {
-            comparator = child => child.getBody().getObjectById(element.id());
+    isParentOf(child) {
+        let comparator = child => !!child.getBody().getObjectById(child.id);
+        if (child.isMage) {
+            comparator = child => child.getBody().getObjectById(child.id());
         }
 
         return this.children.filter(comparator).length > 0;
     }
 
-    has(element) {
-        if (element.isMage) {
-            return this.equals(element) || this.isParentOf(element);
+    has(child) {
+        if (child.isMage) {
+            return this.equals(child) || this.isParentOf(child);
         } else {
-            return this.getBody().getObjectById(element.id);
+            return !!this.getBody().getObjectById(child.id);
         }
     }
 
     remove(element) {
         if (this.hasBody() && this.has(element)) {
-            this.body.remove(element.body);
-            const index = this.children.findIndex(m => m.equals(element));
+            if (element.isMage) {
+                this.body.remove(element.getBody())
+                const index = this.children.findIndex(m => m.equals(element));
 
-            this.children.splice(index, 1);
+                if (index) this.children.splice(index, 1);
+            } else {
+                this.body.remove(element.getBody());
+            }
+            
+        }
+    }
+
+    addTo(target, childName) {
+        if (target && target.isMage) {
+            if (childName) {
+                target.add(this, target.getBodyByName(childName));
+            } else {
+                target.add(this);
+            }
         }
     }
 
@@ -572,12 +615,14 @@ export default class Entity extends EventDispatcher {
     }
 
     toJSON() {
-        return {
-            position: this.getPosition(),
-            rotation: this.getRotation(),
-            scale: this.getScale(),
-            entityType: this.getEntityType(),
-            tags: this.getTags()
+        if (this.isSerializable()) {
+            return {
+                position: this.getPosition(),
+                rotation: this.getRotation(),
+                scale: this.getScale(),
+                entityType: this.getEntityType(),
+                tags: this.getTags()
+            }
         }
     }
 }

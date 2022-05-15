@@ -48,13 +48,10 @@ export class Level extends EventDispatcher {
     onStateChange = (state) => {};
     onCreate() {}
     onUpdate() {}
-    onFailedTest(message, test) {}
-    onSuccededTest(message) {}
+
     onBeforeDispose() {}
     onDispose() {}
-    
-    onInputEnabled() {}
-    onInputDisabled() {}
+
 
     parseScene = ({ elements = [], models = [], lights = [] }, options = {}) => {
         return new Promise((resolve, reject) => {
@@ -75,10 +72,10 @@ export class Level extends EventDispatcher {
         })
     };
 
-    getJSONUrl = () => `assets/scenes/${this.name}.json`;
+    getJSONUrl = () => null;
 
     loadScene = (url = this.getJSONUrl()) => {
-        if (getWindow()) {
+        if (getWindow() && url) {
             return fetch(url)
                 .then(res => res.json())
                 .then(this.parseScene)
@@ -93,9 +90,7 @@ export class Level extends EventDispatcher {
         this.requestAnimationFrameId = requestNextFrame(this.render);
     }
 
-    cancelNextAnimationFrame = () => {
-        cancelAnimationFrame(this.requestAnimationFrameId);
-    }
+    cancelNextAnimationFrame = () => cancelAnimationFrame(this.requestAnimationFrameId);
 
     render() {
         const dt = Scene.clock.getDelta();
@@ -118,10 +113,6 @@ export class Level extends EventDispatcher {
     }
 
     init = () => {
-        const {
-            path
-        } = this.options;
-
         Scene.create(this.getName());
         Scene.createCamera(new Camera());
 

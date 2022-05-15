@@ -105,29 +105,6 @@ export default class Element extends Entity {
         this.getBody().userData.tags = [ ...existingTags, tag ];
     }
 
-    getBodyByName = (name) => {
-        if (name) {
-            if (this.hasBody()) {
-                return this.body.getObjectByName(name);
-            } else {
-                let body;
-                this.body.traverse(element => {
-                    if (element.name === name) {
-                        body = element;
-                    };
-                });
-
-                if (body) {
-                    return body;
-                }
-
-                console.warn(ELEMENT_NOT_SET);
-            }
-        } else {
-            console.warn(ELEMENT_NAME_NOT_PROVIDED);
-        }
-    }
-
     setBody({ body, geometry, material }) {
         if (body) {
             this.body = body;
@@ -672,7 +649,7 @@ export default class Element extends Entity {
             this.checkCollisions();
         }
 
-        if (this.hasAnimationHandler() && this.animationHandler.isPlayingAnimation) {
+        if (this.hasAnimationHandler() && this.animationHandler.isPlaying) {
             this.animationHandler.update(dt);
         }
     }
@@ -692,7 +669,7 @@ export default class Element extends Entity {
     }
 
     toJSON() {
-        if (this.serializable) {
+        if (this.isSerializable()) {
             return {
                 ...super.toJSON(),
                 body: this.body.toJSON(),
