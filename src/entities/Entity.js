@@ -16,6 +16,7 @@ import {
     ENTITY_NOT_SET
 } from '../lib/messages';
 import Scripts from '../scripts/Scripts';
+import Scene from '../core/Scene';
 
 import {
     DEFAULT_TAG,
@@ -149,6 +150,10 @@ export default class Entity extends EventDispatcher {
         }
     }
 
+    hasChildren() {
+        return this.children.length > 0;
+    }
+
     getHierarchy() {
         return {
             element: this,
@@ -239,16 +244,34 @@ export default class Entity extends EventDispatcher {
         }
     }
 
+    disposeBody() {
+        this.getBody().clear();
+        if (this.getBody().dispose) {
+            this.getBody().dispose();
+        }
+    }
+
     dispose() {
+        if (this.hasChildren()) {
+            this.children.forEach(child => {
+                child.dispose();
+            });
+        }
+
         if (this.hasBody()) {
             this.stopStateMachine();
             this.stopScripts();
-            this.reset();
+
+            Scene.remove(this.getBody());
+            this.disposeBody();
         }
+
 
         this.dispatchEvent({
             type: ENTITY_EVENTS.DISPOSE
-        })
+        });
+
+        this.reset();
     }
 
     hasStateMachine = () => !!this.stateMachine;

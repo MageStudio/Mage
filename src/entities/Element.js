@@ -626,19 +626,21 @@ export default class Element extends Entity {
     }
 
     disposeBody() {
-        if (hasMaterial(this.body)) {
+        super.disposeBody();
+
+        if (hasMaterial(this.getBody())) {
             disposeTextures(this.getBody());
             disposeMaterial(this.getBody());
             disposeGeometry(this.getBody());
-        } else {
-            this.body.traverse(child => {
-                if (hasMaterial(child)) {
-                    disposeTextures(child);
-                    disposeMaterial(child);
-                    disposeGeometry(child);
-                }
-            });
         }
+
+        this.getBody().traverse(child => {
+            if (hasMaterial(child)) {
+                disposeTextures(child);
+                disposeMaterial(child);
+                disposeGeometry(child);
+            }
+        });
     }
 
     update(dt) {
@@ -657,10 +659,6 @@ export default class Element extends Entity {
     dispose() {
         super.dispose();
 
-        if (this.hasBody()) {
-            Scene.remove(this.getBody());
-            this.disposeBody();
-        }
         if (this.hasAnimationHandler()) {
             this.removeAnimationHandlerListeners();
         }

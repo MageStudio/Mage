@@ -122,7 +122,7 @@ export class Particles {
         }
 
         if (emitter.isSystemDead()) {
-            this.toDispose.push(emitter.uuid);
+            this.toDispose.push(emitter.uuid());
         }
     }
 
