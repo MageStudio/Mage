@@ -10,7 +10,7 @@ import {
 import Config from '../core/config';
 import Lights from '../lights/Lights';
 import ToonMaterial from '../materials/Toon';
-import { MATERIALS } from './constants';
+import { MATERIALS, TEXTURES } from './constants';
 
 export const setUpLightsAndShadows = (mesh) => {
     const {
@@ -96,7 +96,13 @@ const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
 export const disposeTextures = mesh => {
     if (hasMaterial(mesh)) {
         const _disposeTexture = (material) => {
-            material.map && material.map.dispose();
+            Object
+                .values(TEXTURES)
+                .forEach(key => {
+                    if (material[key]) {
+                        material[key].dispose();
+                    }
+                })
         }
         processMaterial(mesh.material, _disposeTexture);
     }
