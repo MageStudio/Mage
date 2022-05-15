@@ -1,8 +1,10 @@
 export const PREFIX = '[Mage]';
+export const DEPRECATED = '[DEPRECATED]';
 
 export const DEPRECATIONS = {
-    SCRIPTS_CREATE: `${PREFIX} [DEPRECATED] Scripts.create is deprecated, use Scripts.register instead. Will be removed in next major release.`,
-    ELEMENT_SET_TEXTURE_MAP: `${PREFIX} [DEPRECATED] Element.setTextureMap is deprecated, use Element.setTexture() instead. Will be removed in next major release.`,
+    MODELS_GETMODEL: `${PREFIX} ${DEPRECATED} Models.getModel is deprecated, use Models.get instead. WIll be removed in next major release`,
+    SCRIPTS_CREATE: `${PREFIX} ${DEPRECATED} Scripts.create is deprecated, use Scripts.register instead. Will be removed in next major release.`,
+    ELEMENT_SET_TEXTURE_MAP: `${PREFIX} ${DEPRECATED} Element.setTextureMap is deprecated, use Element.setTexture() instead. Will be removed in next major release.`,
 };
 
 export const MALFORMED_ONCREATE_FUNCTION = `${PREFIX} Something wrong in your onCreate method.`;
@@ -35,7 +37,10 @@ export const ELEMENT_NO_MATERIAL_CANT_SET_TEXTURE = `${PREFIX} This element does
 export const ELEMENT_SET_COLOR_MISSING_COLOR = `${PREFIX} Can't set color for this element, missing color`;
 export const ELEMENT_MATERIAL_NO_SUPPORT_FOR_TEXTURE = `${PREFIX} This element's material does not support texture: `;
 
+export const ENTITY_NOT_SET = `${PREFIX} This entity does not have a body.`;
 export const ENTITY_TYPE_NOT_ALLOWED = `${PREFIX} The desired Entity type is not allowed.`;
+export const ENTITY_CANT_ADD_NOT_ENTITY = `${PREFIX} Entity.add requires an Entity.`;
+export const ENTITY_CHILD_IS_NOT_ENTITY = `${PREFIX} The required child is not an instance of Entity.`;
 
 export const ERROR_LOADING_TEXTURE = `${PREFIX} Error while loading texture:`;
 export const CUBE_TEXTURES_NOT_LIST = `${PREFIX} CubeTextures have to be defined as array of images`;

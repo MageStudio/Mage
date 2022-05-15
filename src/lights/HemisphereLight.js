@@ -16,7 +16,7 @@ const GREEN = 0x2ecc71;
 
 export default class HemisphereLight extends Light {
 
-    constructor(options) {
+    constructor(options = {}) {
         const {
             color = {
                 sky: DEFAULT_SKY_COLOR,

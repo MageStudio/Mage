@@ -18,7 +18,8 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
             behaviours = [],
             texture = false,
             color = DEFAULT_PARTICLE_COLOR,
-            rate
+            rate,
+            ...rest
         } = options;
 
         const parsedOptions = {
@@ -26,7 +27,8 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
             behaviours,
             texture,
             color,
-            rate
+            rate,
+            ...rest
         };
 
         super(parsedOptions);

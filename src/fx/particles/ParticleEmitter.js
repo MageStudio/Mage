@@ -20,8 +20,8 @@ export default class ParticleEmitter extends Entity {
         };
 
         this.setSystem();
-        this.setBody({ body: new Object3D() });
         this.setName(name);
+        this.setBody({ body: new Object3D() });
         this.setEntityType(ENTITY_TYPES.EFFECT.PARTICLE);
     }
 

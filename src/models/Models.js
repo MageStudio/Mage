@@ -10,10 +10,10 @@ import GLTFLoader from '../loaders/GLTFLoader';
 import { FBXLoader } from '../loaders/FBXLoader';
 import SkeletonUtils from './SkeletonUtils';
 
-import { prepareModel } from '../lib/meshUtils';
+import { prepareModel, processMaterial } from '../lib/meshUtils';
 import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
-import { ASSETS_MODEL_LOAD_FAIL } from '../lib/messages';
+import { ASSETS_MODEL_LOAD_FAIL, DEPRECATIONS } from '../lib/messages';
 import OBJMTLLoader from '../loaders/OBJMTLLoader';
 
 const EXTENSIONS = {
@@ -81,7 +81,7 @@ const colladaParser = ({ animations, scene, rawSceneData, buildVisualScene }) =>
 const fbxParser = scene => {
     scene.traverse(node => {
         if (node.isSkinnedMesh) {
-            node.material.skinning = true;
+            processMaterial(node.material, material => material.skinning = true);
         }
     });
     
@@ -111,6 +111,11 @@ class Models {
     }
 
     getModel = (name, options = {}) => {
+        console.warn(DEPRECATIONS.MODELS_GETMODEL);
+        return this.get(name, options);
+    }
+
+    get = (name, options = {}) => {
         const {
             scene,
             animations,
