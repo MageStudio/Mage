@@ -96,7 +96,7 @@ const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
 export const disposeTextures = mesh => {
     if (hasMaterial(mesh)) {
         const _disposeTexture = (material) => {
-            material.map && material.dispose();
+            material.map && material.map.dispose();
         }
         processMaterial(mesh.material, _disposeTexture);
     }
