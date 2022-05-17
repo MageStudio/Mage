@@ -12,11 +12,14 @@ import {
     KEY_IS_MISSING,
     KEY_VALUE_IS_MISSING,
     ENTITY_CANT_ADD_NOT_ENTITY,
-    ENTITY_CHILD_IS_NOT_ENTITY,
     ENTITY_NOT_SET
 } from '../lib/messages';
 import Scripts from '../scripts/Scripts';
 import Scene from '../core/Scene';
+
+import {
+    isScene
+} from '../lib/meshUtils';
 
 import {
     DEFAULT_TAG,
@@ -246,7 +249,7 @@ export default class Entity extends EventDispatcher {
 
     disposeBody() {
         this.getBody().clear();
-        if (this.getBody().dispose) {
+        if (this.getBody().dispose && !isScene(this.getBody())) {
             this.getBody().dispose();
         }
     }

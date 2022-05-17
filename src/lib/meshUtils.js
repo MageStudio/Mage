@@ -96,8 +96,7 @@ const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
 export const disposeTextures = mesh => {
     if (hasMaterial(mesh)) {
         const _disposeTexture = (material) => {
-            Object
-                .values(TEXTURES)
+            Object.values(TEXTURES)
                 .forEach(key => {
                     if (material[key]) {
                         material[key].dispose();

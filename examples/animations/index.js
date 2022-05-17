@@ -58,7 +58,7 @@ export default class Intro extends Level {
         
         // const animated = Models.getModel('animated');
         const skeleton = Models.get('skeleton');
-        const duck = Models.get('duck');
+        // const duck = Models.get('duck');
         const eyeballs = [
             Particles.addParticleEmitter(PARTICLES.FIRE, {
                 texture: 'fire',
@@ -88,10 +88,15 @@ export default class Intro extends Level {
         leftEyeball.emit(Infinity);
         leftEyeball.setPosition({x: 0.2, y: 0.35, z: 0.3});
 
-        skeleton.playAnimation(skeleton.getAvailableAnimations()[5])
+        skeleton.playAnimation('Root|Interact');
+        console.log(skeleton.getAvailableAnimations());
 
         skeleton.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: .5, metalness: 0 });
-        duck.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: .5, metalness: 0 });
+        // duck.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: .5, metalness: 0 });
+
+        // setTimeout(() => {
+        //     skeleton.dispose();
+        // }, 2000);
     }
 }
 
