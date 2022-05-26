@@ -58,9 +58,9 @@ export class Universe {
     }
 
     forEach = (callback) => {
-        const keys = Object.keys(this.reality);
-
-        keys.forEach(k => callback(this.reality[k]));
+        Object
+            .keys(this.reality)
+            .forEach(k => callback(this.reality[k], k));
     };
 
     forEachAsync = (callback) => {
@@ -68,7 +68,7 @@ export class Universe {
 
         return new Promise(resolve => {
             Promise
-                .all(keys.map(k => callback(this.reality[k])))
+                .all(keys.map(k => callback(this.reality[k], k)))
                 .then(resolve);
         });
     };
@@ -86,7 +86,9 @@ export class Universe {
     }
 
     bigfreeze = () => {
-        this.forEach(o => o.dispose());
+        this.forEach((o) => {
+            o && o.dispose && o.dispose()
+        });
         this.reset();
     }
 

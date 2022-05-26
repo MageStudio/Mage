@@ -671,7 +671,6 @@ export default class Element extends Entity {
             return {
                 ...super.toJSON(),
                 body: this.body.toJSON(),
-                scripts: this.mapScriptsToJSON(),
                 textures: this.textures,
                 ...this.options
             }

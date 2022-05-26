@@ -103,8 +103,6 @@ export default class Intro extends Level {
 const assets = {
     '/': {
         models: {
-            'animated': 'assets/animated.fbx',
-            'duck': 'assets/duck_animation.fbx',
             'skeleton': 'assets/skeleton_animation.fbx',
         },
         textures: {

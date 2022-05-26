@@ -209,8 +209,19 @@ export default class Entity extends EventDispatcher {
         if (this.hasScripts()) {
             this.scripts.forEach(({ script, enabled }) => {
                 if (enabled) {
+                    script.onStop();
+                    script.__setStartedFlag(false);
+                }
+            });
+        }
+    }
+
+    disposeScripts() {
+        if (this.hasScripts()) {
+            this.scripts.forEach(({ script, enabled }) => {
+                if (enabled) {
                     script.onDispose();
-                    script.__hasStarted(false);
+                    script.__setStartedFlag(false);
                 }
             });
         }
@@ -221,7 +232,7 @@ export default class Entity extends EventDispatcher {
             this.scripts.forEach(({ script, enabled, options }) => {
                 if (enabled) {
                     script.start(this, options);
-                    script.__hasStarted(true);
+                    script.__setStartedFlag(true);
                 }
             });
         }
@@ -263,7 +274,7 @@ export default class Entity extends EventDispatcher {
 
         if (this.hasBody()) {
             this.stopStateMachine();
-            this.stopScripts();
+            this.disposeScripts();
 
             Scene.remove(this.getBody());
             this.disposeBody();
@@ -647,6 +658,7 @@ export default class Entity extends EventDispatcher {
                 rotation: this.getRotation(),
                 scale: this.getScale(),
                 entityType: this.getEntityType(),
+                scripts: this.mapScriptsToJSON(),
                 tags: this.getTags()
             }
         }

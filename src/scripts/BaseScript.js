@@ -2,7 +2,10 @@ export default class BaseScript {
 
     __check() { return true; }
 
-    __hasStarted(flag) { this.hasStarted = flag; }
+    __hasStarted() { return this.hasStarted; }
+    __isDisposed() { return this.isDisposed; }
+    __setStartedFlag(flag) { this.hasStarted = flag; }
+    __setDisposedFlag(flag) { this.isDisposed = flag; }
 
     constructor(name) {
         this.__name = name || this.contructor.name;
