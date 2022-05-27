@@ -12,10 +12,14 @@ import {
     KEY_IS_MISSING,
     KEY_VALUE_IS_MISSING,
     ENTITY_CANT_ADD_NOT_ENTITY,
-    ENTITY_CHILD_IS_NOT_ENTITY,
     ENTITY_NOT_SET
 } from '../lib/messages';
 import Scripts from '../scripts/Scripts';
+import Scene from '../core/Scene';
+
+import {
+    isScene
+} from '../lib/meshUtils';
 
 import {
     DEFAULT_TAG,
@@ -33,6 +37,7 @@ export default class Entity extends EventDispatcher {
         this.children = [];
         this.isMage = true;
         this.parent = false;
+        this.disposed = false;
 
         this.addTags([ DEFAULT_TAG, tag, ...tags ]);
         this.serializable = serializable;
@@ -44,6 +49,10 @@ export default class Entity extends EventDispatcher {
 
     isSerializable() {
         return !!this.serializable;
+    }
+
+    isDisposed() {
+        return this.disposed;
     }
 
     reset() {
@@ -149,6 +158,10 @@ export default class Entity extends EventDispatcher {
         }
     }
 
+    hasChildren() {
+        return this.children.length > 0;
+    }
+
     getHierarchy() {
         return {
             element: this,
@@ -197,14 +210,18 @@ export default class Entity extends EventDispatcher {
         return this.tags;
     }
 
-    stopScripts() {
+    disposeScripts() {
         if (this.hasScripts()) {
-            this.scripts.forEach(({ script, enabled }) => {
+            const length = this.scripts.length;
+            for (let i = 0; i < length; i++) {
+                const { script, enabled } = this.scripts[i];
                 if (enabled) {
                     script.onDispose();
-                    script.__hasStarted(false);
+                    script.__setStartedFlag(false);
                 }
-            });
+
+                delete this.scripts[i];
+            }
         }
     }
 
@@ -213,7 +230,7 @@ export default class Entity extends EventDispatcher {
             this.scripts.forEach(({ script, enabled, options }) => {
                 if (enabled) {
                     script.start(this, options);
-                    script.__hasStarted(true);
+                    script.__setStartedFlag(true);
                 }
             });
         }
@@ -239,16 +256,34 @@ export default class Entity extends EventDispatcher {
         }
     }
 
+    disposeBody() {
+        this.getBody().clear();
+        if (this.getBody().dispose && !isScene(this.getBody())) {
+            this.getBody().dispose();
+        }
+    }
+
     dispose() {
+        if (this.hasChildren()) {
+            this.children.forEach(child => {
+                child.dispose();
+            });
+        }
+
         if (this.hasBody()) {
             this.stopStateMachine();
-            this.stopScripts();
-            this.reset();
+            this.disposeScripts();
+
+            Scene.remove(this.getBody());
+            this.disposeBody();
         }
+
 
         this.dispatchEvent({
             type: ENTITY_EVENTS.DISPOSE
-        })
+        });
+
+        this.reset();
     }
 
     hasStateMachine = () => !!this.stateMachine;
@@ -527,7 +562,7 @@ export default class Entity extends EventDispatcher {
         return new Promise((resolve) =>
             new Between({ x, y, z}, rotation)
                 .time(time)
-                .on('update', value => this.setRotation(value))
+                .on('update', value => !this.isDisposed() && this.setRotation(value))
                 .on('complete', resolve)
         );
     }
@@ -538,7 +573,7 @@ export default class Entity extends EventDispatcher {
         return new Promise((resolve) => 
             new Between({ x, y, z}, position)
                 .time(time)
-                .on('update', value => this.setPosition(value))
+                .on('update', value => !this.isDisposed() && this.setPosition(value))
                 .on('complete', resolve)
         );
     }
@@ -621,6 +656,7 @@ export default class Entity extends EventDispatcher {
                 rotation: this.getRotation(),
                 scale: this.getScale(),
                 entityType: this.getEntityType(),
+                scripts: this.mapScriptsToJSON(),
                 tags: this.getTags()
             }
         }

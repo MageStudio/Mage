@@ -104,10 +104,14 @@ export default class ParticleEmitter extends Entity {
         }
     }
 
+    dispose() {
+        super.dispose();
+    }
+
     update(dt) {
         super.update(dt);
 
-        if (this.hasSystem()) {
+        if (this.hasSystem() && !this.isSystemDead()) {
             this.system.update(dt);
         }
 

@@ -9,6 +9,7 @@ import Images from '../../images/Images';
 import PALETTES from '../../lib/palettes';
 
 const DEFAULT_PARTICLE_COLOR = PALETTES.BASE.BLACK;
+const SYSTEM_DISPOSE_TIMEOUT = 700;
 
 export default class ProtonParticleEmitter extends ParticleEmitter {
 
@@ -95,10 +96,16 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
         this.system.p.z = position.z;
     }
 
+    disposeSystem = () => {
+        if (this.hasSystem()) {
+            this.system.removeAllParticles();
+            this.system.destroy();
+        }
+    }
+
     dispose() {
         super.dispose();
-
-        this.system.stopEmit();
-        this.system.destroy();
+        this.stop();
+        setTimeout(this.disposeSystem, SYSTEM_DISPOSE_TIMEOUT);
     }
 }

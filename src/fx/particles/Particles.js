@@ -7,7 +7,7 @@ import Trail from './Trail';
 
 import Scene from '../../core/Scene';
 import Proton from 'three.proton.js';
-import { INVALID_EMITTER_ID } from '../../lib/messages';
+import { DEPRECATIONS, INVALID_EMITTER_ID } from '../../lib/messages';
 import { PARTICLE_EMITTER_TYPES } from './constants';
 import ParticleEmitter from './ParticleEmitter';
 import ParticleEmitterGroup from './ParticleEmitterGroup';
@@ -62,8 +62,12 @@ export class Particles {
             emitter instanceof ProtonParticleEmitter;
     }
 
-    addParticleEmitter(_emitter, options = {}) {
+    addParticleEmitter(emitter, options = {}) {
+        console.warn(DEPRECATIONS.PARTICLES_ADD_PARTICLE_EMITTER);
+        return this.add(emitter, options);
+    }
 
+    add(_emitter, options = {}) {
         let emitter;
         if (this.isRegisteredEmitter(_emitter)) {
             const Emitter = this.get(_emitter);
@@ -122,7 +126,7 @@ export class Particles {
         }
 
         if (emitter.isSystemDead()) {
-            this.toDispose.push(emitter.uuid);
+            this.toDispose.push(emitter.uuid());
         }
     }
 

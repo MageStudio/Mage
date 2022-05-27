@@ -337,17 +337,6 @@ export class Physics extends EventDispatcher {
         }
     }
 
-    disposeElement = element => {
-        if (Config.physics().enabled) {
-            const uuid = element.uuid();
-
-            this.worker.postMessage({
-                event: PHYSICS_EVENTS.ELEMENT.DISPOSE,
-                uuid
-            });
-        }
-    };
-    
     explosion = (element, strength, radius) => {
         if (Config.physics().enabled) {
             const uuid = element.uuid();

@@ -47,6 +47,7 @@ export default class Intro extends Level {
         fire.setPosition({ y: 1 });
 
         window.cube = cube;
+        window.fire = fire;
     }
 
     onKeyDown({ event }) {

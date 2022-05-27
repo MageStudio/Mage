@@ -10,7 +10,7 @@ export default class Trails extends BaseScript {
 
     start(element, { texture = false, size }) {
         this.element = element;
-        this.emitter = Particles.addParticleEmitter(PARTICLES.TRAIL, { texture, size });
+        this.emitter = Particles.add(PARTICLES.TRAIL, { texture, size });
 
         this.emitter.start(Infinity);
     }
