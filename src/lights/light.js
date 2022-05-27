@@ -116,7 +116,7 @@ export default class Light extends Entity {
         return new Promise((resolve) => 
             new Between(intensity, value)
                 .time(time)
-                .on('update', value => this.setIntensity(value))
+                .on('update', value => !this.isDisposed() && this.setIntensity(value))
                 .on('complete', resolve)
         );
     }

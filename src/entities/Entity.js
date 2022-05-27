@@ -37,6 +37,7 @@ export default class Entity extends EventDispatcher {
         this.children = [];
         this.isMage = true;
         this.parent = false;
+        this.disposed = false;
 
         this.addTags([ DEFAULT_TAG, tag, ...tags ]);
         this.serializable = serializable;
@@ -48,6 +49,10 @@ export default class Entity extends EventDispatcher {
 
     isSerializable() {
         return !!this.serializable;
+    }
+
+    isDisposed() {
+        return this.disposed;
     }
 
     reset() {
@@ -205,25 +210,18 @@ export default class Entity extends EventDispatcher {
         return this.tags;
     }
 
-    stopScripts() {
-        if (this.hasScripts()) {
-            this.scripts.forEach(({ script, enabled }) => {
-                if (enabled) {
-                    script.onStop();
-                    script.__setStartedFlag(false);
-                }
-            });
-        }
-    }
-
     disposeScripts() {
         if (this.hasScripts()) {
-            this.scripts.forEach(({ script, enabled }) => {
+            const length = this.scripts.length;
+            for (let i = 0; i < length; i++) {
+                const { script, enabled } = this.scripts[i];
                 if (enabled) {
                     script.onDispose();
                     script.__setStartedFlag(false);
                 }
-            });
+
+                delete this.scripts[i];
+            }
         }
     }
 
@@ -564,7 +562,7 @@ export default class Entity extends EventDispatcher {
         return new Promise((resolve) =>
             new Between({ x, y, z}, rotation)
                 .time(time)
-                .on('update', value => this.setRotation(value))
+                .on('update', value => !this.isDisposed() && this.setRotation(value))
                 .on('complete', resolve)
         );
     }
@@ -575,7 +573,7 @@ export default class Entity extends EventDispatcher {
         return new Promise((resolve) => 
             new Between({ x, y, z}, position)
                 .time(time)
-                .on('update', value => this.setPosition(value))
+                .on('update', value => !this.isDisposed() && this.setPosition(value))
                 .on('complete', resolve)
         );
     }

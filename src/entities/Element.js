@@ -574,7 +574,7 @@ export default class Element extends Entity {
         return new Promise((resolve) => 
             new Between(this.opacity, opacity)
                 .time(time)
-                .on('update', value => this.setOpacity(value))
+                .on('update', value => !this.isDisposed() && this.setOpacity(value))
                 .on('complete', resolve)
         );
     }
