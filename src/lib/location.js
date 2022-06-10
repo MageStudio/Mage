@@ -1,18 +1,6 @@
-import { HASH, EMPTY } from "./constants";
+import { HASH } from "./constants";
 
 export const hasLocation = () => window && window.location;
-
-export const getLocationSearch = () => (
-    hasLocation() ?
-        location.search :
-        EMPTY
-)
-
-export const setLocationSearch = search => {
-    if (hasLocation()) {
-        location.search = search;
-    }
-};
 
 export const getLocationHash = () => (
     hasLocation() ?
@@ -20,8 +8,8 @@ export const getLocationHash = () => (
         HASH
 );
 
-export const setLocationHash = hash => {
+export const setLocationHash = (hash = '', options = '') => {
     if (hasLocation()) {
-        location.hash = hash;
+        location.hash =`${hash}${options}`;
     }
 }

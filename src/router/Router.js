@@ -11,14 +11,14 @@ import {
     HASH,
     BEFORE_UNLOAD,
     HASH_CHANGE,
-    DEFAULT_SELECTOR
+    DEFAULT_SELECTOR,
+    QUERY_START
 } from '../lib/constants';
 
 import * as UI from '../ui';
 import {
     setLocationHash,
     getLocationHash,
-    getLocationSearch,
     setLocationSearch
 } from '../lib/location';
 
@@ -29,12 +29,15 @@ class Router {
         this.currentLevel = ROOT;
     }
 
-    static extractLocationHash() {
-        return Router.cleanRoute(getLocationHash());
-    }
+    static extractHashAndQuery() {
+        const [hash, query] = Router
+            .cleanRoute(getLocationHash())
+            .split(QUERY_START);
 
-    static extractQuery() {
-        return parseQuery(getLocationSearch());
+        return {
+            hash,
+            query: parseQuery(query)
+        }
     }
 
     static areRoutesIdentical = (routeA, routeB) => (
@@ -45,7 +48,7 @@ class Router {
         if (!route.length) {
             return ROOT;
         }
-        
+
         return route.split(HASH)[1];
     }
 
@@ -70,12 +73,9 @@ class Router {
         }
     }
 
-    goTo(path, options, origin = this.getCurrentLevel()) {
+    goTo(path, options = {}, origin = this.getCurrentLevel()) {
         if (!Router.areRoutesIdentical(origin, path)) {
-            if (options) {
-                setLocationSearch(toQueryString(options));
-            }
-            setLocationHash(path);
+            setLocationHash(path, toQueryString(options));
         }
     }
 
@@ -100,8 +100,7 @@ class Router {
     }
 
     startLevel = () => {
-        const hash = Router.extractLocationHash();
-        const query = Router.extractQuery();
+        const { hash, query } = Router.extractHashAndQuery();
 
         UI.dispatchLocationPathChange(hash);
 
@@ -135,7 +134,7 @@ class Router {
             selector = DEFAULT_SELECTOR
         } = config;
 
-        const hash = Router.extractLocationHash();
+        const { hash } = Router.extractHashAndQuery();
         if (!this.isValidRoute(hash)) {
             setLocationHash(ROOT);
         }

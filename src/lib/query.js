@@ -15,7 +15,7 @@ export const toQueryString = (query = {}) => {
     return q.endsWith(AMPERSAND) ? q.substr(0, q.length -1) : q;
 };
 
-export const parseQuery = queryString => {
+export const parseQuery = (queryString = '') => {
     return queryString.length > 1 ?
         queryString
             .replace(QUERY_PREFIX, EMPTY)

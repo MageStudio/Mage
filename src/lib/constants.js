@@ -103,6 +103,7 @@ export const ROOT = '/';
 export const DIVIDER = '/';
 export const HASH = '#';
 export const EMPTY = '';
+export const QUERY_START = '?';
 
 export const DEFAULT_SELECTOR = '#gameContainer';
 
