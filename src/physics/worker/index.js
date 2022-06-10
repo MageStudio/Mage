@@ -36,7 +36,7 @@ const handleLoadEvent = options => Ammo => {
                 break;
             case PHYSICS_EVENTS.ELEMENT.RESET:
                 resetElement(data);
-                breakj;
+                break;
             case PHYSICS_EVENTS.ELEMENT.SET.POSITION:
                 setPosition(data);
                 break;
