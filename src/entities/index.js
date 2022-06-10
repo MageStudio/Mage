@@ -1,5 +1,5 @@
 import { ENTITY_TYPES, ENTITY_EVENTS } from './constants';
-import { Box, Cube, Cylinder, Grid, Line, CurveLine, Plane, Sphere, Sprite } from './base';
+import { Box, Cube, Cylinder, Grid, Line, CurveLine, Plane, Sphere, Sprite, Axes } from './base';
 
 export {
     ENTITY_TYPES,
@@ -12,5 +12,6 @@ export {
     CurveLine,
     Plane,
     Sprite,
-    Sphere
+    Sphere,
+    Axes
 };

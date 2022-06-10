@@ -28,10 +28,10 @@ export const author = {
 
 export class Level extends EventDispatcher {
 
-    constructor(options) {
+    constructor(props) {
         super();
 
-        this.options = options;
+        this.props = props;
         this.name = this.constructor.name;
         this.debug = true;
         this.inputListenersAreSet = false;

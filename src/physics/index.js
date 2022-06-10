@@ -29,22 +29,53 @@ const {
 } = physicsUtils;
 
 const WORKER_READY_TIMEOUT = 200;
+const PHYSICS_STATE_TIMEOUT = 50;
+export const PHYSICS_STATES = {
+    READY: 'READY',
+    TERMINATING: 'TERMINATING',
+    TERMINATED: 'TERMINATED'
+};
 
 export class Physics extends EventDispatcher {
 
     constructor() {
         super();
         this.elements = [];
+        this.isWorkerReady = false;
+        this.state = PHYSICS_STATES.READY;
     };
 
     createWorker() {
         this.worker = new PhysicsWorker();
         this.workerReady = false;
+        this.state = PHYSICS_STATES.READY;
         this.worker.onmessage = this.handleWorkerMessages;
+    }
+
+    isTerminating() { return this.state === PHYSICS_STATES.TERMINATING; }
+    isTerminated() { return this.state === PHYSICS_STATES.TERMINATED; }
+    isReady() { return this.state === PHYSICS_STATES.READY; }
+
+    waitForState(state) {
+        return new Promise(resolve => {
+            const isStateReached = () => this.state === state;
+            const check = () => {
+                setTimeout(() => {
+                    if (isStateReached()) {
+                        resolve();
+                    } else {
+                        check();
+                    }
+                }, PHYSICS_STATE_TIMEOUT)
+            };
+
+            check();
+        });
     }
 
     dispose() {
         if (Config.physics().enabled) {
+            this.state = PHYSICS_STATES.TERMINATING;
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.TERMINATE
             });
@@ -137,6 +168,7 @@ export class Physics extends EventDispatcher {
 
     handleTerminateEvent = () => {
         this.worker.terminate();
+        this.state = PHYSICS_STATES.READY;
     };
 
     handleBodyUpdate = ({ uuid, ...data }) => {
@@ -256,6 +288,10 @@ export class Physics extends EventDispatcher {
     }
 
     setPosition = (element, position) => {
+        this.setElementPosition(element, position);
+    }
+
+    setElementPosition = (element, position) => {
         if (Config.physics().enabled) {
             const uuid = element.uuid();
 
@@ -263,6 +299,23 @@ export class Physics extends EventDispatcher {
                 event: PHYSICS_EVENTS.ELEMENT.SET.POSITION,
                 uuid,
                 position
+            });
+        }
+    };
+
+    setElementQuaternion = (element, quaternion) => {
+
+    };
+
+    resetElement = (element, position, quaternion) => {
+        if (Config.physics().enabled) {
+            const uuid = element.uuid();
+
+            this.worker.postMessage({
+                event: PHYSICS_EVENTS.ELEMENT.RESET,
+                uuid,
+                position,
+                quaternion
             });
         }
     }

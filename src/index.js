@@ -12,6 +12,7 @@ import {
     Sphere,
     Cylinder,
     Grid,
+    Axes,
     Sprite
 } from './entities';
 
@@ -171,6 +172,7 @@ export {
     Sphere,
     Grid,
     Sprite,
+    Axes,
     //AnimatedMesh,
     //ShaderMesh,
     Camera,

@@ -2,6 +2,7 @@ import Level from '../core/Level';
 import * as Store from '../store/Store';
 import storage from '../storage/storage';
 import { PATH_NOT_FOUND } from '../lib/messages';
+import Physics, { PHYSICS_STATES } from '../physics';
 
 export class GameRunner {
 
@@ -53,19 +54,20 @@ export class GameRunner {
         }
     }
 
-    createNewScene = (path, options) => {
+    createNewLevel = (path, options) => {
         const classname = this.get(path);
-        const scene = new classname({
+        const levelConfig = {
             ...options,
             path
-        });
+        };
+        const level = new classname(levelConfig);
 
-        Store.subscribe(scene);
+        Store.subscribe(level);
 
-        return scene;
+        return level;
     }
 
-    disposeCurrentScene = () => {
+    disposeCurrentLevel = () => {
         Store.unsubscribeAll();
         this.running.dispose();
     }
@@ -79,11 +81,11 @@ export class GameRunner {
             }
 
             if (this.running) {
-                this.disposeCurrentScene();
+                this.disposeCurrentLevel();
             }
 
             this.setCurrentPath(path);
-            this.setCurrentLevel(this.createNewScene(path, options));
+            this.setCurrentLevel(this.createNewLevel(path, options));
 
             if (loading) {
                 storage
@@ -95,14 +97,18 @@ export class GameRunner {
                         resolve(this.getCurrentLevel());
                     })
             } else {
-                this.getCurrentLevel()
-                    .preload()
+                Physics
+                    .waitForState(PHYSICS_STATES.READY)
                     .then(() => {
-                        this.getCurrentLevel().prepareScene();
-                        this.getCurrentLevel().init();
-                        resolve(this.getCurrentLevel());
+                        this.getCurrentLevel()
+                            .preload()
+                            .then(() => {
+                                this.getCurrentLevel().prepareScene();
+                                this.getCurrentLevel().init();
+                                resolve(this.getCurrentLevel());
+                            })
+                            .catch(reject);
                     })
-                    .catch(reject);
             }
         })
     }

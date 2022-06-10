@@ -1,4 +1,5 @@
 import Grid from './Grid';
+import Axes from './Axes';
 import Cube from './Cube';
 import Sphere from './Sphere';
 import Cylinder from './Cylinder';
@@ -17,5 +18,6 @@ export {
     CurveLine,
     Plane,
     Box,
-    Sprite
+    Sprite,
+    Axes
 };

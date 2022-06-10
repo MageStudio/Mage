@@ -164,6 +164,19 @@ export const setPosition = data => {
     body.setWorldTransform(transform);
 }
 
+export const resetElement = data => {
+    const { uuid, position, quaternion } = data;
+    const { body } = world.getElement(uuid);
+
+    const transform = new Ammo.btTransform();
+
+    body.getWorldTransform(transform);
+    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z ));
+    transform.setRotation(new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+
+    body.setWorldTransform(transform);
+}
+
 export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
     const { body } = world.getElement(uuid);
     const motionState = body.getMotionState();

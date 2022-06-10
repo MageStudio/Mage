@@ -3,7 +3,7 @@ import {
 } from '../constants';
 
 import { addVehicle, resetVehicle, setVehiclePosition, setVehicleQuaternion } from './vehicles';
-import { addBox, addModel, setLinearVelocity, applyImpuse, addSphere, setPosition } from './elements';
+import { addBox, addModel, setLinearVelocity, applyImpuse, addSphere, setPosition, resetElement } from './elements';
 import { createExplosion } from './effects';
 import { addPlayer } from './player';
 
@@ -34,6 +34,9 @@ const handleLoadEvent = options => Ammo => {
             case PHYSICS_EVENTS.ELEMENT.SET.LINEAR_VELOCITY:
                 setLinearVelocity(data);
                 break;
+            case PHYSICS_EVENTS.ELEMENT.RESET:
+                resetElement(data);
+                breakj;
             case PHYSICS_EVENTS.ELEMENT.SET.POSITION:
                 setPosition(data);
                 break;

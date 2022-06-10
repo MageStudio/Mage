@@ -28,6 +28,8 @@ export const PHYSICS_EVENTS = {
             LINEAR_VELOCITY: 'physics:element:set:linear_velocity'
         },
 
+        RESET: 'physics:element:reset',
+
         APPLY: {
             IMPULSE: 'physics:element:apply:impulse'
         }
