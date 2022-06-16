@@ -556,7 +556,7 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    rotateTo(rotation = this.getRotation(), time = 250, easing = Between.Easing.Linear) {
+    rotateTo(rotation = this.getRotation(), time = 250, easing = Between.Easing.Linear.None) {
         const { x, y, z } = this.getRotation();
 
         return new Promise((resolve) =>
@@ -568,7 +568,7 @@ export default class Entity extends EventDispatcher {
         );
     }
 
-    goTo(position = this.getPosition(), time = 250, easing = Between.Easing.Linear) {
+    goTo(position = this.getPosition(), time = 250, easing = Between.Easing.Linear.None) {
         const { x, y, z } = this.getPosition();
 
         return new Promise((resolve) => 
