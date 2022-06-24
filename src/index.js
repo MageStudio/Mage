@@ -64,7 +64,10 @@ import Physics, {
 import * as hitboxUtils from './physics/hitbox';
 
 import * as store from './store';
+import * as inferno from 'inferno';
+import { createElement } from 'inferno-create-element';
 import { Provider, connect } from 'inferno-redux';
+import * as htmlTexture from './ui/htmlTexture';
 
 import * as lib_constants from './lib/constants';
 import * as functions from './lib/functions';
@@ -132,7 +135,10 @@ export {
 
     store,
     Provider,
+    inferno,
+    createElement,
     connect,
+    htmlTexture,
 
     Controls,
 
