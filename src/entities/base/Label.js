@@ -6,6 +6,7 @@ import { render } from 'inferno';
 import { createElement } from 'inferno-create-element';
 import { getUIContainer, unmount } from '../../ui';
 import { ENTITY_TYPES } from '../constants';
+import { LABEL_DOMELEMENT_MISSING } from '../../lib/messages';
 
 
 export default class Label extends Element {
@@ -41,13 +42,13 @@ export default class Label extends Element {
     }
 
     onLabelUpdate = (domElement) => (
-        this.convertToPng(this.getName(), domElement)
+        this.convertToPng(domElement)
             .then(this.updateTexture(this.getName(), domElement))
             .catch(console.log)
     )
 
     onLabelMount = (domElement) => (
-        this.convertToPng(this.getName(), domElement)
+        this.convertToPng(domElement)
             .then(this.updateTexture(this.getName(), domElement))
             .then(this.createSprite(domElement))
             .catch(console.log)
@@ -91,8 +92,10 @@ export default class Label extends Element {
         );
     }
 
-    convertToPng = (id, domElement) => (
-        toPng(domElement, { cacheBust: true })
+    convertToPng = domElement => (
+        domElement ?
+            toPng(domElement, { cacheBust: true }) :
+            Promise.reject(LABEL_DOMELEMENT_MISSING)
     )
 
     dispose() {
