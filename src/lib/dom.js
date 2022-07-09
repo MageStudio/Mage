@@ -16,6 +16,10 @@ export const getOrCreateElement = (selector, type, style) => (
     createElementFromSelector(selector, type, style)
 )
 
+export const removeElement = selector => (
+    document.querySelector(selector).remove()
+)
+
 export const createElementFromSelector = (selector, type = 'div', style = DEFAULT_FULL_SIZE_STYLE) => {
     const element = document.createElement(type);
     

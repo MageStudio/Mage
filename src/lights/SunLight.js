@@ -11,6 +11,7 @@ import {
 import Scene from '../core/Scene';
 import { SUNLIGHT } from './Lights';
 import { ENTITY_TYPES } from '../entities/constants';
+import { generateRandomName } from '../lib/uuid';
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
@@ -28,7 +29,7 @@ export default class SunLight extends Light {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name = `SunLight_${Math.random()}`,
+            name = generateRandomName('SunLight')
         } = options;
 
         super({ color, intensity, name });

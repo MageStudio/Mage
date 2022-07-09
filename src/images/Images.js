@@ -128,6 +128,13 @@ export class Images {
         });
     }
 
+    disposeTexture(id) {
+        const texture = this.get(id);
+        texture.dispose();
+
+        this.map[id] = null;
+    }
+
     add(id, image) {
         if (id && image) {
             this.map[id] = image;

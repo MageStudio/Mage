@@ -13,7 +13,8 @@ import {
     Cylinder,
     Grid,
     Axes,
-    Sprite
+    Sprite,
+    Label
 } from './entities';
 
 
@@ -67,7 +68,7 @@ import * as store from './store';
 import * as inferno from 'inferno';
 import { createElement } from 'inferno-create-element';
 import { Provider, connect } from 'inferno-redux';
-import * as htmlTexture from './ui/htmlTexture';
+import LabelComponent from './ui/LabelComponent';
 
 import * as lib_constants from './lib/constants';
 import * as functions from './lib/functions';
@@ -110,6 +111,8 @@ import Models from './models/Models';
 //import Shaders from './fx/shaders/Shaders';
 import PostProcessing from './fx/postprocessing/PostProcessing';
 
+import * as rxjs from 'rxjs';
+
 const constants = {
     ...lib_constants,
     ...light_contants
@@ -137,8 +140,8 @@ export {
     Provider,
     inferno,
     createElement,
+    LabelComponent,
     connect,
-    htmlTexture,
 
     Controls,
 
@@ -179,6 +182,7 @@ export {
     Grid,
     Sprite,
     Axes,
+    Label,
     //AnimatedMesh,
     //ShaderMesh,
     Camera,
@@ -219,5 +223,6 @@ export {
     functions,
     Stats,
 
-    THREE
+    THREE,
+    rxjs
 };

@@ -14,6 +14,4 @@ const config = {
     ]
 };
 
-console.log('\n\n\ngetting babel config\n\n\n');
-
 module.exports = config;

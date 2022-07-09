@@ -1,6 +1,7 @@
 import { GridHelper } from 'three'
 import Element from '../Element';
 import { ENTITY_TYPES }  from '../constants';
+import { generateRandomName } from '../../lib/uuid';
 
 export default class Grid extends Element {
 
@@ -10,7 +11,7 @@ export default class Grid extends Element {
             division,
             color1,
             color2,
-            name: `GridHelper_${Math.random()}`
+            name: generateRandomName('GridHelper')
         };
 
         super(options);

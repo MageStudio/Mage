@@ -1,32 +1,26 @@
-import { inferno, createElement, htmlTexture } from '../../dist/mage.js';
+import { LabelComponent, createElement } from '../../dist/mage.js';
 
-// const UI = ({ name = 'marco', age = 13 }) => {
-//     return createElement('span', null, `My name is: ${name} and my age is: ${age}`)
-// };
-
-class UI extends inferno.Component {
+class UI extends LabelComponent {
 
     constructor(props) {
         super(props);
 
         this.state = { test: 0 };
-        this.element = inferno.createRef();
-    }
-
-    componentDidUpdate() {
-        console.log(this.element.current);
-        htmlTexture.convertToPng(this.element.current);
     }
 
     componentDidMount() {
+        super.componentDidMount();
         this.setState({ test: 1 });
         setInterval(() => {
             this.setState({ test: this.state.test + 1 });
-        }, 2000)
+        }, 2000);
     }
 
     render() {
-        return createElement('div', { ref: this.element, className: 'three_d_ui' }, `My name is:Marco and i am ${this.state.test} years old`)
+        const span = createElement('span', { className: 'progress-bar-fill', style: `width: ${this.state.test}%; `});
+        const progressbar = createElement('div', { className: 'progress-bar', children: span });
+
+        return createElement('div', { ref: this.element, className: 'wrapper', children: progressbar });
     }
 }
 

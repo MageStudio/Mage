@@ -8,6 +8,7 @@ import CurveLine from './CurveLine';
 import Plane from './Plane';
 import Box from './Box';
 import Sprite from './Sprite';
+import Label from './Label';
 
 export {
     Sphere,
@@ -19,5 +20,6 @@ export {
     Plane,
     Box,
     Sprite,
-    Axes
+    Axes,
+    Label
 };

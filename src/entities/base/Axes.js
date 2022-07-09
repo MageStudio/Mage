@@ -7,6 +7,7 @@ import {
     Color,
     BufferGeometry
 } from 'three';
+import { generateRandomName } from '../../lib/uuid';
 
 class AxesHelper extends LineSegments {
 
@@ -70,7 +71,7 @@ export default class Axes extends Element {
         const options = {
             size,
             thickness,
-            name: `AxesHelper_${Math.random()}`
+            name: generateRandomName('AxesHelper')
         };
 
         super(options);
