@@ -11,6 +11,15 @@ export const DEFAULT_FULL_SIZE_STYLE = {
     margin: '0'
 };
 
+export const getOrCreateElement = (selector, type, style) => (
+    document.querySelector(selector) ||
+    createElementFromSelector(selector, type, style)
+)
+
+export const removeElement = selector => (
+    document.querySelector(selector).remove()
+)
+
 export const createElementFromSelector = (selector, type = 'div', style = DEFAULT_FULL_SIZE_STYLE) => {
     const element = document.createElement(type);
     
@@ -21,7 +30,7 @@ export const createElementFromSelector = (selector, type = 'div', style = DEFAUL
         });
 
     if (isClassname(selector)) {
-        element.classname = removeFirst(selector);
+        element.className = removeFirst(selector);
     } else if (isId(selector)) {
         element.id = removeFirst(selector);
     }

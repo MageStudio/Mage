@@ -11,6 +11,7 @@ import {
 import Scene from '../core/Scene';
 import { SPOTLIGHT } from './Lights';
 import { ENTITY_TYPES } from '../entities/constants';
+import { generateRandomName } from '../lib/uuid';
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
@@ -29,7 +30,7 @@ export default class SpotLight extends Light {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name = `SpotLight_${Math.random()}`,
+            name = generateRandomName('SpotLight')
         } = options;
         
         super({ color, intensity, name });

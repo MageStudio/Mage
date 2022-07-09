@@ -46,6 +46,7 @@ import {
     setUpLightsAndShadows
 } from '../lib/meshUtils';
 import { isTextureMapAllowedForMaterial } from '../materials/helpers';
+import { generateRandomName } from '../lib/uuid';
 
 const COLLIDER_TAG = 'collider';
 const COLLIDER_COLOR = 0xff0000;
@@ -62,7 +63,7 @@ export default class Element extends Entity {
         super(options);
 
         const {
-            name = `default_${Math.random()}`,
+            name = generateRandomName(this.constructor.name),
             geometry,
             material,
             body

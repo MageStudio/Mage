@@ -9,6 +9,7 @@ import {
     CameraHelper
 } from 'three';
 import { ENTITY_TYPES } from '../entities/constants';
+import { generateRandomName } from '../lib/uuid';
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
@@ -28,7 +29,7 @@ export default class PointLight extends Light {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name = `PointLight_${Math.random()}`,
+            name = generateRandomName('PointLight'),
             distance,
             decay
         } = options;

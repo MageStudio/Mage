@@ -10,6 +10,7 @@ import {
     LIGHT_HOLDER_MODEL_NOT_FOUND,
     LIGHT_NOT_FOUND
 } from '../lib/messages';
+import { generateRandomName } from '../lib/uuid';
 
 const LAMP_COLOR = 0Xf1c40f;
 
@@ -19,7 +20,7 @@ export default class Light extends Entity {
         super({ name });
         this.color = color;
         this.intensity = intensity;
-        this.name = name || `light_${Math.random() * 1000}`;
+        this.name = name || generateRandomName('Light')
         this.isLightOn = false;
         this.body = undefined;
 

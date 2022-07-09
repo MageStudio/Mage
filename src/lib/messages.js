@@ -79,3 +79,5 @@ export const AUDIO_UNABLE_TO_LOAD_SOUND = `${PREFIX} Unable to load sound, sorry
 
 export const LIGHT_NOT_FOUND = `${PREFIX} This light was not created properly.`;
 export const LIGHT_HOLDER_MODEL_NOT_FOUND = `${PREFIX} This light holder model can't be found.`;
+
+export const LABEL_DOMELEMENT_MISSING = `${PREFIX} Could not create Label, domElement is missing. Did you forget to set the this.element ref on your component?`;

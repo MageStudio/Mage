@@ -63,6 +63,24 @@ export default class Entity extends EventDispatcher {
         this.tags = [ DEFAULT_TAG ];
     }
 
+    waitForBody(delay = 200, maxTries = 1) {
+        return new Promise((resolve, reject) => {
+            const check = (tries) => {
+                setTimeout(() => {
+                    if (this.hasBody()) {
+                        resolve();
+                    } else if (tries <= maxTries) {
+                        check(tries+1);
+                    } else {
+                        reject();
+                    }
+                }, delay);
+            };
+
+            check(0);
+        });
+    }
+
     hasBody() {
         return !!this.body;
     }
@@ -95,25 +113,32 @@ export default class Entity extends EventDispatcher {
         this.parent = parent;
     }
 
-    add(child, container = this.getBody()) {
+    add(child, container = this.getBody(), { waitForBody = 0, waitForBodyMaxRetries = 1 } = {}) {
         if (this.hasBody()) {
             const _add = (toAdd) => {
                 if (toAdd instanceof Entity) {
-                    this.children.push(toAdd);
-                    toAdd.setParent(this);
-                    container.add(toAdd.getBody());
+                    return toAdd.waitForBody(waitForBody, waitForBodyMaxRetries)
+                        .then(() => {
+                            this.children.push(toAdd);
+                            toAdd.setParent(this);
+                            container.add(toAdd.getBody());
+                            return toAdd;
+                        })
+                        .catch(console.log);
                 } else {
                     console.log(ENTITY_CANT_ADD_NOT_ENTITY);
+                    return Promise.reject(ENTITY_CANT_ADD_NOT_ENTITY);
                 }
             };
 
             if (Array.isArray(child)) {
-                child.forEach(_add);
+                return Promise.all(child.map(_add));
             } else {
-                _add(child);
+                return _add(child);
             }
         } else {
-            console.log(ENTITY_NOT_SET)
+            console.log(ENTITY_NOT_SET);
+            return Promise.reject(ENTITY_NOT_SET);
         }
     }
 

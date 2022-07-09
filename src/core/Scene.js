@@ -9,7 +9,7 @@ import {
     LinearToneMapping
 } from 'three';
 
-import { generateUUID } from '../lib/uuid';
+import { generateRandomName, generateUUID } from '../lib/uuid';
 import Images from '../images/Images';
 import { DEFAULT_SHADOWTYPE, SHADOW_TYPES } from '../lights/constants';
 import { mapShadowTypeToShadowMap } from '../lights/utils';
@@ -33,7 +33,7 @@ export class Scene {
         return ENTITY_TYPES.SCENE;
     }
 
-    createScene(name = `LevelScene_${Math.random()}`) {
+    createScene(name = generateRandomName('LevelName')) {
         const fog = Config.fog();
 
         this.scene = new THREEScene();

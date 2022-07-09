@@ -6,6 +6,7 @@ import {
 } from 'three';
 import { HEMISPHERELIGHT } from './Lights';
 import { ENTITY_TYPES } from '../entities/constants';
+import { generateRandomName } from '../lib/uuid';
 
 const DEFAULT_INTENSITY = 0.5;
 
@@ -23,7 +24,7 @@ export default class HemisphereLight extends Light {
                 ground: DEFAULT_GROUND_COLOR,
             },
             intensity = DEFAULT_INTENSITY,
-            name = `HemisphereLight_${Math.random()}`,
+            name = generateRandomName('HemisphereLight'),
         } = options;
 
         super({ color, intensity, name });

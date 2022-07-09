@@ -6,7 +6,7 @@ import {
     BackSide
 } from 'three';
 
-import { generateUUID } from '../../lib/uuid'; 
+import { generateRandomName, generateUUID } from '../../lib/uuid'; 
 import Images from '../../images/Images';
 import Element from '../../entities/Element';
 
@@ -14,7 +14,7 @@ export default class Skybox extends Element {
 
     constructor(options) {
         const {
-            name = `skybox_${generateUUID()}`,
+            name = generateRandomName('Skybox'),
             texture = 'skybox',
             ...rest
         } = options;

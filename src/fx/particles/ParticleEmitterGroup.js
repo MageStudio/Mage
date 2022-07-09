@@ -4,6 +4,7 @@ import { PARTICLE_EMITTER_TYPES } from "./constants";
 import Entity from "../../entities/Entity";
 import { ENTITY_TYPES } from '../../entities/constants';
 import Scene from "../../core/Scene";
+import { generateRandomName } from "../../lib/uuid";
 
 export default class ParticleEmitterGroup extends Entity {
 
@@ -11,7 +12,7 @@ export default class ParticleEmitterGroup extends Entity {
         super({ tag: 'particle '});
 
         const {
-            name = `emitter_${Math.random()}`,
+            name = generateRandomName('EmitterGroup'),
             system
         } = options;
 

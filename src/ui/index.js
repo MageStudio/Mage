@@ -6,21 +6,22 @@ import BaseUI from './BaseUI';
 import Config from '../core/config';
 import Router from '../router/Router';
 import { dispatch } from '../store';
-import { createElementFromSelector } from '../lib/dom';
+import { createElementFromSelector, removeElement } from '../lib/dom';
 import { showLoadingScreen, hideLoadingScreen } from '../store/actions/ui';
 import { locationPathChange } from '../store/actions/location';
 
 const ROOT_ID = '#ui';
+export const LABELS_ROOT_ID = '#labels_ui';
 
 const createProps = () => ({
     level: Router.getCurrentLevel()
 });
 
-const getUIContainer = () => {
-    let rootElement = document.querySelector(ROOT_ID);
+export const getUIContainer = (id = ROOT_ID) => {
+    let rootElement = document.querySelector(id);
 
     if (!rootElement) {
-        rootElement = createElementFromSelector(ROOT_ID);
+        rootElement = createElementFromSelector(id);
         document.body.appendChild(rootElement);
     }
 
@@ -52,12 +53,12 @@ export const mount = () => {
     }
 };
 
-
-export const unmount = () => {
-    const { enabled = true } = Config.ui();
-    if (!enabled) return;
+export const unmount = (id = ROOT_ID) => {
+    const container = document.querySelector(id);
 
     // Rendering null will trigger unmount lifecycle hooks for whole vDOM tree and remove global event listeners.
     // https://github.com/infernojs/inferno#tear-down
-    render(null, document.querySelector(ROOT_ID));
+    render(null, container);
+    // removing the container as well
+    removeElement(id);
 };

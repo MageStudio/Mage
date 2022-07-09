@@ -6,3 +6,5 @@ export const generateUUID = () => {
 
     return s4() + s4();
 };
+
+export const generateRandomName = (prefix) => `${prefix}_${generateUUID()}`;
