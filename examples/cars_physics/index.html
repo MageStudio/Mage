@@ -2,10 +2,35 @@
 <html>
 
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet"> -->
     <link rel="stylesheet" href="../css/M.css" />
     <link rel="stylesheet" href="../css/app.css" />
     <script type="module" src="index.js"></script>
+
+    <style>
+        .speedometer {
+            height: 120px;
+            width: 120px;
+            border-radius: 8px;
+            font-size: 96px;
+            border: 8px solid black;
+            background: rgba(255, 255, 255, 0.1);
+            color: black;
+            line-height: 105px;
+            padding: 8px;
+            text-align: center;
+            display: block;
+            font-family: "Work Sans";
+        }
+
+        .speedometer::after {
+            content: 'km/h';
+            font-size: 1.5rem;
+            position: absolute;
+            top: 72px;
+            left: 72px;
+        }
+    </style>
 </head>
 
 <body>

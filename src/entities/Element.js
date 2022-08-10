@@ -37,7 +37,7 @@ import {
 
 import { clamp } from '../lib/math';
 import {
-    changeMaterialByName,
+    replaceMaterialByName,
     hasMaterial,
     hasGeometry,
     disposeTextures,
@@ -89,14 +89,6 @@ export default class Element extends Entity {
 
         this.setMaterialType();
         this.setEntityType(ENTITY_TYPES.MESH);
-    }
-
-    getMaterialType() {
-        return this.materialType;
-    }
-
-    setMaterialType(materialType = MATERIALS.BASIC) {
-        this.materialType = materialType;
     }
 
     addTag(tag) {
@@ -540,17 +532,43 @@ export default class Element extends Entity {
         }
     }
 
+    getMaterial() {
+        if (hasMaterial(this.getBody())) {
+            return this.getBody().material;
+        }
+
+        const materials = [];
+        this.getBody().traverse(child => {
+            if (hasMaterial(child)) {
+                materials.push(child.material);
+            }
+        });
+
+        return materials;
+    }
+
+    getMaterialType() {
+        return this.materialType;
+    }
+
+    setMaterialType(materialType = MATERIALS.BASIC) {
+        this.materialType = materialType;
+    }
+
     setMaterialFromName(materialName, options = {}) {
         this.setMaterialType(materialName);
+        const newMaterials = [];
 
         if (hasMaterial(this.getBody())) {
-            changeMaterialByName(materialName, this.getBody(), options);
+            return replaceMaterialByName(materialName, this.getBody(), options);
         } else {
             this.getBody().traverse(child => {
                 if (hasMaterial(child)) {
-                    changeMaterialByName(materialName, child, options);
+                    newMaterials.push(replaceMaterialByName(materialName, child, options));
                 }
             });
+
+            return newMaterials;
         }
     }
 

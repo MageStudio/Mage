@@ -23,7 +23,7 @@ export const setUpLightsAndShadows = (mesh) => {
 
     if (hasMaterial(mesh)) {
         const setUpMaterial = material => {
-            if (Lights.isUsingCSM()) {
+            if (Lights.isUsingCascadeShadowMaps()) {
                 Lights.csm.setupMaterial(material);
             }
     
@@ -52,31 +52,31 @@ export const hasTexture = mesh => hasMaterial(mesh) && mesh.material.map;
 
 export const processMaterial = (material, callback) => Array.isArray(material) ? material.map(callback) : callback(material);
 
-export const changeMaterialByName = (name, mesh, materialOptions) => {
+export const replaceMaterialByName = (name, mesh, materialOptions) => {
 
     if (!hasMaterial(mesh)) return;
 
     switch(name) {
         case MATERIALS.LAMBERT:
-            return cloneMaterial(MeshLambertMaterial, mesh, materialOptions);
+            return replaceMaterial(MeshLambertMaterial, mesh, materialOptions);
         case MATERIALS.PHONG:
-            return cloneMaterial(MeshPhongMaterial, mesh, materialOptions);
+            return replaceMaterial(MeshPhongMaterial, mesh, materialOptions);
         case MATERIALS.DEPTH:
-            return cloneMaterial(MeshDepthMaterial, mesh, materialOptions);
+            return replaceMaterial(MeshDepthMaterial, mesh, materialOptions);
         case MATERIALS.STANDARD:
-            return cloneMaterial(MeshStandardMaterial, mesh, materialOptions);
+            return replaceMaterial(MeshStandardMaterial, mesh, materialOptions);
         case MATERIALS.TOON:
-            return cloneMaterial(ToonMaterial, mesh, materialOptions);
+            return replaceMaterial(ToonMaterial, mesh, materialOptions);
         case MATERIALS.THREE_TOON:
-            return cloneMaterial(MeshToonMaterial, mesh, materialOptions);
+            return replaceMaterial(MeshToonMaterial, mesh, materialOptions);
         case MATERIALS.BASIC:
         default:
-            return cloneMaterial(MeshBasicMaterial, mesh, materialOptions);
+            return replaceMaterial(MeshBasicMaterial, mesh, materialOptions);
     }
 }
 
-const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
-    const _cloneMaterial = material => {
+const replaceMaterial = (MeshMaterial, mesh, options = {}) => {
+    const _replaceMaterial = material => {
         const clone = material.clone();
         const newMaterial = new MeshMaterial({
             map: clone.map,
@@ -88,9 +88,11 @@ const cloneMaterial = (MeshMaterial, mesh, options = {}) => {
         return newMaterial;
     }
 
-    mesh.material = processMaterial(mesh.material, _cloneMaterial);
+    mesh.material = processMaterial(mesh.material, _replaceMaterial);
 
     setUpLightsAndShadows(mesh);
+
+    return mesh.material;
 }
 
 export const disposeTextures = mesh => {

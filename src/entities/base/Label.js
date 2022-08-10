@@ -7,13 +7,16 @@ import { createElement } from 'inferno-create-element';
 import { getUIContainer, unmount } from '../../ui';
 import { ENTITY_TYPES } from '../constants';
 import { LABEL_DOMELEMENT_MISSING } from '../../lib/messages';
+import { generateRandomName } from '../../lib/uuid';
 
 
 export default class Label extends Element {
 
     constructor({ Component, format = 'png', width, height, ...options }) {
         super(options);
-        const { name } = this.options;
+        const {
+            name = generateRandomName('label')
+        } = this.options;
 
         this.Component = Component;
         this.format = format;
@@ -72,10 +75,12 @@ export default class Label extends Element {
             Images.add(id, texture);
         }
     
-        texture.image.src = dataUrl;
-        texture.image.height = height;
-        texture.image.width = width;
-        texture.needsUpdate = true;
+        if (texture.image.src !== dataUrl) {
+            texture.image.src = dataUrl;
+            texture.image.height = height;
+            texture.image.width = width;
+            texture.needsUpdate = true;
+        }
 
         return Promise.resolve(texture);
     }
@@ -94,7 +99,7 @@ export default class Label extends Element {
 
     convertToPng = domElement => (
         domElement ?
-            toPng(domElement, { cacheBust: true }) :
+            toPng(domElement, { cacheBust: false }) :
             Promise.reject(LABEL_DOMELEMENT_MISSING)
     )
 

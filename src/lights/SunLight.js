@@ -45,9 +45,9 @@ export default class SunLight extends Light {
         intensity = DEFAULT_INTENSITY
     }) {
         if (light) {
-            this.setBody(light);
+            this.setBody({ body: light });
         } else {
-            this.setBody(new THREEDirectionalLight(color, intensity));
+            this.setBody({ body: new THREEDirectionalLight(color, intensity) });
         }
 
         if (this.hasBody()) {
@@ -75,10 +75,11 @@ export default class SunLight extends Light {
             far = DEFAULT_FAR,
             mapSize = DEFAULT_MAP_SIZE,
             bias = DEFAULT_BIAS,
-            fov = DEFAULT_FOV
+            fov = DEFAULT_FOV,
+            castShadow = true
         } = this.options;
 
-        if (Config.lights().shadows) {
+        if (Config.lights().shadows && castShadow) {
             this.body.castShadow = true;
 
             const d = far / 1.5;
@@ -143,13 +144,6 @@ export default class SunLight extends Light {
 
         if (this.hasHolder()) {
             this.setPosition(this.holder.getPosition(), { updateHolder: false });
-        }
-    }
-
-    toJSON() {
-        return {
-            ...super.toJSON(),
-            type: SUNLIGHT
         }
     }
 }

@@ -16,6 +16,7 @@ export default class BaseCar extends BaseScript {
             rightKey = 'd',
             leftKey = 'a',
             debug = false,
+            autostart = true,
             ...physicsOptions
         } = options;
 
@@ -34,8 +35,18 @@ export default class BaseCar extends BaseScript {
         this.rightKey = rightKey;
         this.leftKey = leftKey;
 
+        this.engineStarted = autostart;
+
         Input.enable();
         Physics.addVehicle(this.car, { wheels: wheels.map(w => w.uuid()), ...physicsOptions });
+    }
+
+    startEngine() {
+        this.engineStarted = true;
+    }
+
+    stopEngine() {
+        this.engineStarted = false;
     }
 
     handleInput() {
@@ -50,8 +61,10 @@ export default class BaseCar extends BaseScript {
     }
 
     update(dt) {
-        this.handleInput();
-        this.sendCarUpdate();
+        if (this.engineStarted) {
+            this.handleInput();
+            this.sendCarUpdate();
+        }
     }
 
 }

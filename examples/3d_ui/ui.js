@@ -17,8 +17,8 @@ class UI extends LabelComponent {
     }
 
     render() {
-        const span = createElement('span', { className: 'progress-bar-fill', style: `width: ${this.state.test}%; `});
-        const progressbar = createElement('div', { className: 'progress-bar', children: span });
+        const span = createElement('span', { className: 'progress-bar-fill', style: `width: ${this.state.test}%;` });
+        const progressbar = createElement('div', { className: 'progress-bar', children: [span, `${this.state.test}`] });
 
         return createElement('div', { ref: this.element, className: 'wrapper', children: progressbar });
     }

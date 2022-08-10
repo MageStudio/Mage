@@ -65,17 +65,19 @@ export default class Keyboard extends EventDispatcher {
     enable(cb = f => f) {
         this.enabled = true;
 
-        window.addEventListener(KEY_DOWN, this.handleKeydown.bind(this));
-        window.addEventListener(KEY_UP, this.handleKeyup.bind(this));
-        window.addEventListener(KEY_PRESS, this.handleKeypress.bind(this));
+        this.register('*', cb);
+        window.addEventListener(KEY_DOWN.toLowerCase(), this.handleKeydown.bind(this));
+        window.addEventListener(KEY_UP.toLowerCase(), this.handleKeyup.bind(this));
+        window.addEventListener(KEY_PRESS.toLowerCase(), this.handleKeypress.bind(this));
     }
 
     disable() {
         this.enabled = false;
 
-        window.removeEventListener(KEY_DOWN, this.handleKeydown.bind(this));
-        window.removeEventListener(KEY_UP, this.handleKeyup.bind(this));
-        window.removeEventListener(KEY_PRESS, this.handleKeypress.bind(this));
+        hotkeys.unbind();
+        window.removeEventListener(KEY_DOWN.toLowerCase(), this.handleKeydown.bind(this));
+        window.removeEventListener(KEY_UP.toLowerCase(), this.handleKeyup.bind(this));
+        window.removeEventListener(KEY_PRESS.toLowerCase(), this.handleKeypress.bind(this));
     }
 
     isPressed(key) {

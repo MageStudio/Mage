@@ -18,14 +18,14 @@ const _bbox = new Box3();
 const _uniformArray = [];
 const _logArray = [];
 
-const DEFAULT_MAX_FAR = 100000;
+const DEFAULT_MAX_FAR = 5000;
 const DEFAULT_MODE = 'practical';
 const DEFAULT_SHADOWMAP_SIZE = 2048;
 const DEFAULT_CASCADE = 3;
 const DEFAULT_BIAS = 0.000001;
 const DEFAULT_INTENSITY = 1;
 const DEFAULT_NEAR = 1;
-const DEFAULT_FAR = 2000;
+const DEFAULT_FAR = 1000;
 const DEFAULT_MARGIN = 200;
 
 export class CascadeShadowMaps {
