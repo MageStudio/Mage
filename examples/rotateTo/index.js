@@ -14,20 +14,20 @@ import {
     PALETTES,
     SunLight,
     HemisphereLight,
-    Sky,
-    Particles,
-    PARTICLES,
-    Sprite,
-    Label
+    easing,
+    Sky
 } from '../../dist/mage.js';
-import UI from './ui.js';
+
 
 export default class Intro extends Level {
 
     addAmbientLight() {
-        AmbientLight.create({ color: PALETTES.FRENCH_PALETTE.SPRAY, intensity: .5 });
+        const ambientLight = new AmbientLight({
+            color: PALETTES.FRENCH_PALETTE.SPRAY,
+            intensity: .5
+        });
 
-        HemisphereLight.create({
+        const hemisphereLight = new HemisphereLight({
             color: {
                 sky: PALETTES.FRENCH_PALETTE.SQUASH_BLOSSOM,
                 ground: PALETTES.FRENCH_PALETTE.REEF_ENCOUNTER
@@ -35,9 +35,14 @@ export default class Intro extends Level {
             intensity: 1
         });
     
-        SunLight
-            .create({ color: PALETTES.FRENCH_PALETTE.MELON_MELODY, intensity: 1, far: 20, mapSize: 2048 })
-            .setPosition({ y: 4, z: -3, x: -3 });
+        const sunLight = new SunLight({
+            color: PALETTES.FRENCH_PALETTE.MELON_MELODY,
+            intensity: 1,
+            far: 20,
+            mapSize: 2048
+        });
+        sunLight.setPosition({ y: 4, z: -3, x: -3 });
+        sunLight.addHelper();
     }
 
     createSky() {
@@ -54,23 +59,23 @@ export default class Intro extends Level {
     }
 
     onCreate() {
-        this.addAmbientLight();
         Scene.getCamera().setPosition({ y: 10 });
         Controls.setOrbitControl();
+        this.addAmbientLight();
         this.createSky();
-        const cube = new Cube(1, 0xff0000);
 
-        const label = new Label({ Component: UI, width: 3, height: 1 });
-        cube.add(label, cube.getBody(), { waitForBody: 500, waitForBodyMaxRetries: 5 })
-            .then(label => label.setPosition({ y: 1 }));
+        const cube = new Cube(5, 0xffeeaa);
 
-        cube.goTo({ x: 10, y: 0, z: 10 }, 10000);
-
-        // setTimeout(() => label.dispose(), 10000);
+        cube.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: .5, metalness: 0 });
+        setTimeout(() => {
+            cube.rotateTo({ x: 4, y: 4, z: 4 }, 5000, { loop: easing.LOOPING.BOUNCE, easing: easing.FUNCTIONS.Quadratic.InOut });
+            cube.scaleTo({ x: 2, y: 2, z: 2 }, 5000, { loop: easing.LOOPING.BOUNCE });
+        }, 2000)
     }
 }
 
-const assets = {}
+const assets = {
+}
 
 const { SHADOW_TYPES } = constants;
 
@@ -84,24 +89,19 @@ const config = {
     },
 
     lights: {
-        shadows: false,
+        shadows: true,
         shadowType: SHADOW_TYPES.HARD,
         textureAnisotropy: 32
     },
 
     physics: {
-        enabled: false,
+        enabled: true,
         path: 'dist/ammo.js',
         gravity: { x: 0, y: -9.8, z: 0}
     },
 
     tween: {
         enabled: false,
-    },
-
-    ui: {
-        enabled: false,
-        // root: UI
     },
 
     camera: {

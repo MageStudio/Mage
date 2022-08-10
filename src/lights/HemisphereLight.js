@@ -43,10 +43,10 @@ export default class HemisphereLight extends Light {
         intensity = DEFAULT_INTENSITY
     }) {
         if (light) {
-            this.setBody(light)
+            this.setBody({ body: light });
         } else {
             const { sky = DEFAULT_SKY_COLOR, ground = DEFAULT_GROUND_COLOR } = color;
-            this.setBody(new THREEHemisphereLight(sky, ground, intensity));
+            this.setBody({ body: new THREEHemisphereLight(sky, ground, intensity) });
         }
 
         if (this.hasBody()) {
@@ -58,12 +58,5 @@ export default class HemisphereLight extends Light {
         this.helper = new HemisphereLightHelper(this.body, 2, GREEN);
 
         Scene.add(this.helper, null, false);
-    }
-
-    toJSON() {
-        return {
-            ...super.toJSON(),
-            type: HEMISPHERELIGHT
-        }
     }
 }

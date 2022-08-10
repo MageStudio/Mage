@@ -30,9 +30,9 @@ export default class AmbientLight extends Light {
         intensity = DEFAULT_INTENSITY
     }) {
         if (light) {
-            this.setBody(light);
+            this.setBody({ body: light });
         } else {
-            this.setBody(new THREEAmbientLight(color, intensity))
+            this.setBody({ body: new THREEAmbientLight(color, intensity) });
         }
 
         if (this.hasBody()) {
@@ -58,13 +58,6 @@ export default class AmbientLight extends Light {
         super.update(dt);
         if (this.hasHelper()) {
             this.setPosition(this.holder.getPosition(), { updateHolder: false });
-        }
-    }
-
-    toJSON() {
-        return {
-            ...super.toJSON(),
-            type: AMBIENTLIGHT
         }
     }
 }

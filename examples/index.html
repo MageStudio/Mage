@@ -47,6 +47,8 @@
         <li class='example' data-src='./textures'>Textures</li>
         <li class='example' data-src='./selection_effect'>Selection effect</li>
         <li class='example' data-src='./3d_ui'>3D UI</li>
+        <li class='example' data-src='./scaleTo'>scaleTo</li>
+        <li class='example' data-src='./rotateTo'>rotateTo</li>
     </ul>
     <iframe class='example-frame'></iframe>
 
@@ -59,7 +61,10 @@
             location.hash = e.target.dataset.src;
         };
 
-        iframe.addEventListener('load', () => iframe.contentWindow.focus());
+        iframe.addEventListener('load', () => {
+            console.log('focusing on iframe');
+            iframe.contentWindow.focus()
+        });
         examples.forEach(el => el.addEventListener('click', handleExampleClick));
 
         if (location.hash) {

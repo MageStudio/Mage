@@ -1,4 +1,3 @@
-// import Assets from './core/Assets';
 import Entity from './entities/Entity';
 import Element from './entities/Element';
 import Camera from './entities/camera';
@@ -48,6 +47,7 @@ import * as math from './lib/math';
 import * as strings from './lib/strings';
 import * as uuid from './lib/uuid';
 import * as workers from './lib/workers';
+import * as easing from './lib/easing';
 
 import Stats from './core/Stats';
 import Config from './core/config';
@@ -108,14 +108,13 @@ import ParticleEmitterGroup from './fx/particles/ParticleEmitterGroup';
 
 import Images from './images/Images';
 import Models from './models/Models';
-//import Shaders from './fx/shaders/Shaders';
 import PostProcessing from './fx/postprocessing/PostProcessing';
 
 import * as rxjs from 'rxjs';
 
 const constants = {
     ...lib_constants,
-    ...light_contants
+    ...light_contants,
 };
 
 export {
@@ -147,7 +146,6 @@ export {
 
     Images,
     Models,
-    // Shaders,
     Audio,
     PostProcessing,
     Particles,
@@ -183,13 +181,10 @@ export {
     Sprite,
     Axes,
     Label,
-    //AnimatedMesh,
-    //ShaderMesh,
     Camera,
 
     Sound,
     AUDIO_RAMPS,
-    // AmbientSound,
     BackgroundSound,
     DirectionalSound,
 
@@ -221,6 +216,7 @@ export {
     workers,
     constants,
     functions,
+    easing,
     Stats,
 
     THREE,

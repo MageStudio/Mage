@@ -14,6 +14,7 @@ import {
     Stats,
     PostProcessing
 } from '../../dist/mage.js';
+import Speedometer from './speedometer.js';
 
 const { EFFECTS } = constants;
 
@@ -53,6 +54,9 @@ export default class Intro extends Level {
     }
 
     onCreate() {
+
+        Scripts.register('speedometer', Speedometer);
+
         this.addAmbientLight();
         
         const floor = new Box(50, 1, 50, 0xffffff);
@@ -99,6 +103,8 @@ export default class Intro extends Level {
                 restLength: 0.6
             }
         });
+
+        car.addScript('speedometer');
         
         this.createCube(2, 0xff00ff);
         Scene.getCamera().addScript(Scripts.BUILTIN.SMOOTH_CAR_FOLLOW, { target: car });

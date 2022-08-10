@@ -27,6 +27,7 @@ import {
     ENTITY_TYPES,
     FLAT_ENTITY_TYPES
 } from './constants';
+import { FUNCTIONS, LOOPING }from '../lib/easing';
 
 export default class Entity extends EventDispatcher {
 
@@ -43,8 +44,8 @@ export default class Entity extends EventDispatcher {
         this.serializable = serializable;
     }
 
-    static create(options = {}) {
-        return new this(options);
+    static create(...options) {
+        return new this(...options);
     }
 
     isSerializable() {
@@ -97,7 +98,7 @@ export default class Entity extends EventDispatcher {
         console.warn(ELEMENT_NAME_NOT_PROVIDED);
     }
 
-    setBody(body) {
+    setBody({ body } = {}) {
         this.body = body;
     }
 
@@ -195,7 +196,7 @@ export default class Entity extends EventDispatcher {
     }
 
     addTag = (tagName) => {
-        if (!tagName) return;
+        if (!tagName) return false;
 
         if (!this.hasTag(tagName)) {
             this.tags.push(tagName);
@@ -213,13 +214,15 @@ export default class Entity extends EventDispatcher {
     removeTag(tagName) {
         if (tagName === DEFAULT_TAG) {
             console.log(TAG_CANT_BE_REMOVED);
-            return;
+            return false;
         }
 
         if (this.hasTag(tagName)) {
             this.tags.splice(this.tags.indexOf(tagName), 1);
+            return true;
         } else {
             console.log(TAG_NOT_EXISTING_REMOVAL);
+            return false;
         }
     }
 
@@ -303,7 +306,6 @@ export default class Entity extends EventDispatcher {
             this.disposeBody();
         }
 
-
         this.dispatchEvent({
             type: ENTITY_EVENTS.DISPOSE
         });
@@ -356,6 +358,7 @@ export default class Entity extends EventDispatcher {
             return script;
         } else {
             console.warn(SCRIPT_NOT_FOUND);
+            return false;
         }
     }
 
@@ -433,69 +436,6 @@ export default class Entity extends EventDispatcher {
     isLight = () =>  Object.values(ENTITY_TYPES.LIGHT).includes(this.getEntityType());
     isHelper = () => Object.values(ENTITY_TYPES.HELPER).includes(this.getEntityType());
     isEffect = () => Object.values(ENTITY_TYPES.EFFECT).includes(this.getEntityType());
-
-    // TODO: sounds should become entities
-    // addSound(name, options) {
-    //     const { autoplay = false, ...opts } = options;
-
-    //     this.isPlayingSound = autoplay;
-    //     this.sound = new Sound(name, {
-    //         autoplay,
-    //         ...opts
-    //     });
-
-    //     this.sound.setTarget(this);
-
-    //     return this.sound;
-    // }
-
-    // addDirectionalSound(name, options) {
-    //     const { autoplay = false, ...opts } = options;
-
-    //     this.isPlayingSound = autoplay;
-    //     this.sound = new DirectionalSound(name, {
-    //         autoplay,
-    //         ...opts
-    //     });
-
-    //     this.sound.setTarget(this);
-
-    //     return this.sound;
-    // }
-
-    // addAmbientSound(name, options) {
-    //     const { autoplay = false, ...opts } = options;
-
-    //     this.isPlayingSound = autoplay;
-    //     this.sound = new AmbientSound(name, {
-    //         body: this.body,
-    //         autoplay,
-    //         ...opts
-    //     });
-
-    //     return this.sound;
-    // }
-
-    addLight(light) {
-        const { x, y, z } = this.getPosition();
-
-        light.setPosition({ x, y, z });
-        this.light = light;
-    }
-
-    playSound() {
-        if (this.sound && !this.isPlayingSound) {
-            this.sound.play();
-            this.isPlayingSound = true;
-        }
-    }
-
-    stopSound() {
-        if (this.sound && this.isPlayingSound ) {
-            this.sound.stop();
-            this.isPlayingSound = false;
-        }
-    }
 
     getScale() {
         return {
@@ -581,28 +521,61 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    rotateTo(rotation = this.getRotation(), time = 250, easing = Between.Easing.Linear.None) {
-        const { x, y, z } = this.getRotation();
+    scaleTo(scale = this.getScale(), time = 250, { easing = FUNCTIONS.Linear.None, loop = LOOPING.NONE } = {}) {
+        const { x, y, z } = this.getScale();
+        const targetScale = { x, y, z, ...scale };
 
-        return new Promise((resolve) =>
-            new Between({ x, y, z}, rotation)
+        return new Promise(resolve => {
+            const between = new Between({ x, y, z}, targetScale)
                 .time(time)
-                .easing(easing)
-                .on('update', value => !this.isDisposed() && this.setRotation(value))
+                .easing(easing);
+            
+            if (loop) {
+                between.loop(loop);
+            }
+            
+            between
+                .on('update', value => !this.isDisposed() && this.setScale(value))
                 .on('complete', resolve)
-        );
+        })
     }
 
-    goTo(position = this.getPosition(), time = 250, easing = Between.Easing.Linear.None) {
-        const { x, y, z } = this.getPosition();
+    rotateTo(rotation = this.getRotation(), time = 250, { easing = FUNCTIONS.Linear.None, loop = LOOPING.NONE } = {}) {
+        const { x, y, z } = this.getRotation();
+        const targetRotation = { x, y, z, ...rotation };
 
-        return new Promise((resolve) => 
-            new Between({ x, y, z}, position)
+        return new Promise((resolve) => {
+            const between = new Between({ x, y, z}, targetRotation)
                 .time(time)
-                .easing(easing)
+                .easing(easing);
+            
+            if (loop) {
+                between.loop(loop);
+            }
+            
+            between
+                .on('update', value => !this.isDisposed() && this.setRotation(value))
+                .on('complete', resolve)
+        });
+    }
+
+    goTo(position = this.getPosition(), time = 250, { easing = FUNCTIONS.Linear.None, loop = LOOPING.NONE } = {}) {
+        const { x, y, z } = this.getPosition();
+        const targetPosition = { x, y, z, ...position };
+
+        return new Promise((resolve) => {
+            const between = new Between({ x, y, z}, targetPosition)
+                .time(time)
+                .easing(easing);
+            
+            if (loop) {
+                between.loop(loop);
+            }
+            
+            between
                 .on('update', value => !this.isDisposed() && this.setPosition(value))
                 .on('complete', resolve)
-        );
+        });
     }
 
     setUuid = (uuid) => {

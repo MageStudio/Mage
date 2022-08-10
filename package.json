@@ -42,7 +42,7 @@
         "@babel/plugin-transform-runtime": "7.5.0",
         "@babel/runtime": "7.5.0",
         "between.js": "0.1.2-fix.2",
-        "hotkeys-js": "3.7.2",
+        "hotkeys-js": "3.9.4",
         "html-to-image": "^1.9.0",
         "html2canvas": "^1.4.1",
         "inferno": "7.3.2",

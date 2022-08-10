@@ -24,22 +24,24 @@ export default class SmoothCarFollow extends BaseScript {
             distance = DEFAULT_DISTANCE,
             rotationSnapTime = DEFAULT_ROTATION_SNAP_TIME,
             distanceSnapTime = DEFAULT_DISTANCE_SNAP_TIME,
-            distanceMultiplier = DEFAULT_DISTANCE_MULTIPLIER
+            distanceMultiplier = DEFAULT_DISTANCE_MULTIPLIER,
+            lerpFactor
         } = options;
 
         this.camera = camera;
         this.target = target;
-
+        
         this.height = height;
         this.heightDamping = heightDamping;
-
+        
         this.distance = distance;
-
+        
         this.rotationSnapTime = rotationSnapTime;
         this.distanceSnapTime = distanceSnapTime;
-
+        
         this.distanceMultiplier = distanceMultiplier;
-
+        this.lerpFactor = lerpFactor;
+        
         this.lookAtVector = new Vector3(0, lookAtHeight, 0);
     }
 
@@ -55,10 +57,10 @@ export default class SmoothCarFollow extends BaseScript {
                 .multiplyScalar(this.distance);
 
             vector.y = y + this.height;
-            const desiredPosition = targetPosition.add(vector)
-            // const lerpFactor = 1 - Math.pow(0.1, dt);
+            const desiredPosition = targetPosition.add(vector);
+            const lerpFactor = this.lerpFactor || 1 - Math.pow(0.1, dt);
 
-            cameraPosition.lerpVectors(cameraPosition, desiredPosition, dt);
+            cameraPosition.lerpVectors(cameraPosition, desiredPosition, lerpFactor);
 
             this.camera.setPosition(cameraPosition);
 

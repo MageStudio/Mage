@@ -8,7 +8,7 @@ export default class BaseScript {
     __setDisposedFlag(flag) { this.isDisposed = flag; }
 
     constructor(name) {
-        this.__name = name || this.contructor.name;
+        this.__name = name || this.constructor.name;
         this.hasStarted = false;
         this.options = {};
     }

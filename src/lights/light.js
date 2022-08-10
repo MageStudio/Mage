@@ -141,10 +141,9 @@ export default class Light extends Entity {
     }
 
     toJSON() {
-        const { x, y, z } = this.body.position;
-
         return {
-            position: { x, y, z },
+            ...super.toJSON(),
+            type: this.getEntityType(),
             color: this.color,
             intensity: this.intensity,
             name: this.name

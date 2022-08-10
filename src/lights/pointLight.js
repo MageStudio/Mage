@@ -1,7 +1,6 @@
 import Light from './Light';
 import Scene from '../core/Scene';
 import Config from '../core/config';
-import { POINTLIGHT } from './Lights';
 
 import {
     PointLight as THREEPointLight,
@@ -49,9 +48,9 @@ export default class PointLight extends Light {
         decay = DEFAULT_DECAY
     }) {
         if (light) {
-            this.setBody(light)
+            this.setBody({ body: light });
         } else {
-            this.setBody(new THREEPointLight(color, intensity, distance, decay));
+            this.setBody({ body: new THREEPointLight(color, intensity, distance, decay) });
         }
 
         if (this.hasBody()) {
@@ -123,8 +122,7 @@ export default class PointLight extends Light {
     toJSON() {
         return {
             ...super.toJSON(),
-            distance: this.distance,
-            type: POINTLIGHT
+            distance: this.distance
         }
     }
 }

@@ -1,0 +1,20 @@
+# Created by Kenney (www.kenney.nl)
+
+newmtl Brown(Clone)
+Kd 0.578 0.233 0.115
+
+newmtl Beige(Clone)
+Kd 0.703 0.425 0.207
+
+newmtl BrownDark(Clone)
+Kd 0.327 0.102 0.059
+
+newmtl Green(Clone)
+Kd 0.065 0.501 0.266
+
+newmtl GreenDark(Clone)
+Kd 0.021 0.257 0.267
+
+newmtl Stone(Clone)
+Kd 0.192 0.228 0.246
+
