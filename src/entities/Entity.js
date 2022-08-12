@@ -27,7 +27,7 @@ import {
     ENTITY_TYPES,
     FLAT_ENTITY_TYPES
 } from './constants';
-import { FUNCTIONS, LOOPING }from '../lib/easing';
+import { FUNCTIONS, LOOPING, tweenTo }from '../lib/easing';
 
 export default class Entity extends EventDispatcher {
 
@@ -521,61 +521,28 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    scaleTo(scale = this.getScale(), time = 250, { easing = FUNCTIONS.Linear.None, loop = LOOPING.NONE } = {}) {
+    scaleTo(scale = this.getScale(), time = 250, options = {}) {
         const { x, y, z } = this.getScale();
-        const targetScale = { x, y, z, ...scale };
+        const target = { x, y, z, ...scale };
+        const onUpdate = value => !this.isDisposed() && this.setScale(value)
 
-        return new Promise(resolve => {
-            const between = new Between({ x, y, z}, targetScale)
-                .time(time)
-                .easing(easing);
-            
-            if (loop) {
-                between.loop(loop);
-            }
-            
-            between
-                .on('update', value => !this.isDisposed() && this.setScale(value))
-                .on('complete', resolve)
-        })
+        return tweenTo({ x, y, z }, target, { ...options, time, onUpdate });
     }
 
-    rotateTo(rotation = this.getRotation(), time = 250, { easing = FUNCTIONS.Linear.None, loop = LOOPING.NONE } = {}) {
+    rotateTo(rotation = this.getRotation(), time = 250, options = {}) {
         const { x, y, z } = this.getRotation();
-        const targetRotation = { x, y, z, ...rotation };
+        const target = { x, y, z, ...rotation };
+        const onUpdate = value => !this.isDisposed() && this.setRotation(value)
 
-        return new Promise((resolve) => {
-            const between = new Between({ x, y, z}, targetRotation)
-                .time(time)
-                .easing(easing);
-            
-            if (loop) {
-                between.loop(loop);
-            }
-            
-            between
-                .on('update', value => !this.isDisposed() && this.setRotation(value))
-                .on('complete', resolve)
-        });
+        return tweenTo({ x, y, z }, target, { ...options, time, onUpdate });
     }
 
-    goTo(position = this.getPosition(), time = 250, { easing = FUNCTIONS.Linear.None, loop = LOOPING.NONE } = {}) {
+    goTo(position = this.getPosition(), time = 250, options = {}) {
         const { x, y, z } = this.getPosition();
-        const targetPosition = { x, y, z, ...position };
+        const target = { x, y, z, ...position };
+        const onUpdate = value => !this.isDisposed() && this.setPosition(value);
 
-        return new Promise((resolve) => {
-            const between = new Between({ x, y, z}, targetPosition)
-                .time(time)
-                .easing(easing);
-            
-            if (loop) {
-                between.loop(loop);
-            }
-            
-            between
-                .on('update', value => !this.isDisposed() && this.setPosition(value))
-                .on('complete', resolve)
-        });
+        return tweenTo({ x, y, z }, target, { ...options, time, onUpdate });
     }
 
     setUuid = (uuid) => {
