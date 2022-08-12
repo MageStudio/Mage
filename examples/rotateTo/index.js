@@ -69,7 +69,7 @@ export default class Intro extends Level {
         cube.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: .5, metalness: 0 });
         setTimeout(() => {
             cube.rotateTo({ x: 4, y: 4, z: 4 }, 5000, { loop: easing.LOOPING.BOUNCE, easing: easing.FUNCTIONS.Quadratic.InOut });
-            cube.scaleTo({ x: 2, y: 2, z: 2 }, 5000, { loop: easing.LOOPING.BOUNCE });
+            cube.scaleTo({ x: 2, y: 2, z: 2 }, 5000, { loop: easing.LOOPING.BOUNCE }).then(() => console.log('done'));
         }, 2000)
     }
 }
