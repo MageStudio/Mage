@@ -13,16 +13,16 @@ import {
     Grid,
     Axes,
     Sprite,
-    Label
+    Label,
+    Cone
 } from './entities';
-
 
 import {
     ENTITY_TYPES,
     ENTITY_EVENTS,
 } from './entities/constants';
 
-import Proton from 'three.proton.js';
+import Proton from 'three.proton';
 
 import Audio, { AUDIO_RAMPS } from './audio/Audio';
 import AmbientSound from './audio/AmbientSound';
@@ -181,6 +181,7 @@ export {
     Sprite,
     Axes,
     Label,
+    Cone,
     Camera,
 
     Sound,

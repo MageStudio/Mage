@@ -1,4 +1,4 @@
-import Proton from 'three.proton.js';
+import Proton from 'three.proton';
 import { Vector3 } from 'three';
 import ProtonParticleEmitter from "./ProtonParticleEmitter";
 import PALETTES from '../../lib/palettes';
