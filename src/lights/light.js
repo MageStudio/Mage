@@ -1,4 +1,3 @@
-import Between from 'between.js';
 import { ENTITY_TYPES } from '../entities/constants';
 import Entity from '../entities/Entity';
 
@@ -11,6 +10,7 @@ import {
     LIGHT_NOT_FOUND
 } from '../lib/messages';
 import { generateRandomName } from '../lib/uuid';
+import { tweenTo } from '../lib/easing';
 
 const LAMP_COLOR = 0Xf1c40f;
 
@@ -112,14 +112,10 @@ export default class Light extends Entity {
         }
     }
 
-    dim(value = this.getIntensity(), time) {
+    dim(value = this.getIntensity(), time = 250) {
         const intensity = this.getIntensity();
-        return new Promise((resolve) => 
-            new Between(intensity, value)
-                .time(time)
-                .on('update', value => !this.isDisposed() && this.setIntensity(value))
-                .on('complete', resolve)
-        );
+        const onUpdate = value => !this.isDisposed() && this.setIntensity(value);
+        return tweenTo(intensity, value, { time, onUpdate })
     }
 
     on(time = 500) {

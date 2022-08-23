@@ -16,6 +16,8 @@ class Stats {
         this._fps = 0;
         this._fpsMax = 100;
         this.fps = new Subject();
+        this.memory = new Subject();
+        this.memoryMax = new Subject();
     }
 
     init() {
@@ -46,8 +48,8 @@ class Stats {
 
     getMemoryUsage() {
         if (features.isFeatureSupported(FEATURES.MEMORY)) {
-            this.memory = performance.memory.usedJSHeapSize / ONE_MB;
-            this.memoryMax = performance.memory.jsHeapSizeLimit / ONE_MB;
+            this.memory.next(performance.memory.usedJSHeapSize / ONE_MB);
+            this.memoryMax.next(performance.memory.jsHeapSizeLimit / ONE_MB);
         }
     }
 

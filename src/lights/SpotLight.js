@@ -9,7 +9,6 @@ import {
     SphereGeometry
 } from 'three';
 import Scene from '../core/Scene';
-import { SPOTLIGHT } from './Lights';
 import { ENTITY_TYPES } from '../entities/constants';
 import { generateRandomName } from '../lib/uuid';
 
@@ -24,18 +23,26 @@ const DEFAULT_BIAS = -0.0001;
 const WHITE = 0xffffff;
 const GREEN = 0x2ecc71;
 
+const DEFAULT_SPOTLIGHT_ANGLE = .32;
+const DEFAULT_SPOTLIGHT_PENUMBRA = .5;
+const DEFAULT_SPOTLIGHT_DECAY = 2;
+
 export default class SpotLight extends Light {
 
-    constructor(options) {
+    constructor(options = {}) {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name = generateRandomName('SpotLight')
+            name = generateRandomName('SpotLight'),
+            distance = DEFAULT_FAR,
+            angle = DEFAULT_SPOTLIGHT_ANGLE ,
+            penumbra = DEFAULT_SPOTLIGHT_PENUMBRA,
+            decay = DEFAULT_SPOTLIGHT_DECAY
         } = options;
         
         super({ color, intensity, name });
         this.options = options;
-        this.setLight({ color, intensity });
+        this.setLight({ color, intensity, distance, angle, penumbra, decay });
         this.setEntityType(ENTITY_TYPES.LIGHT.SPOT);
         this.setName(name);
     }
@@ -57,12 +64,16 @@ export default class SpotLight extends Light {
     setLight({
         light,
         color = WHITE,
-        intensity = DEFAULT_INTENSITY
+        intensity = DEFAULT_INTENSITY,
+        distance,
+        angle,
+        penumbra,
+        decay
     }) {
         if (light) {
             this.setBody({ body: light });
         } else {
-            this.setBody({ body: new THREESpotLight(color, intensity) });
+            this.setBody({ body: new THREESpotLight(color, intensity, distance, angle, penumbra, decay) });
         }
 
         if (this.hasBody()) {

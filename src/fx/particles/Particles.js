@@ -6,7 +6,7 @@ import Snow from './Snow';
 import Trail from './Trail';
 
 import Scene from '../../core/Scene';
-import Proton from 'three.proton.js';
+import Proton from 'three.proton';
 import { DEPRECATIONS, INVALID_EMITTER_ID } from '../../lib/messages';
 import { PARTICLE_EMITTER_TYPES } from './constants';
 import ParticleEmitter from './ParticleEmitter';

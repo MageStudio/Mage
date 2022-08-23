@@ -1,4 +1,4 @@
-import Proton from 'three.proton.js';
+import Proton from 'three.proton';
 import ParticleEmitterGroup from './ParticleEmitterGroup';
 import ProtonParticleEmitter from './ProtonParticleEmitter';
 

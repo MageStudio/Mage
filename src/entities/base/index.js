@@ -9,6 +9,7 @@ import Plane from './Plane';
 import Box from './Box';
 import Sprite from './Sprite';
 import Label from './Label';
+import Cone from './Cone';
 
 export {
     Sphere,
@@ -21,5 +22,6 @@ export {
     Box,
     Sprite,
     Axes,
-    Label
+    Label,
+    Cone
 };

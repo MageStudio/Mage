@@ -1,4 +1,4 @@
-import Proton from 'three.proton.js';
+import Proton from 'three.proton';
 import {
     SpriteMaterial,
     Sprite,
