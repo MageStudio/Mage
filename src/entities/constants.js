@@ -13,9 +13,8 @@ export const ENTITY_TYPES = {
     },
     AUDIO: {
         DEFAULT: 'AUDIO.DEFAULT',
-        AMBIENT: 'AUDIO.AMBIENT',
         DIRECTIONAL: 'AUDIO.DIRECTIONAL',
-        BACKGROUND: 'AUDIO.BACKGROUND'
+        AMBIENT: 'AUDIO.AMBIENT'
     },
     MODEL: 'MODEL',
     SPRITE: 'SPRITE',
@@ -64,6 +63,9 @@ export const ENTITY_EVENTS = {
     ANIMATION: {
         LOOP: 'LOOP',
         FINISHED: 'FINISHED'
+    },
+    AUDIO: {
+        ENDED: 'ended'
     }
 };
 

@@ -1,0 +1,29 @@
+# Created by Kenney (www.kenney.nl)
+
+newmtl Stone(Clone)
+Kd 0.192 0.228 0.246
+
+newmtl foliage(Clone)
+Kd 0.26 0.849 0.603
+
+newmtl Green(Clone)
+Kd 0.065 0.501 0.266
+
+newmtl BrownDark(Clone)
+Kd 0.327 0.102 0.059
+
+newmtl wood(Clone)
+Kd 0.896 0.602 0.393
+
+newmtl metal(Clone)
+Kd 0.7732289 0.7964044 0.9056605
+
+newmtl rock(Clone)
+Kd 0.9150943 0.823513 0.62589
+
+newmtl woodDark(Clone)
+Kd 0.738 0.4593361 0.254166
+
+newmtl _defaultMat(Clone)
+Kd 1 1 1
+

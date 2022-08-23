@@ -26,7 +26,6 @@ import Proton from 'three.proton';
 
 import Audio, { AUDIO_RAMPS } from './audio/Audio';
 import AmbientSound from './audio/AmbientSound';
-import BackgroundSound from './audio/BackgroundSound';
 import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
 
@@ -186,7 +185,7 @@ export {
 
     Sound,
     AUDIO_RAMPS,
-    BackgroundSound,
+    AmbientSound,
     DirectionalSound,
 
     AmbientLight,

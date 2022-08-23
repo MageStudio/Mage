@@ -6,16 +6,18 @@ import { buildAssetId } from '../lib/utils/assets';
 import { ROOT } from '../lib/constants';
 import { ASSETS_AUDIO_LOAD_FAIL, AUDIO_CONTEXT_NOT_AVAILABLE } from '../lib/messages';
 
-const TIME_FOR_UPDATE = 5;
-const DELAY_FACTOR = 0.02;
-const DELAY_STEP = 1;
-const DELAY_MIN_VALUE = 0.2;
-const DELAY_NORMAL_VALUE = 40;
-const VOLUME = 2;
+export const TIME_FOR_UPDATE = 5;
+export const DELAY_FACTOR = 0.02;
+export const DELAY_STEP = 1;
+export const DELAY_MIN_VALUE = 0.2;
+export const DELAY_NORMAL_VALUE = 40;
+export const VOLUME = 2;
+export const DEFAULT_AUDIO_NODE_VOLUME = 5;
+export const DEFAULT_AUDIO_NODE_RAMP_TIME = .1;
 
-export const AUDIO_EVENTS = {
-    ENDED: 'ended'
-};
+// export const AUDIO_EVENTS = {
+//     ENDED: 'ended'
+// };
 
 export const AUDIO_RAMPS = {
     LINEAR: 'LINEAR',
@@ -44,6 +46,10 @@ export class Audio {
 
     hasContext() {
         return !!this.context;
+    }
+
+    hasSounds() {
+        return this.sounds.length > 0;
     }
 
     createAudioContext() {
@@ -147,7 +153,10 @@ export class Audio {
         p.setFromMatrixPosition(Scene.getCameraBody().matrixWorld);
 
         //setting audio engine context listener position on camera position
-        this.context.listener.setPosition(p.x, p.y, p.z);
+        // this.context.listener.setPosition(p.x, p.y, p.z);
+        this.context.listener.positionX.setValueAtTime(p.x, this.context.currentTime);
+        this.context.listener.positionY.setValueAtTime(p.y, this.context.currentTime);
+        this.context.listener.positionZ.setValueAtTime(p.z, this.context.currentTime);
     }
 
     updatelistenerOrientation() {
@@ -169,7 +178,12 @@ export class Audio {
         up.normalize();
 
         // Set the orientation and the up-vector for the listener.
-        this.context.listener.setOrientation(vec.x, vec.y, vec.z, up.x, up.y, up.z);
+        this.context.listener.forwardX.setValueAtTime(vec.x, this.context.currentTime);
+        this.context.listener.forwardY.setValueAtTime(vec.y, this.context.currentTime);
+        this.context.listener.forwardZ.setValueAtTime(vec.z, this.context.currentTime);
+        this.context.listener.upX.setValueAtTime(up.x, this.context.currentTime);
+        this.context.listener.upY.setValueAtTime(up.y, this.context.currentTime);
+        this.context.listener.upZ.setValueAtTime(up.z, this.context.currentTime);
 
         m.elements[12] = mx;
         m.elements[13] = my;
@@ -188,13 +202,15 @@ export class Audio {
     update(dt) {
         if (!this.hasContext()) return;
 
+        if (this.hasSounds()) {
+            this.updateListenerPosition();
+            this.updatelistenerOrientation();
+        }
+
         const start = new Date();
         for (var index in this.sounds) {
             const sound = this.sounds[index];
             sound.update(dt);
-
-            this.updateListenerPosition();
-            this.updatelistenerOrientation();
 
             if ((+new Date() - start) > TIME_FOR_UPDATE) break;
         }

@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, Sound } from '../../dist/mage.js';
+import { Router, store, Level, Box, Scene, Controls, AmbientLight, AmbientSound, Input, INPUT_EVENTS } from '../../dist/mage.js';
 
 export default class Example extends Level {
 
@@ -13,7 +13,7 @@ export default class Example extends Level {
     }
 
     playSound() {
-        new Sound('click').play();
+        new AmbientSound('click', { autoplay: true });
     }
 
     onKeyDown({ event }) {
@@ -30,6 +30,8 @@ export default class Example extends Level {
         Scene
             .getCamera()
             .setPosition({ y: 15, z: 45 });
+        Input.enable();
+        Input.keyboard.addEventListener(INPUT_EVENTS.KEY_DOWN, this.onKeyDown.bind(this));
 
         // this.createFloor();/
     }

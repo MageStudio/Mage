@@ -24,7 +24,7 @@ const GREEN = 0x2ecc71;
 
 export default class PointLight extends Light {
 
-    constructor(options) {
+    constructor(options = {}) {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,

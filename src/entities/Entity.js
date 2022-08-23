@@ -31,8 +31,21 @@ import { FUNCTIONS, LOOPING, tweenTo }from '../lib/easing';
 
 export default class Entity extends EventDispatcher {
 
-    constructor({ serializable = true, tag = '', tags = [] } = {}) {
+    constructor(options = {}) {
+        const {
+            serializable = true,
+            tag = '',
+            tags = []
+        } = options;
         super();
+
+        this.options = {
+            ...options,
+            serializable,
+            tag,
+            tags
+        };
+
         this.scripts = [];
         this.tags = [];
         this.children = [];
