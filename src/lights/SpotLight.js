@@ -23,6 +23,10 @@ const DEFAULT_BIAS = -0.0001;
 const WHITE = 0xffffff;
 const GREEN = 0x2ecc71;
 
+const DEFAULT_SPOTLIGHT_ANGLE = .32;
+const DEFAULT_SPOTLIGHT_PENUMBRA = .5;
+const DEFAULT_SPOTLIGHT_DECAY = 2;
+
 export default class SpotLight extends Light {
 
     constructor(options = {}) {
@@ -31,9 +35,9 @@ export default class SpotLight extends Light {
             intensity = DEFAULT_INTENSITY,
             name = generateRandomName('SpotLight'),
             distance = DEFAULT_FAR,
-            angle = 0.32 ,
-            penumbra = 0.5,
-            decay = 2
+            angle = DEFAULT_SPOTLIGHT_ANGLE ,
+            penumbra = DEFAULT_SPOTLIGHT_PENUMBRA,
+            decay = DEFAULT_SPOTLIGHT_DECAY
         } = options;
         
         super({ color, intensity, name });
