@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, AmbientSound, Input, INPUT_EVENTS, Cube, DirectionalSound, easing, Models, HemisphereLight, SunLight, PALETTES, constants, Sky, Lights, Particles, PARTICLES, PointLight, BaseScript } from '../../dist/mage.js';
+import { Router, store, Level, Box, Scene, Controls, AmbientLight, AmbientSound, Input, INPUT_EVENTS, Cube, DirectionalSound, easing, Models, HemisphereLight, SunLight, PALETTES, constants, Sky, Lights, Particles, PARTICLES, PointLight, BaseScript, Scripts, Audio, AUDIO_RAMPS } from '../../dist/mage.js';
 
 const AMBIENTLIGHT_OPTIONS = {
     color: PALETTES.FRENCH_PALETTE.SPRAY,
@@ -14,9 +14,20 @@ const HEMISPHERELIGHT_OPTIONS = {
 };
 
 class Flicker extends BaseScript {
-
     start(light) {
         this.light = light;
+        this.isOn = true;
+
+        const flicker = () => {
+            setTimeout(() => {
+                this.light.dim(this.isOn ? 0.7 : 1, Math.random() * 250).then(() => {
+                    this.isOn = !this.isOn;
+                    flicker();
+                });
+            }, Math.random() * 500);
+        }
+        
+        flicker();
     }
 }
 
@@ -37,7 +48,7 @@ export default class Example extends Level {
 
     createSky() {
         const sky = new Sky();
-        const inclination = .8;
+        const inclination = .51;
         const azimuth = .1;
         const distance = 100;
         
@@ -62,40 +73,56 @@ export default class Example extends Level {
         const fireLight = new PointLight({ color: PALETTES.FRENCH.CARROT_ORANGE });
         fire.add(fireLight);
         fireLight.setPosition({ y: .1 })
+        fireLight.addScript('Flicker');
 
-        window.fireLight = fireLight;
-        window.fire = fire;
+        return fire;
     }
 
     onCreate() {
+        Audio.setVolume(.5);
         this.addAmbientLight();
-        Controls.setOrbitControl();
+        // Controls.setOrbitControl();
         this.createSky();
+
+        Scripts.register('Flicker', Flicker);
 
         Scene
             .getCamera()
-            .setPosition({ y: 5, z: 5 });
+            .setPosition({ x: -0.74, y: 1.62, z: 0.8 });
+
+        Scene.getCamera().lookAt({ x: 0, y: 1, z: 0 });
 
         const scene = Models.get('scene');
         scene.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: .5, metalness: 0 });
 
         const radio = Models.get('radio');
-        window.radio = radio;
         radio.setRotation({ y: 1 })
         radio.setPosition({ y: 1.35, x: .3, z: .2 })
         radio.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: .5, metalness: 0 });
 
-        this.createFire();
+        AmbientSound.create('forest', { loop: true }).play(.4);
+
+        const fire = this.createFire();
 
         document.querySelector('.button').addEventListener('click', () => {
             radio.add(new DirectionalSound('radio', { autoplay: true, loop: true, rolloffFactor: .4, refDistance: .1 }));
+            setTimeout(() => {
+                const swatSound = new DirectionalSound('swat', { autoplay: true, rolloffFactor: .4, refDistance: .1 });
+                radio.add(swatSound);
+
+                swatSound.stop(10000);
+            }, 1000)
+            fire.add(new DirectionalSound('fire', { autoplay: true, loop: true, rolloffFactor: .4, refDistance: .1 }));
         });
     }
 }
 
 const assets = {
     audio: {
-        radio: 'radio.wav'
+        radio: 'radiotune.mp3',
+        fire: 'fire.wav',
+        swat: 'swat.mp3',
+        forest: 'forest.mp3'
     },
     textures: {
         fire: 'fire.png'

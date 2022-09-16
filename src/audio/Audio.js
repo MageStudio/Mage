@@ -13,11 +13,7 @@ export const DELAY_MIN_VALUE = 0.2;
 export const DELAY_NORMAL_VALUE = 40;
 export const VOLUME = 2;
 export const DEFAULT_AUDIO_NODE_VOLUME = 5;
-export const DEFAULT_AUDIO_NODE_RAMP_TIME = .1;
-
-// export const AUDIO_EVENTS = {
-//     ENDED: 'ended'
-// };
+export const DEFAULT_AUDIO_NODE_RAMP_TIME = 100; // value in ms
 
 export const AUDIO_RAMPS = {
     LINEAR: 'LINEAR',
@@ -76,12 +72,14 @@ export class Audio {
         if (this.context) {
             return this.context.destination;
         }
+        console.log(AUDIO_CONTEXT_NOT_AVAILABLE);
     }
 
     getVolume() {
         if (this.masterVolumeNode) {
             return this.masterVolumeNode.gain.value;
         }
+        console.log(AUDIO_CONTEXT_NOT_AVAILABLE);
     }
 
     getMasterVolumeNode() {
@@ -147,37 +145,28 @@ export class Audio {
     }
 
     updateListenerPosition() {
-        //now handling listener
         Scene.getCameraBody().updateMatrixWorld();
         const p = new Vector3();
         p.setFromMatrixPosition(Scene.getCameraBody().matrixWorld);
 
-        //setting audio engine context listener position on camera position
-        // this.context.listener.setPosition(p.x, p.y, p.z);
         this.context.listener.positionX.setValueAtTime(p.x, this.context.currentTime);
         this.context.listener.positionY.setValueAtTime(p.y, this.context.currentTime);
         this.context.listener.positionZ.setValueAtTime(p.z, this.context.currentTime);
     }
 
     updatelistenerOrientation() {
-        //this is to add up and down vector to our camera
-        // The camera's world matrix is named "matrix".
         const m = Scene.getCameraBody().matrix;
-
         const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
         m.elements[12] = m.elements[13] = m.elements[14] = 0;
 
-        // Multiply the orientation vector by the world matrix of the camera.
         const vec = new Vector3(0,0,1);
         vec.applyMatrix4(m);
         vec.normalize();
 
-        // Multiply the up vector by the world matrix.
         const up = new Vector3(0,-1,0);
         up.applyMatrix4(m);
         up.normalize();
 
-        // Set the orientation and the up-vector for the listener.
         this.context.listener.forwardX.setValueAtTime(vec.x, this.context.currentTime);
         this.context.listener.forwardY.setValueAtTime(vec.y, this.context.currentTime);
         this.context.listener.forwardZ.setValueAtTime(vec.z, this.context.currentTime);

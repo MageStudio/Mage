@@ -1,5 +1,4 @@
 import { Vector3 } from "three";
-import Scene from "../core/Scene";
 import { ENTITY_TYPES } from "../entities/constants";
 import { generateRandomName } from "../lib/uuid";
 import Audio from "./Audio";
@@ -7,7 +6,7 @@ import Sound from "./Sound";
 
 export default class DirectionalSound extends Sound {
 
-    constructor(source, { name = generateRandomName('DirectionalSound'), ...options}) {
+    constructor(source, { name = generateRandomName('DirectionalSound'), ...options } = {}) {
         super({ source, name, ...options });
 
         this.setEntityType(ENTITY_TYPES.AUDIO.DIRECTIONAL);
@@ -67,11 +66,9 @@ export default class DirectionalSound extends Sound {
         let vec = new Vector3(0,0,1);
         let m = this.getBody().matrixWorld;
 
-        // Save the translation column and zero it.
         let mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
         m.elements[12] = m.elements[13] = m.elements[14] = 0;
 
-        // Multiply the 0,0,1 vector by the world matrix and normalize the result.
         vec.applyMatrix4(m);
         vec.normalize();
 
@@ -79,7 +76,6 @@ export default class DirectionalSound extends Sound {
         this.pannerNode.orientationY.setValueAtTime(vec.y, Audio.context.currentTime);
         this.pannerNode.orientationZ.setValueAtTime(vec.z, Audio.context.currentTime);
 
-        // Restore the translation column.
         m.elements[12] = mx;
         m.elements[13] = my;
         m.elements[14] = mz;

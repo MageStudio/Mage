@@ -1,13 +1,17 @@
 import { Object3D } from 'three';
 import { ENTITY_EVENTS, ENTITY_TYPES } from '../entities/constants';
 import Entity from '../entities/Entity';
+import { ALMOST_ZERO } from '../lib/constants';
+import { AUDIO_UNABLE_TO_LOAD_SOUND } from '../lib/messages';
 import { generateRandomName } from '../lib/uuid';
-import Audio, { AUDIO_RAMPS, DEFAULT_AUDIO_NODE_RAMP_TIME, DEFAULT_AUDIO_NODE_VOLUME } from './Audio';
+import Audio, {
+    AUDIO_RAMPS,
+    DEFAULT_AUDIO_NODE_RAMP_TIME,
+    DEFAULT_AUDIO_NODE_VOLUME,
+} from './Audio';
 
 export default class Sound extends Entity {
-
     constructor(options = {}) {
-
         const {
             source,
             loop = false,
@@ -15,7 +19,7 @@ export default class Sound extends Entity {
             loopEnd,
             autoplay,
             reconnectOnReset,
-            name = generateRandomName('sound')
+            name = generateRandomName('sound'),
         } = options;
 
         super({
@@ -26,7 +30,7 @@ export default class Sound extends Entity {
             loopEnd,
             autoplay,
             reconnectOnReset,
-            name
+            name,
         });
 
         this.source = source;
@@ -59,8 +63,14 @@ export default class Sound extends Entity {
         this.setBuffer();
         this.setupAudioNodeLoop();
 
-        this.audioNode.removeEventListener(ENTITY_EVENTS.AUDIO.ENDED, this.onSoundEnded.bind(this));
-        this.audioNode.addEventListener(ENTITY_EVENTS.AUDIO.ENDED, this.onSoundEnded.bind(this));
+        this.audioNode.removeEventListener(
+            ENTITY_EVENTS.AUDIO.ENDED,
+            this.onSoundEnded.bind(this)
+        );
+        this.audioNode.addEventListener(
+            ENTITY_EVENTS.AUDIO.ENDED,
+            this.onSoundEnded.bind(this)
+        );
     }
 
     get sampleRate() {
@@ -68,7 +78,7 @@ export default class Sound extends Entity {
     }
 
     get duration() {
-        return this.buffer.duration;
+        return this.buffer.duration * 1000;
     }
 
     get numberOfChannels() {
@@ -78,11 +88,13 @@ export default class Sound extends Entity {
     createAudioNode() {
         this.audioNode = Audio.context.createBufferSource();
     }
-    
+
     setupAudioNodeLoop() {
         this.audioNode.loop = this.loop;
-        this.audioNode.loopEnd = this.loopEnd === undefined ? this.duration : this.loopEnd;
-        this.audioNode.loopStart = this.loopStart === undefined ? this.duration : this.loopStart;
+        this.audioNode.loopEnd =
+            this.loopEnd === undefined ? this.duration : this.loopEnd;
+        this.audioNode.loopStart =
+            this.loopStart === undefined ? this.duration : this.loopStart;
     }
 
     createVolumeNode() {
@@ -116,16 +128,17 @@ export default class Sound extends Entity {
         }
     }
 
-    reset() {
+    reset = () => {
         this.playing = false;
 
         this.disconnect();
 
         this.setupAudio();
         this.connect();
-    }
+    };
 
     dispose() {
+        super.dispose();
         this.stop();
         this.disconnect();
     }
@@ -154,8 +167,12 @@ export default class Sound extends Entity {
         this.audioNode.buffer = buffer;
     }
 
-    play(volume = this.getVolume(), delay = DEFAULT_AUDIO_NODE_RAMP_TIME, ramp = AUDIO_RAMPS.LINEAR) {
-        if (this.playing) return;
+    play(
+        volume = this.getVolume(),
+        delay = DEFAULT_AUDIO_NODE_RAMP_TIME,
+        ramp = AUDIO_RAMPS.LINEAR
+    ) {
+        if (this.playing) return Promise.resolve();
 
         this.setVolume(0);
         this.audioNode.start();
@@ -163,11 +180,21 @@ export default class Sound extends Entity {
         this.hasPlayed = true;
         this.playing = true;
 
+        const audioDelay = delay / 1000; // linearRampToValueAtTime/exponentialRampToValueAtTime requires time to be expressed in seconds
+
         if (ramp === AUDIO_RAMPS.LINEAR) {
-            this.volumeNode.gain.linearRampToValueAtTime(volume, Audio.context.currentTime + delay);
+            this.volumeNode.gain.linearRampToValueAtTime(
+                volume,
+                Audio.context.currentTime + audioDelay
+            );
         } else {
-            this.volumeNode.gain.exponentialRampToValueAtTime(volume, Audio.context.currentTime + delay);
+            this.volumeNode.gain.exponentialRampToValueAtTime(
+                volume,
+                Audio.context.currentTime + audioDelay
+            );
         }
+
+        return this;
     }
 
     onSoundEnded() {
@@ -176,15 +203,23 @@ export default class Sound extends Entity {
     }
 
     stop(delay = DEFAULT_AUDIO_NODE_RAMP_TIME, ramp = AUDIO_RAMPS.LINEAR) {
+        const audioDelay = delay / 1000; // linearRampToValueAtTime/exponentialRampToValueAtTime requires time to be expressed in seconds
+
         if (ramp === AUDIO_RAMPS.LINEAR) {
-            this.volumeNode.gain.linearRampToValueAtTime(0, Audio.context.currentTime + delay);
-        }  else {
-            this.volumeNode.gain.exponentialRampToValueAtTime(0, Audio.context.currentTime + delay);
+            this.volumeNode.gain.linearRampToValueAtTime(
+                ALMOST_ZERO,
+                Audio.context.currentTime + audioDelay
+            );
+        } else {
+            this.volumeNode.gain.exponentialRampToValueAtTime(
+                ALMOST_ZERO,
+                Audio.context.currentTime + audioDelay
+            );
         }
 
-        setTimeout(() => {
-            this.audioNode.stop();
-        }, delay);
+        setTimeout(this.reset, delay);
+
+        return this;
     }
 
     detune(value) {
@@ -219,8 +254,14 @@ export default class Sound extends Entity {
 
             this.convolverNode.buffer = Audio.get(effect);
 
-            this.convolverGainNode.gain.setValueAtTime(0.7, Audio.context.currentTime);
-            this.plainGainNode.gain.setValueAtTime(0.3, Audio.context.currentTime);
+            this.convolverGainNode.gain.setValueAtTime(
+                0.7,
+                Audio.context.currentTime
+            );
+            this.plainGainNode.gain.setValueAtTime(
+                0.3,
+                Audio.context.currentTime
+            );
         }
     }
 }

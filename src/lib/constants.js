@@ -12,6 +12,8 @@ import {
     Quaternion
 } from 'three';
 
+export const ALMOST_ZERO = 0.00001;
+
 export const UP = 'UP';
 export const DOWN = 'DOWN';
 export const LEFT = 'LEFT';
