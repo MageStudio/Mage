@@ -50,6 +50,18 @@ export const hasMaterial = mesh => Boolean(mesh.material);
 export const hasGeometry = mesh => Boolean(mesh.geometry);
 export const hasTexture = mesh => hasMaterial(mesh) && mesh.material.map;
 
+export const applyMaterialChange = (elementBody, changeCallback) => {
+    if (hasMaterial(elementBody)) {
+        processMaterial(elementBody.material, changeCallback);
+    } else {
+        elementBody.traverse(child => {
+            if (hasMaterial(child)) {
+                processMaterial(child.material, changeCallback);
+            }
+        });
+    }
+}
+
 export const processMaterial = (material, callback) => Array.isArray(material) ? material.map(callback) : callback(material);
 
 export const replaceMaterialByName = (name, mesh, materialOptions) => {

@@ -43,10 +43,13 @@ import {
     disposeTextures,
     disposeMaterial,
     disposeGeometry,
-    setUpLightsAndShadows
+    setUpLightsAndShadows,
+    processMaterial,
+    applyMaterialChange
 } from '../lib/meshUtils';
 import { isTextureMapAllowedForMaterial } from '../materials/helpers';
 import { generateRandomName } from '../lib/uuid';
+import { tweenTo } from '../lib/easing';
 
 const COLLIDER_TAG = 'collider';
 const COLLIDER_COLOR = 0xff0000;
@@ -458,16 +461,9 @@ export default class Element extends Entity {
     }
 
     setColor(color) {
+        const _setColor = material => material.color = new Color(color);
         if (color) {
-            if (hasMaterial(this.getBody())) {
-                this.body.material.color = new Color(color);
-            } else {
-                this.body.traverse(child => {
-                    if (hasMaterial(child) && !this.isParentOf(child)) {
-                        child.material.color = new Color(color);
-                    }
-                });
-            }
+            applyMaterialChange(this.getBody(), _setColor);
         } else {
             console.warn(ELEMENT_SET_COLOR_MISSING_COLOR);
         }
@@ -510,25 +506,17 @@ export default class Element extends Entity {
 
             this.recordTexture(textureId, textureType);
 
-            const applyTextureTo = (element) => {
+            const applyTextureTo = material => {
                 const texture = Images.get(textureId);
 
                 texture.wrapS = wrap;
                 texture.wrapT = wrap;
                 texture.repeat.set(repeat.x, repeat.y);
 
-                element.material[textureType] = texture;
+                material[textureType] = texture;
             }
 
-            if (hasMaterial(this.getBody())) {
-                applyTextureTo(this.getBody());
-            } else {
-                this.getBody().traverse(child => {
-                    if (hasMaterial(child)) {
-                        applyTextureTo(child);
-                    }
-                })
-            }
+            applyMaterialChange(this.getBody(), applyTextureTo);
         }
     }
 
@@ -576,50 +564,30 @@ export default class Element extends Entity {
         const opacity = clamp(value, 0, 1);
         this.opacity = opacity;
 
-        if (hasMaterial(this.getBody())) {
-            this.body.material.transparent = true;
-            this.body.material.opacity = opacity;
-        } else {
-            this.body.traverse(child => {
-                if (hasMaterial(child) && !this.isParentOf(child)) {
-                    child.material.transparent = true;
-                    child.material.opacity = opacity;
-                }
-            })
+        const _setOpacity = material => {
+            material.transparent = true;
+            material.opacity = this.opacity;
         }
+
+        applyMaterialChange(this.getBody(), _setOpacity);
     }
 
-    fadeTo(opacity, time) {
-        return new Promise((resolve) => 
-            new Between(this.opacity, opacity)
-                .time(time)
-                .on('update', value => !this.isDisposed() && this.setOpacity(value))
-                .on('complete', resolve)
-        );
+    fadeTo(opacity = 1, time = 250, options = {}) {
+        const onUpdate  = value => !this.isDisposed() && this.setOpacity(value); 
+        return tweenTo(this.opacity, clamp(opacity, 0, 1), { ...options, time, onUpdate });
     }
 
     setWireframe(flag = true) {
-        if (hasMaterial(this.getBody())) {
-            this.body.material.wireframe = flag;
-        } else {
-            this.body.traverse(child => {
-                if (hasMaterial(child)) {
-                    child.material.wireframe = flag;
-                }
-            })
-        }
+        const _setWireframe = material => material.wireframe = flag; 
+        applyMaterialChange(this.getBody(), _setWireframe);
     }
 
     setWireframeLineWidth(width = 1) {
-        if (hasMaterial(this.getBody())) {
-            this.body.material.wireframeLinewidth = width;
-        } else {
-            this.body.traverse(child => {
-                if (hasMaterial(child)) {
-                    child.material.wireframeLinewidth = width;
-                }
-            })
-        }
+        const _setWireframeLineWidth = material => {
+            material.wireframeLinewidth = width;
+        };
+
+        applyMaterialChange(this.getBody(), _setWireframeLineWidth);
     }
 
     lookAt = ({ x = 0, y = 0, z = 0 } = {}) => {
