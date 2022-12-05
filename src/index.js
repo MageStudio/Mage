@@ -14,13 +14,10 @@ import {
     Axes,
     Sprite,
     Label,
-    Cone
+    Cone,
 } from './entities';
 
-import {
-    ENTITY_TYPES,
-    ENTITY_EVENTS,
-} from './entities/constants';
+import { ENTITY_TYPES, ENTITY_EVENTS } from './entities/constants';
 
 import Proton from 'three.proton';
 
@@ -30,10 +27,7 @@ import DirectionalSound from './audio/DirectionalSound';
 import Sound from './audio/Sound';
 
 import * as THREE from 'three';
-import {
-    Vector3,
-    EventDispatcher
-} from 'three';
+import { Vector3, EventDispatcher } from 'three';
 import Level, { author } from './core/Level';
 
 import Universe from './core/Universe';
@@ -110,6 +104,7 @@ import Models from './models/Models';
 import PostProcessing from './fx/postprocessing/PostProcessing';
 
 import * as rxjs from 'rxjs';
+import * as xstate from 'xstate';
 
 const constants = {
     ...lib_constants,
@@ -123,7 +118,6 @@ export {
     ENTITY_TYPES,
     ENTITY_EVENTS,
     Level,
-
     FEATURES,
     Features,
     Config,
@@ -133,16 +127,13 @@ export {
     BUILTIN,
     Router,
     GameRunner,
-
     store,
     Provider,
     inferno,
     createElement,
     LabelComponent,
     connect,
-
     Controls,
-
     Images,
     Models,
     Audio,
@@ -154,21 +145,16 @@ export {
     ParticleEmitterGroup,
     Proton,
     Partykals,
-
     Physics,
     PHYSICS_EVENTS,
     PHYSICS_CONSTANTS,
     physicsUtils,
     hitboxUtils,
-
     MeshLoader,
     LightLoader,
-
     BaseScript,
-
     Input,
     INPUT_EVENTS,
-
     Line,
     CurveLine,
     Plane,
@@ -182,32 +168,25 @@ export {
     Label,
     Cone,
     Camera,
-
     Sound,
     AUDIO_RAMPS,
     AmbientSound,
     DirectionalSound,
-
     AmbientLight,
     SunLight,
     PointLight,
     SpotLight,
     HemisphereLight,
     Lights,
-
     Atmosphere,
     Mirror,
     Ocean,
     Water,
-
     Skybox,
     Sky,
-
     Shader,
-
     Color,
     PALETTES,
-
     Vector3,
     EventDispatcher,
     math,
@@ -218,7 +197,7 @@ export {
     functions,
     easing,
     Stats,
-
     THREE,
-    rxjs
+    rxjs,
+    xstate,
 };
