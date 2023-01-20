@@ -1,6 +1,6 @@
-import Between from 'between.js';
-import { createMachine, interpret } from 'xstate';
-import { EventDispatcher, Vector3, Quaternion, Euler } from 'three';
+import Between from "between.js";
+import { createMachine, interpret } from "xstate";
+import { EventDispatcher, Vector3, Quaternion, Euler } from "three";
 import {
     TAG_ALREADY_EXISTS,
     TAG_NOT_EXISTING_REMOVAL,
@@ -12,38 +12,26 @@ import {
     KEY_IS_MISSING,
     KEY_VALUE_IS_MISSING,
     ENTITY_CANT_ADD_NOT_ENTITY,
-    ENTITY_NOT_SET
-} from '../lib/messages';
-import Scripts from '../scripts/Scripts';
-import Scene from '../core/Scene';
+    ENTITY_NOT_SET,
+} from "../lib/messages";
+import Scripts from "../scripts/Scripts";
+import Scene from "../core/Scene";
 
-import {
-    isScene
-} from '../lib/meshUtils';
+import { isScene } from "../lib/meshUtils";
 
-import {
-    DEFAULT_TAG,
-    ENTITY_EVENTS,
-    ENTITY_TYPES,
-    FLAT_ENTITY_TYPES
-} from './constants';
-import { FUNCTIONS, LOOPING, tweenTo }from '../lib/easing';
+import { DEFAULT_TAG, ENTITY_EVENTS, ENTITY_TYPES, FLAT_ENTITY_TYPES } from "./constants";
+import { FUNCTIONS, LOOPING, tweenTo } from "../lib/easing";
 
 export default class Entity extends EventDispatcher {
-
     constructor(options = {}) {
-        const {
-            serializable = true,
-            tag = '',
-            tags = []
-        } = options;
+        const { serializable = true, tag = "", tags = [] } = options;
         super();
 
         this.options = {
             ...options,
             serializable,
             tag,
-            tags
+            tags,
         };
 
         this.scripts = [];
@@ -53,7 +41,7 @@ export default class Entity extends EventDispatcher {
         this.parent = false;
         this.disposed = false;
 
-        this.addTags([ DEFAULT_TAG, tag, ...tags ]);
+        this.addTags([DEFAULT_TAG, tag, ...tags]);
         this.serializable = serializable;
     }
 
@@ -74,17 +62,17 @@ export default class Entity extends EventDispatcher {
         this.children = [];
         this.isMage = true;
         this.parent = false;
-        this.tags = [ DEFAULT_TAG ];
+        this.tags = [DEFAULT_TAG];
     }
 
     waitForBody(delay = 200, maxTries = 1) {
         return new Promise((resolve, reject) => {
-            const check = (tries) => {
+            const check = tries => {
                 setTimeout(() => {
                     if (this.hasBody()) {
                         resolve();
                     } else if (tries <= maxTries) {
-                        check(tries+1);
+                        check(tries + 1);
                     } else {
                         reject();
                     }
@@ -103,13 +91,13 @@ export default class Entity extends EventDispatcher {
         return this.body;
     }
 
-    getBodyByName = (name) => {
+    getBodyByName = name => {
         if (name && this.hasBody()) {
             return this.getBody().getObjectByName(name);
         }
 
         console.warn(ELEMENT_NAME_NOT_PROVIDED);
-    }
+    };
 
     setBody({ body } = {}) {
         this.body = body;
@@ -129,9 +117,10 @@ export default class Entity extends EventDispatcher {
 
     add(child, container = this.getBody(), { waitForBody = 0, waitForBodyMaxRetries = 1 } = {}) {
         if (this.hasBody()) {
-            const _add = (toAdd) => {
+            const _add = toAdd => {
                 if (toAdd instanceof Entity) {
-                    return toAdd.waitForBody(waitForBody, waitForBodyMaxRetries)
+                    return toAdd
+                        .waitForBody(waitForBody, waitForBodyMaxRetries)
                         .then(() => {
                             this.children.push(toAdd);
                             toAdd.setParent(this);
@@ -176,14 +165,13 @@ export default class Entity extends EventDispatcher {
     remove(element) {
         if (this.hasBody() && this.has(element)) {
             if (element.isMage) {
-                this.body.remove(element.getBody())
+                this.body.remove(element.getBody());
                 const index = this.children.findIndex(m => m.equals(element));
 
-                if (index) this.children.splice(index, 1);
+                if (index !== -1) this.children.splice(index, 1);
             } else {
                 this.body.remove(element.getBody());
             }
-            
         }
     }
 
@@ -204,11 +192,11 @@ export default class Entity extends EventDispatcher {
     getHierarchy() {
         return {
             element: this,
-            children: this.children.map(e => e.getHierarchy())
-        }
+            children: this.children.map(e => e.getHierarchy()),
+        };
     }
 
-    addTag = (tagName) => {
+    addTag = tagName => {
         if (!tagName) return false;
 
         if (!this.hasTag(tagName)) {
@@ -218,7 +206,7 @@ export default class Entity extends EventDispatcher {
             console.log(TAG_ALREADY_EXISTS, tagName);
             return false;
         }
-    }
+    };
 
     addTags(tags = []) {
         tags.forEach(this.addTag);
@@ -240,7 +228,7 @@ export default class Entity extends EventDispatcher {
     }
 
     removeAllTags() {
-        this.tags = [ DEFAULT_TAG ] ;
+        this.tags = [DEFAULT_TAG];
     }
 
     hasTag(tagName) {
@@ -320,22 +308,23 @@ export default class Entity extends EventDispatcher {
         }
 
         this.dispatchEvent({
-            type: ENTITY_EVENTS.DISPOSE
+            type: ENTITY_EVENTS.DISPOSE,
         });
 
         this.reset();
+
+        this.disposed = true;
     }
 
     hasStateMachine = () => !!this.stateMachine;
 
     addStateMachine(description) {
-        this.stateMachine = interpret(createMachine(description))
-            .onTransition(state => {
-                this.dispatchEvent({
-                    type: ENTITY_EVENTS.STATE_MACHINE.CHANGE,
-                    state
-                });
+        this.stateMachine = interpret(createMachine(description)).onTransition(state => {
+            this.dispatchEvent({
+                type: ENTITY_EVENTS.STATE_MACHINE.CHANGE,
+                state,
             });
+        });
 
         if (description.autostart) {
             this.startStateMachine();
@@ -377,22 +366,18 @@ export default class Entity extends EventDispatcher {
 
     hasScripts = () => this.scripts.length > 0;
 
-    parseScripts = (list, options, enabled) => (
+    parseScripts = (list, options, enabled) =>
         list.map((script, i) => ({
             script,
             name: script.getName(),
             enabled,
-            options: options[i]
-        }))
-    )
+            options: options[i],
+        }));
 
     addScripts(scripts = [], options = [], enabled = true) {
         const parsedScripts = this.parseScripts(scripts, options, enabled);
 
-        this.scripts = [
-            ...this.scripts,
-            parsedScripts
-        ];
+        this.scripts = [...this.scripts, parsedScripts];
 
         if (enabled) {
             parsedScripts.forEach(parsed => parsed.start(this, parsed.options));
@@ -401,16 +386,14 @@ export default class Entity extends EventDispatcher {
 
     addScript(name, options = {}) {
         const script = Scripts.get(name);
-        const {
-            enabled = true
-        } = options;
+        const { enabled = true } = options;
 
         if (script) {
             this.scripts.push({
                 script,
                 name,
                 enabled,
-                options
+                options,
             });
             if (enabled) {
                 script.start(this, options);
@@ -420,6 +403,18 @@ export default class Entity extends EventDispatcher {
         }
 
         return script;
+    }
+
+    removeScript(name) {
+        const index = this.scripts.findIndex(script => script.name === name);
+        const { script } = this.scripts[index];
+
+        if (script) {
+            script.onDispose();
+            this.scripts.splice(index, 1);
+        } else {
+            console.log(SCRIPT_NOT_FOUND);
+        }
     }
 
     enableScripts() {
@@ -446,7 +441,7 @@ export default class Entity extends EventDispatcher {
     isMesh = () => this.getEntityType() === ENTITY_TYPES.MESH;
     isModel = () => this.getEntityType() === ENTITY_TYPES.MODEL;
     isSprite = () => this.getEntityType() === ENTITY_TYPES.SPRITE;
-    isLight = () =>  Object.values(ENTITY_TYPES.LIGHT).includes(this.getEntityType());
+    isLight = () => Object.values(ENTITY_TYPES.LIGHT).includes(this.getEntityType());
     isHelper = () => Object.values(ENTITY_TYPES.HELPER).includes(this.getEntityType());
     isEffect = () => Object.values(ENTITY_TYPES.EFFECT).includes(this.getEntityType());
 
@@ -454,7 +449,7 @@ export default class Entity extends EventDispatcher {
         return {
             x: this.body.scale.x,
             y: this.body.scale.y,
-            z: this.body.scale.z
+            z: this.body.scale.z,
         };
     }
 
@@ -462,7 +457,7 @@ export default class Entity extends EventDispatcher {
         if (this.hasBody()) {
             const scale = {
                 ...this.getScale(),
-                ...howbig
+                ...howbig,
             };
             this.body.scale.set(scale.x, scale.y, scale.z);
         }
@@ -476,7 +471,7 @@ export default class Entity extends EventDispatcher {
 
     setQuaternion = ({ x, y, z, w }) => {
         this.body.quaternion.set(x, y, z, w);
-    }
+    };
 
     getPosition() {
         return this.getBody().position.clone();
@@ -489,7 +484,7 @@ export default class Entity extends EventDispatcher {
                 x,
                 y,
                 z,
-                ...where
+                ...where,
             };
 
             this.body.position.set(position.x, position.y, position.z);
@@ -507,7 +502,7 @@ export default class Entity extends EventDispatcher {
                 x,
                 y,
                 z,
-                ...how
+                ...how,
             };
 
             this.body.rotation.set(rotation.x, rotation.y, rotation.z);
@@ -517,16 +512,16 @@ export default class Entity extends EventDispatcher {
     getWorldTransform() {
         const position = this.getBody().getWorldPosition(new Vector3());
         const quaternion = this.getBody().getWorldQuaternion(new Quaternion(0, 0, 0, 1));
-        const rotation = new Euler(0, 0, 0, 'XYZ').setFromQuaternion(quaternion, 'XYZ');
-        
+        const rotation = new Euler(0, 0, 0, "XYZ").setFromQuaternion(quaternion, "XYZ");
+
         return {
             position,
             rotation,
-            quaternion
-        }
+            quaternion,
+        };
     }
 
-    translate({ x = 0, y = 0, z = 0}) {
+    translate({ x = 0, y = 0, z = 0 }) {
         if (this.hasBody()) {
             this.body.translateX(x);
             this.body.translateY(y);
@@ -537,7 +532,7 @@ export default class Entity extends EventDispatcher {
     scaleTo(scale = this.getScale(), time = 250, options = {}) {
         const { x, y, z } = this.getScale();
         const target = { x, y, z, ...scale };
-        const onUpdate = value => !this.isDisposed() && this.setScale(value)
+        const onUpdate = value => !this.isDisposed() && this.setScale(value);
 
         return tweenTo({ x, y, z }, target, { ...options, time, onUpdate });
     }
@@ -545,7 +540,7 @@ export default class Entity extends EventDispatcher {
     rotateTo(rotation = this.getRotation(), time = 250, options = {}) {
         const { x, y, z } = this.getRotation();
         const target = { x, y, z, ...rotation };
-        const onUpdate = value => !this.isDisposed() && this.setRotation(value)
+        const onUpdate = value => !this.isDisposed() && this.setRotation(value);
 
         return tweenTo({ x, y, z }, target, { ...options, time, onUpdate });
     }
@@ -558,11 +553,11 @@ export default class Entity extends EventDispatcher {
         return tweenTo({ x, y, z }, target, { ...options, time, onUpdate });
     }
 
-    setUuid = (uuid) => {
+    setUuid = uuid => {
         if (uuid) {
             this.body.uuid = uuid;
         }
-    }
+    };
 
     uuid() {
         return this.body.uuid;
@@ -583,7 +578,7 @@ export default class Entity extends EventDispatcher {
     equals(entity) {
         try {
             return entity.uuid ? this.uuid() === entity.uuid() : false;
-        } catch(e) {
+        } catch (e) {
             return false;
         }
     }
@@ -604,7 +599,7 @@ export default class Entity extends EventDispatcher {
                 console.log(KEY_VALUE_IS_MISSING);
             }
         } else {
-            console.log(USER_DATA_IS_MISSING)
+            console.log(USER_DATA_IS_MISSING);
         }
     }
 
@@ -616,17 +611,20 @@ export default class Entity extends EventDispatcher {
                 console.log(KEY_IS_MISSING);
             }
         } else {
-            console.log(USER_DATA_IS_MISSING)
+            console.log(USER_DATA_IS_MISSING);
         }
     }
 
     mapScriptsToJSON() {
-        this.scripts.reduce((acc, { name, options = {} }) => {
-            acc.names.push(name);
-            acc.options.push(options);
-            
-            return acc;
-        }, { names: [], options: [] });
+        this.scripts.reduce(
+            (acc, { name, options = {} }) => {
+                acc.names.push(name);
+                acc.options.push(options);
+
+                return acc;
+            },
+            { names: [], options: [] },
+        );
     }
 
     toJSON() {
@@ -637,8 +635,8 @@ export default class Entity extends EventDispatcher {
                 scale: this.getScale(),
                 entityType: this.getEntityType(),
                 scripts: this.mapScriptsToJSON(),
-                tags: this.getTags()
-            }
+                tags: this.getTags(),
+            };
         }
     }
 }
