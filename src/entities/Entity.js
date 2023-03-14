@@ -1,4 +1,3 @@
-import Between from "between.js";
 import { createMachine, interpret } from "xstate";
 import { EventDispatcher, Vector3, Quaternion, Euler } from "three";
 import {
@@ -34,7 +33,8 @@ export default class Entity extends EventDispatcher {
             tags,
         };
 
-        this.scripts = [];
+        this.dynamicScripts = [];
+        this.staticScripts = [];
         this.tags = [];
         this.children = [];
         this.isMage = true;
@@ -58,7 +58,8 @@ export default class Entity extends EventDispatcher {
     }
 
     reset() {
-        this.scripts = [];
+        this.dynamicScripts = [];
+        this.staticScripts = [];
         this.children = [];
         this.isMage = true;
         this.parent = false;
@@ -241,22 +242,20 @@ export default class Entity extends EventDispatcher {
 
     disposeScripts() {
         if (this.hasScripts()) {
-            const length = this.scripts.length;
+            const length = this.allScripts().length;
             for (let i = 0; i < length; i++) {
-                const { script, enabled } = this.scripts[i];
+                const { script, enabled } = this.allScripts()[i];
                 if (enabled) {
                     script.onDispose();
                     script.__setStartedFlag(false);
                 }
-
-                delete this.scripts[i];
             }
         }
     }
 
     start() {
         if (this.hasScripts()) {
-            this.scripts.forEach(({ script, enabled, options }) => {
+            this.allScripts().forEach(({ script, enabled, options }) => {
                 if (enabled) {
                     script.start(this, options);
                     script.__setStartedFlag(true);
@@ -267,7 +266,7 @@ export default class Entity extends EventDispatcher {
 
     update(dt) {
         if (this.hasScripts()) {
-            this.scripts.forEach(({ script, enabled }) => {
+            this.dynamicScripts.forEach(({ script, enabled }) => {
                 if (script && enabled) {
                     script.update(dt);
                 }
@@ -277,7 +276,7 @@ export default class Entity extends EventDispatcher {
 
     onPhysicsUpdate(dt) {
         if (this.hasScripts()) {
-            this.scripts.forEach(({ script, enabled }) => {
+            this.dynamicScripts.forEach(({ script, enabled }) => {
                 if (script && enabled) {
                     script.physicsUpdate(dt);
                 }
@@ -354,34 +353,21 @@ export default class Entity extends EventDispatcher {
     }
 
     getScript(name) {
-        const { script } = this.scripts.filter(script => script.name === name)[0];
-
-        if (script) {
-            return script;
-        } else {
+        if (!this.hasScript(name)) {
             console.warn(SCRIPT_NOT_FOUND);
             return false;
         }
+
+        const { script } = this.allScripts().filter(script => script.name === name)[0];
+        return script;
     }
 
-    hasScripts = () => this.scripts.length > 0;
+    hasScripts = () => this.allScripts().length > 0;
 
-    parseScripts = (list, options, enabled) =>
-        list.map((script, i) => ({
-            script,
-            name: script.getName(),
-            enabled,
-            options: options[i],
-        }));
+    allScripts = () => [...this.dynamicScripts, ...this.staticScripts];
 
-    addScripts(scripts = [], options = [], enabled = true) {
-        const parsedScripts = this.parseScripts(scripts, options, enabled);
-
-        this.scripts = [...this.scripts, parsedScripts];
-
-        if (enabled) {
-            parsedScripts.forEach(parsed => parsed.start(this, parsed.options));
-        }
+    hasScript(name) {
+        return this.allScripts().filter(script => script.name === name).length;
     }
 
     addScript(name, options = {}) {
@@ -389,12 +375,25 @@ export default class Entity extends EventDispatcher {
         const { enabled = true } = options;
 
         if (script) {
-            this.scripts.push({
+            const payload = {
                 script,
                 name,
                 enabled,
                 options,
-            });
+            };
+
+            if (script.__isStatic()) {
+                this.staticScripts.push({
+                    ...payload,
+                    index: this.staticScripts.length,
+                });
+            } else {
+                this.dynamicScripts.push({
+                    ...payload,
+                    index: this.dynamicScripts.length,
+                });
+            }
+
             if (enabled) {
                 script.start(this, options);
             }
@@ -405,13 +404,27 @@ export default class Entity extends EventDispatcher {
         return script;
     }
 
+    updateScriptsIndexes = () => {
+        const update = (s, i) => (s.index = i);
+
+        this.dynamicScripts.forEach(update);
+        this.staticScripts.forEach(update);
+    };
+
     removeScript(name) {
-        const index = this.scripts.findIndex(script => script.name === name);
-        const { script } = this.scripts[index];
+        const all = this.allScripts();
+        const allIndex = all.findIndex(script => script.name === name);
+        const { script, index } = all[allIndex];
 
         if (script) {
             script.onDispose();
-            this.scripts.splice(index, 1);
+            if (script.__isStatic()) {
+                this.staticScripts.splice(index, 1);
+            } else {
+                this.dynamicScripts.splice(index, 1);
+            }
+
+            this.updateScriptsIndexes();
         } else {
             console.log(SCRIPT_NOT_FOUND);
         }
@@ -616,14 +629,15 @@ export default class Entity extends EventDispatcher {
     }
 
     mapScriptsToJSON() {
-        this.scripts.reduce(
-            (acc, { name, options = {} }) => {
+        this.allScripts().reduce(
+            (acc, { name, options = {}, script }) => {
                 acc.names.push(name);
                 acc.options.push(options);
+                acc.static.push(script.__isStatic());
 
                 return acc;
             },
-            { names: [], options: [] },
+            { names: [], options: [], static: [] },
         );
     }
 

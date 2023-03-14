@@ -1,15 +1,32 @@
 export default class BaseScript {
+    __check() {
+        return true;
+    }
 
-    __check() { return true; }
+    __isStatic() {
+        return false;
+    }
 
-    __hasStarted() { return this.hasStarted; }
-    __isDisposed() { return this.isDisposed; }
-    __setStartedFlag(flag) { this.hasStarted = flag; }
-    __setDisposedFlag(flag) { this.isDisposed = flag; }
+    __hasStarted() {
+        return this.hasStarted;
+    }
+
+    __isDisposed() {
+        return this.isDisposed;
+    }
+
+    __setStartedFlag(flag) {
+        this.hasStarted = flag;
+    }
+
+    __setDisposedFlag(flag) {
+        this.isDisposed = flag;
+    }
 
     constructor(name) {
         this.__name = name || this.constructor.name;
         this.hasStarted = false;
+        this.isDisposed = false;
         this.options = {};
     }
 
@@ -27,7 +44,7 @@ export default class BaseScript {
 
     toJSON() {
         return {
-            name: this.name()
-        }
+            name: this.name(),
+        };
     }
 }
