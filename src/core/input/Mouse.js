@@ -1,22 +1,17 @@
-import {
-    EventDispatcher,
-    Raycaster,
-    Vector2,
-    Mesh
-} from 'three';
+import { EventDispatcher, Raycaster, Vector2, Mesh } from "three";
+import { DEFAULT_TAG } from "../../entities/constants";
 
-import Config from '../config';
-import Scene from '../Scene';
-import Universe from '../Universe';
+import Config from "../config";
+import Scene from "../Scene";
+import Universe from "../Universe";
 
-export const MOUSE_DOWN = 'mouseDown';
-export const MOUSE_UP = 'mouseUp';
-export const MOUSE_MOVE = 'mouseMove';
-export const ELEMENT_CLICK = 'elementClick';
-export const ELEMENT_DESELECT = 'elementDeselect';
+export const MOUSE_DOWN = "mouseDown";
+export const MOUSE_UP = "mouseUp";
+export const MOUSE_MOVE = "mouseMove";
+export const ELEMENT_CLICK = "elementClick";
+export const ELEMENT_DESELECT = "elementDeselect";
 
 export default class Mouse extends EventDispatcher {
-
     constructor() {
         super();
 
@@ -39,7 +34,7 @@ export default class Mouse extends EventDispatcher {
         if (!this.hasRaycaster()) {
             this.raycaster = new Raycaster();
             this.raycaster.setFromCamera(this.mouse, Scene.getCameraBody());
-        }   
+        }
     }
 
     enable() {
@@ -47,9 +42,9 @@ export default class Mouse extends EventDispatcher {
 
         this.createRayCaster();
 
-        Scene.getDOMElement().addEventListener('mousemove', this.onMouseMove);
-        Scene.getDOMElement().addEventListener('mousedown', this.onMouseDown);
-        document.addEventListener('mouseup', this.onMouseUp);
+        Scene.getDOMElement().addEventListener("mousemove", this.onMouseMove);
+        Scene.getDOMElement().addEventListener("mousedown", this.onMouseDown);
+        document.addEventListener("mouseup", this.onMouseUp);
     }
 
     enableMouseMoveIntersection() {
@@ -60,9 +55,9 @@ export default class Mouse extends EventDispatcher {
         this.enabled = false;
         this.mouseMoveIntersectionEnabled = false;
 
-        document.removeEventListener('mouseup', this.onMouseUp);
-        Scene.getDOMElement().removeEventListener('mousemove', this.onMouseMove);
-        Scene.getDOMElement().removeEventListener('mousedown', this.onMouseDown);
+        document.removeEventListener("mouseup", this.onMouseUp);
+        Scene.getDOMElement().removeEventListener("mousemove", this.onMouseMove);
+        Scene.getDOMElement().removeEventListener("mousedown", this.onMouseDown);
     }
 
     getRelativeMousePosition(event) {
@@ -77,21 +72,19 @@ export default class Mouse extends EventDispatcher {
     normalizeMouse(x, y) {
         const { w, h } = Config.screen();
 
-        this.mouse.set(
-            (x / w) * 2 - 1,
-            -(y / h) * 2 + 1
-        )
+        this.mouse.set((x / w) * 2 - 1, -(y / h) * 2 + 1);
     }
 
-    parseMouseEvent = (event) => {
+    parseMouseEvent = event => {
         const { x, y } = this.getRelativeMousePosition(event);
         this.normalizeMouse(x, y);
 
         return {
-            x, y,
-            normalized: { ...this.mouse }
-        }
-    }
+            x,
+            y,
+            normalized: { ...this.mouse },
+        };
+    };
 
     onMouseMove = event => {
         if (!this.enabled) return;
@@ -100,7 +93,7 @@ export default class Mouse extends EventDispatcher {
         this.mouseMoveEvent.mouse = this.parseMouseEvent(event);
 
         this.dispatchEvent(this.mouseMoveEvent);
-    }
+    };
 
     onMouseUp = event => {
         if (!this.enabled) return;
@@ -109,33 +102,39 @@ export default class Mouse extends EventDispatcher {
         this.mouseUpEvent.mouse = this.parseMouseEvent(event);
 
         this.dispatchEvent(this.mouseUpEvent);
-    }
+    };
 
     // isIntersectionAMeshOrSprite = (o) => !!o.object.isMesh || !!o.object.isSprite;
     parseIntersection = ({ object, face, point }) => ({
         face,
         position: point,
-        element: Universe.find(object)
+        element: Universe.find(object),
     });
 
     elementExists = ({ element }) => !!element;
-    elementHasTag = tag => ({ element }) => element.hasTag(tag);
+    elementHasTag =
+        tag =>
+        ({ element }) =>
+            element.hasTag(tag);
 
-    getIntersections = (recursive = false, tag) => {
+    getIntersections = (recursive = false, tag = DEFAULT_TAG) => {
         if (this.hasRaycaster()) {
             this.raycaster.setFromCamera(this.mouse, Scene.getCameraBody());
 
-            return this.raycaster
-                .intersectObjects(Scene.getChildren(), recursive)
-                // .filter(this.isIntersectionAMeshOrSprite)
-                .map(this.parseIntersection)
-                .filter(this.elementExists)
-                .filter(this.elementHasTag(tag))
+            return (
+                this.raycaster
+                    .intersectObjects(Scene.getChildren(), recursive)
+                    // .filter(this.isIntersectionAMeshOrSprite)
+                    .map(this.parseIntersection)
+                    .filter(this.elementExists)
+                    .filter(this.elementHasTag(tag))
+            );
         }
-    }
+    };
 
-    onMouseDown = (event) => {
+    onMouseDown = event => {
         if (!this.enabled) return;
+        console.log("on mouse down");
         event.preventDefault();
 
         const mouseEvent = this.parseMouseEvent(event);
@@ -145,6 +144,7 @@ export default class Mouse extends EventDispatcher {
         this.dispatchEvent(this.mouseDownEvent);
 
         const elements = this.getIntersections();
+        console.log("clicked elements", elements);
         this.elementClickEvent.elements = elements;
 
         if (!elements.length) {
@@ -152,5 +152,5 @@ export default class Mouse extends EventDispatcher {
         } else {
             this.dispatchEvent(this.elementClickEvent);
         }
-    }
+    };
 }

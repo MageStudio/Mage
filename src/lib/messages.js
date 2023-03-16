@@ -1,11 +1,15 @@
-export const PREFIX = '[Mage]';
-export const DEPRECATED = '[DEPRECATED]';
+export const PREFIX = "[Mage]";
+export const DEPRECATED = "[DEPRECATED]";
 
 export const DEPRECATIONS = {
     PARTICLES_ADD_PARTICLE_EMITTER: `${PREFIX} ${DEPRECATED} Particles.addParticleEmitter is deprecated, use Particles.add instead. Will be removed in the next major release`,
     MODELS_GETMODEL: `${PREFIX} ${DEPRECATED} Models.getModel is deprecated, use Models.get instead. Will be removed in next major release`,
     SCRIPTS_CREATE: `${PREFIX} ${DEPRECATED} Scripts.create is deprecated, use Scripts.register instead. Will be removed in next major release.`,
     ELEMENT_SET_TEXTURE_MAP: `${PREFIX} ${DEPRECATED} Element.setTextureMap is deprecated, use Element.setTexture() instead. Will be removed in next major release.`,
+    SET_ORBIT_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setOrbitControl() is deprecated, use Controls.setOrbitControls() instead. Will be removed in next major release.`,
+    SET_TRANSFORM_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setTransformControl() is deprecated, use Controls.setTransformControls() instead. Will be removed in next major release.`,
+    SET_FIRST_PERSON_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setFirstPersonControl() is deprecated, use Controls.setFirstPersonControls() instead. Will be removed in next major release.`,
+    SET_FLY_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setFlyControl() is deprecated, use Controls.setFlyControls() instead. Will be removed in next major release.`,
 };
 
 export const MALFORMED_ONCREATE_FUNCTION = `${PREFIX} Something wrong in your onCreate method.`;
@@ -48,7 +52,7 @@ export const CUBE_TEXTURES_NOT_LIST = `${PREFIX} CubeTextures have to be defined
 
 export const TAG_CANT_BE_REMOVED = `${PREFIX} The default tag can't be removed.`;
 export const TAG_ALREADY_EXISTS = `${PREFIX} The following tag has already been added: `;
-export const TAG_NOT_EXISTING_REMOVAL= `${PREFIX} The following tag has can't be removed because it hasnt been added: `;
+export const TAG_NOT_EXISTING_REMOVAL = `${PREFIX} The following tag has can't be removed because it hasnt been added: `;
 
 export const USER_DATA_IS_MISSING = `${PREFIX} This entity cannot hold custom data.`;
 export const KEY_IS_MISSING = `${PREFIX} You need to provide a valid key`;

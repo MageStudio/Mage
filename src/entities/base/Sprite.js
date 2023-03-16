@@ -1,23 +1,16 @@
 import Images from "../../images/Images";
-import Scene from '../../core/Scene';
-import {
-    SpriteMaterial,
-    Sprite as THREESprite
-} from 'three';
-import Element from '../Element';
-import { ENTITY_TYPES }  from '../constants';
+import Scene from "../../core/Scene";
+import { SpriteMaterial, Sprite as THREESprite } from "three";
+import Element from "../Element";
+import { ENTITY_TYPES } from "../constants";
 
-const validateAnisotropy = (anisotropy) => {
-    const max = Scene
-        .getRenderer()
-        .capabilities
-        .getMaxAnisotropy();
+const validateAnisotropy = anisotropy => {
+    const max = Scene.getRenderer().capabilities.getMaxAnisotropy();
 
     return anisotropy > max ? max : anisotropy;
 };
 
 export default class Sprite extends Element {
-
     constructor(width = 20, height = 20, spriteTexture, options = {}) {
         super(options);
 
@@ -28,7 +21,7 @@ export default class Sprite extends Element {
 
         const material = new SpriteMaterial({
             map: texture,
-            ...rest
+            ...rest,
         });
 
         const body = new THREESprite(material);
@@ -45,5 +38,17 @@ export default class Sprite extends Element {
 
     setRotation(rotation = this.getRotation()) {
         this.body.material.rotation = rotation;
+    }
+
+    setSizeAttenuation(attenuation = true) {
+        this.body.material.sizeAttenuation = attenuation;
+    }
+
+    setDepthTest(depthTest = true) {
+        this.body.material.depthTest = depthTest;
+    }
+
+    setDepthWrite(depthWrite = true) {
+        this.body.material.depthWrite = depthWrite;
     }
 }

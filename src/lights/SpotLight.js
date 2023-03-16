@@ -1,16 +1,16 @@
-import Light from './Light';
-import Config from '../core/config';
-import Element from '../entities/Element';
+import Light from "./Light";
+import Config from "../core/config";
+import Element from "../entities/Element";
 import {
     SpotLight as THREESpotLight,
     SpotLightHelper,
     CameraHelper,
     MeshBasicMaterial,
-    SphereGeometry
-} from 'three';
-import Scene from '../core/Scene';
-import { ENTITY_TYPES } from '../entities/constants';
-import { generateRandomName } from '../lib/uuid';
+    SphereGeometry,
+} from "three";
+import Scene from "../core/Scene";
+import { ENTITY_TYPES } from "../entities/constants";
+import { generateRandomName } from "../lib/uuid";
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
@@ -23,23 +23,22 @@ const DEFAULT_BIAS = -0.0001;
 const WHITE = 0xffffff;
 const GREEN = 0x2ecc71;
 
-const DEFAULT_SPOTLIGHT_ANGLE = .32;
-const DEFAULT_SPOTLIGHT_PENUMBRA = .5;
+const DEFAULT_SPOTLIGHT_ANGLE = 0.32;
+const DEFAULT_SPOTLIGHT_PENUMBRA = 0.5;
 const DEFAULT_SPOTLIGHT_DECAY = 2;
 
 export default class SpotLight extends Light {
-
     constructor(options = {}) {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name = generateRandomName('SpotLight'),
+            name = generateRandomName("SpotLight"),
             distance = DEFAULT_FAR,
-            angle = DEFAULT_SPOTLIGHT_ANGLE ,
+            angle = DEFAULT_SPOTLIGHT_ANGLE,
             penumbra = DEFAULT_SPOTLIGHT_PENUMBRA,
-            decay = DEFAULT_SPOTLIGHT_DECAY
+            decay = DEFAULT_SPOTLIGHT_DECAY,
         } = options;
-        
+
         super({ color, intensity, name });
         this.options = options;
         this.setLight({ color, intensity, distance, angle, penumbra, decay });
@@ -51,7 +50,7 @@ export default class SpotLight extends Light {
         const geometry = new SphereGeometry(3, 6, 6);
         const material = new MeshBasicMaterial({
             color: 0xeeeeee,
-            wireframe: true
+            wireframe: true,
         });
 
         const target = new Element({ geometry, material });
@@ -68,12 +67,14 @@ export default class SpotLight extends Light {
         distance,
         angle,
         penumbra,
-        decay
+        decay,
     }) {
         if (light) {
             this.setBody({ body: light });
         } else {
-            this.setBody({ body: new THREESpotLight(color, intensity, distance, angle, penumbra, decay) });
+            this.setBody({
+                body: new THREESpotLight(color, intensity, distance, angle, penumbra, decay),
+            });
         }
 
         if (this.hasBody()) {
@@ -82,10 +83,7 @@ export default class SpotLight extends Light {
     }
 
     postLightCreation() {
-        const {
-            position = DEFAULT_POSITION,
-            target = DEFAULT_TARGET_POSITION
-        } = this.options;
+        const { position = DEFAULT_POSITION, target = DEFAULT_TARGET_POSITION } = this.options;
 
         this.setPosition(position);
         this.setTargetPosition(target);
@@ -98,13 +96,13 @@ export default class SpotLight extends Light {
             near = DEFAULT_NEAR,
             far = DEFAULT_FAR,
             mapSize = DEFAULT_MAP_SIZE,
-            bias = DEFAULT_BIAS
+            bias = DEFAULT_BIAS,
         } = this.options;
 
         if (Config.lights().shadows) {
             this.body.castShadow = true;
 
-            const d = far/2;
+            const d = far / 2;
 
             this.body.shadow.mapSize.height = mapSize;
             this.body.shadow.mapSize.width = mapSize;
@@ -124,7 +122,7 @@ export default class SpotLight extends Light {
     setTargetPosition(position = {}) {
         this.target = {
             ...this.target,
-            ...position
+            ...position,
         };
 
         const { x = 0, y = 0, z = 0 } = this.target;
@@ -135,14 +133,16 @@ export default class SpotLight extends Light {
         return this.target;
     }
 
-    addHelper() {
-        this.helper = new SpotLightHelper(this.body, GREEN);
-        this.shadowHelper = new CameraHelper(this.body.shadow.camera);
+    addHelpers({ holderName = "spotlightholder", holderSize = 0.05 } = {}) {
+        this.helper = new SpotLightHelper(this.getBody(), GREEN);
+        this.shadowHelper = new CameraHelper(this.getBody().shadow.camera);
 
         Scene.add(this.helper, null, false);
         Scene.add(this.shadowHelper, null, false);
 
-        this.addHolder();
+        this.addHolder(holderName, holderSize);
+
+        this.isUsingHelper = true;
     }
 
     hasTarget() {
@@ -151,7 +151,7 @@ export default class SpotLight extends Light {
 
     update(dt) {
         super.update(dt);
-        if (this.hasHelper()) {
+        if (this.usingHelper()) {
             this.helper.update();
             this.shadowHelper.update();
         }

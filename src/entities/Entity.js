@@ -53,6 +53,10 @@ export default class Entity extends EventDispatcher {
         return !!this.serializable;
     }
 
+    setSerializable(serializable = true) {
+        this.serializable = serializable;
+    }
+
     isDisposed() {
         return this.disposed;
     }

@@ -1,13 +1,12 @@
-import Loader from './Loader';
-import Config from '../core/config';
-import SunLight from '../lights/SunLight';
-import AmbientLight from '../lights/AmbientLight';
-import PointLight from '../lights/PointLight';
+import Loader from "./Loader";
+import Config from "../core/config";
+import SunLight from "../lights/SunLight";
+import AmbientLight from "../lights/AmbientLight";
+import PointLight from "../lights/PointLight";
 
-import { SUNLIGHT, POINTLIGHT, AMBIENTLIGHT } from '../lights/Lights';
+import { SUNLIGHT, POINTLIGHT, AMBIENTLIGHT } from "../lights/Lights";
 
 export class LightLoader extends Loader {
-
     constructor() {
         super();
     }
@@ -16,9 +15,9 @@ export class LightLoader extends Loader {
         lights.forEach(this.createLight(useHelper));
     }
 
-    createLight = (useHelper) => l => {
+    createLight = useHelper => l => {
         let light;
-        switch(l.type) {
+        switch (l.type) {
             case SUNLIGHT:
                 light = this.createSunlight(l);
                 break;
@@ -33,9 +32,9 @@ export class LightLoader extends Loader {
         }
 
         if (light && useHelper) {
-            light.addHelper();
+            light.addHelpers();
         }
-    }
+    };
 
     createSunlight({ color, intensity, position, target, name }) {
         return new SunLight({
@@ -43,7 +42,7 @@ export class LightLoader extends Loader {
             intensity,
             position,
             target,
-            name
+            name,
         });
     }
 
@@ -52,7 +51,7 @@ export class LightLoader extends Loader {
             color,
             intensity,
             position,
-            name
+            name,
         });
     }
 
@@ -62,8 +61,8 @@ export class LightLoader extends Loader {
             intensity,
             position,
             distance,
-            name
-        })
+            name,
+        });
     }
 }
 

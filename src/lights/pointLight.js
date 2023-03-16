@@ -1,14 +1,10 @@
-import Light from './Light';
-import Scene from '../core/Scene';
-import Config from '../core/config';
+import Light from "./Light";
+import Scene from "../core/Scene";
+import Config from "../core/config";
 
-import {
-    PointLight as THREEPointLight,
-    PointLightHelper,
-    CameraHelper
-} from 'three';
-import { ENTITY_TYPES } from '../entities/constants';
-import { generateRandomName } from '../lib/uuid';
+import { PointLight as THREEPointLight, PointLightHelper, CameraHelper } from "three";
+import { ENTITY_TYPES } from "../entities/constants";
+import { generateRandomName } from "../lib/uuid";
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
@@ -23,14 +19,13 @@ const WHITE = 0xffffff;
 const GREEN = 0x2ecc71;
 
 export default class PointLight extends Light {
-
     constructor(options = {}) {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name = generateRandomName('PointLight'),
+            name = generateRandomName("PointLight"),
             distance,
-            decay
+            decay,
         } = options;
 
         super({ color, intensity, name });
@@ -45,7 +40,7 @@ export default class PointLight extends Light {
         color = WHITE,
         intensity = DEFAULT_INTENSITY,
         distance = DEFAULT_DISTANCE,
-        decay = DEFAULT_DECAY
+        decay = DEFAULT_DECAY,
     }) {
         if (light) {
             this.setBody({ body: light });
@@ -59,9 +54,7 @@ export default class PointLight extends Light {
     }
 
     postLightCreation() {
-        const {
-            position = DEFAULT_POSITION
-        } = this.options;
+        const { position = DEFAULT_POSITION } = this.options;
 
         this.setPosition(position);
         this.setLightShadows();
@@ -73,13 +66,13 @@ export default class PointLight extends Light {
             near = DEFAULT_NEAR,
             far = DEFAULT_FAR,
             mapSize = DEFAULT_MAP_SIZE,
-            bias = DEFAULT_BIAS
+            bias = DEFAULT_BIAS,
         } = this.options;
 
         if (Config.lights().shadows) {
             this.body.castShadow = true;
 
-            const d = far/2;
+            const d = far / 2;
 
             this.body.shadow.mapSize.height = mapSize;
             this.body.shadow.mapSize.width = mapSize;
@@ -96,19 +89,21 @@ export default class PointLight extends Light {
         }
     }
 
-    addHelper() {
-        this.helper = new PointLightHelper(this.body, 2, GREEN);
-        this.shadowHelper = new CameraHelper(this.body.shadow.camera);
+    addHelpers({ holderName = "pointlightholder", holderSize = 0.05 } = {}) {
+        this.helper = new PointLightHelper(this.getBody(), 2, GREEN);
+        this.shadowHelper = new CameraHelper(this.getBody().shadow.camera);
 
         Scene.add(this.helper, null, false);
         Scene.add(this.shadowHelper, null, false);
 
-        this.addHolder();
+        this.addHolder(holderName, holderSize);
+
+        this.isUsingHelper = true;
     }
 
     update(dt) {
         super.update(dt);
-        if (this.hasHelper()) {
+        if (this.usingHelper()) {
             this.helper.update();
             this.shadowHelper.update();
         }
@@ -116,13 +111,12 @@ export default class PointLight extends Light {
         if (this.hasHolder()) {
             this.setPosition(this.holder.getPosition(), { updateHolder: false });
         }
-
     }
 
     toJSON() {
         return {
             ...super.toJSON(),
-            distance: this.distance
-        }
+            distance: this.distance,
+        };
     }
 }
