@@ -4,15 +4,11 @@ import Entity from "../entities/Entity";
 import Lights from "./Lights";
 import Models from "../models/Models";
 import Scene from "../core/Scene";
-import { MATERIALS } from "../lib/constants";
+import { MATERIALS, TAGS } from "../lib/constants";
 import { LIGHT_HOLDER_MODEL_NOT_FOUND, LIGHT_NOT_FOUND } from "../lib/messages";
 import { generateRandomName } from "../lib/uuid";
 import { tweenTo } from "../lib/easing";
 import Sprite from "../entities/base/Sprite";
-
-const LAMP_COLOR = 0xf1c40f;
-
-const DEFAULT_LIGHT_HOLDER_TAG = "LIGHT_HOLDER";
 
 export default class Light extends Entity {
     constructor({ color, intensity, name }) {
@@ -50,7 +46,7 @@ export default class Light extends Entity {
             holderSprite.setDepthWrite(false);
             holderSprite.setSerializable(false);
             holderSprite.setPosition(this.getPosition());
-            holderSprite.addTags([DEFAULT_LIGHT_HOLDER_TAG, name]);
+            holderSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.HOLDER, name]);
 
             this.holder = holderSprite;
 
@@ -61,12 +57,33 @@ export default class Light extends Entity {
         }
     };
 
+    addTargetHolder = (name = "targetholder", size = 0.05) => {
+        const targetSprite = new Sprite(size, size, name, { name });
+
+        if (targetSprite) {
+            targetSprite.setSizeAttenuation(false);
+            targetSprite.setDepthTest(false);
+            targetSprite.setDepthWrite(false);
+            targetSprite.setSerializable(false);
+            targetSprite.setPosition(this.getTargetPosition());
+            targetSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.TARGET, name]);
+
+            targetSprite.getBody().add(this.getBody().target);
+
+            this.targetHolder = targetSprite;
+        }
+    };
+
     usingHelper() {
         return !!this.isUsingHelper;
     }
 
     hasHolder() {
         return !!this.holder;
+    }
+
+    hasTarget() {
+        return false;
     }
 
     getPosition() {

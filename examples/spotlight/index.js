@@ -71,7 +71,9 @@ export default class Intro extends Level {
     }
 
     onElementClick = ({ elements }) => {
-        const filtered = elements.filter(({ element }) => element.hasTag("LIGHT_HOLDER"))[0];
+        const filtered = elements.filter(({ element }) =>
+            element.hasTag(constants.TAGS.LIGHTS.HELPER),
+        )[0];
 
         if (filtered) {
             this.transform.attach(filtered.element);
@@ -127,6 +129,7 @@ const assets = {
         spotlightholder: "assets/textures/spotlight.png",
         ambientlightholder: "assets/textures/ambientlight.png",
         hemispherelightholder: "assets/textures/hemispherelight.png",
+        targetholder: "assets/textures/target.png",
     },
 };
 

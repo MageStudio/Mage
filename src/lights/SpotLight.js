@@ -46,18 +46,8 @@ export default class SpotLight extends Light {
         this.setName(name);
     }
 
-    getTargetMesh(initialPosition) {
-        const geometry = new SphereGeometry(3, 6, 6);
-        const material = new MeshBasicMaterial({
-            color: 0xeeeeee,
-            wireframe: true,
-        });
-
-        const target = new Element({ geometry, material });
-
-        target.position(initialPosition);
-
-        return target;
+    hasTarget() {
+        return true;
     }
 
     setLight({
@@ -133,7 +123,12 @@ export default class SpotLight extends Light {
         return this.target;
     }
 
-    addHelpers({ holderName = "spotlightholder", holderSize = 0.05 } = {}) {
+    addHelpers({
+        holderName = "spotlightholder",
+        holderSize = 0.05,
+        targetHolderName = "targetholder",
+        targetHolderSize = 0.05,
+    } = {}) {
         this.helper = new SpotLightHelper(this.getBody(), GREEN);
         this.shadowHelper = new CameraHelper(this.getBody().shadow.camera);
 
@@ -141,6 +136,7 @@ export default class SpotLight extends Light {
         Scene.add(this.shadowHelper, null, false);
 
         this.addHolder(holderName, holderSize);
+        this.addTargetHolder(targetHolderName, targetHolderSize);
 
         this.isUsingHelper = true;
     }

@@ -92,18 +92,8 @@ export default class SunLight extends Light {
         }
     }
 
-    getTargetMesh(initialPosition) {
-        const geometry = new SphereGeometry(3, 6, 6);
-        const material = new MeshBasicMaterial({
-            color: 0xeeeeee,
-            wireframe: true,
-        });
-
-        const target = new Element({ geometry, material });
-
-        target.position(initialPosition);
-
-        return target;
+    hasTarget() {
+        return true;
     }
 
     setTarget(target) {
@@ -117,7 +107,12 @@ export default class SunLight extends Light {
         return this.target;
     }
 
-    addHelpers({ holderName = "sunlightHelper", holderSize = 0.05 } = {}) {
+    addHelpers({
+        holderName = "sunlightHelper",
+        holderSize = 0.05,
+        targetHolderName = "targetholder",
+        targetHolderSize = 0.05,
+    } = {}) {
         this.helper = new DirectionalLightHelper(this.getBody(), 5);
         this.shadowHelper = new CameraHelper(this.getBody().shadow.camera);
 
@@ -125,6 +120,7 @@ export default class SunLight extends Light {
         Scene.add(this.shadowHelper, null, false);
 
         this.addHolder(holderName, holderSize);
+        this.addTargetHolder(targetHolderName, targetHolderSize);
 
         this.isUsingHelper = true;
     }
