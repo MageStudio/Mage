@@ -1,41 +1,32 @@
-import {
-    Mesh,
-    RepeatWrapping,
-    Raycaster,
-    Color,
-    Vector3
-} from 'three';
-import Between from 'between.js';
+import { Mesh, RepeatWrapping, Raycaster, Color, Vector3 } from "three";
 
-// import Line from './base/Line';
 import Entity from "../entities/Entity";
-import { ENTITY_TYPES, ENTITY_EVENTS } from '../entities/constants';
+import { ENTITY_TYPES, ENTITY_EVENTS } from "../entities/constants";
 
 import {
     ELEMENT_NOT_SET,
     ANIMATION_HANDLER_NOT_FOUND,
     ELEMENT_SET_COLOR_MISSING_COLOR,
-    ELEMENT_NAME_NOT_PROVIDED,
     ELEMENT_MATERIAL_NO_SUPPORT_FOR_TEXTURE,
-    DEPRECATIONS
-} from '../lib/messages';
-import Images from '../images/Images';
-import AnimationHandler from './animations/AnimationHandler';
-import Config from '../core/config';
-import Scene from '../core/Scene';
-import { COLLISION_EVENT, MATERIALS, TEXTURES } from '../lib/constants';
-import Universe from '../core/Universe';
-import Physics from '../physics';
-import { DEFAULT_ANGULAR_VELOCITY, DEFAULT_LINEAR_VELOCITY } from '../physics/constants';
+    DEPRECATIONS,
+} from "../lib/messages";
+import Images from "../images/Images";
+import AnimationHandler from "./animations/AnimationHandler";
+import Config from "../core/config";
+import Scene from "../core/Scene";
+import { COLLISION_EVENT, MATERIALS, TEXTURES } from "../lib/constants";
+import Universe from "../core/Universe";
+import Physics from "../physics";
+import { DEFAULT_ANGULAR_VELOCITY, DEFAULT_LINEAR_VELOCITY } from "../physics/constants";
 
 import {
     extractBoundingBox,
     extractBiggestBoundingBox,
     extractBoundingSphere,
     extractBiggestBoundingSphere,
-} from '../physics/utils';
+} from "../physics/utils";
 
-import { clamp } from '../lib/math';
+import { clamp } from "../lib/math";
 import {
     replaceMaterialByName,
     hasMaterial,
@@ -44,24 +35,19 @@ import {
     disposeMaterial,
     disposeGeometry,
     setUpLightsAndShadows,
-    processMaterial,
-    applyMaterialChange
-} from '../lib/meshUtils';
-import { isTextureMapAllowedForMaterial } from '../materials/helpers';
-import { generateRandomName } from '../lib/uuid';
-import { tweenTo } from '../lib/easing';
+    applyMaterialChange,
+} from "../lib/meshUtils";
+import { isTextureMapAllowedForMaterial } from "../materials/helpers";
+import { generateRandomName } from "../lib/uuid";
+import { tweenTo } from "../lib/easing";
 
-const COLLIDER_TAG = 'collider';
-const COLLIDER_COLOR = 0xff0000;
-
-const DEFAULT_COLLIDER_OFFSET = { x: 0, y: 0, z: 0};
-
+const COLLIDER_TAG = "collider";
+const DEFAULT_COLLIDER_OFFSET = { x: 0, y: 0, z: 0 };
 const DEFAULT_PHYSICS_OPTIONS = {
-    applyPhysicsUpdate: true
+    applyPhysicsUpdate: true,
 };
 
 export default class Element extends Entity {
-
     constructor(options = {}) {
         super(options);
 
@@ -69,14 +55,14 @@ export default class Element extends Entity {
             name = generateRandomName(this.constructor.name),
             geometry,
             material,
-            body
+            body,
         } = options;
 
         this.textures = {};
         this.opacity = 1;
         this.options = {
             ...options,
-            name
+            name,
         };
 
         this.physicsOptions = DEFAULT_PHYSICS_OPTIONS;
@@ -98,7 +84,7 @@ export default class Element extends Entity {
         super.addTag(tag);
 
         const existingTags = this.getBody().userData.tags || [];
-        this.getBody().userData.tags = [ ...existingTags, tag ];
+        this.getBody().userData.tags = [...existingTags, tag];
     }
 
     setBody({ body, geometry, material }) {
@@ -146,9 +132,7 @@ export default class Element extends Entity {
     }
 
     addToScene() {
-        const {
-            addUniverse = true,
-        } = this.options;
+        const { addUniverse = true } = this.options;
 
         if (this.hasBody()) {
             Scene.add(this.getBody(), this, addUniverse);
@@ -193,18 +177,30 @@ export default class Element extends Entity {
         this.addAnimationHandlerListeners();
     }
 
-    handleAnimationHandlerEvents = (e) => {
+    handleAnimationHandlerEvents = e => {
         this.dispatchEvent(e);
-    }
+    };
 
     addAnimationHandlerListeners() {
-        this.animationHandler.addEventListener(ENTITY_EVENTS.ANIMATION.LOOP, this.handleAnimationHandlerEvents);
-        this.animationHandler.addEventListener(ENTITY_EVENTS.ANIMATION.FINISHED, this.handleAnimationHandlerEvents);
+        this.animationHandler.addEventListener(
+            ENTITY_EVENTS.ANIMATION.LOOP,
+            this.handleAnimationHandlerEvents,
+        );
+        this.animationHandler.addEventListener(
+            ENTITY_EVENTS.ANIMATION.FINISHED,
+            this.handleAnimationHandlerEvents,
+        );
     }
 
     removeAnimationHandlerListeners() {
-        this.animationHandler.removeEventListener(ENTITY_EVENTS.ANIMATION.LOOP, this.handleAnimationHandlerEvents);
-        this.animationHandler.removeEventListener(ENTITY_EVENTS.ANIMATION.FINISHED, this.handleAnimationHandlerEvents);
+        this.animationHandler.removeEventListener(
+            ENTITY_EVENTS.ANIMATION.LOOP,
+            this.handleAnimationHandlerEvents,
+        );
+        this.animationHandler.removeEventListener(
+            ENTITY_EVENTS.ANIMATION.FINISHED,
+            this.handleAnimationHandlerEvents,
+        );
     }
 
     hasAnimationHandler() {
@@ -260,7 +256,7 @@ export default class Element extends Entity {
     setPhysicsOptions({ applyPhysicsUpdate = true, ...rest } = DEFAULT_PHYSICS_OPTIONS) {
         const parsedOptions = {
             applyPhysicsUpdate,
-            ...rest
+            ...rest,
         };
         this.physicsOptions = parsedOptions;
     }
@@ -272,7 +268,7 @@ export default class Element extends Entity {
     setPhysicsState({ dt, event, ...data } = {}) {
         const physicsState = {
             ...this.physicsState,
-            ...data
+            ...data,
         };
 
         this.physicsState = physicsState;
@@ -283,7 +279,7 @@ export default class Element extends Entity {
     }
 
     enablePhysics(options = {}) {
-        const { mass }= options;
+        const { mass } = options;
         this.setPhysicsOptions(options);
 
         if (Config.physics().enabled) {
@@ -317,8 +313,8 @@ export default class Element extends Entity {
 
     areCollisionsEnabled = () => this.collisionsEnabled;
 
-    enableCollisions = () => this.collisionsEnabled = true;
-    disableCollisions = () => this.collisionsEnabled = false;
+    enableCollisions = () => (this.collisionsEnabled = true);
+    disableCollisions = () => (this.collisionsEnabled = false);
 
     updateRayColliders = () => {
         this.colliders.forEach(({ ray, helper, offset = DEFAULT_COLLIDER_OFFSET }) => {
@@ -331,7 +327,6 @@ export default class Element extends Entity {
             }
 
             ray.ray.origin.copy(position);
-
         });
     };
 
@@ -355,7 +350,7 @@ export default class Element extends Entity {
             .add(new Vector3(parsedOffset.x, parsedOffset.y, parsedOffset.z));
 
         const ray = new Raycaster(position, vector, near, far);
-        
+
         let helper;
         // if (debug) {
         //     const points = this.getPointsFromRayCollider(ray, position);
@@ -364,7 +359,7 @@ export default class Element extends Entity {
         //     helper.setColor(COLLIDER_COLOR);
         //     helper.setThickness(4);
         // }
-        
+
         if (this.getEntityType() === ENTITY_TYPES.SPRITE) {
             ray.setFromCamera(position, Scene.getCameraBody());
         }
@@ -373,30 +368,32 @@ export default class Element extends Entity {
             type,
             ray,
             helper,
-            offset: parsedOffset
+            offset: parsedOffset,
         };
     };
 
     setColliders = (vectors = [], options = []) => {
         const colliders = vectors.map((vector, i) => {
-            const { near = 0, far = 10, debug = false, offset = DEFAULT_COLLIDER_OFFSET } = options[i];
-            return this.createRayColliderFromVector(vector, near, far, offset, debug)
+            const {
+                near = 0,
+                far = 10,
+                debug = false,
+                offset = DEFAULT_COLLIDER_OFFSET,
+            } = options[i];
+            return this.createRayColliderFromVector(vector, near, far, offset, debug);
         });
 
-        this.colliders = [
-            ...this.colliders,
-            ...colliders
-        ];
+        this.colliders = [...this.colliders, ...colliders];
     };
 
     checkRayCollider = ({ ray, type }) => {
-        const mapCollision = (collision) => {
+        const mapCollision = collision => {
             const { distance, object } = collision;
             const { uuid } = object;
 
             return {
                 distance,
-                body: Universe.getByUUID(uuid)
+                body: Universe.getByUUID(uuid),
             };
         };
 
@@ -408,13 +405,13 @@ export default class Element extends Entity {
 
         return {
             collisions,
-            type
+            type,
         };
     };
 
     checkCollisions = () => {
         const collisions = [];
-        this.colliders.forEach((collider) => {
+        this.colliders.forEach(collider => {
             const collision = this.checkRayCollider(collider);
 
             if (collision) {
@@ -425,7 +422,7 @@ export default class Element extends Entity {
         if (collisions.length) {
             this.dispatchEvent({
                 type: COLLISION_EVENT,
-                collisions
+                collisions,
             });
         }
 
@@ -436,12 +433,10 @@ export default class Element extends Entity {
         const collider = this.colliders.filter(({ type }) => type === direction)[0];
         const emptyCollision = {
             collisions: [],
-            type: direction
+            type: direction,
         };
 
-        return collider ?
-            this.checkRayCollider(collider) :
-            emptyCollision;
+        return collider ? this.checkRayCollider(collider) : emptyCollision;
     }
 
     setGeometryRotation(rotation = {}) {
@@ -461,7 +456,7 @@ export default class Element extends Entity {
     }
 
     setColor(color) {
-        const _setColor = material => material.color = new Color(color);
+        const _setColor = material => (material.color = new Color(color));
         if (color) {
             applyMaterialChange(this.getBody(), _setColor);
         } else {
@@ -490,19 +485,20 @@ export default class Element extends Entity {
     setTextureMap = (textureId, options = {}) => {
         console.warn(DEPRECATIONS.ELEMENT_SET_TEXTURE_MAP);
         return this.setTexture(textureId, TEXTURES.MAP, options);
-    }
+    };
 
     setTexture(textureId, textureType = TEXTURES.MAP, options = {}) {
         if (!isTextureMapAllowedForMaterial(this.getMaterialType(), textureType)) {
-            console.log(ELEMENT_MATERIAL_NO_SUPPORT_FOR_TEXTURE, textureType, this.getMaterialType());
+            console.log(
+                ELEMENT_MATERIAL_NO_SUPPORT_FOR_TEXTURE,
+                textureType,
+                this.getMaterialType(),
+            );
             return;
         }
 
         if (textureId) {
-            const {
-                repeat = { x: 1, y: 1 },
-                wrap = RepeatWrapping
-            } = options;
+            const { repeat = { x: 1, y: 1 }, wrap = RepeatWrapping } = options;
 
             this.recordTexture(textureId, textureType);
 
@@ -514,7 +510,7 @@ export default class Element extends Entity {
                 texture.repeat.set(repeat.x, repeat.y);
 
                 material[textureType] = texture;
-            }
+            };
 
             applyMaterialChange(this.getBody(), applyTextureTo);
         }
@@ -567,18 +563,18 @@ export default class Element extends Entity {
         const _setOpacity = material => {
             material.transparent = true;
             material.opacity = this.opacity;
-        }
+        };
 
         applyMaterialChange(this.getBody(), _setOpacity);
     }
 
     fadeTo(opacity = 1, time = 250, options = {}) {
-        const onUpdate  = value => !this.isDisposed() && this.setOpacity(value); 
+        const onUpdate = value => !this.isDisposed() && this.setOpacity(value);
         return tweenTo(this.opacity, clamp(opacity, 0, 1), { ...options, time, onUpdate });
     }
 
     setWireframe(flag = true) {
-        const _setWireframe = material => material.wireframe = flag; 
+        const _setWireframe = material => (material.wireframe = flag);
         applyMaterialChange(this.getBody(), _setWireframe);
     }
 
@@ -595,22 +591,19 @@ export default class Element extends Entity {
         if (body.lookAt) {
             body.lookAt(x, y, z);
         }
-    }
+    };
 
     handlePhysicsUpdate = ({ position, quaternion, ...data }) => {
         this.setPosition(position);
         this.setQuaternion(quaternion);
         this.setPhysicsState(data);
-    }
+    };
 
-    equals = (object) => (
-        this.name === object.name &&
-        this.body.uuid === object.body.uuid
-    );
+    equals = object => this.name === object.name && this.body.uuid === object.body.uuid;
 
-    traverse = (cb) => {
+    traverse = cb => {
         this.body.traverse(cb);
-    }
+    };
 
     disposeBody() {
         super.disposeBody();
@@ -632,7 +625,7 @@ export default class Element extends Entity {
 
     update(dt) {
         super.update(dt);
-        
+
         if (this.hasRayColliders() && this.areCollisionsEnabled()) {
             this.updateRayColliders();
             this.checkCollisions();
@@ -659,9 +652,8 @@ export default class Element extends Entity {
                 ...super.toJSON(),
                 body: this.body.toJSON(),
                 textures: this.textures,
-                ...this.options
-            }
+                ...this.options,
+            };
         }
-
     }
 }

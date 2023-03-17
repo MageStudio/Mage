@@ -1,20 +1,19 @@
-import Light from './Light';
-import { AmbientLight as THREEAmbientLight } from 'three';
-import { AMBIENTLIGHT } from './Lights';
-import { ENTITY_TYPES } from '../entities/constants';
-import { generateRandomName } from '../lib/uuid';
+import Light from "./Light";
+import { AmbientLight as THREEAmbientLight } from "three";
+import { AMBIENTLIGHT } from "./Lights";
+import { ENTITY_TYPES } from "../entities/constants";
+import { generateRandomName } from "../lib/uuid";
 
 const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
 const DEFAULT_INTENSITY = 0.5;
 const WHITE = 0xffffff;
 
 export default class AmbientLight extends Light {
-
     constructor(options = {}) {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name = generateRandomName('AmbientLight')
+            name = generateRandomName("AmbientLight"),
         } = options;
         super({ color, intensity, name });
 
@@ -24,11 +23,7 @@ export default class AmbientLight extends Light {
         this.setName(name);
     }
 
-    setLight({
-        light,
-        color = WHITE,
-        intensity = DEFAULT_INTENSITY
-    }) {
+    setLight({ light, color = WHITE, intensity = DEFAULT_INTENSITY }) {
         if (light) {
             this.setBody({ body: light });
         } else {
@@ -41,22 +36,20 @@ export default class AmbientLight extends Light {
     }
 
     postLightCreation() {
-        const {
-            position = DEFAULT_POSITION
-        } = this.options;
+        const { position = DEFAULT_POSITION } = this.options;
 
         this.setPosition(position);
         this.addToScene();
     }
 
-    addHelper() {
-        this.helper = true;
-        this.addHolder('ambientlightholder');
+    addHelpers({ holderName = "ambientlightholder", holderSize = 0.05 } = {}) {
+        this.addHolder(holderName, holderSize);
+        this.isUsingHelper = true;
     }
 
     update(dt) {
         super.update(dt);
-        if (this.hasHelper()) {
+        if (this.usingHelper()) {
             this.setPosition(this.holder.getPosition(), { updateHolder: false });
         }
     }

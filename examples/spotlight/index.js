@@ -18,8 +18,10 @@ import {
     Sky,
     SpotLight,
     Cone,
-    BaseScript
-} from '../../dist/mage.js';
+    BaseScript,
+    Input,
+    INPUT_EVENTS,
+} from "../../dist/mage.js";
 
 class Flicker extends BaseScript {
     start(light, { cone }) {
@@ -35,76 +37,82 @@ class Flicker extends BaseScript {
                     flicker();
                 });
             }, Math.random() * 1000);
-        }
-        
+        };
+
         flicker();
     }
 }
 
-
 export default class Intro extends Level {
-
-    addAmbientLight() {
-        const ambientLight = new AmbientLight({
+    addLights() {
+        AmbientLight.create({
             color: PALETTES.FRENCH_PALETTE.SPRAY,
-            intensity: .2
-        });
+            intensity: 0.2,
+        }).addHelpers();
 
-        const hemisphereLight = new HemisphereLight({
+        HemisphereLight.create({
             color: {
                 sky: PALETTES.FRENCH_PALETTE.SQUASH_BLOSSOM,
-                ground: PALETTES.FRENCH_PALETTE.REEF_ENCOUNTER
+                ground: PALETTES.FRENCH_PALETTE.REEF_ENCOUNTER,
             },
-            intensity: .2
-        });
-    
-        // const sunLight = new SunLight({
-        //     color: PALETTES.FRENCH_PALETTE.MELON_MELODY,
-        //     intensity: .1,
-        //     far: 20,
-        //     mapSize: 2048
-        // });
-        // sunLight.setPosition({ y: 4, z: -3, x: -3 });
-        // sunLight.addHelper();
+            intensity: 0.2,
+        }).addHelpers();
     }
 
     createSky() {
         const sky = new Sky();
-        const inclination = .5;
-        const azimuth = .1;
+        const inclination = 0.5;
+        const azimuth = 0.1;
         const distance = 100;
-        
-        sky.setSun(
-            inclination,
-            azimuth,
-            distance
-        );
+
+        sky.setSun(inclination, azimuth, distance);
 
         window.sky = sky;
     }
 
+    onElementClick = ({ elements }) => {
+        const filtered = elements.filter(({ element }) =>
+            element.hasTag(constants.TAGS.LIGHTS.HELPER),
+        )[0];
+
+        if (filtered) {
+            this.transform.attach(filtered.element);
+        } else {
+            // this.transform.detach();
+        }
+    };
+
+    onElementDeselect = () => {
+        this.transform.detach();
+    };
+
     onCreate() {
+        Input.enableMouse();
+        Input.addEventListener(INPUT_EVENTS.ELEMENT_CLICK, this.onElementClick);
+        Input.addEventListener(INPUT_EVENTS.ELEMENT_DESELECT, this.onElementDeselect);
         Scene.getCamera().setPosition({ y: 10 });
         Controls.setOrbitControl();
-        this.addAmbientLight();
+        this.transform = Controls.setTransformControl();
+        this.addLights();
         this.createSky();
 
-        Scripts.register('Flicker', Flicker);
+        Scripts.register("Flicker", Flicker);
 
-        const floor = new Box(100, .5, 100, 0x555555);
-        floor.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: .5, metalness: 0 });
+        const floor = new Box(100, 0.5, 100, 0x555555);
+        floor.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: 0.5, metalness: 0 });
         const spotlight = new SpotLight({ color: PALETTES.FRENCH.FLAT_FLESH, intensity: 1 });
-        spotlight.setPosition({ y: 3.5 })
+        spotlight.setPosition({ y: 3.5 });
+        spotlight.addHelpers();
 
-        const lamp = Models.get('lamp');
-        lamp.setPosition({ z: .7 })
-        lamp.setScale({ x: 3.8, y: 3.8, z: 3.8 })
+        const lamp = Models.get("lamp");
+        lamp.setPosition({ z: 0.7 });
+        lamp.setScale({ x: 3.8, y: 3.8, z: 3.8 });
 
         const lightCone = new Cone(1.5, 5, 0xffffff, { openEnded: true, radialSegments: 20 });
-        lightCone.setOpacity(.15)
+        lightCone.setOpacity(0.15);
         lightCone.setPosition({ y: 1 });
 
-        spotlight.addScript('Flicker', { cone: lightCone });
+        spotlight.addScript("Flicker", { cone: lightCone });
 
         window.spotlight = spotlight;
         window.lamp = lamp;
@@ -114,9 +122,16 @@ export default class Intro extends Level {
 
 const assets = {
     models: {
-        lamp: 'assets/models/lamp.obj'
-    }
-}
+        lamp: "assets/models/lamp.obj",
+        lightbulb: "assets/models/lamp.gltf",
+    },
+    textures: {
+        spotlightholder: "assets/textures/spotlight.png",
+        ambientlightholder: "assets/textures/ambientlight.png",
+        hemispherelightholder: "assets/textures/hemispherelight.png",
+        targetholder: "assets/textures/target.png",
+    },
+};
 
 const { SHADOW_TYPES } = constants;
 
@@ -132,13 +147,13 @@ const config = {
     lights: {
         shadows: true,
         shadowType: SHADOW_TYPES.HARD,
-        textureAnisotropy: 32
+        textureAnisotropy: 32,
     },
 
     physics: {
         enabled: true,
-        path: 'dist/ammo.js',
-        gravity: { x: 0, y: -9.8, z: 0}
+        path: "dist/ammo.js",
+        gravity: { x: 0, y: -9.8, z: 0 },
     },
 
     tween: {
@@ -152,10 +167,10 @@ const config = {
     },
 };
 
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
     store.createStore({}, {}, true);
 
-    Router.on('/', Intro);
+    Router.on("/", Intro);
 
     Router.start(config, assets);
 });

@@ -1,12 +1,9 @@
-import Light from './Light';
-import Scene from '../core/Scene';
-import {
-    HemisphereLight as THREEHemisphereLight,
-    HemisphereLightHelper
-} from 'three';
-import { HEMISPHERELIGHT } from './Lights';
-import { ENTITY_TYPES } from '../entities/constants';
-import { generateRandomName } from '../lib/uuid';
+import Light from "./Light";
+import Scene from "../core/Scene";
+import { HemisphereLight as THREEHemisphereLight, HemisphereLightHelper } from "three";
+import { HEMISPHERELIGHT } from "./Lights";
+import { ENTITY_TYPES } from "../entities/constants";
+import { generateRandomName } from "../lib/uuid";
 
 const DEFAULT_INTENSITY = 0.5;
 
@@ -16,7 +13,6 @@ const DEFAULT_GROUND_COLOR = 0x555555;
 const GREEN = 0x2ecc71;
 
 export default class HemisphereLight extends Light {
-
     constructor(options = {}) {
         const {
             color = {
@@ -24,7 +20,7 @@ export default class HemisphereLight extends Light {
                 ground: DEFAULT_GROUND_COLOR,
             },
             intensity = DEFAULT_INTENSITY,
-            name = generateRandomName('HemisphereLight'),
+            name = generateRandomName("HemisphereLight"),
         } = options;
 
         super({ color, intensity, name });
@@ -40,7 +36,7 @@ export default class HemisphereLight extends Light {
             sky: DEFAULT_SKY_COLOR,
             ground: DEFAULT_GROUND_COLOR,
         },
-        intensity = DEFAULT_INTENSITY
+        intensity = DEFAULT_INTENSITY,
     }) {
         if (light) {
             this.setBody({ body: light });
@@ -54,9 +50,19 @@ export default class HemisphereLight extends Light {
         }
     }
 
-    addHelper() {
-        this.helper = new HemisphereLightHelper(this.body, 2, GREEN);
+    addHelpers({ holderName = "hemispherelightholder", holderSize = 0.05 } = {}) {
+        this.helper = new HemisphereLightHelper(this.getBody(), 2, GREEN);
+        this.addHolder(holderName, holderSize);
+
+        this.isUsingHelper = true;
 
         Scene.add(this.helper, null, false);
+    }
+
+    update(dt) {
+        super.update(dt);
+        if (this.usingHelper()) {
+            this.setPosition(this.holder.getPosition(), { updateHolder: false });
+        }
     }
 }

@@ -1,17 +1,17 @@
-import Light from './Light';
-import Config from '../core/config';
-import Element from '../entities/Element';
+import Light from "./Light";
+import Config from "../core/config";
+import Element from "../entities/Element";
 import {
     DirectionalLight as THREEDirectionalLight,
     MeshBasicMaterial,
     SphereGeometry,
     DirectionalLightHelper,
-    CameraHelper
-} from 'three';
-import Scene from '../core/Scene';
-import { SUNLIGHT } from './Lights';
-import { ENTITY_TYPES } from '../entities/constants';
-import { generateRandomName } from '../lib/uuid';
+    CameraHelper,
+} from "three";
+import Scene from "../core/Scene";
+import { SUNLIGHT } from "./Lights";
+import { ENTITY_TYPES } from "../entities/constants";
+import { generateRandomName } from "../lib/uuid";
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
@@ -24,12 +24,11 @@ const DEFAULT_BIAS = -0.0001;
 const WHITE = 0xffffff;
 
 export default class SunLight extends Light {
-
     constructor(options = {}) {
         const {
             color = WHITE,
             intensity = DEFAULT_INTENSITY,
-            name = generateRandomName('SunLight')
+            name = generateRandomName("SunLight"),
         } = options;
 
         super({ color, intensity, name });
@@ -39,11 +38,7 @@ export default class SunLight extends Light {
         this.setName(name);
     }
 
-    setLight({
-        light,
-        color = WHITE,
-        intensity = DEFAULT_INTENSITY
-    }) {
+    setLight({ light, color = WHITE, intensity = DEFAULT_INTENSITY }) {
         if (light) {
             this.setBody({ body: light });
         } else {
@@ -56,10 +51,7 @@ export default class SunLight extends Light {
     }
 
     postLightCreation() {
-        const {
-            position = DEFAULT_POSITION,
-            target
-        } = this.options;
+        const { position = DEFAULT_POSITION, target } = this.options;
 
         this.setPosition(position);
         if (target) {
@@ -76,7 +68,7 @@ export default class SunLight extends Light {
             mapSize = DEFAULT_MAP_SIZE,
             bias = DEFAULT_BIAS,
             fov = DEFAULT_FOV,
-            castShadow = true
+            castShadow = true,
         } = this.options;
 
         if (Config.lights().shadows && castShadow) {
@@ -100,18 +92,8 @@ export default class SunLight extends Light {
         }
     }
 
-    getTargetMesh(initialPosition) {
-        const geometry = new SphereGeometry(3, 6, 6);
-        const material = new MeshBasicMaterial({
-            color: 0xeeeeee,
-            wireframe: true
-        });
-
-        const target = new Element({ geometry, material });
-
-        target.position(initialPosition);
-
-        return target;
+    hasTarget() {
+        return true;
     }
 
     setTarget(target) {
@@ -125,19 +107,27 @@ export default class SunLight extends Light {
         return this.target;
     }
 
-    addHelper() {
-        this.helper = new DirectionalLightHelper(this.body, 5);
-        this.shadowHelper = new CameraHelper(this.body.shadow.camera);
+    addHelpers({
+        holderName = "sunlightHelper",
+        holderSize = 0.05,
+        targetHolderName = "targetholder",
+        targetHolderSize = 0.05,
+    } = {}) {
+        this.helper = new DirectionalLightHelper(this.getBody(), 5);
+        this.shadowHelper = new CameraHelper(this.getBody().shadow.camera);
 
         Scene.add(this.helper, null, false);
         Scene.add(this.shadowHelper, null, false);
 
-        this.addHolder();
+        this.addHolder(holderName, holderSize);
+        this.addTargetHolder(targetHolderName, targetHolderSize);
+
+        this.isUsingHelper = true;
     }
 
     update(dt) {
         super.update(dt);
-        if (this.hasHelper()) {
+        if (this.usingHelper()) {
             this.helper.update();
             this.shadowHelper.update();
         }

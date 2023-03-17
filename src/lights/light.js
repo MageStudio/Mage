@@ -1,31 +1,26 @@
-import { ENTITY_TYPES } from '../entities/constants';
-import Entity from '../entities/Entity';
+import { ENTITY_TYPES } from "../entities/constants";
+import Entity from "../entities/Entity";
 
-import Lights from './Lights';
-import Models from '../models/Models';
-import Scene from '../core/Scene';
-import { MATERIALS } from '../lib/constants';
-import {
-    LIGHT_HOLDER_MODEL_NOT_FOUND,
-    LIGHT_NOT_FOUND
-} from '../lib/messages';
-import { generateRandomName } from '../lib/uuid';
-import { tweenTo } from '../lib/easing';
-
-const LAMP_COLOR = 0Xf1c40f;
+import Lights from "./Lights";
+import Models from "../models/Models";
+import Scene from "../core/Scene";
+import { MATERIALS, TAGS } from "../lib/constants";
+import { LIGHT_HOLDER_MODEL_NOT_FOUND, LIGHT_NOT_FOUND } from "../lib/messages";
+import { generateRandomName } from "../lib/uuid";
+import { tweenTo } from "../lib/easing";
+import Sprite from "../entities/base/Sprite";
 
 export default class Light extends Entity {
-
     constructor({ color, intensity, name }) {
         super({ name });
         this.color = color;
         this.intensity = intensity;
-        this.name = name || generateRandomName('Light')
+        this.name = name || generateRandomName("Light");
         this.isLightOn = false;
         this.body = undefined;
 
         // helper body for this light
-        this.helper = undefined;
+        this.isUsingHelper = undefined;
         // holder body representing the light
         this.holder = undefined;
         // target body for the light (only used by directional light)
@@ -42,43 +37,67 @@ export default class Light extends Entity {
         }
     }
 
-    addHolder =(name = 'lightholder') => {
-        const body = Models.getModel(name);
+    addHolder = (name = "lightholder", size = 0.05) => {
+        const holderSprite = new Sprite(size, size, name, { name });
 
-        if (body) {
-            this.holder = body;
-            this.holder.setMaterialFromName(MATERIALS.BASIC, { wireframe: true, color: LAMP_COLOR });
-            this.holder.serializable = false;
-            this.holder.setPosition({
-                x: this.body.position.x,
-                y: this.body.position.y,
-                z: this.body.position.z
-            });
+        if (holderSprite) {
+            holderSprite.setSizeAttenuation(false);
+            holderSprite.setDepthTest(false);
+            holderSprite.setDepthWrite(false);
+            holderSprite.setSerializable(false);
+            holderSprite.setPosition(this.getPosition());
+            holderSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.HOLDER, name]);
+
+            this.holder = holderSprite;
+
+            return true;
         } else {
             console.warn(LIGHT_HOLDER_MODEL_NOT_FOUND);
+            return false;
         }
     };
 
-    hasHelper() {
-        return !!this.helper;
+    addTargetHolder = (name = "targetholder", size = 0.05) => {
+        const targetSprite = new Sprite(size, size, name, { name });
+
+        if (targetSprite) {
+            targetSprite.setSizeAttenuation(false);
+            targetSprite.setDepthTest(false);
+            targetSprite.setDepthWrite(false);
+            targetSprite.setSerializable(false);
+            targetSprite.setPosition(this.getTargetPosition());
+            targetSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.TARGET, name]);
+
+            targetSprite.getBody().add(this.getBody().target);
+
+            this.targetHolder = targetSprite;
+        }
+    };
+
+    usingHelper() {
+        return !!this.isUsingHelper;
     }
 
     hasHolder() {
         return !!this.holder;
     }
 
+    hasTarget() {
+        return false;
+    }
+
     getPosition() {
         return {
             x: this.body.position.x,
             y: this.body.position.y,
-            z: this.body.position.z
+            z: this.body.position.z,
         };
     }
 
     setPosition(where, { updateHolder = true } = {}) {
         const position = {
             ...this.getPosition(),
-            ...where
+            ...where,
         };
 
         const { x, y, z } = position;
@@ -90,7 +109,7 @@ export default class Light extends Entity {
         if (this.hasHolder() & updateHolder) {
             this.holder.setPosition({ x, y, z });
         }
-    }    
+    }
 
     isAlreadyOn() {
         return this.hasBody() && this.body.intensity === this.intensity;
@@ -115,13 +134,12 @@ export default class Light extends Entity {
     dim(value = this.getIntensity(), time = 250) {
         const intensity = this.getIntensity();
         const onUpdate = value => !this.isDisposed() && this.setIntensity(value);
-        return tweenTo(intensity, value, { time, onUpdate })
+        return tweenTo(intensity, value, { time, onUpdate });
     }
 
     on(time = 500) {
         if (this.hasBody()) {
-            this.dim(this.intensity, time)
-                .then(() => this.isLightOn = true);
+            this.dim(this.intensity, time).then(() => (this.isLightOn = true));
         } else {
             console.log(LIGHT_NOT_FOUND);
         }
@@ -129,8 +147,7 @@ export default class Light extends Entity {
 
     off(time = 500) {
         if (this.hasBody()) {
-            this.dim(0, time)
-                .then(() => this.isLightOn = false)
+            this.dim(0, time).then(() => (this.isLightOn = false));
         } else {
             console.log(LIGHT_NOT_FOUND);
         }
@@ -142,7 +159,7 @@ export default class Light extends Entity {
             type: this.getEntityType(),
             color: this.color,
             intensity: this.intensity,
-            name: this.name
-        }
+            name: this.name,
+        };
     }
-};
+}

@@ -1,30 +1,18 @@
-import {
-    EventDispatcher
-} from 'three';
+import { EventDispatcher } from "three";
 
-import Keyboard, {
-    KEY_DOWN,
-    KEY_PRESS,
-    KEY_UP
-} from './Keyboard';
+import Keyboard, { KEY_DOWN, KEY_PRESS, KEY_UP } from "./Keyboard";
 
-import Mouse, {
-    MOUSE_DOWN,
-    MOUSE_UP,
-    ELEMENT_CLICK,
-    ELEMENT_DESELECT,
-    MOUSE_MOVE
-} from './Mouse';
+import Mouse, { MOUSE_DOWN, MOUSE_UP, ELEMENT_CLICK, ELEMENT_DESELECT, MOUSE_MOVE } from "./Mouse";
 
 import Gamepad, {
     GAMEPAD_DISCONNECTED_EVENT,
     GAMEPAD_CONNECTED_EVENT,
     BUTTON_PRESSED_EVENT,
     BUTTON_RELEASED_EVENT,
-    AXIS_CHANGE_EVENT
-} from './Gamepad';
+    AXIS_CHANGE_EVENT,
+} from "./Gamepad";
 
-import { dispatch } from '../../store/Store';
+import { dispatch } from "../../store/Store";
 import {
     inputEnabled,
     inputDisabled,
@@ -33,8 +21,8 @@ import {
     mouseEnabled,
     keyboardDisabled,
     mouseDisabled,
-    gamepadDisabled
-} from '../../store/actions/input';
+    gamepadDisabled,
+} from "../../store/actions/input";
 
 export const INPUT_EVENTS_LIST = [
     KEY_PRESS,
@@ -49,7 +37,7 @@ export const INPUT_EVENTS_LIST = [
     GAMEPAD_DISCONNECTED_EVENT,
     BUTTON_PRESSED_EVENT,
     BUTTON_RELEASED_EVENT,
-    AXIS_CHANGE_EVENT
+    AXIS_CHANGE_EVENT,
 ];
 
 export const INPUT_EVENTS = {
@@ -66,14 +54,16 @@ export const INPUT_EVENTS = {
     GAMEPAD_DISCONNECTED_EVENT,
     BUTTON_PRESSED_EVENT,
     BUTTON_RELEASED_EVENT,
-    AXIS_CHANGE_EVENT
+    AXIS_CHANGE_EVENT,
 };
 
 export class Input extends EventDispatcher {
-
     constructor() {
         super();
         this.enabled = false;
+        this.mouse = new Mouse();
+        this.keyboard = new Keyboard();
+        this.gamepad = new Gamepad();
     }
 
     get EVENTS() {
@@ -83,9 +73,6 @@ export class Input extends EventDispatcher {
     enable() {
         if (!this.enabled) {
             dispatch(inputEnabled());
-            this.mouse = new Mouse();
-            this.keyboard = new Keyboard();
-            this.gamepad = new Gamepad();
             this.enableGamepad();
             this.enableKeyboard();
             this.enableMouse();
@@ -109,7 +96,7 @@ export class Input extends EventDispatcher {
 
     enableGamepad() {
         dispatch(gamepadEnabled());
-        
+
         this.gamepad.enable();
         this.gamepad.addEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this));
         this.gamepad.addEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate.bind(this));
@@ -138,9 +125,9 @@ export class Input extends EventDispatcher {
         this.mouse.addEventListener(ELEMENT_DESELECT, this.propagate.bind(this));
     }
 
-    propagate = (event) => {
+    propagate = event => {
         this.dispatchEvent(event);
-    }
+    };
 
     disableKeyboard() {
         dispatch(keyboardDisabled());
