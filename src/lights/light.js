@@ -122,6 +122,7 @@ export default class Light extends Entity {
     setIntensity(value) {
         if (this.hasBody()) {
             this.body.intensity = value;
+            this.intensity = value;
         }
     }
 
@@ -129,6 +130,14 @@ export default class Light extends Entity {
         if (this.hasBody()) {
             return this.body.intensity;
         }
+    }
+
+    setColor(color) {
+        this.body.color = color;
+    }
+
+    getColor() {
+        return this.body.color;
     }
 
     dim(value = this.getIntensity(), time = 250) {
@@ -157,9 +166,9 @@ export default class Light extends Entity {
         return {
             ...super.toJSON(),
             type: this.getEntityType(),
-            color: this.color,
-            intensity: this.intensity,
-            name: this.name,
+            color: this.getColor(),
+            intensity: this.getIntensity(),
+            name: this.getName(),
         };
     }
 }

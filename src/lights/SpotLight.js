@@ -156,4 +156,11 @@ export default class SpotLight extends Light {
             this.setPosition(this.holder.getPosition(), { updateHolder: false });
         }
     }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            target: this.getTargetPosition(),
+        };
+    }
 }

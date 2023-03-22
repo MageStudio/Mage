@@ -80,13 +80,6 @@ export default class Element extends Entity {
         this.setEntityType(ENTITY_TYPES.MESH);
     }
 
-    addTag(tag) {
-        super.addTag(tag);
-
-        const existingTags = this.getBody().userData.tags || [];
-        this.getBody().userData.tags = [...existingTags, tag];
-    }
-
     setBody({ body, geometry, material }) {
         if (body) {
             this.body = body;
@@ -650,9 +643,15 @@ export default class Element extends Entity {
         if (this.isSerializable()) {
             return {
                 ...super.toJSON(),
+                physics: {
+                    state: this.getPhysicsState(),
+                    options: this.getPhysicsOptions(),
+                },
                 body: this.body.toJSON(),
                 textures: this.textures,
-                ...this.options,
+                materialType: this.getMaterialType(),
+                opacity: this.opacity,
+                color: this.getColor(),
             };
         }
     }

@@ -1,24 +1,17 @@
-import Universe from './Universe';
-import Config from './config';
-import { getWindow } from './window';
-import {
-    Clock,
-    Scene as THREEScene,
-    WebGLRenderer,
-    FogExp2,
-    LinearToneMapping
-} from 'three';
+import Universe from "./Universe";
+import Config from "./config";
+import { getWindow } from "./window";
+import { Clock, Scene as THREEScene, WebGLRenderer, FogExp2, LinearToneMapping } from "three";
 
-import { generateRandomName, generateUUID } from '../lib/uuid';
-import Images from '../images/Images';
-import { DEFAULT_SHADOWTYPE, SHADOW_TYPES } from '../lights/constants';
-import { mapShadowTypeToShadowMap } from '../lights/utils';
-import { DEFAULT_OUTPUT_ENCODING, OUTPUT_ENCODINGS } from '../lib/constants';
-import Physics from '../physics';
-import { PHYSICS_EVENTS } from '../physics/messages';
-import { ENTITY_TYPES } from '../entities/constants';
+import { generateRandomName, generateUUID } from "../lib/uuid";
+import Images from "../images/Images";
+import { DEFAULT_SHADOWTYPE, SHADOW_TYPES } from "../lights/constants";
+import { mapShadowTypeToShadowMap } from "../lights/utils";
+import { DEFAULT_OUTPUT_ENCODING, OUTPUT_ENCODINGS } from "../lib/constants";
+import Physics from "../physics";
+import { PHYSICS_EVENTS } from "../physics/messages";
+import { ENTITY_TYPES } from "../entities/constants";
 export class Scene {
-
     constructor() {
         this.clock = new Clock();
         this.rendererElements = {};
@@ -33,7 +26,7 @@ export class Scene {
         return ENTITY_TYPES.SCENE;
     }
 
-    createScene(name = generateRandomName('LevelName')) {
+    createScene(name = generateRandomName("LevelName")) {
         const fog = Config.fog();
 
         this.scene = new THREEScene();
@@ -82,15 +75,17 @@ export class Scene {
     }
 
     getHierarchy() {
-        return [{
-            element: this,
-            children: [
-                this.getCamera().getHierarchy(),
-                ...(this.elements
-                    .filter(e => !e.hasParent() && !e.isHelper())
-                    .map(e => e.getHierarchy()))
-            ]
-        }];
+        return [
+            {
+                element: this.toJSON(),
+                children: [
+                    this.getCamera().getHierarchy(),
+                    ...this.elements
+                        .filter(e => !e.hasParent() && !e.isHelper())
+                        .map(e => e.getHierarchy()),
+                ],
+            },
+        ];
     }
 
     remove(body) {
@@ -111,17 +106,17 @@ export class Scene {
             this.shadowType = mapShadowTypeToShadowMap(type);
             this.setRendererShadowMap();
         }
-    }
+    };
 
     setRendererOutputEncoding = (encoding = DEFAULT_OUTPUT_ENCODING) => {
         if (Object.keys(OUTPUT_ENCODINGS).includes(encoding)) {
             this.renderer.outputEncoding = OUTPUT_ENCODINGS[encoding];
         }
-    }
+    };
 
     setBackground = texture => {
-        this.scene.background = typeof texture === 'string' ? Images.get(texture) : texture;
-    } 
+        this.scene.background = typeof texture === "string" ? Images.get(texture) : texture;
+    };
 
     create(name) {
         this.createScene(name);
@@ -150,14 +145,14 @@ export class Scene {
     listenToResizeEvent() {
         const win = getWindow();
         if (win) {
-            win.addEventListener('resize', this.onResize);
+            win.addEventListener("resize", this.onResize);
         }
     }
 
     stopResizeListener() {
         const win = getWindow();
         if (win) {
-            win.removeEventListener('resize', this.onResize);
+            win.removeEventListener("resize", this.onResize);
         }
     }
 
@@ -195,16 +190,13 @@ export class Scene {
     }
 
     removeExistingRendererElements() {
-        Object
-            .keys(this.rendererElements)
-            .forEach((k) => {
-                const element = document.body.querySelector(`#${k}`);
+        Object.keys(this.rendererElements).forEach(k => {
+            const element = document.body.querySelector(`#${k}`);
 
-                if (element) {
-                    element.remove();
-                }
-            });
-
+            if (element) {
+                element.remove();
+            }
+        });
     }
 
     storeRenderer(rendererElement) {
@@ -218,7 +210,7 @@ export class Scene {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = this.shadowType;
         this.renderer.sortObjects = false;
-    }
+    };
 
     createRenderer() {
         const { shadows, shadowType = DEFAULT_SHADOWTYPE } = Config.lights();
@@ -228,7 +220,7 @@ export class Scene {
         this.renderer = new WebGLRenderer({
             alpha,
             antialias,
-            powerPreference: 'high-performance'
+            powerPreference: "high-performance",
         });
 
         if (shadows) {
@@ -259,7 +251,7 @@ export class Scene {
 
         const { h, w } = Config.screen();
         this.resize(w, h);
-    }
+    };
 
     resize(width, height) {
         if (!width || !height) return;
@@ -284,22 +276,33 @@ export class Scene {
             fog: {
                 enabled: true,
                 color,
-                density
-            }
+                density,
+            },
         });
     }
 
     update(dt) {
         Universe.update(dt);
 
-        this.getCamera()
-            .update(dt);
+        this.getCamera().update(dt);
     }
 
     onPhysicsUpdate = ({ dt }) => {
         Universe.onPhysicsUpdate(dt);
-        this.getCamera()
-            .onPhysicsUpdate(dt);
+        this.getCamera().onPhysicsUpdate(dt);
+    };
+
+    toJSON() {
+        return {
+            name: this.getName(),
+            uuid: this.uuid(),
+            entityType: this.getEntityType(),
+            background: this.scene.background,
+            clearColor: this.clearColor,
+            alpha: this.alpha,
+            outputEncoding: this.outputEncoding,
+            fog: this.scene.fog,
+        };
     }
 }
 
