@@ -196,7 +196,7 @@ export default class Entity extends EventDispatcher {
 
     getHierarchy() {
         return {
-            element: this,
+            element: this.toJSON(),
             children: this.children.map(e => e.getHierarchy()),
         };
     }
@@ -626,14 +626,16 @@ export default class Entity extends EventDispatcher {
                 return this.getBody().userData[key];
             } else {
                 console.log(KEY_IS_MISSING);
+                return this.getBody().userData;
             }
         } else {
             console.log(USER_DATA_IS_MISSING);
+            return {};
         }
     }
 
     mapScriptsToJSON() {
-        this.allScripts().reduce(
+        return this.allScripts().reduce(
             (acc, { name, options = {}, script }) => {
                 acc.names.push(name);
                 acc.options.push(options);
@@ -650,10 +652,15 @@ export default class Entity extends EventDispatcher {
             return {
                 position: this.getPosition(),
                 rotation: this.getRotation(),
+                quaternion: this.getQuaternion(),
+                worldTransform: this.getWorldTransform(),
                 scale: this.getScale(),
                 entityType: this.getEntityType(),
                 scripts: this.mapScriptsToJSON(),
                 tags: this.getTags(),
+                name: this.getName(),
+                uuid: this.uuid(),
+                data: this.getData(),
             };
         }
     }

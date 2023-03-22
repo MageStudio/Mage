@@ -1,17 +1,16 @@
-import { PerspectiveCamera, Vector3 } from 'three';
-import config from '../core/config';
-import { ENTITY_TYPES } from './constants';
-import Entity from './Entity';
+import { PerspectiveCamera, Vector3 } from "three";
+import config from "../core/config";
+import { ENTITY_TYPES } from "./constants";
+import Entity from "./Entity";
 
 export default class Camera extends Entity {
-
     constructor(options = {}) {
         const {
-            name = 'camera',
+            name = "Main PerspectiveCamera",
             fov = config.camera().fov,
             ratio = config.screen().ratio,
             near = config.camera().near,
-            far = config.camera().far
+            far = config.camera().far,
         } = options;
 
         super({ name });
@@ -35,8 +34,8 @@ export default class Camera extends Entity {
         return {
             x,
             y,
-            z
-        }
+            z,
+        };
     }
 
     lookAt(position = {}) {
