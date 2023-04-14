@@ -51,6 +51,8 @@ import Scripts, { BUILTIN } from "./scripts/Scripts";
 import Controls from "./controls/Controls";
 import Physics, { PHYSICS_EVENTS, PHYSICS_CONSTANTS, physicsUtils } from "./physics";
 
+import * as material_constants from "./materials/constants";
+
 import * as hitboxUtils from "./physics/hitbox";
 
 import * as store from "./store";
@@ -105,6 +107,7 @@ import * as xstate from "xstate";
 const constants = {
     ...lib_constants,
     ...light_contants,
+    ...material_constants,
 };
 
 export {
