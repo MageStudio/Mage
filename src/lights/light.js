@@ -2,13 +2,12 @@ import { ENTITY_TYPES } from "../entities/constants";
 import Entity from "../entities/Entity";
 
 import Lights from "./Lights";
-import Models from "../models/Models";
 import Scene from "../core/Scene";
-import { MATERIALS, TAGS } from "../lib/constants";
+import { TAGS } from "../lib/constants";
 import { LIGHT_HOLDER_MODEL_NOT_FOUND, LIGHT_NOT_FOUND } from "../lib/messages";
 import { generateRandomName } from "../lib/uuid";
 import { tweenTo } from "../lib/easing";
-import Sprite from "../entities/base/Sprite";
+import HelperSprite from "../entities/base/HelperSprite";
 
 export default class Light extends Entity {
     constructor({ color, intensity, name }) {
@@ -38,7 +37,7 @@ export default class Light extends Entity {
     }
 
     addHolder = (name = "lightholder", size = 0.05) => {
-        const holderSprite = new Sprite(size, size, name, { name });
+        const holderSprite = new HelperSprite(size, size, name, { name });
 
         if (holderSprite) {
             holderSprite.setSizeAttenuation(false);
@@ -47,6 +46,8 @@ export default class Light extends Entity {
             holderSprite.setSerializable(false);
             holderSprite.setPosition(this.getPosition());
             holderSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.HOLDER, name]);
+
+            holderSprite.setHelperTarget(this);
 
             this.holder = holderSprite;
 
@@ -58,7 +59,7 @@ export default class Light extends Entity {
     };
 
     addTargetHolder = (name = "targetholder", size = 0.05) => {
-        const targetSprite = new Sprite(size, size, name, { name });
+        const targetSprite = new HelperSprite(size, size, name, { name });
 
         if (targetSprite) {
             targetSprite.setSizeAttenuation(false);
@@ -67,6 +68,8 @@ export default class Light extends Entity {
             targetSprite.setSerializable(false);
             targetSprite.setPosition(this.getTargetPosition());
             targetSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.TARGET, name]);
+
+            targetSprite.setHelperTarget(this);
 
             targetSprite.getBody().add(this.getBody().target);
 

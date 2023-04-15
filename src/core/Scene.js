@@ -81,7 +81,7 @@ export class Scene {
                 children: [
                     this.getCamera().getHierarchy(),
                     ...this.elements
-                        .filter(e => !e.hasParent() && !e.isHelper())
+                        .filter(e => !e.hasParent() && !e.isHelper() && e.isSerializable())
                         .map(e => e.getHierarchy()),
                 ],
             },
