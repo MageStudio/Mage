@@ -13,6 +13,7 @@ import {
     Grid,
     Axes,
     Sprite,
+    HelperSprite,
     Label,
     Cone,
 } from "./entities";
@@ -163,6 +164,7 @@ export {
     Sphere,
     Grid,
     Sprite,
+    HelperSprite,
     Axes,
     Label,
     Cone,

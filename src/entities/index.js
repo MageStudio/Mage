@@ -1,4 +1,4 @@
-import { ENTITY_TYPES, ENTITY_EVENTS } from './constants';
+import { ENTITY_TYPES, ENTITY_EVENTS } from "./constants";
 import {
     Box,
     Cube,
@@ -9,10 +9,11 @@ import {
     Plane,
     Sphere,
     Sprite,
+    HelperSprite,
     Axes,
     Label,
-    Cone
-} from './base';
+    Cone,
+} from "./base";
 
 export {
     ENTITY_TYPES,
@@ -25,8 +26,9 @@ export {
     CurveLine,
     Plane,
     Sprite,
+    HelperSprite,
     Sphere,
     Axes,
     Label,
-    Cone
+    Cone,
 };

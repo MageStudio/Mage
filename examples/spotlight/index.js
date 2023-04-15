@@ -75,6 +75,8 @@ export default class Intro extends Level {
             element.hasTag(constants.TAGS.LIGHTS.HELPER),
         )[0];
 
+        console.log(filtered.element);
+
         if (filtered) {
             this.transform.attach(filtered.element);
         } else {
@@ -117,6 +119,8 @@ export default class Intro extends Level {
         window.spotlight = spotlight;
         window.lamp = lamp;
         window.lightCone = lightCone;
+
+        console.log(Scene.getHierarchy());
     }
 }
 
