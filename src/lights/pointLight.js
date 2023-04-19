@@ -45,7 +45,9 @@ export default class PointLight extends Light {
         if (light) {
             this.setBody({ body: light });
         } else {
-            this.setBody({ body: new THREEPointLight(color, intensity, distance, decay) });
+            this.setBody({ body: new THREEPointLight(color, intensity) });
+            this.setDistance(distance);
+            this.setDecay(decay);
         }
 
         if (this.hasBody()) {
@@ -70,23 +72,74 @@ export default class PointLight extends Light {
         } = this.options;
 
         if (Config.lights().shadows) {
-            this.body.castShadow = true;
-
-            const d = far / 2;
-
-            this.body.shadow.mapSize.height = mapSize;
-            this.body.shadow.mapSize.width = mapSize;
-
-            this.body.shadow.camera.left = -d;
-            this.body.shadow.camera.right = d;
-            this.body.shadow.camera.top = d;
-            this.body.shadow.camera.bottom = -d;
-
-            this.body.shadow.camera.near = near;
-            this.body.shadow.camera.far = far;
-
-            this.body.shadow.bias = bias;
+            this.setCastShadow(true);
+            this.setMapSize(mapSize);
+            this.setShadowCameraNearFar(near, far);
+            this.setBias(bias);
         }
+    }
+
+    setDistance(distance = DEFAULT_DISTANCE) {
+        this.distance = distance;
+
+        this.getBody().distance = distance;
+    }
+
+    getDistance() {
+        return this.distance;
+    }
+
+    setDecay(decay = DEFAULT_DECAY) {
+        this.decay = decay;
+
+        this.getBody().decay = decay;
+    }
+
+    getDecay() {
+        return this.decay;
+    }
+
+    setShadowCameraNearFar = (near = DEFAULT_NEAR, far = DEFAULT_FAR) => {
+        this.near = near;
+        this.far = far;
+
+        const d = this.far / 2;
+
+        this.getBody().shadow.camera.left = -d;
+        this.getBody().shadow.camera.right = d;
+        this.getBody().shadow.camera.top = d;
+        this.getBody().shadow.camera.bottom = -d;
+
+        this.getBody().shadow.camera.near = near;
+        this.getBody().shadow.camera.far = far;
+    };
+
+    getShadowCameraNearFar() {
+        return {
+            near: this.near,
+            far: this.far,
+        };
+    }
+
+    setMapSize(mapSize = DEFAULT_MAP_SIZE) {
+        this.mapSize = mapSize;
+
+        this.getBody().shadow.mapSize.height = mapSize;
+        this.getBody().shadow.mapSize.width = mapSize;
+    }
+
+    getMapSize() {
+        return this.mapSize;
+    }
+
+    setBias = (bias = DEFAULT_BIAS) => {
+        this.bias = bias;
+
+        this.getBody().shadow.bias = bias;
+    };
+
+    getBias() {
+        return this.bias;
     }
 
     addHelpers({ holderName = "pointlightholder", holderSize = 0.05 } = {}) {
@@ -116,7 +169,11 @@ export default class PointLight extends Light {
     toJSON() {
         return {
             ...super.toJSON(),
-            distance: this.distance,
+            distance: this.getDistance(),
+            decay: this.getDecay(),
+            bias: this.getBias(),
+            mapSize: this.getMapSize(),
+            shadowCamera: this.getShadowCameraNearFar(),
         };
     }
 }

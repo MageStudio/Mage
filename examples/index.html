@@ -1,127 +1,126 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <style>
+            body {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: nowrap;
+                align-content: stretch;
+                justify-content: flex-start;
+                height: 100vh;
+                width: 100vw;
+                margin: 0;
+            }
 
-<head>
-    <style>
-        body {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: nowrap;
-            align-content: stretch;
-            justify-content: flex-start;
-            height: 100vh;
-            width: 100vw;
-            margin: 0;
-        }
+            .menu {
+                margin: 16px;
+                padding: 0;
+                display: flex;
+                flex: 1 1 auto;
+                flex-direction: column;
+                flex-wrap: nowrap;
+                align-content: flex-start;
+                justify-content: flex-start;
+            }
 
-        .menu {
-            margin: 16px;
-            padding: 0;
-            display: flex;
-            flex: 1 1 auto;
-            flex-direction: column;
-            flex-wrap: nowrap;
-            align-content: flex-start;
-            justify-content: flex-start;
-        }
+            .example-frame {
+                flex: 10 1 auto;
+            }
 
-        .example-frame {
-            flex: 10 1 auto;
-        }
+            details {
+                font-family: Arial, Helvetica, sans-serif;
+                margin: 0;
+                /* display: block; */
+                border: 1px solid #eee;
+                padding: 8px;
+                margin: 4px 0px;
+                color: #555;
+            }
 
-        details {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            /* display: block; */
-            border: 1px solid #eee;
-            padding: 8px;
-            margin: 4px 0px;
-            color: #555;
-        }
+            summary {
+                font-size: 1.2rem;
+                font-weight: bold;
+                letter-spacing: 0px;
+                text-transform: uppercase;
+            }
 
-        summary {
-            font-size: 1.2rem;
-            font-weight: bold;
-            letter-spacing: 0px;
-            text-transform: uppercase;
-        }
+            .example {
+                display: block;
+                margin: 8px 14px;
+            }
+        </style>
+    </head>
 
-        .example {
-            display: block;
-            margin: 8px 14px;
-        }
-    </style>
-</head>
+    <body>
+        <div class="menu">
+            <details>
+                <summary>Physics</summary>
+                <span class="example" data-src="./physics">Physics</span>
+                <span class="example" data-src="./cars_physics">Physics Car</span>
+                <span class="example" data-src="./cars_physics_ui">Physics Car with UI</span>
+            </details>
+            <details>
+                <summary>Particles</summary>
+                <span class="example" data-src="./particles_explosion">Explosion</span>
+                <span class="example" data-src="./particles_fire">Fire</span>
+                <span class="example" data-src="./particles_custom_emitter">Custom Emitter</span>
+                <span class="example" data-src="./particles_sparkles">Sparkles</span>
+                <span class="example" data-src="./trails">Trails particles</span>
+            </details>
 
-<body>
-    <div class="menu">
-        <details>
-            <summary>Physics</summary>
-            <span class='example' data-src='./physics'>Physics</span>
-            <span class='example' data-src='./cars_physics'>Physics Car</span>
-            <span class='example' data-src='./cars_physics_ui'>Physics Car with UI</span>
-        </details>
-        <details>
-            <summary>Particles</summary>
-            <span class='example' data-src='./particles_explosion'>Explosion</span>
-            <span class='example' data-src='./particles_fire'>Fire</span>
-            <span class='example' data-src='./particles_custom_emitter'>Custom Emitter</span>
-            <span class='example' data-src='./particles_sparkles'>Sparkles</span>
-            <span class='example' data-src='./trails'>Trails particles</span>
-        </details>
-    
-        <details>
-            <summary>Sounds</summary>
-            <span class='example' data-src='./sound'>Click Sound</span>
-            <span class='example' data-src='./directionalSound'>Directional Click Sound</span>
-        </details>
+            <details>
+                <summary>Sounds</summary>
+                <span class="example" data-src="./sound">Click Sound</span>
+                <span class="example" data-src="./directionalSound">Directional Click Sound</span>
+            </details>
 
-        <details>
-            <summary>Lights</summary>
-            <span class='example' data-src='./spotlight'>Spotlight</span>
-        </details>
-    
-        <details>
-            <summary>Elements</summary>
-            <span class='example' data-src='./material_test'>Material test</span>
-            <span class='example' data-src='./hierarchy'>hierarchy</span>
-            <span class='example' data-src='./textures'>Textures</span>
-            <span class='example' data-src='./scaleTo'>scaleTo</span>
-            <span class='example' data-src='./rotateTo'>rotateTo</span>
-        </details>
-    
-        <details>
-            <summary>PostProcessing</summary>
-            <span class='example' data-src='./selection_effect'>Selection effect</span>
-        </details>
-    
-        <details>
-            <summary>Labels</summary>
-            <span class='example' data-src='./3d_ui'>3D UI</span>
-        </details>
-    </div>
+            <details>
+                <summary>Lights</summary>
+                <span class="example" data-src="./spotlight">Spotlight</span>
+                <span class="example" data-src="./sunlight">Spotlight</span>
+            </details>
 
-    <iframe class='example-frame'></iframe>
+            <details>
+                <summary>Elements</summary>
+                <span class="example" data-src="./material_test">Material test</span>
+                <span class="example" data-src="./hierarchy">hierarchy</span>
+                <span class="example" data-src="./textures">Textures</span>
+                <span class="example" data-src="./scaleTo">scaleTo</span>
+                <span class="example" data-src="./rotateTo">rotateTo</span>
+            </details>
 
-    <script>
-        const iframe = document.querySelector('iframe');
-        const examples = document.querySelectorAll('.example');
+            <details>
+                <summary>PostProcessing</summary>
+                <span class="example" data-src="./selection_effect">Selection effect</span>
+            </details>
 
-        const handleExampleClick = e => {
-            iframe.src = e.target.dataset.src;
-            location.hash = e.target.dataset.src;
-        };
+            <details>
+                <summary>Labels</summary>
+                <span class="example" data-src="./3d_ui">3D UI</span>
+            </details>
+        </div>
 
-        iframe.addEventListener('load', () => {
-            console.log('focusing on iframe');
-            iframe.contentWindow.focus()
-        });
-        examples.forEach(el => el.addEventListener('click', handleExampleClick));
+        <iframe class="example-frame"></iframe>
 
-        if (location.hash) {
-            iframe.src = location.hash.replace('#', '');
-        }
-    </script>
-</body>
+        <script>
+            const iframe = document.querySelector("iframe");
+            const examples = document.querySelectorAll(".example");
 
+            const handleExampleClick = e => {
+                iframe.src = e.target.dataset.src;
+                location.hash = e.target.dataset.src;
+            };
+
+            iframe.addEventListener("load", () => {
+                console.log("focusing on iframe");
+                iframe.contentWindow.focus();
+            });
+            examples.forEach(el => el.addEventListener("click", handleExampleClick));
+
+            if (location.hash) {
+                iframe.src = location.hash.replace("#", "");
+            }
+        </script>
+    </body>
 </html>

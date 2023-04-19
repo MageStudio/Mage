@@ -66,7 +66,7 @@ export default class Light extends Entity {
             targetSprite.setDepthTest(false);
             targetSprite.setDepthWrite(false);
             targetSprite.setSerializable(false);
-            targetSprite.setPosition(this.getTargetPosition());
+            targetSprite.setPosition(this.getTarget().getPosition());
             targetSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.TARGET, name]);
 
             targetSprite.setHelperTarget(this);
@@ -143,6 +143,16 @@ export default class Light extends Entity {
         return this.body.color;
     }
 
+    setCastShadow(castShadow) {
+        this.castShadow = castShadow;
+
+        this.getBody().castShadow = castShadow;
+    }
+
+    getCastShadow() {
+        return this.castShadow;
+    }
+
     dim(value = this.getIntensity(), time = 250) {
         const intensity = this.getIntensity();
         const onUpdate = value => !this.isDisposed() && this.setIntensity(value);
@@ -172,6 +182,7 @@ export default class Light extends Entity {
             color: this.getColor(),
             intensity: this.getIntensity(),
             name: this.getName(),
+            castShadow: this.getCastShadow(),
         };
     }
 }

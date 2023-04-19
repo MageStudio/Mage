@@ -50,6 +50,18 @@ export default class HemisphereLight extends Light {
         }
     }
 
+    setColor = ({ sky, ground } = {}) => {
+        this.getBody().color = sky;
+        this.getBody().groundColor = ground;
+    };
+
+    getColor = () => {
+        return {
+            sky: this.getBody().color,
+            ground: this.getBody().groundColor,
+        };
+    };
+
     addHelpers({ holderName = "hemispherelightholder", holderSize = 0.05 } = {}) {
         this.helper = new HemisphereLightHelper(this.getBody(), 2, GREEN);
         this.addHolder(holderName, holderSize);
@@ -64,5 +76,12 @@ export default class HemisphereLight extends Light {
         if (this.usingHelper()) {
             this.setPosition(this.holder.getPosition(), { updateHolder: false });
         }
+    }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            color: this.getColor(),
+        };
     }
 }
