@@ -3,15 +3,14 @@ import Config from "../core/config";
 import Element from "../entities/Element";
 import {
     DirectionalLight as THREEDirectionalLight,
-    MeshBasicMaterial,
-    SphereGeometry,
     DirectionalLightHelper,
     CameraHelper,
 } from "three";
 import Scene from "../core/Scene";
-import { SUNLIGHT } from "./Lights";
 import { ENTITY_TYPES } from "../entities/constants";
 import { generateRandomName } from "../lib/uuid";
+import { ORIGIN } from "../lib/constants";
+import { Object3D } from "three";
 
 const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
@@ -33,6 +32,8 @@ export default class SunLight extends Light {
 
         super({ color, intensity, name });
         this.options = options;
+        this.target = ORIGIN;
+
         this.setLight({ color, intensity });
         this.setEntityType(ENTITY_TYPES.LIGHT.SUN);
         this.setName(name);
@@ -51,12 +52,12 @@ export default class SunLight extends Light {
     }
 
     postLightCreation() {
-        const { position = DEFAULT_POSITION, target } = this.options;
+        const { position = DEFAULT_POSITION } = this.options;
+        const emptyTarget = new Element({ body: new Object3D() });
 
         this.setPosition(position);
-        if (target) {
-            this.setTarget(target);
-        }
+        this.setTarget(emptyTarget);
+
         this.setLightShadows();
         this.addToScene();
     }
@@ -68,28 +69,67 @@ export default class SunLight extends Light {
             mapSize = DEFAULT_MAP_SIZE,
             bias = DEFAULT_BIAS,
             fov = DEFAULT_FOV,
-            castShadow = true,
         } = this.options;
 
-        if (Config.lights().shadows && castShadow) {
-            this.body.castShadow = true;
-
-            const d = far / 1.5;
-
-            this.body.shadow.mapSize.height = mapSize;
-            this.body.shadow.mapSize.width = mapSize;
-
-            this.body.shadow.camera.left = -d;
-            this.body.shadow.camera.right = d;
-            this.body.shadow.camera.top = d;
-            this.body.shadow.camera.bottom = -d;
-
-            this.body.shadow.camera.near = near;
-            this.body.shadow.camera.far = far;
-            this.body.shadow.camera.fov = fov;
-
-            this.body.shadow.bias = bias;
+        if (Config.lights().shadows) {
+            this.setCastShadow(true);
+            this.setMapSize(mapSize);
+            this.setShadowCameraNearFar(near, far);
+            this.setBias(bias);
+            this.setShadowCameraFov(fov);
         }
+    }
+
+    setShadowCameraNearFar = (near = DEFAULT_NEAR, far = DEFAULT_FAR) => {
+        this.near = near;
+        this.far = far;
+
+        const d = this.far / 2;
+
+        this.getBody().shadow.camera.left = -d;
+        this.getBody().shadow.camera.right = d;
+        this.getBody().shadow.camera.top = d;
+        this.getBody().shadow.camera.bottom = -d;
+
+        this.getBody().shadow.camera.near = near;
+        this.getBody().shadow.camera.far = far;
+    };
+
+    getShadowCameraNearFar() {
+        return {
+            near: this.near,
+            far: this.far,
+        };
+    }
+
+    setShadowCameraFov(fov = DEFAULT_FOV) {
+        this.fov = fov;
+        this.getBody().shadow.camera.fov = fov;
+    }
+
+    getShadowCameraFov() {
+        return this.fov;
+    }
+
+    setMapSize(mapSize = DEFAULT_MAP_SIZE) {
+        this.mapSize = mapSize;
+
+        this.getBody().shadow.mapSize.height = mapSize;
+        this.getBody().shadow.mapSize.width = mapSize;
+    }
+
+    getMapSize() {
+        return this.mapSize;
+    }
+
+    setBias = (bias = DEFAULT_BIAS) => {
+        this.bias = bias;
+
+        this.getBody().shadow.bias = bias;
+    };
+
+    getBias() {
+        return this.bias;
     }
 
     hasTarget() {
@@ -97,18 +137,17 @@ export default class SunLight extends Light {
     }
 
     setTarget(target) {
-        if (target.position) {
-            this.body.target = target;
-            Scene.add(this.body.target, null, false);
-        }
+        this.target = target;
+        this.getBody().target = target.getBody();
+        Scene.add(this.getBody().target, null, false);
     }
 
-    getTargetPosition() {
+    getTarget() {
         return this.target;
     }
 
     addHelpers({
-        holderName = "sunlightHelper",
+        holderName = "sunlightholder",
         holderSize = 0.05,
         targetHolderName = "targetholder",
         targetHolderSize = 0.05,
@@ -140,7 +179,17 @@ export default class SunLight extends Light {
     toJSON() {
         return {
             ...super.toJSON(),
-            target: this.getTargetPosition(),
+            target: this.getTarget(),
+            distance: this.getDistance(),
+            decay: this.getDecay(),
+            bias: this.getBias(),
+            mapSize: this.getMapSize(),
+            shadowCamera: {
+                ...this.getShadowCameraNearFar(),
+                fov: this.setShadowCameraFov(),
+            },
+            penumbra: this.getPenumbra(),
+            angle: this.getAngle(),
         };
     }
 }

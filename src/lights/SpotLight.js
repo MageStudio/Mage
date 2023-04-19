@@ -1,13 +1,7 @@
 import Light from "./Light";
 import Config from "../core/config";
 import Element from "../entities/Element";
-import {
-    SpotLight as THREESpotLight,
-    SpotLightHelper,
-    CameraHelper,
-    MeshBasicMaterial,
-    SphereGeometry,
-} from "three";
+import { SpotLight as THREESpotLight, SpotLightHelper, CameraHelper, Object3D } from "three";
 import Scene from "../core/Scene";
 import { ENTITY_TYPES } from "../entities/constants";
 import { generateRandomName } from "../lib/uuid";
@@ -16,7 +10,6 @@ const DEFAULT_NEAR = 0.1;
 const DEFAULT_FAR = 100;
 
 const DEFAULT_POSITION = { x: 0, y: 0, z: 0 };
-const DEFAULT_TARGET_POSITION = { x: 0, y: 0, z: 0 };
 const DEFAULT_INTENSITY = 0.5;
 const DEFAULT_MAP_SIZE = 2048;
 const DEFAULT_BIAS = -0.0001;
@@ -63,8 +56,12 @@ export default class SpotLight extends Light {
             this.setBody({ body: light });
         } else {
             this.setBody({
-                body: new THREESpotLight(color, intensity, distance, angle, penumbra, decay),
+                body: new THREESpotLight(color, intensity),
             });
+            this.setDistance(distance);
+            this.setAngle(angle);
+            this.setPenumbra(penumbra);
+            this.setDecay(decay);
         }
 
         if (this.hasBody()) {
@@ -73,10 +70,11 @@ export default class SpotLight extends Light {
     }
 
     postLightCreation() {
-        const { position = DEFAULT_POSITION, target = DEFAULT_TARGET_POSITION } = this.options;
+        const { position = DEFAULT_POSITION } = this.options;
+        const emptyTarget = new Element({ body: new Object3D() });
 
         this.setPosition(position);
-        this.setTargetPosition(target);
+        this.setTarget(emptyTarget);
         this.setLightShadows();
         this.addToScene();
     }
@@ -90,36 +88,103 @@ export default class SpotLight extends Light {
         } = this.options;
 
         if (Config.lights().shadows) {
-            this.body.castShadow = true;
-
-            const d = far / 2;
-
-            this.body.shadow.mapSize.height = mapSize;
-            this.body.shadow.mapSize.width = mapSize;
-
-            this.body.shadow.camera.left = -d;
-            this.body.shadow.camera.right = d;
-            this.body.shadow.camera.top = d;
-            this.body.shadow.camera.bottom = -d;
-
-            this.body.shadow.camera.near = near;
-            this.body.shadow.camera.far = far;
-
-            this.body.shadow.bias = bias;
+            this.setCastShadow(true);
+            this.setMapSize(mapSize);
+            this.setShadowCameraNearFar(near, far);
+            this.setBias(bias);
         }
     }
 
-    setTargetPosition(position = {}) {
-        this.target = {
-            ...this.target,
-            ...position,
-        };
+    setDistance(distance = DEFAULT_FAR) {
+        this.distance = distance;
 
-        const { x = 0, y = 0, z = 0 } = this.target;
-        this.body.target.position.set(x, y, z);
+        this.getBody().distance = distance;
     }
 
-    getTargetPosition() {
+    getDistance() {
+        return this.distance;
+    }
+
+    setAngle(angle = DEFAULT_SPOTLIGHT_ANGLE) {
+        this.angle = angle;
+
+        this.getBody().angle = angle;
+    }
+
+    getAngle() {
+        return this.angle;
+    }
+
+    setPenumbra(penumbra = DEFAULT_SPOTLIGHT_PENUMBRA) {
+        this.penumbra = penumbra;
+
+        this.getBody().penumbra = penumbra;
+    }
+
+    getPenumbra() {
+        return this.penumbra;
+    }
+
+    setDecay(decay = DEFAULT_SPOTLIGHT_DECAY) {
+        this.decay = decay;
+
+        this.getBody().decay = decay;
+    }
+
+    getDecay() {
+        return this.decay;
+    }
+
+    setShadowCameraNearFar = (near = DEFAULT_NEAR, far = DEFAULT_FAR) => {
+        this.near = near;
+        this.far = far;
+
+        const d = this.far / 2;
+
+        this.getBody().shadow.camera.left = -d;
+        this.getBody().shadow.camera.right = d;
+        this.getBody().shadow.camera.top = d;
+        this.getBody().shadow.camera.bottom = -d;
+
+        this.getBody().shadow.camera.near = near;
+        this.getBody().shadow.camera.far = far;
+    };
+
+    getShadowCameraNearFar() {
+        return {
+            near: this.near,
+            far: this.far,
+        };
+    }
+
+    setMapSize(mapSize = DEFAULT_MAP_SIZE) {
+        this.mapSize = mapSize;
+
+        this.getBody().shadow.mapSize.height = mapSize;
+        this.getBody().shadow.mapSize.width = mapSize;
+    }
+
+    getMapSize() {
+        return this.mapSize;
+    }
+
+    setBias = (bias = DEFAULT_BIAS) => {
+        this.bias = bias;
+
+        this.getBody().shadow.bias = bias;
+    };
+
+    getBias() {
+        return this.bias;
+    }
+
+    setTarget(target) {
+        this.target = target;
+        this.getBody().target = target.getBody();
+        Scene.add(this.getBody().target, null, false);
+    }
+
+    getTarget() {
         return this.target;
     }
 
@@ -160,7 +225,14 @@ export default class SpotLight extends Light {
     toJSON() {
         return {
             ...super.toJSON(),
-            target: this.getTargetPosition(),
+            target: this.getTarget(),
+            distance: this.getDistance(),
+            decay: this.getDecay(),
+            bias: this.getBias(),
+            mapSize: this.getMapSize(),
+            shadowCamera: this.getShadowCameraNearFar(),
+            penumbra: this.getPenumbra(),
+            angle: this.getAngle(),
         };
     }
 }

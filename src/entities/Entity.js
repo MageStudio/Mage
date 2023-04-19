@@ -661,6 +661,10 @@ export default class Entity extends EventDispatcher {
                 name: this.getName(),
                 uuid: this.uuid(),
                 data: this.getData(),
+                shadow: {
+                    cast: this.getBody().castShadow,
+                    receive: this.getBody().receiveShadow,
+                },
             };
         }
     }
