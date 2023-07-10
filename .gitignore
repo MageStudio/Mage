@@ -8,3 +8,4 @@ dist/mage.node.js
 
 .DS_STORE
 .idea
+.vscode
