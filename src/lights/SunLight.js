@@ -180,16 +180,12 @@ export default class SunLight extends Light {
         return {
             ...super.toJSON(),
             target: this.getTarget(),
-            distance: this.getDistance(),
-            decay: this.getDecay(),
             bias: this.getBias(),
             mapSize: this.getMapSize(),
             shadowCamera: {
                 ...this.getShadowCameraNearFar(),
                 fov: this.setShadowCameraFov(),
             },
-            penumbra: this.getPenumbra(),
-            angle: this.getAngle(),
         };
     }
 }
