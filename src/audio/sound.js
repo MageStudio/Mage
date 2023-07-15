@@ -1,14 +1,19 @@
-import { Object3D } from 'three';
-import { ENTITY_EVENTS, ENTITY_TYPES } from '../entities/constants';
-import Entity from '../entities/Entity';
-import { ALMOST_ZERO } from '../lib/constants';
-import { AUDIO_UNABLE_TO_LOAD_SOUND } from '../lib/messages';
-import { generateRandomName } from '../lib/uuid';
+import { Object3D } from "three";
+import { ENTITY_EVENTS, ENTITY_TYPES } from "../entities/constants";
+import Entity from "../entities/Entity";
+import { ALMOST_ZERO, TAGS } from "../lib/constants";
+import { AUDIO_SOURCE_NOT_DEFINED, AUDIO_UNABLE_TO_LOAD_SOUND } from "../lib/messages";
+import { generateRandomName } from "../lib/uuid";
 import Audio, {
     AUDIO_RAMPS,
     DEFAULT_AUDIO_NODE_RAMP_TIME,
     DEFAULT_AUDIO_NODE_VOLUME,
-} from './Audio';
+} from "./Audio";
+import HelperSprite from "../entities/base/HelperSprite";
+
+const DEFAULT_SETUP_CONFIG = {
+    deferred: false,
+};
 
 export default class Sound extends Entity {
     constructor(options = {}) {
@@ -19,7 +24,8 @@ export default class Sound extends Entity {
             loopEnd,
             autoplay,
             reconnectOnReset,
-            name = generateRandomName('sound'),
+            setupConfig = DEFAULT_SETUP_CONFIG,
+            name = generateRandomName("sound"),
         } = options;
 
         super({
@@ -33,6 +39,8 @@ export default class Sound extends Entity {
             name,
         });
 
+        this.setupConfig = setupConfig;
+
         this.source = source;
         this.loop = loop;
         this.loopStart = loopStart;
@@ -43,18 +51,61 @@ export default class Sound extends Entity {
 
         this.connected = false;
         this.playing = false;
+        this.setupCompleted = false;
         this.hasPlayed = false;
 
         this.buffer = null;
         this.audioNode = null;
         this.volumeNode = null;
 
-        this.setupAudio();
+        if (!this.setupConfig.deferred) {
+            this.setupAudio();
+        }
         this.setName(name);
         this.setBody({ body: new Object3D() });
         this.setEntityType(ENTITY_TYPES.AUDIO.DEFAULT);
 
         Audio.add(this);
+
+        if (this.isSetupCompleted()) {
+            this.connect();
+        }
+    }
+
+    addHelpers({ holderName = "soundholder", holderSize = 0.05 } = {}) {
+        const holderSprite = new HelperSprite(holderSize, holderSize, holderName, {
+            name: holderName,
+        });
+
+        if (holderSprite) {
+            holderSprite.setSizeAttenuation(false);
+            holderSprite.setDepthTest(false);
+            holderSprite.setDepthWrite(false);
+            holderSprite.setSerializable(false);
+            holderSprite.setPosition(this.getPosition());
+            holderSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.HOLDER, name]);
+
+            holderSprite.setHelperTarget(this);
+
+            this.holder = holderSprite;
+
+            return true;
+        } else {
+            console.warn(LIGHT_HOLDER_MODEL_NOT_FOUND);
+            return false;
+        }
+    }
+
+    isPlaying() {
+        return this.playing;
+    }
+
+    isSetupCompleted() {
+        return this.setupCompleted;
+    }
+
+    isConnected() {
+        return this.connected;
     }
 
     setupAudio() {
@@ -63,14 +114,18 @@ export default class Sound extends Entity {
         this.setBuffer();
         this.setupAudioNodeLoop();
 
-        this.audioNode.removeEventListener(
-            ENTITY_EVENTS.AUDIO.ENDED,
-            this.onSoundEnded.bind(this)
-        );
-        this.audioNode.addEventListener(
-            ENTITY_EVENTS.AUDIO.ENDED,
-            this.onSoundEnded.bind(this)
-        );
+        this.audioNode.removeEventListener(ENTITY_EVENTS.AUDIO.ENDED, this.onSoundEnded.bind(this));
+        this.audioNode.addEventListener(ENTITY_EVENTS.AUDIO.ENDED, this.onSoundEnded.bind(this));
+
+        this.setupCompleted = true;
+    }
+
+    setSource(source) {
+        this.source = source;
+    }
+
+    getSource() {
+        return this.source;
     }
 
     get sampleRate() {
@@ -91,10 +146,8 @@ export default class Sound extends Entity {
 
     setupAudioNodeLoop() {
         this.audioNode.loop = this.loop;
-        this.audioNode.loopEnd =
-            this.loopEnd === undefined ? this.duration : this.loopEnd;
-        this.audioNode.loopStart =
-            this.loopStart === undefined ? this.duration : this.loopStart;
+        this.audioNode.loopEnd = this.loopEnd === undefined ? this.duration : this.loopEnd;
+        this.audioNode.loopStart = this.loopStart === undefined ? this.duration : this.loopStart;
     }
 
     createVolumeNode() {
@@ -103,13 +156,13 @@ export default class Sound extends Entity {
     }
 
     tryAutoplay() {
-        if (this.autoplay && !this.hasPlayed) {
+        if (this.autoplay && !this.hasPlayed && !this.setupConfig.deferred) {
             this.play();
         }
     }
 
     connect() {
-        if (this.connected) {
+        if (this.isConnected()) {
             this.disconnect();
         }
 
@@ -121,7 +174,7 @@ export default class Sound extends Entity {
     }
 
     disconnect() {
-        if (this.connected) {
+        if (this.isConnected()) {
             this.volumeNode.disconnect();
             this.audioNode.disconnect();
             this.connected = false;
@@ -144,7 +197,7 @@ export default class Sound extends Entity {
     }
 
     getVolume() {
-        return this.volumeNode.gain.value;
+        return this.volumeNode ? this.volumeNode.gain.value : Audio.getVolume();
     }
 
     setVolume(value = DEFAULT_AUDIO_NODE_VOLUME) {
@@ -156,24 +209,34 @@ export default class Sound extends Entity {
     }
 
     setBuffer() {
+        if (!this.getSource()) {
+            console.error(AUDIO_SOURCE_NOT_DEFINED);
+            return false;
+        }
+
         const buffer = Audio.get(this.source);
 
         if (!buffer) {
             console.error(AUDIO_UNABLE_TO_LOAD_SOUND);
-            return;
+            return false;
         }
 
         this.buffer = buffer;
         this.audioNode.buffer = buffer;
+
+        return true;
     }
 
     play(
         volume = this.getVolume(),
         delay = DEFAULT_AUDIO_NODE_RAMP_TIME,
-        ramp = AUDIO_RAMPS.LINEAR
+        ramp = AUDIO_RAMPS.LINEAR,
     ) {
-        if (this.playing) return Promise.resolve();
+        if (this.isPlaying()) return this;
+        if (!this.isSetupCompleted()) this.setupAudio();
+        if (!this.isConnected()) this.connect();
 
+        console.log("goin to start playing at volume", volume, this.source);
         this.setVolume(0);
         this.audioNode.start();
 
@@ -185,12 +248,12 @@ export default class Sound extends Entity {
         if (ramp === AUDIO_RAMPS.LINEAR) {
             this.volumeNode.gain.linearRampToValueAtTime(
                 volume,
-                Audio.context.currentTime + audioDelay
+                Audio.context.currentTime + audioDelay,
             );
         } else {
             this.volumeNode.gain.exponentialRampToValueAtTime(
                 volume,
-                Audio.context.currentTime + audioDelay
+                Audio.context.currentTime + audioDelay,
             );
         }
 
@@ -208,12 +271,12 @@ export default class Sound extends Entity {
         if (ramp === AUDIO_RAMPS.LINEAR) {
             this.volumeNode.gain.linearRampToValueAtTime(
                 ALMOST_ZERO,
-                Audio.context.currentTime + audioDelay
+                Audio.context.currentTime + audioDelay,
             );
         } else {
             this.volumeNode.gain.exponentialRampToValueAtTime(
                 ALMOST_ZERO,
-                Audio.context.currentTime + audioDelay
+                Audio.context.currentTime + audioDelay,
             );
         }
 
@@ -224,8 +287,13 @@ export default class Sound extends Entity {
 
     detune(value) {
         if (this.audioNode) {
-            this.audioNode.detune.value = value;
+            this.detune = value;
+            this.audioNode.detune.value = this.detune;
         }
+    }
+
+    getDetune() {
+        return this.detune;
     }
 
     addEffect(effect) {
@@ -254,14 +322,44 @@ export default class Sound extends Entity {
 
             this.convolverNode.buffer = Audio.get(effect);
 
-            this.convolverGainNode.gain.setValueAtTime(
-                0.7,
-                Audio.context.currentTime
-            );
-            this.plainGainNode.gain.setValueAtTime(
-                0.3,
-                Audio.context.currentTime
-            );
+            this.convolverGainNode.gain.setValueAtTime(0.7, Audio.context.currentTime);
+            this.plainGainNode.gain.setValueAtTime(0.3, Audio.context.currentTime);
         }
+    }
+
+    setPosition(where, { updateHolder = true } = {}) {
+        const position = {
+            ...this.getPosition(),
+            ...where,
+        };
+
+        const { x, y, z } = position;
+
+        if (this.hasBody()) {
+            this.body.position.set(x, y, z);
+        }
+
+        if (this.hasHolder() && updateHolder) {
+            this.holder.setPosition({ x, y, z });
+        }
+    }
+
+    toJSON() {
+        return {
+            ...super.toJSON(),
+            source: this.source,
+            loop: this.loop,
+            loopStart: this.loopStart,
+            loopEnd: this.loopEnd,
+            autoplay: this.autoplay,
+            volume: this.getVolume(),
+            detune: this.getDetune(),
+            hasPlayed: this.hasPlayed,
+            playing: this.isPlaying(),
+            connected: this.isConnected(),
+            duration: this.duration,
+            sampleRate: this.sampleRate,
+            numberOfChannels: this.numberOfChannels,
+        };
     }
 }

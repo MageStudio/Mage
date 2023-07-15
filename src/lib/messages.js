@@ -70,9 +70,10 @@ export const KEYBOARD_COMBO_IS_INVALID = `${PREFIX} Keyboard combo is not valid.
 
 export const PHYSICS_ELEMENT_CANT_BE_REMOVED = `${PREFIX} This element can't be removed from physics world.`;
 export const PHYSICS_ELEMENT_ALREADY_STORED = `${PREFIX} This element has already been added to the world.`;
-export const PHYSICS_ELEMENT_MISSING = `${PREFIX} This element is missing from the world, please use the .enablePhysics(options) method first.`;
+export const PHYSICS_ELEMENT_MISSING = `${PREFIX} This element is missing from the world, please enable its physics first.`;
 
 export const ASSETS_AUDIO_LOAD_FAIL = `${PREFIX} Could not load audio.`;
+export const ASSETS_AUDIO_FILE_LOAD_FAIL = `${PREFIX} Could not load desired audio file.`;
 export const ASSETS_TEXTURE_LOAD_FAIL = `${PREFIX} Could not load texture.`;
 export const ASSETS_IMAGE_LOAD_FAIL = `${PREFIX} Could not load image.`;
 export const ASSETS_VIDEO_LOAD_FAIL = `${PREFIX} Could not load video.`;
@@ -80,6 +81,7 @@ export const ASSETS_MODEL_LOAD_FAIL = `${PREFIX} Could not load model.`;
 
 export const AUDIO_CONTEXT_NOT_AVAILABLE = `${PREFIX} No Audio Context available, sorry.`;
 export const AUDIO_UNABLE_TO_LOAD_SOUND = `${PREFIX} Unable to load sound, sorry.`;
+export const AUDIO_SOURCE_NOT_DEFINED = `${PREFIX} No audio source defined. Set a source for this sound.`;
 
 export const LIGHT_NOT_FOUND = `${PREFIX} This light was not created properly.`;
 export const LIGHT_HOLDER_MODEL_NOT_FOUND = `${PREFIX} This light holder model can't be found.`;

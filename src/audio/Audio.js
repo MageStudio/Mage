@@ -1,10 +1,12 @@
+import { Vector3 } from "three";
+import Scene from "../core/Scene";
+import { buildAssetId } from "../lib/utils/assets";
+import { ROOT } from "../lib/constants";
 import {
-    Vector3
-} from 'three';
-import Scene from '../core/Scene';
-import { buildAssetId } from '../lib/utils/assets';
-import { ROOT } from '../lib/constants';
-import { ASSETS_AUDIO_LOAD_FAIL, AUDIO_CONTEXT_NOT_AVAILABLE } from '../lib/messages';
+    ASSETS_AUDIO_FILE_LOAD_FAIL,
+    ASSETS_AUDIO_LOAD_FAIL,
+    AUDIO_CONTEXT_NOT_AVAILABLE,
+} from "../lib/messages";
 
 export const TIME_FOR_UPDATE = 5;
 export const DELAY_FACTOR = 0.02;
@@ -16,36 +18,36 @@ export const DEFAULT_AUDIO_NODE_VOLUME = 5;
 export const DEFAULT_AUDIO_NODE_RAMP_TIME = 100; // value in ms
 
 export const AUDIO_RAMPS = {
-    LINEAR: 'LINEAR',
-    EXPONENTIAL: 'EXPONENTIAL'
+    LINEAR: "LINEAR",
+    EXPONENTIAL: "EXPONENTIAL",
 };
 
 export class Audio {
-
     constructor() {
         this.masterVolumeNode = null;
         this.context = null;
 
-        this.sounds = [];
-        this.map = {};
+        this.levelSounds = [];
+        this.buffersMap = {};
+        this.audioAssets = {};
 
         this.currentLevel = ROOT;
     }
 
     reset() {
-        this.sounds = [];
+        this.levelSounds = [];
     }
 
     setCurrentLevel = level => {
         this.currentLevel = level;
-    }
+    };
 
     hasContext() {
         return !!this.context;
     }
 
     hasSounds() {
-        return this.sounds.length > 0;
+        return this.levelSounds.length > 0;
     }
 
     createAudioContext() {
@@ -90,58 +92,62 @@ export class Audio {
         this.masterVolumeNode.gain.setValueAtTime(value, this.context.currentTime);
     }
 
-    load = (audio = {}, level) => {
-        this.audio = audio;
+    load = (audioAssets = {}, level) => {
+        this.audioAssets = audioAssets;
         this.createAudioContext();
 
-        if (Object.keys(this.audio).length === 0) {
+        if (Object.keys(this.audioAssets).length === 0) {
             return Promise.resolve();
         }
 
-        return Promise
-            .all(Object
-                .keys(this.audio)
-                .map(id => this.loadSingleFile(id, level))
-            )
-            .catch(e => {
-                console.log(ASSETS_AUDIO_LOAD_FAIL);
-                console.log(e);
+        return Promise.all(
+            Object.keys(this.audioAssets).map(id => this.loadAssetByName(id, level)),
+        ).catch(e => {
+            console.error(ASSETS_AUDIO_LOAD_FAIL);
+            console.log(e);
 
-                return Promise.resolve();
-            });
-    }
+            return Promise.resolve();
+        });
+    };
 
     get(id) {
-        return this.map[id] || this.map[buildAssetId(id, this.currentLevel)] || false;
+        return this.buffersMap[id] || this.buffersMap[buildAssetId(id, this.currentLevel)] || false;
     }
 
-    loadSingleFile = (name, level) => {
-        const path = this.audio[name];
-        const request = new XMLHttpRequest();
+    loadAssetByName = (name, level) => {
+        const path = this.audioAssets[name];
         const id = buildAssetId(name, level);
 
+        return this.loadAsset(path, id);
+    };
+
+    loadAsset = (path, id) => {
+        const request = new XMLHttpRequest();
         return new Promise(resolve => {
             request.open("GET", path, true);
             request.responseType = "arraybuffer";
-            request.onreadystatechange = (e) => {
+            request.onreadystatechange = e => {
                 if (request.readyState === 4 && request.status === 200) {
-                    this.context.decodeAudioData(request.response,
+                    this.context.decodeAudioData(
+                        request.response,
                         buffer => {
-                            this.map[id] = buffer;
+                            this.buffersMap[id] = buffer;
                             resolve();
                         },
                         () => {
-                            this.map[id] = null;
+                            this.buffersMap[id] = null;
+                            console.error(ASSETS_AUDIO_FILE_LOAD_FAIL);
                             resolve();
-                        });
+                        },
+                    );
                 }
             };
             request.send();
-        })
-    }
+        });
+    };
 
     add(sound) {
-        this.sounds.push(sound);
+        this.levelSounds.push(sound);
     }
 
     updateListenerPosition() {
@@ -156,14 +162,16 @@ export class Audio {
 
     updatelistenerOrientation() {
         const m = Scene.getCameraBody().matrix;
-        const mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
+        const mx = m.elements[12],
+            my = m.elements[13],
+            mz = m.elements[14];
         m.elements[12] = m.elements[13] = m.elements[14] = 0;
 
-        const vec = new Vector3(0,0,1);
+        const vec = new Vector3(0, 0, 1);
         vec.applyMatrix4(m);
         vec.normalize();
 
-        const up = new Vector3(0,-1,0);
+        const up = new Vector3(0, -1, 0);
         up.applyMatrix4(m);
         up.normalize();
 
@@ -180,8 +188,8 @@ export class Audio {
     }
 
     dispose() {
-        for (var index in this.sounds) {
-            const sound = this.sounds[index];
+        for (let index in this.levelSounds) {
+            const sound = this.levelSounds[index];
             sound.dispose();
         }
 
@@ -197,11 +205,11 @@ export class Audio {
         }
 
         const start = new Date();
-        for (var index in this.sounds) {
-            const sound = this.sounds[index];
+        for (let index in this.levelSounds) {
+            const sound = this.levelSounds[index];
             sound.update(dt);
 
-            if ((+new Date() - start) > TIME_FOR_UPDATE) break;
+            if (+new Date() - start > TIME_FOR_UPDATE) break;
         }
     }
 }
