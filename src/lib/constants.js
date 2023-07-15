@@ -118,4 +118,7 @@ export const TAGS = {
         HELPER: "TAGS.LIGHTS.HELPER",
         TARGET: "TAGS.LIGHTS.TARGET",
     },
+    SOUNDS: {
+        HOLDER: "TAGS.SOUNDS.HOLDER",
+    },
 };

@@ -109,7 +109,7 @@ export default class Light extends Entity {
             this.body.position.set(x, y, z);
         }
 
-        if (this.hasHolder() & updateHolder) {
+        if (this.hasHolder() && updateHolder) {
             this.holder.setPosition({ x, y, z });
         }
     }

@@ -2,16 +2,18 @@ import { Vector3 } from "three";
 import { ENTITY_TYPES } from "../entities/constants";
 import { generateRandomName } from "../lib/uuid";
 import Audio from "./Audio";
-import Sound from "./Sound";
+import Sound from "./sound";
 
 export default class DirectionalSound extends Sound {
-
-    constructor(source, { name = generateRandomName('DirectionalSound'), ...options } = {}) {
+    constructor(source, { name = generateRandomName("DirectionalSound"), ...options } = {}) {
         super({ source, name, ...options });
 
         this.setEntityType(ENTITY_TYPES.AUDIO.DIRECTIONAL);
-        this.createPannerNode(options);
-        this.connect();
+    }
+
+    setupAudio() {
+        super.setupAudio();
+        this.createPannerNode(this.options);
     }
 
     hasPannerNode() {
@@ -25,13 +27,13 @@ export default class DirectionalSound extends Sound {
             coneOuterGain = 0,
             maxDistance = 10000,
             rolloffFactor = 1,
-            refDistance = 1
+            refDistance = 1,
         } = options;
 
         this.pannerNode = Audio.context.createPanner();
 
-        this.pannerNode.panningModel = 'HRTF';
-        this.pannerNode.distanceModel = 'inverse';
+        this.pannerNode.panningModel = "HRTF";
+        this.pannerNode.distanceModel = "inverse";
         this.pannerNode.refDistance = refDistance;
         this.pannerNode.maxDistance = maxDistance;
         this.pannerNode.rolloffFactor = rolloffFactor;
@@ -63,10 +65,12 @@ export default class DirectionalSound extends Sound {
     }
 
     updatePannerOrientation() {
-        let vec = new Vector3(0,0,1);
+        let vec = new Vector3(0, 0, 1);
         let m = this.getBody().matrixWorld;
 
-        let mx = m.elements[12], my = m.elements[13], mz = m.elements[14];
+        let mx = m.elements[12],
+            my = m.elements[13],
+            mz = m.elements[14];
         m.elements[12] = m.elements[13] = m.elements[14] = 0;
 
         vec.applyMatrix4(m);
@@ -90,7 +94,6 @@ export default class DirectionalSound extends Sound {
         this.pannerNode.positionX.setValueAtTime(position.x, Audio.context.currentTime);
         this.pannerNode.positionY.setValueAtTime(position.y, Audio.context.currentTime);
         this.pannerNode.positionZ.setValueAtTime(position.z, Audio.context.currentTime);
-
     }
 
     update(dt) {

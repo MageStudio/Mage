@@ -1,0 +1,11 @@
+# Created by Kenney (www.kenney.nl)
+
+newmtl metalMedium(Clone)
+Kd 0.3686275 0.4666667 0.4666667
+
+newmtl wood(Clone)
+Kd 0.8962265 0.6015712 0.3931559
+
+newmtl metal(Clone)
+Kd 0.7406105 0.8228667 0.8396227
+
