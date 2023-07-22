@@ -1,5 +1,6 @@
 import { Object3D } from "three";
 import { ENTITY_EVENTS, ENTITY_TYPES } from "../entities/constants";
+import Scene from "../core/Scene";
 import Entity from "../entities/Entity";
 import { ALMOST_ZERO, TAGS } from "../lib/constants";
 import { AUDIO_SOURCE_NOT_DEFINED, AUDIO_UNABLE_TO_LOAD_SOUND } from "../lib/messages";
@@ -65,6 +66,7 @@ export default class Sound extends Entity {
         this.setBody({ body: new Object3D() });
         this.setEntityType(ENTITY_TYPES.AUDIO.DEFAULT);
 
+        Scene.add(this.getBody(), this);
         Audio.add(this);
 
         if (this.isSetupCompleted()) {
@@ -83,7 +85,7 @@ export default class Sound extends Entity {
             holderSprite.setDepthWrite(false);
             holderSprite.setSerializable(false);
             holderSprite.setPosition(this.getPosition());
-            holderSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.HOLDER, name]);
+            holderSprite.addTags([TAGS.HELPER, TAGS.SOUNDS.HELPER, TAGS.SOUNDS.HOLDER, name]);
 
             holderSprite.setHelperTarget(this);
 
@@ -344,6 +346,14 @@ export default class Sound extends Entity {
         }
     }
 
+    usingHelper() {
+        return !!this.isUsingHelper;
+    }
+
+    hasHolder() {
+        return !!this.holder;
+    }
+
     toJSON() {
         return {
             ...super.toJSON(),
@@ -357,9 +367,9 @@ export default class Sound extends Entity {
             hasPlayed: this.hasPlayed,
             playing: this.isPlaying(),
             connected: this.isConnected(),
-            duration: this.duration,
-            sampleRate: this.sampleRate,
-            numberOfChannels: this.numberOfChannels,
+            duration: this.hasBuffer() ? this.duration : 0,
+            sampleRate: this.hasBuffer() ? this.sampleRate : 0,
+            numberOfChannels: this.hasBuffer() ? this.numberOfChannels : 0,
         };
     }
 }

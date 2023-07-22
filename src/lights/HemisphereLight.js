@@ -1,7 +1,6 @@
-import Light from "./Light";
+import Light from "./light";
 import Scene from "../core/Scene";
 import { HemisphereLight as THREEHemisphereLight, HemisphereLightHelper } from "three";
-import { HEMISPHERELIGHT } from "./Lights";
 import { ENTITY_TYPES } from "../entities/constants";
 import { generateRandomName } from "../lib/uuid";
 

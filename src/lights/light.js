@@ -45,7 +45,7 @@ export default class Light extends Entity {
             holderSprite.setDepthWrite(false);
             holderSprite.setSerializable(false);
             holderSprite.setPosition(this.getPosition());
-            holderSprite.addTags([TAGS.LIGHTS.HELPER, TAGS.LIGHTS.HOLDER, name]);
+            holderSprite.addTags([TAGS.HELPER, TAGS.LIGHTS.HELPER, TAGS.LIGHTS.HOLDER, name]);
 
             holderSprite.setHelperTarget(this);
 
