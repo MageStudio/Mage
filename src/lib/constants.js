@@ -113,12 +113,14 @@ export const BEFORE_UNLOAD = "beforeunload";
 export const HASH_CHANGE = "hashchange";
 
 export const TAGS = {
+    HELPER: "TAGS.HELPER",
     LIGHTS: {
         HOLDER: "TAGS.LIGHTS.HOLDER",
         HELPER: "TAGS.LIGHTS.HELPER",
         TARGET: "TAGS.LIGHTS.TARGET",
     },
     SOUNDS: {
+        HELPER: "TAGS.SOUNDS.HELPER",
         HOLDER: "TAGS.SOUNDS.HOLDER",
     },
 };

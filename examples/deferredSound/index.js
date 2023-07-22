@@ -176,6 +176,8 @@ export default class Example extends Level {
             }, 1000);
             fire.add(fireSound);
         });
+
+        console.log(Scene.getHierarchy());
     }
 }
 
