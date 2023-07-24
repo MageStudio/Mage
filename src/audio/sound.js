@@ -59,6 +59,8 @@ export default class Sound extends Entity {
         this.audioNode = null;
         this.volumeNode = null;
 
+        this.detuneValue = 0;
+
         if (!this.setupConfig.deferred) {
             this.setupAudio();
         }
@@ -289,13 +291,13 @@ export default class Sound extends Entity {
 
     detune(value) {
         if (this.audioNode) {
-            this.detune = value;
-            this.audioNode.detune.value = this.detune;
+            this.detuneValue = value;
+            this.audioNode.detune.value = this.detuneValue;
         }
     }
 
     getDetune() {
-        return this.detune;
+        return this.detuneValue;
     }
 
     addEffect(effect) {
