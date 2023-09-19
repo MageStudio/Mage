@@ -1,31 +1,29 @@
-import Element from '../entities/Element';
-import { ENTITY_TYPES } from '../entities/constants';
+import Element from "../entities/Element";
+import { ENTITY_TYPES } from "../entities/constants";
 
-import {
-    ObjectLoader
-} from 'three';
+import { ObjectLoader } from "three";
 
-import GLTFLoader from '../loaders/GLTFLoader';
+import GLTFLoader from "../loaders/GLTFLoader";
 // import ColladaLoader from '../loaders/ColladaLoader';
-import { FBXLoader } from '../loaders/FBXLoader';
-import SkeletonUtils from './SkeletonUtils';
+import { FBXLoader } from "../loaders/FBXLoader";
+import SkeletonUtils from "./SkeletonUtils";
 
-import { prepareModel, processMaterial } from '../lib/meshUtils';
-import { buildAssetId } from '../lib/utils/assets';
-import { ROOT } from '../lib/constants';
-import { ASSETS_MODEL_LOAD_FAIL, DEPRECATIONS } from '../lib/messages';
-import OBJMTLLoader from '../loaders/OBJMTLLoader';
+import { prepareModel, processMaterial } from "../lib/meshUtils";
+import { buildAssetId } from "../lib/utils/assets";
+import { ROOT } from "../lib/constants";
+import { ASSETS_MODEL_LOAD_FAIL, DEPRECATIONS } from "../lib/messages";
+import OBJMTLLoader from "../loaders/OBJMTLLoader";
 
 const EXTENSIONS = {
-    JSON: 'json',
-    GLB: 'glb',
-    GLTF: 'gltf',
+    JSON: "json",
+    GLB: "glb",
+    GLTF: "gltf",
     // COLLADA: 'dae',
-    FBX: 'fbx',
-    OBJ: 'obj'
+    FBX: "fbx",
+    OBJ: "obj",
 };
 
-const FULL_STOP = '.';
+const FULL_STOP = ".";
 
 const loaders = {
     [EXTENSIONS.JSON]: ObjectLoader,
@@ -33,25 +31,25 @@ const loaders = {
     [EXTENSIONS.GLTF]: GLTFLoader,
     // [EXTENSIONS.COLLADA]: new ColladaLoader,
     [EXTENSIONS.FBX]: FBXLoader,
-    [EXTENSIONS.OBJ]: OBJMTLLoader
+    [EXTENSIONS.OBJ]: OBJMTLLoader,
 };
 
-const loaderInstances = {}
+const loaderInstances = {};
 
-const extractExtension = (path) => path.split(FULL_STOP).slice(-1).pop();
-const getLoaderFromExtension = (extension) => {
+const extractExtension = path => path.split(FULL_STOP).slice(-1).pop();
+const getLoaderFromExtension = extension => {
     let instance = loaderInstances[extension];
     if (!instance) {
-        const LoaderClass =  loaders[extension] || ObjectLoader;
+        const LoaderClass = loaders[extension] || ObjectLoader;
         instance = new LoaderClass();
         loaderInstances[extension] = instance;
     }
 
     return instance;
-}
+};
 
 const glbParser = ({ scene, animations }) => {
-    scene.traverse((object) => {
+    scene.traverse(object => {
         if (object.isMesh) {
             object.castShadow = true;
         }
@@ -59,9 +57,9 @@ const glbParser = ({ scene, animations }) => {
 
     return {
         animations,
-        scene
-    }
-}
+        scene,
+    };
+};
 const gltfParser = ({ scene, animations }) => ({ scene, animations });
 const defaultParser = scene => ({ scene });
 const colladaParser = ({ animations, scene, rawSceneData, buildVisualScene }) => {
@@ -75,31 +73,31 @@ const colladaParser = ({ animations, scene, rawSceneData, buildVisualScene }) =>
         animations,
         scene,
         rawSceneData,
-        buildVisualScene
-    }
+        buildVisualScene,
+    };
 };
 const fbxParser = scene => {
     scene.traverse(node => {
         if (node.isSkinnedMesh) {
-            processMaterial(node.material, material => material.skinning = true);
+            processMaterial(node.material, material => (material.skinning = true));
         }
     });
-    
-    return ({ scene, animations: scene.animations })
-}
 
-const getModelParserFromExtension = (extension) => ({
-    [EXTENSIONS.JSON]: defaultParser,
-    [EXTENSIONS.GLB]: glbParser,
-    [EXTENSIONS.GLTF]: gltfParser,
-    [EXTENSIONS.COLLADA]: colladaParser,
-    [EXTENSIONS.FBX]: fbxParser
-})[extension] || defaultParser;
+    return { scene, animations: scene.animations };
+};
+
+const getModelParserFromExtension = extension =>
+    ({
+        [EXTENSIONS.JSON]: defaultParser,
+        [EXTENSIONS.GLB]: glbParser,
+        [EXTENSIONS.GLTF]: gltfParser,
+        [EXTENSIONS.COLLADA]: colladaParser,
+        [EXTENSIONS.FBX]: fbxParser,
+    }[extension] || defaultParser);
 
 const hasAnimations = (animations = []) => animations.length > 0;
 
 class Models {
-
     constructor() {
         this.map = {};
         this.models = {};
@@ -108,24 +106,21 @@ class Models {
 
     setCurrentLevel = level => {
         this.currentLevel = level;
-    }
+    };
 
     getModel = (name, options = {}) => {
         console.warn(DEPRECATIONS.MODELS_GETMODEL);
         return this.get(name, options);
-    }
+    };
 
     get = (name, options = {}) => {
-        const {
-            scene,
-            animations,
-            extension
-        } = this.map[name] || this.map[buildAssetId(name, this.currentLevel)] || {};
+        const builtAssetId = buildAssetId(name, this.currentLevel);
+        const { scene, animations, extension } = this.map[name] || this.map[builtAssetId] || {};
 
         if (scene) {
             const elementOptions = {
                 name,
-                ...options
+                ...options,
             };
 
             let model = scene.clone();
@@ -136,8 +131,8 @@ class Models {
             }
 
             const element = new Element({
-                body: prepareModel(model), 
-                ...elementOptions
+                body: prepareModel(model),
+                ...elementOptions,
             });
 
             element.setEntityType(ENTITY_TYPES.MODEL);
@@ -150,34 +145,41 @@ class Models {
         }
 
         return false;
-    }
+    };
 
     storeModel = (name, model, extension) => {
         model.extension = extension;
         this.map[name] = model;
-    }
+    };
 
     loadModels = (models, level) => {
         this.models = models;
 
-        const keys = Object.keys(this.models);
+        const keys = Object.keys(models);
 
         if (!keys.length) {
-            return Promise.resolve('models');
+            return Promise.resolve("models");
         }
 
-        return Promise
-            .all(keys.map(name => this.loadSingleFile(name, level)))
-            .catch(e => {
-                console.log(ASSETS_MODEL_LOAD_FAIL);
-                console.log(e);
-                
-                return Promise.resolve();
-            })
-    }
+        return Promise.all(keys.map(name => this.loadAssetByName(name, level))).catch(e => {
+            console.log(ASSETS_MODEL_LOAD_FAIL);
+            console.log(e);
 
-    loadSingleFile = (name, level) => {
+            return Promise.resolve();
+        });
+    };
+
+    loadAssetByName = (name, level) => {
+        if (!this.models[name]) {
+            return Promise.resolve();
+        }
+
         const path = this.models[name];
+
+        return this.loadAssetByPath(path, name, level);
+    };
+
+    loadAssetByPath = (path, name, level) => {
         const id = buildAssetId(name, level);
         const extension = extractExtension(path);
         const loader = getLoaderFromExtension(extension);
@@ -189,13 +191,12 @@ class Models {
 
                 if (parsedModel) {
                     this.storeModel(id, parsedModel, extension);
-                } 
-                
-                resolve();
+                }
+
+                resolve(parsedModel);
             });
         });
-    }
-
+    };
 }
 
 export default new Models();

@@ -160,9 +160,9 @@ export default class Example extends Level {
 
         document.querySelector(".button").addEventListener("click", () => {
             Promise.all([
-                Audio.loadAsset("radiotune.mp3", "radio"),
-                Audio.loadAsset("swat.mp3", "swat"),
-                Audio.loadAsset("fire.wav", "fire"),
+                Audio.loadAssetByPath("radiotune.mp3", "radio"),
+                Audio.loadAssetByPath("swat.mp3", "swat"),
+                Audio.loadAssetByPath("fire.wav", "fire"),
             ]).then(() => {
                 radioSound.play(0.7);
                 swatSound.play(0.8);

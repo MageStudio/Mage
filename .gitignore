@@ -6,6 +6,6 @@ examples/**/node_modules/*
 dist/mage.js
 dist/mage.node.js
 
-.DS_STORE
+.DS_Store
 .idea
 .vscode
