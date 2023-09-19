@@ -14,46 +14,41 @@ import {
     PALETTES,
     SunLight,
     HemisphereLight,
-    Sky
-} from '../../dist/mage.js';
+    Sky,
+} from "../../dist/mage.js";
 
 export default class Intro extends Level {
-
     addAmbientLight() {
         const ambientLight = new AmbientLight({
             color: PALETTES.FRENCH_PALETTE.SPRAY,
-            intensity: .5
+            intensity: 0.5,
         });
 
         const hemisphereLight = new HemisphereLight({
             color: {
                 sky: PALETTES.FRENCH_PALETTE.SQUASH_BLOSSOM,
-                ground: PALETTES.FRENCH_PALETTE.REEF_ENCOUNTER
+                ground: PALETTES.FRENCH_PALETTE.REEF_ENCOUNTER,
             },
-            intensity: 1
+            intensity: 1,
         });
-    
+
         const sunLight = new SunLight({
             color: PALETTES.FRENCH_PALETTE.MELON_MELODY,
             intensity: 1,
             far: 20,
-            mapSize: 2048
+            mapSize: 2048,
         });
         sunLight.setPosition({ y: 4, z: -3, x: -3 });
-        sunLight.addHelper();
+        sunLight.addHelpers();
     }
 
     createSky() {
         const sky = new Sky();
-        const inclination = .1;
-        const azimuth = .1;
+        const inclination = 0.1;
+        const azimuth = 0.1;
         const distance = 100;
-        
-        sky.setSun(
-            inclination,
-            azimuth,
-            distance
-        );
+
+        sky.setSun(inclination, azimuth, distance);
     }
 
     onCreate() {
@@ -61,20 +56,20 @@ export default class Intro extends Level {
         Controls.setOrbitControl();
         this.addAmbientLight();
         this.createSky();
-        
-        const tile = Models.getModel('tile');
 
-        tile.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: .5, metalness: 0 });
+        const tile = Models.getModel("tile");
+
+        tile.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: 0.5, metalness: 0 });
     }
 }
 
 const assets = {
-    '/': {
+    "/": {
         models: {
-            'tile': 'assets/models/hex_forest_roadB.gltf.glb',
-        }
-    }
-}
+            tile: "assets/models/hex_forest_roadB.gltf.glb",
+        },
+    },
+};
 
 const { SHADOW_TYPES } = constants;
 
@@ -90,13 +85,13 @@ const config = {
     lights: {
         shadows: true,
         shadowType: SHADOW_TYPES.HARD,
-        textureAnisotropy: 32
+        textureAnisotropy: 32,
     },
 
     physics: {
         enabled: true,
-        path: 'dist/ammo.js',
-        gravity: { x: 0, y: -9.8, z: 0}
+        path: "dist/ammo.js",
+        gravity: { x: 0, y: -9.8, z: 0 },
     },
 
     tween: {
@@ -110,10 +105,10 @@ const config = {
     },
 };
 
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
     store.createStore({}, {}, true);
 
-    Router.on('/', Intro);
+    Router.on("/", Intro);
 
     Router.start(config, assets);
 });

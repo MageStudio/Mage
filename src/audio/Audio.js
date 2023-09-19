@@ -118,10 +118,10 @@ export class Audio {
         const path = this.audioAssets[name];
         const id = buildAssetId(name, level);
 
-        return this.loadAsset(path, id);
+        return this.loadAssetByPath(path, id);
     };
 
-    loadAsset = (path, id) => {
+    loadAssetByPath = (path, id) => {
         const request = new XMLHttpRequest();
         return new Promise(resolve => {
             request.open("GET", path, true);
