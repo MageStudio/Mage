@@ -36,7 +36,21 @@ const loaders = {
 
 const loaderInstances = {};
 
-const extractExtension = path => path.split(FULL_STOP).slice(-1).pop();
+const isURL = path => {
+    try {
+        const url = new URL(path);
+        return url;
+    } catch (_) {
+        return false;
+    }
+};
+const extractExtension = path => {
+    const url = isURL(path);
+    const _extract = s => s.split(FULL_STOP).slice(-1).pop();
+
+    return url ? _extract(url.pathname) : _extract(path);
+};
+
 const getLoaderFromExtension = extension => {
     let instance = loaderInstances[extension];
     if (!instance) {
