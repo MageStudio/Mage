@@ -20,7 +20,11 @@ class MTLLoader extends Loader {
 	constructor( manager ) {
 
 		super( manager );
+		this.options = {};
+	}
 
+	setOptions(options) {
+		this.options = options;
 	}
 
 	/**
@@ -145,6 +149,7 @@ class MTLLoader extends Loader {
 		materialCreator.setCrossOrigin( this.crossOrigin );
 		materialCreator.setManager( this.manager );
 		materialCreator.setMaterials( materialsInfo );
+		materialCreator.setTexturePath(this.options.texture);
 		return materialCreator;
 
 	}
@@ -177,11 +182,17 @@ class MaterialCreator {
 		this.materialsArray = [];
 		this.nameLookup = {};
 
+		this.texturePath = null;
 		this.crossOrigin = 'anonymous';
 
 		this.side = ( this.options.side !== undefined ) ? this.options.side : FrontSide;
 		this.wrap = ( this.options.wrap !== undefined ) ? this.options.wrap : RepeatWrapping;
 
+	}
+
+	setTexturePath( value ) {
+		this.texturePath =value;
+		return this;
 	}
 
 	setCrossOrigin( value ) {
@@ -350,7 +361,8 @@ class MaterialCreator {
 			if ( params[ mapType ] ) return; // Keep the first encountered texture
 
 			const texParams = scope.getTextureParams( value, params );
-			const map = scope.loadTexture( resolveURL( scope.baseUrl, texParams.url ) );
+			const texturePath = scope.texturePath || resolveURL( scope.baseUrl, texParams.url );
+			const map = scope.loadTexture( texturePath );
 
 			map.repeat.copy( texParams.scale );
 			map.offset.copy( texParams.offset );

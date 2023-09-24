@@ -2,28 +2,35 @@ import MTLLoader from "./MTLLoader";
 import OBJLoader from "./OBJLoader";
 
 const EXTENSIONS = {
-    OBJ: '.obj',
-    MTL: '.mtl'
+    OBJ: ".obj",
+    MTL: ".mtl",
 };
 
 export default class OBJMTLLoader {
-
-    constructor() {
-        this.mtlLoader = new MTLLoader();
+    constructor(options) {
+        this.options = options || {};
+        this.materialLoader = new MTLLoader();
         this.objLoader = new OBJLoader();
     }
 
+    setOptions(options) {
+        this.options = options;
+        this.materialLoader.setOptions(options);
+    }
+
     tryLoadingMTL(path) {
-        const mtlPath = path.replace(EXTENSIONS.OBJ, EXTENSIONS.MTL);
+        const { material } = this.options;
+        const materialPath = material || path.replace(EXTENSIONS.OBJ, EXTENSIONS.MTL);
 
         return new Promise(resolve => {
-            this.mtlLoader.load(mtlPath,
+            this.materialLoader.load(
+                materialPath,
                 material => {
                     material.preload();
                     resolve(material);
                 },
                 () => {},
-                () => resolve(null)
+                () => resolve(null),
             );
         });
     }

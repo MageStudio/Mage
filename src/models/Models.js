@@ -13,6 +13,7 @@ import { buildAssetId } from "../lib/utils/assets";
 import { ROOT } from "../lib/constants";
 import { ASSETS_MODEL_LOAD_FAIL, DEPRECATIONS } from "../lib/messages";
 import OBJMTLLoader from "../loaders/OBJMTLLoader";
+import { NOOP } from "../lib/functions";
 
 const EXTENSIONS = {
     JSON: "json",
@@ -51,13 +52,15 @@ const extractExtension = path => {
     return url ? _extract(url.pathname) : _extract(path);
 };
 
-const getLoaderFromExtension = extension => {
+const getLoaderFromExtension = (extension, options) => {
     let instance = loaderInstances[extension];
     if (!instance) {
         const LoaderClass = loaders[extension] || ObjectLoader;
         instance = new LoaderClass();
         loaderInstances[extension] = instance;
     }
+
+    instance.setOptions(options);
 
     return instance;
 };
@@ -175,7 +178,9 @@ class Models {
             return Promise.resolve("models");
         }
 
-        return Promise.all(keys.map(name => this.loadAssetByName(name, level))).catch(e => {
+        const options = { level };
+
+        return Promise.all(keys.map(name => this.loadAssetByName(name, options))).catch(e => {
             console.log(ASSETS_MODEL_LOAD_FAIL);
             console.log(e);
 
@@ -183,32 +188,38 @@ class Models {
         });
     };
 
-    loadAssetByName = (name, level) => {
+    loadAssetByName = (name, options) => {
         if (!this.models[name]) {
             return Promise.resolve();
         }
 
         const path = this.models[name];
 
-        return this.loadAssetByPath(path, name, level);
+        return this.loadAssetByPath(path, name, options);
     };
 
-    loadAssetByPath = (path, name, level) => {
+    loadAssetByPath = (path, name, options = {}) => {
+        const { level } = options;
         const id = buildAssetId(name, level);
         const extension = extractExtension(path);
-        const loader = getLoaderFromExtension(extension);
+        const loader = getLoaderFromExtension(extension, options);
         const parser = getModelParserFromExtension(extension);
 
         return new Promise(resolve => {
-            loader.load(path, model => {
-                const parsedModel = parser(model);
+            loader.load(
+                path,
+                model => {
+                    const parsedModel = parser(model);
 
-                if (parsedModel) {
-                    this.storeModel(id, parsedModel, extension);
-                }
+                    if (parsedModel) {
+                        this.storeModel(id, parsedModel, extension);
+                    }
 
-                resolve(parsedModel);
-            });
+                    resolve(parsedModel);
+                },
+                NOOP,
+                NOOP,
+            );
         });
     };
 }
