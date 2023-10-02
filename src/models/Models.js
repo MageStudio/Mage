@@ -1,25 +1,23 @@
+import { ObjectLoader } from "three";
+
 import Element from "../entities/Element";
 import { ENTITY_TYPES } from "../entities/constants";
 
-import { ObjectLoader } from "three";
-
 import GLTFLoader from "../loaders/GLTFLoader";
-// import ColladaLoader from '../loaders/ColladaLoader';
 import { FBXLoader } from "../loaders/FBXLoader";
+import OBJMTLLoader from "../loaders/OBJMTLLoader";
 import SkeletonUtils from "./SkeletonUtils";
 
 import { prepareModel, processMaterial } from "../lib/meshUtils";
 import { buildAssetId } from "../lib/utils/assets";
 import { ROOT } from "../lib/constants";
 import { ASSETS_MODEL_LOAD_FAIL, DEPRECATIONS } from "../lib/messages";
-import OBJMTLLoader from "../loaders/OBJMTLLoader";
 import { NOOP } from "../lib/functions";
 
 const EXTENSIONS = {
     JSON: "json",
     GLB: "glb",
     GLTF: "gltf",
-    // COLLADA: 'dae',
     FBX: "fbx",
     OBJ: "obj",
 };
@@ -30,7 +28,6 @@ const loaders = {
     [EXTENSIONS.JSON]: ObjectLoader,
     [EXTENSIONS.GLB]: GLTFLoader,
     [EXTENSIONS.GLTF]: GLTFLoader,
-    // [EXTENSIONS.COLLADA]: new ColladaLoader,
     [EXTENSIONS.FBX]: FBXLoader,
     [EXTENSIONS.OBJ]: OBJMTLLoader,
 };
