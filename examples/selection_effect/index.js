@@ -41,7 +41,7 @@ export default class Intro extends Level {
             mapSize: 2048,
         });
         sunLight.setPosition({ y: 4, z: -3, x: -3 });
-        sunLight.addHelpers();
+        // sunLight.addHelpers();
     }
 
     createSky() {
@@ -132,6 +132,9 @@ const config = {
         fov: 75,
         near: 0.1,
         far: 3000000,
+    },
+    postprocessing: {
+        enabled: true,
     },
 };
 
