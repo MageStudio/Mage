@@ -204,7 +204,7 @@ class Models extends EventDispatcher {
         const { level } = options;
         const id = buildAssetId(name, level);
         const extension = extractExtension(path);
-        const { loader, tracer } = getLoaderFromExtension(extension, options, id);
+        const { loader, tracer } = getLoaderFromExtension(extension, options);
         const parser = getModelParserFromExtension(extension);
 
         tracer.addEventListener(REQUIREMENTS_EVENTS.MISSING, ({ requirements }) => {
@@ -221,7 +221,7 @@ class Models extends EventDispatcher {
                     const parsedModel = parser(model);
 
                     if (parsedModel) {
-                        this.storeModel(id, parsedModel, extension, tracer);
+                        this.storeModel(id, parsedModel, extension);
                     }
 
                     resolve(parsedModel);
