@@ -1,11 +1,11 @@
-import { ObjectLoader } from "three";
+import { ObjectLoader, EventDispatcher } from "three";
 
 import Element from "../entities/Element";
 import { ENTITY_TYPES } from "../entities/constants";
 
-import GLTFLoader from "../loaders/GLTFLoader";
-import { FBXLoader } from "../loaders/FBXLoader";
-import OBJMTLLoader from "../loaders/OBJMTLLoader";
+import { buildGLTFLoader } from "../loaders/GLTFLoader";
+import { buildFBXLoader } from "../loaders/FBXLoader";
+import { buildOBJMTLLoader } from "../loaders/OBJMTLLoader";
 import SkeletonUtils from "./SkeletonUtils";
 
 import { prepareModel, processMaterial } from "../lib/meshUtils";
@@ -13,6 +13,7 @@ import { buildAssetId } from "../lib/utils/assets";
 import { ROOT } from "../lib/constants";
 import { ASSETS_MODEL_LOAD_FAIL, DEPRECATIONS } from "../lib/messages";
 import { NOOP } from "../lib/functions";
+import RequirementsTracer, { REQUIREMENTS_EVENTS } from "../loaders/RequirementsTracer";
 
 const EXTENSIONS = {
     JSON: "json",
@@ -24,15 +25,18 @@ const EXTENSIONS = {
 
 const FULL_STOP = ".";
 
-const loaders = {
-    [EXTENSIONS.JSON]: ObjectLoader,
-    [EXTENSIONS.GLB]: GLTFLoader,
-    [EXTENSIONS.GLTF]: GLTFLoader,
-    [EXTENSIONS.FBX]: FBXLoader,
-    [EXTENSIONS.OBJ]: OBJMTLLoader,
-};
+const DEFAULTbuildObjectLoader = () => ({
+    tracer: new RequirementsTracer(),
+    loader: new ObjectLoader(),
+});
 
-const loaderInstances = {};
+const loaders = {
+    [EXTENSIONS.JSON]: DEFAULTbuildObjectLoader,
+    [EXTENSIONS.GLB]: buildGLTFLoader,
+    [EXTENSIONS.GLTF]: buildGLTFLoader,
+    [EXTENSIONS.FBX]: buildFBXLoader,
+    [EXTENSIONS.OBJ]: buildOBJMTLLoader,
+};
 
 const isURL = path => {
     try {
@@ -50,16 +54,12 @@ const extractExtension = path => {
 };
 
 const getLoaderFromExtension = (extension, options) => {
-    let instance = loaderInstances[extension];
-    if (!instance) {
-        const LoaderClass = loaders[extension] || ObjectLoader;
-        instance = new LoaderClass();
-        loaderInstances[extension] = instance;
-    }
+    const loaderBuilder = loaders[extension] || DEFAULTbuildObjectLoader;
+    const { loader, tracer } = loaderBuilder();
 
-    instance.setOptions(options);
+    loader.setOptions(options);
 
-    return instance;
+    return { tracer, loader };
 };
 
 const glbParser = ({ scene, animations }) => {
@@ -111,12 +111,17 @@ const getModelParserFromExtension = extension =>
 
 const hasAnimations = (animations = []) => animations.length > 0;
 
-class Models {
+class Models extends EventDispatcher {
     constructor() {
+        super();
         this.map = {};
         this.models = {};
         this.currentLevel = ROOT;
     }
+
+    onMissingRequirements = (modelname, cb = NOOP) => {
+        this.addEventListener(`${REQUIREMENTS_EVENTS.MISSING}:${modelname}`, cb);
+    };
 
     setCurrentLevel = level => {
         this.currentLevel = level;
@@ -199,8 +204,15 @@ class Models {
         const { level } = options;
         const id = buildAssetId(name, level);
         const extension = extractExtension(path);
-        const loader = getLoaderFromExtension(extension, options);
+        const { loader, tracer } = getLoaderFromExtension(extension, options, id);
         const parser = getModelParserFromExtension(extension);
+
+        tracer.addEventListener(REQUIREMENTS_EVENTS.MISSING, ({ requirements }) => {
+            this.dispatchEvent({
+                type: `${REQUIREMENTS_EVENTS.MISSING}:${name}`,
+                requirements: requirements,
+            });
+        });
 
         return new Promise(resolve => {
             loader.load(
@@ -209,7 +221,7 @@ class Models {
                     const parsedModel = parser(model);
 
                     if (parsedModel) {
-                        this.storeModel(id, parsedModel, extension);
+                        this.storeModel(id, parsedModel, extension, tracer);
                     }
 
                     resolve(parsedModel);
