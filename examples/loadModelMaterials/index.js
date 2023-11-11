@@ -119,44 +119,73 @@ export default class Example extends Level {
         this.createFire();
 
         button.addEventListener("click", () => {
-            Models.loadAssetByPath("car_police.obj", "radio", {
-                material: "materials/car_police.mtl",
-                texture: "textures/citybits_texture.png",
-            }).then(() => {
-                const radio = Models.get("radio");
-                radio.setRotation({ y: 1 });
-                radio.setPosition({ y: 1.35, x: 0.3, z: 0.2 });
-                radio.setMaterialFromName(constants.MATERIALS.STANDARD, {
-                    roughness: 0.5,
-                    metalness: 0,
+            const loadPoliceCar = (options = {}) => {
+                let car;
+                Models.removeEventListener("requirements:missing:car");
+                Models.addEventListener("requirements:missing:car", () => {
+                    if (car) car.dispose();
+                    loadPoliceCar({
+                        material: "materials/car_police.mtl",
+                        texture: "textures/citybits_texture.png",
+                    });
                 });
-            });
+                Models.loadAssetByPath("car_police.obj", "car", options).then(() => {
+                    car = Models.get("car");
+                    car.setRotation({ y: 1 });
+                    car.setPosition({ y: 1.35, x: 0.3, z: 0.2 });
+                    car.setMaterialFromName(constants.MATERIALS.STANDARD, {
+                        roughness: 0.5,
+                        metalness: 0,
+                    });
+                });
+            };
 
-            Models.loadAssetByPath("box_A.fbx", "box", {
-                // material: "materials/car_police.mtl",
-                texture: "textures/citybits_texture.png",
-            }).then(() => {
-                const radio = Models.get("box");
-                radio.setRotation({ y: 1 });
-                radio.setPosition({ y: 1.35, x: 0.3, z: -1.5 });
-                radio.setMaterialFromName(constants.MATERIALS.STANDARD, {
-                    roughness: 0.5,
-                    metalness: 0,
+            const loadBox = (options = {}) => {
+                let box;
+                Models.removeEventListener("requirements:missing:box");
+                Models.onMissingRequirements("box", () => {
+                    if (box) box.dispose();
+                    loadBox({
+                        texture: "textures/citybits_texture.png",
+                    });
                 });
-            });
+                Models.loadAssetByPath("box_A.fbx", "box", options).then(() => {
+                    box = Models.get("box");
+                    box.setRotation({ y: 1 });
+                    box.setScale({ x: 4, y: 4, z: 4 });
+                    box.setPosition({ y: 1.35, x: 0.3, z: -1.5 });
+                    box.setMaterialFromName(constants.MATERIALS.STANDARD, {
+                        roughness: 0.5,
+                        metalness: 0,
+                    });
+                });
+            };
 
-            Models.loadAssetByPath("firehydrant.gltf", "firehyd", {
-                binary: "materials/firehydrant.bin",
-                texture: "textures/citybits_texture.png",
-            }).then(() => {
-                const radio = Models.get("firehyd");
-                radio.setRotation({ y: 1 });
-                radio.setPosition({ y: 1.35, x: 0.3, z: 1.3 });
-                radio.setMaterialFromName(constants.MATERIALS.STANDARD, {
-                    roughness: 0.5,
-                    metalness: 0,
+            const loadFireHydrant = (options = {}) => {
+                let hydrant;
+                Models.removeEventListener("requirements:missing:firehyd");
+                Models.addEventListener("requirements:missing:firehyd", () => {
+                    if (hydrant) hydrant.dispose();
+                    loadFireHydrant({
+                        binary: "materials/firehydrant.bin",
+                        texture: "textures/citybits_texture.png",
+                    });
                 });
-            });
+
+                Models.loadAssetByPath("firehydrant.gltf", "firehyd", options).then(() => {
+                    hydrant = Models.get("firehyd");
+                    hydrant.setRotation({ y: 1 });
+                    hydrant.setPosition({ y: 1.35, x: 0.3, z: 1.3 });
+                    hydrant.setMaterialFromName(constants.MATERIALS.STANDARD, {
+                        roughness: 0.5,
+                        metalness: 0,
+                    });
+                });
+            };
+
+            loadBox();
+            loadPoliceCar();
+            loadFireHydrant();
         });
     }
 }
