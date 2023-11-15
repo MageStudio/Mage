@@ -77,8 +77,8 @@ import HemisphereLight from "./lights/HemisphereLight";
 import Lights from "./lights/Lights";
 import * as light_contants from "./lights/constants";
 
-import LightLoader from "./loaders/LightLoader";
-import MeshLoader from "./loaders/MeshLoader";
+// import LightLoader from "./loaders/LightLoader";
+// import MeshLoader from "./loaders/MeshLoader";
 
 import Atmosphere from "./fx/materials/Atmosphere";
 import Mirror from "./fx/materials/Mirror";
@@ -150,8 +150,8 @@ export {
     PHYSICS_CONSTANTS,
     physicsUtils,
     hitboxUtils,
-    MeshLoader,
-    LightLoader,
+    // MeshLoader,
+    // LightLoader,
     BaseScript,
     Input,
     INPUT_EVENTS,

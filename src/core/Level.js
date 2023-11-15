@@ -1,33 +1,30 @@
-import Assets from './Assets';
-import Universe from './Universe';
-import Scene from './Scene';
-import Stats from './Stats';
-import Audio from '../audio/Audio';
-import MeshLoader from '../loaders/MeshLoader';
-import LightLoader from '../loaders/LightLoader';
-import PostProcessing from '../fx/postprocessing/PostProcessing';
-import Particles from '../fx/particles/Particles';
-import Input, { INPUT_EVENTS_LIST } from './input/Input';
-import Lights from '../lights/Lights';
-import Controls from '../controls/Controls';
-import Physics from '../physics';
-import {
-    EventDispatcher
-} from 'three';
-import { fetch } from 'whatwg-fetch';
-import { getWindow } from './window';
-import { upperCaseFirst } from '../lib/strings';
-import { ONCREATE_NOT_AVAILABLE } from '../lib/messages';
-import Camera from '../entities/camera';
+import Assets from "./Assets";
+import Universe from "./Universe";
+import Scene from "./Scene";
+import Stats from "./Stats";
+import Audio from "../audio/Audio";
+// import MeshLoader from "../loaders/MeshLoader";
+// import LightLoader from "../loaders/LightLoader";
+import PostProcessing from "../fx/postprocessing/PostProcessing";
+import Particles from "../fx/particles/Particles";
+import Input, { INPUT_EVENTS_LIST } from "./input/Input";
+import Lights from "../lights/Lights";
+import Controls from "../controls/Controls";
+import Physics from "../physics";
+import { EventDispatcher } from "three";
+import { fetch } from "whatwg-fetch";
+import { getWindow } from "./window";
+import { upperCaseFirst } from "../lib/strings";
+import { ONCREATE_NOT_AVAILABLE } from "../lib/messages";
+import Camera from "../entities/camera";
 
 export const author = {
-    name: 'Marco Stagni',
-    email: 'mrc.stagni@gmail.com',
-    website: 'http://mage.studio'
+    name: "Marco Stagni",
+    email: "mrc.stagni@gmail.com",
+    website: "http://mage.studio",
 };
 
 export class Level extends EventDispatcher {
-
     constructor(props) {
         super();
 
@@ -45,31 +42,27 @@ export class Level extends EventDispatcher {
 
     prepareScene() {}
 
-    onStateChange = (state) => {};
+    onStateChange = state => {};
     onCreate() {}
     onUpdate() {}
 
     onBeforeDispose() {}
     onDispose() {}
 
-
     parseScene = ({ elements = [], models = [], lights = [] }, options = {}) => {
-        return new Promise((resolve, reject) => {
-            if (elements.length) {
-                for (let i in models) {
-                    elements.push(models[i]);
-                }
-                MeshLoader.load(elements, options);
-            }
-
-            if (lights.length) {
-                LightLoader.load(lights, options);
-            }
-
-            Scene.updateChildren();
-
-            resolve();
-        })
+        // return new Promise((resolve, reject) => {
+        //     if (elements.length) {
+        //         for (let i in models) {
+        //             elements.push(models[i]);
+        //         }
+        //         MeshLoader.load(elements, options);
+        //     }
+        //     if (lights.length) {
+        //         LightLoader.load(lights, options);
+        //     }
+        //     Scene.updateChildren();
+        //     resolve();
+        // })
     };
 
     getJSONUrl = () => null;
@@ -116,21 +109,19 @@ export class Level extends EventDispatcher {
         Scene.create(this.getName());
         Scene.createCamera(new Camera());
 
-        Physics
-            .init()
-            .then(() => {
-                Particles.init();
-                PostProcessing.init();
-                Stats.init();
+        Physics.init().then(() => {
+            Particles.init();
+            PostProcessing.init();
+            Stats.init();
 
-                this.render();
+            this.render();
 
-                if (this.onCreate instanceof Function) {
-                    this.onCreate();
-                } else {
-                    console.log(ONCREATE_NOT_AVAILABLE);
-                }
-            })
+            if (this.onCreate instanceof Function) {
+                this.onCreate();
+            } else {
+                console.log(ONCREATE_NOT_AVAILABLE);
+            }
+        });
     };
 
     dispose = () => {
@@ -151,10 +142,9 @@ export class Level extends EventDispatcher {
     toJSON() {
         return {
             ...Lights.toJSON(),
-            ...Universe.toJSON()
+            ...Universe.toJSON(),
         };
     }
-
 }
 
 export default Level;
