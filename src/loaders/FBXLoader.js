@@ -45,6 +45,7 @@ import * as fflate from "../lib/fflate.js";
 import { NURBSCurve } from "./curves/NURBSCurve.js";
 import { NOOP } from "../lib/functions.js";
 import RequirementsTracer, { MODELS_REQUIREMENTS } from "./RequirementsTracer.js";
+import { isAbsoluteURL } from "./utils.js";
 
 /**
  * Loader loads FBX file and generates Group representing FBX scene.
@@ -138,9 +139,11 @@ export const buildFBXLoader = () => {
             const { texture = "" } = this.options;
             const texturePath = LoaderUtils.extractUrlBase(texture);
 
-            const textureLoader = new TextureLoader(this.manager)
-                .setPath(this.resourcePath || texturePath || path)
-                .setCrossOrigin(this.crossOrigin);
+            const textureLoader = new TextureLoader(this.manager).setCrossOrigin(this.crossOrigin);
+
+            if (!isAbsoluteURL(texture)) {
+                textureLoader.setPath(this.resourcePath || texturePath || path);
+            }
 
             return new FBXTreeParser(textureLoader, this.manager).parse(fbxTree);
         }
