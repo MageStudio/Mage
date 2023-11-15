@@ -145,15 +145,16 @@ export const buildFBXLoader = () => {
                 textureLoader.setPath(this.resourcePath || texturePath || path);
             }
 
-            return new FBXTreeParser(textureLoader, this.manager).parse(fbxTree);
+            return new FBXTreeParser(textureLoader, this.manager, this.options).parse(fbxTree);
         }
     }
 
     // Parse the FBXTree object returned by the BinaryParser or TextParser and return a Group
     class FBXTreeParser {
-        constructor(textureLoader, manager) {
+        constructor(textureLoader, manager, options) {
             this.textureLoader = textureLoader;
             this.manager = manager;
+            this.options = options;
         }
 
         parse() {
@@ -352,6 +353,8 @@ export const buildFBXLoader = () => {
 
         // load a texture specified as a blob or data URI, or via an external URL using TextureLoader
         loadTexture(textureNode, images) {
+            const { texture: textureOption } = this.options;
+
             let fileName;
 
             const currentPath = this.textureLoader.path;
@@ -363,7 +366,10 @@ export const buildFBXLoader = () => {
                 children.length > 0 &&
                 images[children[0].ID] !== undefined
             ) {
-                fileName = images[children[0].ID];
+                fileName =
+                    textureOption instanceof Object
+                        ? textureOption[children[0].ID]
+                        : textureOption || images[children[0].ID];
 
                 if (fileName.indexOf("blob:") === 0 || fileName.indexOf("data:") === 0) {
                     this.textureLoader.setPath(undefined);
