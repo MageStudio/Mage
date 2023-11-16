@@ -27,6 +27,7 @@ import {
     Audio,
     AUDIO_RAMPS,
     GameRunner,
+    Universe,
 } from "../../dist/mage.js";
 
 const AMBIENTLIGHT_OPTIONS = {
@@ -105,8 +106,25 @@ export default class Example extends Level {
     onCreate() {
         Audio.setVolume(0.5);
         this.addAmbientLight();
-        this.createSky();
+        // this.createSky();
         Controls.setOrbitControls();
+        Controls.setTransformControl();
+
+        const transform = Controls.getControl("transform");
+
+        Input.enableMouse({ recursiveSearch: true });
+        Input.addEventListener(INPUT_EVENTS.ELEMENT_CLICK, ({ elements }) => {
+            const filtered = elements[0] || {};
+            console.log(elements, filtered);
+
+            if (filtered.element) {
+                // const selection = filtered.element.hasTag(constants.TAGS.HELPER)
+                //     ? filtered.element.getHelperTarget()
+                //     : filtered.element;
+                // this.dispatchElementSelected(selection);
+                transform.attach(Universe.get(filtered.element.getName()));
+            }
+        });
         // loading a Model on button click
         const button = document.querySelector(".button");
 

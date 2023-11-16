@@ -11,6 +11,11 @@ export const MOUSE_MOVE = "mouseMove";
 export const ELEMENT_CLICK = "elementClick";
 export const ELEMENT_DESELECT = "elementDeselect";
 
+const DEFAULT_OPTIONS = {
+    recursiveSearch: false,
+    selectTags: [DEFAULT_TAG],
+};
+
 export default class Mouse extends EventDispatcher {
     constructor() {
         super();
@@ -18,6 +23,8 @@ export default class Mouse extends EventDispatcher {
         this.enabled = false;
         this.mouseMoveIntersectionEnabled = false;
         this.mouse = new Vector2();
+
+        this.options = DEFAULT_OPTIONS;
 
         this.mouseDownEvent = { type: MOUSE_DOWN };
         this.mouseUpEvent = { type: MOUSE_UP };
@@ -37,8 +44,12 @@ export default class Mouse extends EventDispatcher {
         }
     }
 
-    enable() {
+    enable(options = {}) {
         this.enabled = true;
+        this.options = {
+            ...DEFAULT_OPTIONS,
+            ...options,
+        };
 
         this.createRayCaster();
 
@@ -54,6 +65,7 @@ export default class Mouse extends EventDispatcher {
     disable() {
         this.enabled = false;
         this.mouseMoveIntersectionEnabled = false;
+        this.options = DEFAULT_OPTIONS;
 
         document.removeEventListener("mouseup", this.onMouseUp);
         Scene.getDOMElement().removeEventListener("mousemove", this.onMouseMove);
@@ -112,29 +124,27 @@ export default class Mouse extends EventDispatcher {
     });
 
     elementExists = ({ element }) => !!element;
-    elementHasTag =
-        tag =>
+    filterByTags =
+        tags =>
         ({ element }) =>
-            element.hasTag(tag);
+            tags.some(tag => element.hasTag(tag));
 
-    getIntersections = (recursive = false, tag = DEFAULT_TAG) => {
+    getIntersections = (
+        recursive = this.options.recursiveSearch,
+        tags = this.options.selectTags,
+    ) => {
         if (this.hasRaycaster()) {
             this.raycaster.setFromCamera(this.mouse, Scene.getCameraBody());
-
-            return (
-                this.raycaster
-                    .intersectObjects(Scene.getChildren(), recursive)
-                    // .filter(this.isIntersectionAMeshOrSprite)
-                    .map(this.parseIntersection)
-                    .filter(this.elementExists)
-                    .filter(this.elementHasTag(tag))
-            );
+            return this.raycaster
+                .intersectObjects(Scene.getChildren(), recursive)
+                .map(this.parseIntersection)
+                .filter(this.elementExists)
+                .filter(this.filterByTags(tags));
         }
     };
 
     onMouseDown = event => {
         if (!this.enabled) return;
-        console.log("on mouse down");
         event.preventDefault();
 
         const mouseEvent = this.parseMouseEvent(event);
@@ -144,7 +154,7 @@ export default class Mouse extends EventDispatcher {
         this.dispatchEvent(this.mouseDownEvent);
 
         const elements = this.getIntersections();
-        console.log("clicked elements", elements);
+
         this.elementClickEvent.elements = elements;
 
         if (!elements.length) {
