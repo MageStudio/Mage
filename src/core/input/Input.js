@@ -57,6 +57,8 @@ export const INPUT_EVENTS = {
     AXIS_CHANGE_EVENT,
 };
 
+const DEFAULT_ENABLE_OPTIONS = {};
+
 export class Input extends EventDispatcher {
     constructor() {
         super();
@@ -70,12 +72,12 @@ export class Input extends EventDispatcher {
         return INPUT_EVENTS;
     }
 
-    enable() {
+    enable(options = DEFAULT_ENABLE_OPTIONS) {
         if (!this.enabled) {
             dispatch(inputEnabled());
-            this.enableGamepad();
-            this.enableKeyboard();
-            this.enableMouse();
+            this.enableGamepad(options.gamepad);
+            this.enableKeyboard(options.keyboard);
+            this.enableMouse(options.mouse);
             this.enabled = true;
         }
     }
@@ -94,10 +96,10 @@ export class Input extends EventDispatcher {
         return this.enabled;
     }
 
-    enableGamepad() {
+    enableGamepad(options = {}) {
         dispatch(gamepadEnabled());
 
-        this.gamepad.enable();
+        this.gamepad.enable(options);
         this.gamepad.addEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this));
         this.gamepad.addEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate.bind(this));
         this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this));
@@ -106,18 +108,18 @@ export class Input extends EventDispatcher {
         this.gamepad.addEventListener(AXIS_CHANGE_EVENT, this.propagate.bind(this));
     }
 
-    enableKeyboard() {
+    enableKeyboard(options = {}) {
         dispatch(keyboardEnabled());
-        this.keyboard.enable();
+        this.keyboard.enable(options);
 
         this.keyboard.addEventListener(KEY_DOWN, this.propagate.bind(this));
         this.keyboard.addEventListener(KEY_UP, this.propagate.bind(this));
     }
 
-    enableMouse() {
+    enableMouse(options = {}) {
         dispatch(mouseEnabled());
 
-        this.mouse.enable();
+        this.mouse.enable(options);
         this.mouse.addEventListener(MOUSE_DOWN, this.propagate.bind(this));
         this.mouse.addEventListener(MOUSE_UP, this.propagate.bind(this));
         this.mouse.addEventListener(MOUSE_MOVE, this.propagate.bind(this));
