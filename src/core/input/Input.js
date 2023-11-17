@@ -1,6 +1,6 @@
 import { EventDispatcher } from "three";
 
-import Keyboard, { KEY_DOWN, KEY_PRESS, KEY_UP } from "./Keyboard";
+import Keyboard, { KEY_COMBO, KEY_DOWN, KEY_PRESS, KEY_UP } from "./Keyboard";
 
 import Mouse, { MOUSE_DOWN, MOUSE_UP, ELEMENT_CLICK, ELEMENT_DESELECT, MOUSE_MOVE } from "./Mouse";
 
@@ -41,9 +41,9 @@ export const INPUT_EVENTS_LIST = [
 ];
 
 export const INPUT_EVENTS = {
-    KEY_PRESS,
     KEY_DOWN,
     KEY_UP,
+    KEY_COMBO,
     MOUSE_DOWN,
     MOUSE_UP,
     MOUSE_DOWN,
@@ -114,6 +114,7 @@ export class Input extends EventDispatcher {
 
         this.keyboard.addEventListener(KEY_DOWN, this.propagate.bind(this));
         this.keyboard.addEventListener(KEY_UP, this.propagate.bind(this));
+        this.keyboard.addEventListener(KEY_COMBO, this.propagate.bind(this));
     }
 
     enableMouse(options = {}) {

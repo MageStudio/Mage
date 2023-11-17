@@ -165,3 +165,9 @@ export const serializeQuaternion = quaternion => ({
     z: quaternion.z,
     w: quaternion.w,
 });
+
+export const serializeColor = color => ({
+    r: color.r,
+    g: color.g,
+    b: color.b,
+});
