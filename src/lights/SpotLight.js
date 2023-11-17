@@ -222,9 +222,9 @@ export default class SpotLight extends Light {
         }
     }
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         return {
-            ...super.toJSON(),
+            ...super.toJSON(parseJSON),
             target: this.getTarget(),
             distance: this.getDistance(),
             decay: this.getDecay(),

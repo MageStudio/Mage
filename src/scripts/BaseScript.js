@@ -42,7 +42,7 @@ export default class BaseScript {
 
     onDispose() {}
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         return {
             name: this.name(),
         };

@@ -639,10 +639,10 @@ export default class Element extends Entity {
         Physics.disposeElement(this);
     }
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         if (this.isSerializable()) {
             return {
-                ...super.toJSON(),
+                ...super.toJSON(parseJSON),
                 physics: {
                     state: this.getPhysicsState(),
                     options: this.getPhysicsOptions(),

@@ -74,15 +74,15 @@ export class Scene {
         }
     }
 
-    getHierarchy() {
+    getHierarchy(options = {}) {
         return [
             {
-                element: this.toJSON(),
+                element: this.toJSON(options.parseJSON),
                 children: [
                     this.getCamera().getHierarchy(),
                     ...this.elements
                         .filter(e => !e.hasParent() && !e.isHelper() && e.isSerializable())
-                        .map(e => e.getHierarchy()),
+                        .map(e => e.getHierarchy(options)),
                 ],
             },
         ];
@@ -292,7 +292,7 @@ export class Scene {
         this.getCamera().onPhysicsUpdate(dt);
     };
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         return {
             name: this.getName(),
             uuid: this.uuid(),

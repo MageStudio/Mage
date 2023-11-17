@@ -166,9 +166,9 @@ export default class PointLight extends Light {
         }
     }
 
-    toJSON() {
+    toJSON(parseJSON) {
         return {
-            ...super.toJSON(),
+            ...super.toJSON(parseJSON),
             distance: this.getDistance(),
             decay: this.getDecay(),
             bias: this.getBias(),

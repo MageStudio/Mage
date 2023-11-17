@@ -175,9 +175,9 @@ export default class Light extends Entity {
         }
     }
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         return {
-            ...super.toJSON(),
+            ...super.toJSON(parseJSON),
             type: this.getEntityType(),
             color: this.getColor(),
             intensity: this.getIntensity(),

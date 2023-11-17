@@ -16,7 +16,7 @@ import {
 import Scripts from "../scripts/Scripts";
 import Scene from "../core/Scene";
 
-import { isScene } from "../lib/meshUtils";
+import { isScene, serializeQuaternion, serializeVector } from "../lib/meshUtils";
 
 import { DEFAULT_TAG, ENTITY_EVENTS, ENTITY_TYPES, FLAT_ENTITY_TYPES } from "./constants";
 import { FUNCTIONS, LOOPING, tweenTo } from "../lib/easing";
@@ -194,10 +194,11 @@ export default class Entity extends EventDispatcher {
         return this.children.length > 0;
     }
 
-    getHierarchy() {
+    getHierarchy(options = {}) {
+        const { parseJSON = false } = options;
         return {
-            element: this.toJSON(),
-            children: this.children.map(e => e.getHierarchy()),
+            element: this.toJSON(parseJSON),
+            children: this.children.map(e => e.getHierarchy(options)),
         };
     }
 
@@ -647,14 +648,28 @@ export default class Entity extends EventDispatcher {
         );
     }
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         if (this.isSerializable()) {
+            const position = this.getPosition();
+            const rotation = this.getRotation();
+            const scale = this.getScale();
+            const quaternion = this.getQuaternion();
+            const {
+                position: worldPosition,
+                rotation: worldRotation,
+                quaternion: worldQuaternion,
+            } = this.getWorldTransform();
+
             return {
-                position: this.getPosition(),
-                rotation: this.getRotation(),
-                quaternion: this.getQuaternion(),
-                worldTransform: this.getWorldTransform(),
-                scale: this.getScale(),
+                position: parseJSON ? serializeVector(position) : position,
+                rotation: parseJSON ? serializeVector(rotation) : rotation,
+                quaternion: parseJSON ? serializeQuaternion(quaternion) : quaternion,
+                scale: parseJSON ? serializeVector(scale) : scale,
+                worldTransform: {
+                    position: parseJSON ? serializeVector(worldPosition) : worldPosition,
+                    rotation: parseJSON ? serializeVector(worldRotation) : worldRotation,
+                    quaternion: parseJSON ? serializeQuaternion(worldQuaternion) : worldQuaternion,
+                },
                 entityType: this.getEntityType(),
                 scripts: this.mapScriptsToJSON(),
                 tags: this.getTags(),

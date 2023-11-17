@@ -4,19 +4,16 @@ import {
     MeshPhongMaterial,
     MeshDepthMaterial,
     MeshStandardMaterial,
-    MeshToonMaterial
-} from 'three';
+    MeshToonMaterial,
+} from "three";
 
-import Config from '../core/config';
-import Lights from '../lights/Lights';
-import ToonMaterial from '../materials/Toon';
-import { MATERIALS, TEXTURES } from './constants';
+import Config from "../core/config";
+import Lights from "../lights/Lights";
+import ToonMaterial from "../materials/Toon";
+import { MATERIALS, TEXTURES } from "./constants";
 
-export const setUpLightsAndShadows = (mesh) => {
-    const {
-        textureAnisotropy,
-        shadows
-    } = Config.lights();
+export const setUpLightsAndShadows = mesh => {
+    const { textureAnisotropy, shadows } = Config.lights();
 
     mesh.castShadow = Boolean(shadows);
     mesh.receiveShadow = Boolean(shadows);
@@ -26,17 +23,17 @@ export const setUpLightsAndShadows = (mesh) => {
             if (Lights.isUsingCascadeShadowMaps()) {
                 Lights.csm.setupMaterial(material);
             }
-    
+
             if (material.map) {
                 material.map.anisotropy = textureAnisotropy;
             }
 
             return material;
-        }
+        };
 
         mesh.material = processMaterial(mesh.material, setUpMaterial);
     }
-} 
+};
 
 export const isMesh = mesh => mesh.isMesh;
 export const isSprite = mesh => mesh.isSprite;
@@ -45,7 +42,7 @@ export const isScene = mesh => mesh.isScene;
 
 export const notAScene = mesh => !mesh.isScene;
 
-const isMeshOrSkinnedMesh = (mesh) => mesh.isMesh || mesh.isSkinnedMesh;
+const isMeshOrSkinnedMesh = mesh => mesh.isMesh || mesh.isSkinnedMesh;
 export const hasMaterial = mesh => Boolean(mesh.material);
 export const hasGeometry = mesh => Boolean(mesh.geometry);
 export const hasTexture = mesh => hasMaterial(mesh) && mesh.material.map;
@@ -60,15 +57,15 @@ export const applyMaterialChange = (elementBody, changeCallback) => {
             }
         });
     }
-}
+};
 
-export const processMaterial = (material, callback) => Array.isArray(material) ? material.map(callback) : callback(material);
+export const processMaterial = (material, callback) =>
+    Array.isArray(material) ? material.map(callback) : callback(material);
 
 export const replaceMaterialByName = (name, mesh, materialOptions) => {
-
     if (!hasMaterial(mesh)) return;
 
-    switch(name) {
+    switch (name) {
         case MATERIALS.LAMBERT:
             return replaceMaterial(MeshLambertMaterial, mesh, materialOptions);
         case MATERIALS.PHONG:
@@ -85,7 +82,7 @@ export const replaceMaterialByName = (name, mesh, materialOptions) => {
         default:
             return replaceMaterial(MeshBasicMaterial, mesh, materialOptions);
     }
-}
+};
 
 const replaceMaterial = (MeshMaterial, mesh, options = {}) => {
     const _replaceMaterial = material => {
@@ -93,30 +90,29 @@ const replaceMaterial = (MeshMaterial, mesh, options = {}) => {
         const newMaterial = new MeshMaterial({
             map: clone.map,
             color: clone.color,
-            ...options
+            ...options,
         });
 
         newMaterial.skinning = true;
         return newMaterial;
-    }
+    };
 
     mesh.material = processMaterial(mesh.material, _replaceMaterial);
 
     setUpLightsAndShadows(mesh);
 
     return mesh.material;
-}
+};
 
 export const disposeTextures = mesh => {
     if (hasMaterial(mesh)) {
-        const _disposeTexture = (material) => {
-            Object.values(TEXTURES)
-                .forEach(key => {
-                    if (material[key]) {
-                        material[key].dispose();
-                    }
-                })
-        }
+        const _disposeTexture = material => {
+            Object.values(TEXTURES).forEach(key => {
+                if (material[key]) {
+                    material[key].dispose();
+                }
+            });
+        };
         processMaterial(mesh.material, _disposeTexture);
     }
 };
@@ -133,7 +129,7 @@ export const disposeGeometry = mesh => {
     }
 };
 
-export const prepareModel = (model) => {
+export const prepareModel = model => {
     setUpLightsAndShadows(model);
 
     model.traverse(mesh => {
@@ -141,7 +137,7 @@ export const prepareModel = (model) => {
     });
 
     return model;
-}
+};
 
 export const findFirstInScene = (scene, filter) => {
     let found = false;
@@ -155,4 +151,17 @@ export const findFirstInScene = (scene, filter) => {
     });
 
     return toReturn;
-}
+};
+
+export const serializeVector = vector => ({
+    x: vector.x,
+    y: vector.y,
+    z: vector.z,
+});
+
+export const serializeQuaternion = quaternion => ({
+    x: quaternion.x,
+    y: quaternion.y,
+    z: quaternion.z,
+    w: quaternion.w,
+});

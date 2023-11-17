@@ -139,10 +139,10 @@ export class Level extends EventDispatcher {
         this.onDispose();
     };
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         return {
-            ...Lights.toJSON(),
-            ...Universe.toJSON(),
+            ...Lights.toJSON(parseJSON),
+            ...Universe.toJSON(parseJSON),
         };
     }
 }
