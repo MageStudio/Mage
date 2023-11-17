@@ -79,7 +79,7 @@ export class Scene {
             {
                 element: this.toJSON(options.parseJSON),
                 children: [
-                    this.getCamera().getHierarchy(),
+                    this.getCamera().getHierarchy(options),
                     ...this.elements
                         .filter(e => !e.hasParent() && !e.isHelper() && e.isSerializable())
                         .map(e => e.getHierarchy(options)),
