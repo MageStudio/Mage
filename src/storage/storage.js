@@ -1,34 +1,36 @@
-import GameRunner from '../runner/GameRunner';
-import { getState } from '../store';
+import GameRunner from "../runner/GameRunner";
+import { getState } from "../store";
 
-import { LOCALSTORAGE_NOT_AVAILABLE } from '../lib/messages';
+import { LOCALSTORAGE_NOT_AVAILABLE } from "../lib/messages";
 
-const CURRENT_SCENE_NAME = 'CURRENT_SCENE_NAME';
-const STATE_SNAPSHOT = 'STATE_SNAPSHOT';
-const TIMESTAMP = 'TIMESTAMP';
-const CURRENT_SCENE_JSON = 'CURRENT_SCENE_JSON';
-const CURRENT_PATH = 'CURRENT_PATH';
+const CURRENT_SCENE_NAME = "CURRENT_SCENE_NAME";
+const STATE_SNAPSHOT = "STATE_SNAPSHOT";
+const TIMESTAMP = "TIMESTAMP";
+const CURRENT_SCENE_JSON = "CURRENT_SCENE_JSON";
+const CURRENT_PATH = "CURRENT_PATH";
 
 export class Storage {
-
     static isLocalStorageAvailable() {
-        return window &&
+        return (
+            window &&
             window.localStorage &&
-            typeof window.localStorage.setItem === 'function' &&
-            typeof window.localStorage.getItem === 'function' &&
-            typeof window.localStorage.removeItem === 'function' &&
-            typeof window.localStorage.clear === 'function'
+            typeof window.localStorage.setItem === "function" &&
+            typeof window.localStorage.getItem === "function" &&
+            typeof window.localStorage.removeItem === "function" &&
+            typeof window.localStorage.clear === "function"
+        );
     }
 
-    save() {
+    save(options = {}) {
         if (Storage.isLocalStorageAvailable()) {
             try {
                 const state = getState();
                 const timestamp = +new Date();
                 const currentScene = GameRunner.getCurrentLevel();
                 const currentPath = GameRunner.getCurrentPath();
+                const { parseJSON = false } = options;
 
-                const sceneJSON = currentScene.toJSON();
+                const sceneJSON = currentScene.toJSON(parseJSON);
                 const sceneName = currentScene.name;
 
                 localStorage.setItem(TIMESTAMP, timestamp);
@@ -40,9 +42,9 @@ export class Storage {
                 return Promise.resolve({
                     sceneName,
                     currentPath,
-                    timestamp
+                    timestamp,
                 });
-            } catch(e) {
+            } catch (e) {
                 return Promise.reject(e);
             }
         } else {
@@ -85,7 +87,5 @@ export class Storage {
         }
     }
 }
-
-
 
 export default new Storage();

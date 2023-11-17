@@ -1,5 +1,4 @@
 export class Universe {
-
     constructor() {
         this.reality = {};
         this.realityUUID = {};
@@ -47,7 +46,7 @@ export class Universe {
     reset = () => {
         this.reality = {};
         this.realityUUID = {};
-    }
+    };
 
     storeUUIDToElementNameReference(uuid, name) {
         this.realityUUID[uuid] = name;
@@ -57,48 +56,40 @@ export class Universe {
         delete this.reality[id];
     }
 
-    forEach = (callback) => {
-        Object
-            .keys(this.reality)
-            .forEach(k => callback(this.reality[k], k));
+    forEach = callback => {
+        Object.keys(this.reality).forEach(k => callback(this.reality[k], k));
     };
 
-    forEachAsync = (callback) => {
+    forEachAsync = callback => {
         const keys = Object.keys(this.reality);
 
         return new Promise(resolve => {
-            Promise
-                .all(keys.map(k => callback(this.reality[k], k)))
-                .then(resolve);
+            Promise.all(keys.map(k => callback(this.reality[k], k))).then(resolve);
         });
     };
 
     update(dt) {
-        Object
-            .keys(this.reality)
-            .forEach(k => this.reality[k].update(dt))
+        Object.keys(this.reality).forEach(k => this.reality[k].update(dt));
     }
-    
+
     onPhysicsUpdate(dt) {
-        Object
-            .keys(this.reality)
-            .forEach(k => this.reality[k].onPhysicsUpdate(dt));
+        Object.keys(this.reality).forEach(k => this.reality[k].onPhysicsUpdate(dt));
     }
 
     bigfreeze = () => {
-        this.forEach((o) => {
-            o && o.dispose && o.dispose()
+        this.forEach(o => {
+            o && o.dispose && o.dispose();
         });
         this.reset();
-    }
+    };
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         const elements = Object.keys(this.reality)
             .map(k => this.get(k))
             .filter(element => element.serializable && element.isMesh())
-            .map(element => element.toJSON());
+            .map(element => element.toJSON(parseJSON));
 
-        return { elements }
+        return { elements };
     }
 }
 

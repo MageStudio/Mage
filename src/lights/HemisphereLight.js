@@ -77,9 +77,9 @@ export default class HemisphereLight extends Light {
         }
     }
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         return {
-            ...super.toJSON(),
+            ...super.toJSON(parseJSON),
             color: this.getColor(),
         };
     }

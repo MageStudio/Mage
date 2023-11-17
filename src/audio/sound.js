@@ -356,9 +356,9 @@ export default class Sound extends Entity {
         return !!this.holder;
     }
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         return {
-            ...super.toJSON(),
+            ...super.toJSON(parseJSON),
             source: this.source,
             loop: this.loop,
             loopStart: this.loopStart,

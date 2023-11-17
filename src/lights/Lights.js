@@ -1,13 +1,12 @@
 import { CascadeShadowMaps } from "./csm/CascadeShadowMaps";
 
-export const POINTLIGHT = 'pointlight';
-export const AMBIENTLIGHT = 'ambientlight';
-export const SUNLIGHT = 'sunlight';
-export const SPOTLIGHT = 'spotlight';
-export const HEMISPHERELIGHT = 'hemisphere';
+export const POINTLIGHT = "pointlight";
+export const AMBIENTLIGHT = "ambientlight";
+export const SUNLIGHT = "sunlight";
+export const SPOTLIGHT = "spotlight";
+export const HEMISPHERELIGHT = "hemisphere";
 
 export class Lights {
-
     constructor() {
         this.lights = [];
         this.csm = undefined;
@@ -37,9 +36,9 @@ export class Lights {
         }
     }
 
-    toJSON() {
+    toJSON(parseJSON = false) {
         return {
-            lights: this.lights.map(l => l.toJSON())
+            lights: this.lights.map(l => l.toJSON(parseJSON)),
         };
     }
 }
