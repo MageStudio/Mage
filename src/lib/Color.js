@@ -1,13 +1,10 @@
-import {
-    Color as THREEColor
-} from 'three';
+import { Color as THREEColor } from "three";
 
 export default class Color {
-
     static randomColor(asNumber = false) {
-        const letters = '0123456789ABCDEF'.split('');
-        let color = '';
-        for (let i = 0; i < 6; i++ ) {
+        const letters = "0123456789ABCDEF".split("");
+        let color = "";
+        for (let i = 0; i < 6; i++) {
             color += letters[Math.floor(Math.random() * 16)];
         }
         return asNumber ? Number(`0x${color}`) : `#${color}`;
@@ -19,10 +16,7 @@ export default class Color {
     }
 
     static gbToHex(r, g, b) {
-        return "0x" +
-            Color.componentToHex(r) +
-            Color.componentToHex(g) +
-            Color.componentToHex(b);
+        return "0x" + Color.componentToHex(r) + Color.componentToHex(g) + Color.componentToHex(b);
     }
 
     static getIntValueFromHex(hex) {

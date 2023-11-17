@@ -36,6 +36,7 @@ import {
     disposeGeometry,
     setUpLightsAndShadows,
     applyMaterialChange,
+    serializeColor,
 } from "../lib/meshUtils";
 import { isTextureMapAllowedForMaterial } from "../materials/helpers";
 import { generateRandomName } from "../lib/uuid";
@@ -641,6 +642,7 @@ export default class Element extends Entity {
 
     toJSON(parseJSON = false) {
         if (this.isSerializable()) {
+            const color = this.getColor();
             return {
                 ...super.toJSON(parseJSON),
                 physics: {
@@ -651,7 +653,7 @@ export default class Element extends Entity {
                 textures: this.textures,
                 materialType: this.getMaterialType(),
                 opacity: this.opacity,
-                color: this.getColor(),
+                color: parseJSON ? serializeColor(color) : color,
             };
         }
     }
