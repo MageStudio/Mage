@@ -3,6 +3,7 @@ import Scene from "../core/Scene";
 import { HemisphereLight as THREEHemisphereLight, HemisphereLightHelper } from "three";
 import { ENTITY_TYPES } from "../entities/constants";
 import { generateRandomName } from "../lib/uuid";
+import { serializeColor } from "../lib/meshUtils";
 
 const DEFAULT_INTENSITY = 0.5;
 
@@ -78,9 +79,10 @@ export default class HemisphereLight extends Light {
     }
 
     toJSON(parseJSON = false) {
+        const color = this.getColor();
         return {
             ...super.toJSON(parseJSON),
-            color: this.getColor(),
+            color: parseJSON ? serializeColor(color) : color,
         };
     }
 }

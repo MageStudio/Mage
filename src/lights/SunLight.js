@@ -179,7 +179,7 @@ export default class SunLight extends Light {
     toJSON(parseJSON = false) {
         return {
             ...super.toJSON(parseJSON),
-            target: this.getTarget(),
+            target: parseJSON ? this.getTarget().toJSON(parseJSON) : this.getTarget(),
             bias: this.getBias(),
             mapSize: this.getMapSize(),
             shadowCamera: {

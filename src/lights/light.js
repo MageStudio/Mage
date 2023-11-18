@@ -8,6 +8,7 @@ import { LIGHT_HOLDER_MODEL_NOT_FOUND, LIGHT_NOT_FOUND } from "../lib/messages";
 import { generateRandomName } from "../lib/uuid";
 import { tweenTo } from "../lib/easing";
 import HelperSprite from "../entities/base/HelperSprite";
+import { serializeColor } from "../lib/meshUtils";
 
 export default class Light extends Entity {
     constructor({ color, intensity, name }) {
@@ -176,10 +177,11 @@ export default class Light extends Entity {
     }
 
     toJSON(parseJSON = false) {
+        const color = this.getColor();
         return {
             ...super.toJSON(parseJSON),
             type: this.getEntityType(),
-            color: this.getColor(),
+            color: parseJSON ? serializeColor(color) : color,
             intensity: this.getIntensity(),
             name: this.getName(),
             castShadow: this.getCastShadow(),
