@@ -153,21 +153,24 @@ export const findFirstInScene = (scene, filter) => {
     return toReturn;
 };
 
-export const serializeVector = vector => ({
-    x: vector.x,
-    y: vector.y,
-    z: vector.z,
-});
+export const serializeVector = vector =>
+    vector && {
+        x: vector.x,
+        y: vector.y,
+        z: vector.z,
+    };
 
-export const serializeQuaternion = quaternion => ({
-    x: quaternion.x,
-    y: quaternion.y,
-    z: quaternion.z,
-    w: quaternion.w,
-});
+export const serializeQuaternion = quaternion =>
+    quaternion && {
+        x: quaternion.x,
+        y: quaternion.y,
+        z: quaternion.z,
+        w: quaternion.w,
+    };
 
-export const serializeColor = color => ({
-    r: color.r,
-    g: color.g,
-    b: color.b,
-});
+export const serializeColor = color =>
+    color && {
+        r: color.r,
+        g: color.g,
+        b: color.b,
+    };
