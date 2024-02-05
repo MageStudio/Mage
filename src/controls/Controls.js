@@ -3,25 +3,27 @@ import Orbit from "./Orbit";
 import Transform from "./Transform";
 import FirstPersonControl from "./FirstPersonControl";
 import FlyControl from "./FlyControl";
-import { Vector3 } from "three";
+import { EventDispatcher, Vector3 } from "three";
 import { DEPRECATIONS } from "../lib/messages";
+import { AVAILABLE_CONTROLS, CONTROLS } from "./constants";
+import Universe from "../core/Universe";
 
-const CONTROLS = {
-    ORBIT: "orbit",
-    TRANSFORM: "transform",
-    FPS: "fps",
-    FLY: "fly",
-};
-
-const AVAILABLE_CONTROLS = Object.keys(CONTROLS);
-
-const EVENTS = {
+export const THREEJS_CONTROL_EVENTS = {
     CHANGE: "change",
+    OBJECT_CHANGE: "objectChange",
     DRAGGING_CHANGE: "dragging-changed",
 };
 
-export class Controls {
+export const CONTROL_EVENTS = {
+    TRANSFORM: {
+        CHANGE: `${CONTROLS.TRANSFORM}:CHANGE`,
+        DRAGGING_CHANGE: `${CONTROLS.TRANSFORM}:DRAGGING_CHANGE`,
+    },
+};
+
+export class Controls extends EventDispatcher {
     constructor() {
+        super();
         this.controls = {
             [CONTROLS.ORBIT]: undefined,
             [CONTROLS.TRANSFORM]: undefined,
@@ -83,19 +85,35 @@ export class Controls {
     }
 
     setTransformControls() {
-        this.controls[CONTROLS.TRANSFORM] = new Transform(
-            Scene.getCameraBody(),
-            Scene.getDOMElement(),
-        );
-        this.controls[CONTROLS.TRANSFORM].init();
-        this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.CHANGE, Scene.render.bind(Scene));
-        this.controls[CONTROLS.TRANSFORM].addEventListener(EVENTS.DRAGGING_CHANGE, event => {
+        const control = new Transform(Scene.getCameraBody(), Scene.getDOMElement());
+        control.init();
+        control.addEventListener(THREEJS_CONTROL_EVENTS.CHANGE, () => {
+            this.dispatchEvent({
+                type: CONTROL_EVENTS.TRANSFORM.CHANGE,
+                element: Universe.find(control.object),
+            });
+            Scene.render.call(Scene);
+        });
+        control.addEventListener(THREEJS_CONTROL_EVENTS.OBJECT_CHANGE, () => {
+            this.dispatchEvent({
+                type: CONTROL_EVENTS.TRANSFORM.CHANGE,
+                element: Universe.find(control.object),
+            });
+            Scene.render.call(Scene);
+        });
+        control.addEventListener(THREEJS_CONTROL_EVENTS.DRAGGING_CHANGE, event => {
+            this.dispatchEvent({
+                type: CONTROL_EVENTS.TRANSFORM.DRAGGING_CHANGE,
+                element: Universe.find(control.object),
+            });
             if (this.controls[CONTROLS.ORBIT]) {
                 this.controls[CONTROLS.ORBIT].enabled = !event.value;
             }
         });
 
-        return this.controls.transform;
+        this.controls[CONTROLS.TRANSFORM] = control;
+
+        return this.controls[CONTROLS.TRANSFORM];
     }
 
     setFirstPersonControl(options) {

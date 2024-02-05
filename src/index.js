@@ -49,7 +49,10 @@ import GameRunner from "./runner/GameRunner";
 import Router from "./router/Router";
 import Scene from "./core/Scene";
 import Scripts, { BUILTIN } from "./scripts/Scripts";
-import Controls from "./controls/Controls";
+
+import Controls, { CONTROL_EVENTS, THREEJS_CONTROL_EVENTS } from "./controls/Controls";
+import * as controls_contants from "./controls/constants";
+
 import Physics, { PHYSICS_EVENTS, PHYSICS_CONSTANTS, physicsUtils } from "./physics";
 
 import * as material_constants from "./materials/constants";
@@ -109,6 +112,7 @@ const constants = {
     ...lib_constants,
     ...light_contants,
     ...material_constants,
+    ...controls_contants,
 };
 
 export {
@@ -134,6 +138,8 @@ export {
     LabelComponent,
     connect,
     Controls,
+    CONTROL_EVENTS,
+    THREEJS_CONTROL_EVENTS,
     Images,
     Models,
     Audio,
