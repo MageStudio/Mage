@@ -1,0 +1,8 @@
+export const CONTROLS = {
+    ORBIT: "CONTROLS:ORBIT",
+    TRANSFORM: "CONTROLS:TRANSFORM",
+    FPS: "CONTROLS:FPS",
+    FLY: "CONTROLS:FLY",
+};
+
+export const AVAILABLE_CONTROLS = Object.keys(CONTROLS);
