@@ -70,6 +70,7 @@ export default class Entity extends EventDispatcher {
         this.tags = [DEFAULT_TAG];
     }
 
+    // TODO: this is ridiculous, it's introducing a 200ms delay for no reason if delay is missing.
     waitForBody(delay = 200, maxTries = 1) {
         return new Promise((resolve, reject) => {
             const check = tries => {
@@ -151,6 +152,8 @@ export default class Entity extends EventDispatcher {
     }
 
     isParentOf(child) {
+        if (!child) return false;
+
         let comparator = child => !!child.getBody().getObjectById(child.id);
         if (child.isMage) {
             comparator = child => child.getBody().getObjectById(child.id());
@@ -160,6 +163,8 @@ export default class Entity extends EventDispatcher {
     }
 
     has(child) {
+        if (!child) return false;
+
         if (child.isMage) {
             return this.equals(child) || this.isParentOf(child);
         } else {
