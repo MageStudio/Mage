@@ -10,6 +10,8 @@ export class Universe {
     }
 
     find(element) {
+        if (!element) return;
+
         let found;
         this.forEach(el => {
             if (el.has(element) && !found) {
