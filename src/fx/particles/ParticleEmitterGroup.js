@@ -2,24 +2,21 @@ import { Object3D } from "three";
 import { EMITTER_NOT_FOUND } from "../../lib/messages";
 import { PARTICLE_EMITTER_TYPES } from "./constants";
 import Entity from "../../entities/Entity";
-import { ENTITY_TYPES } from '../../entities/constants';
+import { ENTITY_TYPES } from "../../entities/constants";
 import Scene from "../../core/Scene";
 import { generateRandomName } from "../../lib/uuid";
 
 export default class ParticleEmitterGroup extends Entity {
-
     constructor(options = {}) {
-        super({ tag: 'particle '});
+        super({ tag: "particle " });
 
-        const {
-            name = generateRandomName('EmitterGroup'),
-            system
-        } = options;
+        const { name = generateRandomName("EmitterGroup"), system } = options;
 
         this.options = {
             ...options,
-            name
+            name,
         };
+        this.system = new Map();
 
         this.setBody({ body: new Object3D() });
         this.setName(name);
@@ -36,9 +33,7 @@ export default class ParticleEmitterGroup extends Entity {
     }
 
     addToScene() {
-        const {
-            addUniverse = true,
-        } = this.options;
+        const { addUniverse = true } = this.options;
 
         if (this.hasBody()) {
             Scene.add(this.getBody(), this, addUniverse);
@@ -48,8 +43,7 @@ export default class ParticleEmitterGroup extends Entity {
     }
 
     isProtonEmitter() {
-        Object.keys(this.system)
-            .forEach(emitterId => this.system[emitterId].isProtonEmitter());
+        this.system.forEach(emitter => emitter.isProtonEmitter());
     }
 
     getType() {
@@ -57,20 +51,18 @@ export default class ParticleEmitterGroup extends Entity {
     }
 
     hasSystem() {
-        return !!this.system && !!Object.keys(this.system).length;
+        return !!this.system && !!this.system.size > 0;
     }
 
     isSystemDead() {
-        Object.keys(this.system)
-            .forEach(emitterId => this.system[emitterId].isSystemDead());
+        this.system.forEach(emitter => emitter.isSystemDead());
     }
 
     setSystem(system = []) {
-        this.system = system.reduce((system, emitter) => {
-            system[emitter.getName()] = emitter;
+        system.forEach(emitter => {
             this.add(emitter);
-            return system;
-        }, {});
+            this.system.set(emitter.getName(), emitter);
+        });
     }
 
     getSystem() {
@@ -78,7 +70,7 @@ export default class ParticleEmitterGroup extends Entity {
     }
 
     getEmitter(name) {
-        const emitter = this.system[name];
+        const emitter = this.system.get(name);
 
         if (emitter) {
             return emitter;
@@ -88,39 +80,31 @@ export default class ParticleEmitterGroup extends Entity {
     }
 
     forEach(cb) {
-        Object
-            .keys(this.system)
-            .forEach(k => {
-                cb(this.system[k]);
-            })
+        this.system.forEach(emitter => cb(emitter));
     }
 
     emit(...options) {
         if (this.hasSystem()) {
-            Object.keys(this.system)
-                .forEach(emitterId => this.system[emitterId].emit(...options));
+            this.system.forEach(emitter => emitter.emit(...options));
         }
     }
 
     stop() {
         if (this.hasSystem()) {
-            Object.keys(this.system)
-                .forEach(emitterId => this.system[emitterId].stop());
+            this.system.forEach(emitter => emitter.stop());
         }
     }
 
     dispose() {
         super.dispose();
-        Object.keys(this.system)
-                .forEach(emitterId => this.system[emitterId].dispose());
+        this.system.forEach(emitter => emitter.dispose());
     }
 
     update(dt) {
         super.update(dt);
 
         if (this.hasSystem()) {
-            Object.keys(this.system)
-                .forEach(emitterId => this.system[emitterId].update(dt));
+            this.system.forEach(emitter => emitter.update(dt));
         }
     }
 }

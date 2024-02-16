@@ -12,28 +12,27 @@ import {
     constants,
     Scripts,
     Stats,
-    PostProcessing
-} from '../../dist/mage.js';
-import Speedometer from './speedometer.js';
+    PostProcessing,
+} from "../../dist/mage.js";
+import Speedometer from "./speedometer.js";
 
 const { EFFECTS } = constants;
 
 const SATURATION_OPTIONS = {
-    saturation: 0.4
+    saturation: 0.4,
 };
 
 export default class Intro extends Level {
-
     addAmbientLight() {
         this.ambientLight = new AmbientLight({ color: 0xffffff });
     }
 
     createWheel(index) {
-        return Models.getModel('wheel', { name: `wheel_${index}` });
+        return Models.getModel("wheel", { name: `wheel_${index}` });
     }
 
     createCar(name) {
-        return Models.getModel('car', { name });
+        return Models.getModel("car", { name });
     }
 
     createCube(size, color) {
@@ -48,25 +47,24 @@ export default class Intro extends Level {
 
     createWall() {
         const wall = new Box(50, 25, 1, 0xeeeeee);
-        wall.setMaterialFromName(constants.MATERIALS.STANDARD)
+        wall.setMaterialFromName(constants.MATERIALS.STANDARD);
         wall.setPosition({ z: -25, y: 0 });
         wall.enablePhysics({ mass: 0, debug: true });
     }
 
     onCreate() {
-
-        Scripts.register('speedometer', Speedometer);
+        Scripts.register("speedometer", Speedometer);
 
         this.addAmbientLight();
-        
+
         const floor = new Box(50, 1, 50, 0xffffff);
         floor.enablePhysics({ mass: 0, debug: true });
-        
+
         this.createWall();
-        
-        const car = this.createCar('first');
+
+        const car = this.createCar("first");
         car.setPosition({ y: 14 });
-        
+
         const wheels = [
             this.createWheel(1),
             this.createWheel(2),
@@ -75,9 +73,9 @@ export default class Intro extends Level {
         ];
 
         window.car = car;
-        
-        car.addEventListener(PHYSICS_EVENTS.VEHICLE.SPEED, this.handleSpeedChange);
-        
+
+        // car.addEventListener(PHYSICS_EVENTS.VEHICLE.SPEED, this.handleSpeedChange);
+
         car.addScript(Scripts.BUILTIN.BASECAR, {
             wheels,
             mass: 1000,
@@ -85,48 +83,48 @@ export default class Intro extends Level {
             wheelsOptions: {
                 back: {
                     axisPosition: -1.25,
-                    radius: .35,
+                    radius: 0.35,
                     halfTrack: 1,
-                    axisHeight: 0
+                    axisHeight: 0,
                 },
                 front: {
                     axisPosition: 1.2,
-                    radius: .35,
+                    radius: 0.35,
                     halfTrack: 1,
-                    axisHeight: 0
-                }
+                    axisHeight: 0,
+                },
             },
             suspensions: {
                 stiffness: 20.0,
                 damping: 2.3,
                 compression: 4.4,
-                restLength: 0.6
-            }
+                restLength: 0.6,
+            },
         });
 
-        car.addScript('speedometer');
-        
-        this.createCube(2, 0xff00ff);
+        // car.addScript('speedometer');
+
+        // this.createCube(2, 0xff00ff);
         Scene.getCamera().addScript(Scripts.BUILTIN.SMOOTH_CAR_FOLLOW, { target: car });
 
-        const txt = document.querySelector('#txt');
-        const changeFPS = (fps) => {
-            txt.innerText = fps;
-        };
-        Stats.subscribe(changeFPS);
+        // const txt = document.querySelector("#txt");
+        // const changeFPS = fps => {
+        //     txt.innerText = fps;
+        // };
+        // Stats.subscribe(changeFPS);
 
-        PostProcessing.add(EFFECTS.HUE_SATURATION, SATURATION_OPTIONS);
+        // PostProcessing.add(EFFECTS.HUE_SATURATION, SATURATION_OPTIONS);
     }
 }
 
 const assets = {
-    '/': {
+    "/": {
         models: {
-            'car': 'assets/models/buggy.gltf',
-            'wheel': 'assets/models/wheel.gltf'
-        }
-    }
-}
+            car: "assets/models/buggy.gltf",
+            wheel: "assets/models/wheel.gltf",
+        },
+    },
+};
 
 const config = {
     screen: {
@@ -138,7 +136,7 @@ const config = {
     },
 
     postprocessing: {
-        enabled: true
+        enabled: true,
     },
 
     lights: {
@@ -147,8 +145,8 @@ const config = {
 
     physics: {
         enabled: true,
-        path: 'dist/ammo.js',
-        gravity: { x: 0, y: -9.8, z: 0}
+        path: "dist/ammo.js",
+        gravity: { x: 0, y: -9.8, z: 0 },
     },
 
     tween: {
@@ -162,10 +160,10 @@ const config = {
     },
 };
 
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
     store.createStore({}, {}, true);
 
-    Router.on('/', Intro);
+    Router.on("/", Intro);
 
     Router.start(config, assets);
 });

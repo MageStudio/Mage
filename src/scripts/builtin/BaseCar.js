@@ -1,20 +1,19 @@
-import Input from '../../core/input/Input';
-import BaseScript from '../BaseScript';
-import Physics from '../../physics';
+import Input from "../../core/input/Input";
+import BaseScript from "../BaseScript";
+import Physics from "../../physics";
 
 export default class BaseCar extends BaseScript {
-
     constructor() {
-        super('BaseCar');
+        super("BaseCar");
     }
 
     start(element, options) {
         const {
             wheels,
-            accelerationKey = 'w',
-            brakingKey = 's',
-            rightKey = 'd',
-            leftKey = 'a',
+            accelerationKey = "w",
+            brakingKey = "s",
+            rightKey = "d",
+            leftKey = "a",
             debug = false,
             autostart = true,
             ...physicsOptions
@@ -27,7 +26,7 @@ export default class BaseCar extends BaseScript {
             acceleration: false,
             braking: false,
             right: false,
-            left: false
+            left: false,
         };
 
         this.accelerationKey = accelerationKey;
@@ -38,6 +37,7 @@ export default class BaseCar extends BaseScript {
         this.engineStarted = autostart;
 
         Input.enable();
+        Input.keyboard.listenTo([accelerationKey, brakingKey, rightKey, leftKey]);
         Physics.addVehicle(this.car, { wheels: wheels.map(w => w.uuid()), ...physicsOptions });
     }
 
@@ -66,5 +66,4 @@ export default class BaseCar extends BaseScript {
             this.sendCarUpdate();
         }
     }
-
 }

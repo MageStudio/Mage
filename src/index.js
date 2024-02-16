@@ -42,6 +42,7 @@ import * as strings from "./lib/strings";
 import * as uuid from "./lib/uuid";
 import * as workers from "./lib/workers";
 import * as easing from "./lib/easing";
+import * as map from "./lib/map";
 
 import Stats from "./core/Stats";
 import Config from "./core/config";
@@ -207,4 +208,5 @@ export {
     THREE,
     rxjs,
     xstate,
+    map,
 };

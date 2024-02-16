@@ -1,7 +1,18 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES } from '../../dist/mage.js';
+import {
+    Router,
+    store,
+    Level,
+    Box,
+    Scene,
+    Controls,
+    AmbientLight,
+    Particles,
+    PARTICLES,
+    Input,
+    INPUT_EVENTS,
+} from "../../dist/mage.js";
 
 export default class Intro extends Level {
-
     addAmbientLight() {
         this.ambientLight = new AmbientLight({ color: 0xffffff });
     }
@@ -13,16 +24,16 @@ export default class Intro extends Level {
     }
 
     explode(position = { x: 0, y: 0, z: 0 }) {
-        console.log('exploding');
+        console.log("exploding");
         Particles.addParticleEmitter(PARTICLES.EXPLOSION, {
-            texture: 'dot',
-            hasDebris: true
-        }).emit('once');
+            texture: "dot",
+            hasDebris: true,
+        }).emit("once");
     }
 
     onKeyDown({ event }) {
         console.log(event);
-        if (event.key === 'e') {
+        if (event.key === "e") {
             this.explode();
         }
     }
@@ -31,9 +42,10 @@ export default class Intro extends Level {
         this.addAmbientLight();
         Controls.setOrbitControl();
 
-        Scene
-            .getCamera()
-            .setPosition({ y: 15, z: 45 });
+        Input.enable();
+        Input.keyboard.addEventListener(INPUT_EVENTS.KEY_DOWN, this.onKeyDown.bind(this));
+
+        Scene.getCamera().setPosition({ y: 15, z: 45 });
 
         this.createFloor();
     }
@@ -41,9 +53,9 @@ export default class Intro extends Level {
 
 const assets = {
     textures: {
-        'dot': 'dot.png',
-        'fire': 'fire.png'
-    }
+        dot: "dot.png",
+        fire: "fire.png",
+    },
 };
 
 const config = {
@@ -61,8 +73,8 @@ const config = {
 
     physics: {
         enabled: false,
-        path: 'dist/ammo.js',
-        gravity: { x: 0, y: -9.8, z: 0}
+        path: "dist/ammo.js",
+        gravity: { x: 0, y: -9.8, z: 0 },
     },
 
     tween: {
@@ -76,10 +88,10 @@ const config = {
     },
 };
 
-window.addEventListener('load', () => {
+window.addEventListener("load", () => {
     store.createStore({}, {}, true);
 
-    Router.on('/', Intro);
+    Router.on("/", Intro);
 
     Router.start(config, assets);
 });
