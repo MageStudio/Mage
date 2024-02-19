@@ -19,7 +19,7 @@ import Scene from "../core/Scene";
 import { isScene, serializeQuaternion, serializeVector } from "../lib/meshUtils";
 
 import { DEFAULT_TAG, ENTITY_EVENTS, ENTITY_TYPES, FLAT_ENTITY_TYPES } from "./constants";
-import { FUNCTIONS, LOOPING, tweenTo } from "../lib/easing";
+import { tweenTo } from "../lib/easing";
 
 export default class Entity extends EventDispatcher {
     constructor(options = {}) {

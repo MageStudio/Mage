@@ -41,6 +41,7 @@ import {
 import { isTextureMapAllowedForMaterial } from "../materials/helpers";
 import { generateRandomName } from "../lib/uuid";
 import { tweenTo } from "../lib/easing";
+import { populateMap, serializeMap } from "../lib/map";
 
 const COLLIDER_TAG = "collider";
 const DEFAULT_COLLIDER_OFFSET = { x: 0, y: 0, z: 0 };
@@ -59,7 +60,7 @@ export default class Element extends Entity {
             body,
         } = options;
 
-        this.textures = {};
+        this.textures = new Map();
         this.opacity = 1;
         this.options = {
             ...options,
@@ -67,7 +68,7 @@ export default class Element extends Entity {
         };
 
         this.physicsOptions = DEFAULT_PHYSICS_OPTIONS;
-        this.physicsState = {};
+        this.physicsState = new Map();
 
         this.setBody({ geometry, material, body });
 
@@ -260,16 +261,11 @@ export default class Element extends Entity {
     }
 
     setPhysicsState({ dt, event, ...data } = {}) {
-        const physicsState = {
-            ...this.physicsState,
-            ...data,
-        };
-
-        this.physicsState = physicsState;
+        populateMap(this.physicsState, data);
     }
 
     getPhysicsState(key) {
-        return key ? this.physicsState[key] : this.physicsState;
+        return key ? this.physicsState.get(key) : this.physicsState;
     }
 
     enablePhysics(options = {}) {
@@ -473,7 +469,7 @@ export default class Element extends Entity {
     }
 
     recordTexture(textureId, textureType) {
-        this.textures[textureType] = textureId;
+        this.textures.set(textureType, textureId);
     }
 
     setTextureMap = (textureId, options = {}) => {
@@ -646,11 +642,11 @@ export default class Element extends Entity {
             return {
                 ...super.toJSON(parseJSON),
                 physics: {
-                    state: this.getPhysicsState(),
+                    state: serializeMap(this.getPhysicsState()),
                     options: this.getPhysicsOptions(),
                 },
                 body: this.body.toJSON(),
-                textures: this.textures,
+                textures: serializeMap(this.textures),
                 materialType: this.getMaterialType(),
                 opacity: this.opacity,
                 color: parseJSON ? serializeColor(color) : color,

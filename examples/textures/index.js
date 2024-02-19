@@ -59,6 +59,8 @@ export default class Intro extends Level {
 
         const box = new Cube(5, 0xffffff);
 
+        window.box = box;
+
         box.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: 0.5, metalness: 0 });
         box.setTexture("woodMap", constants.TEXTURES.MAP);
         box.setTexture("woodAO", constants.TEXTURES.AO);

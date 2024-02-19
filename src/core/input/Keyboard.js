@@ -84,6 +84,7 @@ export default class Keyboard extends EventDispatcher {
     }
 
     isPressed(key) {
+        console.log(key, hotkeys.getPressedKeyCodes());
         return hotkeys.isPressed(key);
     }
 }

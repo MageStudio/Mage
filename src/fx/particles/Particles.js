@@ -1,41 +1,41 @@
-import Fountain from './Fountain';
-import Explosion from './Explosion';
-import Fire from './Fire';
-import Rain from './Rain';
-import Snow from './Snow';
-import Trail from './Trail';
+import Fountain from "./Fountain";
+import Explosion from "./Explosion";
+import Fire from "./Fire";
+import Rain from "./Rain";
+import Snow from "./Snow";
+import Trail from "./Trail";
 
-import Scene from '../../core/Scene';
-import Proton from 'three.proton';
-import { DEPRECATIONS, INVALID_EMITTER_ID } from '../../lib/messages';
-import { PARTICLE_EMITTER_TYPES } from './constants';
-import ParticleEmitter from './ParticleEmitter';
-import ParticleEmitterGroup from './ParticleEmitterGroup';
-import ProtonParticleEmitter from './ProtonParticleEmitter';
+import Scene from "../../core/Scene";
+import Proton from "three.proton";
+import { DEPRECATIONS, INVALID_EMITTER_ID } from "../../lib/messages";
+import { PARTICLE_EMITTER_TYPES } from "./constants";
+import ParticleEmitter from "./ParticleEmitter";
+import ParticleEmitterGroup from "./ParticleEmitterGroup";
+import ProtonParticleEmitter from "./ProtonParticleEmitter";
 
 export const PARTICLES = {
-    RAIN: 'rain',
-    EXPLOSION: 'explosion',
-    FOUNTAIN: 'fountain',
-    FIRE: 'fire',
-    SNOW: 'snow',
-    TRAIL: 'trail'
+    RAIN: "rain",
+    EXPLOSION: "explosion",
+    FOUNTAIN: "fountain",
+    FIRE: "fire",
+    SNOW: "snow",
+    TRAIL: "trail",
 };
+
+const DEPRECATED_PARTICLES = [PARTICLES.RAIN, PARTICLES.FOUNTAIN, PARTICLES.SNOW];
 
 const { SINGLE, GROUP } = PARTICLE_EMITTER_TYPES;
 export class Particles {
-
     constructor() {
-        this.map = {
-            [PARTICLES.RAIN]: Rain,
-            [PARTICLES.EXPLOSION]: Explosion,
-            [PARTICLES.FOUNTAIN]: Fountain,
-            [PARTICLES.FIRE]: Fire,
-            [PARTICLES.SNOW]: Snow,
-            [PARTICLES.TRAIL]: Trail
-        };
+        this.map = new Map();
+        this.map.set(PARTICLES.RAIN, Rain);
+        this.map.set(PARTICLES.EXPLOSION, Explosion);
+        this.map.set(PARTICLES.FOUNTAIN, Fountain);
+        this.map.set(PARTICLES.FIRE, Fire);
+        this.map.set(PARTICLES.SNOW, Snow);
+        this.map.set(PARTICLES.TRAIL, Trail);
 
-        this.emitters = {};
+        this.emitters = new Map();
         this.toDispose = [];
     }
 
@@ -49,17 +49,19 @@ export class Particles {
     }
 
     get(name) {
-        return this.map[name] || null;
+        return this.map.get(name) || null;
     }
 
     registerEmitter(key, Emitter) {
-        this.map[key] = Emitter;
+        this.map.set(key, Emitter);
     }
 
     isValidEmitter(emitter) {
-        return emitter instanceof ParticleEmitter ||
+        return (
+            emitter instanceof ParticleEmitter ||
             emitter instanceof ParticleEmitterGroup ||
-            emitter instanceof ProtonParticleEmitter;
+            emitter instanceof ProtonParticleEmitter
+        );
     }
 
     addParticleEmitter(emitter, options = {}) {
@@ -68,6 +70,10 @@ export class Particles {
     }
 
     add(_emitter, options = {}) {
+        if (DEPRECATED_PARTICLES.includes(_emitter)) {
+            console.warn(DEPRECATIONS.PARTICLES_OLD);
+        }
+
         let emitter;
         if (this.isRegisteredEmitter(_emitter)) {
             const Emitter = this.get(_emitter);
@@ -79,18 +85,18 @@ export class Particles {
             return;
         }
 
-        this.emitters[emitter.uuid()] = emitter;
+        this.emitters.set(emitter.uuid(), emitter);
 
         if (emitter.getType() === GROUP) {
             emitter.forEach(singleEmitter => {
-                this.handleSingleParticleEmitterCreation(singleEmitter)
-            })
+                this.handleSingleParticleEmitterCreation(singleEmitter);
+            });
         } else {
             this.handleSingleParticleEmitterCreation(emitter);
         }
 
         return emitter;
-    };
+    }
 
     handleSingleParticleEmitterCreation(emitter) {
         if (emitter.isProtonEmitter()) {
@@ -106,19 +112,16 @@ export class Particles {
         this.proton.removeEmitter(emitter.getSystem());
     }
 
-    isRegisteredEmitter = (name) => typeof name === 'string' && name in this.map;
+    isRegisteredEmitter = name => typeof name === "string" && this.map.has(name);
 
     hasEmitters = () => this.emitters.length > 0;
 
-    updateEmitters = (dt) => {
+    updateEmitters = dt => {
         this.toDispose = [];
-        Object
-            .keys(this.emitters)
-            .forEach(uuid => {
-                const emitter = this.emitters[uuid];
-                this.updateSingleEmitter(emitter, dt);
-            });
-    }
+        this.emitters.forEach(emitter => {
+            this.updateSingleEmitter(emitter, dt);
+        });
+    };
 
     updateSingleEmitter(emitter, dt) {
         if (!emitter.isProtonEmitter()) {
@@ -132,16 +135,16 @@ export class Particles {
 
     disposeDeadEmitters() {
         this.toDispose.forEach(uuid => {
-            const emitter = this.emitters[uuid];
+            const emitter = this.emitters.get(uuid);
 
             if (emitter.isProtonEmitter()) {
                 this.removeProtonEmitter(emitter);
             } else {
-                this.emitters[uuid].dispose();
+                emitter.dispose();
             }
 
-            delete this.emitters[uuid];
-        })
+            this.emitters.delete(uuid);
+        });
     }
 
     update(dt) {
@@ -157,5 +160,5 @@ export class Particles {
         }
     }
 }
- 
+
 export default new Particles();

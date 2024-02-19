@@ -2,6 +2,7 @@ export const PREFIX = "[Mage]";
 export const DEPRECATED = "[DEPRECATED]";
 
 export const DEPRECATIONS = {
+    PARTICLES_OLD: `${PREFIX} ${DEPRECATED} This Particle System is outdated and will be removed in the next major release`,
     PARTICLES_ADD_PARTICLE_EMITTER: `${PREFIX} ${DEPRECATED} Particles.addParticleEmitter is deprecated, use Particles.add instead. Will be removed in the next major release`,
     MODELS_GETMODEL: `${PREFIX} ${DEPRECATED} Models.getModel is deprecated, use Models.get instead. Will be removed in next major release`,
     SCRIPTS_CREATE: `${PREFIX} ${DEPRECATED} Scripts.create is deprecated, use Scripts.register instead. Will be removed in next major release.`,
