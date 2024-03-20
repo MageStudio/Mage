@@ -7,6 +7,8 @@ import {
     MeshToonMaterial,
 } from "three";
 
+import * as vivify from "vivifyjs";
+
 import Config from "../core/config";
 import Lights from "../lights/Lights";
 import ToonMaterial from "../materials/Toon";
@@ -56,6 +58,20 @@ export const applyMaterialChange = (elementBody, changeCallback) => {
                 processMaterial(child.material, changeCallback);
             }
         });
+    }
+};
+
+export const extractMaterialProperty = (elementBody, property) => {
+    if (hasMaterial(elementBody)) {
+        return vivify.get(property, elementBody.material);
+    } else {
+        let found;
+        elementBody.traverse(child => {
+            if (hasMaterial(child) && !found) {
+                found = vivify.get(child.material, property);
+            }
+        });
+        return found;
     }
 };
 
