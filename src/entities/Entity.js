@@ -325,6 +325,16 @@ export default class Entity extends EventDispatcher {
         this.disposed = true;
     }
 
+    /**
+     * TODO: the entire state machine system needs to be a component
+     * e.g.
+     *
+     * const stateMachine = new StateMachineComponent();
+     * element.addComponent(stateMachine);
+     *
+     * element.getComponent("statemachine").dosomething;
+     */
+
     hasStateMachine = () => !!this.stateMachine;
 
     addStateMachine(description) {
@@ -361,6 +371,16 @@ export default class Entity extends EventDispatcher {
             console.log(STATE_MACHINE_NOT_AVAILABLE);
         }
     }
+
+    /**
+     * TODO: ScriptComponent to handle scripts
+     * e.g.
+     *
+     * const scriptComponent = new ScriptsComponent();
+     * element.addComponent(physicscomponent);
+     *
+     * element.getComponent("physics").play("animationId");
+     */
 
     getScript(name) {
         if (!this.hasScript(name)) {

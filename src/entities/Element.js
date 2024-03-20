@@ -9,12 +9,21 @@ import {
     ELEMENT_SET_COLOR_MISSING_COLOR,
     ELEMENT_MATERIAL_NO_SUPPORT_FOR_TEXTURE,
     DEPRECATIONS,
+    ELEMENT_SET_FOG_MISSING_MISSING_VALUE,
+    ELEMENT_SET_REFLECTIVITY_MISSING_VALUE,
+    ELEMENT_SET_REFRACTION_RATIO_MISSING_VALUE,
 } from "../lib/messages";
 import Images from "../images/Images";
 import AnimationHandler from "./animations/AnimationHandler";
 import Config from "../core/config";
 import Scene from "../core/Scene";
-import { COLLISION_EVENT, MATERIALS, TEXTURES } from "../lib/constants";
+import {
+    COLLISION_EVENT,
+    MATERIALS,
+    MATERIAL_PROPERTIES_DEFAULT_VALUES,
+    PROPERTIES,
+    TEXTURES,
+} from "../lib/constants";
 import Universe from "../core/Universe";
 import Physics from "../physics";
 import { DEFAULT_ANGULAR_VELOCITY, DEFAULT_LINEAR_VELOCITY } from "../physics/constants";
@@ -37,6 +46,7 @@ import {
     setUpLightsAndShadows,
     applyMaterialChange,
     serializeColor,
+    extractMaterialProperty,
 } from "../lib/meshUtils";
 import { isTextureMapAllowedForMaterial } from "../materials/helpers";
 import { generateRandomName } from "../lib/uuid";
@@ -160,6 +170,16 @@ export default class Element extends Entity {
         }
     }
 
+    /**
+     * TODO: the entire animation system needs to be a component
+     * e.g.
+     *
+     * const animationComponent = new AnimationComponent();
+     * element.addComponent(animationComponent);
+     *
+     * element.getComponent("animation").play("animationId");
+     */
+
     setArmature(armature) {
         this.armature = armature;
 
@@ -247,6 +267,16 @@ export default class Element extends Entity {
 
         return [];
     }
+
+    /**
+     * TODO: the entire physics system needs to be a component
+     * e.g.
+     *
+     * const physicscomponent = new PhysicsComponent();
+     * element.addComponent(physicscomponent);
+     *
+     * element.getComponent("physics").play("animationId");
+     */
 
     setPhysicsOptions({ applyPhysicsUpdate = true, ...rest } = DEFAULT_PHYSICS_OPTIONS) {
         const parsedOptions = {
@@ -445,7 +475,7 @@ export default class Element extends Entity {
         }
     }
 
-    setColor(color) {
+    setColor(color = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.COLOR]) {
         const _setColor = material => (material.color = new Color(color));
         if (color) {
             applyMaterialChange(this.getBody(), _setColor);
@@ -455,17 +485,211 @@ export default class Element extends Entity {
     }
 
     getColor() {
-        if (hasMaterial(this.getBody())) {
-            return this.body.material.color;
+        return extractMaterialProperty(this.getBody(), PROPERTIES.COLOR);
+    }
+
+    setFog(enabled = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.FOG]) {
+        const _setFog = material => (material[PROPERTIES.FOG] = enabled);
+        applyMaterialChange(this.getBody(), _setFog);
+    }
+
+    getFog() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.FOG);
+    }
+
+    setReflectivity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.REFLECTIVITY]) {
+        const _setReflectivity = material => (material[PROPERTIES.REFLECTIVITY] = value);
+        if (value != undefined) {
+            applyMaterialChange(this.getBody(), _setReflectivity);
         } else {
-            let found;
-            this.body.traverse(child => {
-                if (hasMaterial(child) && !found) {
-                    found = child.material.color;
-                }
-            });
-            return found;
+            console.warn(ELEMENT_SET_REFLECTIVITY_MISSING_VALUE);
         }
+    }
+
+    getReflectivity() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.REFLECTIVITY);
+    }
+
+    setRefractionRatio(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.REFRACTION_RATIO]) {
+        const _setRefractionRatio = material => (material[PROPERTIES.REFRACTION_RATIO] = value);
+        if (value != undefined) {
+            applyMaterialChange(this.getBody(), _setRefractionRatio);
+        } else {
+            console.warn(ELEMENT_SET_REFRACTION_RATIO_MISSING_VALUE);
+        }
+    }
+
+    getRefractionRatio() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.REFRACTION_RATIO);
+    }
+
+    setDepthWrite(flag = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.DEPTH_WRITE]) {
+        const _setDepthWrite = material => (material[PROPERTIES.DEPTH_WRITE] = flag);
+        applyMaterialChange(this.getBody(), _setDepthWrite);
+    }
+
+    getDepthWrite() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.DEPTH_WRITE);
+    }
+
+    setDepthTest(flag = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.DEPTH_TEST]) {
+        const _setDepthTest = material => (material[PROPERTIES.DEPTH_TEST] = flag);
+        applyMaterialChange(this.getBody(), _setDepthTest);
+    }
+
+    getDepthTest() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.DEPTH_TEST);
+    }
+
+    setCombine(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.COMBINE]) {
+        const _setCombine = material => (material[PROPERTIES.COMBINE] = value);
+        applyMaterialChange(this.getBody(), _setCombine);
+    }
+
+    getCombine() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.COMBINE);
+    }
+
+    setFlatShading(flag = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.FLAT_SHADING]) {
+        const _setFlatShading = material => (material[PROPERTIES.FLAT_SHADING] = flag);
+        applyMaterialChange(this.getBody(), _setFlatShading);
+    }
+
+    getFlatShading() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.FLAT_SHADING);
+    }
+
+    setShininess(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.SHININESS]) {
+        const _setShininess = material => (material[PROPERTIES.SHININESS] = value);
+        applyMaterialChange(this.getBody(), _setShininess);
+    }
+
+    getShininess() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.SHININESS);
+    }
+
+    setSpecularColor(color = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.SPECULAR]) {
+        const _setSpecularColor = material => (material[PROPERTIES.SPECULAR] = new Color(color));
+        applyMaterialChange(this.getBody(), _setSpecularColor);
+    }
+
+    getSpecularColor() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.SPECULAR);
+    }
+
+    setNormalScale(normalScale = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.NORMAL_SCALE]) {
+        const _setNormalScale = material => (material[PROPERTIES.NORMAL_SCALE] = normalScale);
+        applyMaterialChange(this.getBody(), _setNormalScale);
+    }
+
+    getNormalScale() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.NORMAL_SCALE);
+    }
+
+    setMetalness(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.METALNESS]) {
+        const _setMetalness = material => (material[PROPERTIES.METALNESS] = value);
+        applyMaterialChange(this.getBody(), _setMetalness);
+    }
+
+    getMetalness() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.METALNESS);
+    }
+
+    setRoughness(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.ROUGHNESS]) {
+        const _setRoughness = material => (material[PROPERTIES.ROUGHNESS] = value);
+        applyMaterialChange(this.getBody(), _setRoughness);
+    }
+
+    getRoughness() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.ROUGHNESS);
+    }
+
+    setEmissive(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.EMISSIVE]) {
+        const _setEmissive = material => (material[PROPERTIES.EMISSIVE] = new Color(value));
+        applyMaterialChange(this.getBody(), _setEmissive);
+    }
+
+    getEmissive() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.EMISSIVE);
+    }
+
+    setEmissiveIntensity(
+        value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.EMISSIVE_INTENSITY],
+    ) {
+        const _setEmissiveIntensity = material => (material[PROPERTIES.EMISSIVE_INTENSITY] = value);
+        applyMaterialChange(this.getBody(), _setEmissiveIntensity);
+    }
+
+    getEmissiveIntensity() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.EMISSIVE_INTENSITY);
+    }
+
+    setLightMapIntensity(
+        value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.LIGHT_MAP_INTENSITY],
+    ) {
+        const _setLightMapIntensity = material =>
+            (material[PROPERTIES.LIGHT_MAP_INTENSITY] = value);
+        applyMaterialChange(this.getBody(), _setLightMapIntensity);
+    }
+
+    getLightMapIntensity() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.LIGHT_MAP_INTENSITY);
+    }
+
+    setAOMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.AO_MAP_INTENSITY]) {
+        const _setAOMapIntensity = material => (material[PROPERTIES.AO_MAP_INTENSITY] = value);
+        applyMaterialChange(this.getBody(), _setAOMapIntensity);
+    }
+
+    getAOMapIntensity() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.AO_MAP_INTENSITY);
+    }
+
+    setEnvMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.ENV_MAP_INTENSITY]) {
+        const _setEnvMapIntensity = material => (material[PROPERTIES.ENV_MAP_INTENSITY] = value);
+        applyMaterialChange(this.getBody(), _setEnvMapIntensity);
+    }
+
+    getEnvMapIntensity() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.ENV_MAP_INTENSITY);
+    }
+
+    setDisplacementScale(
+        value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.DISPLACEMENT_SCALE],
+    ) {
+        const _setDisplacementScale = material => (material[PROPERTIES.DISPLACEMENT_SCALE] = value);
+        applyMaterialChange(this.getBody(), _setDisplacementScale);
+    }
+
+    getDisplacementScale() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.DISPLACEMENT_SCALE);
+    }
+
+    setDisplacementBias(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.DISPLACEMENT_BIAS]) {
+        const _setDisplacementBias = material => (material[PROPERTIES.DISPLACEMENT_BIAS] = value);
+        applyMaterialChange(this.getBody(), _setDisplacementBias);
+    }
+
+    getDisplacementBias() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.DISPLACEMENT_BIAS);
+    }
+
+    setBumpScale(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.BUMP_SCALE]) {
+        const _setBumpScale = material => (material[PROPERTIES.BUMP_SCALE] = value);
+        applyMaterialChange(this.getBody(), _setBumpScale);
+    }
+
+    getBumpScale() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.BUMP_SCALE);
+    }
+
+    setSide(side = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.SIDE]) {
+        const _setSide = material => (material[PROPERTIES.SIDE] = side);
+        applyMaterialChange(this.getBody(), _setSide);
+    }
+
+    getSide() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.SIDE);
     }
 
     recordTexture(textureId, textureType) {
@@ -556,6 +780,28 @@ export default class Element extends Entity {
         };
 
         applyMaterialChange(this.getBody(), _setOpacity);
+    }
+
+    getOpacity() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.OPACITY);
+    }
+
+    setTransparent(flag = true) {
+        const _setTransparent = material => (material.transparent = flag);
+        applyMaterialChange(this.getBody(), _setTransparent);
+    }
+
+    isTransparent() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.TRANSPARENT);
+    }
+
+    setVisible(flag = true) {
+        const _setVisible = material => (material.visible = flag);
+        applyMaterialChange(this.getBody(), _setVisible);
+    }
+
+    isVisible() {
+        return extractMaterialProperty(this.getBody(), PROPERTIES.VISIBLE);
     }
 
     fadeTo(opacity = 1, time = 250, options = {}) {
