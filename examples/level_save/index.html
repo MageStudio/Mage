@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Bangers&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="../css/M.css" />
+        <link rel="stylesheet" href="../css/app.css" />
+        <script type="module" src="index.js"></script>
+
+        <style>
+            .save-button {
+                position: absolute;
+                top: 0;
+                z-index: 100000;
+                height: 50px;
+                width: 200px;
+                margin: 16px;
+                background-color: white;
+                color: black;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 24px;
+                font-family: "Bangers", cursive;
+                font-weight: bold;
+                text-align: center;
+                text-decoration: none;
+            }
+
+            .save-button:hover {
+                background-color: #aaa;
+                color: white;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="ui"></div>
+        <div id="gameContainer"></div>
+        <button id="save" class="save-button">Save</button>
+    </body>
+</html>

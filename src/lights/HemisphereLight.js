@@ -26,7 +26,8 @@ export default class HemisphereLight extends Light {
         super({ color, intensity, name });
         this.options = options;
         this.setLight({ color, intensity });
-        this.setEntityType(ENTITY_TYPES.LIGHT.HEMISPHERE);
+        this.setEntityType(ENTITY_TYPES.LIGHT.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.LIGHT.SUBTYPES.HEMISPHERE);
         this.setName(name);
     }
 

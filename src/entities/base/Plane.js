@@ -9,7 +9,16 @@ const DOWN = new Vector3(0, -1, 0);
 
 export default class Plane extends Element {
     constructor(height, width, color = Color.randomColor(true), options = {}) {
-        super(options);
+        super({
+            height,
+            width,
+            color,
+            ...options,
+        });
+
+        this.height = height;
+        this.width = width;
+        this.color = color;
 
         const { transparent = false, opacity = 1 } = options;
 
@@ -17,7 +26,8 @@ export default class Plane extends Element {
         const geometry = new PlaneGeometry(width, height);
 
         this.setBody({ geometry, material });
-        this.setEntityType(ENTITY_TYPES.MESH);
+        this.setEntityType(ENTITY_TYPES.MESH.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.MESH.SUBTYPES.PLANE);
     }
 
     static get UP() {
@@ -27,9 +37,24 @@ export default class Plane extends Element {
         return DOWN;
     }
 
+    toJSON(parseJSON = false) {
+        if (this.isSerializable()) {
+            return {
+                ...super.toJSON(parseJSON),
+                height: this.height,
+                width: this.width,
+                color: this.color,
+            };
+        }
+    }
+
     face(direction) {
         const vector = new Vector3(direction.x, direction.y, direction.z);
 
         this.body.lookAt(vector);
+    }
+
+    static create(data = {}) {
+        return new Plane(data.height, data.width, data.color, data.options);
     }
 }

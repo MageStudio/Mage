@@ -1,63 +1,56 @@
-import { Vector3, MathUtils } from 'three';
+import { Vector3, MathUtils, Vector2 } from "three";
 
 export const PI = Math.PI;
-export const PI_2 = PI/2;
+export const PI_2 = PI / 2;
 
 export const identity = a => a;
 
 export const pickRandom = (list = []) => list[Math.floor(Math.random() * list.length)];
 
-export const degToRad = (angle) => {
+export const degToRad = angle => {
     return angle * (PI / 180);
-}
+};
 
 export const getProportion = (max1, b, max2) => {
-    return (max1 * b)/max2;
-}
+    return (max1 * b) / max2;
+};
 
-export const clamp = (value, min, max) => (
-    value < min ? min : value > max ? max : value
-);
+export const clamp = (value, min, max) => (value < min ? min : value > max ? max : value);
 
 export const isWithin = (value, min, max) => {
     return value >= min && value < max;
 };
 
-export const randomIntFromInterval = (min, max) => { // min and max included 
-    return Math.floor(Math.random() * (max - min + 1) + min)
-}
+export const randomFloatFromInterval = (min, max) => {
+    return Math.random() * (max - min + 1) + min;
+};
+
+export const randomIntFromInterval = (min, max) => {
+    // min and max included
+    return Math.floor(randomFloatFromInterval(min, max));
+};
 
 export const getDistance = (
     { x: xA = 0, y: yA = 0, z: zA = 0 } = {},
-    { x: xB = 0, y: yB = 0, z: zB = 0 } = {}) => (
-        Math.sqrt(
-            Math.pow(xA - xB, 2) +
-            Math.pow(yA - yB, 2) +
-            Math.pow(zA - zB, 2)
-        )
-);
+    { x: xB = 0, y: yB = 0, z: zB = 0 } = {},
+) => Math.sqrt(Math.pow(xA - xB, 2) + Math.pow(yA - yB, 2) + Math.pow(zA - zB, 2));
 
 export const findPointBetweenAtDistance = (
     { x: xC = 0, y: yC = 0, z: zC = 0 } = {},
     { x: xE = 0, y: yE = 0, z: zE = 0 } = {},
-    distance = 1) => {
-
+    distance = 1,
+) => {
     const vCenter = new Vector3(xC, yC, zC);
     const vEnd = new Vector3(xE, yE, zE);
 
-    const point = vCenter.add(
-        vEnd
-            .sub(vCenter)
-            .normalize()
-            .multiplyScalar(distance)
-        );
+    const point = vCenter.add(vEnd.sub(vCenter).normalize().multiplyScalar(distance));
 
     return {
         x: point.x,
         y: point.y,
-        z: point.z
+        z: point.z,
     };
-}
+};
 
 export const lerpVectors = (origin, target, speed) => {
     const originVector = new Vector3(origin.x, origin.y, origin.z);
@@ -68,26 +61,33 @@ export const lerpVectors = (origin, target, speed) => {
     return {
         x: originVector.x,
         y: originVector.y,
-        z: originVector.z
-    }
-}
+        z: originVector.z,
+    };
+};
 
 export const lerp = (x, y, t) => MathUtils.lerp(x, y, t);
 
-export const scaleVector = ({ x = 0, y = 0, z = 0}, scale = 1) => new Vector3(x, y, z).multiplyScalar(scale);
+export const scaleVector = ({ x = 0, y = 0, z = 0 }, scale = 1) =>
+    new Vector3(x, y, z).multiplyScalar(scale);
 
-export const getSphereVolume = (radius) => 4 * Math.PI * Math.pow(radius, 3) / 3;
+export const getSphereVolume = radius => (4 * Math.PI * Math.pow(radius, 3)) / 3;
 
 export const repeat = (t, length) => clamp(t - Math.floor(t / length) * length, 0.0, length);
 
 export const deltaAngle = (angle, target) => {
-    let delta = repeat((target - angle), 360.0);
-    if (delta > 180.0)
-        delta -= 360.0;
+    let delta = repeat(target - angle, 360.0);
+    if (delta > 180.0) delta -= 360.0;
     return delta;
-}
+};
 
-export const smoothDamp = (current, target, currentVelocity, smoothTime, maxSpeed = Infinity, dt) => {
+export const smoothDamp = (
+    current,
+    target,
+    currentVelocity,
+    smoothTime,
+    maxSpeed = Infinity,
+    dt,
+) => {
     smoothTime = Math.max(0.0001, smoothTime);
     const omega = 2 / smoothTime;
 
@@ -112,9 +112,26 @@ export const smoothDamp = (current, target, currentVelocity, smoothTime, maxSpee
     }
 
     return [output, currentVelocity];
-}
+};
 
-export const smoothDampAngle = (current, target, currentVelocity, smoothTime, maxSpeed = Infinity, dt) => {
+export const smoothDampAngle = (
+    current,
+    target,
+    currentVelocity,
+    smoothTime,
+    maxSpeed = Infinity,
+    dt,
+) => {
     target = current + deltaAngle(current, target);
     return smoothDamp(current, target, currentVelocity, smoothTime, maxSpeed, dt);
-}
+};
+
+export const randomVector3 = (min = 0, max = 1) =>
+    new Vector3(
+        randomFloatFromInterval(min, max),
+        randomFloatFromInterval(min, max),
+        randomFloatFromInterval(min, max),
+    );
+
+export const randomVector2 = (min = 0, max = 1) =>
+    new Vector2(randomFloatFromInterval(min, max), randomFloatFromInterval(min, max));

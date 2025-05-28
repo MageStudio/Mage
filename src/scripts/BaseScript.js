@@ -1,3 +1,7 @@
+/*
+    A dynamic script that can be attached to an entity.
+    This is a script that needs to be updated during the game loop.
+*/
 export default class BaseScript {
     __check() {
         return true;

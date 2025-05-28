@@ -12,7 +12,12 @@ const validateAnisotropy = anisotropy => {
 
 export default class Sprite extends Element {
     constructor(width = 20, height = 20, spriteTexture, options = {}) {
-        super(options);
+        super({
+            width,
+            height,
+            spriteTexture,
+            ...options,
+        });
 
         const { anisotropy = 1, ...rest } = options;
         const texture = Images.get(spriteTexture);
@@ -29,7 +34,8 @@ export default class Sprite extends Element {
         body.scale.y = height;
 
         this.setBody({ body });
-        this.setEntityType(ENTITY_TYPES.SPRITE);
+        this.setEntityType(ENTITY_TYPES.SPRITE.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.SPRITE.SUBTYPES.DEFAULT);
     }
 
     getRotation() {

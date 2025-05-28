@@ -26,7 +26,8 @@ export default class Light extends Entity {
         // target body for the light (only used by directional light)
         this.target = undefined;
 
-        this.setEntityType(ENTITY_TYPES.LIGHT.DEFAULT);
+        this.setEntityType(ENTITY_TYPES.LIGHT.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.LIGHT.SUBTYPES.DEFAULT);
 
         Lights.add(this);
     }
@@ -177,14 +178,15 @@ export default class Light extends Entity {
     }
 
     toJSON(parseJSON = false) {
-        const color = this.getColor();
-        return {
-            ...super.toJSON(parseJSON),
-            type: this.getEntityType(),
-            color: parseJSON ? serializeColor(color) : color,
-            intensity: this.getIntensity(),
-            name: this.getName(),
-            castShadow: this.getCastShadow(),
-        };
+        if (this.isSerializable()) {
+            return {
+                ...super.toJSON(parseJSON),
+                type: this.getEntityType(),
+                color: parseJSON ? serializeColor(this.getColor()) : this.getColor(),
+                intensity: this.getIntensity(),
+                name: this.getName(),
+                castShadow: this.getCastShadow(),
+            };
+        }
     }
 }

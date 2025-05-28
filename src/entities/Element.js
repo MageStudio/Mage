@@ -47,6 +47,7 @@ import {
     applyMaterialChange,
     serializeColor,
     extractMaterialProperty,
+    serialiseMaterial,
 } from "../lib/meshUtils";
 import { isTextureMapAllowedForMaterial } from "../materials/helpers";
 import { generateRandomName } from "../lib/uuid";
@@ -72,10 +73,7 @@ export default class Element extends Entity {
 
         this.textures = new Map();
         this.opacity = 1;
-        this.options = {
-            ...options,
-            name,
-        };
+        this.extendOptions({ name });
 
         this.physicsOptions = DEFAULT_PHYSICS_OPTIONS;
         this.physicsState = new Map();
@@ -89,7 +87,8 @@ export default class Element extends Entity {
         this.animations = [];
 
         this.setMaterialType();
-        this.setEntityType(ENTITY_TYPES.MESH);
+        this.setEntityType(ENTITY_TYPES.MESH.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.MESH.SUBTYPES.DEFAULT);
     }
 
     setBody({ body, geometry, material }) {
@@ -153,6 +152,7 @@ export default class Element extends Entity {
             if (replace) this.dispose();
 
             this.body.name = name;
+            Universe.replaceUUIDToElementNameReference(this.uuid(), name);
 
             if (replace) this.addToScene();
         }
@@ -692,8 +692,8 @@ export default class Element extends Entity {
         return extractMaterialProperty(this.getBody(), PROPERTIES.SIDE);
     }
 
-    recordTexture(textureId, textureType) {
-        this.textures.set(textureType, textureId);
+    recordTexture(id, type, options) {
+        this.textures.set(type, { id, options });
     }
 
     setTextureMap = (textureId, options = {}) => {
@@ -713,15 +713,19 @@ export default class Element extends Entity {
 
         if (textureId) {
             const { repeat = { x: 1, y: 1 }, wrap = RepeatWrapping } = options;
+            const textureOptions = {
+                repeat,
+                wrap,
+            };
 
-            this.recordTexture(textureId, textureType);
+            this.recordTexture(textureId, textureType, textureOptions);
 
             const applyTextureTo = material => {
                 const texture = Images.get(textureId);
 
-                texture.wrapS = wrap;
-                texture.wrapT = wrap;
-                texture.repeat.set(repeat.x, repeat.y);
+                texture.wrapS = textureOptions.wrap;
+                texture.wrapT = textureOptions.wrap;
+                texture.repeat.set(textureOptions.repeat.x, textureOptions.repeat.y);
 
                 material[textureType] = texture;
             };
@@ -730,9 +734,9 @@ export default class Element extends Entity {
         }
     }
 
-    getMaterial() {
+    getMaterials() {
         if (hasMaterial(this.getBody())) {
-            return this.getBody().material;
+            return [this.getBody().material];
         }
 
         const materials = [];
@@ -891,9 +895,12 @@ export default class Element extends Entity {
                     state: serializeMap(this.getPhysicsState()),
                     options: this.getPhysicsOptions(),
                 },
-                body: this.body.toJSON(),
+                // body: this.body.toJSON(),
                 textures: serializeMap(this.textures),
                 materialType: this.getMaterialType(),
+                materials: this.getMaterials().map(serialiseMaterial),
+                // no need to have geometry, for basic entities we can build from the type
+                // models have a reference to the model itself
                 opacity: this.opacity,
                 color: parseJSON ? serializeColor(color) : color,
             };

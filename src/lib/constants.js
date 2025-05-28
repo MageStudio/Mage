@@ -271,6 +271,9 @@ export const MATERIAL_TEXTURE_MAP = {
     ],
 };
 
+// removing images when serialising materials because the json becomes too big
+export const UNDESIRED_SERIALISED_MATERIAL_PROPERTIES = ["images", ...Object.values(TEXTURES)];
+
 export const EFFECTS = {
     SEPIA: "SEPIAEFFECT",
     HUE_SATURATION: "HUESATURATIONEFFECT",

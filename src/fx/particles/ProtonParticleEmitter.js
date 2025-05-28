@@ -1,18 +1,14 @@
-import Proton from 'three.proton';
-import {
-    SpriteMaterial,
-    Sprite,
-    AdditiveBlending
-} from 'three';
-import ParticleEmitter from './ParticleEmitter';
-import Images from '../../images/Images';
-import PALETTES from '../../lib/palettes';
+import Proton from "three.proton";
+import { SpriteMaterial, Sprite, AdditiveBlending } from "three";
+import ParticleEmitter from "./ParticleEmitter";
+import Images from "../../images/Images";
+import PALETTES from "../../lib/palettes";
+import { ENTITY_TYPES } from "../../entities/constants";
 
 const DEFAULT_PARTICLE_COLOR = PALETTES.BASE.BLACK;
 const SYSTEM_DISPOSE_TIMEOUT = 700;
 
 export default class ProtonParticleEmitter extends ParticleEmitter {
-
     constructor(options = {}) {
         const {
             initializers = [],
@@ -29,34 +25,35 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
             texture,
             color,
             rate,
-            ...rest
+            ...rest,
         };
 
         super(parsedOptions);
+        this.setEntitySubtype(ENTITY_TYPES.PARTICLE.SUBTYPES.PROTON_EMITTER);
     }
 
-    isProtonEmitter() { return true; }
-    isSystemDead() { return this.system.dead; }
+    isProtonEmitter() {
+        return true;
+    }
+    isSystemDead() {
+        return this.system.dead;
+    }
 
     createParticleBody(texture, color) {
-        return new Sprite(new SpriteMaterial({
-            map: Images.get(texture),
-            transparent: true,
-            color,
-            blending: AdditiveBlending,
-            depthWrite: false,
-            fog: true
-        }));
+        return new Sprite(
+            new SpriteMaterial({
+                map: Images.get(texture),
+                transparent: true,
+                color,
+                blending: AdditiveBlending,
+                depthWrite: false,
+                fog: true,
+            }),
+        );
     }
 
     setSystem() {
-        const {
-            initializers = [],
-            behaviours = [],
-            texture,
-            color,
-            rate
-        } = this.options;
+        const { initializers = [], behaviours = [], texture, color, rate } = this.options;
 
         this.system = new Proton.Emitter();
         this.system.rate = rate;
@@ -70,7 +67,7 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
         behaviours.forEach(behaviour => this.system.addBehaviour(behaviour));
     }
 
-    emit(duration = 'once', life) {
+    emit(duration = "once", life) {
         if (this.hasSystem()) {
             this.system.emit(duration, life);
         }
@@ -101,7 +98,7 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
             this.system.removeAllParticles();
             this.system.destroy();
         }
-    }
+    };
 
     dispose() {
         super.dispose();

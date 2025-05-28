@@ -3,18 +3,13 @@ import Universe from "./Universe";
 import Scene from "./Scene";
 import Stats from "./Stats";
 import Audio from "../audio/Audio";
-// import MeshLoader from "../loaders/MeshLoader";
-// import LightLoader from "../loaders/LightLoader";
 import PostProcessing from "../fx/postprocessing/PostProcessing";
 import Particles from "../fx/particles/Particles";
-import Input, { INPUT_EVENTS_LIST } from "./input/Input";
+import Input from "./input/Input";
 import Lights from "../lights/Lights";
 import Controls from "../controls/Controls";
 import Physics from "../physics";
 import { EventDispatcher } from "three";
-import { fetch } from "whatwg-fetch";
-import { getWindow } from "./window";
-import { upperCaseFirst } from "../lib/strings";
 import { ONCREATE_NOT_AVAILABLE } from "../lib/messages";
 import Camera from "../entities/camera";
 
@@ -40,6 +35,10 @@ export class Level extends EventDispatcher {
         return this.name;
     }
 
+    getPath() {
+        return this.props.path;
+    }
+
     prepareScene() {}
 
     onStateChange = state => {};
@@ -49,35 +48,21 @@ export class Level extends EventDispatcher {
     onBeforeDispose() {}
     onDispose() {}
 
-    parseScene = ({ elements = [], models = [], lights = [] }, options = {}) => {
-        // return new Promise((resolve, reject) => {
-        //     if (elements.length) {
-        //         for (let i in models) {
-        //             elements.push(models[i]);
-        //         }
-        //         MeshLoader.load(elements, options);
-        //     }
-        //     if (lights.length) {
-        //         LightLoader.load(lights, options);
-        //     }
-        //     Scene.updateChildren();
-        //     resolve();
-        // })
-    };
+    // parseLevelData = () => {};
 
-    getJSONUrl = () => null;
+    // getLevelDataURL() {
+    //     return config.getLevelData(this.getPath())?.url;
+    // }
 
-    loadScene = (url = this.getJSONUrl()) => {
-        if (getWindow() && url) {
-            return fetch(url)
-                .then(res => res.json())
-                .then(this.parseScene)
-                .catch(() => Promise.resolve());
-        }
-        return Promise.resolve();
-    };
-
-    preload = (url = this.getJSONUrl()) => this.loadScene(url);
+    // load = (url = this.getLevelDataURL()) => {
+    //     if (getWindow() && url) {
+    //         return fetch(url)
+    //             .then(res => res.json())
+    //             .then(this.parseLevelData)
+    //             .catch(() => Promise.resolve());
+    //     }
+    //     return Promise.resolve();
+    // };
 
     requestNextAnimationFrame() {
         this.requestAnimationFrameId = requestNextFrame(this.render);
@@ -139,10 +124,11 @@ export class Level extends EventDispatcher {
         this.onDispose();
     };
 
-    toJSON(parseJSON = false) {
+    toJSON(parseJSON = true) {
         return {
             ...Lights.toJSON(parseJSON),
             ...Universe.toJSON(parseJSON),
+            ...Audio.toJSON(parseJSON),
         };
     }
 }

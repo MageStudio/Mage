@@ -11,9 +11,20 @@ export default class Cylinder extends Element {
         color = Color.randomColor(true),
         options = {},
     ) {
-        super(options);
-
         const segments = 32;
+
+        super({
+            radiusTop,
+            radiusBottom,
+            height,
+            color,
+            ...options,
+        });
+
+        this.radiusTop = radiusTop;
+        this.radiusBottom = radiusBottom;
+        this.height = height;
+        this.color = color;
 
         const geometry = new CylinderGeometry(radiusTop, radiusBottom, height, segments);
         const material = new MeshBasicMaterial({
@@ -23,6 +34,25 @@ export default class Cylinder extends Element {
         });
 
         this.setBody({ geometry, material });
-        this.setEntityType(ENTITY_TYPES.MESH);
+        this.setEntityType(ENTITY_TYPES.MESH.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.MESH.SUBTYPES.CYLINDER);
+    }
+
+    toJSON(parseJSON = false) {
+        if (this.isSerializable()) {
+            return {
+                ...super.toJSON(parseJSON),
+                radiusTop: this.radiusTop,
+                radiusBottom: this.radiusBottom,
+                height: this.height,
+                color: this.color,
+            };
+        }
+    }
+
+    static create(data = {}) {
+        const { radiusTop, radiusBottom, height, color, options } = data;
+
+        return new Cylinder(radiusTop, radiusBottom, height, color, options);
     }
 }

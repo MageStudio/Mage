@@ -1,55 +1,57 @@
-import { SHADOW_TYPES } from '../lights/constants';
-import { createElementFromSelector } from '../lib/dom';
-import { getWindow } from './window';
+import { SHADOW_TYPES } from "../lights/constants";
+import { createElementFromSelector } from "../lib/dom";
+import { getWindow } from "./window";
 
 const DEFAULT_HEIGHT = 600;
 const DEFAULT_WIDTH = 800;
 const DEFAULT_RATIO = DEFAULT_WIDTH / DEFAULT_HEIGHT;
 
 class Config {
-
     constructor() {
         this.default = {
-
             tests: [],
 
+            levelsData: {
+                // [levelId]: { url: URL }
+            },
+
             screen: {
-                frameRate : 60,
-                alpha: true
+                frameRate: 60,
+                alpha: true,
             },
 
             postprocessing: {
-                enabled: false
+                enabled: false,
             },
 
             fog: {
                 enabled: false,
                 density: 0,
-                color: '#ffffff'
+                color: "#ffffff",
             },
 
             lights: {
                 shadows: true,
                 shadowType: SHADOW_TYPES.BASIC,
-                textureAnisotropy: 16
+                textureAnisotropy: 16,
             },
 
             physics: {
                 enabled: false,
-                path: './mage.physics.js'
+                path: "./mage.physics.js",
             },
 
-            camera : {
+            camera: {
                 //handling useful informations about our camera.
-                fov : 75,
-                near : 0.1,
-                far : 100
+                fov: 75,
+                near: 0.1,
+                far: 100,
             },
 
             ui: {
-                enabled: true
-            }
-        }
+                enabled: true,
+            },
+        };
 
         this.isDefault = true;
     }
@@ -63,15 +65,14 @@ class Config {
             this.isDefault = false;
             this.config = {
                 ...this.default,
-                ...config
+                ...config,
             };
         } else {
             this.config = {
                 ...this.config,
-                config
+                config,
             };
         }
-
     }
 
     container() {
@@ -124,21 +125,20 @@ class Config {
         return {
             h: DEFAULT_HEIGHT,
             w: DEFAULT_WIDTH,
-            ratio: DEFAULT_RATIO
+            ratio: DEFAULT_RATIO,
         };
     }
 
     screen() {
-        const { h, w, ratio } = this.getContainerSize() ||
-            this.getWindowSize() ||
-            this.getScreenDefaults();
+        const { h, w, ratio } =
+            this.getContainerSize() || this.getWindowSize() || this.getScreenDefaults();
 
         this.config.screen = {
             ...this.config.screen,
             h,
             w,
             ratio,
-            devicePixelRatio: window.devicePixelRatio
+            devicePixelRatio: window.devicePixelRatio,
         };
 
         return this.config.screen;
@@ -158,6 +158,10 @@ class Config {
 
     camera() {
         return this.config.camera;
+    }
+
+    getLevelData(levelPath) {
+        return levelPath ? this.config.levelsData[levelPath] : this.config.levelsData;
     }
 }
 

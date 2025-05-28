@@ -3,10 +3,10 @@ import { getState } from "../store";
 
 import { LOCALSTORAGE_NOT_AVAILABLE } from "../lib/messages";
 
-const CURRENT_SCENE_NAME = "CURRENT_SCENE_NAME";
+const CURRENT_LEVEL_NAME = "CURRENT_LEVEL_NAME";
 const STATE_SNAPSHOT = "STATE_SNAPSHOT";
 const TIMESTAMP = "TIMESTAMP";
-const CURRENT_SCENE_JSON = "CURRENT_SCENE_JSON";
+const CURRENT_LEVEL_JSON = "CURRENT_LEVEL_JSON";
 const CURRENT_PATH = "CURRENT_PATH";
 
 export class Storage {
@@ -26,21 +26,21 @@ export class Storage {
             try {
                 const state = getState();
                 const timestamp = +new Date();
-                const currentScene = GameRunner.getCurrentLevel();
+                const currentLevel = GameRunner.getCurrentLevel();
                 const currentPath = GameRunner.getCurrentPath();
                 const { parseJSON = false } = options;
 
-                const sceneJSON = currentScene.toJSON(parseJSON);
-                const sceneName = currentScene.name;
+                const levelJSON = currentLevel.toJSON(parseJSON);
+                const levelName = currentLevel.getName();
 
                 localStorage.setItem(TIMESTAMP, timestamp);
-                localStorage.setItem(CURRENT_SCENE_NAME, sceneName);
+                localStorage.setItem(CURRENT_LEVEL_NAME, levelName);
                 localStorage.setItem(STATE_SNAPSHOT, state);
                 localStorage.setItem(CURRENT_PATH, currentPath);
-                localStorage.setItem(CURRENT_SCENE_JSON, sceneJSON);
+                localStorage.setItem(CURRENT_LEVEL_JSON, levelJSON);
 
                 return Promise.resolve({
-                    sceneName,
+                    levelName,
                     currentPath,
                     timestamp,
                 });
@@ -78,10 +78,10 @@ export class Storage {
         }
     }
 
-    loadScene() {
+    load() {
         if (Storage.isLocalStorageAvailable()) {
-            const scene = localStorage.getItem(CURRENT_SCENE_JSON);
-            return Promise.resolve(JSON.parse(scene));
+            const level = localStorage.getItem(CURRENT_LEVEL_JSON);
+            return Promise.resolve(JSON.parse(level));
         } else {
             return Promise.reject(LOCALSTORAGE_NOT_AVAILABLE);
         }

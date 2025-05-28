@@ -19,7 +19,8 @@ export default class AmbientLight extends Light {
 
         this.options = options;
         this.setLight({ color, intensity });
-        this.setEntityType(ENTITY_TYPES.LIGHT.AMBIENT);
+        this.setEntityType(ENTITY_TYPES.LIGHT.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.LIGHT.SUBTYPES.AMBIENT);
         this.setName(name);
     }
 
@@ -52,5 +53,9 @@ export default class AmbientLight extends Light {
         if (this.usingHelper()) {
             this.setPosition(this.holder.getPosition(), { updateHolder: false });
         }
+    }
+
+    static create(data = {}) {
+        return new AmbientLight(data.options);
     }
 }

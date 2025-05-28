@@ -1,10 +1,10 @@
-import { Vector3 } from 'three';
-import { Randomizers, Emitter } from 'mage-engine.particles';
+import { Vector3 } from "three";
+import { Randomizers, Emitter } from "mage-engine.particles";
 
-import ParticleEmitter from './ParticleEmitter';
+import ParticleEmitter from "./ParticleEmitter";
+import { ENTITY_TYPES } from "../../entities/constants";
 
 export default class Fountain extends ParticleEmitter {
-
     constructor({ container, autostart, particles, system }) {
         const options = {
             container,
@@ -15,14 +15,14 @@ export default class Fountain extends ParticleEmitter {
                 velocity: new Randomizers.SphereRandomizer(12.5),
                 velocityBonus: new Vector3(0, 25, 0),
                 particlesCount: 1000,
-                blending: 'blend',
+                blending: "blend",
                 gravity: -10,
                 startAlpha: 1,
                 endAlpha: 0,
                 startColor: new Randomizers.ColorsRandomizer(),
                 endColor: new Randomizers.ColorsRandomizer(),
                 startAlphaChangeAt: 0,
-                onUpdate: (particle) => {
+                onUpdate: particle => {
                     let floorY = -10;
                     if (particle.position.y < floorY) {
                         particle.position.y = floorY;
@@ -31,7 +31,7 @@ export default class Fountain extends ParticleEmitter {
                         particle.velocity.z *= 0.5;
                     }
                 },
-                ...particles
+                ...particles,
             },
             system: {
                 particlesCount: 100,
@@ -40,10 +40,12 @@ export default class Fountain extends ParticleEmitter {
                     interval: new Randomizers.MinMaxRandomizer(0, 0.25),
                 }),
                 speed: 1,
-                ...system
-            }
+                ...system,
+            },
         };
 
         super(options);
+
+        this.setEntitySubtype(ENTITY_TYPES.PARTICLE.SUBTYPES.FOUNTAIN);
     }
 }

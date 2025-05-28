@@ -31,7 +31,8 @@ export default class PointLight extends Light {
         super({ color, intensity, name });
         this.options = options;
         this.setLight({ color, intensity, distance, decay });
-        this.setEntityType(ENTITY_TYPES.LIGHT.POINT);
+        this.setEntityType(ENTITY_TYPES.LIGHT.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.LIGHT.SUBTYPES.POINT);
         this.setName(name);
     }
 

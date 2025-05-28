@@ -4,7 +4,8 @@ export const DEPRECATED = "[DEPRECATED]";
 export const DEPRECATIONS = {
     PARTICLES_OLD: `${PREFIX} ${DEPRECATED} This Particle System is outdated and will be removed in the next major release`,
     PARTICLES_ADD_PARTICLE_EMITTER: `${PREFIX} ${DEPRECATED} Particles.addParticleEmitter is deprecated, use Particles.add instead. Will be removed in the next major release`,
-    MODELS_GETMODEL: `${PREFIX} ${DEPRECATED} Models.getModel is deprecated, use Models.get instead. Will be removed in next major release`,
+    MODELS_GETMODEL: `${PREFIX} ${DEPRECATED} Models.getModel is deprecated, use Models.create instead. Will be removed in next major release`,
+    MODELS_GET: `${PREFIX} ${DEPRECATED} Models.get is deprecated, use Models.create instead. Will be removed in next major release`,
     SCRIPTS_CREATE: `${PREFIX} ${DEPRECATED} Scripts.create is deprecated, use Scripts.register instead. Will be removed in next major release.`,
     ELEMENT_SET_TEXTURE_MAP: `${PREFIX} ${DEPRECATED} Element.setTextureMap is deprecated, use Element.setTexture() instead. Will be removed in next major release.`,
     SET_ORBIT_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setOrbitControl() is deprecated, use Controls.setOrbitControls() instead. Will be removed in next major release.`,
@@ -48,6 +49,7 @@ export const ELEMENT_SET_REFRACTION_RATIO_MISSING_VALUE = `${PREFIX} Can't set r
 
 export const ENTITY_NOT_SET = `${PREFIX} This entity does not have a body.`;
 export const ENTITY_TYPE_NOT_ALLOWED = `${PREFIX} The desired Entity type is not allowed.`;
+export const ENTITY_SUBTYPE_NOT_ALLOWED = `${PREFIX} The desired Entity subtype is not allowed.`;
 export const ENTITY_CANT_ADD_NOT_ENTITY = `${PREFIX} Entity.add requires an Entity.`;
 export const ENTITY_CHILD_IS_NOT_ENTITY = `${PREFIX} The required child is not an instance of Entity.`;
 
