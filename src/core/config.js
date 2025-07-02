@@ -11,6 +11,13 @@ class Config {
         this.default = {
             tests: [],
 
+            scripts: {
+                // [scriptId]: Script
+                // e.g. "BaseCar": BaseCar,
+                // where at the top of the file we have:
+                // import BaseCar from "../scripts/BaseCar.js";
+            },
+
             levelsData: {
                 // [levelId]: { url: URL }
             },
@@ -160,8 +167,27 @@ class Config {
         return this.config.camera;
     }
 
+    scripts() {
+        return this.config.scripts;
+    }
+
     getLevelData(levelPath) {
         return levelPath ? this.config.levelsData[levelPath] : this.config.levelsData;
+    }
+
+    toJSON() {
+        return {
+            postprocessing: this.postprocessing(),
+            screen: this.screen(),
+            fog: this.fog(),
+            lights: this.lights(),
+            physics: this.physics(),
+            camera: this.camera(),
+            ui: this.ui(),
+            scripts: this.scripts(),
+            tests: this.tests(),
+            levelsData: this.getLevelData(),
+        };
     }
 }
 

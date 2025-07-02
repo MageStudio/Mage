@@ -1,21 +1,20 @@
-import BaseScript from './BaseScript';
-import Input from '../core/input/Input';
-import { fetch } from 'whatwg-fetch';
-import BaseCar from './builtin/BaseCar';
-import SmoothCarFollow from './builtin/SmoothCarFollow';
-import { DEPRECATIONS } from '../lib/messages';
+import BaseScript from "./BaseScript";
+import Input from "../core/input/Input";
+import { fetch } from "whatwg-fetch";
+import BaseCar from "./builtin/BaseCar";
+import SmoothCarFollow from "./builtin/SmoothCarFollow";
+import { DEPRECATIONS, SCRIPT_NEEDS_TO_BE_INSTANCE, SCRIPT_NOT_PROVIDED } from "../lib/messages";
 
 export const BUILTIN = {
-    BASECAR: 'BaseCar',
-    TRAILS: 'Trails',
-    SMOOTH_CAR_FOLLOW: 'SmoothCarFollow'
+    BASECAR: "BaseCar",
+    TRAILS: "Trails",
+    SMOOTH_CAR_FOLLOW: "SmoothCarFollow",
 };
 export class Scripts {
-
     constructor() {
         this.map = {
-            [BUILTIN.BASECAR] : BaseCar,
-            [BUILTIN.SMOOTH_CAR_FOLLOW]: SmoothCarFollow
+            [BUILTIN.BASECAR]: BaseCar,
+            [BUILTIN.SMOOTH_CAR_FOLLOW]: SmoothCarFollow,
         };
     }
 
@@ -30,28 +29,31 @@ export class Scripts {
         const keys = Object.keys(scripts);
 
         if (!keys.length) {
-            return Promise.resolve('scripts');
+            return Promise.resolve("scripts");
         }
 
-        return Promise.all(keys.map(name => this.loadSingleScript(name, level)));
-    }
+        return Promise.all(keys.map(name => this.register(name, this.scripts[name])));
+    };
 
     loadSingleScript = (name, level) => {
         const path = this.scripts[name];
 
         return new Promise(resolve => {
-
             fetch(path)
                 .then(response => response.text())
-                .then((text) => {
+                .then(text => {
                     this.createFromString(text);
                     resolve();
                 });
         });
-    }
+    };
 
     set(id, ScriptClass) {
         this.map[id] = ScriptClass;
+    }
+
+    has(name) {
+        return !!this.map[name];
     }
 
     get(name) {
@@ -66,7 +68,7 @@ export class Scripts {
 
     parseScript(content) {
         // does this mean we can send whatever we want down to the script?
-        return new Function('Script', 'Input', 'return ' + content + ';')(BaseScript, Input);
+        return new Function("Script", "Input", "return " + content + ";")(BaseScript, Input);
     }
 
     createFromString(stringContent) {
@@ -88,11 +90,15 @@ export class Scripts {
             if (script.__check && script.__check()) {
                 this.set(name, ScriptClass);
             } else {
-                console.error('[Mage] Script:', name, 'needs to be an instance of Script.');
+                console.error(SCRIPT_NEEDS_TO_BE_INSTANCE({ name }));
             }
         } else {
-            console.error('[Mage] Script not provided.');
+            console.error(SCRIPT_NOT_PROVIDED);
         }
+    }
+
+    registerList(list) {
+        list.forEach(({ name, script }) => this.register(name, script));
     }
 }
 

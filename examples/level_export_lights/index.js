@@ -15,16 +15,39 @@ import {
     SunLight,
     HemisphereLight,
     Sky,
+    Exporter,
+    BaseScript,
 } from "../../dist/mage.js";
+
+class SimpleScript extends BaseScript {
+    constructor() {
+        super("SimpleScript");
+    }
+
+    start(element, { offset = 0 }) {
+        this.element = element;
+        this.angle = offset;
+    }
+
+    update(dt) {
+        this.angle += dt;
+
+        // this.element.setPosition({ x: Math.sin(this.angle) * 10 });
+        this.element.setRotation({
+            x: 2 * Math.cos(this.angle),
+            y: 2 * Math.sin(this.angle),
+        });
+    }
+}
 
 export default class Intro extends Level {
     addAmbientLight() {
-        const ambientLight = new AmbientLight({
+        AmbientLight.create({
             color: PALETTES.FRENCH_PALETTE.SPRAY,
             intensity: 0.5,
         });
 
-        const hemisphereLight = new HemisphereLight({
+        HemisphereLight.create({
             color: {
                 sky: PALETTES.FRENCH_PALETTE.SQUASH_BLOSSOM,
                 ground: PALETTES.FRENCH_PALETTE.REEF_ENCOUNTER,
@@ -32,14 +55,14 @@ export default class Intro extends Level {
             intensity: 1,
         });
 
-        const sunLight = new SunLight({
+        const sunLight = SunLight.create({
             color: PALETTES.FRENCH_PALETTE.MELON_MELODY,
             intensity: 1,
             far: 20,
             mapSize: 2048,
         });
+
         sunLight.setPosition({ y: 4, z: -3, x: -3 });
-        // sunLight.addHelpers();
     }
 
     createSky() {
@@ -60,10 +83,13 @@ export default class Intro extends Level {
         box.setTexture("woodBump", constants.TEXTURES.BUMP);
         box.setTexture("woodNormal", constants.TEXTURES.NORMAL);
         box.setTexture("woodRoughness", constants.TEXTURES.ROUGHNESS);
+
+        box.addScript("SimpleScript");
         window.box = box;
     }
 
     onCreate() {
+        Scripts.register("SimpleScript", SimpleScript);
         Scene.getCamera().setPosition({ y: 10 });
         Controls.setOrbitControl();
         this.addAmbientLight();
@@ -77,15 +103,7 @@ export default class Intro extends Level {
     }
 
     save() {
-        const content = JSON.stringify(this.toJSON());
-        const fileName = "level.json";
-        const contentType = "application/json";
-        const a = document.createElement("a");
-        const file = new Blob([content], { type: contentType });
-
-        a.href = URL.createObjectURL(file);
-        a.download = fileName;
-        a.click();
+        Exporter.export();
     }
 }
 

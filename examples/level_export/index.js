@@ -16,7 +16,29 @@ import {
     HemisphereLight,
     Sky,
     Exporter,
+    BaseScript,
 } from "../../dist/mage.js";
+
+class SimpleScript extends BaseScript {
+    constructor() {
+        super("SimpleScript");
+    }
+
+    start(element, { offset = 0 }) {
+        this.element = element;
+        this.angle = offset;
+    }
+
+    update(dt) {
+        this.angle += dt;
+
+        // this.element.setPosition({ x: Math.sin(this.angle) * 10 });
+        this.element.setRotation({
+            x: 2 * Math.cos(this.angle),
+            y: 2 * Math.sin(this.angle),
+        });
+    }
+}
 
 export default class Intro extends Level {
     addAmbientLight() {
@@ -61,10 +83,13 @@ export default class Intro extends Level {
         box.setTexture("woodBump", constants.TEXTURES.BUMP);
         box.setTexture("woodNormal", constants.TEXTURES.NORMAL);
         box.setTexture("woodRoughness", constants.TEXTURES.ROUGHNESS);
+
+        box.addScript("SimpleScript");
         window.box = box;
     }
 
     onCreate() {
+        Scripts.register("SimpleScript", SimpleScript);
         Scene.getCamera().setPosition({ y: 10 });
         Controls.setOrbitControl();
         this.addAmbientLight();
@@ -78,7 +103,10 @@ export default class Intro extends Level {
     }
 
     save() {
-        Exporter.exportLevel(this);
+        Exporter.export({
+            config: true,
+            assets: true,
+        });
     }
 }
 

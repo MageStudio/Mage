@@ -12,6 +12,7 @@ import {
     ENTITY_CANT_ADD_NOT_ENTITY,
     ENTITY_NOT_SET,
     ENTITY_SUBTYPE_NOT_ALLOWED,
+    DEPRECATIONS,
 } from "../lib/messages";
 import Scripts from "../scripts/Scripts";
 import Scene from "../core/Scene";
@@ -408,9 +409,14 @@ export default class Entity extends EventDispatcher {
         return script;
     }
 
-    hasScripts = () => this.allScripts().length > 0;
+    hasScripts = () => this.getScripts().length > 0;
 
-    allScripts = () => [...this.dynamicScripts, ...this.staticScripts];
+    getScripts = () => [...this.dynamicScripts, ...this.staticScripts];
+
+    allScripts = () => {
+        console.log(DEPRECATIONS.ENTITY_ALL_SCRIPTS);
+        return this.getScripts();
+    };
 
     hasScript(name) {
         return this.allScripts().filter(script => script.name === name).length;
@@ -695,16 +701,11 @@ export default class Entity extends EventDispatcher {
     }
 
     mapScriptsToJSON() {
-        return this.allScripts().reduce(
-            (acc, { name, options = {}, script }) => {
-                acc.names.push(name);
-                acc.options.push(options);
-                acc.static.push(script.__isStatic());
-
-                return acc;
-            },
-            { names: [], options: [], static: [] },
-        );
+        return this.allScripts().map(({ name, options = {}, script }) => ({
+            name,
+            options,
+            isStatic: script.__isStatic(),
+        }));
     }
 
     toJSON(parseJSON = false) {

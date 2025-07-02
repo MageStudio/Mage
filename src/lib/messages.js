@@ -1,3 +1,5 @@
+import { template } from "./strings";
+
 export const PREFIX = "[Mage]";
 export const DEPRECATED = "[DEPRECATED]";
 
@@ -8,6 +10,7 @@ export const DEPRECATIONS = {
     MODELS_GET: `${PREFIX} ${DEPRECATED} Models.get is deprecated, use Models.create instead. Will be removed in next major release`,
     SCRIPTS_CREATE: `${PREFIX} ${DEPRECATED} Scripts.create is deprecated, use Scripts.register instead. Will be removed in next major release.`,
     ELEMENT_SET_TEXTURE_MAP: `${PREFIX} ${DEPRECATED} Element.setTextureMap is deprecated, use Element.setTexture() instead. Will be removed in next major release.`,
+    ENTITY_ALL_SCRIPTS: `${PREFIX} ${DEPRECATED} Entity.allScripts is deprecated, use Entity.getScripts() instead. Will be removed in next major release.`,
     SET_ORBIT_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setOrbitControl() is deprecated, use Controls.setOrbitControls() instead. Will be removed in next major release.`,
     SET_TRANSFORM_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setTransformControl() is deprecated, use Controls.setTransformControls() instead. Will be removed in next major release.`,
     SET_FIRST_PERSON_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setFirstPersonControl() is deprecated, use Controls.setFirstPersonControls() instead. Will be removed in next major release.`,
@@ -70,6 +73,8 @@ export const EFFECT_COULD_NOT_BE_CREATED = `${PREFIX}  Could not create requeste
 export const EFFECT_UNAVAILABLE = `${PREFIX}  Requested effect is not available.`;
 
 export const SCRIPT_NOT_FOUND = `${PREFIX} Could not find desired script.`;
+export const SCRIPT_NOT_PROVIDED = `${PREFIX} Script not provided.`;
+export const SCRIPT_NEEDS_TO_BE_INSTANCE = template`${PREFIX} Script: ${"name"} needs to be an instance of BaseScript.`;
 
 export const KEYBOARD_COMBO_ALREADY_REGISTERED = `${PREFIX} Keyboard combo already registered.`;
 export const KEYBOARD_COMBO_IS_INVALID = `${PREFIX} Keyboard combo is not valid.`;
@@ -93,3 +98,4 @@ export const LIGHT_NOT_FOUND = `${PREFIX} This light was not created properly.`;
 export const LIGHT_HOLDER_MODEL_NOT_FOUND = `${PREFIX} This light holder model can't be found.`;
 
 export const LABEL_DOMELEMENT_MISSING = `${PREFIX} Could not create Label, domElement is missing. Did you forget to set the this.element ref on your component?`;
+export const NO_VALID_LEVEL_DATA_PROVIDED = `${PREFIX} No valid level data provided`;

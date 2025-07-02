@@ -52,8 +52,10 @@ export default class HemisphereLight extends Light {
     }
 
     setColor = ({ sky, ground } = {}) => {
-        this.getBody().color = sky;
-        this.getBody().groundColor = ground;
+        if (sky && ground) {
+            this.getBody().color = sky;
+            this.getBody().groundColor = ground;
+        }
     };
 
     getColor = () => {
@@ -83,7 +85,9 @@ export default class HemisphereLight extends Light {
         const color = this.getColor();
         return {
             ...super.toJSON(parseJSON),
-            color: parseJSON ? serializeColor(color) : color,
+            color: parseJSON
+                ? { sky: serializeColor(color.sky), ground: serializeColor(color.ground) }
+                : color,
         };
     }
 }
