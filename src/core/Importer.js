@@ -10,6 +10,7 @@ import {
     Box,
     CurveLine,
     Plane,
+    Sprite,
 } from "../entities";
 import Models from "../models/Models";
 import PointLight from "../lights/pointLight";
@@ -19,9 +20,18 @@ import HemisphereLight from "../lights/hemisphereLight";
 import SunLight from "../lights/sunLight";
 import { difference } from "../lib/array";
 import { omit } from "../lib/object";
-import { MATERIAL_PROPERTIES_MAP } from "../lib/constants";
+import { MATERIAL_PROPERTIES_MAP, TEXTURES } from "../lib/constants";
 import Scripts from "../scripts/Scripts";
-import { SCRIPT_NOT_FOUND, NO_VALID_LEVEL_DATA_PROVIDED } from "../lib/messages";
+import {
+    SCRIPT_NOT_FOUND,
+    NO_VALID_LEVEL_DATA_PROVIDED,
+    IMPORTER_ERROR_ELEMENT_CREATION,
+    IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE,
+    IMPORTER_ERROR_LIGHT_CREATION,
+} from "../lib/messages";
+import Sky from "../fx/scenery/Sky";
+import Element from "../entities/Element";
+import { Object3D } from "three";
 
 // class responsible for importing level data from a file
 export class Importer {
@@ -41,44 +51,36 @@ export class Importer {
         return Promise.resolve();
     }
 
-    static completeElementCreation(element, elementData) {
-        // position
-        element.setPosition(elementData.position);
+    static completeCommonCreationSteps(element, elementData, options = {}) {
+        const {
+            skipPosition = false,
+            skipRotation = false,
+            skipQuaternion = false,
+            skipScale = false,
+            skipOpacity = false,
+            skipName = false,
+        } = options;
+
+        /// position
+        if (!skipPosition) element.setPosition(elementData.position);
 
         // rotation
-        element.setRotation(elementData.rotation);
+        if (!skipRotation) element.setRotation(elementData.rotation);
 
         // quaternion
-        element.setQuaternion(elementData.quaternion);
+        if (!skipQuaternion) element.setQuaternion(elementData.quaternion);
 
         // scale
-        element.setScale(elementData.scale);
+        if (!skipScale) element.setScale(elementData.scale);
 
         // opacity
-        element.setOpacity(elementData.opacity);
+        if (!skipOpacity) element.setOpacity(elementData.opacity);
 
         // name
-        element.setUuid(elementData.uuid);
-        element.setName(elementData.name);
-
-        // setting material
-        if (elementData.materials.length) {
-            const defaultMaterialOptionKeys = MATERIAL_PROPERTIES_MAP[elementData.materialType];
-            const disallowedMaterialOptions = difference(
-                Object.keys(elementData.materials[0]),
-                defaultMaterialOptionKeys,
-            );
-            const materialOptions = omit(disallowedMaterialOptions, elementData.materials[0]);
-            element.setMaterialFromName(elementData.materialType, materialOptions);
+        if (!skipName) {
+            element.setUuid(elementData.uuid);
+            element.setName(elementData.name);
         }
-
-        // setting textures
-        const parsedTextures = JSON.parse(elementData.textures);
-        element.setNormalScale();
-        Object.keys(parsedTextures).forEach(textureType => {
-            const { id, options } = parsedTextures[textureType];
-            element.setTexture(id, textureType, options);
-        });
 
         // adding scripts
         if (elementData.scripts && elementData.scripts.length) {
@@ -98,25 +100,31 @@ export class Importer {
         });
     }
 
+    static completeElementCreation(element, elementData) {
+        Importer.completeCommonCreationSteps(element, elementData);
+
+        // setting material
+        if (elementData.materials.length) {
+            const defaultMaterialOptionKeys = MATERIAL_PROPERTIES_MAP[elementData.materialType];
+            const disallowedMaterialOptions = difference(
+                Object.keys(elementData.materials[0]),
+                defaultMaterialOptionKeys,
+            );
+            const materialOptions = omit(disallowedMaterialOptions, elementData.materials[0]);
+            element.setMaterialFromName(elementData.materialType, materialOptions);
+        }
+
+        // setting textures
+        const parsedTextures = JSON.parse(elementData.textures);
+        element.setNormalScale();
+        Object.keys(parsedTextures).forEach(textureType => {
+            const { id, options } = parsedTextures[textureType];
+            element.setTexture(id, textureType, options);
+        });
+    }
+
     static completeLightCreation(light, lightData) {
-        // position
-        light.setPosition(lightData.position);
-
-        // rotation
-        light.setRotation(lightData.rotation);
-
-        // quaternion
-        light.setQuaternion(lightData.quaternion);
-
-        // scale
-        light.setScale(lightData.scale);
-
-        // opacity
-        light.setOpacity(lightData.opacity);
-
-        // name
-        light.setUuid(lightData.uuid);
-        light.setName(lightData.name);
+        Importer.completeCommonCreationSteps(light, lightData, { skipOpacity: true });
 
         // setting color and intensity
         light.setColor(lightData.color);
@@ -160,83 +168,164 @@ export class Importer {
 
         // setting target for directional/sun lights
         if (lightData.target !== undefined) {
-            light.setTarget(lightData.target);
+            const targetElement = new Element({ body: new Object3D() });
+            Importer.completeCommonCreationSteps(targetElement, lightData.target);
+            light.setTarget(targetElement);
         }
+    }
 
-        // adding scripts
-        if (lightData.scripts && lightData.scripts.length) {
-            lightData.scripts.forEach(scriptData => {
-                if (Scripts.has(scriptData.name)) {
-                    const { name, options } = scriptData;
-                    light.addScript(name, options);
-                } else {
-                    console.warn(SCRIPT_NOT_FOUND, scriptData.name);
-                }
-            });
+    static completeSkyCreation(sky, skyData) {
+        // calling completeElementCreation to set position, rotation, quaternion, scale, opacity, name, material, textures, scripts, and data
+        Importer.completeCommonCreationSteps(sky, skyData, { skipScale: true });
+
+        const {
+            turbidity,
+            rayleigh,
+            luminance,
+            mieCoefficient,
+            mieDirectionalG,
+            sunInclination,
+            sunAzimuth,
+            sunDistance,
+        } = skyData.options;
+
+        if (turbidity !== undefined) {
+            sky.setTurbidity(turbidity);
         }
+        if (rayleigh !== undefined) {
+            sky.setRayleigh(rayleigh);
+        }
+        if (luminance !== undefined) {
+            sky.setLuminance(luminance);
+        }
+        if (mieCoefficient !== undefined) {
+            sky.setMieCoefficient(mieCoefficient);
+        }
+        if (mieDirectionalG !== undefined) {
+            sky.setMieDirectionalG(mieDirectionalG);
+        }
+        if (sunInclination !== undefined && sunAzimuth !== undefined && sunDistance !== undefined) {
+            sky.setSun(sunInclination, sunAzimuth, sunDistance);
+        }
+    }
 
-        // setting data
-        Object.keys(lightData.data || {}).forEach(k => {
-            light.setData(k, lightData.data[k]);
-        });
+    static completeSpriteCreation(sprite, spriteData) {
+        // calling completeElementCreation to set position, rotation, quaternion, scale, opacity, name, material, textures, scripts, and data
+        Importer.completeElementCreation(sprite, spriteData);
+
+        const { width, height, spriteTexture, anisotropy, sizeAttenuation, depthTest, depthWrite } =
+            spriteData;
+
+        if (width !== undefined) {
+            sprite.setWidth(width);
+        }
+        if (height !== undefined) {
+            sprite.setHeight(height);
+        }
+        if (spriteTexture !== undefined) {
+            sprite.setTexture(spriteTexture, TEXTURES.MAP);
+        }
+        if (anisotropy !== undefined) {
+            sprite.setAnisotropy(anisotropy);
+        }
+        if (sizeAttenuation !== undefined) {
+            sprite.setSizeAttenuation(sizeAttenuation);
+        }
+        if (depthTest !== undefined) {
+            sprite.setDepthTest(depthTest);
+        }
+        if (depthWrite !== undefined) {
+            sprite.setDepthWrite(depthWrite);
+        }
     }
 
     static parseLevelData(data = {}) {
         const { elements = [], lights = [] } = data;
 
         elements.forEach(data => {
-            if (data.entitySubType === ENTITY_TYPES.MODEL.TYPE) {
-                const { options } = data;
-                const { name, ...rest } = options;
+            try {
+                if (data.entitySubType === ENTITY_TYPES.MODEL.TYPE) {
+                    const { options } = data;
+                    const { name, ...rest } = options;
 
-                Importer.completeElementCreation(Models.create(name, rest), data);
-            } else {
-                switch (data.entitySubType) {
-                    case ENTITY_TYPES.MESH.SUBTYPES.CUBE:
-                        Importer.completeElementCreation(Cube.create(data), data);
-                        break;
-                    case ENTITY_TYPES.MESH.SUBTYPES.LINE:
-                        Importer.completeElementCreation(Line.create(data), data);
-                        break;
-                    case ENTITY_TYPES.MESH.SUBTYPES.SPHERE:
-                        Importer.completeElementCreation(Sphere.create(data), data);
-                        break;
-                    case ENTITY_TYPES.MESH.SUBTYPES.CYLINDER:
-                        Importer.completeElementCreation(Cylinder.create(data), data);
-                        break;
-                    case ENTITY_TYPES.MESH.SUBTYPES.CONE:
-                        Importer.completeElementCreation(Cone.create(data), data);
-                        break;
-                    case ENTITY_TYPES.MESH.SUBTYPES.BOX:
-                        Importer.completeElementCreation(Box.create(data), data);
-                        break;
-                    case ENTITY_TYPES.MESH.SUBTYPES.CURVE_LINE:
-                        Importer.completeElementCreation(CurveLine.create(data), data);
-                        break;
-                    case ENTITY_TYPES.MESH.SUBTYPES.PLANE:
-                        Importer.completeElementCreation(Plane.create(data), data);
-                        break;
+                    Importer.completeElementCreation(Models.create(name, rest), data);
+                } else {
+                    switch (data.entitySubType) {
+                        case ENTITY_TYPES.MESH.SUBTYPES.CUBE:
+                            Importer.completeElementCreation(Cube.create(data), data);
+                            break;
+                        case ENTITY_TYPES.MESH.SUBTYPES.LINE:
+                            Importer.completeElementCreation(Line.create(data), data);
+                            break;
+                        case ENTITY_TYPES.MESH.SUBTYPES.SPHERE:
+                            Importer.completeElementCreation(Sphere.create(data), data);
+                            break;
+                        case ENTITY_TYPES.MESH.SUBTYPES.CYLINDER:
+                            Importer.completeElementCreation(Cylinder.create(data), data);
+                            break;
+                        case ENTITY_TYPES.MESH.SUBTYPES.CONE:
+                            Importer.completeElementCreation(Cone.create(data), data);
+                            break;
+                        case ENTITY_TYPES.MESH.SUBTYPES.BOX:
+                            Importer.completeElementCreation(Box.create(data), data);
+                            break;
+                        case ENTITY_TYPES.MESH.SUBTYPES.CURVE_LINE:
+                            Importer.completeElementCreation(CurveLine.create(data), data);
+                            break;
+                        case ENTITY_TYPES.MESH.SUBTYPES.PLANE:
+                            Importer.completeElementCreation(Plane.create(data), data);
+                            break;
+                        case ENTITY_TYPES.SPRITE.SUBTYPES.DEFAULT:
+                            Importer.completeSpriteCreation(Sprite.create(data), data);
+                            break;
+                        case ENTITY_TYPES.SCENERY.SUBTYPES.SKY:
+                            Importer.completeSkyCreation(Sky.create(data), data);
+                            break;
+                        default:
+                            console.warn(
+                                IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE,
+                                data.entitySubType,
+                            );
+                    }
                 }
+            } catch (error) {
+                console.error(
+                    IMPORTER_ERROR_ELEMENT_CREATION,
+                    data.name,
+                    data.entitySubType,
+                    error,
+                );
             }
         });
 
         lights.forEach(data => {
-            switch (data.entitySubType) {
-                case ENTITY_TYPES.LIGHT.SUBTYPES.POINT:
-                    Importer.completeLightCreation(PointLight.create(data), data);
-                    break;
-                case ENTITY_TYPES.LIGHT.SUBTYPES.AMBIENT:
-                    Importer.completeLightCreation(AmbientLight.create(data), data);
-                    break;
-                case ENTITY_TYPES.LIGHT.SUBTYPES.SPOT:
-                    Importer.completeLightCreation(SpotLight.create(data), data);
-                    break;
-                case ENTITY_TYPES.LIGHT.SUBTYPES.HEMISPHERE:
-                    Importer.completeLightCreation(HemisphereLight.create(data), data);
-                    break;
-                case ENTITY_TYPES.LIGHT.SUBTYPES.SUN:
-                    Importer.completeLightCreation(SunLight.create(data), data);
-                    break;
+            try {
+                switch (data.entitySubType) {
+                    case ENTITY_TYPES.LIGHT.SUBTYPES.POINT:
+                        Importer.completeLightCreation(PointLight.create(data), data);
+                        break;
+                    case ENTITY_TYPES.LIGHT.SUBTYPES.AMBIENT:
+                        Importer.completeLightCreation(AmbientLight.create(data), data);
+                        break;
+                    case ENTITY_TYPES.LIGHT.SUBTYPES.SPOT:
+                        Importer.completeLightCreation(SpotLight.create(data), data);
+                        break;
+                    case ENTITY_TYPES.LIGHT.SUBTYPES.HEMISPHERE:
+                        Importer.completeLightCreation(HemisphereLight.create(data), data);
+                        break;
+                    case ENTITY_TYPES.LIGHT.SUBTYPES.SUN:
+                        Importer.completeLightCreation(SunLight.create(data), data);
+                        break;
+                    default:
+                        console.warn(IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE, data.entitySubType);
+                }
+            } catch (error) {
+                console.error(
+                    IMPORTER_ERROR_LIGHT_CREATION,
+                    data.name,
+                    data.entitySubType,
+                    error.stack,
+                );
             }
         });
     }

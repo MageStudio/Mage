@@ -1,1 +1,441 @@
-{"lights":[{"options":{"color":8572125,"intensity":0.5},"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1},"scale":{"x":1,"y":1,"z":1},"worldTransform":{"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1}},"entityType":"LIGHT.TYPE","entitySubType":"LIGHT.SUBTYPE.AMBIENT","scripts":[],"tags":["all"],"name":"AmbientLight_7a247c71","uuid":"D2DDA7EF-B7B4-47CF-9B06-E32DD715EA09","data":{},"shadow":{"cast":false,"receive":false},"type":"LIGHT.TYPE","color":{"r":0.5098039215686274,"g":0.8,"b":0.8666666666666667},"intensity":0.5},{"options":{"color":{"sky":16169275,"ground":498066},"intensity":1},"position":{"x":0,"y":1,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1},"scale":{"x":1,"y":1,"z":1},"worldTransform":{"position":{"x":0,"y":1,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1}},"entityType":"LIGHT.TYPE","entitySubType":"LIGHT.SUBTYPE.HEMISPHERE","scripts":[],"tags":["all"],"name":"HemisphereLight_5f00375d","uuid":"697AE05C-3ECA-4C74-8825-59AC0888B3DC","data":{},"shadow":{"cast":false,"receive":false},"type":"LIGHT.TYPE","color":{"sky":{"r":0.9647058823529412,"g":0.7254901960784313,"b":0.23137254901960785},"ground":{"r":0.027450980392156862,"g":0.6,"b":0.5725490196078431}},"intensity":1},{"options":{"color":16302737,"intensity":1,"far":20,"mapSize":2048},"position":{"x":-3,"y":4,"z":-3},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1},"scale":{"x":1,"y":1,"z":1},"worldTransform":{"position":{"x":-3,"y":4,"z":-3},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1}},"entityType":"LIGHT.TYPE","entitySubType":"LIGHT.SUBTYPE.SUN","scripts":[],"tags":["all"],"name":"SunLight_0c043e35","uuid":"7FA6A10D-400D-4D93-ABE7-7D4BFAFAF3A5","data":{},"shadow":{"cast":true,"receive":false},"type":"LIGHT.TYPE","color":{"r":0.9725490196078431,"g":0.7607843137254902,"b":0.5686274509803921},"intensity":1,"castShadow":true,"target":{"options":{"body":{"metadata":{"version":4.5,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"038FA816-66D3-4862-9D04-A21AF0421D00","type":"Object3D","name":"Element_21b25d48","castShadow":true,"receiveShadow":true,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]}},"serializable":true,"tag":"","tags":[],"name":"Element_21b25d48"},"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1},"scale":{"x":1,"y":1,"z":1},"worldTransform":{"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1}},"entityType":"MESH.TYPE","entitySubType":"MESH.SUBTYPE.TARGET","scripts":[],"tags":["all"],"name":"Element_21b25d48","uuid":"038FA816-66D3-4862-9D04-A21AF0421D00","data":{},"shadow":{"cast":true,"receive":true},"physics":{"state":"{}","options":{"applyPhysicsUpdate":true}},"textures":"{}","materialType":"BASIC","materials":[],"opacity":1},"bias":-0.0001,"mapSize":2048,"shadowCamera":{"near":0.1,"far":20}}],"elements":[{"options":{"body":{"metadata":{"version":4.5,"type":"Object","generator":"Object3D.toJSON"},"object":{"uuid":"038FA816-66D3-4862-9D04-A21AF0421D00","type":"Object3D","name":"Element_21b25d48","castShadow":true,"receiveShadow":true,"layers":1,"matrix":[1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1]}},"serializable":true,"tag":"","tags":[],"name":"Element_21b25d48"},"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1},"scale":{"x":1,"y":1,"z":1},"worldTransform":{"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1}},"entityType":"MESH.TYPE","entitySubType":"MESH.SUBTYPE.TARGET","scripts":[],"tags":["all"],"name":"Element_21b25d48","uuid":"038FA816-66D3-4862-9D04-A21AF0421D00","data":{},"shadow":{"cast":true,"receive":true},"physics":{"state":"{}","options":{"applyPhysicsUpdate":true}},"textures":"{}","materialType":"BASIC","materials":[],"opacity":1},{"options":{"serializable":true,"tag":"","tags":[],"name":"Sky_ec75c2e5"},"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1},"scale":{"x":10000,"y":10000,"z":10000},"worldTransform":{"position":{"x":0,"y":0,"z":0},"rotation":{"x":0,"y":0,"z":0},"quaternion":{"x":0,"y":0,"z":0,"w":1}},"entityType":"SCENERY","entitySubType":"SCENERY.SUBTYPE.SKY","scripts":[],"tags":["all"],"name":"Sky_ec75c2e5","uuid":"EF37BA61-88A3-4E68-A385-07DB3EA836AC","data":{},"shadow":{"cast":true,"receive":true},"physics":{"state":"{}","options":{"applyPhysicsUpdate":true}},"textures":"{}","materialType":"BASIC","materials":[{"metadata":{"version":4.5,"type":"Material","generator":"Material.toJSON"},"uuid":"9F39F3FE-2BA4-4029-A4A8-C2A5D901A560","type":"ShaderMaterial","side":1,"depthFunc":3,"depthTest":true,"depthWrite":true,"stencilWrite":false,"stencilWriteMask":255,"stencilFunc":519,"stencilRef":0,"stencilFuncMask":255,"stencilFail":7680,"stencilZFail":7680,"stencilZPass":7680,"glslVersion":null,"uniforms":{"luminance":{"value":1},"turbidity":{"value":10},"rayleigh":{"value":0.8},"mieCoefficient":{"value":0.005},"mieDirectionalG":{"value":0.8},"sunPosition":{"type":"v3","value":[-80.90169943749473,55.90169943749475,-18.163563200134025]}},"vertexShader":"uniform vec3 sunPosition;\nuniform float rayleigh;\nuniform float turbidity;\nuniform float mieCoefficient;\nvarying vec3 vWorldPosition;\nvarying vec3 vSunDirection;\nvarying float vSunfade;\nvarying vec3 vBetaR;\nvarying vec3 vBetaM;\nvarying float vSunE;\nconst vec3 up = vec3( 0.0, 1.0, 0.0 );\nconst float e = 2.71828182845904523536028747135266249775724709369995957;\nconst float pi = 3.141592653589793238462643383279502884197169;\nconst vec3 lambda = vec3( 680E-9, 550E-9, 450E-9 );\nconst vec3 totalRayleigh = vec3( 5.804542996261093E-6, 1.3562911419845635E-5, 3.0265902468824876E-5 );\nconst float v = 4.0;\nconst vec3 K = vec3( 0.686, 0.678, 0.666 );\nconst vec3 MieConst = vec3( 1.8399918514433978E14, 2.7798023919660528E14, 4.0790479543861094E14 );\nconst float cutoffAngle = 1.6110731556870734;\nconst float steepness = 1.5;\nconst float EE = 1000.0;\nfloat sunIntensity( float zenithAngleCos ) {\n    zenithAngleCos = clamp( zenithAngleCos, -1.0, 1.0 );\n    return EE * max( 0.0, 1.0 - pow( e, -( ( cutoffAngle - acos( zenithAngleCos ) ) / steepness ) ) );\n}\nvec3 totalMie( float T ) {\n    float c = ( 0.2 * T ) * 10E-18;\n    return 0.434 * c * MieConst;\n}\nvoid main() {\n    vec4 worldPosition = modelMatrix * vec4( position, 1.0 );\n    vWorldPosition = worldPosition.xyz;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n    gl_Position.z = gl_Position.w;\n    vSunDirection = normalize( sunPosition );\n    vSunE = sunIntensity( dot( vSunDirection, up ) );\n    vSunfade = 1.0 - clamp( 1.0 - exp( ( sunPosition.y / 450000.0 ) ), 0.0, 1.0 );\n    float rayleighCoefficient = rayleigh - ( 1.0 * ( 1.0 - vSunfade ) );\n    vBetaR = totalRayleigh * rayleighCoefficient;\n    vBetaM = totalMie( turbidity ) * mieCoefficient;\n}","fragmentShader":"varying vec3 vWorldPosition;\nvarying vec3 vSunDirection;\nvarying float vSunfade;\nvarying vec3 vBetaR;\nvarying vec3 vBetaM;\nvarying float vSunE;\nuniform float luminance;\nuniform float mieDirectionalG;\nconst vec3 cameraPos = vec3( 0.0, 0.0, 0.0 );\nconst float pi = 3.141592653589793238462643383279502884197169;\nconst float n = 1.0003;\nconst float N = 2.545E25;\nconst float rayleighZenithLength = 8.4E3;\nconst float mieZenithLength = 1.25E3;\nconst vec3 up = vec3( 0.0, 1.0, 0.0 );\nconst float sunAngularDiameterCos = 0.999956676946448443553574619906976478926848692873900859324;\nconst float THREE_OVER_SIXTEENPI = 0.05968310365946075;\nconst float ONE_OVER_FOURPI = 0.07957747154594767;\nfloat rayleighPhase( float cosTheta ) {\n    return THREE_OVER_SIXTEENPI * ( 1.0 + pow( cosTheta, 2.0 ) );\n}\nfloat hgPhase( float cosTheta, float g ) {\n    float g2 = pow( g, 2.0 );\n    float inverse = 1.0 / pow( 1.0 - 2.0 * g * cosTheta + g2, 1.5 );\n    return ONE_OVER_FOURPI * ( ( 1.0 - g2 ) * inverse );\n}\nconst float A = 0.15;\nconst float B = 0.50;\nconst float C = 0.10;\nconst float D = 0.20;\nconst float E = 0.02;\nconst float F = 0.30;\nconst float whiteScale = 1.0748724675633854;\nvec3 Uncharted2Tonemap( vec3 x ) {\n    return ( ( x * ( A * x + C * B ) + D * E ) / ( x * ( A * x + B ) + D * F ) ) - E / F;\n}\nvoid main() {\n    float zenithAngle = acos( max( 0.0, dot( up, normalize( vWorldPosition - cameraPos ) ) ) );\n    float inverse = 1.0 / ( cos( zenithAngle ) + 0.15 * pow( 93.885 - ( ( zenithAngle * 180.0 ) / pi ), -1.253 ) );\n    float sR = rayleighZenithLength * inverse;\n    float sM = mieZenithLength * inverse;\n    vec3 Fex = exp( -( vBetaR * sR + vBetaM * sM ) );\n    float cosTheta = dot( normalize( vWorldPosition - cameraPos ), vSunDirection );\n    float rPhase = rayleighPhase( cosTheta * 0.5 + 0.5 );\n    vec3 betaRTheta = vBetaR * rPhase;\n    float mPhase = hgPhase( cosTheta, mieDirectionalG );\n    vec3 betaMTheta = vBetaM * mPhase;\n    vec3 Lin = pow( vSunE * ( ( betaRTheta + betaMTheta ) / ( vBetaR + vBetaM ) ) * ( 1.0 - Fex ), vec3( 1.5 ) );\n    Lin *= mix( vec3( 1.0 ), pow( vSunE * ( ( betaRTheta + betaMTheta ) / ( vBetaR + vBetaM ) ) * Fex, vec3( 1.0 / 2.0 ) ), clamp( pow( 1.0 - dot( up, vSunDirection ), 5.0 ), 0.0, 1.0 ) );\n    vec3 direction = normalize( vWorldPosition - cameraPos );\n    float theta = acos( direction.y ); // elevation --> y-axis, [-pi/2, pi/2]\n    float phi = atan( direction.z, direction.x ); // azimuth --> x-axis [-pi/2, pi/2]\n    vec2 uv = vec2( phi, theta ) / vec2( 2.0 * pi, pi ) + vec2( 0.5, 0.0 );\n    vec3 L0 = vec3( 0.1 ) * Fex;\n    float sundisk = smoothstep( sunAngularDiameterCos, sunAngularDiameterCos + 0.00002, cosTheta );\n    L0 += ( vSunE * 19000.0 * Fex ) * sundisk;\n    vec3 texColor = ( Lin + L0 ) * 0.04 + vec3( 0.0, 0.0003, 0.00075 );\n    vec3 curr = Uncharted2Tonemap( ( log2( 2.0 / pow( luminance, 4.0 ) ) ) * texColor );\n    vec3 color = curr * whiteScale;\n    vec3 retColor = pow( color, vec3( 1.0 / ( 1.2 + ( 1.2 * vSunfade ) ) ) );\n    gl_FragColor = vec4( retColor, 1.0 );\n}"}],"opacity":1},{"options":{"size":5,"color":16777215,"serializable":true,"tag":"","tags":[],"name":"Cube_d2333f90"},"position":{"x":0,"y":0,"z":0},"rotation":{"x":0.6863523074034695,"y":1.8785421235952984,"z":0},"quaternion":{"x":0.1986497399720079,"y":0.7600649048100127,"z":0.27158220741284855,"w":0.5559520895742406},"scale":{"x":1,"y":1,"z":1},"worldTransform":{"position":{"x":0,"y":0,"z":0},"rotation":{"x":-2.455240346186322,"y":1.2630505299944945,"z":3.1415926535897922},"quaternion":{"x":0.19864973997200783,"y":0.7600649048100124,"z":0.2715822074128485,"w":0.5559520895742408}},"entityType":"MESH.TYPE","entitySubType":"MESH.SUBTYPE.CUBE","scripts":[{"name":"SimpleScript","options":{},"isStatic":false}],"tags":["all"],"name":"Cube_d2333f90","uuid":"5338185E-4DA5-49C7-9145-9111B236728F","data":{},"shadow":{"cast":true,"receive":true},"physics":{"state":"{}","options":{"applyPhysicsUpdate":true}},"textures":"{\"map\":{\"id\":\"woodMap\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}},\"aoMap\":{\"id\":\"woodAO\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}},\"bumpMap\":{\"id\":\"woodBump\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}},\"normalMap\":{\"id\":\"woodNormal\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}},\"roughnessMap\":{\"id\":\"woodRoughness\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}}}","materialType":"STANDARD","materials":[{"metadata":{"version":4.5,"type":"Material","generator":"Material.toJSON"},"uuid":"D59F68E9-2821-4CBA-95D8-0E58ADA06EB5","type":"MeshStandardMaterial","color":16777215,"roughness":0.5,"metalness":0,"emissive":0,"aoMapIntensity":1,"bumpScale":1,"normalMapType":0,"normalScale":[1,1],"depthFunc":3,"depthTest":true,"depthWrite":true,"stencilWrite":false,"stencilWriteMask":255,"stencilFunc":519,"stencilRef":0,"stencilFuncMask":255,"stencilFail":7680,"stencilZFail":7680,"stencilZPass":7680,"skinning":true,"textures":[{"uuid":"AE0B2C3B-2159-4EF4-BE1D-87309553A80F","name":"","mapping":300,"repeat":[1,1],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1000,1000],"format":1022,"type":1009,"encoding":3000,"minFilter":1008,"magFilter":1006,"anisotropy":1,"flipY":true,"premultiplyAlpha":false,"unpackAlignment":4,"image":"475A9F92-3012-4412-B151-0918CA4122EF"},{"uuid":"00B9BEBF-9854-42FC-AEC4-6154B0E420F0","name":"","mapping":300,"repeat":[1,1],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1000,1000],"format":1022,"type":1009,"encoding":3000,"minFilter":1008,"magFilter":1006,"anisotropy":1,"flipY":true,"premultiplyAlpha":false,"unpackAlignment":4,"image":"E6A85B84-8381-46A9-A3CE-915CA1885DA5"},{"uuid":"8226A6E5-6B0A-4E20-A198-EAB40F267793","name":"","mapping":300,"repeat":[1,1],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1000,1000],"format":1023,"type":1009,"encoding":3000,"minFilter":1008,"magFilter":1006,"anisotropy":1,"flipY":true,"premultiplyAlpha":false,"unpackAlignment":4,"image":"D7A41B92-421C-4716-8E81-6423A4608367"},{"uuid":"23A03536-AE93-41DC-927D-D5872C7A9D4D","name":"","mapping":300,"repeat":[1,1],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1000,1000],"format":1022,"type":1009,"encoding":3000,"minFilter":1008,"magFilter":1006,"anisotropy":1,"flipY":true,"premultiplyAlpha":false,"unpackAlignment":4,"image":"189333C8-3074-4DB7-B08A-794732F5CB69"},{"uuid":"C5E00DA9-0F0D-4663-96DF-5C41AD6724F5","name":"","mapping":300,"repeat":[1,1],"offset":[0,0],"center":[0,0],"rotation":0,"wrap":[1000,1000],"format":1022,"type":1009,"encoding":3000,"minFilter":1008,"magFilter":1006,"anisotropy":1,"flipY":true,"premultiplyAlpha":false,"unpackAlignment":4,"image":"38372BB2-F490-4DA1-87AB-73D730186A6E"}]}],"opacity":1,"color":{"r":1,"g":1,"b":1}}],"sounds":[]}
+{
+    "lights": [
+        {
+            "options": { "color": 8572125, "intensity": 0.5 },
+            "position": { "x": 0, "y": 0, "z": 0 },
+            "rotation": { "x": 0, "y": 0, "z": 0 },
+            "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 },
+            "scale": { "x": 1, "y": 1, "z": 1 },
+            "worldTransform": {
+                "position": { "x": 0, "y": 0, "z": 0 },
+                "rotation": { "x": 0, "y": 0, "z": 0 },
+                "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
+            },
+            "entityType": "LIGHT.TYPE",
+            "entitySubType": "LIGHT.SUBTYPE.AMBIENT",
+            "scripts": [],
+            "tags": ["all"],
+            "name": "AmbientLight_d20267db",
+            "uuid": "980078F9-05A9-481C-AA31-1730B20782F5",
+            "data": {},
+            "shadow": { "cast": false, "receive": false },
+            "type": "LIGHT.TYPE",
+            "color": { "r": 0.5098039215686274, "g": 0.8, "b": 0.8666666666666667 },
+            "intensity": 0.5
+        },
+        {
+            "options": { "color": { "sky": 16169275, "ground": 498066 }, "intensity": 1 },
+            "position": { "x": 0, "y": 1, "z": 0 },
+            "rotation": { "x": 0, "y": 0, "z": 0 },
+            "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 },
+            "scale": { "x": 1, "y": 1, "z": 1 },
+            "worldTransform": {
+                "position": { "x": 0, "y": 1, "z": 0 },
+                "rotation": { "x": 0, "y": 0, "z": 0 },
+                "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
+            },
+            "entityType": "LIGHT.TYPE",
+            "entitySubType": "LIGHT.SUBTYPE.HEMISPHERE",
+            "scripts": [],
+            "tags": ["all"],
+            "name": "HemisphereLight_c505f2a3",
+            "uuid": "11F41D3F-865E-458E-A026-5BA11AD6E822",
+            "data": {},
+            "shadow": { "cast": false, "receive": false },
+            "type": "LIGHT.TYPE",
+            "color": {
+                "sky": {
+                    "r": 0.9647058823529412,
+                    "g": 0.7254901960784313,
+                    "b": 0.23137254901960785
+                },
+                "ground": { "r": 0.027450980392156862, "g": 0.6, "b": 0.5725490196078431 }
+            },
+            "intensity": 1
+        },
+        {
+            "options": { "color": 16302737, "intensity": 1, "far": 20, "mapSize": 2048 },
+            "position": { "x": -3, "y": 4, "z": -3 },
+            "rotation": { "x": 0, "y": 0, "z": 0 },
+            "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 },
+            "scale": { "x": 1, "y": 1, "z": 1 },
+            "worldTransform": {
+                "position": { "x": -3, "y": 4, "z": -3 },
+                "rotation": { "x": 0, "y": 0, "z": 0 },
+                "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
+            },
+            "entityType": "LIGHT.TYPE",
+            "entitySubType": "LIGHT.SUBTYPE.SUN",
+            "scripts": [],
+            "tags": ["all"],
+            "name": "SunLight_d7f37993",
+            "uuid": "0BA831A8-C014-45B1-A317-6ACB49D2FA5E",
+            "data": {},
+            "shadow": { "cast": true, "receive": false },
+            "type": "LIGHT.TYPE",
+            "color": { "r": 0.9725490196078431, "g": 0.7607843137254902, "b": 0.5686274509803921 },
+            "intensity": 1,
+            "castShadow": true,
+            "target": {
+                "options": {
+                    "body": {
+                        "metadata": {
+                            "version": 4.5,
+                            "type": "Object",
+                            "generator": "Object3D.toJSON"
+                        },
+                        "object": {
+                            "uuid": "99AED206-AB17-43A4-A51C-BAB17B57EFAB",
+                            "type": "Object3D",
+                            "name": "Element_2ed5b88e",
+                            "castShadow": true,
+                            "receiveShadow": true,
+                            "layers": 1,
+                            "matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+                        }
+                    },
+                    "serializable": true,
+                    "tag": "",
+                    "tags": [],
+                    "name": "Element_2ed5b88e"
+                },
+                "position": { "x": 0, "y": 0, "z": 0 },
+                "rotation": { "x": 0, "y": 0, "z": 0 },
+                "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 },
+                "scale": { "x": 1, "y": 1, "z": 1 },
+                "worldTransform": {
+                    "position": { "x": 0, "y": 0, "z": 0 },
+                    "rotation": { "x": 0, "y": 0, "z": 0 },
+                    "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
+                },
+                "entityType": "MESH.TYPE",
+                "entitySubType": "MESH.SUBTYPE.TARGET",
+                "scripts": [],
+                "tags": ["all"],
+                "name": "Element_2ed5b88e",
+                "uuid": "99AED206-AB17-43A4-A51C-BAB17B57EFAB",
+                "data": {},
+                "shadow": { "cast": true, "receive": true },
+                "physics": { "state": "{}", "options": { "applyPhysicsUpdate": true } },
+                "textures": "{}",
+                "materialType": "BASIC",
+                "materials": [],
+                "opacity": 1
+            },
+            "bias": -0.0001,
+            "mapSize": 2048,
+            "shadowCamera": { "near": 0.1, "far": 20 }
+        }
+    ],
+    "elements": [
+        {
+            "options": {
+                "body": {
+                    "metadata": {
+                        "version": 4.5,
+                        "type": "Object",
+                        "generator": "Object3D.toJSON"
+                    },
+                    "object": {
+                        "uuid": "99AED206-AB17-43A4-A51C-BAB17B57EFAB",
+                        "type": "Object3D",
+                        "name": "Element_2ed5b88e",
+                        "castShadow": true,
+                        "receiveShadow": true,
+                        "layers": 1,
+                        "matrix": [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1]
+                    }
+                },
+                "serializable": true,
+                "tag": "",
+                "tags": [],
+                "name": "Element_2ed5b88e"
+            },
+            "position": { "x": 0, "y": 0, "z": 0 },
+            "rotation": { "x": 0, "y": 0, "z": 0 },
+            "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 },
+            "scale": { "x": 1, "y": 1, "z": 1 },
+            "worldTransform": {
+                "position": { "x": 0, "y": 0, "z": 0 },
+                "rotation": { "x": 0, "y": 0, "z": 0 },
+                "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
+            },
+            "entityType": "MESH.TYPE",
+            "entitySubType": "MESH.SUBTYPE.TARGET",
+            "scripts": [],
+            "tags": ["all"],
+            "name": "Element_2ed5b88e",
+            "uuid": "99AED206-AB17-43A4-A51C-BAB17B57EFAB",
+            "data": {},
+            "shadow": { "cast": true, "receive": true },
+            "physics": { "state": "{}", "options": { "applyPhysicsUpdate": true } },
+            "textures": "{}",
+            "materialType": "BASIC",
+            "materials": [],
+            "opacity": 1
+        },
+        {
+            "options": {
+                "scale": 10000,
+                "turbidity": 10,
+                "rayleigh": 0.8,
+                "mieCoefficient": 0.005,
+                "mieDirectionalG": 0.8,
+                "sunInclination": 0.49,
+                "sunAzimuth": 0.205,
+                "sunDistance": 100,
+                "serializable": true,
+                "tag": "",
+                "tags": [],
+                "name": "Sky_a8d704f5"
+            },
+            "position": { "x": 0, "y": 0, "z": 0 },
+            "rotation": { "x": 0, "y": 0, "z": 0 },
+            "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 },
+            "scale": { "x": 10000, "y": 10000, "z": 10000 },
+            "worldTransform": {
+                "position": { "x": 0, "y": 0, "z": 0 },
+                "rotation": { "x": 0, "y": 0, "z": 0 },
+                "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
+            },
+            "entityType": "SCENERY",
+            "entitySubType": "SCENERY.SUBTYPE.SKY",
+            "scripts": [],
+            "tags": ["all"],
+            "name": "Sky_a8d704f5",
+            "uuid": "6D0B9C87-7E09-48AF-9766-0D039024AFE4",
+            "data": {
+                "turbidity": 10,
+                "rayleigh": 0.8,
+                "mieCoefficient": 0.005,
+                "mieDirectionalG": 0.8,
+                "sunInclination": 0.49,
+                "sunAzimuth": 0.205,
+                "sunDistance": 100
+            },
+            "shadow": { "cast": true, "receive": true },
+            "physics": { "state": "{}", "options": { "applyPhysicsUpdate": true } },
+            "textures": "{}",
+            "materialType": "BASIC",
+            "materials": [
+                {
+                    "metadata": {
+                        "version": 4.5,
+                        "type": "Material",
+                        "generator": "Material.toJSON"
+                    },
+                    "uuid": "4E64948B-420C-44AE-8F53-768DB498E379",
+                    "type": "ShaderMaterial",
+                    "side": 1,
+                    "depthFunc": 3,
+                    "depthTest": true,
+                    "depthWrite": true,
+                    "stencilWrite": false,
+                    "stencilWriteMask": 255,
+                    "stencilFunc": 519,
+                    "stencilRef": 0,
+                    "stencilFuncMask": 255,
+                    "stencilFail": 7680,
+                    "stencilZFail": 7680,
+                    "stencilZPass": 7680,
+                    "glslVersion": null,
+                    "uniforms": {
+                        "luminance": { "value": 1 },
+                        "turbidity": { "value": 10 },
+                        "rayleigh": { "value": 0.8 },
+                        "mieCoefficient": { "value": 0.005 },
+                        "mieDirectionalG": { "value": 0.8 },
+                        "sunPosition": {
+                            "type": "v3",
+                            "value": [-27.89911060392293, 3.016355360504634, -95.98198387118924]
+                        }
+                    },
+                    "vertexShader": "uniform vec3 sunPosition;\nuniform float rayleigh;\nuniform float turbidity;\nuniform float mieCoefficient;\nvarying vec3 vWorldPosition;\nvarying vec3 vSunDirection;\nvarying float vSunfade;\nvarying vec3 vBetaR;\nvarying vec3 vBetaM;\nvarying float vSunE;\nconst vec3 up = vec3( 0.0, 1.0, 0.0 );\nconst float e = 2.71828182845904523536028747135266249775724709369995957;\nconst float pi = 3.141592653589793238462643383279502884197169;\nconst vec3 lambda = vec3( 680E-9, 550E-9, 450E-9 );\nconst vec3 totalRayleigh = vec3( 5.804542996261093E-6, 1.3562911419845635E-5, 3.0265902468824876E-5 );\nconst float v = 4.0;\nconst vec3 K = vec3( 0.686, 0.678, 0.666 );\nconst vec3 MieConst = vec3( 1.8399918514433978E14, 2.7798023919660528E14, 4.0790479543861094E14 );\nconst float cutoffAngle = 1.6110731556870734;\nconst float steepness = 1.5;\nconst float EE = 1000.0;\nfloat sunIntensity( float zenithAngleCos ) {\n    zenithAngleCos = clamp( zenithAngleCos, -1.0, 1.0 );\n    return EE * max( 0.0, 1.0 - pow( e, -( ( cutoffAngle - acos( zenithAngleCos ) ) / steepness ) ) );\n}\nvec3 totalMie( float T ) {\n    float c = ( 0.2 * T ) * 10E-18;\n    return 0.434 * c * MieConst;\n}\nvoid main() {\n    vec4 worldPosition = modelMatrix * vec4( position, 1.0 );\n    vWorldPosition = worldPosition.xyz;\n    gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );\n    gl_Position.z = gl_Position.w;\n    vSunDirection = normalize( sunPosition );\n    vSunE = sunIntensity( dot( vSunDirection, up ) );\n    vSunfade = 1.0 - clamp( 1.0 - exp( ( sunPosition.y / 450000.0 ) ), 0.0, 1.0 );\n    float rayleighCoefficient = rayleigh - ( 1.0 * ( 1.0 - vSunfade ) );\n    vBetaR = totalRayleigh * rayleighCoefficient;\n    vBetaM = totalMie( turbidity ) * mieCoefficient;\n}",
+                    "fragmentShader": "varying vec3 vWorldPosition;\nvarying vec3 vSunDirection;\nvarying float vSunfade;\nvarying vec3 vBetaR;\nvarying vec3 vBetaM;\nvarying float vSunE;\nuniform float luminance;\nuniform float mieDirectionalG;\nconst vec3 cameraPos = vec3( 0.0, 0.0, 0.0 );\nconst float pi = 3.141592653589793238462643383279502884197169;\nconst float n = 1.0003;\nconst float N = 2.545E25;\nconst float rayleighZenithLength = 8.4E3;\nconst float mieZenithLength = 1.25E3;\nconst vec3 up = vec3( 0.0, 1.0, 0.0 );\nconst float sunAngularDiameterCos = 0.999956676946448443553574619906976478926848692873900859324;\nconst float THREE_OVER_SIXTEENPI = 0.05968310365946075;\nconst float ONE_OVER_FOURPI = 0.07957747154594767;\nfloat rayleighPhase( float cosTheta ) {\n    return THREE_OVER_SIXTEENPI * ( 1.0 + pow( cosTheta, 2.0 ) );\n}\nfloat hgPhase( float cosTheta, float g ) {\n    float g2 = pow( g, 2.0 );\n    float inverse = 1.0 / pow( 1.0 - 2.0 * g * cosTheta + g2, 1.5 );\n    return ONE_OVER_FOURPI * ( ( 1.0 - g2 ) * inverse );\n}\nconst float A = 0.15;\nconst float B = 0.50;\nconst float C = 0.10;\nconst float D = 0.20;\nconst float E = 0.02;\nconst float F = 0.30;\nconst float whiteScale = 1.0748724675633854;\nvec3 Uncharted2Tonemap( vec3 x ) {\n    return ( ( x * ( A * x + C * B ) + D * E ) / ( x * ( A * x + B ) + D * F ) ) - E / F;\n}\nvoid main() {\n    float zenithAngle = acos( max( 0.0, dot( up, normalize( vWorldPosition - cameraPos ) ) ) );\n    float inverse = 1.0 / ( cos( zenithAngle ) + 0.15 * pow( 93.885 - ( ( zenithAngle * 180.0 ) / pi ), -1.253 ) );\n    float sR = rayleighZenithLength * inverse;\n    float sM = mieZenithLength * inverse;\n    vec3 Fex = exp( -( vBetaR * sR + vBetaM * sM ) );\n    float cosTheta = dot( normalize( vWorldPosition - cameraPos ), vSunDirection );\n    float rPhase = rayleighPhase( cosTheta * 0.5 + 0.5 );\n    vec3 betaRTheta = vBetaR * rPhase;\n    float mPhase = hgPhase( cosTheta, mieDirectionalG );\n    vec3 betaMTheta = vBetaM * mPhase;\n    vec3 Lin = pow( vSunE * ( ( betaRTheta + betaMTheta ) / ( vBetaR + vBetaM ) ) * ( 1.0 - Fex ), vec3( 1.5 ) );\n    Lin *= mix( vec3( 1.0 ), pow( vSunE * ( ( betaRTheta + betaMTheta ) / ( vBetaR + vBetaM ) ) * Fex, vec3( 1.0 / 2.0 ) ), clamp( pow( 1.0 - dot( up, vSunDirection ), 5.0 ), 0.0, 1.0 ) );\n    vec3 direction = normalize( vWorldPosition - cameraPos );\n    float theta = acos( direction.y ); // elevation --> y-axis, [-pi/2, pi/2]\n    float phi = atan( direction.z, direction.x ); // azimuth --> x-axis [-pi/2, pi/2]\n    vec2 uv = vec2( phi, theta ) / vec2( 2.0 * pi, pi ) + vec2( 0.5, 0.0 );\n    vec3 L0 = vec3( 0.1 ) * Fex;\n    float sundisk = smoothstep( sunAngularDiameterCos, sunAngularDiameterCos + 0.00002, cosTheta );\n    L0 += ( vSunE * 19000.0 * Fex ) * sundisk;\n    vec3 texColor = ( Lin + L0 ) * 0.04 + vec3( 0.0, 0.0003, 0.00075 );\n    vec3 curr = Uncharted2Tonemap( ( log2( 2.0 / pow( luminance, 4.0 ) ) ) * texColor );\n    vec3 color = curr * whiteScale;\n    vec3 retColor = pow( color, vec3( 1.0 / ( 1.2 + ( 1.2 * vSunfade ) ) ) );\n    gl_FragColor = vec4( retColor, 1.0 );\n}"
+                }
+            ],
+            "opacity": 1
+        },
+        {
+            "options": {
+                "size": 5,
+                "color": 16777215,
+                "serializable": true,
+                "tag": "",
+                "tags": [],
+                "name": "Cube_a1927a5a"
+            },
+            "position": { "x": 0, "y": 0, "z": 0 },
+            "rotation": { "x": -0.8110670777822804, "y": 1.8281603308620697, "z": 0 },
+            "quaternion": {
+                "x": -0.2408554253503747,
+                "y": 0.7277637333880193,
+                "z": -0.3124517229607652,
+                "w": 0.5610013665431407
+            },
+            "scale": { "x": 1, "y": 1, "z": 1 },
+            "worldTransform": {
+                "position": { "x": 0, "y": 0, "z": 0 },
+                "rotation": {
+                    "x": 2.330525575807512,
+                    "y": 1.3134323227277238,
+                    "z": -3.1415926535897927
+                },
+                "quaternion": {
+                    "x": -0.24085542535037463,
+                    "y": 0.7277637333880193,
+                    "z": -0.3124517229607651,
+                    "w": 0.5610013665431408
+                }
+            },
+            "entityType": "MESH.TYPE",
+            "entitySubType": "MESH.SUBTYPE.CUBE",
+            "scripts": [{ "name": "SimpleScript", "options": {}, "isStatic": false }],
+            "tags": ["all"],
+            "name": "Cube_a1927a5a",
+            "uuid": "D2FC0ABF-3C02-41DB-95F8-AA6F84F75E76",
+            "data": {},
+            "shadow": { "cast": true, "receive": true },
+            "physics": { "state": "{}", "options": { "applyPhysicsUpdate": true } },
+            "textures": "{\"map\":{\"id\":\"woodMap\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}},\"aoMap\":{\"id\":\"woodAO\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}},\"bumpMap\":{\"id\":\"woodBump\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}},\"normalMap\":{\"id\":\"woodNormal\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}},\"roughnessMap\":{\"id\":\"woodRoughness\",\"options\":{\"repeat\":{\"x\":1,\"y\":1},\"wrap\":1000}}}",
+            "materialType": "STANDARD",
+            "materials": [
+                {
+                    "metadata": {
+                        "version": 4.5,
+                        "type": "Material",
+                        "generator": "Material.toJSON"
+                    },
+                    "uuid": "79604EA0-7748-433A-B136-A8E3F6D884A2",
+                    "type": "MeshStandardMaterial",
+                    "color": 16777215,
+                    "roughness": 0.5,
+                    "metalness": 0,
+                    "emissive": 0,
+                    "aoMapIntensity": 1,
+                    "bumpScale": 1,
+                    "normalMapType": 0,
+                    "normalScale": [1, 1],
+                    "depthFunc": 3,
+                    "depthTest": true,
+                    "depthWrite": true,
+                    "stencilWrite": false,
+                    "stencilWriteMask": 255,
+                    "stencilFunc": 519,
+                    "stencilRef": 0,
+                    "stencilFuncMask": 255,
+                    "stencilFail": 7680,
+                    "stencilZFail": 7680,
+                    "stencilZPass": 7680,
+                    "skinning": true,
+                    "textures": [
+                        {
+                            "uuid": "61D114A2-C8F9-4686-95D6-E24F7B2E0CF7",
+                            "name": "",
+                            "mapping": 300,
+                            "repeat": [1, 1],
+                            "offset": [0, 0],
+                            "center": [0, 0],
+                            "rotation": 0,
+                            "wrap": [1000, 1000],
+                            "format": 1022,
+                            "type": 1009,
+                            "encoding": 3000,
+                            "minFilter": 1008,
+                            "magFilter": 1006,
+                            "anisotropy": 1,
+                            "flipY": true,
+                            "premultiplyAlpha": false,
+                            "unpackAlignment": 4,
+                            "image": "008AD787-4CFE-461B-B3BB-71661C7E8473"
+                        },
+                        {
+                            "uuid": "D21039D1-027E-4527-AFA2-71EE4D0A40EE",
+                            "name": "",
+                            "mapping": 300,
+                            "repeat": [1, 1],
+                            "offset": [0, 0],
+                            "center": [0, 0],
+                            "rotation": 0,
+                            "wrap": [1000, 1000],
+                            "format": 1022,
+                            "type": 1009,
+                            "encoding": 3000,
+                            "minFilter": 1008,
+                            "magFilter": 1006,
+                            "anisotropy": 1,
+                            "flipY": true,
+                            "premultiplyAlpha": false,
+                            "unpackAlignment": 4,
+                            "image": "B48785CF-5B3C-4292-91C2-9D54BAACC89B"
+                        },
+                        {
+                            "uuid": "723B5EB9-591B-48FA-A577-15F077FB77B6",
+                            "name": "",
+                            "mapping": 300,
+                            "repeat": [1, 1],
+                            "offset": [0, 0],
+                            "center": [0, 0],
+                            "rotation": 0,
+                            "wrap": [1000, 1000],
+                            "format": 1023,
+                            "type": 1009,
+                            "encoding": 3000,
+                            "minFilter": 1008,
+                            "magFilter": 1006,
+                            "anisotropy": 1,
+                            "flipY": true,
+                            "premultiplyAlpha": false,
+                            "unpackAlignment": 4,
+                            "image": "3AF3F152-AE8C-4B9E-8D9E-DFCBEE6DC2A2"
+                        },
+                        {
+                            "uuid": "65744975-8F8D-4C6D-9E50-E5A395448584",
+                            "name": "",
+                            "mapping": 300,
+                            "repeat": [1, 1],
+                            "offset": [0, 0],
+                            "center": [0, 0],
+                            "rotation": 0,
+                            "wrap": [1000, 1000],
+                            "format": 1022,
+                            "type": 1009,
+                            "encoding": 3000,
+                            "minFilter": 1008,
+                            "magFilter": 1006,
+                            "anisotropy": 1,
+                            "flipY": true,
+                            "premultiplyAlpha": false,
+                            "unpackAlignment": 4,
+                            "image": "2089B6F9-4191-4BFA-AA93-44966E200A5B"
+                        },
+                        {
+                            "uuid": "0BAF7FA1-9109-4CEC-A8CA-6A79002B9815",
+                            "name": "",
+                            "mapping": 300,
+                            "repeat": [1, 1],
+                            "offset": [0, 0],
+                            "center": [0, 0],
+                            "rotation": 0,
+                            "wrap": [1000, 1000],
+                            "format": 1022,
+                            "type": 1009,
+                            "encoding": 3000,
+                            "minFilter": 1008,
+                            "magFilter": 1006,
+                            "anisotropy": 1,
+                            "flipY": true,
+                            "premultiplyAlpha": false,
+                            "unpackAlignment": 4,
+                            "image": "5FF27BFD-8A0E-40E3-8BB3-EEF8FC98D065"
+                        }
+                    ]
+                }
+            ],
+            "opacity": 1,
+            "color": 16777215,
+            "size": 5
+        }
+    ],
+    "sounds": []
+}

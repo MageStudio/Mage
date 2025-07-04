@@ -47,4 +47,10 @@ export default class Box extends Element {
             };
         }
     }
+
+    static create(data = {}) {
+        const { width, height, depth, color, options } = data;
+
+        return new Box(width, height, depth, color, options);
+    }
 }

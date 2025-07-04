@@ -191,4 +191,8 @@ export default class SunLight extends Light {
             },
         };
     }
+
+    static create(data = {}) {
+        return new SunLight(data.options);
+    }
 }

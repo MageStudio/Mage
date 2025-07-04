@@ -17,6 +17,12 @@ export const DEPRECATIONS = {
     SET_FLY_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setFlyControl() is deprecated, use Controls.setFlyControls() instead. Will be removed in next major release.`,
 };
 
+export const IMPORTER_ERROR = `${PREFIX} Error while importing level: `;
+
+export const IMPORTER_ERROR_ELEMENT_CREATION = `${PREFIX} Error while creating element: `;
+export const IMPORTER_ERROR_LIGHT_CREATION = `${PREFIX} Error while creating light: `;
+export const IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE = `${PREFIX} Unknown element subtype: `;
+
 export const MALFORMED_ONCREATE_FUNCTION = `${PREFIX} Something wrong in your onCreate method.`;
 export const ONCREATE_NOT_AVAILABLE = `${PREFIX} Your scene needs a onCreate method.`;
 
@@ -98,4 +104,4 @@ export const LIGHT_NOT_FOUND = `${PREFIX} This light was not created properly.`;
 export const LIGHT_HOLDER_MODEL_NOT_FOUND = `${PREFIX} This light holder model can't be found.`;
 
 export const LABEL_DOMELEMENT_MISSING = `${PREFIX} Could not create Label, domElement is missing. Did you forget to set the this.element ref on your component?`;
-export const NO_VALID_LEVEL_DATA_PROVIDED = `${PREFIX} No valid level data provided`;
+export const NO_VALID_LEVEL_DATA_PROVIDED = `${PREFIX} No valid level data (json or url) provided`;

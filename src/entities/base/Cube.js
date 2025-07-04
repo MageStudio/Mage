@@ -18,12 +18,27 @@ export default class Cube extends Element {
             ...options,
         });
 
+        this.size = size;
+        this.color = color;
+
         this.setBody({ geometry, material });
         this.setEntityType(ENTITY_TYPES.MESH.TYPE);
         this.setEntitySubtype(ENTITY_TYPES.MESH.SUBTYPES.CUBE);
     }
 
+    toJSON(parseJSON = false) {
+        if (this.isSerializable()) {
+            return {
+                ...super.toJSON(parseJSON),
+                size: this.size,
+                color: this.color,
+            };
+        }
+    }
+
     static create(data = {}) {
-        return new Cube(data.size, data.color);
+        const { size, color, options } = data;
+
+        return new Cube(size, color, options);
     }
 }

@@ -41,19 +41,18 @@ export default class Intro extends Level {
     }
 
     createSky() {
-        const sky = new Sky();
-        const inclination = 0.1;
-        const azimuth = 0.1;
-        const distance = 100;
-
-        sky.setSun(inclination, azimuth, distance);
+        Sky.create({
+            sunInclination: 0.1,
+            sunAzimuth: 0.1,
+            sunDistance: 100,
+        });
     }
 
     onCreate() {
         Scene.getCamera().setPosition({ y: 10 });
         Controls.setOrbitControl();
         this.addAmbientLight();
-        this.createSky();
+        // this.createSky();
     }
 }
 

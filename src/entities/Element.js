@@ -734,6 +734,10 @@ export default class Element extends Entity {
         }
     }
 
+    getTexture(textureType = TEXTURES.MAP) {
+        return this.getBody().material[textureType];
+    }
+
     getMaterials() {
         if (hasMaterial(this.getBody())) {
             return [this.getBody().material];

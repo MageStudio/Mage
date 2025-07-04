@@ -10,12 +10,17 @@ export const pickRandom = (list = []) => list[Math.floor(Math.random() * list.le
 export const degToRad = angle => {
     return angle * (PI / 180);
 };
+export const radToDeg = angle => {
+    return angle * (180 / PI);
+};
 
 export const getProportion = (max1, b, max2) => {
     return (max1 * b) / max2;
 };
 
 export const clamp = (value, min, max) => (value < min ? min : value > max ? max : value);
+
+export const cap = (value, max) => (value > max ? max : value);
 
 export const isWithin = (value, min, max) => {
     return value >= min && value < max;

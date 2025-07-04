@@ -240,7 +240,6 @@ export default class Sound extends Entity {
         if (!this.isSetupCompleted()) this.setupAudio();
         if (!this.isConnected()) this.connect();
 
-        console.log("goin to start playing at volume", volume, this.source);
         this.setVolume(0);
         this.audioNode.start();
 

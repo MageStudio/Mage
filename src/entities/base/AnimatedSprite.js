@@ -17,8 +17,29 @@ export default class AnimatedSprite extends Element {
         body.scale.x = width;
         body.scale.y = height;
 
+        this.width = width;
+        this.height = height;
+        this.spriteTexture = spriteTexture;
+
         this.setBody({ body });
         this.setEntityType(ENTITY_TYPES.SPRITE.TYPE);
         this.setEntitySubtype(ENTITY_TYPES.SPRITE.SUBTYPES.ANIMATED_SPRITE);
+    }
+
+    toJSON(parseJSON = false) {
+        if (this.isSerializable()) {
+            return {
+                ...super.toJSON(parseJSON),
+                width: this.width,
+                height: this.height,
+                spriteTexture: this.spriteTexture,
+            };
+        }
+    }
+
+    static create(data = {}) {
+        const { width, height, spriteTexture, options } = data;
+
+        return new Sprite(width, height, spriteTexture, options);
     }
 }
