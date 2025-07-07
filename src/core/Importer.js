@@ -32,6 +32,7 @@ import {
 import Sky from "../fx/scenery/Sky";
 import Element from "../entities/Element";
 import { Object3D } from "three";
+import Universe from "./Universe";
 
 // class responsible for importing level data from a file
 export class Importer {
@@ -59,6 +60,7 @@ export class Importer {
             skipScale = false,
             skipOpacity = false,
             skipName = false,
+            skipWorldTransform = false,
         } = options;
 
         /// position
@@ -80,6 +82,11 @@ export class Importer {
         if (!skipName) {
             element.setUuid(elementData.uuid);
             element.setName(elementData.name);
+        }
+
+        // world transform
+        if (!skipWorldTransform && elementData.worldTransform) {
+            element.setWorldTransform(elementData.worldTransform);
         }
 
         // adding scripts
@@ -295,6 +302,22 @@ export class Importer {
                     data.entitySubType,
                     error,
                 );
+            }
+        });
+
+        // adding children to elements
+        elements.forEach(data => {
+            if (data.children && data.children.length) {
+                // parent already exists in universe
+                const parent = Universe.getByUUID(data.uuid);
+                data.children.forEach(uuid => {
+                    const child = Universe.getByUUID(uuid);
+                    if (child) {
+                        parent.add(child);
+                        const childData = elements.find(e => e.uuid === uuid);
+                        Importer.completeCommonCreationSteps(child, childData);
+                    }
+                });
             }
         });
 

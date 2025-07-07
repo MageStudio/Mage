@@ -35,19 +35,6 @@ export class Scripts {
         return Promise.all(keys.map(name => this.register(name, this.scripts[name])));
     };
 
-    loadSingleScript = (name, level) => {
-        const path = this.scripts[name];
-
-        return new Promise(resolve => {
-            fetch(path)
-                .then(response => response.text())
-                .then(text => {
-                    this.createFromString(text);
-                    resolve();
-                });
-        });
-    };
-
     set(id, ScriptClass) {
         this.map[id] = ScriptClass;
     }
@@ -64,19 +51,6 @@ export class Scripts {
         }
 
         return false;
-    }
-
-    parseScript(content) {
-        // does this mean we can send whatever we want down to the script?
-        return new Function("Script", "Input", "return " + content + ";")(BaseScript, Input);
-    }
-
-    createFromString(stringContent) {
-        const Script = this.parseScript(stringContent);
-        const s = new Script();
-
-        this.set(s.name(), s);
-        return s;
     }
 
     create(name, ScriptClass) {

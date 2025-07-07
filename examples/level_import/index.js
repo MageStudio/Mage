@@ -1,58 +1,30 @@
-import {
-    Router,
-    store,
-    Level,
-    Box,
-    Scene,
-    Cube,
-    Controls,
-    Models,
-    AmbientLight,
-    PHYSICS_EVENTS,
-    constants,
-    Scripts,
-    PALETTES,
-    SunLight,
-    HemisphereLight,
-    Sky,
-} from "../../dist/mage.js";
+import { Router, store, Level, Scene, Controls, BaseScript } from "../../dist/mage.js";
+
+class SimpleScript extends BaseScript {
+    constructor() {
+        super("SimpleScript");
+    }
+
+    start(element, { offset = 0 }) {
+        this.element = element;
+        this.angle = offset;
+    }
+
+    update(dt) {
+        this.angle += dt;
+
+        // this.element.setPosition({ x: Math.sin(this.angle) * 10 });
+        this.element.setRotation({
+            x: 2 * Math.cos(this.angle),
+            y: 2 * Math.sin(this.angle),
+        });
+    }
+}
 
 export default class Intro extends Level {
-    addAmbientLight() {
-        AmbientLight.create({
-            color: PALETTES.FRENCH_PALETTE.SPRAY,
-            intensity: 0.5,
-        });
-
-        HemisphereLight.create({
-            color: {
-                sky: PALETTES.FRENCH_PALETTE.SQUASH_BLOSSOM,
-                ground: PALETTES.FRENCH_PALETTE.REEF_ENCOUNTER,
-            },
-            intensity: 1,
-        });
-
-        SunLight.create({
-            color: PALETTES.FRENCH_PALETTE.MELON_MELODY,
-            intensity: 1,
-            far: 20,
-            mapSize: 2048,
-        }).setPosition({ y: 4, z: -3, x: -3 });
-    }
-
-    createSky() {
-        Sky.create({
-            sunInclination: 0.1,
-            sunAzimuth: 0.1,
-            sunDistance: 100,
-        });
-    }
-
     onCreate() {
         Scene.getCamera().setPosition({ y: 10 });
         Controls.setOrbitControl();
-        this.addAmbientLight();
-        // this.createSky();
     }
 }
 
@@ -77,18 +49,24 @@ window.addEventListener("load", async () => {
 
     const { assets, config, level } = await loadExportedData();
 
-    console.log("assets", assets);
-    console.log("config", config);
-    console.log("level", level);
-
     const fullConfig = {
         ...config,
         levelsData: {
             "/": {
-                url: "data/snapshot.json",
+                data: level,
             },
         },
     };
 
-    Router.start(fullConfig, assets);
+    const fullAssets = {
+        ...assets,
+        "/": {
+            ...assets["/"],
+            scripts: {
+                SimpleScript,
+            },
+        },
+    };
+
+    Router.start(fullConfig, fullAssets);
 });

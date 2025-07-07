@@ -553,7 +553,7 @@ export default class Entity extends EventDispatcher {
     }
 
     setQuaternion = ({ x, y, z, w }) => {
-        this.body.quaternion.set(x, y, z, w);
+        this.getBody().quaternion.set(x, y, z, w);
     };
 
     getPosition() {
@@ -570,7 +570,7 @@ export default class Entity extends EventDispatcher {
                 ...where,
             };
 
-            this.body.position.set(position.x, position.y, position.z);
+            this.getBody().position.set(position.x, position.y, position.z);
         }
     }
 
@@ -588,7 +588,7 @@ export default class Entity extends EventDispatcher {
                 ...how,
             };
 
-            this.body.rotation.set(rotation.x, rotation.y, rotation.z);
+            this.getBody().rotation.set(rotation.x, rotation.y, rotation.z);
         }
     }
 
@@ -602,6 +602,12 @@ export default class Entity extends EventDispatcher {
             rotation,
             quaternion,
         };
+    }
+
+    setWorldTransform(worldTransform) {
+        const { position, quaternion } = worldTransform;
+        this.getBody().setWorldPosition(position);
+        this.getBody().setWorldQuaternion(quaternion);
     }
 
     translate({ x = 0, y = 0, z = 0 }) {
@@ -731,6 +737,7 @@ export default class Entity extends EventDispatcher {
                     rotation: parseJSON ? serializeVector(worldRotation) : worldRotation,
                     quaternion: parseJSON ? serializeQuaternion(worldQuaternion) : worldQuaternion,
                 },
+                children: this.children.map(child => child.uuid()),
                 entityType: this.getEntityType(),
                 entitySubType: this.getEntitySubtype(),
                 scripts: this.mapScriptsToJSON(),
