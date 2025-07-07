@@ -51,15 +51,8 @@ export default class Intro extends Level {
         sky.setSun(inclination, azimuth, distance);
     }
 
-    onCreate() {
-        Scene.getCamera().setPosition({ y: 10 });
-        Controls.setOrbitControl();
-        this.addAmbientLight();
-        this.createSky();
-
+    addBox() {
         const box = new Cube(5, 0xffffff);
-
-        window.box = box;
 
         box.setMaterialFromName(constants.MATERIALS.STANDARD, { roughness: 0.5, metalness: 0 });
         box.setTexture("woodMap", constants.TEXTURES.MAP);
@@ -67,6 +60,29 @@ export default class Intro extends Level {
         box.setTexture("woodBump", constants.TEXTURES.BUMP);
         box.setTexture("woodNormal", constants.TEXTURES.NORMAL);
         box.setTexture("woodRoughness", constants.TEXTURES.ROUGHNESS);
+        window.box = box;
+    }
+
+    onCreate() {
+        Scene.getCamera().setPosition({ y: 10 });
+        Controls.setOrbitControl();
+        this.addAmbientLight();
+        this.createSky();
+
+        window.level = this;
+        this.addBox();
+    }
+
+    download() {
+        const content = JSON.stringify(this.toJSON());
+        const fileName = "level.json";
+        const contentType = "application/json";
+        const a = document.createElement("a");
+        const file = new Blob([content], { type: contentType });
+
+        a.href = URL.createObjectURL(file);
+        a.download = fileName;
+        a.click();
     }
 }
 

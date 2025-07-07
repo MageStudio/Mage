@@ -1,29 +1,27 @@
-import { ParticlesSystem } from 'mage-engine.particles';
+import { ParticlesSystem } from "mage-engine.particles";
 import { Object3D } from "three";
 import { PARTICLE_EMITTER_TYPES } from "./constants";
 import Entity from "../../entities/Entity";
-import { ENTITY_TYPES } from '../../entities/constants';
-import Scene from '../../core/Scene';
-import { generateRandomName } from '../../lib/uuid';
+import { ENTITY_TYPES } from "../../entities/constants";
+import Scene from "../../core/Scene";
+import { generateRandomName } from "../../lib/uuid";
 
 export default class ParticleEmitter extends Entity {
-
     constructor(options = {}) {
-        super({ tag: 'particle '});
+        super({ tag: "particle " });
 
-        const {
-            name = generateRandomName('Emitter')
-        } = options;
+        const { name = generateRandomName("Emitter") } = options;
 
         this.options = {
             ...options,
-            name
+            name,
         };
 
         this.setSystem();
         this.setName(name);
         this.setBody({ body: new Object3D() });
-        this.setEntityType(ENTITY_TYPES.EFFECT.PARTICLE);
+        this.setEntityType(ENTITY_TYPES.PARTICLE.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.PARTICLE.SUBTYPES.EMITTER);
     }
 
     setBody({ body }) {
@@ -35,9 +33,7 @@ export default class ParticleEmitter extends Entity {
     }
 
     addToScene() {
-        const {
-            addUniverse = true,
-        } = this.options;
+        const { addUniverse = true } = this.options;
 
         if (this.hasBody()) {
             Scene.add(this.getBody(), this, addUniverse);
@@ -67,14 +63,14 @@ export default class ParticleEmitter extends Entity {
             container = this.getBody(),
             autostart = false,
             particles = {},
-            system = {}
+            system = {},
         } = this.options;
 
         this.system = new ParticlesSystem({
             container,
             autostart,
             particles,
-            system
+            system,
         });
     }
 

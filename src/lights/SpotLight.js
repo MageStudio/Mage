@@ -35,7 +35,8 @@ export default class SpotLight extends Light {
         super({ color, intensity, name });
         this.options = options;
         this.setLight({ color, intensity, distance, angle, penumbra, decay });
-        this.setEntityType(ENTITY_TYPES.LIGHT.SPOT);
+        this.setEntityType(ENTITY_TYPES.LIGHT.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.LIGHT.SUBTYPES.SPOT);
         this.setName(name);
     }
 
@@ -72,6 +73,8 @@ export default class SpotLight extends Light {
     postLightCreation() {
         const { position = DEFAULT_POSITION } = this.options;
         const emptyTarget = new Element({ body: new Object3D() });
+
+        emptyTarget.setEntitySubtype(ENTITY_TYPES.MESH.SUBTYPES.TARGET);
 
         this.setPosition(position);
         this.setTarget(emptyTarget);

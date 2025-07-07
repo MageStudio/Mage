@@ -54,6 +54,11 @@ export class Universe {
         this.realityUUID[uuid] = name;
     }
 
+    replaceUUIDToElementNameReference(uuid, newName) {
+        delete this.realityUUID[uuid];
+        this.realityUUID[uuid] = newName;
+    }
+
     remove(id) {
         delete this.reality[id];
     }
@@ -88,7 +93,14 @@ export class Universe {
     toJSON(parseJSON = false) {
         const elements = Object.keys(this.reality)
             .map(k => this.get(k))
-            .filter(element => element.serializable && element.isMesh())
+            .filter(
+                element =>
+                    element.isSerializable() &&
+                    (element.isMesh() ||
+                        element.isModel() ||
+                        element.isScenery() ||
+                        element.isParticle()),
+            )
             .map(element => element.toJSON(parseJSON));
 
         return { elements };

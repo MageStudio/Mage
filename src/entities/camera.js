@@ -19,7 +19,8 @@ export default class Camera extends Entity {
         const body = new PerspectiveCamera(fov, ratio, near, far);
 
         this.setBody({ body });
-        this.setEntityType(ENTITY_TYPES.CAMERA);
+        this.setEntityType(ENTITY_TYPES.CAMERA.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.CAMERA.SUBTYPES.MAIN);
         this.setName(name);
     }
 

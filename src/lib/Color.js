@@ -24,6 +24,7 @@ export default class Color {
     }
 
     constructor(color) {
+        // TODO: rename this property to be `value`
         this.color = new THREEColor(color);
     }
 

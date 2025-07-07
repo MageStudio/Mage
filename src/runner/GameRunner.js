@@ -1,20 +1,19 @@
-import Level from '../core/Level';
-import * as Store from '../store/Store';
-import storage from '../storage/storage';
-import { PATH_NOT_FOUND } from '../lib/messages';
-import Physics, { PHYSICS_STATES } from '../physics';
+import Level from "../core/Level";
+import * as Store from "../store/Store";
+import storage from "../storage/storage";
+import { PATH_NOT_FOUND } from "../lib/messages";
+import Physics, { PHYSICS_STATES } from "../physics";
+import { Importer } from "../core/Importer";
+import config from "../core/config";
 
 export class GameRunner {
-
     constructor() {
         this.store = {};
         this.running = null;
     }
 
     has(path) {
-        return Object
-            .keys(this.store)
-            .includes(path);
+        return Object.keys(this.store).includes(path);
     }
 
     get(path) {
@@ -35,10 +34,10 @@ export class GameRunner {
 
     setCurrentPath(path) {
         this.currentPath = path;
-    } 
+    }
 
     static isValidClassname(classname) {
-        return typeof classname === 'function';
+        return typeof classname === "function";
     }
 
     register(path, classname) {
@@ -49,7 +48,7 @@ export class GameRunner {
                 this.store[path] = Level;
             }
             return true;
-        } catch(e) {
+        } catch (e) {
             return false;
         }
     }
@@ -58,19 +57,19 @@ export class GameRunner {
         const classname = this.get(path);
         const levelConfig = {
             ...options,
-            path
+            path,
         };
         const level = new classname(levelConfig);
 
         Store.subscribe(level);
 
         return level;
-    }
+    };
 
     disposeCurrentLevel = () => {
         Store.unsubscribeAll();
         this.running.dispose();
-    }
+    };
 
     start = (path, options = {}) => {
         return new Promise((resolve, reject) => {
@@ -88,30 +87,27 @@ export class GameRunner {
             this.setCurrentLevel(this.createNewLevel(path, options));
 
             if (loading) {
+                this.getCurrentLevel().prepareScene();
+                this.getCurrentLevel().init();
                 storage
-                    .loadScene()
-                    .then(this.getCurrentLevel().parseScene)
-                    .then(() => {
-                        this.getCurrentLevel().prepareScene();
-                        this.getCurrentLevel().init();
-                        resolve(this.getCurrentLevel());
-                    })
+                    .load()
+                    .then(Importer.parseLevelData)
+                    .then(() => resolve(this.getCurrentLevel()));
             } else {
-                Physics
-                    .waitForState(PHYSICS_STATES.READY)
-                    .then(() => {
-                        this.getCurrentLevel()
-                            .preload()
-                            .then(() => {
-                                this.getCurrentLevel().prepareScene();
-                                this.getCurrentLevel().init();
-                                resolve(this.getCurrentLevel());
-                            })
-                            .catch(reject);
-                    })
+                Physics.waitForState(PHYSICS_STATES.READY).then(() => {
+                    this.getCurrentLevel().prepareScene();
+                    this.getCurrentLevel().init();
+
+                    // const levelURL = config.getLevelData(this.getCurrentLevel().getPath())?.url;
+                    const levelData = config.getLevelData(this.getCurrentLevel().getPath());
+
+                    Importer.importLevelSnapshot(levelData)
+                        .then(() => resolve(this.getCurrentLevel()))
+                        .catch(reject);
+                });
             }
-        })
-    }
+        });
+    };
 }
 
 export default new GameRunner();

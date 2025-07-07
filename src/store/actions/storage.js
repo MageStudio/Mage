@@ -5,67 +5,67 @@ import {
     LOAD_STARTED,
     LOAD_COMPLETED,
     LOAD_ERROR,
-    RESET
-} from './types';
+    RESET,
+} from "./types";
 
-import storage from '../../storage/storage';
+import storage from "../../storage/storage";
 
 export const saveStarted = () => ({
-    type: SAVE_STARTED
+    type: SAVE_STARTED,
 });
 
 export const saveCompleted = (sceneName, currentPath, timestamp) => ({
     type: SAVE_COMPLETED,
     timestamp,
     sceneName,
-    currentPath
+    currentPath,
 });
 
-export const saveError = (errorDetails) => ({
+export const saveError = errorDetails => ({
     type: SAVE_ERROR,
-    errorDetails
+    errorDetails,
 });
 
 export const loadStarted = () => ({
-    type: LOAD_STARTED
+    type: LOAD_STARTED,
 });
 
 export const loadCompleted = () => ({
-    type: LOAD_COMPLETED
+    type: LOAD_COMPLETED,
 });
 
-export const loadError = (errorDetails) => ({
+export const loadError = errorDetails => ({
     type: LOAD_ERROR,
-    errorDetails
+    errorDetails,
 });
 
-export const resetState = (state) => ({
+export const resetState = state => ({
     type: RESET,
-    state
+    state,
 });
 
-export const saveGame = () => (dispatch) => {
+export const saveGame = () => dispatch => {
     dispatch(saveStarted());
 
     storage
         .save()
-        .then(({ sceneName, currentPath, timestamp }) =>
-            dispatch(saveCompleted(sceneName, currentPath, timestamp))
+        .then(({ levelName, currentPath, timestamp }) =>
+            dispatch(saveCompleted(levelName, currentPath, timestamp)),
         )
-        .catch((e) => dispatch(saveError(e)));
+        .catch(e => dispatch(saveError(e)));
 };
 
-export const loadGame = () => (dispatch) => {
+export const loadGame = () => dispatch => {
     dispatch(loadStarted());
 
     storage
         .loadState()
         .then(state => dispatch(resetState(state)))
-        .catch((e) => dispatch(loadError(e)));
+        .catch(e => dispatch(loadError(e)));
 
     storage
         .loadCurrentPath()
         .then(currentPath => Router.goTo(currentPath, { loading: true }))
         .then(() => dispatch(loadCompleted()))
-        .catch((e) => dispatch(loadError(e)));
-}
+        .catch(e => dispatch(loadError(e)));
+};

@@ -11,7 +11,18 @@ export default class Box extends Element {
         color = Color.randomColor(true),
         options = {},
     ) {
-        super(options);
+        super({
+            width,
+            height,
+            depth,
+            color,
+            ...options,
+        });
+
+        this.width = width;
+        this.height = height;
+        this.depth = depth;
+        this.color = color;
 
         const geometry = new BoxGeometry(width, height, depth);
         const material = new MeshBasicMaterial({
@@ -21,6 +32,25 @@ export default class Box extends Element {
         });
 
         this.setBody({ geometry, material });
-        this.setEntityType(ENTITY_TYPES.MESH);
+        this.setEntityType(ENTITY_TYPES.MESH.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.MESH.SUBTYPES.BOX);
+    }
+
+    toJSON(parseJSON = false) {
+        if (this.isSerializable()) {
+            return {
+                ...super.toJSON(parseJSON),
+                width: this.width,
+                height: this.height,
+                depth: this.depth,
+                color: this.color,
+            };
+        }
+    }
+
+    static create(data = {}) {
+        const { width, height, depth, color, options } = data;
+
+        return new Box(width, height, depth, color, options);
     }
 }

@@ -1,0 +1,23 @@
+{
+    "postprocessing": { "enabled": false },
+    "screen": {
+        "h": 1351,
+        "w": 1111,
+        "ratio": 0.8223538119911177,
+        "frameRate": 60,
+        "alpha": true,
+        "devicePixelRatio": 1
+    },
+    "fog": { "enabled": false, "density": 0, "color": "#ffffff" },
+    "lights": { "shadows": true, "shadowType": "HARD", "textureAnisotropy": 32 },
+    "physics": {
+        "enabled": true,
+        "path": "dist/ammo.js",
+        "gravity": { "x": 0, "y": -9.8, "z": 0 }
+    },
+    "camera": { "fov": 75, "near": 0.1, "far": 3000000 },
+    "ui": { "enabled": true },
+    "scripts": {},
+    "tests": [],
+    "levelsData": {}
+}

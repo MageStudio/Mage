@@ -26,7 +26,8 @@ export default class HemisphereLight extends Light {
         super({ color, intensity, name });
         this.options = options;
         this.setLight({ color, intensity });
-        this.setEntityType(ENTITY_TYPES.LIGHT.HEMISPHERE);
+        this.setEntityType(ENTITY_TYPES.LIGHT.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.LIGHT.SUBTYPES.HEMISPHERE);
         this.setName(name);
     }
 
@@ -51,8 +52,10 @@ export default class HemisphereLight extends Light {
     }
 
     setColor = ({ sky, ground } = {}) => {
-        this.getBody().color = sky;
-        this.getBody().groundColor = ground;
+        if (sky && ground) {
+            this.getBody().color = sky;
+            this.getBody().groundColor = ground;
+        }
     };
 
     getColor = () => {
@@ -82,7 +85,9 @@ export default class HemisphereLight extends Light {
         const color = this.getColor();
         return {
             ...super.toJSON(parseJSON),
-            color: parseJSON ? serializeColor(color) : color,
+            color: parseJSON
+                ? { sky: serializeColor(color.sky), ground: serializeColor(color.ground) }
+                : color,
         };
     }
 }

@@ -8,11 +8,11 @@ import {
 } from "three";
 
 import * as vivify from "vivifyjs";
-
+import { omit } from "./object";
 import Config from "../core/config";
 import Lights from "../lights/Lights";
 import ToonMaterial from "../materials/Toon";
-import { MATERIALS, TEXTURES } from "./constants";
+import { MATERIALS, TEXTURES, UNDESIRED_SERIALISED_MATERIAL_PROPERTIES } from "./constants";
 
 export const setUpLightsAndShadows = mesh => {
     const { textureAnisotropy, shadows } = Config.lights();
@@ -74,6 +74,9 @@ export const extractMaterialProperty = (elementBody, property) => {
         return found;
     }
 };
+
+export const serialiseMaterial = material =>
+    omit(UNDESIRED_SERIALISED_MATERIAL_PROPERTIES, material?.toJSON());
 
 export const processMaterial = (material, callback) =>
     Array.isArray(material) ? material.map(callback) : callback(material);

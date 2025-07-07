@@ -8,17 +8,24 @@ import {
     SCRIPT_NOT_FOUND,
     ENTITY_TYPE_NOT_ALLOWED,
     USER_DATA_IS_MISSING,
-    KEY_IS_MISSING,
     KEY_VALUE_IS_MISSING,
     ENTITY_CANT_ADD_NOT_ENTITY,
     ENTITY_NOT_SET,
+    ENTITY_SUBTYPE_NOT_ALLOWED,
+    DEPRECATIONS,
 } from "../lib/messages";
 import Scripts from "../scripts/Scripts";
 import Scene from "../core/Scene";
 
 import { isScene, serializeQuaternion, serializeVector } from "../lib/meshUtils";
 
-import { DEFAULT_TAG, ENTITY_EVENTS, ENTITY_TYPES, FLAT_ENTITY_TYPES } from "./constants";
+import {
+    DEFAULT_TAG,
+    ENTITY_EVENTS,
+    ENTITY_TYPES,
+    FLAT_ENTITY_SUBTYPES,
+    FLAT_ENTITY_TYPES,
+} from "./constants";
 import { tweenTo } from "../lib/easing";
 
 export default class Entity extends EventDispatcher {
@@ -41,9 +48,19 @@ export default class Entity extends EventDispatcher {
         this.parent = false;
         this.disposed = false;
 
+        this.entityType = ENTITY_TYPES.UNKNOWN;
+        this.entitySubtype = ENTITY_TYPES.UNKNOWN;
+
         this.addTags([DEFAULT_TAG, tag, ...tags]);
         this.serializable = serializable;
     }
+
+    extendOptions = options => {
+        this.options = {
+            ...this.options,
+            ...options,
+        };
+    };
 
     static create(...options) {
         return new this(...options);
@@ -392,9 +409,14 @@ export default class Entity extends EventDispatcher {
         return script;
     }
 
-    hasScripts = () => this.allScripts().length > 0;
+    hasScripts = () => this.getScripts().length > 0;
 
-    allScripts = () => [...this.dynamicScripts, ...this.staticScripts];
+    getScripts = () => [...this.dynamicScripts, ...this.staticScripts];
+
+    allScripts = () => {
+        console.log(DEPRECATIONS.ENTITY_ALL_SCRIPTS);
+        return this.getScripts();
+    };
 
     hasScript(name) {
         return this.allScripts().filter(script => script.name === name).length;
@@ -472,7 +494,7 @@ export default class Entity extends EventDispatcher {
         if (FLAT_ENTITY_TYPES.includes(type)) {
             this.entityType = type;
         } else {
-            console.log(ENTITY_TYPE_NOT_ALLOWED);
+            console.log(ENTITY_TYPE_NOT_ALLOWED, type);
             this.entityType = ENTITY_TYPES.UNKNOWN;
         }
     }
@@ -481,12 +503,30 @@ export default class Entity extends EventDispatcher {
         return this.entityType;
     }
 
-    isMesh = () => this.getEntityType() === ENTITY_TYPES.MESH;
-    isModel = () => this.getEntityType() === ENTITY_TYPES.MODEL;
-    isSprite = () => this.getEntityType() === ENTITY_TYPES.SPRITE;
-    isLight = () => Object.values(ENTITY_TYPES.LIGHT).includes(this.getEntityType());
-    isHelper = () => Object.values(ENTITY_TYPES.HELPER).includes(this.getEntityType());
-    isEffect = () => Object.values(ENTITY_TYPES.EFFECT).includes(this.getEntityType());
+    setEntitySubtype(subtype) {
+        if (FLAT_ENTITY_SUBTYPES.includes(subtype)) {
+            this.entitySubtype = subtype;
+        } else {
+            console.log(ENTITY_SUBTYPE_NOT_ALLOWED, subtype);
+            this.entitySubtype = ENTITY_TYPES.UNKNOWN;
+        }
+    }
+
+    getEntitySubtype() {
+        return this.entitySubtype;
+    }
+
+    isMesh = () => this.getEntityType() === ENTITY_TYPES.MESH.TYPE;
+    isModel = () => this.getEntityType() === ENTITY_TYPES.MODEL.TYPE;
+    isScenery = () => this.getEntityType() === ENTITY_TYPES.SCENERY.TYPE;
+    isParticle = () => this.getEntityType() === ENTITY_TYPES.PARTICLE.TYPE;
+    isSprite = () => this.getEntityType() === ENTITY_TYPES.SPRITE.TYPE;
+    isLight = () => this.getEntityType() === ENTITY_TYPES.LIGHT.TYPE;
+    isHelper = () => this.getEntityType() === ENTITY_TYPES.HELPER.TYPE;
+    isEffect = () =>
+        [ENTITY_TYPES.SCENERY.TYPE, ENTITY_TYPES.PARTICLE.TYPE].includes(this.getEntityType());
+    isType = type => this.getEntityType() === type;
+    isSubtype = subtype => this.getEntitySubtype() === subtype;
 
     getScale() {
         return {
@@ -513,7 +553,7 @@ export default class Entity extends EventDispatcher {
     }
 
     setQuaternion = ({ x, y, z, w }) => {
-        this.body.quaternion.set(x, y, z, w);
+        this.getBody().quaternion.set(x, y, z, w);
     };
 
     getPosition() {
@@ -530,7 +570,7 @@ export default class Entity extends EventDispatcher {
                 ...where,
             };
 
-            this.body.position.set(position.x, position.y, position.z);
+            this.getBody().position.set(position.x, position.y, position.z);
         }
     }
 
@@ -548,7 +588,7 @@ export default class Entity extends EventDispatcher {
                 ...how,
             };
 
-            this.body.rotation.set(rotation.x, rotation.y, rotation.z);
+            this.getBody().rotation.set(rotation.x, rotation.y, rotation.z);
         }
     }
 
@@ -562,6 +602,12 @@ export default class Entity extends EventDispatcher {
             rotation,
             quaternion,
         };
+    }
+
+    setWorldTransform(worldTransform) {
+        const { position, quaternion } = worldTransform;
+        this.getBody().setWorldPosition(position);
+        this.getBody().setWorldQuaternion(quaternion);
     }
 
     translate({ x = 0, y = 0, z = 0 }) {
@@ -651,7 +697,7 @@ export default class Entity extends EventDispatcher {
             if (key) {
                 return this.getBody().userData[key];
             } else {
-                console.log(KEY_IS_MISSING);
+                // if no key is provided, we return all userData
                 return this.getBody().userData;
             }
         } else {
@@ -661,16 +707,11 @@ export default class Entity extends EventDispatcher {
     }
 
     mapScriptsToJSON() {
-        return this.allScripts().reduce(
-            (acc, { name, options = {}, script }) => {
-                acc.names.push(name);
-                acc.options.push(options);
-                acc.static.push(script.__isStatic());
-
-                return acc;
-            },
-            { names: [], options: [], static: [] },
-        );
+        return this.allScripts().map(({ name, options = {}, script }) => ({
+            name,
+            options,
+            isStatic: script.__isStatic(),
+        }));
     }
 
     toJSON(parseJSON = false) {
@@ -686,6 +727,7 @@ export default class Entity extends EventDispatcher {
             } = this.getWorldTransform();
 
             return {
+                options: this.options,
                 position: parseJSON ? serializeVector(position) : position,
                 rotation: parseJSON ? serializeVector(rotation) : rotation,
                 quaternion: parseJSON ? serializeQuaternion(quaternion) : quaternion,
@@ -695,7 +737,9 @@ export default class Entity extends EventDispatcher {
                     rotation: parseJSON ? serializeVector(worldRotation) : worldRotation,
                     quaternion: parseJSON ? serializeQuaternion(worldQuaternion) : worldQuaternion,
                 },
+                children: this.children.map(child => child.uuid()),
                 entityType: this.getEntityType(),
+                entitySubType: this.getEntitySubtype(),
                 scripts: this.mapScriptsToJSON(),
                 tags: this.getTags(),
                 name: this.getName(),

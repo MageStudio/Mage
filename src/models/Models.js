@@ -129,16 +129,22 @@ class Models extends EventDispatcher {
 
     getModel = (name, options = {}) => {
         console.warn(DEPRECATIONS.MODELS_GETMODEL);
-        return this.get(name, options);
+        return this.create(name, options);
     };
 
     get = (name, options = {}) => {
+        console.warn(DEPRECATIONS.MODELS_GET);
+        return this.create(name, options);
+    };
+
+    create = (name, options = {}) => {
         const builtAssetId = buildAssetId(name, this.currentLevel);
         const { scene, animations, extension } = this.map[name] || this.map[builtAssetId] || {};
 
         if (scene) {
             const elementOptions = {
                 name,
+                builtAssetId,
                 ...options,
             };
 
@@ -154,7 +160,8 @@ class Models extends EventDispatcher {
                 ...elementOptions,
             });
 
-            element.setEntityType(ENTITY_TYPES.MODEL);
+            element.setEntityType(ENTITY_TYPES.MODEL.TYPE);
+            element.setEntitySubtype(ENTITY_TYPES.MODEL.SUBTYPES.DEFAULT);
 
             if (hasAnimations(animations)) {
                 element.addAnimationHandler(animations);

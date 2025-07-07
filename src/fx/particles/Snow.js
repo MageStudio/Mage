@@ -1,10 +1,10 @@
-import { Vector3, Color } from 'three';
-import { Randomizers, Emitter } from 'mage-engine.particles';
+import { Vector3, Color } from "three";
+import { Randomizers, Emitter } from "mage-engine.particles";
 
-import ParticleEmitter from './ParticleEmitter';
+import ParticleEmitter from "./ParticleEmitter";
+import { ENTITY_TYPES } from "../../entities/constants";
 
 export default class Snow extends ParticleEmitter {
-
     constructor({ container, autostart, particles, system }) {
         const options = {
             container,
@@ -21,11 +21,11 @@ export default class Snow extends ParticleEmitter {
                 endColor: new Color(0, 0, 0),
                 startAlphaChangeAt: 0,
                 blending: "blend",
-                onSpawn: (particle) => {
+                onSpawn: particle => {
                     particle.position.x = Math.random() * 200;
                     particle.position.z = Math.random() * 200;
                 },
-                ...particles
+                ...particles,
             },
             system: {
                 particlesCount: 4000,
@@ -34,10 +34,11 @@ export default class Snow extends ParticleEmitter {
                     interval: new Randomizers.MinMaxRandomizer(0, 0.25),
                 }),
                 speed: 1.5,
-                ...system
-            }
+                ...system,
+            },
         };
 
         super(options);
+        this.setEntitySubtype(ENTITY_TYPES.PARTICLE.SUBTYPES.SNOW);
     }
 }

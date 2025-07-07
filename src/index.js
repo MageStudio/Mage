@@ -43,12 +43,15 @@ import * as uuid from "./lib/uuid";
 import * as workers from "./lib/workers";
 import * as easing from "./lib/easing";
 import * as map from "./lib/map";
+import * as object from "./lib/object";
 
 import Stats from "./core/Stats";
 import Config from "./core/config";
 import GameRunner from "./runner/GameRunner";
 import Router from "./router/Router";
 import Scene from "./core/Scene";
+import { Importer } from "./core/Importer";
+import { Exporter } from "./core/Exporter";
 import Scripts, { BUILTIN } from "./scripts/Scripts";
 
 import Controls, { CONTROL_EVENTS, THREEJS_CONTROL_EVENTS } from "./controls/Controls";
@@ -118,6 +121,8 @@ const constants = {
 
 export {
     author,
+    Importer,
+    Exporter,
     Entity,
     Element,
     ENTITY_TYPES,
@@ -209,4 +214,5 @@ export {
     rxjs,
     xstate,
     map,
+    object,
 };

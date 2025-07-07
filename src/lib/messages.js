@@ -1,17 +1,27 @@
+import { template } from "./strings";
+
 export const PREFIX = "[Mage]";
 export const DEPRECATED = "[DEPRECATED]";
 
 export const DEPRECATIONS = {
     PARTICLES_OLD: `${PREFIX} ${DEPRECATED} This Particle System is outdated and will be removed in the next major release`,
     PARTICLES_ADD_PARTICLE_EMITTER: `${PREFIX} ${DEPRECATED} Particles.addParticleEmitter is deprecated, use Particles.add instead. Will be removed in the next major release`,
-    MODELS_GETMODEL: `${PREFIX} ${DEPRECATED} Models.getModel is deprecated, use Models.get instead. Will be removed in next major release`,
+    MODELS_GETMODEL: `${PREFIX} ${DEPRECATED} Models.getModel is deprecated, use Models.create instead. Will be removed in next major release`,
+    MODELS_GET: `${PREFIX} ${DEPRECATED} Models.get is deprecated, use Models.create instead. Will be removed in next major release`,
     SCRIPTS_CREATE: `${PREFIX} ${DEPRECATED} Scripts.create is deprecated, use Scripts.register instead. Will be removed in next major release.`,
     ELEMENT_SET_TEXTURE_MAP: `${PREFIX} ${DEPRECATED} Element.setTextureMap is deprecated, use Element.setTexture() instead. Will be removed in next major release.`,
+    ENTITY_ALL_SCRIPTS: `${PREFIX} ${DEPRECATED} Entity.allScripts is deprecated, use Entity.getScripts() instead. Will be removed in next major release.`,
     SET_ORBIT_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setOrbitControl() is deprecated, use Controls.setOrbitControls() instead. Will be removed in next major release.`,
     SET_TRANSFORM_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setTransformControl() is deprecated, use Controls.setTransformControls() instead. Will be removed in next major release.`,
     SET_FIRST_PERSON_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setFirstPersonControl() is deprecated, use Controls.setFirstPersonControls() instead. Will be removed in next major release.`,
     SET_FLY_CONTROL: `${PREFIX} ${DEPRECATED} Controls.setFlyControl() is deprecated, use Controls.setFlyControls() instead. Will be removed in next major release.`,
 };
+
+export const IMPORTER_ERROR = `${PREFIX} Error while importing level: `;
+
+export const IMPORTER_ERROR_ELEMENT_CREATION = `${PREFIX} Error while creating element: `;
+export const IMPORTER_ERROR_LIGHT_CREATION = `${PREFIX} Error while creating light: `;
+export const IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE = `${PREFIX} Unknown element subtype: `;
 
 export const MALFORMED_ONCREATE_FUNCTION = `${PREFIX} Something wrong in your onCreate method.`;
 export const ONCREATE_NOT_AVAILABLE = `${PREFIX} Your scene needs a onCreate method.`;
@@ -48,6 +58,7 @@ export const ELEMENT_SET_REFRACTION_RATIO_MISSING_VALUE = `${PREFIX} Can't set r
 
 export const ENTITY_NOT_SET = `${PREFIX} This entity does not have a body.`;
 export const ENTITY_TYPE_NOT_ALLOWED = `${PREFIX} The desired Entity type is not allowed.`;
+export const ENTITY_SUBTYPE_NOT_ALLOWED = `${PREFIX} The desired Entity subtype is not allowed.`;
 export const ENTITY_CANT_ADD_NOT_ENTITY = `${PREFIX} Entity.add requires an Entity.`;
 export const ENTITY_CHILD_IS_NOT_ENTITY = `${PREFIX} The required child is not an instance of Entity.`;
 
@@ -68,6 +79,8 @@ export const EFFECT_COULD_NOT_BE_CREATED = `${PREFIX}  Could not create requeste
 export const EFFECT_UNAVAILABLE = `${PREFIX}  Requested effect is not available.`;
 
 export const SCRIPT_NOT_FOUND = `${PREFIX} Could not find desired script.`;
+export const SCRIPT_NOT_PROVIDED = `${PREFIX} Script not provided.`;
+export const SCRIPT_NEEDS_TO_BE_INSTANCE = template`${PREFIX} Script: ${"name"} needs to be an instance of BaseScript.`;
 
 export const KEYBOARD_COMBO_ALREADY_REGISTERED = `${PREFIX} Keyboard combo already registered.`;
 export const KEYBOARD_COMBO_IS_INVALID = `${PREFIX} Keyboard combo is not valid.`;
@@ -91,3 +104,4 @@ export const LIGHT_NOT_FOUND = `${PREFIX} This light was not created properly.`;
 export const LIGHT_HOLDER_MODEL_NOT_FOUND = `${PREFIX} This light holder model can't be found.`;
 
 export const LABEL_DOMELEMENT_MISSING = `${PREFIX} Could not create Label, domElement is missing. Did you forget to set the this.element ref on your component?`;
+export const NO_VALID_LEVEL_DATA_PROVIDED = `${PREFIX} No valid level data (json or url) provided`;

@@ -212,6 +212,12 @@ export class Audio {
             if (+new Date() - start > TIME_FOR_UPDATE) break;
         }
     }
+
+    toJSON(parseJSON = false) {
+        return {
+            sounds: this.levelSounds.map(sound => sound.toJSON(parseJSON)),
+        };
+    }
 }
 
 export default new Audio();

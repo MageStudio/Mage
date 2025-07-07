@@ -35,7 +35,8 @@ export default class SunLight extends Light {
         this.target = ORIGIN;
 
         this.setLight({ color, intensity });
-        this.setEntityType(ENTITY_TYPES.LIGHT.SUN);
+        this.setEntityType(ENTITY_TYPES.LIGHT.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.LIGHT.SUBTYPES.SUN);
         this.setName(name);
     }
 
@@ -54,6 +55,8 @@ export default class SunLight extends Light {
     postLightCreation() {
         const { position = DEFAULT_POSITION } = this.options;
         const emptyTarget = new Element({ body: new Object3D() });
+
+        emptyTarget.setEntitySubtype(ENTITY_TYPES.MESH.SUBTYPES.TARGET);
 
         this.setPosition(position);
         this.setTarget(emptyTarget);
@@ -187,5 +190,9 @@ export default class SunLight extends Light {
                 fov: this.setShadowCameraFov(),
             },
         };
+    }
+
+    static create(data = {}) {
+        return new SunLight(data.options);
     }
 }

@@ -23,7 +23,8 @@ export default class Grid extends Element {
         const body = new GridHelper(size, division, color1, color2);
 
         this.setBody({ body });
-        this.setEntityType(ENTITY_TYPES.HELPER.GRID);
+        this.setEntityType(ENTITY_TYPES.HELPER.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.HELPER.SUBTYPES.GRID);
     }
 
     update() {}

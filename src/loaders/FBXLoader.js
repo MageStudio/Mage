@@ -392,7 +392,6 @@ export const buildFBXLoader = () => {
                 } else {
                     loader.setPath(this.textureLoader.path);
                     texture = loader.load(fileName, NOOP, NOOP, () => {
-                        console.log("texture missing");
                         tracer.trace(MODELS_REQUIREMENTS.TEXTURE);
                     });
                 }
@@ -404,7 +403,6 @@ export const buildFBXLoader = () => {
                 texture = new Texture();
             } else {
                 texture = this.textureLoader.load(fileName, NOOP, NOOP, () => {
-                    console.log("texture missing");
                     tracer.trace(MODELS_REQUIREMENTS.TEXTURE);
                 });
             }

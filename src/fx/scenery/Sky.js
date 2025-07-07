@@ -222,7 +222,6 @@ const DEFAULT_SUN_DISTANCE = 100;
 
 export default class Sky extends Element {
     constructor(options = {}) {
-        super(options);
         const {
             scale = DEFAULT_SCALE,
             turbidity = DEFAULT_TURBIDITY,
@@ -234,6 +233,19 @@ export default class Sky extends Element {
             sunDistance = DEFAULT_SUN_DISTANCE,
         } = options;
 
+        const cleanedOptions = {
+            scale,
+            turbidity,
+            rayleigh,
+            mieCoefficient,
+            mieDirectionalG,
+            sunInclination,
+            sunAzimuth,
+            sunDistance,
+        };
+
+        super(cleanedOptions);
+
         const material = new ShaderMaterial({
             fragmentShader: SkyShader.fragmentShader(),
             vertexShader: SkyShader.vertexShader(),
@@ -244,37 +256,47 @@ export default class Sky extends Element {
         const body = new Mesh(new BoxBufferGeometry(1, 1, 1), material);
 
         this.setBody({ body });
-        this.setEntityType(ENTITY_TYPES.EFFECT.SCENERY);
+        this.setEntityType(ENTITY_TYPES.SCENERY.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.SCENERY.SUBTYPES.SKY);
 
         this.setScale({ x: scale, y: scale, z: scale });
-        this.seTurbidity(turbidity);
+        this.setTurbidity(turbidity);
         this.setRayleigh(rayleigh);
         this.setMieCoefficient(mieCoefficient);
         this.setMieDirectionalG(mieDirectionalG);
         this.setSun(sunInclination, sunAzimuth, sunDistance);
     }
 
-    seTurbidity(value) {
+    setTurbidity(value) {
+        this.setData("turbidity", value);
         this.getBody().material.uniforms.turbidity.value = value;
     }
 
     setRayleigh(value) {
+        this.setData("rayleigh", value);
         this.getBody().material.uniforms.rayleigh.value = value;
     }
 
     setLuminance(value) {
+        this.setData("luminance", value);
         this.getBody().material.uniforms.luminance.value = value;
     }
 
     setMieCoefficient(value) {
+        this.setData("mieCoefficient", value);
         this.getBody().material.uniforms.mieCoefficient.value = value;
     }
 
     setMieDirectionalG(value) {
+        this.setData("mieDirectionalG", value);
         this.getBody().material.uniforms.mieDirectionalG.value = value;
     }
 
     setSun(inclination, azimuth, distance) {
+        this.setData("sunInclination", inclination);
+        this.setData("sunAzimuth", azimuth);
+        this.setData("sunDistance", distance);
+
         const theta = Math.PI * (inclination - 0.5);
         const phi = 2 * Math.PI * (azimuth - 0.5);
 
@@ -286,5 +308,9 @@ export default class Sky extends Element {
         const position = new Vector3(x, y, z);
 
         this.getBody().material.uniforms.sunPosition.value.copy(position);
+    }
+
+    static create(data) {
+        return new Sky(data.options);
     }
 }
