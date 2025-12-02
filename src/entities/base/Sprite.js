@@ -35,8 +35,7 @@ export default class Sprite extends Element {
         this.height = height;
         this.spriteTexture = spriteTexture;
 
-        this.setAnisotropy(anisotropy);
-
+        
         const material = new SpriteMaterial({
             map: texture,
             ...rest,
@@ -45,6 +44,7 @@ export default class Sprite extends Element {
         const body = new THREESprite(material);
         this.setBody({ body });
 
+        this.setAnisotropy(anisotropy);
         this.setWidth(width);
         this.setHeight(height);
         this.setSizeAttenuation(sizeAttenuation);

@@ -1,12 +1,12 @@
 {
     "postprocessing": { "enabled": false },
     "screen": {
-        "h": 1351,
-        "w": 1111,
-        "ratio": 0.8223538119911177,
+        "h": 1015,
+        "w": 834,
+        "ratio": 0.8216748768472907,
         "frameRate": 60,
         "alpha": true,
-        "devicePixelRatio": 1
+        "devicePixelRatio": 2
     },
     "fog": { "enabled": false, "density": 0, "color": "#ffffff" },
     "lights": { "shadows": true, "shadowType": "HARD", "textureAnisotropy": 32 },
@@ -19,5 +19,12 @@
     "ui": { "enabled": true },
     "scripts": {},
     "tests": [],
-    "levelsData": {}
+    "levelsData": {
+        "/": {
+            "url": "./data/Intro.snapshot.json",
+            "options": {
+                "skipWorldTransform": true
+            }
+        }
+    }
 }

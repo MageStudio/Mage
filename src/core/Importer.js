@@ -37,15 +37,15 @@ import Universe from "./Universe";
 // class responsible for importing level data from a file
 export class Importer {
     // Importer gets config, containing either a level or a url
-    static importLevelSnapshot({ url, data }) {
+    static importLevelSnapshot({ url, data, options = {} } = {}) {
         if (getWindow() && url) {
             return fetch(url)
                 .then(res => res.json())
                 .then(data => data || {})
-                .then(Importer.parseLevelData)
+                .then(data => Importer.parseLevelData(data, options))
                 .catch(() => Promise.resolve());
         } else if (data) {
-            return Promise.resolve(Importer.parseLevelData(data));
+            return Promise.resolve(Importer.parseLevelData(data, options));
         }
 
         console.warn(NO_VALID_LEVEL_DATA_PROVIDED);
@@ -61,6 +61,7 @@ export class Importer {
             skipOpacity = false,
             skipName = false,
             skipWorldTransform = false,
+            skipTags = false,
         } = options;
 
         /// position
@@ -105,10 +106,15 @@ export class Importer {
         Object.keys(elementData.data).forEach(k => {
             element.setData(k, elementData.data[k]);
         });
+
+        // setting tags
+        if (!skipTags && elementData.tags) {
+            element.addTags(elementData.tags);
+        }
     }
 
-    static completeElementCreation(element, elementData) {
-        Importer.completeCommonCreationSteps(element, elementData);
+    static completeElementCreation(element, elementData, options) {
+        Importer.completeCommonCreationSteps(element, elementData, options);
 
         // setting material
         if (elementData.materials.length) {
@@ -130,8 +136,9 @@ export class Importer {
         });
     }
 
-    static completeLightCreation(light, lightData) {
-        Importer.completeCommonCreationSteps(light, lightData, { skipOpacity: true });
+    static completeLightCreation(light, lightData, options) {
+        // always setting skipOpacity to true
+        Importer.completeCommonCreationSteps(light, lightData, { ...options, skipOpacity: true });
 
         // setting color and intensity
         light.setColor(lightData.color);
@@ -176,14 +183,14 @@ export class Importer {
         // setting target for directional/sun lights
         if (lightData.target !== undefined) {
             const targetElement = new Element({ body: new Object3D() });
-            Importer.completeCommonCreationSteps(targetElement, lightData.target);
+            Importer.completeCommonCreationSteps(targetElement, lightData.target, options);
             light.setTarget(targetElement);
         }
     }
 
-    static completeSkyCreation(sky, skyData) {
+    static completeSkyCreation(sky, skyData, options) {
         // calling completeElementCreation to set position, rotation, quaternion, scale, opacity, name, material, textures, scripts, and data
-        Importer.completeCommonCreationSteps(sky, skyData, { skipScale: true });
+        Importer.completeCommonCreationSteps(sky, skyData, { ...options, skipScale: true });
 
         const {
             turbidity,
@@ -216,9 +223,9 @@ export class Importer {
         }
     }
 
-    static completeSpriteCreation(sprite, spriteData) {
+    static completeSpriteCreation(sprite, spriteData, options) {
         // calling completeElementCreation to set position, rotation, quaternion, scale, opacity, name, material, textures, scripts, and data
-        Importer.completeElementCreation(sprite, spriteData);
+        Importer.completeElementCreation(sprite, spriteData, options);
 
         const { width, height, spriteTexture, anisotropy, sizeAttenuation, depthTest, depthWrite } =
             spriteData;
@@ -246,7 +253,7 @@ export class Importer {
         }
     }
 
-    static parseLevelData(data = {}) {
+    static parseLevelData(data = {}, options = {}) {
         const { elements = [], lights = [] } = data;
 
         elements.forEach(data => {
@@ -255,38 +262,38 @@ export class Importer {
                     const { options } = data;
                     const { name, ...rest } = options;
 
-                    Importer.completeElementCreation(Models.create(name, rest), data);
+                    Importer.completeElementCreation(Models.create(name, rest), data, options);
                 } else {
                     switch (data.entitySubType) {
                         case ENTITY_TYPES.MESH.SUBTYPES.CUBE:
-                            Importer.completeElementCreation(Cube.create(data), data);
+                            Importer.completeElementCreation(Cube.create(data), data, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.LINE:
-                            Importer.completeElementCreation(Line.create(data), data);
+                            Importer.completeElementCreation(Line.create(data), data, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.SPHERE:
-                            Importer.completeElementCreation(Sphere.create(data), data);
+                            Importer.completeElementCreation(Sphere.create(data), data, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.CYLINDER:
-                            Importer.completeElementCreation(Cylinder.create(data), data);
+                            Importer.completeElementCreation(Cylinder.create(data), data, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.CONE:
-                            Importer.completeElementCreation(Cone.create(data), data);
+                            Importer.completeElementCreation(Cone.create(data), data, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.BOX:
-                            Importer.completeElementCreation(Box.create(data), data);
+                            Importer.completeElementCreation(Box.create(data), data, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.CURVE_LINE:
-                            Importer.completeElementCreation(CurveLine.create(data), data);
+                            Importer.completeElementCreation(CurveLine.create(data), data, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.PLANE:
-                            Importer.completeElementCreation(Plane.create(data), data);
+                            Importer.completeElementCreation(Plane.create(data), data, options);
                             break;
                         case ENTITY_TYPES.SPRITE.SUBTYPES.DEFAULT:
-                            Importer.completeSpriteCreation(Sprite.create(data), data);
+                            Importer.completeSpriteCreation(Sprite.create(data), data, options);
                             break;
                         case ENTITY_TYPES.SCENERY.SUBTYPES.SKY:
-                            Importer.completeSkyCreation(Sky.create(data), data);
+                            Importer.completeSkyCreation(Sky.create(data), data, options);
                             break;
                         default:
                             console.warn(
@@ -315,7 +322,7 @@ export class Importer {
                     if (child) {
                         parent.add(child);
                         const childData = elements.find(e => e.uuid === uuid);
-                        Importer.completeCommonCreationSteps(child, childData);
+                        Importer.completeCommonCreationSteps(child, childData, options);
                     }
                 });
             }
@@ -325,19 +332,19 @@ export class Importer {
             try {
                 switch (data.entitySubType) {
                     case ENTITY_TYPES.LIGHT.SUBTYPES.POINT:
-                        Importer.completeLightCreation(PointLight.create(data), data);
+                        Importer.completeLightCreation(PointLight.create(data), data, options);
                         break;
                     case ENTITY_TYPES.LIGHT.SUBTYPES.AMBIENT:
-                        Importer.completeLightCreation(AmbientLight.create(data), data);
+                        Importer.completeLightCreation(AmbientLight.create(data), data, options);
                         break;
                     case ENTITY_TYPES.LIGHT.SUBTYPES.SPOT:
-                        Importer.completeLightCreation(SpotLight.create(data), data);
+                        Importer.completeLightCreation(SpotLight.create(data), data, options);
                         break;
                     case ENTITY_TYPES.LIGHT.SUBTYPES.HEMISPHERE:
-                        Importer.completeLightCreation(HemisphereLight.create(data), data);
+                        Importer.completeLightCreation(HemisphereLight.create(data), data, options);
                         break;
                     case ENTITY_TYPES.LIGHT.SUBTYPES.SUN:
-                        Importer.completeLightCreation(SunLight.create(data), data);
+                        Importer.completeLightCreation(SunLight.create(data), data, options);
                         break;
                     default:
                         console.warn(IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE, data.entitySubType);
