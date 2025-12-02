@@ -1,4 +1,4 @@
-import { Router, store, Level, Scene, Controls, BaseScript } from "../../dist/mage.js";
+import { Router, store, Level, Scene, Controls, BaseScript, Universe } from "../../dist/mage.js";
 
 class SimpleScript extends BaseScript {
     constructor() {
@@ -25,6 +25,10 @@ export default class Intro extends Level {
     onCreate() {
         Scene.getCamera().setPosition({ y: 10 });
         Controls.setOrbitControl();
+
+        Universe.getByTag("exportable").forEach(element => {
+            console.log("Found exportable element:", element.getName());
+        });
     }
 }
 
@@ -37,7 +41,7 @@ const loadJSON = url => {
 const loadExportedData = async () => {
     const assets = await loadJSON("./data/assets.json");
     const config = await loadJSON("./data/config.json");
-    const level = await loadJSON("./data/snapshot.json");
+    const level = await loadJSON("./data/Intro.snapshot.json");
 
     return { assets, config, level };
 };
@@ -54,6 +58,9 @@ window.addEventListener("load", async () => {
         levelsData: {
             "/": {
                 data: level,
+                options: {
+                    skipWorldTransform: true,
+                },
             },
         },
     };

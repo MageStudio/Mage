@@ -11,12 +11,13 @@
                 "rotation": { "x": 0, "y": 0, "z": 0 },
                 "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
             },
+            "children": [],
             "entityType": "LIGHT.TYPE",
             "entitySubType": "LIGHT.SUBTYPE.AMBIENT",
             "scripts": [],
             "tags": ["all"],
-            "name": "AmbientLight_d20267db",
-            "uuid": "980078F9-05A9-481C-AA31-1730B20782F5",
+            "name": "AmbientLight_18ff3ad3",
+            "uuid": "6243AA93-A869-457D-88AA-D78A7ADE21CA",
             "data": {},
             "shadow": { "cast": false, "receive": false },
             "type": "LIGHT.TYPE",
@@ -34,12 +35,13 @@
                 "rotation": { "x": 0, "y": 0, "z": 0 },
                 "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
             },
+            "children": [],
             "entityType": "LIGHT.TYPE",
             "entitySubType": "LIGHT.SUBTYPE.HEMISPHERE",
             "scripts": [],
             "tags": ["all"],
-            "name": "HemisphereLight_c505f2a3",
-            "uuid": "11F41D3F-865E-458E-A026-5BA11AD6E822",
+            "name": "HemisphereLight_417168fe",
+            "uuid": "A3C86178-D79A-4D7B-9B1D-37ED1A556D1B",
             "data": {},
             "shadow": { "cast": false, "receive": false },
             "type": "LIGHT.TYPE",
@@ -64,12 +66,13 @@
                 "rotation": { "x": 0, "y": 0, "z": 0 },
                 "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
             },
+            "children": [],
             "entityType": "LIGHT.TYPE",
             "entitySubType": "LIGHT.SUBTYPE.SUN",
             "scripts": [],
             "tags": ["all"],
-            "name": "SunLight_d7f37993",
-            "uuid": "0BA831A8-C014-45B1-A317-6ACB49D2FA5E",
+            "name": "SunLight_71c5c71c",
+            "uuid": "C7B8DAD2-BD4C-464B-A0BB-E929C0DFB082",
             "data": {},
             "shadow": { "cast": true, "receive": false },
             "type": "LIGHT.TYPE",
@@ -85,9 +88,9 @@
                             "generator": "Object3D.toJSON"
                         },
                         "object": {
-                            "uuid": "99AED206-AB17-43A4-A51C-BAB17B57EFAB",
+                            "uuid": "1E031925-9D8F-44D9-A25D-E90D9DF9BC1A",
                             "type": "Object3D",
-                            "name": "Element_2ed5b88e",
+                            "name": "Element_664ec9b5",
                             "castShadow": true,
                             "receiveShadow": true,
                             "layers": 1,
@@ -97,7 +100,7 @@
                     "serializable": true,
                     "tag": "",
                     "tags": [],
-                    "name": "Element_2ed5b88e"
+                    "name": "Element_664ec9b5"
                 },
                 "position": { "x": 0, "y": 0, "z": 0 },
                 "rotation": { "x": 0, "y": 0, "z": 0 },
@@ -108,12 +111,13 @@
                     "rotation": { "x": 0, "y": 0, "z": 0 },
                     "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
                 },
+                "children": [],
                 "entityType": "MESH.TYPE",
                 "entitySubType": "MESH.SUBTYPE.TARGET",
                 "scripts": [],
                 "tags": ["all"],
-                "name": "Element_2ed5b88e",
-                "uuid": "99AED206-AB17-43A4-A51C-BAB17B57EFAB",
+                "name": "Element_664ec9b5",
+                "uuid": "1E031925-9D8F-44D9-A25D-E90D9DF9BC1A",
                 "data": {},
                 "shadow": { "cast": true, "receive": true },
                 "physics": { "state": "{}", "options": { "applyPhysicsUpdate": true } },
@@ -137,9 +141,9 @@
                         "generator": "Object3D.toJSON"
                     },
                     "object": {
-                        "uuid": "99AED206-AB17-43A4-A51C-BAB17B57EFAB",
+                        "uuid": "1E031925-9D8F-44D9-A25D-E90D9DF9BC1A",
                         "type": "Object3D",
-                        "name": "Element_2ed5b88e",
+                        "name": "Element_664ec9b5",
                         "castShadow": true,
                         "receiveShadow": true,
                         "layers": 1,
@@ -149,7 +153,7 @@
                 "serializable": true,
                 "tag": "",
                 "tags": [],
-                "name": "Element_2ed5b88e"
+                "name": "Element_664ec9b5"
             },
             "position": { "x": 0, "y": 0, "z": 0 },
             "rotation": { "x": 0, "y": 0, "z": 0 },
@@ -160,12 +164,13 @@
                 "rotation": { "x": 0, "y": 0, "z": 0 },
                 "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
             },
+            "children": [],
             "entityType": "MESH.TYPE",
             "entitySubType": "MESH.SUBTYPE.TARGET",
             "scripts": [],
             "tags": ["all"],
-            "name": "Element_2ed5b88e",
-            "uuid": "99AED206-AB17-43A4-A51C-BAB17B57EFAB",
+            "name": "Element_664ec9b5",
+            "uuid": "1E031925-9D8F-44D9-A25D-E90D9DF9BC1A",
             "data": {},
             "shadow": { "cast": true, "receive": true },
             "physics": { "state": "{}", "options": { "applyPhysicsUpdate": true } },
@@ -187,7 +192,7 @@
                 "serializable": true,
                 "tag": "",
                 "tags": [],
-                "name": "Sky_a8d704f5"
+                "name": "Sky_7a4e0e9a"
             },
             "position": { "x": 0, "y": 0, "z": 0 },
             "rotation": { "x": 0, "y": 0, "z": 0 },
@@ -198,12 +203,13 @@
                 "rotation": { "x": 0, "y": 0, "z": 0 },
                 "quaternion": { "x": 0, "y": 0, "z": 0, "w": 1 }
             },
+            "children": [],
             "entityType": "SCENERY",
             "entitySubType": "SCENERY.SUBTYPE.SKY",
             "scripts": [],
             "tags": ["all"],
-            "name": "Sky_a8d704f5",
-            "uuid": "6D0B9C87-7E09-48AF-9766-0D039024AFE4",
+            "name": "Sky_7a4e0e9a",
+            "uuid": "6BC932F5-47FD-4DAB-A6FA-736DCB62BCA3",
             "data": {
                 "turbidity": 10,
                 "rayleigh": 0.8,
@@ -224,7 +230,7 @@
                         "type": "Material",
                         "generator": "Material.toJSON"
                     },
-                    "uuid": "4E64948B-420C-44AE-8F53-768DB498E379",
+                    "uuid": "EB1DCE82-318D-4A14-91E4-C09E616C23BB",
                     "type": "ShaderMaterial",
                     "side": 1,
                     "depthFunc": 3,
@@ -263,37 +269,38 @@
                 "serializable": true,
                 "tag": "",
                 "tags": [],
-                "name": "Cube_a1927a5a"
+                "name": "Cube_02b8919a"
             },
             "position": { "x": 0, "y": 0, "z": 0 },
-            "rotation": { "x": -0.8110670777822804, "y": 1.8281603308620697, "z": 0 },
+            "rotation": { "x": 0.8964552209809914, "y": 1.7878389292036132, "z": 0 },
             "quaternion": {
-                "x": -0.2408554253503747,
-                "y": 0.7277637333880193,
-                "z": -0.3124517229607652,
-                "w": 0.5610013665431407
+                "x": 0.27144559739866714,
+                "y": 0.7025278495275898,
+                "z": 0.33782524880396775,
+                "w": 0.5644873865389359
             },
             "scale": { "x": 1, "y": 1, "z": 1 },
             "worldTransform": {
                 "position": { "x": 0, "y": 0, "z": 0 },
                 "rotation": {
-                    "x": 2.330525575807512,
-                    "y": 1.3134323227277238,
-                    "z": -3.1415926535897927
+                    "x": -2.245137432608802,
+                    "y": 1.3537537243861801,
+                    "z": -3.141592653589793
                 },
                 "quaternion": {
-                    "x": -0.24085542535037463,
-                    "y": 0.7277637333880193,
-                    "z": -0.3124517229607651,
-                    "w": 0.5610013665431408
+                    "x": 0.27144559739866714,
+                    "y": 0.7025278495275898,
+                    "z": 0.33782524880396775,
+                    "w": 0.5644873865389359
                 }
             },
+            "children": [],
             "entityType": "MESH.TYPE",
             "entitySubType": "MESH.SUBTYPE.CUBE",
             "scripts": [{ "name": "SimpleScript", "options": {}, "isStatic": false }],
-            "tags": ["all"],
-            "name": "Cube_a1927a5a",
-            "uuid": "D2FC0ABF-3C02-41DB-95F8-AA6F84F75E76",
+            "tags": ["all", "exportable", "testing", "box"],
+            "name": "Cube_02b8919a",
+            "uuid": "A9D33E46-5CC0-4BDF-A8DA-CDA09F0C6F30",
             "data": {},
             "shadow": { "cast": true, "receive": true },
             "physics": { "state": "{}", "options": { "applyPhysicsUpdate": true } },
@@ -306,7 +313,7 @@
                         "type": "Material",
                         "generator": "Material.toJSON"
                     },
-                    "uuid": "79604EA0-7748-433A-B136-A8E3F6D884A2",
+                    "uuid": "C7FA2128-3479-449F-9E6E-1BD8EB609132",
                     "type": "MeshStandardMaterial",
                     "color": 16777215,
                     "roughness": 0.5,
@@ -330,7 +337,7 @@
                     "skinning": true,
                     "textures": [
                         {
-                            "uuid": "61D114A2-C8F9-4686-95D6-E24F7B2E0CF7",
+                            "uuid": "8BBD2CE6-3E1B-4EA5-88C5-EC8721F1B9B2",
                             "name": "",
                             "mapping": 300,
                             "repeat": [1, 1],
@@ -347,10 +354,10 @@
                             "flipY": true,
                             "premultiplyAlpha": false,
                             "unpackAlignment": 4,
-                            "image": "008AD787-4CFE-461B-B3BB-71661C7E8473"
+                            "image": "637B9DD1-2640-46B0-8BC9-CFE4FFC57854"
                         },
                         {
-                            "uuid": "D21039D1-027E-4527-AFA2-71EE4D0A40EE",
+                            "uuid": "89A74BF0-940F-4B88-94CB-74D22D2D5ECD",
                             "name": "",
                             "mapping": 300,
                             "repeat": [1, 1],
@@ -367,10 +374,10 @@
                             "flipY": true,
                             "premultiplyAlpha": false,
                             "unpackAlignment": 4,
-                            "image": "B48785CF-5B3C-4292-91C2-9D54BAACC89B"
+                            "image": "0279FA31-68BA-4151-A743-04F4DD05194B"
                         },
                         {
-                            "uuid": "723B5EB9-591B-48FA-A577-15F077FB77B6",
+                            "uuid": "D5402F74-DE63-4156-A9BD-2696E34EF5B2",
                             "name": "",
                             "mapping": 300,
                             "repeat": [1, 1],
@@ -387,10 +394,10 @@
                             "flipY": true,
                             "premultiplyAlpha": false,
                             "unpackAlignment": 4,
-                            "image": "3AF3F152-AE8C-4B9E-8D9E-DFCBEE6DC2A2"
+                            "image": "B7FD1663-F927-45D4-AEE9-D0009DF9E61A"
                         },
                         {
-                            "uuid": "65744975-8F8D-4C6D-9E50-E5A395448584",
+                            "uuid": "2C85BCB2-A97F-43D4-B65B-B4FD88746693",
                             "name": "",
                             "mapping": 300,
                             "repeat": [1, 1],
@@ -407,10 +414,10 @@
                             "flipY": true,
                             "premultiplyAlpha": false,
                             "unpackAlignment": 4,
-                            "image": "2089B6F9-4191-4BFA-AA93-44966E200A5B"
+                            "image": "BBCCF447-D7A1-4DB1-A4C3-B904C8902FD1"
                         },
                         {
-                            "uuid": "0BAF7FA1-9109-4CEC-A8CA-6A79002B9815",
+                            "uuid": "6F9450ED-8A52-4B3B-9EA5-D27923EED150",
                             "name": "",
                             "mapping": 300,
                             "repeat": [1, 1],
@@ -427,7 +434,7 @@
                             "flipY": true,
                             "premultiplyAlpha": false,
                             "unpackAlignment": 4,
-                            "image": "5FF27BFD-8A0E-40E3-8BB3-EEF8FC98D065"
+                            "image": "8A02DF90-4A66-4D64-A765-D027DA9725AE"
                         }
                     ]
                 }

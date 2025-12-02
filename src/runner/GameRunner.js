@@ -98,8 +98,7 @@ export class GameRunner {
                     this.getCurrentLevel().prepareScene();
                     this.getCurrentLevel().init();
 
-                    // const levelURL = config.getLevelData(this.getCurrentLevel().getPath())?.url;
-                    const levelData = config.getLevelData(this.getCurrentLevel().getPath());
+                    const levelData = config.getLevelData(this.getCurrentLevel().getPath()) || {};
 
                     Importer.importLevelSnapshot(levelData)
                         .then(() => resolve(this.getCurrentLevel()))

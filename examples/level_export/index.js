@@ -84,6 +84,9 @@ export default class Intro extends Level {
         box.setTexture("woodRoughness", constants.TEXTURES.ROUGHNESS);
 
         box.addScript("SimpleScript");
+
+
+        box.addTags(["exportable", "testing", "box"]);
         window.box = box;
     }
 

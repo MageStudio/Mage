@@ -6,60 +6,61 @@ const DEFAULT_HEIGHT = 600;
 const DEFAULT_WIDTH = 800;
 const DEFAULT_RATIO = DEFAULT_WIDTH / DEFAULT_HEIGHT;
 
+const DEFAULT_CONFIG = {
+    tests: [],
+
+    scripts: {
+        // [scriptId]: Script
+        // e.g. "BaseCar": BaseCar,
+        // where at the top of the file we have:
+        // import BaseCar from "../scripts/BaseCar.js";
+    },
+
+    levelsData: {
+        // [levelId]: { url: URL, data: JSON, options: {} }
+    },
+
+    screen: {
+        frameRate: 60,
+        alpha: true,
+    },
+
+    postprocessing: {
+        enabled: false,
+    },
+
+    fog: {
+        enabled: false,
+        density: 0,
+        color: "#ffffff",
+    },
+
+    lights: {
+        shadows: true,
+        shadowType: SHADOW_TYPES.BASIC,
+        textureAnisotropy: 16,
+    },
+
+    physics: {
+        enabled: false,
+        path: "./mage.physics.js",
+    },
+
+    camera: {
+        //handling useful informations about our camera.
+        fov: 75,
+        near: 0.1,
+        far: 100,
+    },
+
+    ui: {
+        enabled: true,
+    },
+};
+
 class Config {
     constructor() {
-        this.default = {
-            tests: [],
-
-            scripts: {
-                // [scriptId]: Script
-                // e.g. "BaseCar": BaseCar,
-                // where at the top of the file we have:
-                // import BaseCar from "../scripts/BaseCar.js";
-            },
-
-            levelsData: {
-                // [levelId]: { url: URL }
-            },
-
-            screen: {
-                frameRate: 60,
-                alpha: true,
-            },
-
-            postprocessing: {
-                enabled: false,
-            },
-
-            fog: {
-                enabled: false,
-                density: 0,
-                color: "#ffffff",
-            },
-
-            lights: {
-                shadows: true,
-                shadowType: SHADOW_TYPES.BASIC,
-                textureAnisotropy: 16,
-            },
-
-            physics: {
-                enabled: false,
-                path: "./mage.physics.js",
-            },
-
-            camera: {
-                //handling useful informations about our camera.
-                fov: 75,
-                near: 0.1,
-                far: 100,
-            },
-
-            ui: {
-                enabled: true,
-            },
-        };
-
+        this.default = DEFAULT_CONFIG;
         this.isDefault = true;
     }
 

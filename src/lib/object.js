@@ -8,3 +8,28 @@ export const omit = (keys, map) =>
         const { [key]: value, ...rest } = acc;
         return rest;
     }, map);
+
+
+const isSerializable = value =>
+    !(value === null || value === undefined || typeof value !== "object");
+
+const deepSerialize = obj => {
+    if (!isSerializable(obj)) {
+        return obj;
+    }
+    if (obj?.toJSON && typeof obj.toJSON === "function") {
+        return obj.toJSON();
+    }
+    if (Array.isArray(obj)) {
+        return obj.map(item => deepSerialize(item));
+    }
+    const result = {};
+    for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            // Serialize and parse each property
+            const value = deepSerialize(obj[key]);
+            result[key] = isSerializable(value) ? JSON.parse(JSON.stringify(value)) : value;
+        }
+    }
+    return result;
+};

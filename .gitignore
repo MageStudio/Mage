@@ -9,3 +9,5 @@ dist/mage.node.js
 .DS_Store
 .idea
 .vscode
+
+**/.DS_Store
