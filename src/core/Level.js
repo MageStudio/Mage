@@ -43,6 +43,7 @@ export class Level extends EventDispatcher {
 
     onStateChange = state => {};
     onCreate() {}
+    onStart() {}
     onUpdate() {}
 
     onBeforeDispose() {}
