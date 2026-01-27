@@ -92,7 +92,12 @@ export class GameRunner {
                 storage
                     .load()
                     .then(Importer.parseLevelData)
-                    .then(() => resolve(this.getCurrentLevel()));
+                    .then(() => {
+                        if (this.getCurrentLevel().onStart instanceof Function) {
+                            this.getCurrentLevel().onStart();
+                        }
+                        resolve(this.getCurrentLevel());
+                    });
             } else {
                 Physics.waitForState(PHYSICS_STATES.READY).then(() => {
                     this.getCurrentLevel().prepareScene();
@@ -101,7 +106,12 @@ export class GameRunner {
                     const levelData = config.getLevelData(this.getCurrentLevel().getPath()) || {};
 
                     Importer.importLevelSnapshot(levelData)
-                        .then(() => resolve(this.getCurrentLevel()))
+                        .then(() => {
+                            if (this.getCurrentLevel().onStart instanceof Function) {
+                                this.getCurrentLevel().onStart();
+                            }
+                            resolve(this.getCurrentLevel());
+                        })
                         .catch(reject);
                 });
             }
