@@ -21,6 +21,7 @@ export const IMPORTER_ERROR = `${PREFIX} Error while importing level: `;
 
 export const IMPORTER_ERROR_ELEMENT_CREATION = `${PREFIX} Error while creating element: `;
 export const IMPORTER_ERROR_LIGHT_CREATION = `${PREFIX} Error while creating light: `;
+export const IMPORTER_ERROR_SOUND_CREATION = `${PREFIX} Error while creating sound: `;
 export const IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE = `${PREFIX} Unknown element subtype: `;
 
 export const MALFORMED_ONCREATE_FUNCTION = `${PREFIX} Something wrong in your onCreate method.`;

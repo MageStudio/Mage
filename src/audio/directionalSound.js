@@ -8,7 +8,8 @@ export default class DirectionalSound extends Sound {
     constructor(source, { name = generateRandomName("DirectionalSound"), ...options } = {}) {
         super({ source, name, ...options });
 
-        this.setEntityType(ENTITY_TYPES.AUDIO.DIRECTIONAL);
+        this.setEntityType(ENTITY_TYPES.AUDIO.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.AUDIO.SUBTYPES.DIRECTIONAL);
     }
 
     setupAudio() {
@@ -102,5 +103,18 @@ export default class DirectionalSound extends Sound {
             this.updatePannerOrientation();
             this.updatePannerPosition();
         }
+    }
+
+    static create(data = {}) {
+        const { source, loop, loopStart, loopEnd, autoplay, reconnectOnReset, name, options = {} } = data;
+        return new DirectionalSound(source, {
+            loop,
+            loopStart,
+            loopEnd,
+            autoplay,
+            reconnectOnReset,
+            name,
+            ...options
+        });
     }
 }

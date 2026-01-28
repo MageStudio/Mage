@@ -52,9 +52,19 @@ export default class HemisphereLight extends Light {
     }
 
     setColor = ({ sky, ground } = {}) => {
-        if (sky && ground) {
-            this.getBody().color = sky;
-            this.getBody().groundColor = ground;
+        if (sky !== undefined) {
+            if (typeof sky === 'object' && 'r' in sky && 'g' in sky && 'b' in sky) {
+                this.getBody().color.setRGB(sky.r, sky.g, sky.b);
+            } else {
+                this.getBody().color.set(sky);
+            }
+        }
+        if (ground !== undefined) {
+            if (typeof ground === 'object' && 'r' in ground && 'g' in ground && 'b' in ground) {
+                this.getBody().groundColor.setRGB(ground.r, ground.g, ground.b);
+            } else {
+                this.getBody().groundColor.set(ground);
+            }
         }
     };
 
@@ -89,5 +99,9 @@ export default class HemisphereLight extends Light {
                 ? { sky: serializeColor(color.sky), ground: serializeColor(color.ground) }
                 : color,
         };
+    }
+
+    static create(data = {}) {
+        return new HemisphereLight(data.options);
     }
 }
