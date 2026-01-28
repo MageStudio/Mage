@@ -238,4 +238,8 @@ export default class SpotLight extends Light {
             angle: this.getAngle(),
         };
     }
+
+    static create(data = {}) {
+        return new SpotLight(data.options);
+    }
 }

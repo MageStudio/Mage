@@ -476,7 +476,13 @@ export default class Element extends Entity {
     }
 
     setColor(color = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.COLOR]) {
-        const _setColor = material => (material.color = new Color(color));
+        const _setColor = material => {
+            if (color && typeof color === 'object' && 'r' in color && 'g' in color && 'b' in color) {
+                material.color.setRGB(color.r, color.g, color.b);
+            } else {
+                material.color = new Color(color);
+            }
+        };
         if (color) {
             applyMaterialChange(this.getBody(), _setColor);
         } else {
@@ -569,7 +575,16 @@ export default class Element extends Entity {
     }
 
     setSpecularColor(color = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.SPECULAR]) {
-        const _setSpecularColor = material => (material[PROPERTIES.SPECULAR] = new Color(color));
+        const _setSpecularColor = material => {
+            if (color && typeof color === 'object' && 'r' in color && 'g' in color && 'b' in color) {
+                if (!material[PROPERTIES.SPECULAR]) {
+                    material[PROPERTIES.SPECULAR] = new Color();
+                }
+                material[PROPERTIES.SPECULAR].setRGB(color.r, color.g, color.b);
+            } else {
+                material[PROPERTIES.SPECULAR] = new Color(color);
+            }
+        };
         applyMaterialChange(this.getBody(), _setSpecularColor);
     }
 
@@ -605,7 +620,16 @@ export default class Element extends Entity {
     }
 
     setEmissive(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.EMISSIVE]) {
-        const _setEmissive = material => (material[PROPERTIES.EMISSIVE] = new Color(value));
+        const _setEmissive = material => {
+            if (value && typeof value === 'object' && 'r' in value && 'g' in value && 'b' in value) {
+                if (!material[PROPERTIES.EMISSIVE]) {
+                    material[PROPERTIES.EMISSIVE] = new Color();
+                }
+                material[PROPERTIES.EMISSIVE].setRGB(value.r, value.g, value.b);
+            } else {
+                material[PROPERTIES.EMISSIVE] = new Color(value);
+            }
+        };
         applyMaterialChange(this.getBody(), _setEmissive);
     }
 

@@ -177,4 +177,8 @@ export default class PointLight extends Light {
             shadowCamera: this.getShadowCameraNearFar(),
         };
     }
+
+    static create(data = {}) {
+        return new PointLight(data.options);
+    }
 }

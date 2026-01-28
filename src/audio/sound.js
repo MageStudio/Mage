@@ -66,7 +66,8 @@ export default class Sound extends Entity {
         }
         this.setName(name);
         this.setBody({ body: new Object3D() });
-        this.setEntityType(ENTITY_TYPES.AUDIO.DEFAULT);
+        this.setEntityType(ENTITY_TYPES.AUDIO.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.AUDIO.SUBTYPES.DEFAULT);
 
         Scene.add(this.getBody(), this);
         Audio.add(this);
@@ -363,6 +364,7 @@ export default class Sound extends Entity {
             loopStart: this.loopStart,
             loopEnd: this.loopEnd,
             autoplay: this.autoplay,
+            reconnectOnReset: this.reconnectOnReset,
             volume: this.getVolume(),
             detune: this.getDetune(),
             hasPlayed: this.hasPlayed,
@@ -372,5 +374,18 @@ export default class Sound extends Entity {
             sampleRate: this.hasBuffer() ? this.sampleRate : 0,
             numberOfChannels: this.hasBuffer() ? this.numberOfChannels : 0,
         };
+    }
+
+    static create(data = {}) {
+        const { source, loop, loopStart, loopEnd, autoplay, reconnectOnReset, options = {} } = data;
+        return new Sound({
+            source,
+            loop,
+            loopStart,
+            loopEnd,
+            autoplay,
+            reconnectOnReset,
+            ...options
+        });
     }
 }

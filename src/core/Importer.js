@@ -18,6 +18,9 @@ import AmbientLight from "../lights/ambientLight";
 import SpotLight from "../lights/spotLight";
 import HemisphereLight from "../lights/hemisphereLight";
 import SunLight from "../lights/sunLight";
+import Sound from "../audio/sound";
+import AmbientSound from "../audio/ambientSound";
+import DirectionalSound from "../audio/directionalSound";
 import { difference } from "../lib/array";
 import { omit } from "../lib/object";
 import { MATERIAL_PROPERTIES_MAP, TEXTURES } from "../lib/constants";
@@ -28,6 +31,7 @@ import {
     IMPORTER_ERROR_ELEMENT_CREATION,
     IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE,
     IMPORTER_ERROR_LIGHT_CREATION,
+    IMPORTER_ERROR_SOUND_CREATION,
 } from "../lib/messages";
 import Sky from "../fx/scenery/Sky";
 import Element from "../entities/Element";
@@ -117,7 +121,7 @@ export class Importer {
         Importer.completeCommonCreationSteps(element, elementData, options);
 
         // setting material
-        if (elementData.materials.length) {
+        if (elementData.materials && elementData.materials.length) {
             const defaultMaterialOptionKeys = MATERIAL_PROPERTIES_MAP[elementData.materialType];
             const disallowedMaterialOptions = difference(
                 Object.keys(elementData.materials[0]),
@@ -128,12 +132,39 @@ export class Importer {
         }
 
         // setting textures
-        const parsedTextures = JSON.parse(elementData.textures);
-        element.setNormalScale();
-        Object.keys(parsedTextures).forEach(textureType => {
-            const { id, options } = parsedTextures[textureType];
-            element.setTexture(id, textureType, options);
-        });
+        if (elementData.textures) {
+            const parsedTextures = JSON.parse(elementData.textures);
+            element.setNormalScale();
+            Object.keys(parsedTextures).forEach(textureType => {
+                const { id, options } = parsedTextures[textureType];
+                element.setTexture(id, textureType, options);
+            });
+        }
+
+        // setting shadow properties
+        if (elementData.shadow) {
+            const castShadow = elementData.shadow.cast;
+            const receiveShadow = elementData.shadow.receive;
+
+            if (castShadow !== undefined) {
+                element.getBody().castShadow = castShadow;
+            }
+            if (receiveShadow !== undefined) {
+                element.getBody().receiveShadow = receiveShadow;
+            }
+
+            // For models, also traverse children
+            if (element.isModel()) {
+                element.getBody().traverse(child => {
+                    if (castShadow !== undefined) {
+                        child.castShadow = castShadow;
+                    }
+                    if (receiveShadow !== undefined) {
+                        child.receiveShadow = receiveShadow;
+                    }
+                });
+            }
+        }
     }
 
     static completeLightCreation(light, lightData, options) {
@@ -143,6 +174,11 @@ export class Importer {
         // setting color and intensity
         light.setColor(lightData.color);
         light.setIntensity(lightData.intensity);
+
+        // setting castShadow
+        if (lightData.castShadow !== undefined) {
+            light.setCastShadow(lightData.castShadow);
+        }
 
         // setting light-specific properties
         if (lightData.distance !== undefined) {
@@ -159,11 +195,6 @@ export class Importer {
 
         if (lightData.penumbra !== undefined) {
             light.setPenumbra(lightData.penumbra);
-        }
-
-        // setting ground color for hemisphere lights
-        if (lightData.ground !== undefined && lightData.sky !== undefined) {
-            light.setColor({ sky: lightData.sky, ground: lightData.ground });
         }
 
         // setting shadow properties
@@ -253,8 +284,22 @@ export class Importer {
         }
     }
 
+    static completeSoundCreation(sound, soundData, options) {
+        Importer.completeCommonCreationSteps(sound, soundData, { ...options, skipOpacity: true, skipScale: true });
+
+        // setting sound-specific properties
+        if (soundData.volume !== undefined) {
+            sound.setVolume(soundData.volume);
+        }
+        if (soundData.detune !== undefined) {
+            sound.detune(soundData.detune);
+        }
+    }
+
     static parseLevelData(data = {}, options = {}) {
-        const { elements = [], lights = [] } = data;
+        const { elements = [], lights = [], audio = [], sounds = [] } = data;
+        // Support both 'audio' and 'sounds' keys for backwards compatibility
+        const allSounds = [...audio, ...sounds];
 
         elements.forEach(data => {
             try {
@@ -352,6 +397,33 @@ export class Importer {
             } catch (error) {
                 console.error(
                     IMPORTER_ERROR_LIGHT_CREATION,
+                    data.name,
+                    data.entitySubType,
+                    error.stack,
+                );
+            }
+        });
+
+        // processing sounds
+        allSounds.forEach(data => {
+            try {
+                switch (data.entitySubType) {
+                    case ENTITY_TYPES.AUDIO.SUBTYPES.DEFAULT:
+                        Importer.completeSoundCreation(Sound.create(data), data, options);
+                        break;
+                    case ENTITY_TYPES.AUDIO.SUBTYPES.AMBIENT:
+                        Importer.completeSoundCreation(AmbientSound.create(data), data, options);
+                        break;
+                    case ENTITY_TYPES.AUDIO.SUBTYPES.DIRECTIONAL:
+                        Importer.completeSoundCreation(DirectionalSound.create(data), data, options);
+                        break;
+                    default:
+                        // Try to create as basic Sound if entitySubType not recognized
+                        Importer.completeSoundCreation(Sound.create(data), data, options);
+                }
+            } catch (error) {
+                console.error(
+                    IMPORTER_ERROR_SOUND_CREATION,
                     data.name,
                     data.entitySubType,
                     error.stack,
