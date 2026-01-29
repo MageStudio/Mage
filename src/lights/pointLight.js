@@ -179,6 +179,8 @@ export default class PointLight extends Light {
     }
 
     static create(data = {}) {
-        return new PointLight(data.options);
+        const { color, intensity, name, position, distance, decay, bias, mapSize, shadowCamera } = data;
+        const { near, far } = shadowCamera || {};
+        return new PointLight({ color, intensity, name, position, distance, decay, near, far, mapSize, bias });
     }
 }

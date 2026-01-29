@@ -102,6 +102,7 @@ export default class HemisphereLight extends Light {
     }
 
     static create(data = {}) {
-        return new HemisphereLight(data.options);
+        const { color, intensity, name, position } = data;
+        return new HemisphereLight({ color, intensity, name, position });
     }
 }

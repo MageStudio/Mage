@@ -193,6 +193,8 @@ export default class SunLight extends Light {
     }
 
     static create(data = {}) {
-        return new SunLight(data.options);
+        const { color, intensity, name, position, bias, mapSize, shadowCamera } = data;
+        const { near, far, fov } = shadowCamera || {};
+        return new SunLight({ color, intensity, name, position, near, far, mapSize, bias, fov });
     }
 }
