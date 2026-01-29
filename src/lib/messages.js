@@ -103,6 +103,7 @@ export const AUDIO_SOURCE_NOT_DEFINED = `${PREFIX} No audio source defined. Set 
 
 export const LIGHT_NOT_FOUND = `${PREFIX} This light was not created properly.`;
 export const LIGHT_HOLDER_MODEL_NOT_FOUND = `${PREFIX} This light holder model can't be found.`;
+export const SOUND_HOLDER_MODEL_NOT_FOUND = `${PREFIX} This sound holder model can't be found.`;
 
 export const LABEL_DOMELEMENT_MISSING = `${PREFIX} Could not create Label, domElement is missing. Did you forget to set the this.element ref on your component?`;
 export const NO_VALID_LEVEL_DATA_PROVIDED = `${PREFIX} No valid level data (json or url) provided`;

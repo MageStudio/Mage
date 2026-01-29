@@ -3,7 +3,7 @@ import { ENTITY_EVENTS, ENTITY_TYPES } from "../entities/constants";
 import Scene from "../core/Scene";
 import Entity from "../entities/Entity";
 import { ALMOST_ZERO, TAGS } from "../lib/constants";
-import { AUDIO_SOURCE_NOT_DEFINED, AUDIO_UNABLE_TO_LOAD_SOUND } from "../lib/messages";
+import { AUDIO_SOURCE_NOT_DEFINED, AUDIO_UNABLE_TO_LOAD_SOUND, SOUND_HOLDER_MODEL_NOT_FOUND } from "../lib/messages";
 import { generateRandomName } from "../lib/uuid";
 import Audio, {
     AUDIO_RAMPS,
@@ -88,7 +88,7 @@ export default class Sound extends Entity {
             holderSprite.setDepthWrite(false);
             holderSprite.setSerializable(false);
             holderSprite.setPosition(this.getPosition());
-            holderSprite.addTags([TAGS.HELPER, TAGS.SOUNDS.HELPER, TAGS.SOUNDS.HOLDER, name]);
+            holderSprite.addTags([TAGS.HELPER, TAGS.SOUNDS.HELPER, TAGS.SOUNDS.HOLDER, holderName]);
 
             holderSprite.setHelperTarget(this);
 
@@ -96,7 +96,7 @@ export default class Sound extends Entity {
 
             return true;
         } else {
-            console.warn(LIGHT_HOLDER_MODEL_NOT_FOUND);
+            console.warn(SOUND_HOLDER_MODEL_NOT_FOUND);
             return false;
         }
     }

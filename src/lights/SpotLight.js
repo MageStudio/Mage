@@ -240,6 +240,8 @@ export default class SpotLight extends Light {
     }
 
     static create(data = {}) {
-        return new SpotLight(data.options);
+        const { color, intensity, name, position, distance, angle, penumbra, decay, bias, mapSize, shadowCamera } = data;
+        const { near, far } = shadowCamera || {};
+        return new SpotLight({ color, intensity, name, position, distance, angle, penumbra, decay, near, far, mapSize, bias });
     }
 }

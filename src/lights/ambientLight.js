@@ -56,6 +56,7 @@ export default class AmbientLight extends Light {
     }
 
     static create(data = {}) {
-        return new AmbientLight(data.options);
+        const { color, intensity, name, position } = data;
+        return new AmbientLight({ color, intensity, name, position });
     }
 }
