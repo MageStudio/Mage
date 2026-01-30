@@ -1,5 +1,6 @@
 import { ObjectLoader, EventDispatcher } from "three";
 
+import env from "../env";
 import Element from "../entities/Element";
 import { ENTITY_TYPES } from "../entities/constants";
 
@@ -45,6 +46,31 @@ const isURL = path => {
     } catch (_) {
         return false;
     }
+};
+
+/**
+ * Resolves an asset path to a full URL.
+ * If path is already an absolute URL, returns it as-is.
+ * If path is relative and MAGE_ASSETS_BASE_URL is set, prepends the base URL.
+ * @param {string} path - The asset path (relative or absolute)
+ * @returns {string} - The resolved full URL
+ */
+const resolveAssetPath = path => {
+    // If it's already an absolute URL, use it as-is
+    if (isURL(path)) {
+        return path;
+    }
+
+    // If MAGE_ASSETS_BASE_URL is set, prepend it to the relative path
+    const baseUrl = env.MAGE_ASSETS_BASE_URL;
+    if (baseUrl) {
+        // Remove leading slash from path if present to avoid double slashes
+        const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+        return `${baseUrl}/${cleanPath}`;
+    }
+
+    // Fallback: return the path as-is (for backwards compatibility)
+    return path;
 };
 const extractExtension = path => {
     const url = isURL(path);
@@ -210,6 +236,8 @@ class Models extends EventDispatcher {
     loadAssetByPath = (path, name, options = {}) => {
         const { level } = options;
         const id = buildAssetId(name, level);
+        // Resolve the path using MAGE_ASSETS_BASE_URL if available
+        const resolvedPath = resolveAssetPath(path);
         const extension = extractExtension(path);
         const { loader, tracer } = getLoaderFromExtension(extension, options);
         const parser = getModelParserFromExtension(extension);
@@ -223,7 +251,7 @@ class Models extends EventDispatcher {
 
         return new Promise(resolve => {
             loader.load(
-                path,
+                resolvedPath,
                 model => {
                     const parsedModel = parser(model);
 

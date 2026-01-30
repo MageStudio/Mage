@@ -716,8 +716,9 @@ export default class Element extends Entity {
         return extractMaterialProperty(this.getBody(), PROPERTIES.SIDE);
     }
 
-    recordTexture(id, type, options) {
-        this.textures.set(type, { id, options });
+    recordTexture(id, type, options, assetPath) {
+        // assetPath is the relative path like "textures/mytexture.png"
+        this.textures.set(type, { id, options, assetPath });
     }
 
     setTextureMap = (textureId, options = {}) => {
@@ -736,16 +737,21 @@ export default class Element extends Entity {
         }
 
         if (textureId) {
-            const { repeat = { x: 1, y: 1 }, wrap = RepeatWrapping } = options;
+            const { repeat = { x: 1, y: 1 }, wrap = RepeatWrapping, assetPath } = options;
             const textureOptions = {
                 repeat,
                 wrap,
             };
 
-            this.recordTexture(textureId, textureType, textureOptions);
+            this.recordTexture(textureId, textureType, textureOptions, assetPath);
 
             const applyTextureTo = material => {
                 const texture = Images.get(textureId);
+
+                if (!texture) {
+                    console.warn(`[Mage] Texture not found: ${textureId}`);
+                    return;
+                }
 
                 texture.wrapS = textureOptions.wrap;
                 texture.wrapT = textureOptions.wrap;

@@ -1,5 +1,6 @@
 import { fetch } from "whatwg-fetch";
 import { getWindow } from "./window";
+import env from "../env";
 import {
     Line,
     Cube,
@@ -37,6 +38,7 @@ import Sky from "../fx/scenery/Sky";
 import Element from "../entities/Element";
 import { Object3D } from "three";
 import Universe from "./Universe";
+import Images from "../images/Images";
 
 // class responsible for importing level data from a file
 export class Importer {
@@ -135,8 +137,23 @@ export class Importer {
         if (elementData.textures) {
             const parsedTextures = JSON.parse(elementData.textures);
             element.setNormalScale();
-            Object.keys(parsedTextures).forEach(textureType => {
-                const { id, options } = parsedTextures[textureType];
+            Object.keys(parsedTextures).forEach(async textureType => {
+                const { id, options, assetPath } = parsedTextures[textureType];
+
+                // If texture not already loaded and we have an assetPath, load it first
+                // assetPath is relative like "textures/mytexture.png"
+                // The actual URL is resolved based on the assets base URL
+                if (!Images.get(id) && assetPath) {
+                    try {
+                        // Use the assets base URL from env to build full URL
+                        const baseUrl = env.MAGE_ASSETS_BASE_URL;
+                        const fullUrl = baseUrl ? `${baseUrl}/${assetPath}` : assetPath;
+                        await Images.loadAssetByPath(fullUrl, id, Images.currentLevel);
+                    } catch (e) {
+                        console.warn(`[Mage] Failed to load texture: ${id} from ${assetPath}`);
+                    }
+                }
+
                 element.setTexture(id, textureType, options);
             });
         }
