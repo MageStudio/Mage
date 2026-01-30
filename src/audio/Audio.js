@@ -36,14 +36,12 @@ const isAbsoluteURL = path => {
 };
 
 /**
- * Checks if a path already contains the assets API path.
- * This prevents double-prepending when a full path is passed.
+ * Checks if a path is already a fully resolved URL.
+ * The engine is agnostic about asset locations - it just needs to know
+ * if the path is absolute (use as-is) or relative (prepend base URL).
  */
 const isAlreadyResolved = path => {
-    return path && (
-        isAbsoluteURL(path) ||
-        path.includes("/api/assets/")
-    );
+    return path && isAbsoluteURL(path);
 };
 
 /**
