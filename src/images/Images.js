@@ -105,7 +105,7 @@ export class Images {
         const id = buildAssetId(name, level);
         const loader = this.getLoaderByType(loaderType);
 
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
             try {
                 loader.load(
                     path,
@@ -114,14 +114,16 @@ export class Images {
                         resolve(asset);
                     },
                     () => {},
-                    () => {
-                        console.log(ERROR_LOADING_TEXTURE, name, path);
-                        resolve();
+                    error => {
+                        // Log warning but resolve anyway to allow other assets to continue loading
+                        console.warn(`[Mage] ${ERROR_LOADING_TEXTURE}`, name, path, error?.message || "");
+                        resolve(null);
                     },
                 );
             } catch (e) {
-                console.log(ERROR_LOADING_TEXTURE, name, path);
-                reject();
+                // Log warning but resolve anyway to allow other assets to continue loading
+                console.warn(`[Mage] ${ERROR_LOADING_TEXTURE}`, name, path, e?.message || "");
+                resolve(null);
             }
         });
     };
