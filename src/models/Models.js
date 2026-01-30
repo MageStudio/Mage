@@ -39,25 +39,51 @@ const loaders = {
     [EXTENSIONS.OBJ]: buildOBJMTLLoader,
 };
 
-const isURL = path => {
+/**
+ * Checks if a path is an absolute URL (with protocol).
+ */
+const isAbsoluteURL = path => {
     try {
-        const url = new URL(path);
-        return url;
+        new URL(path);
+        return true;
     } catch (_) {
         return false;
     }
 };
 
 /**
+ * Parses a URL and returns the URL object, or false if not a valid URL.
+ * Used by extractExtension to get the pathname.
+ */
+const isURL = path => {
+    try {
+        return new URL(path);
+    } catch (_) {
+        return false;
+    }
+};
+
+/**
+ * Checks if a path already contains the assets API path.
+ * This prevents double-prepending when a full path is passed.
+ */
+const isAlreadyResolved = path => {
+    return path && (
+        isAbsoluteURL(path) ||
+        path.includes("/api/assets/")
+    );
+};
+
+/**
  * Resolves an asset path to a full URL.
- * If path is already an absolute URL, returns it as-is.
+ * If path is already an absolute URL or contains the API path, returns it as-is.
  * If path is relative and MAGE_ASSETS_BASE_URL is set, prepends the base URL.
  * @param {string} path - The asset path (relative or absolute)
  * @returns {string} - The resolved full URL
  */
 const resolveAssetPath = path => {
-    // If it's already an absolute URL, use it as-is
-    if (isURL(path)) {
+    // If already a full URL or already contains the API path, return as-is
+    if (isAlreadyResolved(path)) {
         return path;
     }
 

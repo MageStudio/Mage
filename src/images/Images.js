@@ -6,9 +6,9 @@ import { ROOT } from "../lib/constants";
 import { ERROR_LOADING_TEXTURE } from "../lib/messages";
 
 /**
- * Checks if a path is an absolute URL.
+ * Checks if a path is an absolute URL (with protocol).
  */
-const isURL = path => {
+const isAbsoluteURL = path => {
     try {
         new URL(path);
         return true;
@@ -18,10 +18,22 @@ const isURL = path => {
 };
 
 /**
- * Resolves an asset path to a full URL using MAGE_ASSETS_BASE_URL.
+ * Checks if a path already contains the assets API path.
+ * This prevents double-prepending when a full path is passed.
  */
-const resolveAssetPath = path => {
-    if (isURL(path)) {
+const isAlreadyResolved = path => {
+    return path && (
+        isAbsoluteURL(path) ||
+        path.includes("/api/assets/")
+    );
+};
+
+/**
+ * Resolves a single asset path to a full URL using MAGE_ASSETS_BASE_URL.
+ */
+const resolveSinglePath = path => {
+    // If already a full URL or already contains the API path, return as-is
+    if (isAlreadyResolved(path)) {
         return path;
     }
 
@@ -32,6 +44,17 @@ const resolveAssetPath = path => {
     }
 
     return path;
+};
+
+/**
+ * Resolves asset path(s) to full URL(s) using MAGE_ASSETS_BASE_URL.
+ * Handles both single paths (string) and arrays of paths (for cube textures).
+ */
+const resolveAssetPath = pathOrPaths => {
+    if (Array.isArray(pathOrPaths)) {
+        return pathOrPaths.map(p => resolveSinglePath(p));
+    }
+    return resolveSinglePath(pathOrPaths);
 };
 
 export class Images {
