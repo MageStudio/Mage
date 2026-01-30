@@ -262,7 +262,11 @@ class Models extends EventDispatcher {
                     resolve(parsedModel);
                 },
                 NOOP,
-                NOOP,
+                error => {
+                    // Log error but resolve anyway to allow other assets to continue loading
+                    console.warn(`[Mage] Failed to load model "${name}" from ${resolvedPath}:`, error?.message || error);
+                    resolve(null);
+                },
             );
         });
     };

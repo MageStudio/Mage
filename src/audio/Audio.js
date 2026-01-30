@@ -169,19 +169,26 @@ export class Audio {
             request.open("GET", resolvedPath, true);
             request.responseType = "arraybuffer";
             request.onreadystatechange = e => {
-                if (request.readyState === 4 && request.status === 200) {
-                    this.context.decodeAudioData(
-                        request.response,
-                        buffer => {
-                            this.buffersMap[id] = buffer;
-                            resolve();
-                        },
-                        () => {
-                            this.buffersMap[id] = null;
-                            console.error(ASSETS_AUDIO_FILE_LOAD_FAIL);
-                            resolve();
-                        },
-                    );
+                if (request.readyState === 4) {
+                    if (request.status === 200) {
+                        this.context.decodeAudioData(
+                            request.response,
+                            buffer => {
+                                this.buffersMap[id] = buffer;
+                                resolve();
+                            },
+                            () => {
+                                this.buffersMap[id] = null;
+                                console.error(ASSETS_AUDIO_FILE_LOAD_FAIL);
+                                resolve();
+                            },
+                        );
+                    } else {
+                        // Handle HTTP errors (404, etc.) - log warning and continue
+                        console.warn(`[Mage] Failed to load audio "${id}" from ${resolvedPath}: HTTP ${request.status}`);
+                        this.buffersMap[id] = null;
+                        resolve();
+                    }
                 }
             };
             request.send();
