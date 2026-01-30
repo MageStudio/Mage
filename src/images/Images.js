@@ -1,8 +1,38 @@
 import { TextureLoader, ImageLoader, CubeTextureLoader } from "three";
 
+import env from "../env";
 import { buildAssetId } from "../lib/utils/assets";
 import { ROOT } from "../lib/constants";
 import { ERROR_LOADING_TEXTURE } from "../lib/messages";
+
+/**
+ * Checks if a path is an absolute URL.
+ */
+const isURL = path => {
+    try {
+        new URL(path);
+        return true;
+    } catch (_) {
+        return false;
+    }
+};
+
+/**
+ * Resolves an asset path to a full URL using MAGE_ASSETS_BASE_URL.
+ */
+const resolveAssetPath = path => {
+    if (isURL(path)) {
+        return path;
+    }
+
+    const baseUrl = env.MAGE_ASSETS_BASE_URL;
+    if (baseUrl) {
+        const cleanPath = path.startsWith("/") ? path.slice(1) : path;
+        return `${baseUrl}/${cleanPath}`;
+    }
+
+    return path;
+};
 
 export class Images {
     constructor() {
@@ -104,11 +134,13 @@ export class Images {
     loadAssetByPath = (path, name, level, loaderType = this.LOADERS.TEXTURE) => {
         const id = buildAssetId(name, level);
         const loader = this.getLoaderByType(loaderType);
+        // Resolve the path using MAGE_ASSETS_BASE_URL if available
+        const resolvedPath = resolveAssetPath(path);
 
         return new Promise(resolve => {
             try {
                 loader.load(
-                    path,
+                    resolvedPath,
                     asset => {
                         this.add(id, asset);
                         resolve(asset);
