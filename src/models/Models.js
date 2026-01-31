@@ -93,6 +93,16 @@ const resolveAssetPath = path => {
         return `${baseUrl}/${cleanPath}`;
     }
 
+    // Warn if path contains colon (could be mistaken for protocol) and no base URL is set
+    if (path && path.includes(":") && !path.startsWith("/")) {
+        console.warn(
+            `[Mage] Asset path "${path}" contains a colon but MAGE_ASSETS_BASE_URL is not set. ` +
+            `This may cause the browser to interpret it as a protocol scheme. ` +
+            `Prepending "./" to make it a relative path.`
+        );
+        return `./${path}`;
+    }
+
     // Fallback: return the path as-is (for backwards compatibility)
     return path;
 };
