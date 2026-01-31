@@ -107,10 +107,7 @@ export const buildFBXLoader = () => {
                     }
                 },
                 onProgress,
-                err => {
-                    errors.push(err.message);
-                    onError(err);
-                },
+                onError,
             );
         }
 
