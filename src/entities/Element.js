@@ -758,6 +758,7 @@ export default class Element extends Entity {
                 texture.repeat.set(textureOptions.repeat.x, textureOptions.repeat.y);
 
                 material[textureType] = texture;
+                material.needsUpdate = true;
             };
 
             applyMaterialChange(this.getBody(), applyTextureTo);
