@@ -142,19 +142,17 @@ export class Importer {
 
                 // If texture not already loaded and we have an assetPath, load it first
                 // assetPath is relative like "textures/mytexture.png"
-                // The actual URL is resolved based on the assets base URL
+                // Images.loadAssetByPath will resolve the path using MAGE_ASSETS_BASE_URL
                 if (!Images.get(id) && assetPath) {
                     try {
-                        // Use the assets base URL from env to build full URL
-                        const baseUrl = env.MAGE_ASSETS_BASE_URL;
-                        const fullUrl = baseUrl ? `${baseUrl}/${assetPath}` : assetPath;
-                        await Images.loadAssetByPath(fullUrl, id, Images.currentLevel);
+                        // Pass the relative assetPath - resolveAssetPath in Images will add the base URL
+                        await Images.loadAssetByPath(assetPath, id, Images.currentLevel);
                     } catch (e) {
                         console.warn(`[Mage] Failed to load texture: ${id} from ${assetPath}`);
                     }
                 }
 
-                element.setTexture(id, textureType, options);
+                element.setTexture(id, textureType, { ...options, assetPath });
             });
         }
 
