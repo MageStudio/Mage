@@ -669,6 +669,11 @@ export default class Element extends Entity {
         return extractMaterialProperty(this.getBody(), PROPERTIES.AO_MAP_INTENSITY);
     }
 
+    setAoMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.AO_MAP_INTENSITY]) {
+        const _setAoMapIntensity = material => (material[PROPERTIES.AO_MAP_INTENSITY] = value);
+        applyMaterialChange(this.getBody(), _setAoMapIntensity);
+    }
+
     setEnvMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.ENV_MAP_INTENSITY]) {
         const _setEnvMapIntensity = material => (material[PROPERTIES.ENV_MAP_INTENSITY] = value);
         applyMaterialChange(this.getBody(), _setEnvMapIntensity);
