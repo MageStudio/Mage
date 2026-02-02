@@ -2,7 +2,8 @@ const config = {
     presets: [
         ["@babel/preset-env", {
             "targets": {
-                "browsers": ["> 0.25%", "ie >= 11"]
+                // Modern browsers that support WebGL, async/await, and ES modules
+                "browsers": ["> 0.5%", "not dead", "not ie 11"]
             }
         }],
     ],

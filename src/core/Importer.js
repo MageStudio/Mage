@@ -119,7 +119,7 @@ export class Importer {
         }
     }
 
-    static completeElementCreation(element, elementData, options) {
+    static async completeElementCreation(element, elementData, options) {
         Importer.completeCommonCreationSteps(element, elementData, options);
 
         // setting material
@@ -137,7 +137,9 @@ export class Importer {
         if (elementData.textures) {
             const parsedTextures = JSON.parse(elementData.textures);
             element.setNormalScale();
-            Object.keys(parsedTextures).forEach(async textureType => {
+
+            // Use for...of loop to properly await texture loading before applying
+            for (const textureType of Object.keys(parsedTextures)) {
                 const { id, options, assetPath } = parsedTextures[textureType];
 
                 // If texture not already loaded and we have an assetPath, load it first
@@ -153,7 +155,7 @@ export class Importer {
                 }
 
                 element.setTexture(id, textureType, { ...options, assetPath });
-            });
+            }
         }
 
         // setting shadow properties
@@ -269,9 +271,9 @@ export class Importer {
         }
     }
 
-    static completeSpriteCreation(sprite, spriteData, options) {
+    static async completeSpriteCreation(sprite, spriteData, options) {
         // calling completeElementCreation to set position, rotation, quaternion, scale, opacity, name, material, textures, scripts, and data
-        Importer.completeElementCreation(sprite, spriteData, options);
+        await Importer.completeElementCreation(sprite, spriteData, options);
 
         const { width, height, spriteTexture, anisotropy, sizeAttenuation, depthTest, depthWrite } =
             spriteData;
@@ -311,82 +313,83 @@ export class Importer {
         }
     }
 
-    static parseLevelData(data = {}, options = {}) {
+    static async parseLevelData(data = {}, options = {}) {
         const { elements = [], lights = [], audio = [], sounds = [] } = data;
         // Support both 'audio' and 'sounds' keys for backwards compatibility
         const allSounds = [...audio, ...sounds];
 
-        elements.forEach(data => {
+        // Use for...of to properly await async completeElementCreation calls
+        for (const elementData of elements) {
             try {
-                if (data.entitySubType === ENTITY_TYPES.MODEL.TYPE) {
-                    const { options } = data;
-                    const { name, ...rest } = options;
+                if (elementData.entitySubType === ENTITY_TYPES.MODEL.TYPE) {
+                    const { options: modelOptions } = elementData;
+                    const { name, ...rest } = modelOptions;
 
-                    Importer.completeElementCreation(Models.create(name, rest), data, options);
+                    await Importer.completeElementCreation(Models.create(name, rest), elementData, options);
                 } else {
-                    switch (data.entitySubType) {
+                    switch (elementData.entitySubType) {
                         case ENTITY_TYPES.MESH.SUBTYPES.CUBE:
-                            Importer.completeElementCreation(Cube.create(data), data, options);
+                            await Importer.completeElementCreation(Cube.create(elementData), elementData, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.LINE:
-                            Importer.completeElementCreation(Line.create(data), data, options);
+                            await Importer.completeElementCreation(Line.create(elementData), elementData, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.SPHERE:
-                            Importer.completeElementCreation(Sphere.create(data), data, options);
+                            await Importer.completeElementCreation(Sphere.create(elementData), elementData, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.CYLINDER:
-                            Importer.completeElementCreation(Cylinder.create(data), data, options);
+                            await Importer.completeElementCreation(Cylinder.create(elementData), elementData, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.CONE:
-                            Importer.completeElementCreation(Cone.create(data), data, options);
+                            await Importer.completeElementCreation(Cone.create(elementData), elementData, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.BOX:
-                            Importer.completeElementCreation(Box.create(data), data, options);
+                            await Importer.completeElementCreation(Box.create(elementData), elementData, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.CURVE_LINE:
-                            Importer.completeElementCreation(CurveLine.create(data), data, options);
+                            await Importer.completeElementCreation(CurveLine.create(elementData), elementData, options);
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.PLANE:
-                            Importer.completeElementCreation(Plane.create(data), data, options);
+                            await Importer.completeElementCreation(Plane.create(elementData), elementData, options);
                             break;
                         case ENTITY_TYPES.SPRITE.SUBTYPES.DEFAULT:
-                            Importer.completeSpriteCreation(Sprite.create(data), data, options);
+                            await Importer.completeSpriteCreation(Sprite.create(elementData), elementData, options);
                             break;
                         case ENTITY_TYPES.SCENERY.SUBTYPES.SKY:
-                            Importer.completeSkyCreation(Sky.create(data), data, options);
+                            Importer.completeSkyCreation(Sky.create(elementData), elementData, options);
                             break;
                         default:
                             console.warn(
                                 IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE,
-                                data.entitySubType,
+                                elementData.entitySubType,
                             );
                     }
                 }
             } catch (error) {
                 console.error(
                     IMPORTER_ERROR_ELEMENT_CREATION,
-                    data.name,
-                    data.entitySubType,
+                    elementData.name,
+                    elementData.entitySubType,
                     error,
                 );
             }
-        });
+        }
 
         // adding children to elements
-        elements.forEach(data => {
-            if (data.children && data.children.length) {
+        for (const elementData of elements) {
+            if (elementData.children && elementData.children.length) {
                 // parent already exists in universe
-                const parent = Universe.getByUUID(data.uuid);
-                data.children.forEach(uuid => {
+                const parent = Universe.getByUUID(elementData.uuid);
+                for (const uuid of elementData.children) {
                     const child = Universe.getByUUID(uuid);
                     if (child) {
                         parent.add(child);
                         const childData = elements.find(e => e.uuid === uuid);
                         Importer.completeCommonCreationSteps(child, childData, options);
                     }
-                });
+                }
             }
-        });
+        }
 
         lights.forEach(data => {
             try {
