@@ -321,11 +321,31 @@ export class Importer {
         // Use for...of to properly await async completeElementCreation calls
         for (const elementData of elements) {
             try {
-                if (elementData.entitySubType === ENTITY_TYPES.MODEL.TYPE) {
-                    const { options: modelOptions } = elementData;
-                    const { name, ...rest } = modelOptions;
+                // Check entityType for models (entitySubType would be MODEL.SUBTYPE.DEFAULT)
+                if (elementData.entityType === ENTITY_TYPES.MODEL.TYPE) {
+                    const { options: modelOptions = {} } = elementData;
+                    const { name, assetPath, dependencies = {}, ...rest } = modelOptions;
 
-                    await Importer.completeElementCreation(Models.create(name, rest), elementData, options);
+                    if (!name) {
+                        console.warn(`[Mage] Model element missing name in options:`, elementData);
+                        continue;
+                    }
+
+                    // Load the model first if it's not already loaded
+                    // This handles page refresh in the editor where models need to be reloaded
+                    if (assetPath) {
+                        const loadResult = await Models.loadAssetByPath(assetPath, name, dependencies);
+                        if (!loadResult) {
+                            console.warn(`[Mage] Failed to load model "${name}" from ${assetPath}`);
+                        }
+                    }
+
+                    const model = Models.create(name, { assetPath, dependencies, ...rest });
+                    if (model) {
+                        await Importer.completeElementCreation(model, elementData, options);
+                    } else {
+                        console.warn(`[Mage] Could not create model "${name}" - check assetPath: ${assetPath}`);
+                    }
                 } else {
                     switch (elementData.entitySubType) {
                         case ENTITY_TYPES.MESH.SUBTYPES.CUBE:
