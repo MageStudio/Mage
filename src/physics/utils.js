@@ -67,6 +67,11 @@ export const extractBoundingSphere = body => {
 };
 
 export const extractBiggestBoundingSphere = body => {
+    if (!body || typeof body.traverse !== 'function') {
+        console.warn('[Mage] extractBiggestBoundingSphere received invalid body');
+        return null;
+    }
+
     const spheres = [];
     body.traverse(child => {
         if (child.geometry) {

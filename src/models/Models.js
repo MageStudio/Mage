@@ -26,10 +26,15 @@ const EXTENSIONS = {
 
 const FULL_STOP = ".";
 
-const DEFAULTbuildObjectLoader = () => ({
-    tracer: new RequirementsTracer(),
-    loader: new ObjectLoader(),
-});
+const DEFAULTbuildObjectLoader = () => {
+    const loader = new ObjectLoader();
+    // Add setOptions for compatibility with the loader interface
+    loader.setOptions = () => {};
+    return {
+        tracer: new RequirementsTracer(),
+        loader,
+    };
+};
 
 const loaders = {
     [EXTENSIONS.JSON]: DEFAULTbuildObjectLoader,
@@ -122,7 +127,17 @@ const getLoaderFromExtension = (extension, options) => {
     return { tracer, loader };
 };
 
-const glbParser = ({ scene, animations }) => {
+const glbParser = (gltf) => {
+    // GLTF/GLB loader returns { scene, animations, ... }
+    if (!gltf || !gltf.scene) {
+        console.error('[Mage] GLB parser received invalid GLTF object:', {
+            type: gltf?.constructor?.name,
+            keys: gltf ? Object.keys(gltf) : [],
+        });
+        return null;
+    }
+
+    const { scene, animations } = gltf;
     scene.traverse(object => {
         if (object.isMesh) {
             object.castShadow = true;
@@ -134,9 +149,40 @@ const glbParser = ({ scene, animations }) => {
         scene,
     };
 };
-const gltfParser = ({ scene, animations }) => ({ scene, animations });
-const defaultParser = scene => ({ scene });
-const colladaParser = ({ animations, scene, rawSceneData, buildVisualScene }) => {
+const gltfParser = (gltf) => {
+    // GLTF loader returns { scene, animations, ... }
+    if (!gltf || !gltf.scene) {
+        console.error('[Mage] GLTF parser received invalid GLTF object:', {
+            type: gltf?.constructor?.name,
+            keys: gltf ? Object.keys(gltf) : [],
+        });
+        return null;
+    }
+    return { scene: gltf.scene, animations: gltf.animations };
+};
+const defaultParser = scene => {
+    // Validate the scene is a proper THREE.js object
+    if (!scene || typeof scene.traverse !== 'function') {
+        console.error('[Mage] Default parser received invalid scene object:', {
+            type: scene?.constructor?.name,
+            isObject3D: scene?.isObject3D,
+            keys: scene ? Object.keys(scene) : [],
+        });
+        return null;
+    }
+    return { scene };
+};
+const colladaParser = (collada) => {
+    // Collada loader returns { animations, scene, ... }
+    if (!collada || !collada.scene) {
+        console.error('[Mage] Collada parser received invalid object:', {
+            type: collada?.constructor?.name,
+            keys: collada ? Object.keys(collada) : [],
+        });
+        return null;
+    }
+
+    const { animations, scene, rawSceneData, buildVisualScene } = collada;
     scene.traverse(node => {
         if (node.isSkinnedMesh) {
             node.frustumCulled = false;
@@ -151,6 +197,16 @@ const colladaParser = ({ animations, scene, rawSceneData, buildVisualScene }) =>
     };
 };
 const fbxParser = scene => {
+    // Validate the FBX loader returned a proper THREE.js object
+    if (!scene || typeof scene.traverse !== 'function') {
+        console.error('[Mage] FBX parser received invalid scene object:', {
+            type: scene?.constructor?.name,
+            isObject3D: scene?.isObject3D,
+            keys: scene ? Object.keys(scene) : [],
+        });
+        return null;
+    }
+
     scene.traverse(node => {
         if (node.isSkinnedMesh) {
             processMaterial(node.material, material => (material.skinning = true));
@@ -199,38 +255,64 @@ class Models extends EventDispatcher {
 
     create = (name, options = {}) => {
         const builtAssetId = buildAssetId(name, this.currentLevel);
-        const { scene, animations, extension } = this.map[name] || this.map[builtAssetId] || {};
+        const modelData = this.map[name] || this.map[builtAssetId];
 
-        if (scene) {
-            const elementOptions = {
-                name,
-                builtAssetId,
-                ...options,
-            };
-
-            let model = scene.clone();
-
-            if (extension !== EXTENSIONS.COLLADA && hasAnimations(animations)) {
-                // we have no idea how to clone collada for the time being
-                model = SkeletonUtils.clone(scene);
-            }
-
-            const element = new Element({
-                body: prepareModel(model),
-                ...elementOptions,
-            });
-
-            element.setEntityType(ENTITY_TYPES.MODEL.TYPE);
-            element.setEntitySubtype(ENTITY_TYPES.MODEL.SUBTYPES.DEFAULT);
-
-            if (hasAnimations(animations)) {
-                element.addAnimationHandler(animations);
-            }
-
-            return element;
+        if (!modelData) {
+            console.warn(`[Mage] Model "${name}" not found in map. Available: ${Object.keys(this.map).join(', ')}`);
+            return false;
         }
 
-        return false;
+        const { scene, animations, extension } = modelData;
+
+        // Validate that scene is a valid THREE.js object with required methods
+        if (!scene || typeof scene.clone !== 'function' || typeof scene.traverse !== 'function') {
+            console.warn(`[Mage] Model "${name}" has invalid scene object. Got:`, Object.keys(modelData));
+            return false;
+        }
+
+        const elementOptions = {
+            name,
+            builtAssetId,
+            ...options,
+        };
+
+        let model;
+        const useSkeletonClone = extension !== EXTENSIONS.COLLADA && hasAnimations(animations);
+
+        try {
+            if (useSkeletonClone) {
+                model = SkeletonUtils.clone(scene);
+            } else {
+                model = scene.clone();
+            }
+        } catch (cloneError) {
+            console.error(`[Mage] Error cloning model "${name}":`, cloneError);
+            return false;
+        }
+
+        // Validate the cloned model
+        const preparedBody = prepareModel(model);
+
+        if (!preparedBody) {
+            console.warn(`[Mage] Model "${name}" failed to prepare after cloning`);
+            return false;
+        }
+
+        // IMPORTANT: body must come AFTER elementOptions spread to ensure
+        // our preparedBody is used, not any 'body' property from saved options
+        const element = new Element({
+            ...elementOptions,
+            body: preparedBody,
+        });
+
+        element.setEntityType(ENTITY_TYPES.MODEL.TYPE);
+        element.setEntitySubtype(ENTITY_TYPES.MODEL.SUBTYPES.DEFAULT);
+
+        if (hasAnimations(animations)) {
+            element.addAnimationHandler(animations);
+        }
+
+        return element;
     };
 
     storeModel = (name, model, extension) => {
@@ -262,9 +344,19 @@ class Models extends EventDispatcher {
             return Promise.resolve();
         }
 
-        const path = this.models[name];
+        const modelConfig = this.models[name];
 
-        return this.loadAssetByPath(path, name, options);
+        // Support both string paths and objects with path + dependencies
+        // String format: "models/mymodel.fbx"
+        // Object format: { path: "models/mymodel.fbx", dependencies: { texture: "textures/tex.png" } }
+        if (typeof modelConfig === "string") {
+            return this.loadAssetByPath(modelConfig, name, options);
+        } else if (modelConfig && typeof modelConfig === "object") {
+            const { path, dependencies = {} } = modelConfig;
+            return this.loadAssetByPath(path, name, { ...options, ...dependencies });
+        }
+
+        return Promise.resolve();
     };
 
     loadAssetByPath = (path, name, options = {}) => {

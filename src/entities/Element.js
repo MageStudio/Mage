@@ -1,4 +1,4 @@
-import { Mesh, RepeatWrapping, Raycaster, Color, Vector3 } from "three";
+import { Mesh, RepeatWrapping, Raycaster, Color, Vector3, sRGBEncoding } from "three";
 
 import Entity from "../entities/Entity";
 import { ENTITY_TYPES, ENTITY_EVENTS } from "../entities/constants";
@@ -761,6 +761,14 @@ export default class Element extends Entity {
                 texture.wrapS = textureOptions.wrap;
                 texture.wrapT = textureOptions.wrap;
                 texture.repeat.set(textureOptions.repeat.x, textureOptions.repeat.y);
+
+                // Set sRGB encoding for color textures (map, emissiveMap, specularMap)
+                // This is required for textures to display with correct colors
+                if (textureType === TEXTURES.MAP ||
+                    textureType === TEXTURES.EMISSIVE ||
+                    textureType === TEXTURES.SPECULAR) {
+                    texture.encoding = sRGBEncoding;
+                }
 
                 material[textureType] = texture;
                 material.needsUpdate = true;
