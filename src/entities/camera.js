@@ -11,11 +11,12 @@ export default class Camera extends Entity {
             ratio = config.screen().ratio,
             near = config.camera().near,
             far = config.camera().far,
+            serializable = true,
         } = options;
 
-        super({ name });
+        super({ name, serializable });
 
-        this.options = options;
+        this.extendOptions(options);
         const body = new PerspectiveCamera(fov, ratio, near, far);
 
         this.setBody({ body });
@@ -42,5 +43,49 @@ export default class Camera extends Entity {
     lookAt(position = {}) {
         const { x = 0, y = 0, z = 0 } = position;
         this.body.lookAt(x, y, z);
+    }
+
+    getFov() {
+        return this.getBody().fov;
+    }
+
+    setFov(fov) {
+        const num = Number(fov);
+        const numericFov = Number.isFinite(num) ? num : 75;
+        this.getBody().fov = numericFov;
+        this.getBody().updateProjectionMatrix();
+    }
+
+    getNear() {
+        return this.getBody().near;
+    }
+
+    setNear(near) {
+        const num = Number(near);
+        const numericNear = Number.isFinite(num) ? num : 0.1;
+        this.getBody().near = numericNear;
+        this.getBody().updateProjectionMatrix();
+    }
+
+    getFar() {
+        return this.getBody().far;
+    }
+
+    setFar(far) {
+        const num = Number(far);
+        const numericFar = Number.isFinite(num) ? num : 3000000;
+        this.getBody().far = numericFar;
+        this.getBody().updateProjectionMatrix();
+    }
+
+    toJSON(parseJSON = false) {
+        if (this.isSerializable()) {
+            return {
+                ...super.toJSON(parseJSON),
+                fov: this.getFov(),
+                near: this.getNear(),
+                far: this.getFar(),
+            };
+        }
     }
 }

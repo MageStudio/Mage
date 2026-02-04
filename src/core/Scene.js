@@ -76,11 +76,14 @@ export class Scene {
     }
 
     getHierarchy(options = {}) {
+        const camera = this.getCamera();
+        // Only include camera in hierarchy if it's serializable (scene camera is not)
+        const cameraChildren = camera && camera.isSerializable() ? [camera.getHierarchy(options)] : [];
         return [
             {
                 element: this.toJSON(options.parseJSON),
                 children: [
-                    this.getCamera().getHierarchy(options),
+                    ...cameraChildren,
                     ...this.elements
                         .filter(e => !e.hasParent() && !e.isHelper() && e.isSerializable())
                         .map(e => e.getHierarchy(options)),

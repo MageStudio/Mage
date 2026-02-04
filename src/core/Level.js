@@ -93,7 +93,8 @@ export class Level extends EventDispatcher {
 
     init = () => {
         Scene.create(this.getName());
-        Scene.createCamera(new Camera());
+        // Scene camera is for editor navigation, not serializable
+        Scene.createCamera(new Camera({ serializable: false }));
 
         Physics.init().then(() => {
             Particles.init();
