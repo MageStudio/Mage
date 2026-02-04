@@ -316,8 +316,13 @@ export default class Element extends Entity {
     }
 
     setAngularVelocity(velocity) {
-        this.angularVelocity = velocity;
-        Physics.updateAngularVelocity(this.uuid(), velocity);
+        const numericVelocity = {
+            x: Number(velocity?.x) || 0,
+            y: Number(velocity?.y) || 0,
+            z: Number(velocity?.z) || 0,
+        };
+        this.angularVelocity = numericVelocity;
+        Physics.updateAngularVelocity(this.uuid(), numericVelocity);
     }
 
     getLinearVelocity() {
@@ -325,8 +330,13 @@ export default class Element extends Entity {
     }
 
     setLinearVelocity(velocity) {
-        this.linearVelocity = velocity;
-        Physics.updateLinearVelocity(this.uuid(), velocity);
+        const numericVelocity = {
+            x: Number(velocity?.x) || 0,
+            y: Number(velocity?.y) || 0,
+            z: Number(velocity?.z) || 0,
+        };
+        this.linearVelocity = numericVelocity;
+        Physics.updateLinearVelocity(this.uuid(), numericVelocity);
     }
 
     hasRayColliders = () => this.colliders.length > 0;
@@ -460,7 +470,9 @@ export default class Element extends Entity {
     }
 
     setGeometryRotation(rotation = {}) {
-        const { x = 0, y = 0, z = 0 } = rotation;
+        const x = Number(rotation?.x) || 0;
+        const y = Number(rotation?.y) || 0;
+        const z = Number(rotation?.z) || 0;
 
         if (x !== 0) {
             this.getBody().geometry.rotateX(x);
@@ -504,7 +516,8 @@ export default class Element extends Entity {
     }
 
     setReflectivity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.REFLECTIVITY]) {
-        const _setReflectivity = material => (material[PROPERTIES.REFLECTIVITY] = value);
+        const numericValue = Number(value) || 0;
+        const _setReflectivity = material => (material[PROPERTIES.REFLECTIVITY] = numericValue);
         if (value != undefined) {
             applyMaterialChange(this.getBody(), _setReflectivity);
         } else {
@@ -517,7 +530,8 @@ export default class Element extends Entity {
     }
 
     setRefractionRatio(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.REFRACTION_RATIO]) {
-        const _setRefractionRatio = material => (material[PROPERTIES.REFRACTION_RATIO] = value);
+        const numericValue = Number(value) || 0;
+        const _setRefractionRatio = material => (material[PROPERTIES.REFRACTION_RATIO] = numericValue);
         if (value != undefined) {
             applyMaterialChange(this.getBody(), _setRefractionRatio);
         } else {
@@ -566,7 +580,8 @@ export default class Element extends Entity {
     }
 
     setShininess(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.SHININESS]) {
-        const _setShininess = material => (material[PROPERTIES.SHININESS] = value);
+        const numericValue = Number(value) || 0;
+        const _setShininess = material => (material[PROPERTIES.SHININESS] = numericValue);
         applyMaterialChange(this.getBody(), _setShininess);
     }
 
@@ -602,7 +617,8 @@ export default class Element extends Entity {
     }
 
     setMetalness(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.METALNESS]) {
-        const _setMetalness = material => (material[PROPERTIES.METALNESS] = value);
+        const numericValue = Number(value) || 0;
+        const _setMetalness = material => (material[PROPERTIES.METALNESS] = numericValue);
         applyMaterialChange(this.getBody(), _setMetalness);
     }
 
@@ -611,7 +627,8 @@ export default class Element extends Entity {
     }
 
     setRoughness(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.ROUGHNESS]) {
-        const _setRoughness = material => (material[PROPERTIES.ROUGHNESS] = value);
+        const numericValue = Number(value) || 0;
+        const _setRoughness = material => (material[PROPERTIES.ROUGHNESS] = numericValue);
         applyMaterialChange(this.getBody(), _setRoughness);
     }
 
@@ -640,7 +657,8 @@ export default class Element extends Entity {
     setEmissiveIntensity(
         value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.EMISSIVE_INTENSITY],
     ) {
-        const _setEmissiveIntensity = material => (material[PROPERTIES.EMISSIVE_INTENSITY] = value);
+        const numericValue = Number(value) || 0;
+        const _setEmissiveIntensity = material => (material[PROPERTIES.EMISSIVE_INTENSITY] = numericValue);
         applyMaterialChange(this.getBody(), _setEmissiveIntensity);
     }
 
@@ -651,8 +669,9 @@ export default class Element extends Entity {
     setLightMapIntensity(
         value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.LIGHT_MAP_INTENSITY],
     ) {
+        const numericValue = Number(value) || 0;
         const _setLightMapIntensity = material =>
-            (material[PROPERTIES.LIGHT_MAP_INTENSITY] = value);
+            (material[PROPERTIES.LIGHT_MAP_INTENSITY] = numericValue);
         applyMaterialChange(this.getBody(), _setLightMapIntensity);
     }
 
@@ -661,7 +680,8 @@ export default class Element extends Entity {
     }
 
     setAOMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.AO_MAP_INTENSITY]) {
-        const _setAOMapIntensity = material => (material[PROPERTIES.AO_MAP_INTENSITY] = value);
+        const numericValue = Number(value) || 0;
+        const _setAOMapIntensity = material => (material[PROPERTIES.AO_MAP_INTENSITY] = numericValue);
         applyMaterialChange(this.getBody(), _setAOMapIntensity);
     }
 
@@ -670,12 +690,14 @@ export default class Element extends Entity {
     }
 
     setAoMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.AO_MAP_INTENSITY]) {
-        const _setAoMapIntensity = material => (material[PROPERTIES.AO_MAP_INTENSITY] = value);
+        const numericValue = Number(value) || 0;
+        const _setAoMapIntensity = material => (material[PROPERTIES.AO_MAP_INTENSITY] = numericValue);
         applyMaterialChange(this.getBody(), _setAoMapIntensity);
     }
 
     setEnvMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.ENV_MAP_INTENSITY]) {
-        const _setEnvMapIntensity = material => (material[PROPERTIES.ENV_MAP_INTENSITY] = value);
+        const numericValue = Number(value) || 0;
+        const _setEnvMapIntensity = material => (material[PROPERTIES.ENV_MAP_INTENSITY] = numericValue);
         applyMaterialChange(this.getBody(), _setEnvMapIntensity);
     }
 
@@ -686,7 +708,8 @@ export default class Element extends Entity {
     setDisplacementScale(
         value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.DISPLACEMENT_SCALE],
     ) {
-        const _setDisplacementScale = material => (material[PROPERTIES.DISPLACEMENT_SCALE] = value);
+        const numericValue = Number(value) || 0;
+        const _setDisplacementScale = material => (material[PROPERTIES.DISPLACEMENT_SCALE] = numericValue);
         applyMaterialChange(this.getBody(), _setDisplacementScale);
     }
 
@@ -695,7 +718,8 @@ export default class Element extends Entity {
     }
 
     setDisplacementBias(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.DISPLACEMENT_BIAS]) {
-        const _setDisplacementBias = material => (material[PROPERTIES.DISPLACEMENT_BIAS] = value);
+        const numericValue = Number(value) || 0;
+        const _setDisplacementBias = material => (material[PROPERTIES.DISPLACEMENT_BIAS] = numericValue);
         applyMaterialChange(this.getBody(), _setDisplacementBias);
     }
 
@@ -704,7 +728,8 @@ export default class Element extends Entity {
     }
 
     setBumpScale(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.BUMP_SCALE]) {
-        const _setBumpScale = material => (material[PROPERTIES.BUMP_SCALE] = value);
+        const numericValue = Number(value) || 0;
+        const _setBumpScale = material => (material[PROPERTIES.BUMP_SCALE] = numericValue);
         applyMaterialChange(this.getBody(), _setBumpScale);
     }
 
@@ -867,8 +892,9 @@ export default class Element extends Entity {
     }
 
     setWireframeLineWidth(width = 1) {
+        const numericWidth = Number(width) || 1;
         const _setWireframeLineWidth = material => {
-            material.wireframeLinewidth = width;
+            material.wireframeLinewidth = numericWidth;
         };
 
         applyMaterialChange(this.getBody(), _setWireframeLineWidth);

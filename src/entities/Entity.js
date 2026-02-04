@@ -542,7 +542,13 @@ export default class Entity extends EventDispatcher {
                 ...this.getScale(),
                 ...howbig,
             };
-            this.body.scale.set(scale.x, scale.y, scale.z);
+
+            // Ensure values are numbers (not strings) to prevent rendering issues
+            const sx = Number(scale.x) || 1;
+            const sy = Number(scale.y) || 1;
+            const sz = Number(scale.z) || 1;
+
+            this.body.scale.set(sx, sy, sz);
         }
     }
 
@@ -553,7 +559,13 @@ export default class Entity extends EventDispatcher {
     }
 
     setQuaternion = ({ x, y, z, w }) => {
-        this.getBody().quaternion.set(x, y, z, w);
+        // Ensure values are numbers (not strings) to prevent rendering issues
+        const qx = Number(x) || 0;
+        const qy = Number(y) || 0;
+        const qz = Number(z) || 0;
+        const qw = Number(w) || 1;
+
+        this.getBody().quaternion.set(qx, qy, qz, qw);
     };
 
     getPosition() {
@@ -570,7 +582,12 @@ export default class Entity extends EventDispatcher {
                 ...where,
             };
 
-            this.getBody().position.set(position.x, position.y, position.z);
+            // Ensure values are numbers (not strings) to prevent rendering issues
+            const px = Number(position.x) || 0;
+            const py = Number(position.y) || 0;
+            const pz = Number(position.z) || 0;
+
+            this.getBody().position.set(px, py, pz);
         }
     }
 
@@ -588,7 +605,12 @@ export default class Entity extends EventDispatcher {
                 ...how,
             };
 
-            this.getBody().rotation.set(rotation.x, rotation.y, rotation.z);
+            // Ensure values are numbers (not strings) to prevent rendering issues
+            const rx = Number(rotation.x) || 0;
+            const ry = Number(rotation.y) || 0;
+            const rz = Number(rotation.z) || 0;
+
+            this.getBody().rotation.set(rx, ry, rz);
         }
     }
 

@@ -46,6 +46,7 @@ import { NURBSCurve } from "./curves/NURBSCurve.js";
 import { NOOP } from "../lib/functions.js";
 import RequirementsTracer, { MODELS_REQUIREMENTS } from "./RequirementsTracer.js";
 import { isAbsoluteURL } from "./utils.js";
+import env from "../env.js";
 
 /**
  * Loader loads FBX file and generates Group representing FBX scene.
@@ -139,7 +140,11 @@ export const buildFBXLoader = () => {
             const textureLoader = new TextureLoader(this.manager).setCrossOrigin(this.crossOrigin);
 
             if (!isAbsoluteURL(texture)) {
-                textureLoader.setPath(this.resourcePath || texturePath || path);
+                // Use MAGE_ASSETS_BASE_URL + textures/ as fallback when no texture path is specified
+                // This allows FBX models to find textures in the textures directory of deployed builds
+                const baseUrl = env.MAGE_ASSETS_BASE_URL;
+                const defaultTexturePath = baseUrl ? `${baseUrl}/textures/` : null;
+                textureLoader.setPath(this.resourcePath || texturePath || defaultTexturePath || path);
             }
 
             return new FBXTreeParser(textureLoader, this.manager, this.options).parse(fbxTree);

@@ -59,23 +59,27 @@ export default class Sprite extends Element {
     }
 
     setRotation(rotation = this.getRotation()) {
-        this.setData("rotation", rotation);
-        this.getBody().material.rotation = rotation;
+        const numericRotation = Number(rotation) || 0;
+        this.setData("rotation", numericRotation);
+        this.getBody().material.rotation = numericRotation;
     }
 
     setWidth(width = this.width) {
-        this.setData("width", width);
-        this.getBody().scale.x = width;
+        const numericWidth = Number(width) || 1;
+        this.setData("width", numericWidth);
+        this.getBody().scale.x = numericWidth;
     }
 
     setHeight(height = this.height) {
-        this.setData("height", height);
-        this.getBody().scale.y = height;
+        const numericHeight = Number(height) || 1;
+        this.setData("height", numericHeight);
+        this.getBody().scale.y = numericHeight;
     }
 
     setAnisotropy(anisotropy = 1) {
-        this.setData("anisotropy", anisotropy);
-        this.getTexture(TEXTURES.MAP).anisotropy = validateAnisotropy(anisotropy);
+        const numericAnisotropy = Number(anisotropy) || 1;
+        this.setData("anisotropy", numericAnisotropy);
+        this.getTexture(TEXTURES.MAP).anisotropy = validateAnisotropy(numericAnisotropy);
     }
 
     setSizeAttenuation(attenuation = true) {
