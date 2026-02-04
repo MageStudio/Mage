@@ -64,7 +64,8 @@ export default class Line extends Element {
     };
 
     setThickness(thickness = DEFAULT_LINE_THICKNESS) {
-        this.body.material.linewidth = thickness;
+        const numericThickness = Number(thickness) || DEFAULT_LINE_THICKNESS;
+        this.body.material.linewidth = numericThickness;
     }
 
     toJSON(parseJSON = false) {
