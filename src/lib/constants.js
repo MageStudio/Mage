@@ -345,6 +345,7 @@ export const HASH_CHANGE = "hashchange";
 
 export const TAGS = {
     HELPER: "TAGS.HELPER",
+    CAMERA_HELPER: "TAGS.CAMERA_HELPER",
     LIGHTS: {
         HOLDER: "TAGS.LIGHTS.HOLDER",
         HELPER: "TAGS.LIGHTS.HELPER",
