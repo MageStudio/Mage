@@ -13,6 +13,7 @@ import {
     Plane,
     Sprite,
 } from "../entities";
+import Camera from "../entities/camera";
 import Models from "../models/Models";
 import PointLight from "../lights/pointLight";
 import AmbientLight from "../lights/ambientLight";
@@ -39,6 +40,7 @@ import Element from "../entities/Element";
 import { Object3D } from "three";
 import Universe from "./Universe";
 import Images from "../images/Images";
+import Scene from "./Scene";
 
 // class responsible for importing level data from a file
 export class Importer {
@@ -314,9 +316,46 @@ export class Importer {
     }
 
     static async parseLevelData(data = {}, options = {}) {
-        const { elements = [], lights = [], audio = [], sounds = [] } = data;
+        const { elements = [], lights = [], audio = [], sounds = [], cameras = [] } = data;
         // Support both 'audio' and 'sounds' keys for backwards compatibility
         const allSounds = [...audio, ...sounds];
+
+        // Process cameras - create game camera entity and apply settings to scene camera
+        for (const cameraData of cameras) {
+            if (cameraData.entitySubType === ENTITY_TYPES.CAMERA.SUBTYPES.GAME) {
+                // Create a Camera entity that will appear in the hierarchy (for editor)
+                const gameCamera = new Camera({
+                    name: cameraData.name || "Game Camera",
+                    fov: cameraData.fov || 75,
+                    near: cameraData.near || 0.1,
+                    far: cameraData.far || 3000000,
+                    serializable: true,
+                });
+                gameCamera.setEntitySubtype(ENTITY_TYPES.CAMERA.SUBTYPES.GAME);
+
+                // Set position and rotation
+                if (cameraData.position) gameCamera.setPosition(cameraData.position);
+                if (cameraData.rotation) gameCamera.setRotation(cameraData.rotation);
+
+                // Set uuid and name for persistence
+                if (cameraData.uuid) gameCamera.setUuid(cameraData.uuid);
+                if (cameraData.name) gameCamera.setName(cameraData.name);
+
+                // Add tags for selectability in editor
+                if (cameraData.tags) gameCamera.addTags(cameraData.tags);
+
+                // Add to Scene.elements so it appears in hierarchy
+                Scene.add(gameCamera.getBody(), gameCamera);
+
+                // Also apply to the scene's rendering camera (for deployed games)
+                const sceneCamera = Scene.getCamera();
+                if (cameraData.position) sceneCamera.setPosition(cameraData.position);
+                if (cameraData.rotation) sceneCamera.setRotation(cameraData.rotation);
+                if (cameraData.fov) sceneCamera.setFov(cameraData.fov);
+                if (cameraData.near) sceneCamera.setNear(cameraData.near);
+                if (cameraData.far) sceneCamera.setFar(cameraData.far);
+            }
+        }
 
         // Use for...of to properly await async completeElementCreation calls
         for (const elementData of elements) {
