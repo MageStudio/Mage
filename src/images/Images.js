@@ -35,10 +35,15 @@ const resolveSinglePath = path => {
         return path;
     }
 
+    // Root-relative paths (starting with /) are served from the public folder
+    // and should not be modified with base URL
+    if (path && path.startsWith("/")) {
+        return path;
+    }
+
     const baseUrl = env.MAGE_ASSETS_BASE_URL;
     if (baseUrl) {
-        const cleanPath = path.startsWith("/") ? path.slice(1) : path;
-        return `${baseUrl}/${cleanPath}`;
+        return `${baseUrl}/${path}`;
     }
 
     // Warn if path contains colon (could be mistaken for protocol) and no base URL is set

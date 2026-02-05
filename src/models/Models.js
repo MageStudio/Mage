@@ -80,6 +80,7 @@ const isAlreadyResolved = path => {
 /**
  * Resolves an asset path to a full URL.
  * If path is already an absolute URL or contains the API path, returns it as-is.
+ * If path is root-relative (starts with /), returns it as-is (served from public folder).
  * If path is relative and MAGE_ASSETS_BASE_URL is set, prepends the base URL.
  * @param {string} path - The asset path (relative or absolute)
  * @returns {string} - The resolved full URL
@@ -90,12 +91,16 @@ const resolveAssetPath = path => {
         return path;
     }
 
+    // Root-relative paths (starting with /) are served from the public folder
+    // and should not be modified with base URL
+    if (path && path.startsWith("/")) {
+        return path;
+    }
+
     // If MAGE_ASSETS_BASE_URL is set, prepend it to the relative path
     const baseUrl = env.MAGE_ASSETS_BASE_URL;
     if (baseUrl) {
-        // Remove leading slash from path if present to avoid double slashes
-        const cleanPath = path.startsWith("/") ? path.slice(1) : path;
-        return `${baseUrl}/${cleanPath}`;
+        return `${baseUrl}/${path}`;
     }
 
     // Warn if path contains colon (could be mistaken for protocol) and no base URL is set

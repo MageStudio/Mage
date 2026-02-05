@@ -1,7 +1,10 @@
-import { PerspectiveCamera, Vector3 } from "three";
+import { PerspectiveCamera, Vector3, CameraHelper } from "three";
 import config from "../core/config";
+import Scene from "../core/Scene";
 import { ENTITY_TYPES } from "./constants";
 import Entity from "./Entity";
+import HelperSprite from "./base/HelperSprite";
+import { TAGS } from "../lib/constants";
 
 export default class Camera extends Entity {
     constructor(options = {}) {
@@ -23,10 +26,62 @@ export default class Camera extends Entity {
         this.setEntityType(ENTITY_TYPES.CAMERA.TYPE);
         this.setEntitySubtype(ENTITY_TYPES.CAMERA.SUBTYPES.MAIN);
         this.setName(name);
+
+        // Helper body for this camera
+        this.isUsingHelper = false;
+        // Holder body representing the camera (for selection in editor)
+        this.holder = null;
+        // THREE.js CameraHelper for visual feedback
+        this.helper = null;
+    }
+
+    hasHolder() {
+        return !!this.holder;
+    }
+
+    usingHelper() {
+        return this.isUsingHelper;
+    }
+
+    addHolder(name = "cameraholder", size = 0.05) {
+        const holderSprite = new HelperSprite(size, size, name, { name });
+
+        if (holderSprite) {
+            holderSprite.setSizeAttenuation(false);
+            holderSprite.setDepthTest(false);
+            holderSprite.setDepthWrite(false);
+            holderSprite.setSerializable(false);
+            holderSprite.setPosition(this.getPosition());
+            holderSprite.addTags([TAGS.HELPER, TAGS.CAMERA_HELPER, name]);
+
+            holderSprite.setHelperTarget(this);
+
+            this.holder = holderSprite;
+
+            return true;
+        }
+
+        console.warn("[Mage] Camera holder texture not found");
+        return false;
+    }
+
+    addHelpers({ holderName = "cameraholder", holderSize = 0.05 } = {}) {
+        // Add THREE.js CameraHelper for visual feedback
+        this.helper = new CameraHelper(this.getBody());
+        Scene.add(this.helper, null, false);
+
+        // Add holder sprite for selection
+        this.addHolder(holderName, holderSize);
+
+        this.isUsingHelper = true;
     }
 
     getPosition() {
-        return this.body.position;
+        return {
+            x: this.body.position.x,
+            y: this.body.position.y,
+            z: this.body.position.z,
+        };
     }
 
     getDirection() {
@@ -43,6 +98,54 @@ export default class Camera extends Entity {
     lookAt(position = {}) {
         const { x = 0, y = 0, z = 0 } = position;
         this.body.lookAt(x, y, z);
+    }
+
+    setPosition(where, { updateHolder = true } = {}) {
+        const currentPos = this.getPosition();
+        const position = {
+            x: currentPos.x,
+            y: currentPos.y,
+            z: currentPos.z,
+            ...where,
+        };
+
+        const { x, y, z } = position;
+
+        if (this.hasBody()) {
+            this.body.position.set(x, y, z);
+        }
+
+        if (this.hasHolder() && updateHolder) {
+            this.holder.setPosition({ x, y, z });
+        }
+    }
+
+    update(dt) {
+        super.update && super.update(dt);
+
+        // Update the THREE.js CameraHelper
+        if (this.usingHelper() && this.helper) {
+            this.helper.update();
+        }
+
+        // Sync camera position from holder (when user drags the holder)
+        if (this.hasHolder()) {
+            // Read directly from the holder's THREE.js body position
+            const holderBody = this.holder.getBody();
+            const holderPos = {
+                x: holderBody.position.x,
+                y: holderBody.position.y,
+                z: holderBody.position.z,
+            };
+            const cameraPos = this.getPosition();
+            // Only update if positions differ significantly
+            const threshold = 0.001;
+            if (Math.abs(holderPos.x - cameraPos.x) > threshold ||
+                Math.abs(holderPos.y - cameraPos.y) > threshold ||
+                Math.abs(holderPos.z - cameraPos.z) > threshold) {
+                this.setPosition(holderPos, { updateHolder: false });
+            }
+        }
     }
 
     getFov() {
