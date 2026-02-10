@@ -1,12 +1,28 @@
 export class Universe {
     constructor() {
-        this.reality = {};
-        this.realityUUID = {};
+        this.reality = {}; // uuid -> element (primary storage)
+        this.nameIndex = {}; // name -> uuid[] (reverse index for name lookups)
         this.worker = undefined;
     }
 
     get(id) {
-        return this.reality[id];
+        // Primary: lookup by UUID
+        if (this.reality[id]) {
+            return this.reality[id];
+        }
+        // Fallback: lookup by name (backward compat for user scripts)
+        return this.getByName(id);
+    }
+
+    getByName(name) {
+        const uuids = this.nameIndex[name];
+        if (uuids && uuids.length > 0) {
+            return this.reality[uuids[0]];
+        }
+    }
+
+    getByUUID(uuid) {
+        return this.reality[uuid];
     }
 
     find(element) {
@@ -22,14 +38,6 @@ export class Universe {
         return found;
     }
 
-    getByUUID(uuid) {
-        const id = this.realityUUID[uuid.toString()];
-
-        if (id) {
-            return this.get(id);
-        }
-    }
-
     getByTag(tagName) {
         const elements = [];
         this.forEach(element => {
@@ -41,26 +49,67 @@ export class Universe {
         return elements;
     }
 
-    set(id, value) {
-        this.reality[id] = value;
+    set(uuid, element) {
+        this.reality[uuid] = element;
+
+        // Maintain name index
+        const name = element.getName ? element.getName() : undefined;
+        if (name) {
+            if (!this.nameIndex[name]) {
+                this.nameIndex[name] = [];
+            }
+            if (!this.nameIndex[name].includes(uuid)) {
+                this.nameIndex[name].push(uuid);
+            }
+        }
     }
 
     reset = () => {
         this.reality = {};
-        this.realityUUID = {};
+        this.nameIndex = {};
     };
 
+    updateNameIndex(uuid, oldName, newName) {
+        // Remove from old name's list
+        if (oldName && this.nameIndex[oldName]) {
+            this.nameIndex[oldName] = this.nameIndex[oldName].filter(u => u !== uuid);
+            if (this.nameIndex[oldName].length === 0) {
+                delete this.nameIndex[oldName];
+            }
+        }
+        // Add to new name's list
+        if (newName) {
+            if (!this.nameIndex[newName]) {
+                this.nameIndex[newName] = [];
+            }
+            if (!this.nameIndex[newName].includes(uuid)) {
+                this.nameIndex[newName].push(uuid);
+            }
+        }
+    }
+
+    // @deprecated - indexing is now handled inside set()
     storeUUIDToElementNameReference(uuid, name) {
-        this.realityUUID[uuid] = name;
+        // no-op: set() handles name indexing
     }
 
+    // @deprecated - use updateNameIndex() instead
     replaceUUIDToElementNameReference(uuid, newName) {
-        delete this.realityUUID[uuid];
-        this.realityUUID[uuid] = newName;
+        // no-op: use updateNameIndex() instead
     }
 
-    remove(id) {
-        delete this.reality[id];
+    remove(uuid) {
+        const element = this.reality[uuid];
+        if (element) {
+            const name = element.getName ? element.getName() : undefined;
+            if (name && this.nameIndex[name]) {
+                this.nameIndex[name] = this.nameIndex[name].filter(u => u !== uuid);
+                if (this.nameIndex[name].length === 0) {
+                    delete this.nameIndex[name];
+                }
+            }
+        }
+        delete this.reality[uuid];
     }
 
     forEach = callback => {

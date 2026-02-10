@@ -146,13 +146,14 @@ export default class Element extends Entity {
     }
 
     setName(name, { replace = false } = {}) {
+        const oldName = this.name;
         super.setName(name);
 
         if (this.hasBody()) {
             if (replace) this.dispose();
 
             this.body.name = name;
-            Universe.replaceUUIDToElementNameReference(this.uuid(), name);
+            Universe.updateNameIndex(this.uuid(), oldName, name);
 
             if (replace) this.addToScene();
         }

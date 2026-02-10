@@ -69,9 +69,7 @@ export class Scene {
         }
 
         if (addUniverse) {
-            const name = element.getName();
-            Universe.set(name, element);
-            Universe.storeUUIDToElementNameReference(body.uuid, name);
+            Universe.set(body.uuid, element);
         }
     }
 
@@ -94,7 +92,7 @@ export class Scene {
 
     remove(body) {
         this.scene.remove(body);
-        Universe.remove(body.name);
+        Universe.remove(body.uuid);
     }
 
     setClearColor(value, alpha = 1.0) {
