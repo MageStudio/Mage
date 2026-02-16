@@ -16,6 +16,7 @@ import {
 } from "../lib/messages";
 import Scripts from "../scripts/Scripts";
 import Scene from "../core/Scene";
+import Universe from "../core/Universe";
 
 import { isScene, serializeQuaternion, serializeVector } from "../lib/meshUtils";
 
@@ -666,7 +667,19 @@ export default class Entity extends EventDispatcher {
 
     setUuid = uuid => {
         if (uuid) {
+            const oldUuid = this.body.uuid;
             this.body.uuid = uuid;
+
+            // Re-register in Universe under the new UUID so that
+            // Universe.getByUUID(newUuid) works after the Importer
+            // restores an entity's persisted UUID.
+            if (oldUuid !== uuid) {
+                const registered = Universe.getByUUID(oldUuid);
+                if (registered) {
+                    Universe.remove(oldUuid);
+                    Universe.set(uuid, registered);
+                }
+            }
         }
     };
 
