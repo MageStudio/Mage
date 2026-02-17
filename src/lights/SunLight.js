@@ -187,7 +187,7 @@ export default class SunLight extends Light {
             mapSize: this.getMapSize(),
             shadowCamera: {
                 ...this.getShadowCameraNearFar(),
-                fov: this.setShadowCameraFov(),
+                fov: this.getShadowCameraFov(),
             },
         };
     }
