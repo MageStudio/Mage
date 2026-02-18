@@ -151,6 +151,7 @@ export default class SpotLight extends Light {
 
         this.getBody().shadow.camera.near = near;
         this.getBody().shadow.camera.far = far;
+        this.getBody().shadow.camera.updateProjectionMatrix();
     };
 
     getShadowCameraNearFar() {

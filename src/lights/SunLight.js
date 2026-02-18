@@ -96,6 +96,7 @@ export default class SunLight extends Light {
 
         this.getBody().shadow.camera.near = near;
         this.getBody().shadow.camera.far = far;
+        this.getBody().shadow.camera.updateProjectionMatrix();
     };
 
     getShadowCameraNearFar() {
@@ -108,6 +109,7 @@ export default class SunLight extends Light {
     setShadowCameraFov(fov = DEFAULT_FOV) {
         this.fov = fov;
         this.getBody().shadow.camera.fov = fov;
+        this.getBody().shadow.camera.updateProjectionMatrix();
     }
 
     getShadowCameraFov() {
