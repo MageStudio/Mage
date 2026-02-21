@@ -16,6 +16,8 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
             texture = false,
             color = DEFAULT_PARTICLE_COLOR,
             rate,
+            autoEmit = false,
+            emitWhenEditing = false,
             ...rest
         } = options;
 
@@ -25,11 +27,17 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
             texture,
             color,
             rate,
+            autoEmit,
+            emitWhenEditing,
             ...rest,
         };
 
         super(parsedOptions);
         this.setEntitySubtype(ENTITY_TYPES.PARTICLE.SUBTYPES.PROTON_EMITTER);
+
+        if (autoEmit || emitWhenEditing) {
+            this.emit();
+        }
     }
 
     isProtonEmitter() {
@@ -67,9 +75,102 @@ export default class ProtonParticleEmitter extends ParticleEmitter {
         behaviours.forEach(behaviour => this.system.addBehaviour(behaviour));
     }
 
-    emit(duration = "once", life) {
+    rebuildSystem({ rate, initializers = [], behaviours = [], texture, color }) {
+        const wasEmitting = this.hasSystem() && !this.system.dead;
+
         if (this.hasSystem()) {
-            this.system.emit(duration, life);
+            this.system.stopEmit();
+            this.system.removeAllParticles();
+            // Clear existing initializers and behaviours
+            this.system.initializes.length = 0;
+            this.system.behaviours.length = 0;
+        }
+
+        // Update options so setSystem can re-read if needed
+        this.options = {
+            ...this.options,
+            rate,
+            initializers,
+            behaviours,
+            texture,
+            color,
+        };
+
+        // Set new rate
+        this.system.rate = rate;
+
+        // Re-add initializers
+        initializers.forEach(init => this.system.addInitialize(init));
+
+        if (texture) {
+            this.system.addInitialize(new Proton.Body(this.createParticleBody(texture, color)));
+        }
+
+        // Re-add behaviours
+        behaviours.forEach(beh => this.system.addBehaviour(beh));
+
+        // Re-emit if was emitting
+        if (wasEmitting) {
+            this.emit();
+        }
+    }
+
+    // Override in subclasses to rebuild from particleConfig
+    rebuild() {}
+
+    setTexture(texture) {
+        this.particleConfig.texture = texture;
+        this.rebuild();
+    }
+
+    getTexture() {
+        return this.particleConfig.texture;
+    }
+
+    setAutoEmit(autoEmit) {
+        this.particleConfig.autoEmit = autoEmit;
+    }
+
+    getAutoEmit() {
+        return this.particleConfig.autoEmit;
+    }
+
+    setEmitWhenEditing(emitWhenEditing) {
+        this.particleConfig.emitWhenEditing = emitWhenEditing;
+    }
+
+    getEmitWhenEditing() {
+        return this.particleConfig.emitWhenEditing;
+    }
+
+    setEmitMode(emitMode) {
+        this.particleConfig.emitMode = emitMode;
+    }
+
+    getEmitMode() {
+        return this.particleConfig.emitMode || "continuous";
+    }
+
+    setEmitDuration(emitDuration) {
+        this.particleConfig.emitDuration = emitDuration;
+    }
+
+    getEmitDuration() {
+        return this.particleConfig.emitDuration || 1;
+    }
+
+    getEmitDurationValue() {
+        const mode = this.getEmitMode();
+        if (mode === "continuous") return Infinity;
+        if (mode === "burst") return 0.1;
+        // timed
+        return this.getEmitDuration();
+    }
+
+    emit(duration, life) {
+        if (this.hasSystem()) {
+            const d = duration !== undefined ? duration : this.getEmitDurationValue();
+            this.system.emit(d, life);
         }
 
         return this;

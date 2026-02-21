@@ -116,6 +116,7 @@ export class Level extends EventDispatcher {
 
         Physics.dispose();
         Audio.dispose();
+        Lights.dispose();
         Particles.dispose();
         PostProcessing.dispose();
         Universe.bigfreeze();

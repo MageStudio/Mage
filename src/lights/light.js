@@ -35,6 +35,10 @@ export default class Light extends Entity {
     addToScene() {
         if (this.hasBody()) {
             Scene.add(this.body, this);
+            // When a new light is added to the scene, all materials need
+            // their shaders recompiled so THREE.js picks up the updated
+            // shadow-casting light count (NUM_DIR_LIGHT_SHADOWS, etc.).
+            Scene.updateChildren();
         }
     }
 
@@ -153,6 +157,10 @@ export default class Light extends Entity {
         this.castShadow = castShadow;
 
         this.getBody().castShadow = castShadow;
+
+        // Changing shadow-casting state alters the number of active shadow
+        // maps, so every material must recompile its shader.
+        Scene.updateChildren();
     }
 
     getCastShadow() {

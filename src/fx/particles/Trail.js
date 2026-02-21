@@ -21,7 +21,7 @@ const getTrailBehaviour = () => [
 
 export default class Trail extends ParticleEmitterGroup {
     constructor(options = {}) {
-        const { texture = false, size = DEFAULT_SIZE } = options;
+        const { texture = false, size = DEFAULT_SIZE, autoEmit = false, emitWhenEditing = false } = options;
 
         const system = [
             new ProtonParticleEmitter({
@@ -29,12 +29,48 @@ export default class Trail extends ParticleEmitterGroup {
                 texture,
                 initializers: getTrailInitialisers(size),
                 behaviours: getTrailBehaviour(size),
+                skipSceneAdd: true,
             }),
         ];
 
         const name = "TrailGroup";
 
-        super({ system, name });
+        super({ system, name, autoEmit, emitWhenEditing });
+        this.setPreset("trail");
         this.setEntitySubtype(ENTITY_TYPES.PARTICLE.SUBTYPES.TRAIL);
+        this.setParticleConfig({ texture, size, autoEmit, emitWhenEditing });
+    }
+
+    rebuild() {
+        const config = this.getParticleConfig();
+        const { texture = false, size = DEFAULT_SIZE } = config;
+
+        const emitters = Array.from(this.system.values());
+        if (emitters[0]) {
+            emitters[0].rebuildSystem({
+                rate: getTrailRate(),
+                initializers: getTrailInitialisers(size),
+                behaviours: getTrailBehaviour(size),
+                texture,
+            });
+        }
+    }
+
+    setSize(size) {
+        this.particleConfig.size = size;
+        this.rebuild();
+    }
+
+    getSize() {
+        return this.particleConfig.size;
+    }
+
+    setTexture(texture) {
+        this.particleConfig.texture = texture;
+        this.rebuild();
+    }
+
+    getTexture() {
+        return this.particleConfig.texture;
     }
 }

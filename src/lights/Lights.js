@@ -30,6 +30,14 @@ export class Lights {
         this.lights.push(light);
     }
 
+    dispose() {
+        this.lights = [];
+        if (this.csm) {
+            this.csm.dispose();
+            this.csm = undefined;
+        }
+    }
+
     update(dt) {
         if (this.isUsingCascadeShadowMaps()) {
             this.csm.update();

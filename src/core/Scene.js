@@ -55,11 +55,15 @@ export class Scene {
     }
 
     updateChildren() {
-        for (let i in this.scene.children) {
-            if (this.scene.children[i].material) {
-                this.scene.children[i].material.needsUpdate = true;
+        this.scene.traverse(child => {
+            if (child.material) {
+                if (Array.isArray(child.material)) {
+                    child.material.forEach(m => (m.needsUpdate = true));
+                } else {
+                    child.material.needsUpdate = true;
+                }
             }
-        }
+        });
     }
 
     add(body, element, addUniverse = true) {

@@ -92,8 +92,6 @@ import Mirror from "./fx/materials/Mirror";
 import Ocean from "./fx/materials/Ocean";
 import Water from "./fx/materials/Water";
 
-import * as Partykals from "mage-engine.particles";
-
 import Sky from "./fx/scenery/Sky";
 import Skybox from "./fx/scenery/Skybox";
 
@@ -104,6 +102,13 @@ import Particles, { PARTICLES } from "./fx/particles/Particles";
 import ParticleEmitter from "./fx/particles/ParticleEmitter";
 import ProtonParticleEmitter from "./fx/particles/ProtonParticleEmitter";
 import ParticleEmitterGroup from "./fx/particles/ParticleEmitterGroup";
+
+import Fire from "./fx/particles/Fire";
+import Explosion from "./fx/particles/Explosion";
+import Trail from "./fx/particles/Trail";
+import Rain from "./fx/particles/Rain";
+import Snow from "./fx/particles/Snow";
+import Fountain from "./fx/particles/Fountain";
 
 import Images from "./images/Images";
 import Models from "./models/Models";
@@ -156,7 +161,12 @@ export {
     ProtonParticleEmitter,
     ParticleEmitterGroup,
     Proton,
-    Partykals,
+    Fire,
+    Explosion,
+    Trail,
+    Rain,
+    Snow,
+    Fountain,
     Physics,
     PHYSICS_EVENTS,
     PHYSICS_CONSTANTS,

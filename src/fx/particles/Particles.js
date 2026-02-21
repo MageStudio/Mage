@@ -7,7 +7,7 @@ import Trail from "./Trail";
 
 import Scene from "../../core/Scene";
 import Proton from "three.proton";
-import { DEPRECATIONS, INVALID_EMITTER_ID } from "../../lib/messages";
+import { INVALID_EMITTER_ID } from "../../lib/messages";
 import { PARTICLE_EMITTER_TYPES } from "./constants";
 import ParticleEmitter from "./ParticleEmitter";
 import ParticleEmitterGroup from "./ParticleEmitterGroup";
@@ -21,8 +21,6 @@ export const PARTICLES = {
     SNOW: "snow",
     TRAIL: "trail",
 };
-
-const DEPRECATED_PARTICLES = [PARTICLES.RAIN, PARTICLES.FOUNTAIN, PARTICLES.SNOW];
 
 const { SINGLE, GROUP } = PARTICLE_EMITTER_TYPES;
 export class Particles {
@@ -40,6 +38,7 @@ export class Particles {
     }
 
     init() {
+        if (this.isInitialised()) return;
         this.proton = new Proton();
         this.proton.addRender(new Proton.SpriteRender(Scene.getScene()));
     }
@@ -65,15 +64,10 @@ export class Particles {
     }
 
     addParticleEmitter(emitter, options = {}) {
-        console.warn(DEPRECATIONS.PARTICLES_ADD_PARTICLE_EMITTER);
         return this.add(emitter, options);
     }
 
     add(_emitter, options = {}) {
-        if (DEPRECATED_PARTICLES.includes(_emitter)) {
-            console.warn(DEPRECATIONS.PARTICLES_OLD);
-        }
-
         let emitter;
         if (this.isRegisteredEmitter(_emitter)) {
             const Emitter = this.get(_emitter);
@@ -105,6 +99,9 @@ export class Particles {
     }
 
     addProtonEmitter(emitter) {
+        if (!this.isInitialised()) {
+            this.init();
+        }
         this.proton.addEmitter(emitter.getSystem());
     }
 
@@ -137,6 +134,8 @@ export class Particles {
         this.toDispose.forEach(uuid => {
             const emitter = this.emitters.get(uuid);
 
+            if (!emitter) return;
+
             if (emitter.isProtonEmitter()) {
                 this.removeProtonEmitter(emitter);
             } else {
@@ -148,6 +147,7 @@ export class Particles {
     }
 
     update(dt) {
+        if (!this.isInitialised()) return;
         this.proton.update(dt);
         this.updateEmitters(dt);
         this.disposeDeadEmitters();
