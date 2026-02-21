@@ -97,6 +97,12 @@ export class Scene {
     remove(body) {
         this.scene.remove(body);
         Universe.remove(body.uuid);
+
+        // Remove the element from the elements array
+        const index = this.elements.findIndex(e => e.hasBody() && e.getBody().uuid === body.uuid);
+        if (index !== -1) {
+            this.elements.splice(index, 1);
+        }
     }
 
     setClearColor(value, alpha = 1.0) {

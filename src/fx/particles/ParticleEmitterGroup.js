@@ -235,6 +235,10 @@ export default class ParticleEmitterGroup extends Entity {
     }
 
     dispose() {
+        if (this.holder) {
+            this.holder.dispose();
+            this.holder = undefined;
+        }
         super.dispose();
         this.system.forEach(emitter => emitter.dispose());
     }

@@ -152,6 +152,10 @@ export default class ParticleEmitter extends Entity {
     }
 
     dispose() {
+        if (this.holder) {
+            this.holder.dispose();
+            this.holder = undefined;
+        }
         super.dispose();
     }
 
