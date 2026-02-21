@@ -23,6 +23,7 @@ import SunLight from "../lights/sunLight";
 import Sound from "../audio/sound";
 import AmbientSound from "../audio/ambientSound";
 import DirectionalSound from "../audio/directionalSound";
+import Particles from "../fx/particles/Particles";
 import { difference } from "../lib/array";
 import { omit } from "../lib/object";
 import { MATERIAL_PROPERTIES_MAP, TEXTURES } from "../lib/constants";
@@ -34,6 +35,7 @@ import {
     IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE,
     IMPORTER_ERROR_LIGHT_CREATION,
     IMPORTER_ERROR_SOUND_CREATION,
+    IMPORTER_ERROR_PARTICLE_CREATION,
 } from "../lib/messages";
 import Sky from "../fx/scenery/Sky";
 import Element from "../entities/Element";
@@ -315,8 +317,33 @@ export class Importer {
         }
     }
 
+    static async completeParticleCreation(emitter, particleData, options) {
+        Importer.completeCommonCreationSteps(emitter, particleData, {
+            ...options,
+            skipOpacity: true,
+        });
+
+        // Load particle texture if one was saved
+        const particleOptions = particleData.options || {};
+        if (particleOptions.texture && particleOptions.textureAssetPath) {
+            try {
+                await Images.loadAssetByPath(
+                    particleOptions.textureAssetPath,
+                    particleOptions.texture,
+                    Images.currentLevel,
+                );
+                // Rebuild so the texture is applied to the particle system
+                if (emitter.rebuild) {
+                    emitter.rebuild();
+                }
+            } catch (error) {
+                console.warn("[Mage] Failed to load particle texture:", particleOptions.textureAssetPath, error);
+            }
+        }
+    }
+
     static async parseLevelData(data = {}, options = {}) {
-        const { elements = [], lights = [], audio = [], sounds = [], cameras = [] } = data;
+        const { elements = [], lights = [], audio = [], sounds = [], cameras = [], particles = [] } = data;
         // Support both 'audio' and 'sounds' keys for backwards compatibility
         const allSounds = [...audio, ...sounds];
 
@@ -503,6 +530,33 @@ export class Importer {
                     IMPORTER_ERROR_SOUND_CREATION,
                     data.name,
                     data.entitySubType,
+                    error.stack,
+                );
+            }
+        });
+
+        // processing particles
+        particles.forEach(data => {
+            try {
+                const particleOptions = data.options || {};
+                const { preset } = data;
+
+                if (!preset) {
+                    console.warn(IMPORTER_ERROR_UNKNOWN_ELEMENT_SUBTYPE, data.entitySubType);
+                    return;
+                }
+
+                const emitter = Particles.add(preset, particleOptions);
+
+                if (emitter) {
+                    emitter.setSceneEmitter(true);
+                    Importer.completeParticleCreation(emitter, data, options);
+                }
+            } catch (error) {
+                console.error(
+                    IMPORTER_ERROR_PARTICLE_CREATION,
+                    data.name,
+                    data.preset,
                     error.stack,
                 );
             }

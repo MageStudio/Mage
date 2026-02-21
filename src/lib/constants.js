@@ -355,4 +355,8 @@ export const TAGS = {
         HELPER: "TAGS.SOUNDS.HELPER",
         HOLDER: "TAGS.SOUNDS.HOLDER",
     },
+    PARTICLES: {
+        HELPER: "TAGS.PARTICLES.HELPER",
+        HOLDER: "TAGS.PARTICLES.HOLDER",
+    },
 };

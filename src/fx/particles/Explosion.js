@@ -13,6 +13,7 @@ const getSparksInitializers = (size = DEFAULT_SIZE) => [
 ];
 
 const getSparksBehaviours = (size = DEFAULT_SIZE) => [
+    new Proton.Alpha(1, 0),
     new Proton.RandomDrift(size * 0.75, size * 0.75, size * 0.75, 0.5),
     new Proton.Color("#ffffff"),
     new Proton.Scale(1, 0.1),
@@ -34,6 +35,7 @@ const getDebrisBehaviours = (size = DEFAULT_SIZE) => {
     zone.friction = 0.95;
     zone.max = 7;
     return [
+        new Proton.Alpha(1, 0),
         new Proton.CrossZone(zone, "bound"),
         new Proton.Repulsion(new Proton.Vector3D(0, 0, 0), size * 12.5, size * 1.5),
         new Proton.G(3),
@@ -48,22 +50,24 @@ const getFireInitializers = (size = DEFAULT_SIZE) => [
     new Proton.Position(new Proton.SphereZone(size * 1.25)),
 ];
 
-const getFireBehaviours = () => [new Proton.Scale(1, 2), new Proton.Color("#c0392b", "#f1c40f")];
+const getFireBehaviours = () => [new Proton.Alpha(1, 0), new Proton.Scale(1, 2), new Proton.Color("#c0392b", "#f1c40f")];
 export default class Explosion extends ParticleEmitterGroup {
     constructor(options = {}) {
-        const { texture = false, hasDebris = false, size = DEFAULT_SIZE } = options;
+        const { texture = false, hasDebris = false, size = DEFAULT_SIZE, autoEmit = false, emitWhenEditing = false } = options;
 
         const sparks = new ProtonParticleEmitter({
             rate: getSparksRate(),
             texture,
             initializers: getSparksInitializers(size),
             behaviours: getSparksBehaviours(size),
+            skipSceneAdd: true,
         });
         const fire = new ProtonParticleEmitter({
             rate: getFireRate(),
             texture,
             initializers: getFireInitializers(size),
             behaviours: getFireBehaviours(size),
+            skipSceneAdd: true,
         });
 
         const system = [sparks, fire];
@@ -75,13 +79,68 @@ export default class Explosion extends ParticleEmitterGroup {
                     texture,
                     initializers: getDebrisInitializers(size),
                     behaviours: getDebrisBehaviours(size),
+                    skipSceneAdd: true,
                 }),
             );
         }
 
         const name = "ExplosionGroup";
 
-        super({ system, name });
+        super({ system, name, autoEmit, emitWhenEditing });
+        this.setPreset("explosion");
         this.setEntitySubtype(ENTITY_TYPES.PARTICLE.SUBTYPES.EXPLOSION);
+        this.setParticleConfig({ texture, hasDebris, size, autoEmit, emitWhenEditing, emitMode: "burst" });
+    }
+
+    rebuild() {
+        const config = this.getParticleConfig();
+        const { texture = false, size = DEFAULT_SIZE } = config;
+
+        const emitters = Array.from(this.system.values());
+        // Rebuild sparks (first emitter)
+        if (emitters[0]) {
+            emitters[0].rebuildSystem({
+                rate: getSparksRate(),
+                initializers: getSparksInitializers(size),
+                behaviours: getSparksBehaviours(size),
+                texture,
+            });
+        }
+        // Rebuild fire (second emitter)
+        if (emitters[1]) {
+            emitters[1].rebuildSystem({
+                rate: getFireRate(),
+                initializers: getFireInitializers(size),
+                behaviours: getFireBehaviours(size),
+                texture,
+            });
+        }
+        // Rebuild debris (third emitter, if exists)
+        if (emitters[2]) {
+            emitters[2].rebuildSystem({
+                rate: getDebrisRate(),
+                initializers: getDebrisInitializers(size),
+                behaviours: getDebrisBehaviours(size),
+                texture,
+            });
+        }
+    }
+
+    setSize(size) {
+        this.particleConfig.size = size;
+        this.rebuild();
+    }
+
+    getSize() {
+        return this.particleConfig.size;
+    }
+
+    setTexture(texture) {
+        this.particleConfig.texture = texture;
+        this.rebuild();
+    }
+
+    getTexture() {
+        return this.particleConfig.texture;
     }
 }
