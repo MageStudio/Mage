@@ -461,7 +461,7 @@ export class Importer {
             }
         }
 
-        // adding children to elements
+        // adding children to elements (legacy children array format)
         for (const elementData of elements) {
             if (elementData.children && elementData.children.length) {
                 // parent already exists in universe
@@ -473,6 +473,20 @@ export class Importer {
                         const childData = elements.find(e => e.uuid === uuid);
                         Importer.completeCommonCreationSteps(child, childData, options);
                     }
+                }
+            }
+        }
+
+        // Handle parentUUID relationships (new format from database parentId)
+        // Use parent.add(child) instead of child.reparent(parent) to preserve
+        // the saved local position. reparent() uses attach() which preserves
+        // world position, but for import we want to keep the saved local position.
+        for (const elementData of elements) {
+            if (elementData.parentUUID) {
+                const child = Universe.getByUUID(elementData.uuid);
+                const parent = Universe.getByUUID(elementData.parentUUID);
+                if (child && parent && parent.add) {
+                    await parent.add(child);
                 }
             }
         }
@@ -561,5 +575,49 @@ export class Importer {
                 );
             }
         });
+
+        // Handle parentUUID for lights
+        for (const lightData of lights) {
+            if (lightData.parentUUID) {
+                const child = Universe.getByUUID(lightData.uuid);
+                const parent = Universe.getByUUID(lightData.parentUUID);
+                if (child && parent && parent.add) {
+                    await parent.add(child);
+                }
+            }
+        }
+
+        // Handle parentUUID for sounds
+        for (const soundData of allSounds) {
+            if (soundData.parentUUID) {
+                const child = Universe.getByUUID(soundData.uuid);
+                const parent = Universe.getByUUID(soundData.parentUUID);
+                if (child && parent && parent.add) {
+                    await parent.add(child);
+                }
+            }
+        }
+
+        // Handle parentUUID for particles
+        for (const particleData of particles) {
+            if (particleData.parentUUID) {
+                const child = Universe.getByUUID(particleData.uuid);
+                const parent = Universe.getByUUID(particleData.parentUUID);
+                if (child && parent && parent.add) {
+                    await parent.add(child);
+                }
+            }
+        }
+
+        // Handle parentUUID for cameras
+        for (const cameraData of cameras) {
+            if (cameraData.parentUUID) {
+                const child = Universe.getByUUID(cameraData.uuid);
+                const parent = Universe.getByUUID(cameraData.parentUUID);
+                if (child && parent && parent.add) {
+                    await parent.add(child);
+                }
+            }
+        }
     }
 }
