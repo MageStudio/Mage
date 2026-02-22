@@ -217,6 +217,63 @@ export default class Entity extends EventDispatcher {
         return this.children.length > 0;
     }
 
+    /**
+     * Checks if the given ancestor is in this entity's parent chain.
+     * Used to prevent circular references when reparenting.
+     * @param {Entity} ancestor - The potential ancestor entity
+     * @returns {boolean} True if ancestor is in the parent chain
+     */
+    isDescendantOf(ancestor) {
+        if (!ancestor) return false;
+        let current = this.getParent();
+        while (current) {
+            if (current === ancestor ||
+                (current.uuid && ancestor.uuid && current.uuid() === ancestor.uuid())) {
+                return true;
+            }
+            current = current.getParent ? current.getParent() : null;
+        }
+        return false;
+    }
+
+    /**
+     * Reparents this entity to a new parent while preserving world position.
+     * Uses THREE.js attach() to maintain the entity's world transform.
+     * @param {Entity|null} newParent - The new parent entity, or null to move to scene root
+     * @returns {Entity} This entity for chaining
+     */
+    reparent(newParent) {
+        if (!this.hasBody()) return this;
+
+        const oldParent = this.getParent();
+
+        // Detach from old parent's Entity children array
+        if (oldParent && oldParent.children) {
+            const index = oldParent.children.findIndex(c => c === this ||
+                (c.uuid && this.uuid && c.uuid() === this.uuid()));
+            if (index !== -1) oldParent.children.splice(index, 1);
+        }
+
+        // Detach from old THREE.js parent
+        const body = this.getBody();
+        if (body.parent) {
+            body.parent.remove(body);
+        }
+
+        if (newParent && newParent.hasBody()) {
+            // Attach to new parent (preserves world position)
+            newParent.children.push(this);
+            this.setParent(newParent);
+            newParent.getBody().attach(body);
+        } else {
+            // Move to scene root
+            this.setParent(false);
+            Scene.getScene().attach(body);
+        }
+
+        return this;
+    }
+
     getHierarchy(options = {}) {
         const { parseJSON = false } = options;
         return {

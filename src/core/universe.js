@@ -28,14 +28,33 @@ export class Universe {
     find(element) {
         if (!element) return;
 
-        let found;
+        // Traverse up the THREE.js parent chain to find the closest Mage entity.
+        // This ensures that when clicking on a child mesh that's nested inside
+        // a parent entity's body, we find the child entity (not the parent).
+        let current = element;
+        while (current) {
+            // Check if any entity's body IS this object directly
+            let found;
+            this.forEach(el => {
+                if (!found && el.hasBody() && el.getBody() === current) {
+                    found = el;
+                }
+            });
+            if (found) {
+                return found;
+            }
+            current = current.parent;
+        }
+
+        // Fallback: use the original has() check for edge cases
+        let fallback;
         this.forEach(el => {
-            if (el.has(element) && !found) {
-                found = el;
+            if (el.has(element) && !fallback) {
+                fallback = el;
             }
         });
 
-        return found;
+        return fallback;
     }
 
     getByTag(tagName) {
