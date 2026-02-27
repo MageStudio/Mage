@@ -29,6 +29,36 @@ export default class TransformControls extends Object3D {
         this.gizmo = new Gizmo();
         this.plane = new Plane();
 
+        // Set gizmo and plane to layer 1 ONLY so mirrors don't render them
+        // Main camera must enable layer 1 to see these
+        this.gizmo.layers.set(1);
+        this.plane.layers.set(1);
+
+        // Helper function to set depth properties on materials
+        const setMaterialDepth = (material) => {
+            if (!material) return;
+            const mats = Array.isArray(material) ? material : [material];
+            mats.forEach(mat => {
+                mat.depthTest = false;
+                mat.depthWrite = false;
+                mat.transparent = true;
+                mat.needsUpdate = true;
+            });
+        };
+
+        // Also set layer 1 on all children recursively
+        // Set high renderOrder and disable depthTest so gizmos render on top of sky/water
+        this.gizmo.traverse(child => {
+            child.layers.set(1);
+            child.renderOrder = 999;
+            setMaterialDepth(child.material);
+        });
+        this.plane.traverse(child => {
+            child.layers.set(1);
+            child.renderOrder = 999;
+            setMaterialDepth(child.material);
+        });
+
         this.add(this.gizmo);
         this.add(this.plane);
 
@@ -67,6 +97,8 @@ export default class TransformControls extends Object3D {
         this.setAndDispatch("showZ", true);
 
         this.ray = new Raycaster();
+        // Enable layer 1 so raycaster can pick gizmo objects (which are on layer 1)
+        this.ray.layers.enable(1);
 
         this._tempVector = new Vector3();
         this._tempVector2 = new Vector3();

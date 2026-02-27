@@ -148,6 +148,30 @@ export default class PointLight extends Light {
         this.helper = new PointLightHelper(this.getBody(), 2, GREEN);
         this.shadowHelper = new CameraHelper(this.getBody().shadow.camera);
 
+        // Set to layer 1 ONLY so mirrors don't render light helpers
+        // Disable depth test so helpers always render on top of sky/water
+        const setMaterialDepth = (material) => {
+            if (!material) return;
+            const mats = Array.isArray(material) ? material : [material];
+            mats.forEach(mat => {
+                mat.depthTest = false;
+                mat.depthWrite = false;
+                mat.transparent = true;
+                mat.needsUpdate = true;
+            });
+        };
+
+        [this.helper, this.shadowHelper].forEach(helper => {
+            helper.layers.set(1);
+            helper.renderOrder = 999;
+            setMaterialDepth(helper.material);
+            helper.traverse(child => {
+                child.layers.set(1);
+                child.renderOrder = 999;
+                setMaterialDepth(child.material);
+            });
+        });
+
         Scene.add(this.helper, null, false);
         Scene.add(this.shadowHelper, null, false);
 

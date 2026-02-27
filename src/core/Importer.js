@@ -28,6 +28,7 @@ import { difference } from "../lib/array";
 import { omit } from "../lib/object";
 import { MATERIAL_PROPERTIES_MAP, TEXTURES } from "../lib/constants";
 import Scripts from "../scripts/Scripts";
+import Config from "./config";
 import {
     SCRIPT_NOT_FOUND,
     NO_VALID_LEVEL_DATA_PROVIDED,
@@ -38,6 +39,9 @@ import {
     IMPORTER_ERROR_PARTICLE_CREATION,
 } from "../lib/messages";
 import Sky from "../fx/scenery/Sky";
+import Skybox from "../fx/scenery/Skybox";
+import Water from "../fx/materials/Water";
+import MirrorElement from "../fx/materials/MirrorElement";
 import Element from "../entities/Element";
 import { Object3D } from "three";
 import Universe from "./Universe";
@@ -275,6 +279,43 @@ export class Importer {
         }
     }
 
+    static completeSkyboxCreation(skybox, skyboxData, options) {
+        Importer.completeCommonCreationSteps(skybox, skyboxData, { ...options, skipScale: true });
+        // Skybox texture is set during construction via the texture option
+        // No additional setup needed beyond common creation steps
+    }
+
+    static completeWaterCreation(water, waterData, options) {
+        Importer.completeCommonCreationSteps(water, waterData, { ...options, skipScale: true });
+
+        const waterOptions = waterData.options || {};
+        const { alpha, distortionScale, size } = waterOptions;
+
+        if (alpha !== undefined) {
+            water.setAlpha(alpha);
+        }
+        if (distortionScale !== undefined) {
+            water.setDistortionScale(distortionScale);
+        }
+        if (size !== undefined) {
+            water.setSize(size);
+        }
+    }
+
+    static completeMirrorCreation(mirror, mirrorData, options) {
+        Importer.completeCommonCreationSteps(mirror, mirrorData, options);
+
+        const mirrorOptions = mirrorData.options || {};
+        const { color, clipBias } = mirrorOptions;
+
+        if (color !== undefined) {
+            mirror.setColor(color);
+        }
+        if (clipBias !== undefined) {
+            mirror.setClipBias(clipBias);
+        }
+    }
+
     static async completeSpriteCreation(sprite, spriteData, options) {
         // calling completeElementCreation to set position, rotation, quaternion, scale, opacity, name, material, textures, scripts, and data
         await Importer.completeElementCreation(sprite, spriteData, options);
@@ -350,12 +391,18 @@ export class Importer {
         // Process cameras - create game camera entity and apply settings to scene camera
         for (const cameraData of cameras) {
             if (cameraData.entitySubType === ENTITY_TYPES.CAMERA.SUBTYPES.GAME) {
+                // Use config defaults, but prefer saved values if they're reasonable
+                // (old default was 100, which is too small for most scenes)
+                const configFar = Config.camera().far;
+                const savedFar = cameraData.far;
+                const cameraFar = savedFar && savedFar > 100 ? savedFar : configFar;
+
                 // Create a Camera entity that will appear in the hierarchy (for editor)
                 const gameCamera = new Camera({
                     name: cameraData.name || "Game Camera",
-                    fov: cameraData.fov || 75,
-                    near: cameraData.near || 0.1,
-                    far: cameraData.far || 3000000,
+                    fov: cameraData.fov || Config.camera().fov,
+                    near: cameraData.near || Config.camera().near,
+                    far: cameraFar,
                     serializable: true,
                 });
                 gameCamera.setEntitySubtype(ENTITY_TYPES.CAMERA.SUBTYPES.GAME);
@@ -380,7 +427,7 @@ export class Importer {
                 if (cameraData.rotation) sceneCamera.setRotation(cameraData.rotation);
                 if (cameraData.fov) sceneCamera.setFov(cameraData.fov);
                 if (cameraData.near) sceneCamera.setNear(cameraData.near);
-                if (cameraData.far) sceneCamera.setFar(cameraData.far);
+                sceneCamera.setFar(cameraFar);
             }
         }
 
@@ -443,6 +490,15 @@ export class Importer {
                             break;
                         case ENTITY_TYPES.SCENERY.SUBTYPES.SKY:
                             Importer.completeSkyCreation(Sky.create(elementData), elementData, options);
+                            break;
+                        case ENTITY_TYPES.SCENERY.SUBTYPES.SKYBOX:
+                            Importer.completeSkyboxCreation(Skybox.create(elementData), elementData, options);
+                            break;
+                        case ENTITY_TYPES.SCENERY.SUBTYPES.WATER:
+                            Importer.completeWaterCreation(Water.create(elementData), elementData, options);
+                            break;
+                        case ENTITY_TYPES.SCENERY.SUBTYPES.MIRROR:
+                            Importer.completeMirrorCreation(MirrorElement.create(elementData), elementData, options);
                             break;
                         default:
                             console.warn(

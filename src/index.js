@@ -88,7 +88,7 @@ import * as light_contants from "./lights/constants";
 // import MeshLoader from "./loaders/MeshLoader";
 
 import Atmosphere from "./fx/materials/Atmosphere";
-import Mirror from "./fx/materials/Mirror";
+import Mirror from "./fx/materials/MirrorElement";
 import Ocean from "./fx/materials/Ocean";
 import Water from "./fx/materials/Water";
 

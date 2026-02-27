@@ -50,7 +50,7 @@ const DEFAULT_CONFIG = {
         //handling useful informations about our camera.
         fov: 75,
         near: 0.1,
-        far: 100,
+        far: 10000,
     },
 
     ui: {

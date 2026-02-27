@@ -22,6 +22,10 @@ export default class Grid extends Element {
         super(options);
         const body = new GridHelper(size, division, color1, color2);
 
+        // Set to layer 1 ONLY so mirrors don't render the grid
+        // Main camera must enable layer 1 to see the grid
+        body.layers.set(1);
+
         this.setBody({ body });
         this.setEntityType(ENTITY_TYPES.HELPER.TYPE);
         this.setEntitySubtype(ENTITY_TYPES.HELPER.SUBTYPES.GRID);

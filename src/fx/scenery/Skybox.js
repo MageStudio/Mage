@@ -23,4 +23,8 @@ export default class Skybox extends Element {
         this.setEntityType(ENTITY_TYPES.SCENERY.TYPE);
         this.setEntitySubtype(ENTITY_TYPES.SCENERY.SUBTYPES.SKYBOX);
     }
+
+    static create(data) {
+        return new Skybox(data.options || data);
+    }
 }

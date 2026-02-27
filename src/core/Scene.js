@@ -179,6 +179,11 @@ export class Scene {
 
     createCamera(camera) {
         this.camera = camera;
+        // Enable layer 1 so camera can see editor-only objects (helpers, grid, gizmos)
+        // Mirror cameras only use layer 0, so they won't render these
+        if (this.camera && this.camera.getBody()) {
+            this.camera.getBody().layers.enable(1);
+        }
     }
 
     getDOMElement() {
