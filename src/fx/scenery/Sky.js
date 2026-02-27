@@ -251,9 +251,11 @@ export default class Sky extends Element {
             vertexShader: SkyShader.vertexShader(),
             uniforms: UniformsUtils.clone(SkyShader.uniforms()),
             side: BackSide,
+            depthWrite: false,
         });
 
         const body = new Mesh(new BoxBufferGeometry(1, 1, 1), material);
+        body.renderOrder = -1000;
 
         this.setBody({ body });
         this.setEntityType(ENTITY_TYPES.SCENERY.TYPE);
@@ -290,6 +292,18 @@ export default class Sky extends Element {
     setMieDirectionalG(value) {
         this.setData("mieDirectionalG", value);
         this.getBody().material.uniforms.mieDirectionalG.value = value;
+    }
+
+    setSunInclination(value) {
+        const azimuth = this.getData("sunAzimuth") || 0.1;
+        const distance = this.getData("sunDistance") || 100;
+        this.setSun(value, azimuth, distance);
+    }
+
+    setSunAzimuth(value) {
+        const inclination = this.getData("sunInclination") || 0.21;
+        const distance = this.getData("sunDistance") || 100;
+        this.setSun(inclination, value, distance);
     }
 
     setSun(inclination, azimuth, distance) {

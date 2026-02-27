@@ -40,6 +40,8 @@ export default class Mouse extends EventDispatcher {
     createRayCaster() {
         if (!this.hasRaycaster()) {
             this.raycaster = new Raycaster();
+            // Enable layer 1 so raycaster can pick editor-only objects (mirrors, etc.)
+            this.raycaster.layers.enable(1);
             this.raycaster.setFromCamera(this.mouse, Scene.getCameraBody());
         }
     }

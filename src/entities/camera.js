@@ -68,6 +68,34 @@ export default class Camera extends Entity {
     addHelpers({ holderName = "cameraholder", holderSize = 0.05 } = {}) {
         // Add THREE.js CameraHelper for visual feedback
         this.helper = new CameraHelper(this.getBody());
+
+        // Set to layer 1 ONLY so mirrors don't render camera helper
+        this.helper.layers.set(1);
+
+        // Disable depth test so helper always renders on top of sky/water
+        this.helper.renderOrder = 999;
+
+        // Helper function to set depth properties on materials
+        const setMaterialDepth = (material) => {
+            if (!material) return;
+            const mats = Array.isArray(material) ? material : [material];
+            mats.forEach(mat => {
+                mat.depthTest = false;
+                mat.depthWrite = false;
+                mat.transparent = true;
+                mat.needsUpdate = true;
+            });
+        };
+
+        setMaterialDepth(this.helper.material);
+
+        // Also apply to all children
+        this.helper.traverse(child => {
+            child.layers.set(1);
+            child.renderOrder = 999;
+            setMaterialDepth(child.material);
+        });
+
         Scene.add(this.helper, null, false);
 
         // Add holder sprite for selection

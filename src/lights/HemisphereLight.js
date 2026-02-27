@@ -77,6 +77,29 @@ export default class HemisphereLight extends Light {
 
     addHelpers({ holderName = "hemispherelightholder", holderSize = 0.05 } = {}) {
         this.helper = new HemisphereLightHelper(this.getBody(), 2, GREEN);
+
+        // Set to layer 1 ONLY so mirrors don't render light helpers
+        // Disable depth test so helpers always render on top of sky/water
+        const setMaterialDepth = (material) => {
+            if (!material) return;
+            const mats = Array.isArray(material) ? material : [material];
+            mats.forEach(mat => {
+                mat.depthTest = false;
+                mat.depthWrite = false;
+                mat.transparent = true;
+                mat.needsUpdate = true;
+            });
+        };
+
+        this.helper.layers.set(1);
+        this.helper.renderOrder = 999;
+        setMaterialDepth(this.helper.material);
+        this.helper.traverse(child => {
+            child.layers.set(1);
+            child.renderOrder = 999;
+            setMaterialDepth(child.material);
+        });
+
         this.addHolder(holderName, holderSize);
 
         this.isUsingHelper = true;

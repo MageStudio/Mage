@@ -26,7 +26,10 @@ import {
     UniformsUtils,
     Vector3,
     Vector4,
-    WebGLRenderTarget
+    WebGLRenderTarget,
+    DataTexture,
+    RGBAFormat,
+    UnsignedByteType
 } from 'three';
 
 import Images from '../../images/Images';
@@ -219,7 +222,8 @@ var WaterMesh = function ( geometry, options ) {
 		uniforms: UniformsUtils.clone( mirrorShader.uniforms ),
 		lights: true,
 		side: side,
-		fog: fog
+		fog: fog,
+		depthWrite: false // Water should not write to depth buffer so gizmos render on top
 	} );
 
 	material.uniforms[ 'mirrorSampler' ].value = renderTarget.texture;
@@ -376,6 +380,35 @@ const DEFAULT_WATER_HEIGHT = 512;
 const DEFAULT_WATER_WIDTH = 512;
 const DEFAULT_WATER_ALPHA = 1.0;
 const DEFAULT_WATER_DISTORTION_SCALE = 3.7;
+
+// Create a simple procedural normal map for water when no texture is available
+const createDefaultWaterNormalTexture = () => {
+    const size = 256;
+    const data = new Uint8Array(size * size * 4);
+
+    for (let i = 0; i < size; i++) {
+        for (let j = 0; j < size; j++) {
+            const idx = (i * size + j) * 4;
+            // Create a subtle wave pattern using sine waves
+            const wave1 = Math.sin(i * 0.1) * 0.5 + 0.5;
+            const wave2 = Math.sin(j * 0.1) * 0.5 + 0.5;
+            const wave3 = Math.sin((i + j) * 0.05) * 0.5 + 0.5;
+
+            // Normal map colors (x, y, z mapped to r, g, b)
+            // Flat normal pointing up is (0.5, 0.5, 1.0) in 0-1 range
+            data[idx] = 128 + (wave1 - 0.5) * 20;     // R (X normal)
+            data[idx + 1] = 128 + (wave2 - 0.5) * 20; // G (Y normal)
+            data[idx + 2] = 255 * (0.9 + wave3 * 0.1); // B (Z normal - mostly up)
+            data[idx + 3] = 255; // A
+        }
+    }
+
+    const texture = new DataTexture(data, size, size, RGBAFormat, UnsignedByteType);
+    texture.wrapS = texture.wrapT = RepeatWrapping;
+    texture.needsUpdate = true;
+    return texture;
+};
+
 export default class Water extends Element {
 
     constructor(options = {}) {
@@ -391,8 +424,13 @@ export default class Water extends Element {
             distortionScale = DEFAULT_WATER_DISTORTION_SCALE
         } = options;
 
-        const waterNormals = texture || Images.get(textureNormalName || 'waterNormal');
-        waterNormals.wrapS = waterNormals.wrapT = RepeatWrapping;
+        // Get water normal texture, falling back to a procedural one if not available
+        let waterNormals = texture || Images.get(textureNormalName || 'waterNormal');
+        if (!waterNormals || waterNormals === false) {
+            waterNormals = createDefaultWaterNormalTexture();
+        } else {
+            waterNormals.wrapS = waterNormals.wrapT = RepeatWrapping;
+        }
 
         const body = new WaterMesh(
             new PlaneBufferGeometry(width * 500, height * 500 ),
@@ -410,17 +448,89 @@ export default class Water extends Element {
         );
 
         this.setBody({ body });
-        this.setEntityType(ENTITY_TYPES.MESH);
+        this.setEntityType(ENTITY_TYPES.SCENERY.TYPE);
+        this.setEntitySubtype(ENTITY_TYPES.SCENERY.SUBTYPES.WATER);
+
+        // Store original dimensions for scaling calculations
+        this.setData("originalWidth", width);
+        this.setData("originalHeight", height);
+        this.setData("width", width);
+        this.setData("height", height);
+        this.setData("alpha", alpha);
+        this.setData("distortionScale", distortionScale);
+        this.setData("waterColor", 0x001e0f);
+        this.setData("sunColor", 0xffffff);
+        this.setData("sunDirection", { x: -0.577, y: 0.577, z: -0.577 });
 
         this.setRotation({ x: - Math.PI / 2 });
     }
 
     setSize(size) {
-        this.getBody().material.uniforms.size.value = clamp(size, 0.1, 100);
+        const clampedSize = clamp(size, 0.1, 100);
+        this.setData("size", clampedSize);
+        this.getBody().material.uniforms.size.value = clampedSize;
+    }
+
+    setAlpha(alpha) {
+        const clampedAlpha = clamp(alpha, 0, 1);
+        this.setData("alpha", clampedAlpha);
+        this.getBody().material.uniforms.alpha.value = clampedAlpha;
+    }
+
+    setDistortionScale(scale) {
+        const clampedScale = clamp(scale, 0, 100);
+        this.setData("distortionScale", clampedScale);
+        this.getBody().material.uniforms.distortionScale.value = clampedScale;
+    }
+
+    setWaterColor(color) {
+        this.setData("waterColor", color);
+        const colorValue = typeof color === 'object' && color.hex ? color.hex : color;
+        this.getBody().material.uniforms.waterColor.value.set(colorValue);
+    }
+
+    setSunColor(color) {
+        this.setData("sunColor", color);
+        const colorValue = typeof color === 'object' && color.hex ? color.hex : color;
+        this.getBody().material.uniforms.sunColor.value.set(colorValue);
+    }
+
+    setSunDirection(x, y, z) {
+        this.setData("sunDirection", { x, y, z });
+        this.getBody().material.uniforms.sunDirection.value.set(x, y, z).normalize();
+    }
+
+    setWidth(width) {
+        const clampedWidth = clamp(width, 1, 10000);
+        this.setData("width", clampedWidth);
+        this._recreateGeometry();
+    }
+
+    setHeight(height) {
+        const clampedHeight = clamp(height, 1, 10000);
+        this.setData("height", clampedHeight);
+        this._recreateGeometry();
+    }
+
+    _recreateGeometry() {
+        const width = this.getData("width") || 1000;
+        const height = this.getData("height") || 1000;
+
+        // Dispose old geometry
+        if (this.getBody().geometry) {
+            this.getBody().geometry.dispose();
+        }
+
+        // Create new geometry with updated dimensions
+        this.getBody().geometry = new PlaneBufferGeometry(width * 500, height * 500);
     }
 
     update = (dt) => {
         super.update(dt);
-        this.getBody().material.uniforms.time.value += dt;//1.0 / 60.0;
+        this.getBody().material.uniforms.time.value += dt;
+    }
+
+    static create(data) {
+        return new Water(data.options || data);
     }
 }
