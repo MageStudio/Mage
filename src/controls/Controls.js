@@ -6,7 +6,7 @@ import FlyControl from "./FlyControl";
 import { EventDispatcher, Vector3 } from "three";
 import { DEPRECATIONS } from "../lib/messages";
 import { AVAILABLE_CONTROLS, CONTROLS } from "./constants";
-import Universe from "../core/Universe";
+import Universe from "../core/universe";
 
 export const THREEJS_CONTROL_EVENTS = {
     CHANGE: "change",

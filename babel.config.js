@@ -12,7 +12,22 @@ const config = {
         ["babel-plugin-inferno", {"imports": true}],
         "@babel/plugin-proposal-class-properties",
         "@babel/plugin-transform-classes"
-    ]
+    ],
+    env: {
+        test: {
+            presets: [
+                ["@babel/preset-env", {
+                    targets: {
+                        node: "current",
+                    },
+                }],
+            ],
+            plugins: [
+                "@babel/plugin-proposal-class-properties",
+                "@babel/plugin-transform-classes",
+            ],
+        },
+    },
 };
 
 module.exports = config;

@@ -12,11 +12,12 @@ import {
     ENTITY_CANT_ADD_NOT_ENTITY,
     ENTITY_NOT_SET,
     ENTITY_SUBTYPE_NOT_ALLOWED,
+    ELEMENT_NAME_NOT_PROVIDED,
     DEPRECATIONS,
 } from "../lib/messages";
 import Scripts from "../scripts/Scripts";
 import Scene from "../core/Scene";
-import Universe from "../core/Universe";
+import Universe from "../core/universe";
 
 import { isScene, serializeQuaternion, serializeVector } from "../lib/meshUtils";
 
@@ -227,8 +228,10 @@ export default class Entity extends EventDispatcher {
         if (!ancestor) return false;
         let current = this.getParent();
         while (current) {
-            if (current === ancestor ||
-                (current.uuid && ancestor.uuid && current.uuid() === ancestor.uuid())) {
+            if (
+                current === ancestor ||
+                (current.uuid && ancestor.uuid && current.uuid() === ancestor.uuid())
+            ) {
                 return true;
             }
             current = current.getParent ? current.getParent() : null;
@@ -249,8 +252,9 @@ export default class Entity extends EventDispatcher {
 
         // Detach from old parent's Entity children array
         if (oldParent && oldParent.children) {
-            const index = oldParent.children.findIndex(c => c === this ||
-                (c.uuid && this.uuid && c.uuid() === this.uuid()));
+            const index = oldParent.children.findIndex(
+                c => c === this || (c.uuid && this.uuid && c.uuid() === this.uuid()),
+            );
             if (index !== -1) oldParent.children.splice(index, 1);
         }
 
@@ -712,8 +716,8 @@ export default class Entity extends EventDispatcher {
 
     setWorldTransform(worldTransform) {
         const { position, quaternion } = worldTransform;
-        this.getBody().setWorldPosition(position);
-        this.getBody().setWorldQuaternion(quaternion);
+        this.getBody().position.copy(position);
+        this.getBody().quaternion.copy(quaternion);
 
         // Update matrix world and skeleton for skinned meshes
         this.getBody().updateMatrixWorld(true);

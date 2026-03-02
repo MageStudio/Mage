@@ -34,7 +34,7 @@ export const mapColliderTypeToAddEvent = type =>
         [COLLIDER_TYPES.VEHICLE]: PHYSICS_EVENTS.ADD.VEHICLE,
         [COLLIDER_TYPES.PLAYER]: PHYSICS_EVENTS.ADD.PLAYER,
         [COLLIDER_TYPES.SPHERE]: PHYSICS_EVENTS.ADD.SPHERE,
-    }[type] || PHYSICS_EVENTS.ADD.BOX);
+    })[type] || PHYSICS_EVENTS.ADD.BOX;
 
 export const extractBoundingBox = body => {
     body.geometry.computeBoundingBox();
@@ -67,8 +67,8 @@ export const extractBoundingSphere = body => {
 };
 
 export const extractBiggestBoundingSphere = body => {
-    if (!body || typeof body.traverse !== 'function') {
-        console.warn('[Mage] extractBiggestBoundingSphere received invalid body');
+    if (!body || typeof body.traverse !== "function") {
+        console.warn("[Mage] extractBiggestBoundingSphere received invalid body");
         return null;
     }
 
@@ -153,7 +153,7 @@ export const mapColliderTypeToDescription = (colliderType = COLLIDER_TYPES.BOX) 
     ({
         [COLLIDER_TYPES.BOX]: getBoxDescriptionForElement,
         [COLLIDER_TYPES.SPHERE]: getSphereDescriptionForElement,
-    }[colliderType] || getBoxDescriptionForElement);
+    })[colliderType] || getBoxDescriptionForElement;
 
 export const iterateGeometries = (function () {
     const inverse = new Matrix4();

@@ -150,7 +150,7 @@ export default class PointLight extends Light {
 
         // Set to layer 1 ONLY so mirrors don't render light helpers
         // Disable depth test so helpers always render on top of sky/water
-        const setMaterialDepth = (material) => {
+        const setMaterialDepth = material => {
             if (!material) return;
             const mats = Array.isArray(material) ? material : [material];
             mats.forEach(mat => {
@@ -204,8 +204,20 @@ export default class PointLight extends Light {
     }
 
     static create(data = {}) {
-        const { color, intensity, name, position, distance, decay, bias, mapSize, shadowCamera } = data;
+        const { color, intensity, name, position, distance, decay, bias, mapSize, shadowCamera } =
+            data;
         const { near, far } = shadowCamera || {};
-        return new PointLight({ color, intensity, name, position, distance, decay, near, far, mapSize, bias });
+        return new PointLight({
+            color,
+            intensity,
+            name,
+            position,
+            distance,
+            decay,
+            near,
+            far,
+            mapSize,
+            bias,
+        });
     }
 }

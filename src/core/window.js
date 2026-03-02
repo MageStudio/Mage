@@ -6,4 +6,4 @@ export const getWindow = () => {
     } catch (e) {
         return null;
     }
-}
+};

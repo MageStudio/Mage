@@ -9,7 +9,16 @@ export default class AmbientSound extends Sound {
     }
 
     static create(data = {}) {
-        const { source, loop, loopStart, loopEnd, autoplay, reconnectOnReset, name, options = {} } = data;
+        const {
+            source,
+            loop,
+            loopStart,
+            loopEnd,
+            autoplay,
+            reconnectOnReset,
+            name,
+            options = {},
+        } = data;
         return new AmbientSound(source, {
             loop,
             loopStart,
@@ -17,7 +26,7 @@ export default class AmbientSound extends Sound {
             autoplay,
             reconnectOnReset,
             name,
-            ...options
+            ...options,
         });
     }
 }

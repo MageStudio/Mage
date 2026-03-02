@@ -31,7 +31,7 @@ import * as THREE from "three";
 import { Vector3, EventDispatcher } from "three";
 import Level, { author } from "./core/Level";
 
-import Universe from "./core/Universe";
+import Universe from "./core/universe";
 
 import Color from "./lib/Color";
 import PALETTES from "./lib/palettes";

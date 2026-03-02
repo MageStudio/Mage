@@ -149,9 +149,9 @@ export const disposeGeometry = mesh => {
 };
 
 export const prepareModel = model => {
-    if (!model || typeof model.traverse !== 'function') {
-        console.warn('[Mage] prepareModel received invalid model object:', model);
-        return null;  // Return null for invalid models
+    if (!model || typeof model.traverse !== "function") {
+        console.warn("[Mage] prepareModel received invalid model object:", model);
+        return null; // Return null for invalid models
     }
 
     setUpLightsAndShadows(model);

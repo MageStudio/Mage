@@ -1,17 +1,15 @@
-import {
-    UI_LOADING_SCREEN
-} from '../actions/types';
+import { UI_LOADING_SCREEN } from "../actions/types";
 
 export const DEFAULT_STATE = {
-    loadingScreenVisible: false
+    loadingScreenVisible: false,
 };
 
 export default (state = DEFAULT_STATE, action = {}) => {
-    switch(action.type) {
+    switch (action.type) {
         case UI_LOADING_SCREEN:
             return {
                 ...state,
-                loadingScreenVisible: action.loadingScreenVisible
+                loadingScreenVisible: action.loadingScreenVisible,
             };
         default:
             return state;

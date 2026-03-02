@@ -1,11 +1,10 @@
 import Particles, { PARTICLES } from "../../fx/particles/Particles";
 
-import BaseScript from "../BaseScript"
+import BaseScript from "../BaseScript";
 
 export default class Trails extends BaseScript {
-
     constructor() {
-        super('Trails');
+        super("Trails");
     }
 
     start(element, { texture = false, size }) {

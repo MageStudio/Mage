@@ -2,21 +2,15 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
-import {
-    Clock,
-    Vector2,
-    WebGLRenderTarget
-} from "three";
+import { Clock, Vector2, WebGLRenderTarget } from "three";
 
-import ShaderPass from './ShaderPass';
-import CopyShader from '../shaders/CopyShader';
-import MaskPass from './MaskPass';
-import ClearMaskPass from './ClearMaskPass';
+import ShaderPass from "./ShaderPass";
+import CopyShader from "../shaders/CopyShader";
+import MaskPass from "./MaskPass";
+import ClearMaskPass from "./ClearMaskPass";
 
 export default class EffectComposer {
-
     constructor(renderer, renderTarget) {
-
         this.renderer = renderer;
 
         if (renderTarget === undefined) {
@@ -25,8 +19,11 @@ export default class EffectComposer {
             this._width = size.width;
             this._height = size.height;
 
-            renderTarget = new WebGLRenderTarget(this._width * this._pixelRatio, this._height * this._pixelRatio);
-            renderTarget.texture.name = 'EffectComposer.rt1';
+            renderTarget = new WebGLRenderTarget(
+                this._width * this._pixelRatio,
+                this._height * this._pixelRatio,
+            );
+            renderTarget.texture.name = "EffectComposer.rt1";
         } else {
             this._pixelRatio = 1;
             this._width = renderTarget.width;
@@ -35,7 +32,7 @@ export default class EffectComposer {
 
         this.renderTarget1 = renderTarget;
         this.renderTarget2 = renderTarget.clone();
-        this.renderTarget2.texture.name = 'EffectComposer.rt2';
+        this.renderTarget2.texture.name = "EffectComposer.rt2";
 
         this.writeBuffer = this.renderTarget1;
         this.readBuffer = this.renderTarget2;
@@ -47,11 +44,11 @@ export default class EffectComposer {
         // dependencies
 
         if (CopyShader === undefined) {
-            console.error('THREE.EffectComposer relies on CopyShader');
+            console.error("THREE.EffectComposer relies on CopyShader");
         }
 
         if (ShaderPass === undefined) {
-            console.error('THREE.EffectComposer relies on ShaderPass');
+            console.error("THREE.EffectComposer relies on ShaderPass");
         }
 
         this.copyPass = new ShaderPass(CopyShader);
@@ -71,8 +68,9 @@ export default class EffectComposer {
     }
 
     ensureLastPassIsRendered = () => {
-        this.passes.forEach((pass, index) =>
-            pass.renderToScreen = index === (this.passes.length - 1));
+        this.passes.forEach(
+            (pass, index) => (pass.renderToScreen = index === this.passes.length - 1),
+        );
     };
 
     insertPass(pass, index) {
@@ -89,7 +87,7 @@ export default class EffectComposer {
     }
 
     isLastEnabledPass(passIndex) {
-        for (var i = passIndex + 1; i < this.passes.length; i ++) {
+        for (var i = passIndex + 1; i < this.passes.length; i++) {
             if (this.passes[i].enabled) {
                 return false;
             }
@@ -107,13 +105,12 @@ export default class EffectComposer {
 
         let maskActive = false;
 
-        for (let i = 0, il = this.passes.length; i < il; i ++) {
-
-            const pass = this.passes[ i ];
+        for (let i = 0, il = this.passes.length; i < il; i++) {
+            const pass = this.passes[i];
 
             if (pass.enabled === false) continue;
 
-            pass.renderToScreen = (this.renderToScreen && this.isLastEnabledPass(i));
+            pass.renderToScreen = this.renderToScreen && this.isLastEnabledPass(i);
             pass.render(this.renderer, this.writeBuffer, this.readBuffer, deltaTime, maskActive);
 
             if (pass.needsSwap) {
@@ -124,7 +121,12 @@ export default class EffectComposer {
                     //context.stencilFunc(context.NOTEQUAL, 1, 0xffffffff);
                     stencil.setFunc(context.NOTEQUAL, 1, 0xffffffff);
 
-                    this.copyPass.render(this.renderer, this.writeBuffer, this.readBuffer, deltaTime);
+                    this.copyPass.render(
+                        this.renderer,
+                        this.writeBuffer,
+                        this.readBuffer,
+                        deltaTime,
+                    );
 
                     //context.stencilFunc(context.EQUAL, 1, 0xffffffff);
                     stencil.setFunc(context.EQUAL, 1, 0xffffffff);
@@ -175,8 +177,8 @@ export default class EffectComposer {
         this.renderTarget1.setSize(effectiveWidth, effectiveHeight);
         this.renderTarget2.setSize(effectiveWidth, effectiveHeight);
 
-        for (let i = 0; i < this.passes.length; i ++) {
-            this.passes[ i ].setSize(effectiveWidth, effectiveHeight);
+        for (let i = 0; i < this.passes.length; i++) {
+            this.passes[i].setSize(effectiveWidth, effectiveHeight);
         }
     }
 

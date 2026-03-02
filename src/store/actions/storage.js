@@ -9,6 +9,7 @@ import {
 } from "./types";
 
 import storage from "../../storage/storage";
+import Router from "../../router/Router";
 
 export const saveStarted = () => ({
     type: SAVE_STARTED,

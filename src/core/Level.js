@@ -1,5 +1,5 @@
 import Assets from "./Assets";
-import Universe from "./Universe";
+import Universe from "./universe";
 import Scene from "./Scene";
 import Stats from "./Stats";
 import Audio from "../audio/Audio";

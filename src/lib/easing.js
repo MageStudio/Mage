@@ -1,34 +1,34 @@
-import between from 'between.js';
+import between from "between.js";
 
 export const LOOPING = {
-    BOUNCE: 'bounce',
-    REPEAT: 'repeat',
-    NONE: false
+    BOUNCE: "bounce",
+    REPEAT: "repeat",
+    NONE: false,
 };
 
 export const EASING_EVENTS = {
-    UPDATE: 'update',
-    COMPLETE: 'complete'
+    UPDATE: "update",
+    COMPLETE: "complete",
 };
 
 export const FUNCTIONS = {
-    ...between.Easing
+    ...between.Easing,
 };
 
-export const tweenTo = (origin, target, options = {}) => (
-    new Promise((resolve) => {
+export const tweenTo = (origin, target, options = {}) =>
+    new Promise(resolve => {
         const {
             time,
             easing = FUNCTIONS.Linear.None,
             loop = LOOPING.NONE,
             onUpdate = f => f,
-            repeat = undefined
+            repeat = undefined,
         } = options;
 
         const tween = new between(origin, target)
             .time(time)
             .easing(easing)
-            .on(EASING_EVENTS.UPDATE, onUpdate)
+            .on(EASING_EVENTS.UPDATE, onUpdate);
 
         const infinite = loop && !repeat;
         const onComplete = () => resolve(tween, infinite);
@@ -43,6 +43,4 @@ export const tweenTo = (origin, target, options = {}) => (
         } else {
             tween.on(EASING_EVENTS.COMPLETE, onComplete);
         }
-    })
-);
-
+    });

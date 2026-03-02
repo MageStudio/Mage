@@ -1,8 +1,9 @@
 class Video {
-
     constructor() {}
 
-    load() { return Promise.resolve(); }
+    load() {
+        return Promise.resolve();
+    }
 }
 
 const engine = new Video();

@@ -46,7 +46,6 @@ export const INPUT_EVENTS = {
     KEY_COMBO,
     MOUSE_DOWN,
     MOUSE_UP,
-    MOUSE_DOWN,
     MOUSE_MOVE,
     ELEMENT_CLICK,
     ELEMENT_DESELECT,

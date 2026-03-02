@@ -1,20 +1,20 @@
-import { render } from 'inferno';
-import { createElement } from 'inferno-create-element';
-import { Provider } from 'inferno-redux';
-import { getStore } from '../store/Store';
-import BaseUI from './BaseUI';
-import Config from '../core/config';
-import Router from '../router/Router';
-import { dispatch } from '../store';
-import { createElementFromSelector, removeElement } from '../lib/dom';
-import { showLoadingScreen, hideLoadingScreen } from '../store/actions/ui';
-import { locationPathChange } from '../store/actions/location';
+import { render } from "inferno";
+import { createElement } from "inferno-create-element";
+import { Provider } from "inferno-redux";
+import { getStore } from "../store/Store";
+import BaseUI from "./BaseUI";
+import Config from "../core/config";
+import Router from "../router/Router";
+import { dispatch } from "../store";
+import { createElementFromSelector, removeElement } from "../lib/dom";
+import { showLoadingScreen, hideLoadingScreen } from "../store/actions/ui";
+import { locationPathChange } from "../store/actions/location";
 
-const ROOT_ID = '#ui';
-export const LABELS_ROOT_ID = '#labels_ui';
+const ROOT_ID = "#ui";
+export const LABELS_ROOT_ID = "#labels_ui";
 
 const createProps = () => ({
-    level: Router.getCurrentLevel()
+    level: Router.getCurrentLevel(),
 });
 
 export const getUIContainer = (id = ROOT_ID) => {
@@ -44,12 +44,12 @@ export const mount = () => {
         render(
             createElement(Provider, {
                 store: getStore(),
-                children: uiElement
+                children: uiElement,
             }),
-            getUIContainer()
+            getUIContainer(),
         );
     } else {
-        render(uiElement, getUIContainer())
+        render(uiElement, getUIContainer());
     }
 };
 

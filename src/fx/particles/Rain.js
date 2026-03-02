@@ -4,19 +4,18 @@ import ProtonParticleEmitter from "./ProtonParticleEmitter";
 import PALETTES from "../../lib/palettes";
 import { ENTITY_TYPES } from "../../entities/constants";
 
-const getRainRate = (particleCount) =>
-    new Proton.Rate(new Proton.Span(particleCount / 10, particleCount / 5), new Proton.Span(0.01, 0.02));
+const getRainRate = particleCount =>
+    new Proton.Rate(
+        new Proton.Span(particleCount / 10, particleCount / 5),
+        new Proton.Span(0.01, 0.02),
+    );
 
 const getRainInitializers = (size, strength, area) => [
     new Proton.Mass(0.5),
     new Proton.Life(2, 5),
     new Proton.Radius(size / 4, size / 2),
     new Proton.Position(new Proton.BoxZone(area, 0, area)),
-    new Proton.V(
-        new Proton.Span(strength, strength * 1.5),
-        new Proton.Vector3D(0, -1, 0),
-        2,
-    ),
+    new Proton.V(new Proton.Span(strength, strength * 1.5), new Proton.Vector3D(0, -1, 0), 2),
 ];
 
 const getRainBehaviours = (strength, colors) => [
@@ -54,12 +53,28 @@ export default class Rain extends ProtonParticleEmitter {
         super(rainOptions);
         this.setPreset("rain");
         this.setEntitySubtype(ENTITY_TYPES.PARTICLE.SUBTYPES.RAIN);
-        this.setParticleConfig({ texture, size, strength, area, particleCount, colors, autoEmit, emitWhenEditing });
+        this.setParticleConfig({
+            texture,
+            size,
+            strength,
+            area,
+            particleCount,
+            colors,
+            autoEmit,
+            emitWhenEditing,
+        });
     }
 
     rebuild() {
         const config = this.getParticleConfig();
-        const { texture, size = 1, strength = 60, area = 100, particleCount = 200, colors = ["#ffffff", "#000000"] } = config;
+        const {
+            texture,
+            size = 1,
+            strength = 60,
+            area = 100,
+            particleCount = 200,
+            colors = ["#ffffff", "#000000"],
+        } = config;
 
         this.rebuildSystem({
             rate: getRainRate(particleCount),

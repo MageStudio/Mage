@@ -1,12 +1,10 @@
-import { createRigidBody } from './elements';
-import world from './world';
+import { createRigidBody } from "./elements";
+import world from "./world";
+import dispatcher from "./lib/dispatcher";
 
-import {
-    TYPES,
-    DEFAULT_RIGIDBODY_STATE
-} from '../constants';
+import { TYPES, DEFAULT_RIGIDBODY_STATE } from "../constants";
 
-export const addPlayer = (data) => {
+export const addPlayer = data => {
     const { uuid, width, height, position, quaternion, mass, friction } = data;
 
     const capsule = new Ammo.btCapsuleShape(width, height);
@@ -23,7 +21,7 @@ export const handlePlayerUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE
     const { movement, direction, cameraDirection, quaternion, position } = state;
 
     const MAX_SPEED = 1;
-    const walkVelocity = .1;
+    const walkVelocity = 0.1;
 
     const motionState = body.getMotionState();
 
@@ -41,15 +39,15 @@ export const handlePlayerUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE
         const walkSpeed = walkVelocity * dt;
 
         if (movement.forward) {
-            walkDirection.setX( walkDirection.x() + forwardDir.x());
+            walkDirection.setX(walkDirection.x() + forwardDir.x());
             //walkDirection.setY( walkDirection.y() + forwardDir.y());
-            walkDirection.setZ( walkDirection.z() + forwardDir.z());
+            walkDirection.setZ(walkDirection.z() + forwardDir.z());
         }
-    
+
         if (movement.backwards) {
-            walkDirection.setX( walkDirection.x() - forwardDir.x());
+            walkDirection.setX(walkDirection.x() - forwardDir.x());
             //walkDirection.setY( walkDirection.y() - forwardDir.y());
-            walkDirection.setZ( walkDirection.z() - forwardDir.z());
+            walkDirection.setZ(walkDirection.z() - forwardDir.z());
         }
 
         if (!movement.forward && !movement.backwards) {

@@ -1,44 +1,43 @@
-import Config from '../core/config';
+import Config from "../core/config";
 
 export const FEATURES = {
-    WEBGL: 'webgl',
-    WEBAUDIOAPI: 'webaudioapi',
-    WEBWORKER: 'webworker',
-    LOCALSTORAGE: 'localStorage',
-    AJAX: 'ajax',
-    OFFSCREENCANVAS: 'offscreenCanvas',
-    GAMEPADAPI: 'gamepadapi',
-    MEMORY: 'memory'
+    WEBGL: "webgl",
+    WEBAUDIOAPI: "webaudioapi",
+    WEBWORKER: "webworker",
+    LOCALSTORAGE: "localStorage",
+    AJAX: "ajax",
+    OFFSCREENCANVAS: "offscreenCanvas",
+    GAMEPADAPI: "gamepadapi",
+    MEMORY: "memory",
 };
 
 export class Features {
-
     constructor() {
         this.tests = [
             FEATURES.WEBGL,
             FEATURES.WEBAUDIOAPI,
             FEATURES.WEBWORKER,
             FEATURES.LOCALSTORAGE,
-            FEATURES.AJAX
+            FEATURES.AJAX,
         ];
     }
 
     setUpPolyfills() {
         const frameRate = Config.screen().frameRate;
 
-        window.requestNextFrame = (
-            window.requestAnimationFrame       ||
+        window.requestNextFrame =
+            window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame    ||
-            window.oRequestAnimationFrame      ||
-            window.msRequestAnimationFrame     ||
-            function(callback, element){
+            window.mozRequestAnimationFrame ||
+            window.oRequestAnimationFrame ||
+            window.msRequestAnimationFrame ||
+            function (callback, element) {
                 window.setTimeout(callback, 1000 / frameRate);
-            });
+            };
     }
 
     isFeatureSupported(feature) {
-        if (typeof this[feature] === 'function') {
+        if (typeof this[feature] === "function") {
             const { success } = this[feature]();
 
             return success;
@@ -49,10 +48,7 @@ export class Features {
 
     checkSupportedFeatures() {
         const configTests = Config.tests() || [];
-        const tests = [
-            ...this.tests,
-            ...configTests,
-        ];
+        const tests = [...this.tests, ...configTests];
 
         if (tests.indexOf(FEATURES.WEBGL) == -1) {
             tests.push(FEATURES.WEBGL);
@@ -67,28 +63,28 @@ export class Features {
                 return acc;
             }, []);
 
-        return failures.length ? 
-            Promise.reject(failures) :
-            Promise.resolve();
+        return failures.length ? Promise.reject(failures) : Promise.resolve();
     }
 
     localStorage() {
-        if (window &&
+        if (
+            window &&
             window.localStorage &&
-            typeof window.localStorage.setItem === 'function' &&
-            typeof window.localStorage.getItem === 'function' &&
-            typeof window.localStorage.removeItem === 'function' &&
-            typeof window.localStorage.clear === 'function') {
-                return {
-                    success: true,
-                    name: FEATURES.LOCALSTORAGE
-                };
-            } else {
-                return {
-                    success: false,
-                    name: FEATURES.LOCALSTORAGE
-                };
-            }
+            typeof window.localStorage.setItem === "function" &&
+            typeof window.localStorage.getItem === "function" &&
+            typeof window.localStorage.removeItem === "function" &&
+            typeof window.localStorage.clear === "function"
+        ) {
+            return {
+                success: true,
+                name: FEATURES.LOCALSTORAGE,
+            };
+        } else {
+            return {
+                success: false,
+                name: FEATURES.LOCALSTORAGE,
+            };
+        }
     }
 
     offscreenCanvas() {
@@ -96,7 +92,7 @@ export class Features {
 
         return {
             success: hasOffscreenCanvas,
-            name: FEATURES.OFFSCREENCANVAS
+            name: FEATURES.OFFSCREENCANVAS,
         };
     }
 
@@ -107,18 +103,18 @@ export class Features {
             if (context) {
                 return {
                     success: true,
-                    name: FEATURES.WEBGL
+                    name: FEATURES.WEBGL,
                 };
             } else {
                 return {
                     success: false,
-                    name: FEATURES.WEBGL
+                    name: FEATURES.WEBGL,
                 };
             }
-        } catch(e) {
+        } catch (e) {
             return {
                 success: false,
-                name: FEATURES.WEBGL
+                name: FEATURES.WEBGL,
             };
         }
     }
@@ -130,41 +126,41 @@ export class Features {
             if (hasWebAudioApi) {
                 return {
                     success: true,
-                    name: FEATURES.WEBAUDIOAPI
+                    name: FEATURES.WEBAUDIOAPI,
                 };
             } else {
                 return {
                     success: false,
-                    name: FEATURES.WEBAUDIOAPI
+                    name: FEATURES.WEBAUDIOAPI,
                 };
             }
-        } catch(e) {
+        } catch (e) {
             return {
                 success: false,
-                name: FEATURES.WEBAUDIOAPI
+                name: FEATURES.WEBAUDIOAPI,
             };
         }
     }
 
     webworker() {
         try {
-            const hasWorkers = !!(window.Worker);
+            const hasWorkers = !!window.Worker;
 
             if (hasWorkers) {
                 return {
                     success: true,
-                    name: FEATURES.WEBWORKER
+                    name: FEATURES.WEBWORKER,
                 };
             } else {
                 return {
                     success: false,
-                    name: FEATURES.WEBWORKER
+                    name: FEATURES.WEBWORKER,
                 };
             }
-        } catch(e) {
+        } catch (e) {
             return {
                 success: false,
-                name: FEATURES.WEBWORKER
+                name: FEATURES.WEBWORKER,
             };
         }
     }
@@ -172,74 +168,83 @@ export class Features {
     ajax() {
         try {
             let xhr = null;
-            try { xhr = new XMLHttpRequest(); } catch (e) {}
-            try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); } catch (e) {}
-            try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); } catch (e) {}
+            try {
+                xhr = new XMLHttpRequest();
+            } catch (e) {}
+            try {
+                xhr = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (e) {}
+            try {
+                xhr = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch (e) {}
 
             if (xhr) {
                 return {
                     success: true,
-                    name: FEATURES.AJAX
+                    name: FEATURES.AJAX,
                 };
             } else {
                 return {
                     success: false,
-                    name: FEATURES.AJAX
+                    name: FEATURES.AJAX,
                 };
             }
-        } catch(e) {
+        } catch (e) {
             return {
                 success: false,
-                name: FEATURES.AJAX
+                name: FEATURES.AJAX,
             };
         }
     }
 
     gamepadapi() {
         try {
-            if (navigator && (
-                navigator.getGamepads ||
-                navigator.webkitGetGamepads ) &&
+            if (
+                navigator &&
+                (navigator.getGamepads || navigator.webkitGetGamepads) &&
                 window.Gamepad &&
-                window.GamepadButton) {
-                    return {
-                        success: true,
-                        name: FEATURES.GAMEPADAPI
-                    };
-                } else {
-                    return {
-                        success: false,
-                        name: FEATURES.GAMEPADAPI
-                    };
-                }
-        } catch(e) {
+                window.GamepadButton
+            ) {
+                return {
+                    success: true,
+                    name: FEATURES.GAMEPADAPI,
+                };
+            } else {
+                return {
+                    success: false,
+                    name: FEATURES.GAMEPADAPI,
+                };
+            }
+        } catch (e) {
             return {
                 success: false,
-                name: FEATURES.GAMEPADAPI
+                name: FEATURES.GAMEPADAPI,
             };
         }
     }
 
     memory() {
         try {
-            if (performance && 
+            if (
+                performance &&
                 performance.memory &&
                 performance.memory.usedJSHeapSize &&
-                performance.memory.jsHeapSizeLimit) {
-                    return {
-                        success: true,
-                        name: FEATURES.MEMORY
-                    };
-                } else {
-                    return {
-                        success: false,
-                        name: FEATURES.MEMORY
-                    };
-                }
-        } catch(e) {
+                performance.memory.jsHeapSizeLimit
+            ) {
+                return {
+                    success: true,
+                    name: FEATURES.MEMORY,
+                };
+            } else {
+                return {
+                    success: false,
+                    name: FEATURES.MEMORY,
+                };
+            }
+        } catch (e) {
             return {
                 success: false,
-                name: FEATURES.MEMORY
+                name: FEATURES.MEMORY,
             };
         }
     }

@@ -1,21 +1,27 @@
+import { LIBRARY_NAME } from "../constants";
+
+import { addVehicle, resetVehicle, setVehiclePosition, setVehicleQuaternion } from "./vehicles";
 import {
-    LIBRARY_NAME
-} from '../constants';
+    addBox,
+    addModel,
+    setLinearVelocity,
+    applyImpuse,
+    addSphere,
+    setPosition,
+    resetElement,
+} from "./elements";
+import { createExplosion } from "./effects";
+import { addPlayer } from "./player";
 
-import { addVehicle, resetVehicle, setVehiclePosition, setVehicleQuaternion } from './vehicles';
-import { addBox, addModel, setLinearVelocity, applyImpuse, addSphere, setPosition, resetElement } from './elements';
-import { createExplosion } from './effects';
-import { addPlayer } from './player';
-
-import dispatcher from './lib/dispatcher';
-import world from './world';
-import { PHYSICS_EVENTS } from '../messages';
+import dispatcher from "./lib/dispatcher";
+import world from "./world";
+import { PHYSICS_EVENTS } from "../messages";
 
 const handleLoadEvent = options => Ammo => {
     self.Ammo = Ammo;
 
     onmessage = ({ data }) => {
-        switch(data.event) {
+        switch (data.event) {
             case PHYSICS_EVENTS.ADD.BOX:
                 addBox(data);
                 break;
@@ -65,26 +71,26 @@ const handleLoadEvent = options => Ammo => {
                 world.terminate();
                 break;
         }
-    }
+    };
 
     world.init(options);
     dispatcher.sendReadyEvent();
-    world.simulate()
+    world.simulate();
 };
 
-const loadAmmo = (options) => {
-    const scriptUrl = options.host + '/' + (options.path || LIBRARY_NAME);
+const loadAmmo = options => {
+    const scriptUrl = options.host + "/" + (options.path || LIBRARY_NAME);
     importScripts(scriptUrl);
 
     Ammo().then(handleLoadEvent(options));
 };
 
 onmessage = ({ data }) => {
-    switch(data.event) {
+    switch (data.event) {
         case PHYSICS_EVENTS.LOAD.AMMO:
             loadAmmo(data);
             break;
         default:
             break;
     }
-}
+};

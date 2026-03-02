@@ -35,7 +35,6 @@ export default class Sprite extends Element {
         this.height = height;
         this.spriteTexture = spriteTexture;
 
-        
         const material = new SpriteMaterial({
             map: texture,
             ...rest,

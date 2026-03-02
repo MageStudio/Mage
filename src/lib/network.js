@@ -1,8 +1,8 @@
 import { dispatch } from "../store/Store";
 import { networkChanged } from "../store/actions/network";
 
-const ONLINE_EVENT = 'online';
-const OFFLINE_EVENT = 'offline';
+const ONLINE_EVENT = "online";
+const OFFLINE_EVENT = "offline";
 
 const handleOnline = () => dispatch(networkChanged(true));
 const handleOffline = () => dispatch(networkChanged(false));

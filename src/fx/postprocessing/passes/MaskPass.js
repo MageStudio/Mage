@@ -1,4 +1,3 @@
-
 /**
  * @author alteredq / http://alteredqualia.com/
  */
@@ -6,7 +5,6 @@
 import Pass from "./Pass.js";
 
 export default class MaskPass extends Pass {
-
     constructor(scene, camera) {
         super();
 
@@ -20,7 +18,6 @@ export default class MaskPass extends Pass {
     }
 
     render(renderer, writeBuffer, readBuffer /*, deltaTime, maskActive */) {
-
         const context = renderer.getContext();
         const state = renderer.state;
 

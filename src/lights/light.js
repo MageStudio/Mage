@@ -142,7 +142,7 @@ export default class Light extends Entity {
     }
 
     setColor(color) {
-        if (color && typeof color === 'object' && 'r' in color && 'g' in color && 'b' in color) {
+        if (color && typeof color === "object" && "r" in color && "g" in color && "b" in color) {
             this.body.color.setRGB(color.r, color.g, color.b);
         } else {
             this.body.color.set(color);

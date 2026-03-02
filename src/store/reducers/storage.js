@@ -4,25 +4,25 @@ import {
     SAVE_COMPLETED,
     LOAD_STARTED,
     LOAD_COMPLETED,
-    LOAD_ERROR
-} from '../actions/types';
+    LOAD_ERROR,
+} from "../actions/types";
 
 const DEFAULT_STATE = {
     error: false,
     saving: false,
     loading: false,
-    errorDetails: '',
-    sceneName: '',
-    currentPath: '/',
-    timestamp: ''
-}
+    errorDetails: "",
+    sceneName: "",
+    currentPath: "/",
+    timestamp: "",
+};
 
 export default (state = DEFAULT_STATE, action = {}) => {
-    switch(action.type) {
+    switch (action.type) {
         case SAVE_STARTED:
             return {
                 ...state,
-                saving: true
+                saving: true,
             };
         case SAVE_COMPLETED:
             return {
@@ -31,34 +31,34 @@ export default (state = DEFAULT_STATE, action = {}) => {
                 error: false,
                 sceneName: action.currentScene,
                 currentPath: action.currentPath,
-                timestamp: action.timestamp
-            }
+                timestamp: action.timestamp,
+            };
         case SAVE_ERROR:
             return {
                 ...state,
                 saving: false,
                 error: true,
-                errorDetails: action.errorDetails
+                errorDetails: action.errorDetails,
             };
         case LOAD_STARTED:
             return {
                 ...state,
-                loading: true
+                loading: true,
             };
         case LOAD_COMPLETED:
             return {
                 ...state,
                 loading: false,
-                error: false
+                error: false,
             };
         case LOAD_ERROR:
             return {
                 ...state,
                 loading: false,
                 error: true,
-                errorDetails: action.errorDetails
-            }
+                errorDetails: action.errorDetails,
+            };
         default:
             return state;
     }
-}
+};

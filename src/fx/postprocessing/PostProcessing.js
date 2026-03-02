@@ -1,57 +1,53 @@
-import EffectComposer from './passes/EffectComposer';
-import RenderPass from './passes/RenderPass';
-import Scene from '../../core/Scene';
-import HueSaturationEffect from './HueSaturationEffect';
-import SepiaEffect from './SepiaEffect';
-import BloomPass from './BloomPass';
-import DepthOfField from './DepthOfField';
-import SelectiveOutline from './SelectiveOutline';
-import GlitchEffect from './GlitchEffect';
-import { EFFECTS } from '../../lib/constants';
-import {
-    EFFECT_COULD_NOT_BE_CREATED,
-    EFFECT_UNAVAILABLE
-} from '../../lib/messages';
-import Config from '../../core/config';
-import PixelEffect from './PixelEffect';
-import OutlineEffect from './OutlineEffect';
+import EffectComposer from "./passes/EffectComposer";
+import RenderPass from "./passes/RenderPass";
+import Scene from "../../core/Scene";
+import HueSaturationEffect from "./HueSaturationEffect";
+import SepiaEffect from "./SepiaEffect";
+import BloomPass from "./BloomPass";
+import DepthOfField from "./DepthOfField";
+import SelectiveOutline from "./SelectiveOutline";
+import GlitchEffect from "./GlitchEffect";
+import { EFFECTS } from "../../lib/constants";
+import { EFFECT_COULD_NOT_BE_CREATED, EFFECT_UNAVAILABLE } from "../../lib/messages";
+import Config from "../../core/config";
+import PixelEffect from "./PixelEffect";
+import OutlineEffect from "./OutlineEffect";
 
 export class PostProcessing {
-
     constructor() {
         this.map = {
             [EFFECTS.SEPIA]: {
                 effect: SepiaEffect,
-                isClass: false
+                isClass: false,
             },
             [EFFECTS.HUE_SATURATION]: {
                 effect: HueSaturationEffect,
-                isClass: false
+                isClass: false,
             },
             [EFFECTS.BLOOM]: {
                 effect: BloomPass,
-                isClass: true
+                isClass: true,
             },
             [EFFECTS.DEPTH_OF_FIELD]: {
                 effect: DepthOfField,
-                isClass: true
+                isClass: true,
             },
             [EFFECTS.SELECTIVE_OUTLINE]: {
                 effect: SelectiveOutline,
-                isClass: true
+                isClass: true,
             },
             [EFFECTS.GLITCH]: {
                 effect: GlitchEffect,
-                isClass: true
+                isClass: true,
             },
             [EFFECTS.PIXEL]: {
                 effect: PixelEffect,
-                isClass: true
+                isClass: true,
             },
             [EFFECTS.OUTLINE]: {
                 effect: OutlineEffect,
-                isClass: true
-            }
+                isClass: true,
+            },
         };
 
         this.effects = [];
@@ -59,26 +55,23 @@ export class PostProcessing {
         this.enabled = false;
     }
 
-    isEnabled = () => (
-        this.enabled &&
-        (!!this.effects.length || !!this.customs.length)
-    );
+    isEnabled = () => this.enabled && (!!this.effects.length || !!this.customs.length);
 
     init = () => {
         const { enabled = false } = Config.postprocessing();
         this.enabled = enabled;
 
         if (enabled) {
-            window.addEventListener('resize', this.onWindowResize, false);
-    
+            window.addEventListener("resize", this.onWindowResize, false);
+
             this.composer = new EffectComposer(Scene.getRenderer());
             this.composer.addPass(new RenderPass(Scene.getScene(), Scene.getCameraBody()));
         }
-    }
+    };
 
     dispose = () => {
-        window.removeEventListener('resize', this.onWindowResize);
-    }
+        window.removeEventListener("resize", this.onWindowResize);
+    };
 
     onWindowResize = () => {
         const { h, w } = Config.screen();
@@ -89,8 +82,8 @@ export class PostProcessing {
             if (effect.onWindowResize) {
                 effect.onWindowResize();
             }
-        })
-    }
+        });
+    };
 
     get(id) {
         return this.map[id] || null;
@@ -107,19 +100,19 @@ export class PostProcessing {
         return pass;
     }
 
-    addEffectToComposer = (effect) => {
+    addEffectToComposer = effect => {
         this.composer.addPass(effect);
         this.effects.push(effect);
         this.composer.ensureLastPassIsRendered();
-    }
+    };
 
-    addEffectToCustomEffects = (effect) => {
+    addEffectToCustomEffects = effect => {
         this.customs.push(effect);
-    }
+    };
 
     add = (desiredEffect, options = {}) => {
         let effect;
-        if (typeof desiredEffect === 'string') {
+        if (typeof desiredEffect === "string") {
             const effectDescription = this.get(desiredEffect);
             if (effectDescription) {
                 effect = PostProcessing.createEffect(effectDescription, options);

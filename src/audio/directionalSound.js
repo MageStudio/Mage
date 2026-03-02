@@ -106,7 +106,16 @@ export default class DirectionalSound extends Sound {
     }
 
     static create(data = {}) {
-        const { source, loop, loopStart, loopEnd, autoplay, reconnectOnReset, name, options = {} } = data;
+        const {
+            source,
+            loop,
+            loopStart,
+            loopEnd,
+            autoplay,
+            reconnectOnReset,
+            name,
+            options = {},
+        } = data;
         return new DirectionalSound(source, {
             loop,
             loopStart,
@@ -114,7 +123,7 @@ export default class DirectionalSound extends Sound {
             autoplay,
             reconnectOnReset,
             name,
-            ...options
+            ...options,
         });
     }
 }

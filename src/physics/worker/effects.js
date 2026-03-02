@@ -19,7 +19,7 @@ export const createGhostCollider = (radius, position) => {
 
 export const forEachGhostCollision = (ghostCollider, forEachCallback = () => {}) => {
     const collisions = ghostCollider.getNumOverlappingObjects();
-    for (let i=0; i<collisions; i++) {
+    for (let i = 0; i < collisions; i++) {
         const object = Ammo.castObject(ghostCollider.getOverlappingObject(i), Ammo.btRigidBody);
         const transform = new Ammo.btTransform();
 
@@ -28,7 +28,7 @@ export const forEachGhostCollision = (ghostCollider, forEachCallback = () => {})
 
         Ammo.destroy(transform);
     }
-}
+};
 
 export const getExplosionPosition = (uuid, position) => {
     let explosionPosition = position;
@@ -52,13 +52,13 @@ export const getExplosionImpulse = (position, explosionPosition, strength) => {
     impulse.setY(impulse.y() + strength);
 
     return impulse;
-}
+};
 
 export const createExplosion = ({
     uuid,
     position,
     radius = EXPLOSION_SIZES.SMALL,
-    strength = EXPLOSION_STRENGTHS.MEDIUM
+    strength = EXPLOSION_STRENGTHS.MEDIUM,
 }) => {
     try {
         const explosionPosition = getExplosionPosition(uuid, position);
@@ -75,7 +75,7 @@ export const createExplosion = ({
         world.getDynamicsWorld().removeCollisionObject(ghostCollider);
         Ammo.destroy(ghostCollider);
         Ammo.destroy(transform);
-    } catch(e) {
+    } catch (e) {
         console.log(e);
     }
-}
+};
