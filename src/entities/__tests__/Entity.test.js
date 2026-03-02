@@ -263,9 +263,7 @@ describe("Entity", () => {
             const listener = jest.fn();
             entity.addEventListener("test", listener);
             entity.dispatchEvent({ type: "test" });
-            expect(listener).toHaveBeenCalledWith(
-                expect.objectContaining({ type: "test" }),
-            );
+            expect(listener).toHaveBeenCalledWith(expect.objectContaining({ type: "test" }));
         });
 
         test("can remove event listeners", () => {

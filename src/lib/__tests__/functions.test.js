@@ -1,7 +1,6 @@
 import { debounce, NOOP } from "../functions";
 
 describe("functions.js", () => {
-
     beforeEach(() => {
         jest.useFakeTimers();
     });

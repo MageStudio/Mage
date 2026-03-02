@@ -1,21 +1,14 @@
-import {
-    EventDispatcher
-} from 'three';
-import Universe from '../core/universe';
-import Config from '../core/config';
-import PhysicsWorker from 'worker:./worker';
+import { EventDispatcher } from "three";
+import Universe from "../core/universe";
+import Config from "../core/config";
+import PhysicsWorker from "worker:./worker";
 
-import {
-    PHYSICS_EVENTS
-} from './messages';
-import * as physicsUtils from './utils';
-import { getHostURL } from '../lib/url';
-import {
-    PHYSICS_ELEMENT_ALREADY_STORED,
-    PHYSICS_ELEMENT_CANT_BE_REMOVED
-} from '../lib/messages';
+import { PHYSICS_EVENTS } from "./messages";
+import * as physicsUtils from "./utils";
+import { getHostURL } from "../lib/url";
+import { PHYSICS_ELEMENT_ALREADY_STORED, PHYSICS_ELEMENT_CANT_BE_REMOVED } from "../lib/messages";
 
-import * as PHYSICS_CONSTANTS from './constants';
+import * as PHYSICS_CONSTANTS from "./constants";
 
 const { COLLIDER_TYPES } = PHYSICS_CONSTANTS;
 
@@ -25,25 +18,24 @@ const {
     mapColliderTypeToDescription,
     iterateGeometries,
     mapColliderTypeToAddEvent,
-    DEFAULT_DESCRIPTION
+    DEFAULT_DESCRIPTION,
 } = physicsUtils;
 
 const WORKER_READY_TIMEOUT = 200;
 const PHYSICS_STATE_TIMEOUT = 50;
 export const PHYSICS_STATES = {
-    READY: 'READY',
-    TERMINATING: 'TERMINATING',
-    TERMINATED: 'TERMINATED'
+    READY: "READY",
+    TERMINATING: "TERMINATING",
+    TERMINATED: "TERMINATED",
 };
 
 export class Physics extends EventDispatcher {
-
     constructor() {
         super();
         this.elements = [];
         this.isWorkerReady = false;
         this.state = PHYSICS_STATES.READY;
-    };
+    }
 
     createWorker() {
         this.worker = new PhysicsWorker();
@@ -52,9 +44,15 @@ export class Physics extends EventDispatcher {
         this.worker.onmessage = this.handleWorkerMessages;
     }
 
-    isTerminating() { return this.state === PHYSICS_STATES.TERMINATING; }
-    isTerminated() { return this.state === PHYSICS_STATES.TERMINATED; }
-    isReady() { return this.state === PHYSICS_STATES.READY; }
+    isTerminating() {
+        return this.state === PHYSICS_STATES.TERMINATING;
+    }
+    isTerminated() {
+        return this.state === PHYSICS_STATES.TERMINATED;
+    }
+    isReady() {
+        return this.state === PHYSICS_STATES.READY;
+    }
 
     waitForState(state) {
         return new Promise(resolve => {
@@ -66,7 +64,7 @@ export class Physics extends EventDispatcher {
                     } else {
                         check();
                     }
-                }, PHYSICS_STATE_TIMEOUT)
+                }, PHYSICS_STATE_TIMEOUT);
             };
 
             check();
@@ -77,7 +75,7 @@ export class Physics extends EventDispatcher {
         if (Config.physics().enabled) {
             this.state = PHYSICS_STATES.TERMINATING;
             this.worker.postMessage({
-                event: PHYSICS_EVENTS.TERMINATE
+                event: PHYSICS_EVENTS.TERMINATE,
             });
 
             this.elements = [];
@@ -115,7 +113,7 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.LOAD.AMMO,
                 ...Config.physics(),
-                host: getHostURL()
+                host: getHostURL(),
             });
 
             return new Promise(resolve => {
@@ -127,13 +125,13 @@ export class Physics extends EventDispatcher {
                         } else {
                             check();
                         }
-                    }, WORKER_READY_TIMEOUT)
+                    }, WORKER_READY_TIMEOUT);
                 };
 
                 check();
             });
         }
-        
+
         return Promise.resolve();
     }
 
@@ -162,8 +160,8 @@ export class Physics extends EventDispatcher {
     handlePhysicsUpdate = ({ dt }) => {
         this.dispatchEvent({
             type: PHYSICS_EVENTS.UPDATE,
-            dt
-        })
+            dt,
+        });
     };
 
     handleTerminateEvent = () => {
@@ -173,14 +171,14 @@ export class Physics extends EventDispatcher {
 
     handleBodyUpdate = ({ uuid, ...data }) => {
         const element = Universe.getByUUID(uuid);
- 
+
         if (element) {
-            if (element.getPhysicsOptions('applyPhysicsUpdate')) {
+            if (element.getPhysicsOptions("applyPhysicsUpdate")) {
                 element.handlePhysicsUpdate(data);
             } else {
                 element.dispatchEvent({
                     type: PHYSICS_EVENTS.ELEMENT.UPDATE,
-                    ...data
+                    ...data,
                 });
             }
         }
@@ -188,10 +186,10 @@ export class Physics extends EventDispatcher {
 
     handleDispatchEvent = ({ uuid, eventData, eventName }) => {
         const element = Universe.getByUUID(uuid);
-        if(element) {
+        if (element) {
             element.dispatchEvent({
                 type: eventName,
-                data: eventData
+                data: eventData,
             });
         }
     };
@@ -203,21 +201,19 @@ export class Physics extends EventDispatcher {
             this.removeElement(element);
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.ELEMENT.DISPOSE,
-                uuid
-            })
+                uuid,
+            });
         }
     }
 
     add(element, options = {}) {
         if (Config.physics().enabled) {
-            const {
-                colliderType = COLLIDER_TYPES.BOX
-            } = options;
+            const { colliderType = COLLIDER_TYPES.BOX } = options;
 
             const uuid = element.uuid();
             const description = {
                 ...mapColliderTypeToDescription(colliderType)(element),
-                ...options
+                ...options,
             };
 
             this.storeElement(element, options);
@@ -225,8 +221,8 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: mapColliderTypeToAddEvent(description.collider),
                 ...description,
-                uuid
-            })
+                uuid,
+            });
         }
     }
 
@@ -241,8 +237,8 @@ export class Physics extends EventDispatcher {
                 event: PHYSICS_EVENTS.ADD.VEHICLE,
                 uuid,
                 ...description,
-                ...options
-            })
+                ...options,
+            });
         }
     }
 
@@ -269,9 +265,8 @@ export class Physics extends EventDispatcher {
                 indexes,
                 ...DEFAULT_DESCRIPTION,
                 ...extractPositionAndQuaternion(model),
-                ...options
-            })
-
+                ...options,
+            });
         }
     }
 
@@ -282,14 +277,14 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.ELEMENT.SET.LINEAR_VELOCITY,
                 uuid,
-                velocity
+                velocity,
             });
         }
-    }
+    };
 
     setPosition = (element, position) => {
         this.setElementPosition(element, position);
-    }
+    };
 
     setElementPosition = (element, position) => {
         if (Config.physics().enabled) {
@@ -298,14 +293,12 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.ELEMENT.SET.POSITION,
                 uuid,
-                position
+                position,
             });
         }
     };
 
-    setElementQuaternion = (element, quaternion) => {
-
-    };
+    setElementQuaternion = (element, quaternion) => {};
 
     resetElement = (element, position, quaternion) => {
         if (Config.physics().enabled) {
@@ -315,10 +308,10 @@ export class Physics extends EventDispatcher {
                 event: PHYSICS_EVENTS.ELEMENT.RESET,
                 uuid,
                 position,
-                quaternion
+                quaternion,
             });
         }
-    }
+    };
 
     setVehiclePosition = (vehicle, { x, y, z }) => {
         if (Config.physics().enabled) {
@@ -327,10 +320,10 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.VEHICLE.SET.POSITION,
                 uuid,
-                position: { x, y, z }
-            })
+                position: { x, y, z },
+            });
         }
-    }
+    };
 
     setVehicleQuaternion = (vehicle, { x, y, z, w }) => {
         if (Config.physics().enabled) {
@@ -339,10 +332,10 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.VEHICLE.SET.QUATERNION,
                 uuid,
-                quaternion: { x, y, z, w }
+                quaternion: { x, y, z, w },
             });
         }
-    }
+    };
 
     resetVehicle = (vehicle, position, quaternion) => {
         if (Config.physics().enabled) {
@@ -355,16 +348,16 @@ export class Physics extends EventDispatcher {
                     x: quaternion.x,
                     y: quaternion.y,
                     z: quaternion.z,
-                    w: quaternion.w
+                    w: quaternion.w,
                 },
                 position: {
                     x: position.x,
                     y: position.y,
-                    z: position.z
-                }
+                    z: position.z,
+                },
             });
         }
-    }
+    };
 
     applyImpulse = (element, impulse) => {
         if (Config.physics().enabled) {
@@ -373,10 +366,10 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.ELEMENT.APPLY.IMPULSE,
                 uuid,
-                impulse
+                impulse,
             });
         }
-    }
+    };
 
     updateBodyState(element, state) {
         if (Config.physics().enabled) {
@@ -385,7 +378,7 @@ export class Physics extends EventDispatcher {
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.ELEMENT.UPDATE,
                 uuid,
-                state
+                state,
             });
         }
     }
@@ -398,16 +391,12 @@ export class Physics extends EventDispatcher {
                 event: PHYSICS_EVENTS.EFFECTS.EXPLOSION,
                 uuid,
                 strength,
-                radius
+                radius,
             });
         }
     };
 }
 
-export { 
-    PHYSICS_EVENTS,
-    PHYSICS_CONSTANTS,
-    physicsUtils
-};
+export { PHYSICS_EVENTS, PHYSICS_CONSTANTS, physicsUtils };
 
 export default new Physics();

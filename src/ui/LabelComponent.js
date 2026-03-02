@@ -1,7 +1,6 @@
 import { Component, createRef } from "inferno";
 
 export default class LabelComponent extends Component {
-
     constructor(props) {
         super(props);
         this.element = createRef();

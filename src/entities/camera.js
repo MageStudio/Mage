@@ -76,7 +76,7 @@ export default class Camera extends Entity {
         this.helper.renderOrder = 999;
 
         // Helper function to set depth properties on materials
-        const setMaterialDepth = (material) => {
+        const setMaterialDepth = material => {
             if (!material) return;
             const mats = Array.isArray(material) ? material : [material];
             mats.forEach(mat => {
@@ -168,9 +168,11 @@ export default class Camera extends Entity {
             const cameraPos = this.getPosition();
             // Only update if positions differ significantly
             const threshold = 0.001;
-            if (Math.abs(holderPos.x - cameraPos.x) > threshold ||
+            if (
+                Math.abs(holderPos.x - cameraPos.x) > threshold ||
                 Math.abs(holderPos.y - cameraPos.y) > threshold ||
-                Math.abs(holderPos.z - cameraPos.z) > threshold) {
+                Math.abs(holderPos.z - cameraPos.z) > threshold
+            ) {
                 this.setPosition(holderPos, { updateHolder: false });
             }
         }

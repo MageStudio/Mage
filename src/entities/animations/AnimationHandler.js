@@ -1,11 +1,10 @@
-import { AnimationMixer, AnimationClip, LoopRepeat, LoopOnce, EventDispatcher } from 'three';
-import { ENTITY_EVENTS } from '../constants';
-import { ANIMATION_NOT_FOUND } from '../../lib/messages';
+import { AnimationMixer, AnimationClip, LoopRepeat, LoopOnce, EventDispatcher } from "three";
+import { ENTITY_EVENTS } from "../constants";
+import { ANIMATION_NOT_FOUND } from "../../lib/messages";
 
 const DEFAULT_BLEND_DURATION = 0.3;
 
 export default class AnimationHandler extends EventDispatcher {
-
     constructor(mesh, animations = []) {
         super();
         this.mixer = new AnimationMixer(mesh);
@@ -17,24 +16,32 @@ export default class AnimationHandler extends EventDispatcher {
     }
 
     addEventsListeners() {
-        this.mixer.addEventListener('loop', this.getAnimationEventHandler(ENTITY_EVENTS.ANIMATION.LOOP));
-        this.mixer.addEventListener('finished', this.getAnimationEventHandler(ENTITY_EVENTS.ANIMATION.FINISHED));
+        this.mixer.addEventListener(
+            "loop",
+            this.getAnimationEventHandler(ENTITY_EVENTS.ANIMATION.LOOP),
+        );
+        this.mixer.addEventListener(
+            "finished",
+            this.getAnimationEventHandler(ENTITY_EVENTS.ANIMATION.FINISHED),
+        );
     }
 
-    getAnimationEventHandler = (type) => ({ action, direction }) => {
-        this.dispatchEvent({
-            type,
-            action,
-            direction
-        })
-    }
+    getAnimationEventHandler =
+        type =>
+        ({ action, direction }) => {
+            this.dispatchEvent({
+                type,
+                action,
+                direction,
+            });
+        };
 
     getAction(id) {
         let action;
 
-        if (typeof id === 'number') {
+        if (typeof id === "number") {
             action = this.animations[id];
-        } else if (typeof id === 'string') {
+        } else if (typeof id === "string") {
             action = AnimationClip.findByName(this.animations, id);
         }
 
@@ -103,7 +110,7 @@ export default class AnimationHandler extends EventDispatcher {
             blendDuration = DEFAULT_BLEND_DURATION,
             timeScale = 1,
             weight = 1,
-            clampWhenFinished = true
+            clampWhenFinished = true,
         } = options;
 
         this.isPlaying = true;
@@ -151,7 +158,7 @@ export default class AnimationHandler extends EventDispatcher {
             loop = LoopRepeat,
             timeScale = 1,
             warp = false,
-            clampWhenFinished = true
+            clampWhenFinished = true,
         } = options;
 
         const previousAction = this.currentAction;
@@ -164,11 +171,7 @@ export default class AnimationHandler extends EventDispatcher {
         this.currentAction = newAction;
         this.activeActions.set(id, newAction);
 
-        newAction
-            .reset()
-            .setLoop(loop)
-            .setEffectiveTimeScale(timeScale)
-            .setEffectiveWeight(1);
+        newAction.reset().setLoop(loop).setEffectiveTimeScale(timeScale).setEffectiveWeight(1);
 
         if (loop === LoopOnce) {
             newAction.clampWhenFinished = clampWhenFinished;

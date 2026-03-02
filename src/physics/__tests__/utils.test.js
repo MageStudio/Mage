@@ -38,15 +38,21 @@ describe("physics/utils.js", () => {
         });
 
         test("maps SPHERE to ADD.SPHERE event", () => {
-            expect(mapColliderTypeToAddEvent(COLLIDER_TYPES.SPHERE)).toBe(PHYSICS_EVENTS.ADD.SPHERE);
+            expect(mapColliderTypeToAddEvent(COLLIDER_TYPES.SPHERE)).toBe(
+                PHYSICS_EVENTS.ADD.SPHERE,
+            );
         });
 
         test("maps VEHICLE to ADD.VEHICLE event", () => {
-            expect(mapColliderTypeToAddEvent(COLLIDER_TYPES.VEHICLE)).toBe(PHYSICS_EVENTS.ADD.VEHICLE);
+            expect(mapColliderTypeToAddEvent(COLLIDER_TYPES.VEHICLE)).toBe(
+                PHYSICS_EVENTS.ADD.VEHICLE,
+            );
         });
 
         test("maps PLAYER to ADD.PLAYER event", () => {
-            expect(mapColliderTypeToAddEvent(COLLIDER_TYPES.PLAYER)).toBe(PHYSICS_EVENTS.ADD.PLAYER);
+            expect(mapColliderTypeToAddEvent(COLLIDER_TYPES.PLAYER)).toBe(
+                PHYSICS_EVENTS.ADD.PLAYER,
+            );
         });
 
         test("defaults to ADD.BOX for unknown type", () => {
@@ -57,7 +63,11 @@ describe("physics/utils.js", () => {
     describe("parseBoundingBoxSize", () => {
         test("returns size from bounding box getSize", () => {
             const mockBoundingBox = {
-                getSize: jest.fn(v => { v.x = 2; v.y = 3; v.z = 4; }),
+                getSize: jest.fn(v => {
+                    v.x = 2;
+                    v.y = 3;
+                    v.z = 4;
+                }),
             };
             const result = parseBoundingBoxSize(mockBoundingBox);
             expect(result).toEqual({ x: 2, y: 3, z: 4 });

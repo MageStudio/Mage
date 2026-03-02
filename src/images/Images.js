@@ -3,7 +3,7 @@ import { TextureLoader, ImageLoader, CubeTextureLoader } from "three";
 import env from "../env";
 import { buildAssetId } from "../lib/utils/assets";
 import { ROOT } from "../lib/constants";
-import { ERROR_LOADING_TEXTURE } from "../lib/messages";
+import { ERROR_LOADING_TEXTURE, CUBE_TEXTURES_NOT_LIST } from "../lib/messages";
 
 /**
  * Checks if a path is an absolute URL (with protocol).
@@ -50,8 +50,8 @@ const resolveSinglePath = path => {
     if (path && path.includes(":") && !path.startsWith("/")) {
         console.warn(
             `[Mage] Asset path "${path}" contains a colon but MAGE_ASSETS_BASE_URL is not set. ` +
-            `This may cause the browser to interpret it as a protocol scheme. ` +
-            `Prepending "./" to make it a relative path.`
+                `This may cause the browser to interpret it as a protocol scheme. ` +
+                `Prepending "./" to make it a relative path.`,
         );
         return `./${path}`;
     }
@@ -159,7 +159,7 @@ export class Images {
     loadCubeTextureByName = (name, level) => {
         const paths = this.cubeTextures[name];
 
-        if (!paths instanceof Array) {
+        if ((!paths) instanceof Array) {
             console.log(CUBE_TEXTURES_NOT_LIST);
             return Promise.reject();
         }
@@ -184,7 +184,12 @@ export class Images {
                     () => {},
                     error => {
                         // Log warning but resolve anyway to allow other assets to continue loading
-                        console.warn(`[Mage] ${ERROR_LOADING_TEXTURE}`, name, path, error?.message || "");
+                        console.warn(
+                            `[Mage] ${ERROR_LOADING_TEXTURE}`,
+                            name,
+                            path,
+                            error?.message || "",
+                        );
                         resolve(null);
                     },
                 );

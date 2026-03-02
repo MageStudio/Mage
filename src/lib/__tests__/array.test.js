@@ -1,7 +1,6 @@
 import { difference } from "../array";
 
 describe("array.js", () => {
-
     describe("difference", () => {
         test("returns elements in a but not in b", () => {
             expect(difference([1, 2, 3, 4], [2, 4])).toEqual([1, 3]);

@@ -591,7 +591,13 @@ export default class Element extends Entity {
 
     setColor(color = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.COLOR]) {
         const _setColor = material => {
-            if (color && typeof color === 'object' && 'r' in color && 'g' in color && 'b' in color) {
+            if (
+                color &&
+                typeof color === "object" &&
+                "r" in color &&
+                "g" in color &&
+                "b" in color
+            ) {
                 material.color.setRGB(color.r, color.g, color.b);
             } else {
                 material.color = new Color(color);
@@ -633,7 +639,8 @@ export default class Element extends Entity {
 
     setRefractionRatio(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.REFRACTION_RATIO]) {
         const numericValue = Number(value) || 0;
-        const _setRefractionRatio = material => (material[PROPERTIES.REFRACTION_RATIO] = numericValue);
+        const _setRefractionRatio = material =>
+            (material[PROPERTIES.REFRACTION_RATIO] = numericValue);
         if (value != undefined) {
             applyMaterialChange(this.getBody(), _setRefractionRatio);
         } else {
@@ -693,7 +700,13 @@ export default class Element extends Entity {
 
     setSpecularColor(color = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.SPECULAR]) {
         const _setSpecularColor = material => {
-            if (color && typeof color === 'object' && 'r' in color && 'g' in color && 'b' in color) {
+            if (
+                color &&
+                typeof color === "object" &&
+                "r" in color &&
+                "g" in color &&
+                "b" in color
+            ) {
                 if (!material[PROPERTIES.SPECULAR]) {
                     material[PROPERTIES.SPECULAR] = new Color();
                 }
@@ -740,7 +753,13 @@ export default class Element extends Entity {
 
     setEmissive(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.EMISSIVE]) {
         const _setEmissive = material => {
-            if (value && typeof value === 'object' && 'r' in value && 'g' in value && 'b' in value) {
+            if (
+                value &&
+                typeof value === "object" &&
+                "r" in value &&
+                "g" in value &&
+                "b" in value
+            ) {
                 if (!material[PROPERTIES.EMISSIVE]) {
                     material[PROPERTIES.EMISSIVE] = new Color();
                 }
@@ -760,7 +779,8 @@ export default class Element extends Entity {
         value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.EMISSIVE_INTENSITY],
     ) {
         const numericValue = Number(value) || 0;
-        const _setEmissiveIntensity = material => (material[PROPERTIES.EMISSIVE_INTENSITY] = numericValue);
+        const _setEmissiveIntensity = material =>
+            (material[PROPERTIES.EMISSIVE_INTENSITY] = numericValue);
         applyMaterialChange(this.getBody(), _setEmissiveIntensity);
     }
 
@@ -783,7 +803,8 @@ export default class Element extends Entity {
 
     setAOMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.AO_MAP_INTENSITY]) {
         const numericValue = Number(value) || 0;
-        const _setAOMapIntensity = material => (material[PROPERTIES.AO_MAP_INTENSITY] = numericValue);
+        const _setAOMapIntensity = material =>
+            (material[PROPERTIES.AO_MAP_INTENSITY] = numericValue);
         applyMaterialChange(this.getBody(), _setAOMapIntensity);
     }
 
@@ -793,13 +814,15 @@ export default class Element extends Entity {
 
     setAoMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.AO_MAP_INTENSITY]) {
         const numericValue = Number(value) || 0;
-        const _setAoMapIntensity = material => (material[PROPERTIES.AO_MAP_INTENSITY] = numericValue);
+        const _setAoMapIntensity = material =>
+            (material[PROPERTIES.AO_MAP_INTENSITY] = numericValue);
         applyMaterialChange(this.getBody(), _setAoMapIntensity);
     }
 
     setEnvMapIntensity(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.ENV_MAP_INTENSITY]) {
         const numericValue = Number(value) || 0;
-        const _setEnvMapIntensity = material => (material[PROPERTIES.ENV_MAP_INTENSITY] = numericValue);
+        const _setEnvMapIntensity = material =>
+            (material[PROPERTIES.ENV_MAP_INTENSITY] = numericValue);
         applyMaterialChange(this.getBody(), _setEnvMapIntensity);
     }
 
@@ -811,7 +834,8 @@ export default class Element extends Entity {
         value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.DISPLACEMENT_SCALE],
     ) {
         const numericValue = Number(value) || 0;
-        const _setDisplacementScale = material => (material[PROPERTIES.DISPLACEMENT_SCALE] = numericValue);
+        const _setDisplacementScale = material =>
+            (material[PROPERTIES.DISPLACEMENT_SCALE] = numericValue);
         applyMaterialChange(this.getBody(), _setDisplacementScale);
     }
 
@@ -821,7 +845,8 @@ export default class Element extends Entity {
 
     setDisplacementBias(value = MATERIAL_PROPERTIES_DEFAULT_VALUES[PROPERTIES.DISPLACEMENT_BIAS]) {
         const numericValue = Number(value) || 0;
-        const _setDisplacementBias = material => (material[PROPERTIES.DISPLACEMENT_BIAS] = numericValue);
+        const _setDisplacementBias = material =>
+            (material[PROPERTIES.DISPLACEMENT_BIAS] = numericValue);
         applyMaterialChange(this.getBody(), _setDisplacementBias);
     }
 
@@ -891,9 +916,11 @@ export default class Element extends Entity {
 
                 // Set sRGB encoding for color textures (map, emissiveMap, specularMap)
                 // This is required for textures to display with correct colors
-                if (textureType === TEXTURES.MAP ||
+                if (
+                    textureType === TEXTURES.MAP ||
                     textureType === TEXTURES.EMISSIVE ||
-                    textureType === TEXTURES.SPECULAR) {
+                    textureType === TEXTURES.SPECULAR
+                ) {
                     texture.encoding = sRGBEncoding;
                 }
 
@@ -1070,9 +1097,10 @@ export default class Element extends Entity {
         const materialType = this.getMaterialType();
         // Use allowed properties for known material types, or fallback to STANDARD properties
         // which has the most comprehensive set
-        const allowedProperties = MATERIAL_PROPERTIES_MAP[materialType]
-            || MATERIAL_PROPERTIES_MAP[MATERIALS.STANDARD]
-            || [];
+        const allowedProperties =
+            MATERIAL_PROPERTIES_MAP[materialType] ||
+            MATERIAL_PROPERTIES_MAP[MATERIALS.STANDARD] ||
+            [];
         const materials = this.getMaterials();
 
         if (!materials.length) return [];

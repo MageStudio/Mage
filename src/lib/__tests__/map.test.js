@@ -1,10 +1,12 @@
 import { serializeMap, deserialiseMap, populateMap } from "../map";
 
 describe("map.js", () => {
-
     describe("serializeMap", () => {
         test("serializes a simple Map to JSON string", () => {
-            const m = new Map([["a", 1], ["b", 2]]);
+            const m = new Map([
+                ["a", 1],
+                ["b", 2],
+            ]);
             const result = JSON.parse(serializeMap(m));
             expect(result).toEqual({ a: 1, b: 2 });
         });
@@ -22,7 +24,11 @@ describe("map.js", () => {
         });
 
         test("handles non-Map values in Map entries", () => {
-            const m = new Map([["str", "hello"], ["num", 42], ["bool", true]]);
+            const m = new Map([
+                ["str", "hello"],
+                ["num", 42],
+                ["bool", true],
+            ]);
             const result = JSON.parse(serializeMap(m));
             expect(result).toEqual({ str: "hello", num: 42, bool: true });
         });

@@ -162,7 +162,7 @@ export default class SunLight extends Light {
 
         // Set to layer 1 ONLY so mirrors don't render light helpers
         // Disable depth test so helpers always render on top of sky/water
-        const setMaterialDepth = (material) => {
+        const setMaterialDepth = material => {
             if (!material) return;
             const mats = Array.isArray(material) ? material : [material];
             mats.forEach(mat => {

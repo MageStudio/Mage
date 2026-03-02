@@ -1,30 +1,32 @@
 import { EventDispatcher } from "three";
-import Features, { FEATURES } from '../../lib/features';
+import Features, { FEATURES } from "../../lib/features";
 import { gamepadDisconnected, gamepadConnected } from "../../store/actions/input";
-import { dispatch } from '../../store/Store';
+import { dispatch } from "../../store/Store";
 import { GAMEPAD_BUTTON_MAPPINGS, STANDARD } from "./constants";
 
-const WINDOW_GAMEPAD_CONNECTED_EVENT = 'gamepadconnected';
-const WINDOW_GAMEPAD_DISCONNECTED_EVENT = 'gamepaddisconnected';
+const WINDOW_GAMEPAD_CONNECTED_EVENT = "gamepadconnected";
+const WINDOW_GAMEPAD_DISCONNECTED_EVENT = "gamepaddisconnected";
 
-export const GAMEPAD_CONNECTED_EVENT = 'gamepadConnected';
-export const GAMEPAD_DISCONNECTED_EVENT = 'gamepadDisconnected';
+export const GAMEPAD_CONNECTED_EVENT = "gamepadConnected";
+export const GAMEPAD_DISCONNECTED_EVENT = "gamepadDisconnected";
 
-export const X_AXES_CHANGE_EVENT = 'xAxesChange';
-export const Y_AXES_CHANGE_EVENT = 'yAxesChcange';
-export const AXIS_CHANGE_EVENT = 'axisChange';
+export const X_AXES_CHANGE_EVENT = "xAxesChange";
+export const Y_AXES_CHANGE_EVENT = "yAxesChcange";
+export const AXIS_CHANGE_EVENT = "axisChange";
 
-export const BUTTON_PRESSED_EVENT = 'gamepadButtonPressed';
-export const BUTTON_RELEASED_EVENT = 'gamepadButtonReleased';
+export const BUTTON_PRESSED_EVENT = "gamepadButtonPressed";
+export const BUTTON_RELEASED_EVENT = "gamepadButtonReleased";
 
 export const isValidGamepad = gamepad => !!gamepad;
 
 export const getConnectedGamepads = () => {
-    const list = navigator.getGamepads ?
-        navigator.getGamepads() :
-        (navigator.webkitGetGamepads ? navigator.webkitGetGamepads() : [])
+    const list = navigator.getGamepads
+        ? navigator.getGamepads()
+        : navigator.webkitGetGamepads
+          ? navigator.webkitGetGamepads()
+          : [];
 
-    if (typeof list === 'array') return list;
+    if (Array.isArray(list)) return list;
 
     let gamepads = [];
     for (let gamepad of navigator.getGamepads()) {
@@ -36,31 +38,28 @@ export const getConnectedGamepads = () => {
     return gamepads;
 };
 
-export const mapButtonIndexToKey = (gamepad, index) => (
-    (GAMEPAD_BUTTON_MAPPINGS[gamepad.id] || GAMEPAD_BUTTON_MAPPINGS[STANDARD])[index]
-);
+export const mapButtonIndexToKey = (gamepad, index) =>
+    (GAMEPAD_BUTTON_MAPPINGS[gamepad.id] || GAMEPAD_BUTTON_MAPPINGS[STANDARD])[index];
 
-export const parseButton = (button, index)=> {
-
-    if (typeof button === 'number') {
+export const parseButton = (button, index) => {
+    if (typeof button === "number") {
         return {
             pressed: button === 1.0,
             value: button,
             index,
-            key: mapButtonIndexToKey(index)
-        }
-    };
+            key: mapButtonIndexToKey(index),
+        };
+    }
 
     return {
         pressed: button.pressed,
         value: button.value,
         index,
-        key: mapButtonIndexToKey(index)
-    }
-}
+        key: mapButtonIndexToKey(index),
+    };
+};
 
 export default class Gamepad extends EventDispatcher {
-
     constructor() {
         super();
         this.enabled = false;
@@ -94,62 +93,59 @@ export default class Gamepad extends EventDispatcher {
         return this.gamepads;
     }
 
-    transformGamepadsForEvent = () => (
-        Object
-            .keys(this.gamepads)
-            .reduce((acc, index) => {
-                const {
-                    index: gamepadIndex,
-                    connected,
-                    timestamp,
-                    id,
-                    mapping
-                } = this.gamepads[index];
+    transformGamepadsForEvent = () =>
+        Object.keys(this.gamepads).reduce((acc, index) => {
+            const { index: gamepadIndex, connected, timestamp, id, mapping } = this.gamepads[index];
 
-                acc[index] = {
-                    index: gamepadIndex,
-                    connected,
-                    timestamp,
-                    id,
-                    mapping
-                }
-                
-                return acc;
-            }, {})
-    )
+            acc[index] = {
+                index: gamepadIndex,
+                connected,
+                timestamp,
+                id,
+                mapping,
+            };
 
-    onGamepadConnected = (e) => {
+            return acc;
+        }, {});
+
+    onGamepadConnected = e => {
         this.addGamepad(e.gamepad);
         this.dispatchEvent({
             type: GAMEPAD_CONNECTED_EVENT,
-            gamepad: e.gamepad
+            gamepad: e.gamepad,
         });
         dispatch(gamepadConnected(this.transformGamepadsForEvent()));
-    }
-    onGamepadDisconnected = (e) => {
+    };
+    onGamepadDisconnected = e => {
         this.removeGamepad(e.gamepad);
         this.dispatchEvent({
             type: GAMEPAD_DISCONNECTED_EVENT,
-            gamepad: e.gamepad
+            gamepad: e.gamepad,
         });
         dispatch(gamepadDisconnected(this.transformGamepadsForEvent()));
+    };
+
+    addGamepad(gamepad) {
+        this.gamepads[gamepad.index] = gamepad;
+    }
+    removeGamepad(gamepad) {
+        delete this.gamepads[gamepad.index];
+    }
+    updateGamepadWithIndex(index, gamepad) {
+        this.gamepads[index] = gamepad;
+    }
+    hasGamepadWithIndex(index) {
+        return !!(index in this.gamepads);
     }
 
-    addGamepad(gamepad) { this.gamepads[gamepad.index] = gamepad; }
-    removeGamepad(gamepad) { delete this.gamepads[gamepad.index]; }
-    updateGamepadWithIndex(index, gamepad) { this.gamepads[index] = gamepad; }
-    hasGamepadWithIndex(index) { return !!(index in this.gamepads); }
+    evaluateGamepads = previousGamepads => {
+        Object.keys(this.gamepads).forEach(index => {
+            const gamepad = this.gamepads[index];
+            const { buttons: previousButtons } = previousGamepads[index];
 
-    evaluateGamepads = (previousGamepads) => {
-        Object
-            .keys(this.gamepads)
-            .forEach(index => {
-                const gamepad = this.gamepads[index];
-                const { buttons: previousButtons } = previousGamepads[index];
-    
-                this.evaluateButtonsChange(previousButtons, gamepad);
-                this.evaluateAxesChange(gamepad);
-            });
+            this.evaluateButtonsChange(previousButtons, gamepad);
+            this.evaluateAxesChange(gamepad);
+        });
     };
 
     evaluateButtonsChange = (previousButtons, gamepad) => {
@@ -161,38 +157,37 @@ export default class Gamepad extends EventDispatcher {
                 this.dispatchEvent({
                     type: BUTTON_PRESSED_EVENT,
                     button: current,
-                    gamepad
-                })
+                    gamepad,
+                });
             } else if (previous.pressed) {
                 this.dispatchEvent({
                     type: BUTTON_RELEASED_EVENT,
                     button: current,
-                    gamepad
-                })
+                    gamepad,
+                });
             }
         });
     };
 
-    evaluateAxesChange = (gamepad) => {
+    evaluateAxesChange = gamepad => {
         const toFloat = (number, fixed) => parseFloat(number.toFixed(fixed));
         let joystick = 0;
         const axes = gamepad.axes;
 
-        for (let i = 0; i<axes.length; i+= 2) {
-
+        for (let i = 0; i < axes.length; i += 2) {
             let x = toFloat(axes[i], 2);
-            let y = toFloat(axes[i+1], 2);
+            let y = toFloat(axes[i + 1], 2);
 
             this.dispatchEvent({
                 type: AXIS_CHANGE_EVENT,
                 value: { x, y },
                 gamepad,
-                joystick
-            })
+                joystick,
+            });
 
             joystick++;
         }
-    }
+    };
 
     updateGamepads() {
         getConnectedGamepads()
@@ -206,7 +201,7 @@ export default class Gamepad extends EventDispatcher {
             });
     }
 
-    update() { 
+    update() {
         if (this.enabled) {
             const previous = { ...this.gamepads };
             this.updateGamepads();

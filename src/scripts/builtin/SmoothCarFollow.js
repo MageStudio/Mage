@@ -1,5 +1,5 @@
-import BaseScript from '../BaseScript';
-import { Vector3 } from 'three';
+import BaseScript from "../BaseScript";
+import { Vector3 } from "three";
 
 const DEFAULT_DISTANCE = 5.0;
 const DEFAULT_HEIGHT = 3.0;
@@ -10,9 +10,8 @@ const DEFAULT_DISTANCE_SNAP_TIME = 0.5;
 const DEFAULT_DISTANCE_MULTIPLIER = 1;
 
 export default class SmoothCarFollow extends BaseScript {
-
     constructor() {
-        super('SmoothCarFollow');
+        super("SmoothCarFollow");
     }
 
     start(camera, options) {
@@ -25,36 +24,33 @@ export default class SmoothCarFollow extends BaseScript {
             rotationSnapTime = DEFAULT_ROTATION_SNAP_TIME,
             distanceSnapTime = DEFAULT_DISTANCE_SNAP_TIME,
             distanceMultiplier = DEFAULT_DISTANCE_MULTIPLIER,
-            lerpFactor
+            lerpFactor,
         } = options;
 
         this.camera = camera;
         this.target = target;
-        
+
         this.height = height;
         this.heightDamping = heightDamping;
-        
+
         this.distance = distance;
-        
+
         this.rotationSnapTime = rotationSnapTime;
         this.distanceSnapTime = distanceSnapTime;
-        
+
         this.distanceMultiplier = distanceMultiplier;
         this.lerpFactor = lerpFactor;
-        
+
         this.lookAtVector = new Vector3(0, lookAtHeight, 0);
     }
 
     followCar(dt) {
-        const direction = this.target.getPhysicsState('direction');
+        const direction = this.target.getPhysicsState("direction");
         if (direction) {
             const { x, y, z } = direction;
             const cameraPosition = this.camera.getPosition();
             const targetPosition = this.target.getPosition();
-            const vector = new Vector3(x, y, z)
-                .negate()
-                .normalize()
-                .multiplyScalar(this.distance);
+            const vector = new Vector3(x, y, z).negate().normalize().multiplyScalar(this.distance);
 
             vector.y = y + this.height;
             const desiredPosition = targetPosition.add(vector);
@@ -74,5 +70,4 @@ export default class SmoothCarFollow extends BaseScript {
     update(dt) {
         this.followCar(dt);
     }
-
 }

@@ -2,8 +2,18 @@ jest.mock("three", () => require("../../../__mocks__/three"));
 
 import {
     ALMOST_ZERO,
-    UP, DOWN, LEFT, RIGHT, FRONT, BACK,
-    VECTOR_UP, VECTOR_DOWN, VECTOR_LEFT, VECTOR_RIGHT, VECTOR_FRONT, VECTOR_BACK,
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+    FRONT,
+    BACK,
+    VECTOR_UP,
+    VECTOR_DOWN,
+    VECTOR_LEFT,
+    VECTOR_RIGHT,
+    VECTOR_FRONT,
+    VECTOR_BACK,
     ORIGIN,
     ZERO_QUATERNION,
     MATERIALS,
@@ -56,10 +66,12 @@ describe("lib/constants.js", () => {
         });
 
         test("each vector constant has type and vector", () => {
-            [VECTOR_UP, VECTOR_DOWN, VECTOR_LEFT, VECTOR_RIGHT, VECTOR_FRONT, VECTOR_BACK].forEach(v => {
-                expect(v.type).toBeDefined();
-                expect(v.vector).toBeDefined();
-            });
+            [VECTOR_UP, VECTOR_DOWN, VECTOR_LEFT, VECTOR_RIGHT, VECTOR_FRONT, VECTOR_BACK].forEach(
+                v => {
+                    expect(v.type).toBeDefined();
+                    expect(v.vector).toBeDefined();
+                },
+            );
         });
     });
 

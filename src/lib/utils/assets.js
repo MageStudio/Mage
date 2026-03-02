@@ -1,4 +1,4 @@
-import { DIVIDER } from '../constants';
+import { DIVIDER } from "../constants";
 
-export const buildAssetId = (name, level) => level ? `${level}_${name}` : name;
+export const buildAssetId = (name, level) => (level ? `${level}_${name}` : name);
 export const isLevelName = level => level.startsWith(DIVIDER);

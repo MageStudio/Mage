@@ -1,4 +1,18 @@
-import { PlaneGeometry, Mesh, Vector3, Matrix4, Plane, Vector4, LinearFilter, RGBFormat, WebGLRenderTarget, ShaderMaterial, UniformsUtils, Color, PerspectiveCamera } from "three";
+import {
+    PlaneGeometry,
+    Mesh,
+    Vector3,
+    Matrix4,
+    Plane,
+    Vector4,
+    LinearFilter,
+    RGBFormat,
+    WebGLRenderTarget,
+    ShaderMaterial,
+    UniformsUtils,
+    Color,
+    PerspectiveCamera,
+} from "three";
 import Element from "../../entities/Element";
 import { ENTITY_TYPES } from "../../entities/constants";
 import { generateRandomName } from "../../lib/uuid";
@@ -13,9 +27,9 @@ const DEFAULT_HEIGHT = 100;
 
 // Mirror shader uniforms
 const mirrorUniforms = () => ({
-    "mirrorColor": { type: "c", value: new Color(0x7F7F7F) },
-    "mirrorSampler": { type: "t", value: null },
-    "textureMatrix": { type: "m4", value: new Matrix4() }
+    mirrorColor: { type: "c", value: new Color(0x7f7f7f) },
+    mirrorSampler: { type: "t", value: null },
+    textureMatrix: { type: "m4", value: new Matrix4() },
 });
 
 // Mirror vertex shader
@@ -81,7 +95,12 @@ export default class MirrorElement extends Element {
         this.textureHeight = textureHeight;
 
         // Create render target for mirror reflection
-        const parameters = { minFilter: LinearFilter, magFilter: LinearFilter, format: RGBFormat, stencilBuffer: false };
+        const parameters = {
+            minFilter: LinearFilter,
+            magFilter: LinearFilter,
+            format: RGBFormat,
+            stencilBuffer: false,
+        };
         this.renderTarget = new WebGLRenderTarget(textureWidth, textureHeight, parameters);
 
         // Create mirror camera - only renders layer 0, excludes layer 1 (editor-only objects)
@@ -93,7 +112,7 @@ export default class MirrorElement extends Element {
         this.mirrorMaterial = new ShaderMaterial({
             fragmentShader: mirrorFragmentShader,
             vertexShader: mirrorVertexShader,
-            uniforms: UniformsUtils.clone(mirrorUniforms())
+            uniforms: UniformsUtils.clone(mirrorUniforms()),
         });
 
         this.mirrorMaterial.uniforms.mirrorSampler.value = this.renderTarget.texture;
@@ -120,7 +139,7 @@ export default class MirrorElement extends Element {
 
         // Hook mirror rendering into THREE.js render loop
         const self = this;
-        body.onBeforeRender = function(renderer, scene, camera) {
+        body.onBeforeRender = function (renderer, scene, camera) {
             self.renderMirror(renderer, scene, camera, this);
         };
 
@@ -170,10 +189,22 @@ export default class MirrorElement extends Element {
 
         // Update the texture matrix
         this.textureMatrix.set(
-            0.5, 0.0, 0.0, 0.5,
-            0.0, 0.5, 0.0, 0.5,
-            0.0, 0.0, 0.5, 0.5,
-            0.0, 0.0, 0.0, 1.0
+            0.5,
+            0.0,
+            0.0,
+            0.5,
+            0.0,
+            0.5,
+            0.0,
+            0.5,
+            0.0,
+            0.0,
+            0.5,
+            0.5,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
         );
         this.textureMatrix.multiply(this.mirrorCamera.projectionMatrix);
         this.textureMatrix.multiply(this.mirrorCamera.matrixWorldInverse);
@@ -182,13 +213,22 @@ export default class MirrorElement extends Element {
         this.mirrorPlane.setFromNormalAndCoplanarPoint(this.normal, this.mirrorWorldPosition);
         this.mirrorPlane.applyMatrix4(this.mirrorCamera.matrixWorldInverse);
 
-        this.clipPlane.set(this.mirrorPlane.normal.x, this.mirrorPlane.normal.y, this.mirrorPlane.normal.z, this.mirrorPlane.constant);
+        this.clipPlane.set(
+            this.mirrorPlane.normal.x,
+            this.mirrorPlane.normal.y,
+            this.mirrorPlane.normal.z,
+            this.mirrorPlane.constant,
+        );
 
         const q = new Vector4();
         const projectionMatrix = this.mirrorCamera.projectionMatrix;
 
-        q.x = (Math.sign(this.clipPlane.x) + projectionMatrix.elements[8]) / projectionMatrix.elements[0];
-        q.y = (Math.sign(this.clipPlane.y) + projectionMatrix.elements[9]) / projectionMatrix.elements[5];
+        q.x =
+            (Math.sign(this.clipPlane.x) + projectionMatrix.elements[8]) /
+            projectionMatrix.elements[0];
+        q.y =
+            (Math.sign(this.clipPlane.y) + projectionMatrix.elements[9]) /
+            projectionMatrix.elements[5];
         q.z = -1.0;
         q.w = (1.0 + projectionMatrix.elements[10]) / projectionMatrix.elements[14];
 

@@ -6,7 +6,15 @@ jest.mock("../../lights/Lights", () => ({
     isUsingCascadeShadowMaps: () => false,
     csm: { setupMaterial: jest.fn() },
 }));
-jest.mock("../../materials/Toon", () => class ToonMaterial { constructor(opts) { Object.assign(this, opts); } });
+jest.mock(
+    "../../materials/Toon",
+    () =>
+        class ToonMaterial {
+            constructor(opts) {
+                Object.assign(this, opts);
+            }
+        },
+);
 jest.mock("vivifyjs", () => ({
     get: jest.fn((prop, obj) => obj && obj[prop]),
 }));
@@ -291,7 +299,10 @@ describe("meshUtils.js", () => {
             const childNoMat = {};
             const childWithMat = { material: { color: "green" } };
             const body = {
-                traverse: fn => { fn(childNoMat); fn(childWithMat); },
+                traverse: fn => {
+                    fn(childNoMat);
+                    fn(childWithMat);
+                },
             };
             applyMaterialChange(body, callback);
             expect(callback).toHaveBeenCalledTimes(1);

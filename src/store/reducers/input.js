@@ -8,39 +8,39 @@ import {
     MOUSE_DISABLED,
     GAMEPAD_DISABLED,
     GAMEPAD_CONNECTED,
-    GAMEPAD_DISCONNECTED
+    GAMEPAD_DISCONNECTED,
 } from "../actions/types";
 
 const DEFAULT_STATE = {
     keyboard: false,
     mouse: false,
     gamepad: false,
-    gamepads: {}
+    gamepads: {},
 };
 
 export default (state = DEFAULT_STATE, action = {}) => {
-    switch(action.type) {
+    switch (action.type) {
         case INPUT_ENABLED:
             return {
                 ...state,
                 keyboard: true,
                 mouse: true,
-                gamepad: true
+                gamepad: true,
             };
         case KEYBOARD_ENABLED:
             return {
                 ...state,
-                keyboard: true
+                keyboard: true,
             };
         case MOUSE_ENABLED:
             return {
                 ...state,
-                mouse: true
+                mouse: true,
             };
         case GAMEPAD_ENABLED:
             return {
                 ...state,
-                gamepad: true
+                gamepad: true,
             };
 
         case INPUT_DISABLED:
@@ -48,29 +48,29 @@ export default (state = DEFAULT_STATE, action = {}) => {
                 ...state,
                 keyboard: false,
                 mouse: false,
-                gamepad: false
+                gamepad: false,
             };
         case KEYBOARD_DISABLED:
             return {
                 ...state,
-                keyboard: false
+                keyboard: false,
             };
         case MOUSE_DISABLED:
             return {
                 ...state,
-                mouse: false
+                mouse: false,
             };
         case GAMEPAD_DISABLED:
             return {
                 ...state,
-                gamepad: false
+                gamepad: false,
             };
 
         case GAMEPAD_CONNECTED:
         case GAMEPAD_DISCONNECTED:
             return {
                 ...state,
-                gamepads: action.gamepads
+                gamepads: action.gamepads,
             };
         default:
             return state;

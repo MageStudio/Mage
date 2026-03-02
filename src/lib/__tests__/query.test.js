@@ -1,7 +1,6 @@
 import { toQueryString, parseQuery } from "../query";
 
 describe("query.js", () => {
-
     describe("toQueryString", () => {
         test("converts object to query string", () => {
             expect(toQueryString({ a: 1, b: 2 })).toBe("?a=1&b=2");

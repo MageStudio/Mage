@@ -35,7 +35,7 @@ export default class TransformControls extends Object3D {
         this.plane.layers.set(1);
 
         // Helper function to set depth properties on materials
-        const setMaterialDepth = (material) => {
+        const setMaterialDepth = material => {
             if (!material) return;
             const mats = Array.isArray(material) ? material : [material];
             mats.forEach(mat => {
@@ -899,8 +899,7 @@ export default class TransformControls extends Object3D {
             // Apply this.rotation snap
             if (this.rotationSnap)
                 this.rotationAngle =
-                    Math.round(this.rotationAngle / this.rotationSnap) *
-                    this.rotationSnap;
+                    Math.round(this.rotationAngle / this.rotationSnap) * this.rotationSnap;
             // Apply rotate
             if (space === "local") {
                 object.quaternion.copy(this._quaternionStart);

@@ -1,9 +1,7 @@
-import dispatcher from './lib/dispatcher';
-import world from './world';
+import dispatcher from "./lib/dispatcher";
+import world from "./world";
 
-import {
-    applyMatrix4ToVector3
-} from './lib/math';
+import { applyMatrix4ToVector3 } from "./lib/math";
 
 import {
     DEFAULT_RIGIDBODY_STATE,
@@ -11,8 +9,8 @@ import {
     DEFAULT_SCALE,
     DISABLE_DEACTIVATION,
     DEFAULT_LINEAR_VELOCITY,
-    DEFAULT_IMPULSE
-} from '../constants';
+    DEFAULT_IMPULSE,
+} from "../constants";
 
 export const createRigidBody = (shape, options) => {
     const {
@@ -21,23 +19,23 @@ export const createRigidBody = (shape, options) => {
         quaternion,
         mass,
         friction,
-        restitution = .9,
-        damping = { linear: 0.2, angular: 0.2 }
+        restitution = 0.9,
+        damping = { linear: 0.2, angular: 0.2 },
     } = options;
 
     const transform = new Ammo.btTransform();
 
     transform.setIdentity();
     transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
-    transform.setRotation(new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+    transform.setRotation(
+        new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
+    );
     const motionState = new Ammo.btDefaultMotionState(transform);
     const localInertia = new Ammo.btVector3(0, 0, 0);
     shape.calculateLocalInertia(mass, localInertia);
 
     const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
     const body = new Ammo.btRigidBody(rbInfo);
-
-    
 
     if (mass > 0) {
         body.setFriction(friction);
@@ -52,9 +50,9 @@ export const createRigidBody = (shape, options) => {
     world.addRigidBody(body);
 
     return body;
-}
+};
 
-export const addModel = (options) => {
+export const addModel = options => {
     const {
         uuid,
         vertices,
@@ -63,7 +61,7 @@ export const addModel = (options) => {
         position,
         quaternion,
         mass = 0,
-        friction = 2
+        friction = 2,
     } = options;
 
     const scale = DEFAULT_SCALE;
@@ -80,24 +78,42 @@ export const addModel = (options) => {
 
         if (index) {
             for (let j = 0; j < index.length; j += 3) {
-            const ai = index[j] * 3;
-            const bi = index[j + 1] * 3;
-            const ci = index[j + 2] * 3;
+                const ai = index[j] * 3;
+                const bi = index[j + 1] * 3;
+                const ci = index[j + 2] * 3;
 
-            const va = applyMatrix4ToVector3({ x: components[ai], y: components[ai + 1], z: components[ai + 2] }, matrix);
-            const vb = applyMatrix4ToVector3({ x: components[bi], y: components[bi + 1], z: components[bi + 2] }, matrix);
-            const vc = applyMatrix4ToVector3({ x: components[ci], y: components[ci + 1], z: components[ci + 2] }, matrix);
+                const va = applyMatrix4ToVector3(
+                    { x: components[ai], y: components[ai + 1], z: components[ai + 2] },
+                    matrix,
+                );
+                const vb = applyMatrix4ToVector3(
+                    { x: components[bi], y: components[bi + 1], z: components[bi + 2] },
+                    matrix,
+                );
+                const vc = applyMatrix4ToVector3(
+                    { x: components[ci], y: components[ci + 1], z: components[ci + 2] },
+                    matrix,
+                );
 
-            bta.setValue(va.x, va.y, va.z);
-            btb.setValue(vb.x, vb.y, vb.z);
-            btc.setValue(vc.x, vc.y, vc.z);
-            triMesh.addTriangle(bta, btb, btc, false);
+                bta.setValue(va.x, va.y, va.z);
+                btb.setValue(vb.x, vb.y, vb.z);
+                btc.setValue(vc.x, vc.y, vc.z);
+                triMesh.addTriangle(bta, btb, btc, false);
             }
         } else {
             for (let j = 0; j < components.length; j += 9) {
-                const va = applyMatrix4ToVector3({ x: components[j + 0], y: components[j + 1], z: components[j + 2] }, matrix);
-                const vb = applyMatrix4ToVector3({ x: components[j + 3], y: components[j + 4], z: components[j + 5] }, matrix);
-                const vc = applyMatrix4ToVector3({ x: components[j + 6], y: components[j + 7], z: components[j + 8] }, matrix);
+                const va = applyMatrix4ToVector3(
+                    { x: components[j + 0], y: components[j + 1], z: components[j + 2] },
+                    matrix,
+                );
+                const vb = applyMatrix4ToVector3(
+                    { x: components[j + 3], y: components[j + 4], z: components[j + 5] },
+                    matrix,
+                );
+                const vc = applyMatrix4ToVector3(
+                    { x: components[j + 6], y: components[j + 7], z: components[j + 8] },
+                    matrix,
+                );
 
                 bta.setValue(va.x, va.y, va.z);
                 btb.setValue(vb.x, vb.y, vb.z);
@@ -120,12 +136,14 @@ export const addModel = (options) => {
 
     const body = createRigidBody(collisionShape, { uuid, position, quaternion, mass, friction });
     world.addElement({ uuid, body, type: TYPES.MESH, state: DEFAULT_RIGIDBODY_STATE });
-}
+};
 
-export const addBox = (data) => {
+export const addBox = data => {
     const { uuid, width, length, height, position, quaternion, mass = 0, friction = 2 } = data;
 
-    const geometry = new Ammo.btBoxShape(new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5));
+    const geometry = new Ammo.btBoxShape(
+        new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5),
+    );
     const body = createRigidBody(geometry, { uuid, position, quaternion, mass, friction });
 
     world.addElement({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
@@ -140,7 +158,7 @@ export const addSphere = data => {
     world.addElement({ uuid, body, type: TYPES.SPHERE, state: DEFAULT_RIGIDBODY_STATE });
 };
 
-export const setLinearVelocity = (data) => {
+export const setLinearVelocity = data => {
     const { uuid, velocity = DEFAULT_LINEAR_VELOCITY } = data;
     const { body } = world.getElement(uuid);
     const motionState = body.getMotionState();
@@ -159,10 +177,10 @@ export const setPosition = data => {
     const transform = new Ammo.btTransform();
 
     body.getWorldTransform(transform);
-    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z ));
+    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
 
     body.setWorldTransform(transform);
-}
+};
 
 export const resetElement = data => {
     const { uuid, position, quaternion } = data;
@@ -171,11 +189,13 @@ export const resetElement = data => {
     const transform = new Ammo.btTransform();
 
     body.getWorldTransform(transform);
-    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z ));
-    transform.setRotation(new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w));
+    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
+    transform.setRotation(
+        new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
+    );
 
     body.setWorldTransform(transform);
-}
+};
 
 export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
     const { body } = world.getElement(uuid);
@@ -186,7 +206,7 @@ export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
         body.applyCentralImpulse(impulseVector);
         Ammo.destroy(impulseVector);
     }
-}
+};
 
 export const handleElementUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
     const motionState = body.getMotionState();
@@ -201,4 +221,4 @@ export const handleElementUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STAT
         dispatcher.sendBodyUpdate(uuid, origin, rotation, dt);
         Ammo.destroy(transform);
     }
-}
+};

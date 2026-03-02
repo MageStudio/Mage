@@ -1,15 +1,33 @@
 jest.mock("three", () => require("../../../__mocks__/three"));
 
 import {
-    PI, PI_2, identity, degToRad, radToDeg, clamp, cap, isWithin,
-    getDistance, getProportion, repeat, deltaAngle, smoothDamp,
-    smoothDampAngle, randomFloatFromInterval, randomIntFromInterval,
-    getSphereVolume, pickRandom, lerp, findPointBetweenAtDistance,
-    lerpVectors, scaleVector, randomVector3, randomVector2,
+    PI,
+    PI_2,
+    identity,
+    degToRad,
+    radToDeg,
+    clamp,
+    cap,
+    isWithin,
+    getDistance,
+    getProportion,
+    repeat,
+    deltaAngle,
+    smoothDamp,
+    smoothDampAngle,
+    randomFloatFromInterval,
+    randomIntFromInterval,
+    getSphereVolume,
+    pickRandom,
+    lerp,
+    findPointBetweenAtDistance,
+    lerpVectors,
+    scaleVector,
+    randomVector3,
+    randomVector2,
 } from "../math";
 
 describe("math.js", () => {
-
     describe("constants", () => {
         test("PI equals Math.PI", () => {
             expect(PI).toBe(Math.PI);
@@ -267,11 +285,11 @@ describe("math.js", () => {
         });
 
         test("calculates volume of unit sphere", () => {
-            expect(getSphereVolume(1)).toBeCloseTo(4 * Math.PI / 3);
+            expect(getSphereVolume(1)).toBeCloseTo((4 * Math.PI) / 3);
         });
 
         test("calculates volume for radius 2", () => {
-            expect(getSphereVolume(2)).toBeCloseTo(4 * Math.PI * 8 / 3);
+            expect(getSphereVolume(2)).toBeCloseTo((4 * Math.PI * 8) / 3);
         });
     });
 
@@ -330,33 +348,21 @@ describe("math.js", () => {
 
     describe("lerpVectors", () => {
         test("interpolates between two vectors at t=0.5", () => {
-            const result = lerpVectors(
-                { x: 0, y: 0, z: 0 },
-                { x: 10, y: 10, z: 10 },
-                0.5,
-            );
+            const result = lerpVectors({ x: 0, y: 0, z: 0 }, { x: 10, y: 10, z: 10 }, 0.5);
             expect(result.x).toBeCloseTo(5);
             expect(result.y).toBeCloseTo(5);
             expect(result.z).toBeCloseTo(5);
         });
 
         test("returns origin at t=0", () => {
-            const result = lerpVectors(
-                { x: 1, y: 2, z: 3 },
-                { x: 10, y: 20, z: 30 },
-                0,
-            );
+            const result = lerpVectors({ x: 1, y: 2, z: 3 }, { x: 10, y: 20, z: 30 }, 0);
             expect(result.x).toBeCloseTo(1);
             expect(result.y).toBeCloseTo(2);
             expect(result.z).toBeCloseTo(3);
         });
 
         test("returns target at t=1", () => {
-            const result = lerpVectors(
-                { x: 0, y: 0, z: 0 },
-                { x: 10, y: 20, z: 30 },
-                1,
-            );
+            const result = lerpVectors({ x: 0, y: 0, z: 0 }, { x: 10, y: 20, z: 30 }, 1);
             expect(result.x).toBeCloseTo(10);
             expect(result.y).toBeCloseTo(20);
             expect(result.z).toBeCloseTo(30);

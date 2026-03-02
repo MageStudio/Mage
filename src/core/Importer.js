@@ -347,7 +347,11 @@ export class Importer {
     }
 
     static completeSoundCreation(sound, soundData, options) {
-        Importer.completeCommonCreationSteps(sound, soundData, { ...options, skipOpacity: true, skipScale: true });
+        Importer.completeCommonCreationSteps(sound, soundData, {
+            ...options,
+            skipOpacity: true,
+            skipScale: true,
+        });
 
         // setting sound-specific properties
         if (soundData.volume !== undefined) {
@@ -378,13 +382,24 @@ export class Importer {
                     emitter.rebuild();
                 }
             } catch (error) {
-                console.warn("[Mage] Failed to load particle texture:", particleOptions.textureAssetPath, error);
+                console.warn(
+                    "[Mage] Failed to load particle texture:",
+                    particleOptions.textureAssetPath,
+                    error,
+                );
             }
         }
     }
 
     static async parseLevelData(data = {}, options = {}) {
-        const { elements = [], lights = [], audio = [], sounds = [], cameras = [], particles = [] } = data;
+        const {
+            elements = [],
+            lights = [],
+            audio = [],
+            sounds = [],
+            cameras = [],
+            particles = [],
+        } = data;
         // Support both 'audio' and 'sounds' keys for backwards compatibility
         const allSounds = [...audio, ...sounds];
 
@@ -447,7 +462,11 @@ export class Importer {
                     // Load the model first if it's not already loaded
                     // This handles page refresh in the editor where models need to be reloaded
                     if (assetPath) {
-                        const loadResult = await Models.loadAssetByPath(assetPath, name, dependencies);
+                        const loadResult = await Models.loadAssetByPath(
+                            assetPath,
+                            name,
+                            dependencies,
+                        );
                         if (!loadResult) {
                             console.warn(`[Mage] Failed to load model "${name}" from ${assetPath}`);
                         }
@@ -457,48 +476,102 @@ export class Importer {
                     if (model) {
                         await Importer.completeElementCreation(model, elementData, options);
                     } else {
-                        console.warn(`[Mage] Could not create model "${name}" - check assetPath: ${assetPath}`);
+                        console.warn(
+                            `[Mage] Could not create model "${name}" - check assetPath: ${assetPath}`,
+                        );
                     }
                 } else {
                     switch (elementData.entitySubType) {
                         case ENTITY_TYPES.MESH.SUBTYPES.CUBE:
-                            await Importer.completeElementCreation(Cube.create(elementData), elementData, options);
+                            await Importer.completeElementCreation(
+                                Cube.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.LINE:
-                            await Importer.completeElementCreation(Line.create(elementData), elementData, options);
+                            await Importer.completeElementCreation(
+                                Line.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.SPHERE:
-                            await Importer.completeElementCreation(Sphere.create(elementData), elementData, options);
+                            await Importer.completeElementCreation(
+                                Sphere.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.CYLINDER:
-                            await Importer.completeElementCreation(Cylinder.create(elementData), elementData, options);
+                            await Importer.completeElementCreation(
+                                Cylinder.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.CONE:
-                            await Importer.completeElementCreation(Cone.create(elementData), elementData, options);
+                            await Importer.completeElementCreation(
+                                Cone.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.BOX:
-                            await Importer.completeElementCreation(Box.create(elementData), elementData, options);
+                            await Importer.completeElementCreation(
+                                Box.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.CURVE_LINE:
-                            await Importer.completeElementCreation(CurveLine.create(elementData), elementData, options);
+                            await Importer.completeElementCreation(
+                                CurveLine.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.MESH.SUBTYPES.PLANE:
-                            await Importer.completeElementCreation(Plane.create(elementData), elementData, options);
+                            await Importer.completeElementCreation(
+                                Plane.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.SPRITE.SUBTYPES.DEFAULT:
-                            await Importer.completeSpriteCreation(Sprite.create(elementData), elementData, options);
+                            await Importer.completeSpriteCreation(
+                                Sprite.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.SCENERY.SUBTYPES.SKY:
-                            Importer.completeSkyCreation(Sky.create(elementData), elementData, options);
+                            Importer.completeSkyCreation(
+                                Sky.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.SCENERY.SUBTYPES.SKYBOX:
-                            Importer.completeSkyboxCreation(Skybox.create(elementData), elementData, options);
+                            Importer.completeSkyboxCreation(
+                                Skybox.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.SCENERY.SUBTYPES.WATER:
-                            Importer.completeWaterCreation(Water.create(elementData), elementData, options);
+                            Importer.completeWaterCreation(
+                                Water.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         case ENTITY_TYPES.SCENERY.SUBTYPES.MIRROR:
-                            Importer.completeMirrorCreation(MirrorElement.create(elementData), elementData, options);
+                            Importer.completeMirrorCreation(
+                                MirrorElement.create(elementData),
+                                elementData,
+                                options,
+                            );
                             break;
                         default:
                             console.warn(
@@ -589,7 +662,11 @@ export class Importer {
                         Importer.completeSoundCreation(AmbientSound.create(data), data, options);
                         break;
                     case ENTITY_TYPES.AUDIO.SUBTYPES.DIRECTIONAL:
-                        Importer.completeSoundCreation(DirectionalSound.create(data), data, options);
+                        Importer.completeSoundCreation(
+                            DirectionalSound.create(data),
+                            data,
+                            options,
+                        );
                         break;
                     default:
                         // Try to create as basic Sound if entitySubType not recognized

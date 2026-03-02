@@ -1,11 +1,3 @@
-import {
-    getState,
-    createStore,
-    dispatch
-} from './Store';
+import { getState, createStore, dispatch } from "./Store";
 
-export {
-    getState,
-    createStore,
-    dispatch
-};
+export { getState, createStore, dispatch };

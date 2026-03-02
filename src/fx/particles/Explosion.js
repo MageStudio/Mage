@@ -50,10 +50,20 @@ const getFireInitializers = (size = DEFAULT_SIZE) => [
     new Proton.Position(new Proton.SphereZone(size * 1.25)),
 ];
 
-const getFireBehaviours = () => [new Proton.Alpha(1, 0), new Proton.Scale(1, 2), new Proton.Color("#c0392b", "#f1c40f")];
+const getFireBehaviours = () => [
+    new Proton.Alpha(1, 0),
+    new Proton.Scale(1, 2),
+    new Proton.Color("#c0392b", "#f1c40f"),
+];
 export default class Explosion extends ParticleEmitterGroup {
     constructor(options = {}) {
-        const { texture = false, hasDebris = false, size = DEFAULT_SIZE, autoEmit = false, emitWhenEditing = false } = options;
+        const {
+            texture = false,
+            hasDebris = false,
+            size = DEFAULT_SIZE,
+            autoEmit = false,
+            emitWhenEditing = false,
+        } = options;
 
         const sparks = new ProtonParticleEmitter({
             rate: getSparksRate(),
@@ -89,7 +99,14 @@ export default class Explosion extends ParticleEmitterGroup {
         super({ system, name, autoEmit, emitWhenEditing });
         this.setPreset("explosion");
         this.setEntitySubtype(ENTITY_TYPES.PARTICLE.SUBTYPES.EXPLOSION);
-        this.setParticleConfig({ texture, hasDebris, size, autoEmit, emitWhenEditing, emitMode: "burst" });
+        this.setParticleConfig({
+            texture,
+            hasDebris,
+            size,
+            autoEmit,
+            emitWhenEditing,
+            emitMode: "burst",
+        });
     }
 
     rebuild() {

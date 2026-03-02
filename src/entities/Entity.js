@@ -228,8 +228,10 @@ export default class Entity extends EventDispatcher {
         if (!ancestor) return false;
         let current = this.getParent();
         while (current) {
-            if (current === ancestor ||
-                (current.uuid && ancestor.uuid && current.uuid() === ancestor.uuid())) {
+            if (
+                current === ancestor ||
+                (current.uuid && ancestor.uuid && current.uuid() === ancestor.uuid())
+            ) {
                 return true;
             }
             current = current.getParent ? current.getParent() : null;
@@ -250,8 +252,9 @@ export default class Entity extends EventDispatcher {
 
         // Detach from old parent's Entity children array
         if (oldParent && oldParent.children) {
-            const index = oldParent.children.findIndex(c => c === this ||
-                (c.uuid && this.uuid && c.uuid() === this.uuid()));
+            const index = oldParent.children.findIndex(
+                c => c === this || (c.uuid && this.uuid && c.uuid() === this.uuid()),
+            );
             if (index !== -1) oldParent.children.splice(index, 1);
         }
 

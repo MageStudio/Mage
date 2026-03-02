@@ -9,7 +9,6 @@ export const omit = (keys, map) =>
         return rest;
     }, map);
 
-
 const isSerializable = value =>
     !(value === null || value === undefined || typeof value !== "object");
 
@@ -25,7 +24,7 @@ const deepSerialize = obj => {
     }
     const result = {};
     for (const key in obj) {
-        if (obj.hasOwnProperty(key)) {
+        if (Object.prototype.hasOwnProperty.call(obj, key)) {
             // Serialize and parse each property
             const value = deepSerialize(obj[key]);
             result[key] = isSerializable(value) ? JSON.parse(JSON.stringify(value)) : value;

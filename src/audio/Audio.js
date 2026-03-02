@@ -74,8 +74,8 @@ const resolveAssetPath = path => {
     if (path && path.includes(":") && !path.startsWith("/")) {
         console.warn(
             `[Mage] Asset path "${path}" contains a colon but MAGE_ASSETS_BASE_URL is not set. ` +
-            `This may cause the browser to interpret it as a protocol scheme. ` +
-            `Prepending "./" to make it a relative path.`
+                `This may cause the browser to interpret it as a protocol scheme. ` +
+                `Prepending "./" to make it a relative path.`,
         );
         return `./${path}`;
     }
@@ -207,7 +207,9 @@ export class Audio {
                         );
                     } else {
                         // Handle HTTP errors (404, etc.) - log warning and continue
-                        console.warn(`[Mage] Failed to load audio "${id}" from ${resolvedPath}: HTTP ${request.status}`);
+                        console.warn(
+                            `[Mage] Failed to load audio "${id}" from ${resolvedPath}: HTTP ${request.status}`,
+                        );
                         this.buffersMap[id] = null;
                         resolve();
                     }

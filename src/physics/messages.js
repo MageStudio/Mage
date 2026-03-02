@@ -1,52 +1,52 @@
 export const PHYSICS_EVENTS = {
-    DISPATCH: 'physics:dispatch',
-    TERMINATE: 'physics:terminate',
+    DISPATCH: "physics:dispatch",
+    TERMINATE: "physics:terminate",
     LOAD: {
-        AMMO: 'physics:load:ammo',
+        AMMO: "physics:load:ammo",
     },
-    READY: 'physics:ready',
-    INIT: 'physics:init',
-    UPDATE: 'physics:update',
-    
+    READY: "physics:ready",
+    INIT: "physics:init",
+    UPDATE: "physics:update",
+
     ADD: {
-        BOX: 'physics:add:box',
-        VEHICLE: 'physics:add:vehicle',
-        MODEL: 'physics:add:model',
-        PLAYER: 'physics:add:player',
-        SPHERE: 'physics:add:sphere',
+        BOX: "physics:add:box",
+        VEHICLE: "physics:add:vehicle",
+        MODEL: "physics:add:model",
+        PLAYER: "physics:add:player",
+        SPHERE: "physics:add:sphere",
     },
 
     ELEMENT: {
-        DISPOSE: 'physics:element:dispose',
-        COLLISION: 'physics:element:collision',
-        UPDATE: 'physics:element:update',
-        CREATED: 'physics:element:created',
+        DISPOSE: "physics:element:dispose",
+        COLLISION: "physics:element:collision",
+        UPDATE: "physics:element:update",
+        CREATED: "physics:element:created",
 
         SET: {
-            POSITION: 'physics:element:set:position',
-            QUATERNION: 'physics:element:set:quaternion',
-            LINEAR_VELOCITY: 'physics:element:set:linear_velocity'
+            POSITION: "physics:element:set:position",
+            QUATERNION: "physics:element:set:quaternion",
+            LINEAR_VELOCITY: "physics:element:set:linear_velocity",
         },
 
-        RESET: 'physics:element:reset',
+        RESET: "physics:element:reset",
 
         APPLY: {
-            IMPULSE: 'physics:element:apply:impulse'
-        }
+            IMPULSE: "physics:element:apply:impulse",
+        },
     },
 
     VEHICLE: {
         SET: {
-            POSITION: 'physics:vehicle:set:position',
-            QUATERNION: 'physics:vehicle:set:quaternion'
+            POSITION: "physics:vehicle:set:position",
+            QUATERNION: "physics:vehicle:set:quaternion",
         },
-        RESET: 'physics:vehicle:reset',
-        
-        SPEED: 'physics:vehicle:speed',
-        DIRECTION: 'physics:vehicle:direction'
+        RESET: "physics:vehicle:reset",
+
+        SPEED: "physics:vehicle:speed",
+        DIRECTION: "physics:vehicle:direction",
     },
 
     EFFECTS: {
-        EXPLOSION: 'physics:effects:explosion'
-    }
+        EXPLOSION: "physics:effects:explosion",
+    },
 };

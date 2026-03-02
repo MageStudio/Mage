@@ -1,7 +1,6 @@
 import { omit } from "../object";
 
 describe("object.js", () => {
-
     describe("omit", () => {
         test("removes specified keys from object", () => {
             const obj = { a: 1, b: 2, c: 3 };

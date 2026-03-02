@@ -1,7 +1,7 @@
 // Models.js has many deep dependencies. We mock them to isolate testable logic.
 jest.mock("../../env", () => ({ MAGE_ASSETS_BASE_URL: "" }));
 jest.mock("../../entities/Element", () => {
-    return jest.fn().mockImplementation((opts) => ({
+    return jest.fn().mockImplementation(opts => ({
         ...opts,
         setEntityType: jest.fn(),
         setEntitySubtype: jest.fn(),
@@ -46,7 +46,6 @@ jest.mock("../../loaders/RequirementsTracer", () => {
 import Models from "../Models";
 
 describe("Models.js", () => {
-
     describe("Models instance", () => {
         test("initializes with empty map", () => {
             expect(Models.map).toBeDefined();

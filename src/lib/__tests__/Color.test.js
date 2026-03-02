@@ -1,7 +1,6 @@
 import Color from "../Color";
 
 describe("Color", () => {
-
     describe("static randomColor", () => {
         test("returns a hex string by default", () => {
             const color = Color.randomColor();

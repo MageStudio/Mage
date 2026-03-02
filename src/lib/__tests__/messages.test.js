@@ -35,8 +35,9 @@ describe("messages.js", () => {
 
     describe("error messages", () => {
         test("all exported string constants contain PREFIX", () => {
-            const stringExports = Object.entries(messages)
-                .filter(([key, val]) => typeof val === "string" && key !== "PREFIX" && key !== "DEPRECATED");
+            const stringExports = Object.entries(messages).filter(
+                ([key, val]) => typeof val === "string" && key !== "PREFIX" && key !== "DEPRECATED",
+            );
 
             stringExports.forEach(([key, msg]) => {
                 expect(msg).toContain(messages.PREFIX);

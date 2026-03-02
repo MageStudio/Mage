@@ -1,7 +1,6 @@
 import { upperCaseFirst, removeFirst, template } from "../strings";
 
 describe("strings.js", () => {
-
     describe("upperCaseFirst", () => {
         test("capitalizes first letter of a word", () => {
             expect(upperCaseFirst("hello")).toBe("Hello");

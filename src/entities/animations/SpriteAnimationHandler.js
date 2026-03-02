@@ -1,3 +1,1 @@
-export default class SpriteAnimationHandler {
-
-};
+export default class SpriteAnimationHandler {}

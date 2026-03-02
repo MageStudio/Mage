@@ -9,8 +9,17 @@ import {
 describe("entities/constants.js", () => {
     describe("ENTITY_TYPES", () => {
         const expectedCategories = [
-            "SCENE", "CAMERA", "MESH", "LABEL", "LIGHT",
-            "AUDIO", "MODEL", "SPRITE", "PARTICLE", "SCENERY", "HELPER",
+            "SCENE",
+            "CAMERA",
+            "MESH",
+            "LABEL",
+            "LIGHT",
+            "AUDIO",
+            "MODEL",
+            "SPRITE",
+            "PARTICLE",
+            "SCENERY",
+            "HELPER",
         ];
 
         test("has all expected entity categories", () => {

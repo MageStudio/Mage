@@ -7,21 +7,21 @@ describe("palettes.js", () => {
         });
 
         test("has standard color values", () => {
-            expect(palettes.BASE.WHITE).toBe(0xFFFFFF);
+            expect(palettes.BASE.WHITE).toBe(0xffffff);
             expect(palettes.BASE.BLACK).toBe(0x000000);
-            expect(palettes.BASE.RED).toBe(0xFF0000);
-            expect(palettes.BASE.GREEN).toBe(0x00FF00);
-            expect(palettes.BASE.BLUE).toBe(0x0000FF);
+            expect(palettes.BASE.RED).toBe(0xff0000);
+            expect(palettes.BASE.GREEN).toBe(0x00ff00);
+            expect(palettes.BASE.BLUE).toBe(0x0000ff);
         });
 
         test("has secondary colors", () => {
-            expect(palettes.BASE.YELLOW).toBe(0xFFFF00);
-            expect(palettes.BASE.CYAN).toBe(0x00FFFF);
-            expect(palettes.BASE.MAGENTA).toBe(0xFF00FF);
+            expect(palettes.BASE.YELLOW).toBe(0xffff00);
+            expect(palettes.BASE.CYAN).toBe(0x00ffff);
+            expect(palettes.BASE.MAGENTA).toBe(0xff00ff);
         });
 
         test("has neutral colors", () => {
-            expect(palettes.BASE.SILVER).toBe(0xC0C0C0);
+            expect(palettes.BASE.SILVER).toBe(0xc0c0c0);
             expect(palettes.BASE.GRAY).toBe(0x808080);
         });
 
@@ -54,7 +54,7 @@ describe("palettes.js", () => {
         test("all values are valid hex colors (0-0xFFFFFF)", () => {
             Object.values(palettes.FRENCH_PALETTE).forEach(color => {
                 expect(color).toBeGreaterThanOrEqual(0);
-                expect(color).toBeLessThanOrEqual(0xFFFFFF);
+                expect(color).toBeLessThanOrEqual(0xffffff);
             });
         });
     });

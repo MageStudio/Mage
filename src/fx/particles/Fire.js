@@ -68,7 +68,13 @@ export default class Fire extends ProtonParticleEmitter {
 
     rebuild() {
         const config = this.getParticleConfig();
-        const { texture, direction = { x: 0, y: 1, z: 0 }, size = 20, strength = 100, colors } = config;
+        const {
+            texture,
+            direction = { x: 0, y: 1, z: 0 },
+            size = 20,
+            strength = 100,
+            colors,
+        } = config;
         const dir = new Vector3(direction.x, direction.y, direction.z);
 
         this.rebuildSystem({

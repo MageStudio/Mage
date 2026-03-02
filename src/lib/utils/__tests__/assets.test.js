@@ -1,7 +1,6 @@
 import { buildAssetId, isLevelName } from "../assets";
 
 describe("assets.js", () => {
-
     describe("buildAssetId", () => {
         test("combines level and name with underscore", () => {
             expect(buildAssetId("model", "/level1")).toBe("/level1_model");

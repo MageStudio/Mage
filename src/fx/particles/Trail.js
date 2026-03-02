@@ -21,7 +21,12 @@ const getTrailBehaviour = () => [
 
 export default class Trail extends ParticleEmitterGroup {
     constructor(options = {}) {
-        const { texture = false, size = DEFAULT_SIZE, autoEmit = false, emitWhenEditing = false } = options;
+        const {
+            texture = false,
+            size = DEFAULT_SIZE,
+            autoEmit = false,
+            emitWhenEditing = false,
+        } = options;
 
         const system = [
             new ProtonParticleEmitter({

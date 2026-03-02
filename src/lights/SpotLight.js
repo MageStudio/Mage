@@ -203,7 +203,7 @@ export default class SpotLight extends Light {
 
         // Set to layer 1 ONLY so mirrors don't render light helpers
         // Disable depth test so helpers always render on top of sky/water
-        const setMaterialDepth = (material) => {
+        const setMaterialDepth = material => {
             if (!material) return;
             const mats = Array.isArray(material) ? material : [material];
             mats.forEach(mat => {
@@ -265,8 +265,33 @@ export default class SpotLight extends Light {
     }
 
     static create(data = {}) {
-        const { color, intensity, name, position, distance, angle, penumbra, decay, bias, mapSize, shadowCamera } = data;
+        const {
+            color,
+            intensity,
+            name,
+            position,
+            distance,
+            angle,
+            penumbra,
+            decay,
+            bias,
+            mapSize,
+            shadowCamera,
+        } = data;
         const { near, far } = shadowCamera || {};
-        return new SpotLight({ color, intensity, name, position, distance, angle, penumbra, decay, near, far, mapSize, bias });
+        return new SpotLight({
+            color,
+            intensity,
+            name,
+            position,
+            distance,
+            angle,
+            penumbra,
+            decay,
+            near,
+            far,
+            mapSize,
+            bias,
+        });
     }
 }

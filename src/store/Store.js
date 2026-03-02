@@ -1,14 +1,13 @@
 // creates the store
-import * as redux from 'redux';
-import thunk from 'redux-thunk';
+import * as redux from "redux";
+import thunk from "redux-thunk";
 
-import createRootReducer, * as DEFAULT_REDUCERS from './reducers';
+import createRootReducer, * as DEFAULT_REDUCERS from "./reducers";
 
-import { STORE_DOESNT_EXIST } from '../lib/messages';
-import { NOOP } from '../lib/functions';
+import { STORE_DOESNT_EXIST } from "../lib/messages";
+import { NOOP } from "../lib/functions";
 
-let store,
-    latestAction;
+let store, latestAction;
 
 let unsubscribe = NOOP;
 let subscribers = [];
@@ -17,20 +16,19 @@ const applyMiddlewares = (mdws, debug) => {
     if (debug) {
         return redux.compose(
             redux.applyMiddleware(...mdws),
-            window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f
+            window.__REDUX_DEVTOOLS_EXTENSION__ ? window.__REDUX_DEVTOOLS_EXTENSION__() : f => f,
         );
     }
     return redux.applyMiddleware(...mdws);
-}
+};
 
 const defaultMiddleware = () => [thunk];
 
-const combineReducers = (reducers = {}) => (
+const combineReducers = (reducers = {}) =>
     redux.combineReducers({
         ...reducers,
-        ...DEFAULT_REDUCERS
-    })
-);
+        ...DEFAULT_REDUCERS,
+    });
 
 export const getState = () => {
     if (store) {
@@ -42,14 +40,12 @@ export const getState = () => {
 
 export const getStore = () => store;
 
-const handleSubscriptions = (...args) => (
-    subscribers
-        .forEach((subscriber) => {
-            if (subscriber.onStateChange) {
-                subscriber.onStateChange(getState(), latestAction);
-            }
-        })
-)
+const handleSubscriptions = (...args) =>
+    subscribers.forEach(subscriber => {
+        if (subscriber.onStateChange) {
+            subscriber.onStateChange(getState(), latestAction);
+        }
+    });
 
 export const createStore = (reducers, initialState = {}, debug = false) => {
     const storeReducers = combineReducers(reducers);
@@ -58,7 +54,7 @@ export const createStore = (reducers, initialState = {}, debug = false) => {
         store = redux.createStore(
             createRootReducer(storeReducers),
             initialState,
-            applyMiddlewares(defaultMiddleware(), debug)
+            applyMiddlewares(defaultMiddleware(), debug),
         );
         unsubscribe = store.subscribe(handleSubscriptions);
     }
@@ -68,11 +64,11 @@ export const subscribe = subscriber => subscribers.push(subscriber);
 export const unsubscribeAll = () => {
     unsubscribe();
     subscribers = [];
-}
+};
 
-export const dispatch = (action) => {
+export const dispatch = action => {
     if (store && action) {
         store.dispatch(action);
         latestAction = action;
     }
-}
+};

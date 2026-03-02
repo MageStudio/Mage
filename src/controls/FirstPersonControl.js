@@ -3,31 +3,24 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import {
-    EventDispatcher,
-    Vector3,
-    Euler,
-    Raycaster,
-    Quaternion
-} from 'three';
+import { EventDispatcher, Vector3, Euler, Raycaster, Quaternion } from "three";
 
-import Scene from '../core/Scene';
-import { debounce } from '../lib/functions';
-import { PHYSICS_ELEMENT_MISSING } from '../lib/messages';
+import Scene from "../core/Scene";
+import { debounce } from "../lib/functions";
+import { PHYSICS_ELEMENT_MISSING } from "../lib/messages";
 
-import Physics from '../physics';
+import Physics from "../physics";
 
-const CHANGE_EVENT = { type: 'change' };
-const LOCK_EVENT = { type: 'lock' };
-const UNLOCK_EVENT = { type: 'unlock' };
+const CHANGE_EVENT = { type: "change" };
+const LOCK_EVENT = { type: "lock" };
+const UNLOCK_EVENT = { type: "unlock" };
 
 const PI_2 = Math.PI / 2;
 
 export default class FirstPersonControl extends EventDispatcher {
-
     constructor(camera, domElement, options = {}) {
         super();
-        
+
         const {
             close = 0,
             far = 1,
@@ -39,7 +32,7 @@ export default class FirstPersonControl extends EventDispatcher {
             height = 1.8,
             sensitivity = 0.002,
             target = null,
-            physicsEnabled = false
+            physicsEnabled = false,
         } = options;
 
         this.options = {
@@ -53,12 +46,16 @@ export default class FirstPersonControl extends EventDispatcher {
             mass,
             height,
             target,
-            physicsEnabled
+            physicsEnabled,
         };
 
         this.camera = camera;
         if (!target) {
-            this.camera.setPosition({ x: this.options.position.x, y: this.options.position.y + this.options.height, z: this.options.position.z});
+            this.camera.setPosition({
+                x: this.options.position.x,
+                y: this.options.position.y + this.options.height,
+                z: this.options.position.z,
+            });
         } else {
             this.camera.setPosition({ x: 0, y: this.options.height, z: 0 });
         }
@@ -68,7 +65,7 @@ export default class FirstPersonControl extends EventDispatcher {
         this.domElement = domElement || document.body;
         this.isLocked = false;
 
-        this.euler = new Euler( 0, 0, 0, 'YXZ' );
+        this.euler = new Euler(0, 0, 0, "YXZ");
         this.vector = new Vector3();
 
         // downwards raycaster, 0 is close, 10 is far
@@ -87,21 +84,21 @@ export default class FirstPersonControl extends EventDispatcher {
     }
 
     init() {
-        document.addEventListener('click', this.onClick.bind(this), false);
-        document.addEventListener('mousemove', this.onMouseMove.bind(this), false);
-        document.addEventListener('keydown', this.onKeyDown.bind(this), false);
-        document.addEventListener('keyup', this.onKeyUp.bind(this), false);
-        document.addEventListener('pointerlockchange', this.onPointerlockChange.bind(this), false);
-        document.addEventListener('pointerlockerror', this.onPointerlockError.bind(this), false);
+        document.addEventListener("click", this.onClick.bind(this), false);
+        document.addEventListener("mousemove", this.onMouseMove.bind(this), false);
+        document.addEventListener("keydown", this.onKeyDown.bind(this), false);
+        document.addEventListener("keyup", this.onKeyUp.bind(this), false);
+        document.addEventListener("pointerlockchange", this.onPointerlockChange.bind(this), false);
+        document.addEventListener("pointerlockerror", this.onPointerlockError.bind(this), false);
     }
 
     dispose() {
-        document.removeEventListener('click', this.onClick, false);
-        document.removeEventListener('mousemove', this.onMouseMove, false);
-        document.removeEventListener('keydown', this.onKeyDown, false);
-        document.removeEventListener('keyup', this.onKeyUp, false);
-        document.removeEventListener('pointerlockchange', this.onPointerlockChange, false);
-        document.removeEventListener('pointerlockerror', this.onPointerlockError, false);
+        document.removeEventListener("click", this.onClick, false);
+        document.removeEventListener("mousemove", this.onMouseMove, false);
+        document.removeEventListener("keydown", this.onKeyDown, false);
+        document.removeEventListener("keyup", this.onKeyUp, false);
+        document.removeEventListener("pointerlockchange", this.onPointerlockChange, false);
+        document.removeEventListener("pointerlockerror", this.onPointerlockError, false);
 
         this.unlock();
     }
@@ -111,15 +108,14 @@ export default class FirstPersonControl extends EventDispatcher {
     getCharacter() {
         // FirstPersonControl will either control a character or the camera.
         return this.character || this.camera;
-    };
+    }
 
     getDirection = (() => {
-        const direction = new Vector3(0, 0, - 1);
+        const direction = new Vector3(0, 0, -1);
 
-        return (v) => {
+        return v => {
             return v.copy(direction).applyQuaternion(this.camera.getQuaternion());
         };
-
     })();
 
     onClick() {
@@ -147,11 +143,11 @@ export default class FirstPersonControl extends EventDispatcher {
                 this.movement.right = true;
                 break;
             case 32: // space
-                if (this.canJump === true ) this.velocity.y += this.options.jumpSpeed;
+                if (this.canJump === true) this.velocity.y += this.options.jumpSpeed;
                 this.canJump = false;
                 break;
         }
-    };
+    }
 
     onKeyUp(event) {
         switch (event.keyCode) {
@@ -172,8 +168,7 @@ export default class FirstPersonControl extends EventDispatcher {
                 this.movement.right = false;
                 break;
         }
-    };
-
+    }
 
     onMouseMove(event) {
         if (!this.isLocked) return;
@@ -207,7 +202,7 @@ export default class FirstPersonControl extends EventDispatcher {
     }
 
     onPointerlockError(e) {
-        console.error('Unable to use Pointer Lock API', e);
+        console.error("Unable to use Pointer Lock API", e);
     }
 
     moveForward(distance) {
@@ -217,19 +212,19 @@ export default class FirstPersonControl extends EventDispatcher {
         this.vector.setFromMatrixColumn(body.matrix, 0);
         this.vector.crossVectors(body.up, this.vector);
         body.position.addScaledVector(this.vector, distance);
-    };
+    }
 
     moveRight(distance) {
         const body = this.getCharacter().getBody();
 
         this.vector.setFromMatrixColumn(body.matrix, 0);
         body.position.addScaledVector(this.vector, distance);
-    };
+    }
 
     moveUpAndDown(dt) {
         const position = this.getCharacter().getPosition();
 
-        position.y += (this.velocity.y * dt); // new behavior
+        position.y += this.velocity.y * dt; // new behavior
 
         if (position.y < this.options.height) {
             this.velocity.y = 0;
@@ -242,51 +237,53 @@ export default class FirstPersonControl extends EventDispatcher {
 
     lock() {
         this.domElement.requestPointerLock();
-    };
+    }
 
     unlock() {
         document.exitPointerLock();
-    };
+    }
 
     updateRaycasters = () => {
-        this.raycaster.ray.origin.copy( this.getCharacter().getPosition() );
+        this.raycaster.ray.origin.copy(this.getCharacter().getPosition());
         this.raycaster.ray.origin.y -= this.options.height;
 
-        this.headRaycaster.ray.origin.copy( this.getCharacter().getPosition() );
+        this.headRaycaster.ray.origin.copy(this.getCharacter().getPosition());
         this.headRaycaster.ray.origin.y += this.options.height;
-    }
+    };
 
     calculateCollisions = () => ({
         onObject: this.raycaster.intersectObjects(Scene.getChildren(), true).length > 0,
-        headCollision: this.headRaycaster.intersectObjects(Scene.getChildren(), true).length > 0
+        headCollision: this.headRaycaster.intersectObjects(Scene.getChildren(), true).length > 0,
     });
 
-    updateVelocity = (dt) => {
+    updateVelocity = dt => {
         this.velocity.x -= this.velocity.x * this.options.slowDownFactor * dt;
         this.velocity.z -= this.velocity.z * this.options.slowDownFactor * dt;
         this.velocity.y -= 9.8 * this.options.mass * dt; // 100.0 = mass
 
-        if ( this.movement.forward || this.movement.backwards ) this.velocity.z -= this.direction.z * this.options.speed * dt;
-        if ( this.movement.left || this.movement.right ) this.velocity.x -= this.direction.x * this.options.speed * dt;
-    }
+        if (this.movement.forward || this.movement.backwards)
+            this.velocity.z -= this.direction.z * this.options.speed * dt;
+        if (this.movement.left || this.movement.right)
+            this.velocity.x -= this.direction.x * this.options.speed * dt;
+    };
 
     updateDirection = () => {
-        this.direction.z = Number( this.movement.forward ) - Number( this.movement.backwards );
-        this.direction.x = Number( this.movement.right ) - Number( this.movement.left );
+        this.direction.z = Number(this.movement.forward) - Number(this.movement.backwards);
+        this.direction.x = Number(this.movement.right) - Number(this.movement.left);
         this.direction.normalize(); // this ensures consistent movements in all this.directions
-    }
+    };
 
     updateVelocityForCollisions = () => {
         this.updateRaycasters();
         const { onObject, headCollision } = this.calculateCollisions();
 
         if (onObject) {
-            this.velocity.y = Math.max( 0, this.velocity.y );
+            this.velocity.y = Math.max(0, this.velocity.y);
             this.canJump = true;
         } else if (headCollision && this.velocity.y > 0) {
             this.velocity.y = 0;
         }
-    }
+    };
 
     sendBodyUpdate() {
         const element = this.getCharacter();
@@ -298,29 +295,28 @@ export default class FirstPersonControl extends EventDispatcher {
                 direction: this.direction,
                 movement: this.movement,
                 quaternion: { x: 0, y, z: 0, w },
-                cameraDirection
+                cameraDirection,
             });
         } else {
             debounce(() => {
                 console.log(PHYSICS_ELEMENT_MISSING, element);
-            }, 3000)
+            }, 3000);
         }
     }
 
     update(dt) {
         if (this.isLocked) {
-
             this.updateDirection();
             this.updateVelocity(dt);
 
             if (!this.hasPhysicsEnabled()) {
                 this.updateVelocityForCollisions();
 
-                this.moveRight(- this.velocity.x * dt);
-                this.moveForward(- this.velocity.z * dt);
+                this.moveRight(-this.velocity.x * dt);
+                this.moveForward(-this.velocity.z * dt);
                 this.moveUpAndDown(dt);
             } else {
-                this.sendBodyUpdate()
+                this.sendBodyUpdate();
             }
         }
     }

@@ -269,9 +269,7 @@ describe("AnimationHandler", () => {
             const listener = jest.fn();
             handler.addEventListener("test", listener);
             handler.dispatchEvent({ type: "test" });
-            expect(listener).toHaveBeenCalledWith(
-                expect.objectContaining({ type: "test" }),
-            );
+            expect(listener).toHaveBeenCalledWith(expect.objectContaining({ type: "test" }));
         });
 
         test("removes event listeners", () => {

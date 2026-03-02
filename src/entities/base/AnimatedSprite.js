@@ -40,6 +40,6 @@ export default class AnimatedSprite extends Element {
     static create(data = {}) {
         const { width, height, spriteTexture, options } = data;
 
-        return new Sprite(width, height, spriteTexture, options);
+        return new AnimatedSprite(width, height, spriteTexture, options);
     }
 }

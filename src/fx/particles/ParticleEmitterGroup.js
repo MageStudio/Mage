@@ -1,5 +1,5 @@
 import { Object3D } from "three";
-import { EMITTER_NOT_FOUND } from "../../lib/messages";
+import { EMITTER_NOT_FOUND, ELEMENT_NOT_SET } from "../../lib/messages";
 import { PARTICLE_EMITTER_TYPES } from "./constants";
 import Entity from "../../entities/Entity";
 import { ENTITY_TYPES } from "../../entities/constants";
@@ -12,7 +12,12 @@ export default class ParticleEmitterGroup extends Entity {
     constructor(options = {}) {
         super({ tag: "particle " });
 
-        const { name = generateRandomName("EmitterGroup"), system, autoEmit = false, emitWhenEditing = false } = options;
+        const {
+            name = generateRandomName("EmitterGroup"),
+            system,
+            autoEmit = false,
+            emitWhenEditing = false,
+        } = options;
 
         this.options = {
             ...options,

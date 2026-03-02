@@ -1,14 +1,12 @@
-import {
-    RESET
-} from '../actions/types';
+import { RESET } from "../actions/types";
 
-export const createRootReducer = (combinedReducer) => (state, action) => {
+export const createRootReducer = combinedReducer => (state, action) => {
     switch (action.type) {
         case RESET:
             if (Object.keys(action.state).length > 0) {
                 return {
                     ...state,
-                    ...action.state
+                    ...action.state,
                 };
             } else {
                 return state;

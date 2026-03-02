@@ -1,7 +1,6 @@
 import { generateUUID, generateRandomName } from "../uuid";
 
 describe("uuid.js", () => {
-
     describe("generateUUID", () => {
         test("returns a string", () => {
             expect(typeof generateUUID()).toBe("string");

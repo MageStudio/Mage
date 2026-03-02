@@ -117,8 +117,8 @@ const resolveAssetPath = path => {
     if (path && path.includes(":") && !path.startsWith("/")) {
         console.warn(
             `[Mage] Asset path "${path}" contains a colon but MAGE_ASSETS_BASE_URL is not set. ` +
-            `This may cause the browser to interpret it as a protocol scheme. ` +
-            `Prepending "./" to make it a relative path.`
+                `This may cause the browser to interpret it as a protocol scheme. ` +
+                `Prepending "./" to make it a relative path.`,
         );
         return `./${path}`;
     }
@@ -142,10 +142,10 @@ const getLoaderFromExtension = (extension, options) => {
     return { tracer, loader };
 };
 
-const glbParser = (gltf) => {
+const glbParser = gltf => {
     // GLTF/GLB loader returns { scene, animations, ... }
     if (!gltf || !gltf.scene) {
-        console.error('[Mage] GLB parser received invalid GLTF object:', {
+        console.error("[Mage] GLB parser received invalid GLTF object:", {
             type: gltf?.constructor?.name,
             keys: gltf ? Object.keys(gltf) : [],
         });
@@ -167,10 +167,10 @@ const glbParser = (gltf) => {
         scene,
     };
 };
-const gltfParser = (gltf) => {
+const gltfParser = gltf => {
     // GLTF loader returns { scene, animations, ... }
     if (!gltf || !gltf.scene) {
-        console.error('[Mage] GLTF parser received invalid GLTF object:', {
+        console.error("[Mage] GLTF parser received invalid GLTF object:", {
             type: gltf?.constructor?.name,
             keys: gltf ? Object.keys(gltf) : [],
         });
@@ -187,8 +187,8 @@ const gltfParser = (gltf) => {
 };
 const defaultParser = scene => {
     // Validate the scene is a proper THREE.js object
-    if (!scene || typeof scene.traverse !== 'function') {
-        console.error('[Mage] Default parser received invalid scene object:', {
+    if (!scene || typeof scene.traverse !== "function") {
+        console.error("[Mage] Default parser received invalid scene object:", {
             type: scene?.constructor?.name,
             isObject3D: scene?.isObject3D,
             keys: scene ? Object.keys(scene) : [],
@@ -197,10 +197,10 @@ const defaultParser = scene => {
     }
     return { scene };
 };
-const colladaParser = (collada) => {
+const colladaParser = collada => {
     // Collada loader returns { animations, scene, ... }
     if (!collada || !collada.scene) {
-        console.error('[Mage] Collada parser received invalid object:', {
+        console.error("[Mage] Collada parser received invalid object:", {
             type: collada?.constructor?.name,
             keys: collada ? Object.keys(collada) : [],
         });
@@ -223,8 +223,8 @@ const colladaParser = (collada) => {
 };
 const fbxParser = scene => {
     // Validate the FBX loader returned a proper THREE.js object
-    if (!scene || typeof scene.traverse !== 'function') {
-        console.error('[Mage] FBX parser received invalid scene object:', {
+    if (!scene || typeof scene.traverse !== "function") {
+        console.error("[Mage] FBX parser received invalid scene object:", {
             type: scene?.constructor?.name,
             isObject3D: scene?.isObject3D,
             keys: scene ? Object.keys(scene) : [],
@@ -249,7 +249,7 @@ const getModelParserFromExtension = extension =>
         [EXTENSIONS.GLTF]: gltfParser,
         [EXTENSIONS.COLLADA]: colladaParser,
         [EXTENSIONS.FBX]: fbxParser,
-    }[extension] || defaultParser);
+    })[extension] || defaultParser;
 
 const hasAnimations = (animations = []) => animations.length > 0;
 
@@ -284,7 +284,9 @@ class Models extends EventDispatcher {
         const modelData = this.map[name] || this.map[builtAssetId];
 
         if (!modelData) {
-            console.warn(`[Mage] Model "${name}" not found in map. Available: ${Object.keys(this.map).join(', ')}`);
+            console.warn(
+                `[Mage] Model "${name}" not found in map. Available: ${Object.keys(this.map).join(", ")}`,
+            );
             return false;
         }
 
@@ -306,11 +308,16 @@ class Models extends EventDispatcher {
             if (node.isMesh) meshCount++;
             if (node.isSkinnedMesh) skinnedMeshCount++;
         });
-        console.log(`[Mage] Model "${name}" contains: ${meshCount} meshes, ${skinnedMeshCount} skinned meshes`);
+        console.log(
+            `[Mage] Model "${name}" contains: ${meshCount} meshes, ${skinnedMeshCount} skinned meshes`,
+        );
 
         // Validate that scene is a valid THREE.js object with required methods
-        if (!scene || typeof scene.clone !== 'function' || typeof scene.traverse !== 'function') {
-            console.warn(`[Mage] Model "${name}" has invalid scene object. Got:`, Object.keys(modelData));
+        if (!scene || typeof scene.clone !== "function" || typeof scene.traverse !== "function") {
+            console.warn(
+                `[Mage] Model "${name}" has invalid scene object. Got:`,
+                Object.keys(modelData),
+            );
             return false;
         }
 
@@ -332,7 +339,8 @@ class Models extends EventDispatcher {
 
         // Use SkeletonUtils.clone for models with skinned meshes OR animations
         // Regular clone() doesn't properly handle skeleton binding
-        const useSkeletonClone = extension !== EXTENSIONS.COLLADA && (hasAnimations(animations) || hasSkinnedMeshes);
+        const useSkeletonClone =
+            extension !== EXTENSIONS.COLLADA && (hasAnimations(animations) || hasSkinnedMeshes);
 
         try {
             if (useSkeletonClone) {
@@ -457,7 +465,10 @@ class Models extends EventDispatcher {
                 NOOP,
                 error => {
                     // Log error but resolve anyway to allow other assets to continue loading
-                    console.warn(`[Mage] Failed to load model "${name}" from ${resolvedPath}:`, error?.message || error);
+                    console.warn(
+                        `[Mage] Failed to load model "${name}" from ${resolvedPath}:`,
+                        error?.message || error,
+                    );
                     resolve(null);
                 },
             );
