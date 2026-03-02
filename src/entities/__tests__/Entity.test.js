@@ -12,7 +12,7 @@ jest.mock("../../scripts/Scripts", () => ({
     get: jest.fn(),
 }));
 jest.mock("../../core/Scene", () => ({}));
-jest.mock("../../core/Universe", () => ({
+jest.mock("../../core/universe", () => ({
     getByTag: jest.fn(() => []),
 }));
 jest.mock("../../lib/easing", () => ({
