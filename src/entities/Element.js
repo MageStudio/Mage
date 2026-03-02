@@ -21,6 +21,7 @@ import {
     COLLISION_EVENT,
     MATERIALS,
     MATERIAL_PROPERTIES_DEFAULT_VALUES,
+    MATERIAL_PROPERTIES_MAP,
     PROPERTIES,
     TEXTURES,
 } from "../lib/constants";
@@ -45,9 +46,7 @@ import {
     disposeGeometry,
     setUpLightsAndShadows,
     applyMaterialChange,
-    serializeColor,
     extractMaterialProperty,
-    serialiseMaterial,
 } from "../lib/meshUtils";
 import { isTextureMapAllowedForMaterial } from "../materials/helpers";
 import { generateRandomName } from "../lib/uuid";
@@ -247,7 +246,7 @@ export default class Element extends Entity {
         }
     }
 
-    stopAnimation() {
+    stopCurrentAnimation() {
         if (!this.hasAnimations()) return;
 
         if (this.hasAnimationHandler()) {
@@ -267,6 +266,108 @@ export default class Element extends Entity {
         }
 
         return [];
+    }
+
+    /**
+     * Crossfade from current animation to a new animation
+     * @param {string|number} id - Target animation name or index
+     * @param {Object} options - Blend options
+     * @param {number} options.blendDuration - Duration of the crossfade (default: 0.3)
+     * @param {number} options.loop - Loop mode (LoopRepeat, LoopOnce)
+     * @param {number} options.timeScale - Playback speed (1 = normal)
+     * @param {boolean} options.warp - Whether to warp time scales during blend
+     */
+    crossFadeTo(id, options = {}) {
+        if (!this.hasAnimations()) return;
+
+        if (this.hasAnimationHandler()) {
+            return this.animationHandler.crossFadeTo(id, options);
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+        }
+    }
+
+    /**
+     * Stop an animation. If no id is provided, stops the current animation.
+     * @param {string|number} [id] - Animation name or index (optional)
+     * @param {number} fadeOutDuration - Duration to fade out (0 for immediate)
+     */
+    stopAnimation(id, fadeOutDuration = 0) {
+        if (!this.hasAnimations()) return;
+
+        if (this.hasAnimationHandler()) {
+            // If no id provided, stop the current animation
+            if (id === undefined || id === null) {
+                this.animationHandler.stopCurrentAnimation();
+            } else {
+                this.animationHandler.stopAnimation(id, fadeOutDuration);
+            }
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+        }
+    }
+
+    /**
+     * Set the weight of an animation for layered blending
+     * @param {string|number} id - Animation name or index
+     * @param {number} weight - Weight value (0-1)
+     * @param {number} fadeDuration - Optional fade duration
+     */
+    setAnimationWeight(id, weight, fadeDuration = 0) {
+        if (!this.hasAnimations()) return;
+
+        if (this.hasAnimationHandler()) {
+            this.animationHandler.setAnimationWeight(id, weight, fadeDuration);
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+        }
+    }
+
+    /**
+     * Set the playback speed of an animation
+     * @param {string|number} id - Animation name or index
+     * @param {number} timeScale - Speed multiplier (1 = normal, 2 = double speed)
+     */
+    setAnimationTimeScale(id, timeScale) {
+        if (!this.hasAnimations()) return;
+
+        if (this.hasAnimationHandler()) {
+            this.animationHandler.setAnimationTimeScale(id, timeScale);
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+        }
+    }
+
+    /**
+     * Get the duration of an animation clip
+     * @param {string|number} id - Animation name or index
+     * @returns {number} Duration in seconds
+     */
+    getAnimationDuration(id) {
+        if (!this.hasAnimations()) return 0;
+
+        if (this.hasAnimationHandler()) {
+            return this.animationHandler.getAnimationDuration(id);
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+            return 0;
+        }
+    }
+
+    /**
+     * Check if a specific animation is currently playing
+     * @param {string|number} id - Animation name or index
+     * @returns {boolean}
+     */
+    isAnimationPlaying(id) {
+        if (!this.hasAnimations()) return false;
+
+        if (this.hasAnimationHandler()) {
+            return this.animationHandler.isAnimationPlaying(id);
+        } else {
+            console.warn(ANIMATION_HANDLER_NOT_FOUND);
+            return false;
+        }
     }
 
     /**
@@ -961,23 +1062,64 @@ export default class Element extends Entity {
         Physics.disposeElement(this);
     }
 
+    /**
+     * Serialize only the material properties that the Importer actually uses.
+     * This avoids bloating the JSON with full Three.js material data.
+     */
+    serializeMaterialProperties() {
+        const materialType = this.getMaterialType();
+        // Use allowed properties for known material types, or fallback to STANDARD properties
+        // which has the most comprehensive set
+        const allowedProperties = MATERIAL_PROPERTIES_MAP[materialType]
+            || MATERIAL_PROPERTIES_MAP[MATERIALS.STANDARD]
+            || [];
+        const materials = this.getMaterials();
+
+        if (!materials.length) return [];
+
+        return materials.map(material => {
+            const serialized = {
+                // Always include the material type for the inspector
+                type: material.type,
+            };
+            for (const prop of allowedProperties) {
+                if (material[prop] !== undefined) {
+                    const value = material[prop];
+                    // Serialize Color objects to plain objects
+                    if (value && value.isColor) {
+                        serialized[prop] = { r: value.r, g: value.g, b: value.b };
+                    } else if (value && value.isVector2) {
+                        serialized[prop] = { x: value.x, y: value.y };
+                    } else {
+                        serialized[prop] = value;
+                    }
+                }
+            }
+            return serialized;
+        });
+    }
+
     toJSON(parseJSON = false) {
         if (this.isSerializable()) {
             const color = this.getColor();
             return {
                 ...super.toJSON(parseJSON),
+                // Physics options (state is not used by Importer, only options)
                 physics: {
-                    state: serializeMap(this.getPhysicsState()),
                     options: this.getPhysicsOptions(),
                 },
-                // body: this.body.toJSON(),
+                // Textures with serialized map
                 textures: serializeMap(this.textures),
+                // Material type name (e.g., "STANDARD", "BASIC")
                 materialType: this.getMaterialType(),
-                materials: this.getMaterials().map(serialiseMaterial),
-                // no need to have geometry, for basic entities we can build from the type
-                // models have a reference to the model itself
+                // Lightweight material properties (type + allowed properties only)
+                materials: this.serializeMaterialProperties(),
+                // Opacity
                 opacity: this.opacity,
-                color: parseJSON ? serializeColor(color) : color,
+                // Color (for inspector display)
+                color: parseJSON ? { r: color?.r, g: color?.g, b: color?.b } : color,
+                // Animation names (for inspector display - actual animations loaded from model file)
+                animations: this.getAvailableAnimations(),
             };
         }
     }

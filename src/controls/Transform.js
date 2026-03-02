@@ -380,6 +380,18 @@ export default class TransformControls extends Object3D {
 
         this.object = element.getBody();
         this.visible = true;
+
+        // Force immediate matrix world update to ensure gizmo position is correct
+        // This is especially important for skinned meshes where the matrix may not be current
+        if (this.object) {
+            this.object.updateMatrixWorld(true);
+        }
+    }
+
+    // Update matrix world for skinned meshes after transform changes
+    updateSkinnedMeshSkeletons() {
+        if (!this.object) return;
+        this.object.updateMatrixWorld(true);
     }
 
     detach() {
@@ -902,6 +914,10 @@ export default class TransformControls extends Object3D {
                 object.quaternion.multiply(this._quaternionStart);
             }
         }
+
+        // Update skinned mesh skeletons after transform
+        this.updateSkinnedMeshSkeletons();
+
         this.dispatchEvent(this.changeEvent);
         this.dispatchEvent(this.objectChangeEvent);
     };

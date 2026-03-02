@@ -147,6 +147,9 @@ const glbParser = (gltf) => {
         if (object.isMesh) {
             object.castShadow = true;
         }
+        if (object.isSkinnedMesh) {
+            object.frustumCulled = false;
+        }
     });
 
     return {
@@ -163,6 +166,13 @@ const gltfParser = (gltf) => {
         });
         return null;
     }
+
+    gltf.scene.traverse(node => {
+        if (node.isSkinnedMesh) {
+            node.frustumCulled = false;
+        }
+    });
+
     return { scene: gltf.scene, animations: gltf.animations };
 };
 const defaultParser = scene => {
@@ -214,6 +224,7 @@ const fbxParser = scene => {
 
     scene.traverse(node => {
         if (node.isSkinnedMesh) {
+            node.frustumCulled = false;
             processMaterial(node.material, material => (material.skinning = true));
         }
     });
@@ -269,6 +280,24 @@ class Models extends EventDispatcher {
 
         const { scene, animations, extension } = modelData;
 
+        // Debug: Log model structure
+        console.log(`[Mage] Creating model "${name}":`, {
+            hasScene: !!scene,
+            sceneType: scene?.type,
+            childrenCount: scene?.children?.length,
+            animations: animations?.length || 0,
+            extension,
+        });
+
+        // Debug: Check for meshes in the scene
+        let meshCount = 0;
+        let skinnedMeshCount = 0;
+        scene?.traverse?.(node => {
+            if (node.isMesh) meshCount++;
+            if (node.isSkinnedMesh) skinnedMeshCount++;
+        });
+        console.log(`[Mage] Model "${name}" contains: ${meshCount} meshes, ${skinnedMeshCount} skinned meshes`);
+
         // Validate that scene is a valid THREE.js object with required methods
         if (!scene || typeof scene.clone !== 'function' || typeof scene.traverse !== 'function') {
             console.warn(`[Mage] Model "${name}" has invalid scene object. Got:`, Object.keys(modelData));
@@ -282,7 +311,18 @@ class Models extends EventDispatcher {
         };
 
         let model;
-        const useSkeletonClone = extension !== EXTENSIONS.COLLADA && hasAnimations(animations);
+
+        // Check if the scene contains any skinned meshes
+        let hasSkinnedMeshes = false;
+        scene.traverse(node => {
+            if (node.isSkinnedMesh) {
+                hasSkinnedMeshes = true;
+            }
+        });
+
+        // Use SkeletonUtils.clone for models with skinned meshes OR animations
+        // Regular clone() doesn't properly handle skeleton binding
+        const useSkeletonClone = extension !== EXTENSIONS.COLLADA && (hasAnimations(animations) || hasSkinnedMeshes);
 
         try {
             if (useSkeletonClone) {
@@ -315,6 +355,18 @@ class Models extends EventDispatcher {
 
         if (hasAnimations(animations)) {
             element.addAnimationHandler(animations);
+        }
+
+        // Debug: Log element body info
+        const body = element.getBody?.();
+        if (body) {
+            console.log(`[Mage] Element "${name}" body:`, {
+                type: body.type,
+                visible: body.visible,
+                position: body.position?.toArray?.(),
+                scale: body.scale?.toArray?.(),
+                childrenCount: body.children?.length,
+            });
         }
 
         return element;
