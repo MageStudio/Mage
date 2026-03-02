@@ -607,6 +607,9 @@ export default class Entity extends EventDispatcher {
             const sz = Number(scale.z) || 1;
 
             this.body.scale.set(sx, sy, sz);
+
+            // Update matrix world for all children including skinned meshes
+            this.getBody().updateMatrixWorld(true);
         }
     }
 
@@ -624,6 +627,14 @@ export default class Entity extends EventDispatcher {
         const qw = Number(w) || 1;
 
         this.getBody().quaternion.set(qx, qy, qz, qw);
+
+        // Update matrix world and skeleton for skinned meshes
+        this.getBody().updateMatrixWorld(true);
+        this.getBody().traverse(child => {
+            if (child.isSkinnedMesh && child.skeleton) {
+                child.skeleton.update();
+            }
+        });
     };
 
     getPosition() {
@@ -646,6 +657,18 @@ export default class Entity extends EventDispatcher {
             const pz = Number(position.z) || 0;
 
             this.getBody().position.set(px, py, pz);
+
+            // Update matrix world to ensure skinned mesh skeletons follow the parent transform
+            this.getBody().updateMatrixWorld(true);
+
+            // For skinned meshes, we need to rebind the skeleton after position change
+            // The bindMatrix captures where the mesh was when bound, so we need to update it
+            this.getBody().traverse(child => {
+                if (child.isSkinnedMesh && child.skeleton) {
+                    // Rebind with current matrix to update the bind pose
+                    child.bind(child.skeleton, child.matrixWorld);
+                }
+            });
         }
     }
 
@@ -669,6 +692,9 @@ export default class Entity extends EventDispatcher {
             const rz = Number(rotation.z) || 0;
 
             this.getBody().rotation.set(rx, ry, rz);
+
+            // Update matrix world for all children including skinned meshes
+            this.getBody().updateMatrixWorld(true);
         }
     }
 
@@ -688,6 +714,14 @@ export default class Entity extends EventDispatcher {
         const { position, quaternion } = worldTransform;
         this.getBody().setWorldPosition(position);
         this.getBody().setWorldQuaternion(quaternion);
+
+        // Update matrix world and skeleton for skinned meshes
+        this.getBody().updateMatrixWorld(true);
+        this.getBody().traverse(child => {
+            if (child.isSkinnedMesh && child.skeleton) {
+                child.skeleton.update();
+            }
+        });
     }
 
     translate({ x = 0, y = 0, z = 0 }) {
@@ -695,6 +729,9 @@ export default class Entity extends EventDispatcher {
             this.body.translateX(x);
             this.body.translateY(y);
             this.body.translateZ(z);
+
+            // Update matrix world for all children including skinned meshes
+            this.getBody().updateMatrixWorld(true);
         }
     }
 
