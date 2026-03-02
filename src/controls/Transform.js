@@ -188,7 +188,7 @@ export default class TransformControls extends Object3D {
         return this.getPrivateField("object");
     }
 
-    enabled(value) {
+    set enabled(value) {
         this.setAndDispatch("enabled", value);
     }
     get enabled() {
@@ -899,8 +899,8 @@ export default class TransformControls extends Object3D {
             // Apply this.rotation snap
             if (this.rotationSnap)
                 this.rotationAngle =
-                    Math.round(this.rotationAngle / this.this.rotationSnap) *
-                    this.this.rotationSnap;
+                    Math.round(this.rotationAngle / this.rotationSnap) *
+                    this.rotationSnap;
             // Apply rotate
             if (space === "local") {
                 object.quaternion.copy(this._quaternionStart);

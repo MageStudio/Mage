@@ -13,3 +13,4 @@ dist/mage.node.js
 
 **/.DS_Store
 
+coverage/

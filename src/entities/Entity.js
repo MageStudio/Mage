@@ -12,6 +12,7 @@ import {
     ENTITY_CANT_ADD_NOT_ENTITY,
     ENTITY_NOT_SET,
     ENTITY_SUBTYPE_NOT_ALLOWED,
+    ELEMENT_NAME_NOT_PROVIDED,
     DEPRECATIONS,
 } from "../lib/messages";
 import Scripts from "../scripts/Scripts";
@@ -712,8 +713,8 @@ export default class Entity extends EventDispatcher {
 
     setWorldTransform(worldTransform) {
         const { position, quaternion } = worldTransform;
-        this.getBody().setWorldPosition(position);
-        this.getBody().setWorldQuaternion(quaternion);
+        this.getBody().position.copy(position);
+        this.getBody().quaternion.copy(quaternion);
 
         // Update matrix world and skeleton for skinned meshes
         this.getBody().updateMatrixWorld(true);

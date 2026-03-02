@@ -15,6 +15,7 @@ import { ROOT } from "../lib/constants";
 import { ASSETS_MODEL_LOAD_FAIL, DEPRECATIONS } from "../lib/messages";
 import { NOOP } from "../lib/functions";
 import RequirementsTracer, { REQUIREMENTS_EVENTS } from "../loaders/RequirementsTracer";
+import ColladaLoader from "../loaders/ColladaLoader";
 
 const EXTENSIONS = {
     JSON: "json",
@@ -22,6 +23,7 @@ const EXTENSIONS = {
     GLTF: "gltf",
     FBX: "fbx",
     OBJ: "obj",
+    COLLADA: "dae",
 };
 
 const FULL_STOP = ".";
@@ -36,12 +38,20 @@ const DEFAULTbuildObjectLoader = () => {
     };
 };
 
+const buildColladaLoader = () => {
+    const tracer = new RequirementsTracer();
+    const loader = new ColladaLoader();
+    loader.setOptions = () => {};
+    return { tracer, loader };
+};
+
 const loaders = {
     [EXTENSIONS.JSON]: DEFAULTbuildObjectLoader,
     [EXTENSIONS.GLB]: buildGLTFLoader,
     [EXTENSIONS.GLTF]: buildGLTFLoader,
     [EXTENSIONS.FBX]: buildFBXLoader,
     [EXTENSIONS.OBJ]: buildOBJMTLLoader,
+    [EXTENSIONS.COLLADA]: buildColladaLoader,
 };
 
 /**
