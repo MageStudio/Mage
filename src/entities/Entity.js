@@ -17,7 +17,7 @@ import {
 } from "../lib/messages";
 import Scripts from "../scripts/Scripts";
 import Scene from "../core/Scene";
-import Universe from "../core/Universe";
+import Universe from "../core/universe";
 
 import { isScene, serializeQuaternion, serializeVector } from "../lib/meshUtils";
 

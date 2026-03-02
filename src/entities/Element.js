@@ -25,7 +25,7 @@ import {
     PROPERTIES,
     TEXTURES,
 } from "../lib/constants";
-import Universe from "../core/Universe";
+import Universe from "../core/universe";
 import Physics from "../physics";
 import { DEFAULT_ANGULAR_VELOCITY, DEFAULT_LINEAR_VELOCITY } from "../physics/constants";
 

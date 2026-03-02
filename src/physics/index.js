@@ -1,7 +1,7 @@
 import {
     EventDispatcher
 } from 'three';
-import Universe from '../core/Universe';
+import Universe from '../core/universe';
 import Config from '../core/config';
 import PhysicsWorker from 'worker:./worker';
 
