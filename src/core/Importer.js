@@ -436,13 +436,16 @@ export class Importer {
                 // Add to Scene.elements so it appears in hierarchy
                 Scene.add(gameCamera.getBody(), gameCamera);
 
-                // Also apply to the scene's rendering camera (for deployed games)
-                const sceneCamera = Scene.getCamera();
-                if (cameraData.position) sceneCamera.setPosition(cameraData.position);
-                if (cameraData.rotation) sceneCamera.setRotation(cameraData.rotation);
-                if (cameraData.fov) sceneCamera.setFov(cameraData.fov);
-                if (cameraData.near) sceneCamera.setNear(cameraData.near);
-                sceneCamera.setFar(cameraFar);
+                // Optionally apply game camera settings to the scene's rendering camera.
+                // Callers can set options.applyToSceneCamera = false to keep the scene camera unchanged.
+                if (options.applyToSceneCamera !== false) {
+                    const sceneCamera = Scene.getCamera();
+                    if (cameraData.position) sceneCamera.setPosition(cameraData.position);
+                    if (cameraData.rotation) sceneCamera.setRotation(cameraData.rotation);
+                    if (cameraData.fov) sceneCamera.setFov(cameraData.fov);
+                    if (cameraData.near) sceneCamera.setNear(cameraData.near);
+                    sceneCamera.setFar(cameraFar);
+                }
             }
         }
 
