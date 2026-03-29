@@ -353,6 +353,16 @@ class Models extends EventDispatcher {
             return false;
         }
 
+        // Reset root transform inherited from FBX/model file.
+        // The FBXLoader applies the file's internal root node transforms (position, rotation)
+        // to the scene graph, which then becomes the Element body. This causes models to
+        // appear at the FBX authoring position instead of the origin. The entity's own
+        // position/rotation (set by the Importer or editor) should be the sole determinant
+        // of where the model appears in the scene.
+        model.position.set(0, 0, 0);
+        model.rotation.set(0, 0, 0);
+        model.quaternion.identity();
+
         // Validate the cloned model
         const preparedBody = prepareModel(model);
 
