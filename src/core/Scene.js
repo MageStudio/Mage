@@ -69,7 +69,15 @@ export class Scene {
     add(body, element, addUniverse = true) {
         this.scene.add(body);
         if (element) {
-            this.elements.push(element);
+            // Prevent duplicate entries in elements array (same element instance
+            // or same body UUID). Duplicates can occur from double-renders, HMR,
+            // or race conditions between Importer and ensure* methods.
+            const alreadyExists = this.elements.some(
+                e => e === element || (e.hasBody() && e.getBody().uuid === body.uuid),
+            );
+            if (!alreadyExists) {
+                this.elements.push(element);
+            }
         }
 
         if (addUniverse) {
@@ -82,14 +90,24 @@ export class Scene {
         // Only include camera in hierarchy if it's serializable (scene camera is not)
         const cameraChildren =
             camera && camera.isSerializable() ? [camera.getHierarchy(options)] : [];
+
+        // Deduplicate elements by UUID to prevent showing the same element twice
+        // in the hierarchy (can happen from race conditions or double-adds)
+        const seenUUIDs = new Set();
+        const deduplicatedElements = this.elements.filter(e => {
+            if (!e.hasBody()) return false;
+            const uuid = e.getBody().uuid;
+            if (seenUUIDs.has(uuid)) return false;
+            seenUUIDs.add(uuid);
+            return !e.hasParent() && !e.isHelper() && e.isSerializable();
+        });
+
         return [
             {
                 element: this.toJSON(options.parseJSON),
                 children: [
                     ...cameraChildren,
-                    ...this.elements
-                        .filter(e => !e.hasParent() && !e.isHelper() && e.isSerializable())
-                        .map(e => e.getHierarchy(options)),
+                    ...deduplicatedElements.map(e => e.getHierarchy(options)),
                 ],
             },
         ];
