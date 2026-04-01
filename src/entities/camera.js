@@ -213,6 +213,21 @@ export default class Camera extends Entity {
 
     toJSON(parseJSON = false) {
         if (this.isSerializable()) {
+            // Sync position from holder before serializing to ensure the
+            // serialized position matches the holder (which the user drags).
+            // Without this, the camera body can lag the holder by one frame.
+            if (this.hasHolder()) {
+                const holderBody = this.holder.getBody();
+                this.setPosition(
+                    {
+                        x: holderBody.position.x,
+                        y: holderBody.position.y,
+                        z: holderBody.position.z,
+                    },
+                    { updateHolder: false },
+                );
+            }
+
             return {
                 ...super.toJSON(parseJSON),
                 fov: this.getFov(),
