@@ -18,6 +18,7 @@ export const CONTROL_EVENTS = {
     TRANSFORM: {
         CHANGE: `${CONTROLS.TRANSFORM}:CHANGE`,
         DRAGGING_CHANGE: `${CONTROLS.TRANSFORM}:DRAGGING_CHANGE`,
+        DRAG_END: `${CONTROLS.TRANSFORM}:DRAG_END`,
     },
 };
 
@@ -109,6 +110,14 @@ export class Controls extends EventDispatcher {
             if (this.controls[CONTROLS.ORBIT]) {
                 this.controls[CONTROLS.ORBIT].enabled = !event.value;
             }
+        });
+
+        // Dispatch a dedicated drag-end event when the transform interaction finishes
+        control.addEventListener("mouseUp", () => {
+            this.dispatchEvent({
+                type: CONTROL_EVENTS.TRANSFORM.DRAG_END,
+                element: Universe.find(control.object),
+            });
         });
 
         this.controls[CONTROLS.TRANSFORM] = control;
