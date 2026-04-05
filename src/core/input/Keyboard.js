@@ -19,6 +19,7 @@ export default class Keyboard extends EventDispatcher {
         super();
 
         this.combos = [];
+        this.pressedKeys = new Set();
 
         this.enabled = false;
     }
@@ -42,6 +43,7 @@ export default class Keyboard extends EventDispatcher {
     };
 
     handleKeydown = event => {
+        this.pressedKeys.add(event.key.toLowerCase());
         this.dispatchEvent({
             type: KEY_DOWN,
             event,
@@ -49,6 +51,7 @@ export default class Keyboard extends EventDispatcher {
     };
 
     handleKeyup = event => {
+        this.pressedKeys.delete(event.key.toLowerCase());
         this.dispatchEvent({
             type: KEY_UP,
             event,
@@ -76,6 +79,7 @@ export default class Keyboard extends EventDispatcher {
 
     disable() {
         this.enabled = false;
+        this.pressedKeys.clear();
 
         hotkeys.unbind();
         window.removeEventListener(KEY_DOWN.toLowerCase(), this.handleKeydown.bind(this));
@@ -84,7 +88,6 @@ export default class Keyboard extends EventDispatcher {
     }
 
     isPressed(key) {
-        console.log(key, hotkeys.getPressedKeyCodes());
-        return hotkeys.isPressed(key);
+        return this.pressedKeys.has(key.toLowerCase());
     }
 }
