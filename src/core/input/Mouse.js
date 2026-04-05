@@ -3,7 +3,7 @@ import { DEFAULT_TAG } from "../../entities/constants";
 
 import Config from "../config";
 import Scene from "../Scene";
-import Universe from "../Universe";
+import Universe from "../universe";
 
 export const MOUSE_DOWN = "mouseDown";
 export const MOUSE_UP = "mouseUp";

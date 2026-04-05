@@ -44,7 +44,7 @@ import Water from "../fx/materials/Water";
 import MirrorElement from "../fx/materials/MirrorElement";
 import Element from "../entities/Element";
 import { Object3D } from "three";
-import Universe from "./Universe";
+import Universe from "./universe";
 import Images from "../images/Images";
 import Scene from "./Scene";
 

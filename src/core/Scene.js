@@ -1,4 +1,4 @@
-import Universe from "./Universe";
+import Universe from "./universe";
 import Config from "./config";
 import { getWindow } from "./window";
 import { Clock, Scene as THREEScene, WebGLRenderer, FogExp2, LinearToneMapping } from "three";
