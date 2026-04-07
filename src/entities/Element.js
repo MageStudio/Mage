@@ -57,6 +57,8 @@ const COLLIDER_TAG = "collider";
 const DEFAULT_COLLIDER_OFFSET = { x: 0, y: 0, z: 0 };
 const DEFAULT_PHYSICS_OPTIONS = {
     applyPhysicsUpdate: true,
+    mass: 0,
+    colliderType: "BOX",
 };
 
 export default class Element extends Entity {
@@ -424,7 +426,7 @@ export default class Element extends Entity {
             z: Number(velocity?.z) || 0,
         };
         this.angularVelocity = numericVelocity;
-        Physics.updateAngularVelocity(this.uuid(), numericVelocity);
+        console.warn("[Mage] setAngularVelocity: Physics.setAngularVelocity not yet implemented");
     }
 
     getLinearVelocity() {
@@ -438,7 +440,7 @@ export default class Element extends Entity {
             z: Number(velocity?.z) || 0,
         };
         this.linearVelocity = numericVelocity;
-        Physics.updateLinearVelocity(this.uuid(), numericVelocity);
+        Physics.setLinearVelocity(this, numericVelocity);
     }
 
     hasRayColliders = () => this.colliders.length > 0;

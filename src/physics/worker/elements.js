@@ -208,6 +208,18 @@ export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
     }
 };
 
+export const setQuaternion = data => {
+    const { uuid, quaternion } = data;
+    const { body } = world.getElement(uuid);
+
+    const transform = new Ammo.btTransform();
+    body.getWorldTransform(transform);
+    transform.setRotation(
+        new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
+    );
+    body.setWorldTransform(transform);
+};
+
 export const handleElementUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
     const motionState = body.getMotionState();
 

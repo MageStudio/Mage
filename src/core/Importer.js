@@ -190,6 +190,11 @@ export class Importer {
                 });
             }
         }
+
+        // enable physics if options were configured
+        if (elementData.physics?.options) {
+            element.enablePhysics(elementData.physics.options);
+        }
     }
 
     static completeLightCreation(light, lightData, options) {

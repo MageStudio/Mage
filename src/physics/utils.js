@@ -75,7 +75,7 @@ export const extractBiggestBoundingSphere = body => {
     const spheres = [];
     body.traverse(child => {
         if (child.geometry) {
-            spheres.push(extractBoundingBox(child));
+            spheres.push(extractBoundingSphere(child));
         }
     });
 

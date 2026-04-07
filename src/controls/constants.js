@@ -3,6 +3,7 @@ export const CONTROLS = {
     TRANSFORM: "CONTROLS:TRANSFORM",
     FPS: "CONTROLS:FPS",
     FLY: "CONTROLS:FLY",
+    TPS: "CONTROLS:TPS",
 };
 
 export const AVAILABLE_CONTROLS = Object.keys(CONTROLS);

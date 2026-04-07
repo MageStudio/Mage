@@ -10,18 +10,17 @@ export const addPlayer = data => {
     const capsule = new Ammo.btCapsuleShape(width, height);
     const body = createRigidBody(capsule, { uuid, position, quaternion, mass, friction });
 
-    // disabliing rotation for collisions
+    // disabling rotation for collisions
     body.setAngularFactor(0);
 
-    world.addRigidBody(body);
     world.addElement({ uuid, body, type: TYPES.PLAYER, state: DEFAULT_RIGIDBODY_STATE });
 };
 
 export const handlePlayerUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
-    const { movement, direction, cameraDirection, quaternion, position } = state;
+    const { movement, cameraDirection } = state;
 
-    const MAX_SPEED = 1;
-    const walkVelocity = 0.1;
+    const MAX_SPEED = 5;
+    const walkVelocity = 5.0;
 
     const motionState = body.getMotionState();
 
@@ -32,30 +31,41 @@ export const handlePlayerUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE
         const linearVelocity = body.getLinearVelocity();
         const speed = linearVelocity.length();
 
-        const forwardDir = transform.getBasis().getRow(2);
-        forwardDir.normalize();
-        const walkDirection = new Ammo.btVector3(0.0, 0.0, 0.0);
-
         const walkSpeed = walkVelocity * dt;
 
-        if (movement.forward) {
-            walkDirection.setX(walkDirection.x() + forwardDir.x());
-            //walkDirection.setY( walkDirection.y() + forwardDir.y());
-            walkDirection.setZ(walkDirection.z() + forwardDir.z());
-        }
+        const isMoving = movement.forward || movement.backwards || movement.left || movement.right;
 
-        if (movement.backwards) {
-            walkDirection.setX(walkDirection.x() - forwardDir.x());
-            //walkDirection.setY( walkDirection.y() - forwardDir.y());
-            walkDirection.setZ(walkDirection.z() - forwardDir.z());
-        }
-
-        if (!movement.forward && !movement.backwards) {
+        if (!isMoving) {
+            // apply damping when not moving
             linearVelocity.setX(linearVelocity.x() * 0.2);
             linearVelocity.setZ(linearVelocity.z() * 0.2);
         } else if (speed < MAX_SPEED) {
-            linearVelocity.setX(linearVelocity.x() + cameraDirection.x * walkSpeed);
-            linearVelocity.setZ(linearVelocity.z() + cameraDirection.z * walkSpeed);
+            // camera-relative movement direction
+            let moveX = 0;
+            let moveZ = 0;
+
+            // forward/backward along camera direction
+            if (movement.forward) {
+                moveX += cameraDirection.x;
+                moveZ += cameraDirection.z;
+            }
+            if (movement.backwards) {
+                moveX -= cameraDirection.x;
+                moveZ -= cameraDirection.z;
+            }
+
+            // strafe left/right using perpendicular camera vector
+            if (movement.left) {
+                moveX += cameraDirection.z;
+                moveZ -= cameraDirection.x;
+            }
+            if (movement.right) {
+                moveX -= cameraDirection.z;
+                moveZ += cameraDirection.x;
+            }
+
+            linearVelocity.setX(linearVelocity.x() + moveX * walkSpeed);
+            linearVelocity.setZ(linearVelocity.z() + moveZ * walkSpeed);
         }
 
         body.setLinearVelocity(linearVelocity);

@@ -298,7 +298,17 @@ export class Physics extends EventDispatcher {
         }
     };
 
-    setElementQuaternion = (element, quaternion) => {};
+    setElementQuaternion = (element, quaternion) => {
+        if (Config.physics().enabled) {
+            const uuid = element.uuid();
+
+            this.worker.postMessage({
+                event: PHYSICS_EVENTS.ELEMENT.SET.QUATERNION,
+                uuid,
+                quaternion,
+            });
+        }
+    };
 
     resetElement = (element, position, quaternion) => {
         if (Config.physics().enabled) {
