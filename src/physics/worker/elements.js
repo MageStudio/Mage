@@ -180,6 +180,11 @@ export const setPosition = data => {
     transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
 
     body.setWorldTransform(transform);
+    // Also update motion state so static bodies (mass=0) reflect the change
+    const motionState = body.getMotionState();
+    if (motionState) {
+        motionState.setWorldTransform(transform);
+    }
 };
 
 export const resetElement = data => {
@@ -195,6 +200,11 @@ export const resetElement = data => {
     );
 
     body.setWorldTransform(transform);
+    // Also update motion state so static bodies (mass=0) reflect the change
+    const motionState = body.getMotionState();
+    if (motionState) {
+        motionState.setWorldTransform(transform);
+    }
 };
 
 export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
@@ -218,6 +228,11 @@ export const setQuaternion = data => {
         new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
     );
     body.setWorldTransform(transform);
+    // Also update motion state so static bodies (mass=0) reflect the change
+    const motionState = body.getMotionState();
+    if (motionState) {
+        motionState.setWorldTransform(transform);
+    }
 };
 
 export const handleElementUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {

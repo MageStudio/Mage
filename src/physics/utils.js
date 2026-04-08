@@ -28,6 +28,13 @@ const DEFAULT_SPHERE_DESCRIPTION = {
     collider: COLLIDER_TYPES.SPHERE,
 };
 
+const DEFAULT_PLAYER_DESCRIPTION = {
+    ...DEFAULT_DESCRIPTION,
+    width: 0.5,
+    height: 1.8,
+    collider: COLLIDER_TYPES.PLAYER,
+};
+
 export const mapColliderTypeToAddEvent = type =>
     ({
         [COLLIDER_TYPES.BOX]: PHYSICS_EVENTS.ADD.BOX,
@@ -149,10 +156,16 @@ export const getSphereDescriptionForElement = element => ({
     ...extractSphereDescription(element),
 });
 
+export const getPlayerDescriptionForElement = element => ({
+    ...DEFAULT_PLAYER_DESCRIPTION,
+    ...extractBoxDescription(element),
+});
+
 export const mapColliderTypeToDescription = (colliderType = COLLIDER_TYPES.BOX) =>
     ({
         [COLLIDER_TYPES.BOX]: getBoxDescriptionForElement,
         [COLLIDER_TYPES.SPHERE]: getSphereDescriptionForElement,
+        [COLLIDER_TYPES.PLAYER]: getPlayerDescriptionForElement,
     })[colliderType] || getBoxDescriptionForElement;
 
 export const iterateGeometries = (function () {

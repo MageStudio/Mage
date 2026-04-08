@@ -69,6 +69,8 @@ export default class ThirdPersonControl extends EventDispatcher {
         this.characterQuaternion = new Quaternion();
         this.characterYaw = 0;
         this.hasMovementInput = false;
+        this.wantsJump = false;
+        this.spaceHeld = false;
     }
 
     init() {
@@ -175,8 +177,12 @@ export default class ThirdPersonControl extends EventDispatcher {
                 this.movement.right = true;
                 break;
             case 32: // space
-                if (this.canJump === true) this.velocity.y += this.options.jumpSpeed;
-                this.canJump = false;
+                if (!this.spaceHeld && this.canJump) {
+                    this.velocity.y += this.options.jumpSpeed;
+                    this.wantsJump = true;
+                    this.canJump = false;
+                }
+                this.spaceHeld = true;
                 break;
         }
     }
@@ -198,6 +204,9 @@ export default class ThirdPersonControl extends EventDispatcher {
             case 39: // right
             case 68: // d
                 this.movement.right = false;
+                break;
+            case 32: // space
+                this.spaceHeld = false;
                 break;
         }
     }
@@ -304,7 +313,9 @@ export default class ThirdPersonControl extends EventDispatcher {
     updateVelocity(dt) {
         this.velocity.x -= this.velocity.x * this.options.slowDownFactor * dt;
         this.velocity.z -= this.velocity.z * this.options.slowDownFactor * dt;
-        this.velocity.y -= 9.8 * this.options.mass * dt;
+
+        // Gravity is acceleration (9.8 m/s²), not force — mass is irrelevant here
+        this.velocity.y -= 9.8 * dt;
 
         if (this.movement.forward || this.movement.backwards)
             this.velocity.z -= this.direction.z * this.options.speed * dt;
@@ -350,12 +361,23 @@ export default class ThirdPersonControl extends EventDispatcher {
             const cameraDirection = this.getCameraForwardXZ();
             const { y, w } = this.characterQuaternion;
 
-            Physics.updateBodyState(element, {
+            const state = {
                 direction: this.direction,
                 movement: this.movement,
                 quaternion: { x: 0, y, z: 0, w },
                 cameraDirection,
-            });
+                speed: this.options.speed * 2,
+                walkSpeed: this.options.speed,
+            };
+
+            // Send jump impulse if requested
+            if (this.wantsJump) {
+                state.jump = true;
+                state.jumpSpeed = this.options.jumpSpeed;
+                this.wantsJump = false;
+            }
+
+            Physics.updateBodyState(element, state);
         } else {
             debounce(() => {
                 console.log(PHYSICS_ELEMENT_MISSING, element);
@@ -364,7 +386,31 @@ export default class ThirdPersonControl extends EventDispatcher {
     }
 
     // Required by Controls.onPhysicsUpdate()
-    physicsUpdate() {}
+    // Called AFTER handlePhysicsUpdate runs on all elements,
+    // so we can safely override the quaternion that physics reset.
+    physicsUpdate() {
+        if (this.hasPhysicsEnabled() && this.character) {
+            // Re-enable jumping when grounded AND space is released
+            const grounded = this.character.getPhysicsState("grounded");
+            if (grounded && !this.spaceHeld) {
+                this.canJump = true;
+            }
+
+            // Apply visual rotation after physics has overwritten it.
+            // Physics uses angularFactor=0 so the body never rotates;
+            // we drive rotation visually from the control input.
+            if (this.hasMovementInput) {
+                const body = this.character.getBody();
+                body.quaternion.set(
+                    this.characterQuaternion.x,
+                    this.characterQuaternion.y,
+                    this.characterQuaternion.z,
+                    this.characterQuaternion.w,
+                );
+                body.updateMatrixWorld(true);
+            }
+        }
+    }
 
     // --- Main Update Loop ---
 
@@ -384,13 +430,6 @@ export default class ThirdPersonControl extends EventDispatcher {
         // Always position camera relative to character
         if (this.character) {
             this.updateCameraPosition();
-
-            // Override character quaternion with facing direction.
-            // Physics only controls position (angularFactor=0),
-            // so visual rotation is driven by the control.
-            if (this.hasPhysicsEnabled() && this.hasMovementInput) {
-                this.character.setQuaternion(this.characterQuaternion);
-            }
         }
     }
 }

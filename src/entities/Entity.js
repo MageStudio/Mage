@@ -623,7 +623,7 @@ export default class Entity extends EventDispatcher {
         }
     }
 
-    setQuaternion = ({ x, y, z, w }) => {
+    setQuaternion({ x, y, z, w }) {
         // Ensure values are numbers (not strings) to prevent rendering issues
         const qx = Number(x) || 0;
         const qy = Number(y) || 0;
@@ -639,7 +639,7 @@ export default class Entity extends EventDispatcher {
                 child.skeleton.update();
             }
         });
-    };
+    }
 
     getPosition() {
         return this.getBody().position.clone();

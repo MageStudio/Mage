@@ -1038,9 +1038,37 @@ export default class Element extends Entity {
         }
     };
 
+    setPosition(where) {
+        super.setPosition(where);
+        if (Physics.hasElement(this)) {
+            Physics.setElementPosition(this, this.getPosition());
+        }
+    }
+
+    setRotation(how) {
+        super.setRotation(how);
+        if (Physics.hasElement(this)) {
+            const quaternion = this.getQuaternion();
+            Physics.setElementQuaternion(this, {
+                x: quaternion.x,
+                y: quaternion.y,
+                z: quaternion.z,
+                w: quaternion.w,
+            });
+        }
+    }
+
+    setQuaternion({ x, y, z, w }) {
+        super.setQuaternion({ x, y, z, w });
+        if (Physics.hasElement(this)) {
+            Physics.setElementQuaternion(this, { x, y, z, w });
+        }
+    }
+
     handlePhysicsUpdate = ({ position, quaternion, ...data }) => {
-        this.setPosition(position);
-        this.setQuaternion(quaternion);
+        // Call super directly to update Three.js without routing back to physics
+        super.setPosition(position);
+        super.setQuaternion(quaternion);
         this.setPhysicsState(data);
     };
 
