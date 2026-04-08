@@ -88,31 +88,38 @@ export class GameRunner {
 
             if (loading) {
                 this.getCurrentLevel().prepareScene();
-                this.getCurrentLevel().init();
-                storage
-                    .load()
-                    .then(Importer.parseLevelData)
+                this.getCurrentLevel()
+                    .init()
                     .then(() => {
-                        if (this.getCurrentLevel().onStart instanceof Function) {
-                            this.getCurrentLevel().onStart();
-                        }
-                        resolve(this.getCurrentLevel());
+                        storage
+                            .load()
+                            .then(Importer.parseLevelData)
+                            .then(() => {
+                                if (this.getCurrentLevel().onStart instanceof Function) {
+                                    this.getCurrentLevel().onStart();
+                                }
+                                resolve(this.getCurrentLevel());
+                            })
+                            .catch(reject);
                     });
             } else {
                 Physics.waitForState(PHYSICS_STATES.READY).then(() => {
                     this.getCurrentLevel().prepareScene();
-                    this.getCurrentLevel().init();
-
-                    const levelData = config.getLevelData(this.getCurrentLevel().getPath()) || {};
-
-                    Importer.importLevelSnapshot(levelData)
+                    this.getCurrentLevel()
+                        .init()
                         .then(() => {
-                            if (this.getCurrentLevel().onStart instanceof Function) {
-                                this.getCurrentLevel().onStart();
-                            }
-                            resolve(this.getCurrentLevel());
-                        })
-                        .catch(reject);
+                            const levelData =
+                                config.getLevelData(this.getCurrentLevel().getPath()) || {};
+
+                            Importer.importLevelSnapshot(levelData)
+                                .then(() => {
+                                    if (this.getCurrentLevel().onStart instanceof Function) {
+                                        this.getCurrentLevel().onStart();
+                                    }
+                                    resolve(this.getCurrentLevel());
+                                })
+                                .catch(reject);
+                        });
                 });
             }
         });

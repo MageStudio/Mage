@@ -2,6 +2,7 @@ import Scene from "../core/Scene";
 import Orbit from "./Orbit";
 import Transform from "./Transform";
 import FirstPersonControl from "./FirstPersonControl";
+import ThirdPersonControl from "./ThirdPersonControl";
 import FlyControl from "./FlyControl";
 import { EventDispatcher, Vector3 } from "three";
 import { DEPRECATIONS } from "../lib/messages";
@@ -30,6 +31,7 @@ export class Controls extends EventDispatcher {
             [CONTROLS.TRANSFORM]: undefined,
             [CONTROLS.FPS]: undefined,
             [CONTROLS.FLY]: undefined,
+            [CONTROLS.TPS]: undefined,
         };
     }
 
@@ -72,7 +74,7 @@ export class Controls extends EventDispatcher {
     }
 
     setOrbitControls({ target = new Vector3() } = {}) {
-        this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY]);
+        this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY, CONTROLS.TPS]);
         this.controls[CONTROLS.ORBIT] = new Orbit(Scene.getCameraBody(), Scene.getDOMElement());
         this.controls[CONTROLS.ORBIT].init();
         this.controls[CONTROLS.ORBIT].setTarget(target);
@@ -131,6 +133,7 @@ export class Controls extends EventDispatcher {
     }
 
     setFirstPersonControls(options) {
+        this.disposePreviousControls([CONTROLS.TPS, CONTROLS.FLY, CONTROLS.ORBIT]);
         this.controls[CONTROLS.FPS] = new FirstPersonControl(
             Scene.getCamera(),
             Scene.getDOMElement(),
@@ -139,6 +142,18 @@ export class Controls extends EventDispatcher {
         this.controls[CONTROLS.FPS].init();
 
         return this.controls[CONTROLS.FPS];
+    }
+
+    setThirdPersonControls(options) {
+        this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY, CONTROLS.ORBIT]);
+        this.controls[CONTROLS.TPS] = new ThirdPersonControl(
+            Scene.getCamera(),
+            Scene.getDOMElement(),
+            options,
+        );
+        this.controls[CONTROLS.TPS].init();
+
+        return this.controls[CONTROLS.TPS];
     }
 
     setFlyControl(options) {

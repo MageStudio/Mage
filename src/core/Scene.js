@@ -10,6 +10,7 @@ import { mapShadowTypeToShadowMap } from "../lights/utils";
 import { DEFAULT_OUTPUT_ENCODING, OUTPUT_ENCODINGS } from "../lib/constants";
 import Physics from "../physics";
 import { PHYSICS_EVENTS } from "../physics/messages";
+import Controls from "../controls/Controls";
 import { ENTITY_TYPES } from "../entities/constants";
 export class Scene {
     constructor() {
@@ -328,6 +329,7 @@ export class Scene {
     onPhysicsUpdate = ({ dt }) => {
         Universe.onPhysicsUpdate(dt);
         this.getCamera().onPhysicsUpdate(dt);
+        Controls.onPhysicsUpdate(dt);
     };
 
     toJSON(parseJSON = false) {

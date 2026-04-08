@@ -114,7 +114,7 @@ export class World {
     };
 
     simulate = () => {
-        const dt = this.clock.getDelta();
+        const dt = this.clock.getDelta() / 1000;
         this.stepSimulation(dt);
 
         Object.keys(this.elements).forEach(uuid => {

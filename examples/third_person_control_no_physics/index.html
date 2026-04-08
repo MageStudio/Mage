@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/M.css" />
+    <link rel="stylesheet" href="../css/app.css" />
+    <style>
+        #instructions {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-family: 'Bangers', sans-serif;
+            font-size: 18px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 12px 24px;
+            border-radius: 8px;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+    <script type="module" src="index.js"></script>
+</head>
+
+<body>
+    <div id="instructions">
+        Click to enable mouse look | WASD to move | Space to jump<br>
+        <small>(No physics - simple gravity simulation)</small>
+    </div>
+    <div id="gameContainer" />
+</body>
+
+</html>

@@ -43,7 +43,7 @@ const DEFAULT_CONFIG = {
 
     physics: {
         enabled: false,
-        path: "./mage.physics.js",
+        path: "./ammo.js",
     },
 
     camera: {
