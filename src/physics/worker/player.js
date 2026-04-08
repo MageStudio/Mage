@@ -9,7 +9,11 @@ export const addPlayer = data => {
 
     const capsule = new Ammo.btCapsuleShape(width, height);
     const body = createRigidBody(capsule, {
-        uuid, position, quaternion, mass, friction,
+        uuid,
+        position,
+        quaternion,
+        mass,
+        friction,
         restitution: 0, // no bouncing for player characters
         damping: { linear: 0, angular: 0 }, // we handle damping ourselves
     });
@@ -43,7 +47,8 @@ export const handlePlayerUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE
         state.jump = false;
     }
 
-    const isMoving = movement && (movement.forward || movement.backwards || movement.left || movement.right);
+    const isMoving =
+        movement && (movement.forward || movement.backwards || movement.left || movement.right);
 
     const linearVelocity = body.getLinearVelocity();
     const currentY = linearVelocity.y(); // preserve vertical velocity (gravity + jump)
@@ -53,14 +58,29 @@ export const handlePlayerUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE
         let moveX = 0;
         let moveZ = 0;
 
-        if (movement.forward) { moveX += cameraDirection.x; moveZ += cameraDirection.z; }
-        if (movement.backwards) { moveX -= cameraDirection.x; moveZ -= cameraDirection.z; }
-        if (movement.left) { moveX += cameraDirection.z; moveZ -= cameraDirection.x; }
-        if (movement.right) { moveX -= cameraDirection.z; moveZ += cameraDirection.x; }
+        if (movement.forward) {
+            moveX += cameraDirection.x;
+            moveZ += cameraDirection.z;
+        }
+        if (movement.backwards) {
+            moveX -= cameraDirection.x;
+            moveZ -= cameraDirection.z;
+        }
+        if (movement.left) {
+            moveX += cameraDirection.z;
+            moveZ -= cameraDirection.x;
+        }
+        if (movement.right) {
+            moveX -= cameraDirection.z;
+            moveZ += cameraDirection.x;
+        }
 
         // Normalize direction
         const len = Math.sqrt(moveX * moveX + moveZ * moveZ);
-        if (len > 0) { moveX /= len; moveZ /= len; }
+        if (len > 0) {
+            moveX /= len;
+            moveZ /= len;
+        }
 
         // Set horizontal velocity directly for responsive movement
         linearVelocity.setX(moveX * characterSpeed);
