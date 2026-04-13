@@ -403,15 +403,10 @@ export default class Element extends Entity {
     }
 
     enablePhysics(options = {}) {
-        const { mass } = options;
         this.setPhysicsOptions(options);
 
         if (Config.physics().enabled) {
-            if (this.isModel() && mass === 0) {
-                Physics.addModel(this, options);
-            } else {
-                Physics.add(this, options);
-            }
+            Physics.add(this, options);
         }
     }
 

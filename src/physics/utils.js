@@ -1,4 +1,4 @@
-import { Matrix4, Vector3 } from "three";
+import { Box3, Matrix4, Vector3 } from "three";
 import { PHYSICS_EVENTS } from "./messages";
 
 import { getSphereVolume } from "../lib/math";
@@ -124,6 +124,9 @@ export const extractPositionAndQuaternion = element => {
     };
 };
 
+// Original bounding-box path — uses the pre-computed element.boundingBox
+// which comes from evaluateBoundingBox() during postBodyCreation().
+// Reliable for individual elements whose bounding box is already computed.
 export const extractBoxDescription = element => {
     const scale = element.getScale();
     const size = parseBoundingBoxSize(element.boundingBox);
@@ -137,6 +140,30 @@ export const extractBoxDescription = element => {
     };
 };
 
+// World-space AABB path — uses Box3.setFromObject() to compute the full
+// bounding box of the entire object hierarchy including child transforms.
+// More accurate for imported models whose geometry may be offset from the
+// element origin, but can produce unexpected results for complex hierarchies.
+const extractWorldBoxDescription = element => {
+    const body = element.getBody();
+    const worldBox = new Box3().setFromObject(body);
+    const worldSize = new Vector3();
+    worldBox.getSize(worldSize);
+
+    // Fall back to the legacy path if the world box is degenerate.
+    if (worldSize.x === 0 && worldSize.y === 0 && worldSize.z === 0) {
+        return extractBoxDescription(element);
+    }
+
+    return {
+        width: worldSize.x,
+        height: worldSize.y,
+        length: worldSize.z,
+        size: { x: worldSize.x, y: worldSize.y, z: worldSize.z },
+        ...extractPositionAndQuaternion(element),
+    };
+};
+
 export const extractSphereDescription = element => {
     const radius = element.boundingSphere.radius;
 
@@ -146,9 +173,11 @@ export const extractSphereDescription = element => {
     };
 };
 
+// Static box colliders use the world-space AABB so imported models get
+// correctly sized colliders even when their geometry is offset.
 export const getBoxDescriptionForElement = element => ({
     ...DEFAULT_BOX_DESCRIPTION,
-    ...extractBoxDescription(element),
+    ...extractWorldBoxDescription(element),
 });
 
 export const getSphereDescriptionForElement = element => ({

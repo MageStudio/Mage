@@ -45,11 +45,32 @@ export const getExplosionPosition = (uuid, position) => {
 };
 
 export const getExplosionImpulse = (position, explosionPosition, strength) => {
-    const distance = position.op_sub(explosionPosition);
-    distance.normalize();
-    const impulse = distance.op_mul(strength);
+    // Calculate direction vector WITHOUT mutating the input btVector3 objects.
+    // op_sub/op_mul mutate in place in Ammo.js, which would corrupt the body's transform origin.
+    const dx = position.x() - explosionPosition.x();
+    const dy = position.y() - explosionPosition.y();
+    const dz = position.z() - explosionPosition.z();
 
-    impulse.setY(impulse.y() + strength);
+    let length = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+    // If the object is at the explosion center, push it straight up instead of
+    // producing an unstable near-zero normalization.
+    if (length < 0.001) {
+        const impulse = new Ammo.btVector3(0, strength * 2, 0);
+        return impulse;
+    }
+
+    // Normalize direction
+    const nx = dx / length;
+    const ny = dy / length;
+    const nz = dz / length;
+
+    // Scale by strength and add upward bias
+    const impulse = new Ammo.btVector3(
+        nx * strength,
+        ny * strength + strength,
+        nz * strength,
+    );
 
     return impulse;
 };
@@ -61,21 +82,42 @@ export const createExplosion = ({
     strength = EXPLOSION_STRENGTHS.MEDIUM,
 }) => {
     try {
+        // Get the source body's Ammo pointer so we can reliably skip it.
+        // Ammo.castObject() creates new JS wrappers, so custom properties like
+        // .uuid set on the original wrapper are NOT available on cast results.
+        // We compare the underlying C++ pointer instead.
+        const sourceElement = world.getElement(uuid);
+        const sourceBodyPtr = sourceElement && sourceElement.body
+            ? (sourceElement.body.a || sourceElement.body.ptr)
+            : null;
+
         const explosionPosition = getExplosionPosition(uuid, position);
         const { ghostCollider, transform } = createGhostCollider(radius, explosionPosition);
 
         world.addCollisionObject(ghostCollider);
 
+        // Force a collision detection pass so the ghost collider discovers
+        // overlapping bodies. Without this, getNumOverlappingObjects() returns 0
+        // because btGhostPairCallback only updates during a simulation step.
+        world.getDynamicsWorld().performDiscreteCollisionDetection();
+
         forEachGhostCollision(ghostCollider, (object, objectTransform) => {
+            // Skip the source entity using pointer comparison.
+            const objectPtr = object.a || object.ptr;
+            if (sourceBodyPtr && objectPtr === sourceBodyPtr) return;
+
             const origin = objectTransform.getOrigin();
             object.activate(true);
-            object.applyCentralImpulse(getExplosionImpulse(origin, explosionPosition, strength));
+
+            const impulse = getExplosionImpulse(origin, explosionPosition, strength);
+            object.applyCentralImpulse(impulse);
+            Ammo.destroy(impulse);
         });
 
         world.getDynamicsWorld().removeCollisionObject(ghostCollider);
         Ammo.destroy(ghostCollider);
         Ammo.destroy(transform);
     } catch (e) {
-        console.log(e);
+        console.error("[Physics Worker] createExplosion error:", e);
     }
 };
