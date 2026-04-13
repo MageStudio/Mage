@@ -216,17 +216,6 @@ export class Physics extends EventDispatcher {
                 ...options,
             };
 
-            console.log("[Physics.add]", element.getName?.() || uuid, {
-                colliderType,
-                collider: description.collider,
-                event: mapColliderTypeToAddEvent(description.collider),
-                mass: description.mass,
-                width: description.width,
-                height: description.height,
-                length: description.length,
-                position: description.position,
-            });
-
             this.storeElement(element, options);
 
             this.worker.postMessage({

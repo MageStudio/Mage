@@ -11,11 +11,6 @@ export const addPlayer = data => {
     // radius so the capsule wraps the bounding box correctly.
     const radius = width * 0.5;
     const totalHeight = height + 2 * radius;
-    console.log("[Player Physics] capsule dimensions:", {
-        inputWidth: width, inputHeight: height,
-        capsuleRadius: radius, cylinderHeight: height, totalHeight,
-        position, mass, friction, originOffset,
-    });
     const capsule = new Ammo.btCapsuleShape(radius, height);
 
     // Always create the player body upright (identity quaternion).

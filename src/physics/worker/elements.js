@@ -141,8 +141,6 @@ export const addModel = options => {
 export const addBox = data => {
     const { uuid, width, length, height, position, quaternion, mass = 0, friction = 2 } = data;
 
-    console.log("[Box Physics] dimensions:", { width, height, length, position, mass });
-
     const geometry = new Ammo.btBoxShape(
         new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5),
     );
