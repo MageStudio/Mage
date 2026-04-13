@@ -220,7 +220,7 @@ export default class OutlineEffect {
         this.renderer.shadowMap.enabled = currentShadowMapEnabled;
     }
 
-    render(scene, camera, dt) {
+    render(scene, camera, _dt) {
         let renderTarget;
         let forceClear = false;
 

@@ -31,7 +31,7 @@ export class Features {
             window.mozRequestAnimationFrame ||
             window.oRequestAnimationFrame ||
             window.msRequestAnimationFrame ||
-            function (callback, element) {
+            function (callback, _element) {
                 window.setTimeout(callback, 1000 / frameRate);
             };
     }
@@ -111,7 +111,7 @@ export class Features {
                     name: FEATURES.WEBGL,
                 };
             }
-        } catch (e) {
+        } catch {
             return {
                 success: false,
                 name: FEATURES.WEBGL,
@@ -134,7 +134,7 @@ export class Features {
                     name: FEATURES.WEBAUDIOAPI,
                 };
             }
-        } catch (e) {
+        } catch {
             return {
                 success: false,
                 name: FEATURES.WEBAUDIOAPI,
@@ -157,7 +157,7 @@ export class Features {
                     name: FEATURES.WEBWORKER,
                 };
             }
-        } catch (e) {
+        } catch {
             return {
                 success: false,
                 name: FEATURES.WEBWORKER,
@@ -170,13 +170,13 @@ export class Features {
             let xhr = null;
             try {
                 xhr = new XMLHttpRequest();
-            } catch (e) {}
+            } catch {}
             try {
                 xhr = new ActiveXObject("Microsoft.XMLHTTP");
-            } catch (e) {}
+            } catch {}
             try {
                 xhr = new ActiveXObject("Msxml2.XMLHTTP");
-            } catch (e) {}
+            } catch {}
 
             if (xhr) {
                 return {
@@ -189,7 +189,7 @@ export class Features {
                     name: FEATURES.AJAX,
                 };
             }
-        } catch (e) {
+        } catch {
             return {
                 success: false,
                 name: FEATURES.AJAX,
@@ -215,7 +215,7 @@ export class Features {
                     name: FEATURES.GAMEPADAPI,
                 };
             }
-        } catch (e) {
+        } catch {
             return {
                 success: false,
                 name: FEATURES.GAMEPADAPI,
@@ -241,7 +241,7 @@ export class Features {
                     name: FEATURES.MEMORY,
                 };
             }
-        } catch (e) {
+        } catch {
             return {
                 success: false,
                 name: FEATURES.MEMORY,

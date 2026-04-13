@@ -40,10 +40,6 @@ export default class SpotLight extends Light {
         this.setName(name);
     }
 
-    hasTarget() {
-        return true;
-    }
-
     setLight({
         light,
         color = WHITE,

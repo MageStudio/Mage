@@ -800,7 +800,7 @@ export default class Entity extends EventDispatcher {
     equals(entity) {
         try {
             return entity.uuid ? this.uuid() === entity.uuid() : false;
-        } catch (e) {
+        } catch {
             return false;
         }
     }

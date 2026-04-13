@@ -44,7 +44,6 @@ export const isScene = mesh => mesh.isScene;
 
 export const notAScene = mesh => !mesh.isScene;
 
-const isMeshOrSkinnedMesh = mesh => mesh.isMesh || mesh.isSkinnedMesh;
 export const hasMaterial = mesh => Boolean(mesh.material);
 export const hasGeometry = mesh => Boolean(mesh.geometry);
 export const hasTexture = mesh => hasMaterial(mesh) && mesh.material.map;

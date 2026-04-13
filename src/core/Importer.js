@@ -1,6 +1,5 @@
 import { fetch } from "whatwg-fetch";
 import { getWindow } from "./window";
-import env from "../env";
 import {
     Line,
     Cube,
@@ -157,7 +156,7 @@ export class Importer {
                     try {
                         // Pass the relative assetPath - resolveAssetPath in Images will add the base URL
                         await Images.loadAssetByPath(assetPath, id, Images.currentLevel);
-                    } catch (e) {
+                    } catch {
                         console.warn(`[Mage] Failed to load texture: ${id} from ${assetPath}`);
                     }
                 }

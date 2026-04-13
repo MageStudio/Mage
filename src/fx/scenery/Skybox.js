@@ -1,6 +1,6 @@
-import { CubeTexture, RGBFormat, MeshBasicMaterial, BoxGeometry, BackSide } from "three";
+import { MeshBasicMaterial, BoxGeometry, BackSide } from "three";
 
-import { generateRandomName, generateUUID } from "../../lib/uuid";
+import { generateRandomName } from "../../lib/uuid";
 import Images from "../../images/Images";
 import Element from "../../entities/Element";
 import { ENTITY_TYPES } from "../../entities/constants";

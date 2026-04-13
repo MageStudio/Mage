@@ -1,5 +1,5 @@
 import hotkeys from "hotkeys-js";
-import { KEYBOARD_COMBO_ALREADY_REGISTERED, KEYBOARD_COMBO_IS_INVALID } from "../../lib/messages";
+import { KEYBOARD_COMBO_IS_INVALID } from "../../lib/messages";
 
 import { EventDispatcher } from "three";
 

@@ -208,13 +208,25 @@ export const resetElement = data => {
 };
 
 export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
-    const { body } = world.getElement(uuid);
-    const motionState = body.getMotionState();
+    try {
+        const element = world.getElement(uuid);
+        if (!element) {
+            console.warn("[Physics Worker] applyImpulse: element not found for uuid:", uuid);
+            return;
+        }
+        const { body } = element;
+        if (!body) {
+            console.warn("[Physics Worker] applyImpulse: body is null for uuid:", uuid);
+            return;
+        }
 
-    if (motionState) {
-        const impulseVector = new Ammo.btVector3(impulse.x, impulse.y, impulse.z);
-        body.applyCentralImpulse(impulseVector);
-        Ammo.destroy(impulseVector);
+        body.activate(true);
+
+        const btImpulse = new Ammo.btVector3(impulse.x, impulse.y, impulse.z);
+        body.applyCentralImpulse(btImpulse);
+        Ammo.destroy(btImpulse);
+    } catch (e) {
+        console.error("[Physics Worker] applyImpulse error:", e);
     }
 };
 
@@ -235,7 +247,14 @@ export const setQuaternion = data => {
     }
 };
 
-export const handleElementUpdate = ({ body, uuid, state = DEFAULT_RIGIDBODY_STATE }, dt) => {
+export const handleElementUpdate = (
+    { body, uuid, state: _state = DEFAULT_RIGIDBODY_STATE },
+    dt,
+) => {
+    // Static bodies (mass=0) never move — skip sending updates so the
+    // visual position stays exactly where the author placed it.
+    if (body.isStaticObject()) return;
+
     const motionState = body.getMotionState();
 
     if (motionState) {

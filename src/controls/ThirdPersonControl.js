@@ -1,10 +1,11 @@
 import { EventDispatcher, Vector3, Euler, Quaternion, MathUtils } from "three";
 
-import Scene from "../core/Scene";
 import { debounce } from "../lib/functions";
 import { PHYSICS_ELEMENT_MISSING } from "../lib/messages";
 
-import Physics from "../physics";
+import Physics, { PHYSICS_CONSTANTS } from "../physics";
+
+const { COLLIDER_TYPES } = PHYSICS_CONSTANTS;
 
 const CHANGE_EVENT = { type: "change" };
 const LOCK_EVENT = { type: "lock" };
@@ -16,32 +17,39 @@ export default class ThirdPersonControl extends EventDispatcher {
 
         const {
             distance = 5,
-            heightOffset = 2,
+            // cameraHeight: how far above the character the camera sits
+            cameraHeight = options.heightOffset ?? 2,
             sensitivity = 0.002,
             target = null,
             physicsEnabled = false,
             speed = 2,
             jumpSpeed = 2,
             mass = 100,
-            height = 1.8,
+            // groundLevel: the Y coordinate of the floor (non-physics mode only)
+            groundLevel = options.height ?? 0.5,
             slowDownFactor = 20,
             minPolarAngle = 0.1,
             maxPolarAngle = Math.PI / 2 - 0.1,
+            // originOffset: offset from the model origin to the desired capsule
+            // centre.  Adjust this if the character sinks into or floats above
+            // the ground.  Positive Y moves the capsule up relative to the model.
+            originOffset = { x: 0, y: 0, z: 0 },
         } = options;
 
         this.options = {
             distance,
-            heightOffset,
+            cameraHeight,
             sensitivity,
             target,
             physicsEnabled,
             speed,
             jumpSpeed,
             mass,
-            height,
+            groundLevel,
             slowDownFactor,
             minPolarAngle,
             maxPolarAngle,
+            originOffset,
         };
 
         this.camera = camera;
@@ -61,9 +69,8 @@ export default class ThirdPersonControl extends EventDispatcher {
         this.movement.right = false;
         this.canJump = false;
 
-        // For non-physics mode
+        // For non-physics mode (gravity/jump only — horizontal movement is direct)
         this.velocity = new Vector3();
-        this.direction = new Vector3();
 
         // Character facing direction (Y-axis rotation only)
         this.characterQuaternion = new Quaternion();
@@ -87,6 +94,31 @@ export default class ThirdPersonControl extends EventDispatcher {
         document.addEventListener("keyup", this._onKeyUp, false);
         document.addEventListener("pointerlockchange", this._onPointerlockChange, false);
         document.addEventListener("pointerlockerror", this._onPointerlockError, false);
+
+        // In non-physics mode, use the character's starting Y as ground level
+        // when no explicit value was provided, so it doesn't free-fall on start.
+        if (!this.hasPhysicsEnabled() && this.character) {
+            const startY = this.character.getPosition().y;
+            if (this.options.groundLevel === 0.5 && startY > 1) {
+                this.options.groundLevel = startY;
+            }
+            // Start grounded so the first jump works
+            this.canJump = true;
+        }
+
+        if (this.hasPhysicsEnabled() && this.character) {
+            this.addCharacterToPhysics();
+        }
+    }
+
+    addCharacterToPhysics() {
+        if (!Physics.hasElement(this.character)) {
+            this.character.enablePhysics({
+                colliderType: COLLIDER_TYPES.PLAYER,
+                mass: this.options.mass,
+                originOffset: this.options.originOffset,
+            });
+        }
     }
 
     dispose() {
@@ -129,6 +161,19 @@ export default class ThirdPersonControl extends EventDispatcher {
         } else {
             this.dispatchEvent(UNLOCK_EVENT);
             this.isLocked = false;
+
+            // Clear movement flags so the physics worker stops applying velocity.
+            this.movement.forward = false;
+            this.movement.backwards = false;
+            this.movement.left = false;
+            this.movement.right = false;
+            this.hasMovementInput = false;
+            this.wantsJump = false;
+
+            // Send a final "idle" update to the worker to halt the character.
+            if (this.hasPhysicsEnabled()) {
+                this.sendBodyUpdate();
+            }
         }
     }
 
@@ -231,11 +276,11 @@ export default class ThirdPersonControl extends EventDispatcher {
     updateCameraPosition() {
         const target = this.getCharacter();
         const targetPos = target.getPosition();
-        const { distance, heightOffset } = this.options;
+        const { distance, cameraHeight } = this.options;
 
         // Camera offset: behind and above the character
         const offsetX = -Math.sin(this.theta) * Math.cos(this.phi) * distance;
-        const offsetY = Math.sin(this.phi) * distance + heightOffset;
+        const offsetY = Math.sin(this.phi) * distance + cameraHeight;
         const offsetZ = -Math.cos(this.theta) * Math.cos(this.phi) * distance;
 
         this.camera.setPosition({
@@ -247,7 +292,7 @@ export default class ThirdPersonControl extends EventDispatcher {
         // Look at the character (slightly above center)
         this.camera.lookAt({
             x: targetPos.x,
-            y: targetPos.y + heightOffset * 0.5,
+            y: targetPos.y + cameraHeight * 0.5,
             z: targetPos.z,
         });
     }
@@ -302,51 +347,66 @@ export default class ThirdPersonControl extends EventDispatcher {
         }
     }
 
-    // --- Direction/Velocity (non-physics mode) ---
-
-    updateDirection() {
-        this.direction.z = Number(this.movement.forward) - Number(this.movement.backwards);
-        this.direction.x = Number(this.movement.right) - Number(this.movement.left);
-        this.direction.normalize();
-    }
-
-    updateVelocity(dt) {
-        this.velocity.x -= this.velocity.x * this.options.slowDownFactor * dt;
-        this.velocity.z -= this.velocity.z * this.options.slowDownFactor * dt;
-
-        // Gravity is acceleration (9.8 m/s²), not force — mass is irrelevant here
-        this.velocity.y -= 9.8 * dt;
-
-        if (this.movement.forward || this.movement.backwards)
-            this.velocity.z -= this.direction.z * this.options.speed * dt;
-        if (this.movement.left || this.movement.right)
-            this.velocity.x -= this.direction.x * this.options.speed * dt;
-    }
+    // --- Movement (non-physics mode) ---
 
     /**
-     * Move the character directly using camera-relative directions (non-physics mode).
+     * Move the character using camera-relative directions (non-physics mode).
+     * Uses direct velocity (matching the physics mode feel) instead of
+     * acceleration, so movement is responsive and predictable.
      */
     moveCharacter(dt) {
         const character = this.getCharacter();
         const pos = character.getPosition();
         const cameraForward = this.getCameraForwardXZ();
+        const speed = this.options.speed;
 
-        // Forward/back along camera direction
-        let dx = cameraForward.x * (-this.velocity.z * dt);
-        let dz = cameraForward.z * (-this.velocity.z * dt);
+        const isMoving =
+            this.movement.forward ||
+            this.movement.backwards ||
+            this.movement.left ||
+            this.movement.right;
 
-        // Strafe perpendicular to camera direction
-        dx += -cameraForward.z * (-this.velocity.x * dt);
-        dz += cameraForward.x * (-this.velocity.x * dt);
+        if (isMoving) {
+            // Compute camera-relative movement direction (same logic as physics worker)
+            let moveX = 0;
+            let moveZ = 0;
 
-        pos.x += dx;
-        pos.z += dz;
+            if (this.movement.forward) {
+                moveX += cameraForward.x;
+                moveZ += cameraForward.z;
+            }
+            if (this.movement.backwards) {
+                moveX -= cameraForward.x;
+                moveZ -= cameraForward.z;
+            }
+            if (this.movement.left) {
+                moveX += cameraForward.z;
+                moveZ -= cameraForward.x;
+            }
+            if (this.movement.right) {
+                moveX -= cameraForward.z;
+                moveZ += cameraForward.x;
+            }
 
-        // Vertical (gravity/jump)
+            // Normalize so diagonal movement isn't faster
+            const len = Math.sqrt(moveX * moveX + moveZ * moveZ);
+            if (len > 0) {
+                moveX /= len;
+                moveZ /= len;
+            }
+
+            pos.x += moveX * speed * dt;
+            pos.z += moveZ * speed * dt;
+        }
+
+        // Gravity
+        this.velocity.y -= 9.8 * dt;
         pos.y += this.velocity.y * dt;
-        if (pos.y < this.options.height) {
+
+        // Ground clamp
+        if (pos.y <= this.options.groundLevel) {
+            pos.y = this.options.groundLevel;
             this.velocity.y = 0;
-            pos.y = this.options.height;
             this.canJump = true;
         }
 
@@ -362,11 +422,10 @@ export default class ThirdPersonControl extends EventDispatcher {
             const { y, w } = this.characterQuaternion;
 
             const state = {
-                direction: this.direction,
                 movement: this.movement,
                 quaternion: { x: 0, y, z: 0, w },
                 cameraDirection,
-                speed: this.options.speed * 2,
+                speed: this.options.speed,
                 walkSpeed: this.options.speed,
             };
 
@@ -396,19 +455,17 @@ export default class ThirdPersonControl extends EventDispatcher {
                 this.canJump = true;
             }
 
-            // Apply visual rotation after physics has overwritten it.
-            // Physics uses angularFactor=0 so the body never rotates;
-            // we drive rotation visually from the control input.
-            if (this.hasMovementInput) {
-                const body = this.character.getBody();
-                body.quaternion.set(
-                    this.characterQuaternion.x,
-                    this.characterQuaternion.y,
-                    this.characterQuaternion.z,
-                    this.characterQuaternion.w,
-                );
-                body.updateMatrixWorld(true);
-            }
+            // Always override the quaternion from physics — player rotation
+            // is purely visual and driven by the control, not by physics.
+            // This prevents any physics rotation drift from affecting the visual.
+            const body = this.character.getBody();
+            body.quaternion.set(
+                this.characterQuaternion.x,
+                this.characterQuaternion.y,
+                this.characterQuaternion.z,
+                this.characterQuaternion.w,
+            );
+            body.updateMatrixWorld(true);
         }
     }
 
@@ -416,11 +473,9 @@ export default class ThirdPersonControl extends EventDispatcher {
 
     update(dt) {
         if (this.isLocked) {
-            this.updateDirection();
             this.updateCharacterRotation();
 
             if (!this.hasPhysicsEnabled()) {
-                this.updateVelocity(dt);
                 this.moveCharacter(dt);
             } else {
                 this.sendBodyUpdate();

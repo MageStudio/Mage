@@ -12,8 +12,6 @@ import {
     DEFAULT_STEERING_INCREMENT,
 } from "../constants";
 
-import { PHYSICS_EVENTS } from "../messages";
-
 import world from "./world";
 import dispatcher from "./lib/dispatcher";
 

@@ -224,10 +224,6 @@ export class Scene {
         return this.renderer;
     }
 
-    getChildren() {
-        return this.scene.children;
-    }
-
     removeExistingRendererElements() {
         Object.keys(this.rendererElements).forEach(k => {
             const element = document.body.querySelector(`#${k}`);
@@ -332,7 +328,7 @@ export class Scene {
         Controls.onPhysicsUpdate(dt);
     };
 
-    toJSON(parseJSON = false) {
+    toJSON(_parseJSON = false) {
         return {
             name: this.getName(),
             uuid: this.uuid(),

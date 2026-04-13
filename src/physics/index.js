@@ -88,7 +88,7 @@ export class Physics extends EventDispatcher {
         return this.elements.includes(uuid);
     }
 
-    storeElement(element, options) {
+    storeElement(element, _options) {
         if (!this.hasElement(element)) {
             const uuid = element.uuid();
             this.elements.push(uuid);

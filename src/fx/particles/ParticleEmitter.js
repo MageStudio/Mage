@@ -83,7 +83,7 @@ export default class ParticleEmitter extends Entity {
         return this.system;
     }
 
-    emit(...options) {
+    emit(..._options) {
         return this;
     }
 

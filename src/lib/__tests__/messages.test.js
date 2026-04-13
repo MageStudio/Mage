@@ -39,7 +39,7 @@ describe("messages.js", () => {
                 ([key, val]) => typeof val === "string" && key !== "PREFIX" && key !== "DEPRECATED",
             );
 
-            stringExports.forEach(([key, msg]) => {
+            stringExports.forEach(([_key, msg]) => {
                 expect(msg).toContain(messages.PREFIX);
             });
         });

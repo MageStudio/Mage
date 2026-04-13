@@ -48,7 +48,7 @@ export class GameRunner {
                 this.store[path] = Level;
             }
             return true;
-        } catch (e) {
+        } catch {
             return false;
         }
     }
