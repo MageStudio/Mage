@@ -108,12 +108,12 @@ export class Universe {
     }
 
     // @deprecated - indexing is now handled inside set()
-    storeUUIDToElementNameReference(uuid, name) {
+    storeUUIDToElementNameReference(_uuid, _name) {
         // no-op: set() handles name indexing
     }
 
     // @deprecated - use updateNameIndex() instead
-    replaceUUIDToElementNameReference(uuid, newName) {
+    replaceUUIDToElementNameReference(_uuid, _newName) {
         // no-op: use updateNameIndex() instead
     }
 

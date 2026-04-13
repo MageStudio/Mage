@@ -66,11 +66,7 @@ export const getExplosionImpulse = (position, explosionPosition, strength) => {
     const nz = dz / length;
 
     // Scale by strength and add upward bias
-    const impulse = new Ammo.btVector3(
-        nx * strength,
-        ny * strength + strength,
-        nz * strength,
-    );
+    const impulse = new Ammo.btVector3(nx * strength, ny * strength + strength, nz * strength);
 
     return impulse;
 };
@@ -87,9 +83,10 @@ export const createExplosion = ({
         // .uuid set on the original wrapper are NOT available on cast results.
         // We compare the underlying C++ pointer instead.
         const sourceElement = world.getElement(uuid);
-        const sourceBodyPtr = sourceElement && sourceElement.body
-            ? (sourceElement.body.a || sourceElement.body.ptr)
-            : null;
+        const sourceBodyPtr =
+            sourceElement && sourceElement.body
+                ? sourceElement.body.a || sourceElement.body.ptr
+                : null;
 
         const explosionPosition = getExplosionPosition(uuid, position);
         const { ghostCollider, transform } = createGhostCollider(radius, explosionPosition);

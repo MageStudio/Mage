@@ -14,7 +14,6 @@ export default class BaseCar extends BaseScript {
             brakingKey = "s",
             rightKey = "d",
             leftKey = "a",
-            debug = false,
             autostart = true,
             ...physicsOptions
         } = options;
@@ -60,7 +59,7 @@ export default class BaseCar extends BaseScript {
         Physics.updateBodyState(this.car, this.state);
     }
 
-    update(dt) {
+    update(_dt) {
         if (this.engineStarted) {
             this.handleInput();
             this.sendCarUpdate();

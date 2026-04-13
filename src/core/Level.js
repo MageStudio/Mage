@@ -41,7 +41,7 @@ export class Level extends EventDispatcher {
 
     prepareScene() {}
 
-    onStateChange = state => {};
+    onStateChange = _state => {};
     onCreate() {}
     onStart() {}
     onUpdate() {}

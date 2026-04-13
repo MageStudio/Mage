@@ -104,7 +104,7 @@ export const parseBoundingBoxSize = (boundingBox = {}) => {
             y: sizeY,
             z: sizeZ,
         };
-    } catch (e) {
+    } catch {
         console.log(BOUNDINGBOX_NOT_AVAILABLE);
         return {
             x: 1,

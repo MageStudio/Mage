@@ -38,7 +38,7 @@ export class Lights {
         }
     }
 
-    update(dt) {
+    update(_dt) {
         if (this.isUsingCascadeShadowMaps()) {
             this.csm.update();
         }

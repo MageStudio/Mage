@@ -1,6 +1,5 @@
 import { EventDispatcher, Vector3, Euler, Quaternion, MathUtils } from "three";
 
-import Scene from "../core/Scene";
 import { debounce } from "../lib/functions";
 import { PHYSICS_ELEMENT_MISSING } from "../lib/messages";
 

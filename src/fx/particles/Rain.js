@@ -1,7 +1,5 @@
 import Proton from "three.proton";
-import { Vector3 } from "three";
 import ProtonParticleEmitter from "./ProtonParticleEmitter";
-import PALETTES from "../../lib/palettes";
 import { ENTITY_TYPES } from "../../entities/constants";
 
 const getRainRate = particleCount =>

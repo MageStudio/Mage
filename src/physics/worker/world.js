@@ -13,7 +13,7 @@ const requestNextFrame =
     self.mozRequestAnimationFrame ||
     self.oRequestAnimationFrame ||
     self.msRequestAnimationFrame ||
-    function (callback, element) {
+    function (callback, _element) {
         self.setTimeout(callback, 1000 / 120);
     };
 class Clock {

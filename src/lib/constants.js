@@ -10,9 +10,7 @@ import {
     sRGBEncoding,
     Vector3,
     Quaternion,
-    DoubleSide,
     FrontSide,
-    BackSide,
 } from "three";
 
 export const ALMOST_ZERO = 0.00001;

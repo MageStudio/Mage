@@ -1,4 +1,4 @@
-import { EventDispatcher, Raycaster, Vector2, Mesh } from "three";
+import { EventDispatcher, Raycaster, Vector2 } from "three";
 import { DEFAULT_TAG } from "../../entities/constants";
 
 import Config from "../config";

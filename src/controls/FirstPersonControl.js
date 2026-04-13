@@ -3,7 +3,7 @@
  * @author Mugen87 / https://github.com/Mugen87
  */
 
-import { EventDispatcher, Vector3, Euler, Raycaster, Quaternion } from "three";
+import { EventDispatcher, Vector3, Euler, Raycaster } from "three";
 
 import Scene from "../core/Scene";
 import { debounce } from "../lib/functions";

@@ -5,12 +5,19 @@ import dispatcher from "./lib/dispatcher";
 import { TYPES, DEFAULT_RIGIDBODY_STATE } from "../constants";
 
 export const addPlayer = data => {
-    const { uuid, width, height, position, mass, friction, originOffset = { x: 0, y: 0, z: 0 } } = data;
+    const {
+        uuid,
+        width,
+        height,
+        position,
+        mass,
+        friction,
+        originOffset = { x: 0, y: 0, z: 0 },
+    } = data;
 
     // btCapsuleShape expects (radius, cylinderHeight) — use half-width as
     // radius so the capsule wraps the bounding box correctly.
     const radius = width * 0.5;
-    const totalHeight = height + 2 * radius;
     const capsule = new Ammo.btCapsuleShape(radius, height);
 
     // Always create the player body upright (identity quaternion).

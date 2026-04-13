@@ -1,6 +1,3 @@
-import BaseScript from "./BaseScript";
-import Input from "../core/input/Input";
-import { fetch } from "whatwg-fetch";
 import BaseCar from "./builtin/BaseCar";
 import SmoothCarFollow from "./builtin/SmoothCarFollow";
 import { DEPRECATIONS, SCRIPT_NEEDS_TO_BE_INSTANCE, SCRIPT_NOT_PROVIDED } from "../lib/messages";
@@ -24,7 +21,7 @@ export class Scripts {
 
     update() {}
 
-    load = (scripts, level) => {
+    load = (scripts, _level) => {
         this.scripts = scripts;
         const keys = Object.keys(scripts);
 

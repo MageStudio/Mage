@@ -59,7 +59,6 @@ export default class FlyControl extends EventDispatcher {
         this.updateRotationVector();
     };
 
-    update() {}
     physicsUpdate() {}
 
     dispose = () => {

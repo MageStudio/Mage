@@ -30,7 +30,7 @@ const isAbsoluteURL = path => {
     try {
         new URL(path);
         return true;
-    } catch (_) {
+    } catch {
         return false;
     }
 };
@@ -190,7 +190,7 @@ export class Audio {
         return new Promise(resolve => {
             request.open("GET", resolvedPath, true);
             request.responseType = "arraybuffer";
-            request.onreadystatechange = e => {
+            request.onreadystatechange = _e => {
                 if (request.readyState === 4) {
                     if (request.status === 200) {
                         this.context.decodeAudioData(

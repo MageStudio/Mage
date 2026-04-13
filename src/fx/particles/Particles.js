@@ -22,7 +22,7 @@ export const PARTICLES = {
     TRAIL: "trail",
 };
 
-const { SINGLE, GROUP } = PARTICLE_EMITTER_TYPES;
+const { GROUP } = PARTICLE_EMITTER_TYPES;
 export class Particles {
     constructor() {
         this.map = new Map();

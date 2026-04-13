@@ -1,6 +1,5 @@
 import Light from "./Light";
 import { AmbientLight as THREEAmbientLight } from "three";
-import { AMBIENTLIGHT } from "./Lights";
 import { ENTITY_TYPES } from "../entities/constants";
 import { generateRandomName } from "../lib/uuid";
 

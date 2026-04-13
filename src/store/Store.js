@@ -40,7 +40,7 @@ export const getState = () => {
 
 export const getStore = () => store;
 
-const handleSubscriptions = (...args) =>
+const handleSubscriptions = (..._args) =>
     subscribers.forEach(subscriber => {
         if (subscriber.onStateChange) {
             subscriber.onStateChange(getState(), latestAction);

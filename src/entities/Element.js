@@ -9,7 +9,6 @@ import {
     ELEMENT_SET_COLOR_MISSING_COLOR,
     ELEMENT_MATERIAL_NO_SUPPORT_FOR_TEXTURE,
     DEPRECATIONS,
-    ELEMENT_SET_FOG_MISSING_MISSING_VALUE,
     ELEMENT_SET_REFLECTIVITY_MISSING_VALUE,
     ELEMENT_SET_REFRACTION_RATIO_MISSING_VALUE,
 } from "../lib/messages";
@@ -394,7 +393,7 @@ export default class Element extends Entity {
         return option ? this.physicsOptions[option] : this.physicsOptions;
     }
 
-    setPhysicsState({ dt, event, ...data } = {}) {
+    setPhysicsState({ dt: _dt, event: _event, ...data } = {}) {
         populateMap(this.physicsState, data);
     }
 
@@ -468,7 +467,7 @@ export default class Element extends Entity {
     };
 
     //TODO: ray colliders need refactoring
-    createRayColliderFromVector = ({ type, vector }, near, far, offset, debug) => {
+    createRayColliderFromVector = ({ type, vector }, near, far, offset, _debug) => {
         const parsedOffset = {
             ...DEFAULT_COLLIDER_OFFSET,
             ...offset,

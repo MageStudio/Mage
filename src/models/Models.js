@@ -61,7 +61,7 @@ const isAbsoluteURL = path => {
     try {
         new URL(path);
         return true;
-    } catch (_) {
+    } catch {
         return false;
     }
 };
@@ -73,7 +73,7 @@ const isAbsoluteURL = path => {
 const isURL = path => {
     try {
         return new URL(path);
-    } catch (_) {
+    } catch {
         return false;
     }
 };

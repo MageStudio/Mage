@@ -12,7 +12,7 @@ const isAbsoluteURL = path => {
     try {
         new URL(path);
         return true;
-    } catch (_) {
+    } catch {
         return false;
     }
 };

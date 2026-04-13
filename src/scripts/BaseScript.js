@@ -38,15 +38,15 @@ export default class BaseScript {
         return this.__name;
     }
 
-    start(element, options) {}
+    start(_element, _options) {}
 
-    update(dt) {}
+    update(_dt) {}
 
-    physicsUpdate(dt) {}
+    physicsUpdate(_dt) {}
 
     onDispose() {}
 
-    toJSON(parseJSON = false) {
+    toJSON(_parseJSON = false) {
         return {
             name: this.name(),
         };

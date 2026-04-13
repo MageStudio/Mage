@@ -3,7 +3,7 @@ export const getWindow = () => {
         const win = window || global.window;
 
         return win;
-    } catch (e) {
+    } catch {
         return null;
     }
 };
