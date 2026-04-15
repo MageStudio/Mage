@@ -119,7 +119,8 @@ export class GameRunner {
                                     resolve(this.getCurrentLevel());
                                 })
                                 .catch(reject);
-                        });
+                        })
+                        .catch(reject);
                 });
             }
         });
