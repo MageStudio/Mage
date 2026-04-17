@@ -115,9 +115,7 @@ export class Physics extends EventDispatcher {
             // images, and audio) so the path works identically in local
             // preview and production.
             const baseUrl = env.MAGE_ASSETS_BASE_URL;
-            const host = baseUrl
-                ? `${getHostURL()}/${baseUrl}`
-                : getHostURL();
+            const host = baseUrl ? `${getHostURL()}/${baseUrl}` : getHostURL();
 
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.LOAD.AMMO,
