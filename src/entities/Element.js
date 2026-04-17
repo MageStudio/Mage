@@ -403,6 +403,7 @@ export default class Element extends Entity {
 
     enablePhysics(options = {}) {
         this.setPhysicsOptions(options);
+        this._physicsEnabled = true;
 
         if (Config.physics().enabled) {
             Physics.add(this, options);

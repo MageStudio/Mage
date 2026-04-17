@@ -6,6 +6,7 @@ import PhysicsWorker from "worker:./worker";
 import { PHYSICS_EVENTS } from "./messages";
 import * as physicsUtils from "./utils";
 import { getHostURL } from "../lib/url";
+import env from "../env";
 import { PHYSICS_ELEMENT_ALREADY_STORED, PHYSICS_ELEMENT_CANT_BE_REMOVED } from "../lib/messages";
 
 import * as PHYSICS_CONSTANTS from "./constants";
@@ -110,10 +111,18 @@ export class Physics extends EventDispatcher {
         if (Config.physics().enabled) {
             this.createWorker();
 
+            // Resolve ammo.js using MAGE_ASSETS_BASE_URL (same as models,
+            // images, and audio) so the path works identically in local
+            // preview and production.
+            const baseUrl = env.MAGE_ASSETS_BASE_URL;
+            const host = baseUrl
+                ? `${getHostURL()}/${baseUrl}`
+                : getHostURL();
+
             this.worker.postMessage({
                 event: PHYSICS_EVENTS.LOAD.AMMO,
                 ...Config.physics(),
-                host: getHostURL(),
+                host,
             });
 
             return new Promise(resolve => {
