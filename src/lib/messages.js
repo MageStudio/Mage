@@ -108,3 +108,5 @@ export const SOUND_HOLDER_MODEL_NOT_FOUND = `${PREFIX} This sound holder model c
 
 export const LABEL_DOMELEMENT_MISSING = `${PREFIX} Could not create Label, domElement is missing. Did you forget to set the this.element ref on your component?`;
 export const NO_VALID_LEVEL_DATA_PROVIDED = `${PREFIX} No valid level data (json or url) provided`;
+
+export const THIRD_PERSON_CONTROL_TARGET_MISSING = `${PREFIX} ThirdPersonControl requires a target element. Please provide a valid target.`;

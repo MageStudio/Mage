@@ -8,6 +8,8 @@ import { EventDispatcher, Vector3 } from "three";
 import { DEPRECATIONS } from "../lib/messages";
 import { AVAILABLE_CONTROLS, CONTROLS } from "./constants";
 import Universe from "../core/universe";
+import Config from "../core/config";
+import Physics from "../physics";
 
 export const THREEJS_CONTROL_EVENTS = {
     CHANGE: "change",
@@ -144,8 +146,27 @@ export class Controls extends EventDispatcher {
         return this.controls[CONTROLS.FPS];
     }
 
-    setThirdPersonControls(options) {
+    async setThirdPersonControls(options) {
         this.disposePreviousControls([CONTROLS.FPS, CONTROLS.FLY, CONTROLS.ORBIT]);
+
+        // Ensure the global physics system is initialised when the control
+        // requests physics.  The builder/preview config may not have enabled
+        // physics explicitly, so we enable it on-demand here.
+        if (options.physicsEnabled && !Config.physics().enabled) {
+            Config.physics().enabled = true;
+            await Physics.init();
+
+            // Entities loaded before physics was enabled had their
+            // enablePhysics() calls silently skipped.  Now that the
+            // worker is ready, add every entity that has pending
+            // physics options to the world.
+            Universe.forEach(element => {
+                if (element._physicsEnabled && !Physics.hasElement(element)) {
+                    Physics.add(element, element.getPhysicsOptions());
+                }
+            });
+        }
+
         this.controls[CONTROLS.TPS] = new ThirdPersonControl(
             Scene.getCamera(),
             Scene.getDOMElement(),

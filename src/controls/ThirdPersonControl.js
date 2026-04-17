@@ -1,7 +1,7 @@
 import { EventDispatcher, Vector3, Euler, Quaternion, MathUtils } from "three";
 
 import { debounce } from "../lib/functions";
-import { PHYSICS_ELEMENT_MISSING } from "../lib/messages";
+import { PHYSICS_ELEMENT_MISSING, THIRD_PERSON_CONTROL_TARGET_MISSING } from "../lib/messages";
 
 import Physics, { PHYSICS_CONSTANTS } from "../physics";
 
@@ -81,6 +81,11 @@ export default class ThirdPersonControl extends EventDispatcher {
     }
 
     init() {
+        if (!this.character) {
+            console.error(THIRD_PERSON_CONTROL_TARGET_MISSING);
+            return;
+        }
+
         this._onClick = this.onClick.bind(this);
         this._onMouseMove = this.onMouseMove.bind(this);
         this._onKeyDown = this.onKeyDown.bind(this);
@@ -97,7 +102,7 @@ export default class ThirdPersonControl extends EventDispatcher {
 
         // In non-physics mode, use the character's starting Y as ground level
         // when no explicit value was provided, so it doesn't free-fall on start.
-        if (!this.hasPhysicsEnabled() && this.character) {
+        if (!this.hasPhysicsEnabled()) {
             const startY = this.character.getPosition().y;
             if (this.options.groundLevel === 0.5 && startY > 1) {
                 this.options.groundLevel = startY;
@@ -106,7 +111,7 @@ export default class ThirdPersonControl extends EventDispatcher {
             this.canJump = true;
         }
 
-        if (this.hasPhysicsEnabled() && this.character) {
+        if (this.hasPhysicsEnabled()) {
             this.addCharacterToPhysics();
         }
     }
@@ -135,7 +140,7 @@ export default class ThirdPersonControl extends EventDispatcher {
     hasPhysicsEnabled = () => this.options.physicsEnabled;
 
     getCharacter() {
-        return this.character || this.camera;
+        return this.character;
     }
 
     // --- Pointer Lock ---
@@ -448,7 +453,7 @@ export default class ThirdPersonControl extends EventDispatcher {
     // Called AFTER handlePhysicsUpdate runs on all elements,
     // so we can safely override the quaternion that physics reset.
     physicsUpdate() {
-        if (this.hasPhysicsEnabled() && this.character) {
+        if (this.hasPhysicsEnabled()) {
             // Re-enable jumping when grounded AND space is released
             const grounded = this.character.getPhysicsState("grounded");
             if (grounded && !this.spaceHeld) {
@@ -483,8 +488,6 @@ export default class ThirdPersonControl extends EventDispatcher {
         }
 
         // Always position camera relative to character
-        if (this.character) {
-            this.updateCameraPosition();
-        }
+        this.updateCameraPosition();
     }
 }
