@@ -157,11 +157,17 @@ export class Controls extends EventDispatcher {
             await Physics.init();
 
             // Entities loaded before physics was enabled had their
-            // enablePhysics() calls silently skipped.  Now that the
-            // worker is ready, add every entity that has pending
-            // physics options to the world.
+            // enablePhysics() calls silently skipped (or the worker
+            // message was dropped because the worker wasn't ready yet).
+            // Now that the worker is ready, re-add every entity that
+            // has pending physics options.  Clear stale entries first
+            // so the hasElement check doesn't incorrectly skip
+            // elements whose worker message was silently dropped.
             Universe.forEach(element => {
-                if (element._physicsEnabled && !Physics.hasElement(element)) {
+                if (element._physicsEnabled) {
+                    if (Physics.hasElement(element)) {
+                        Physics.removeElement(element);
+                    }
                     Physics.add(element, element.getPhysicsOptions());
                 }
             });
