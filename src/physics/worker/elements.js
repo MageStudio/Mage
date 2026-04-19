@@ -17,7 +17,7 @@ export const createRigidBody = (shape, options) => {
         uuid,
         position,
         quaternion,
-        mass,
+        mass = 0,
         friction,
         restitution = 0.9,
         damping = { linear: 0.2, angular: 0.2 },

@@ -8,7 +8,7 @@ import { DEFAULT_QUATERNION, DEFAULT_POSITION } from "./constants";
 import { COLLIDER_TYPES } from "./constants";
 
 export const DEFAULT_DESCRIPTION = {
-    mass: 1,
+    mass: 0,
     friction: 1,
     quaternion: DEFAULT_QUATERNION,
     position: DEFAULT_POSITION,

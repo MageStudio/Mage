@@ -18,8 +18,8 @@ import { PHYSICS_EVENTS } from "../messages";
 
 describe("physics/utils.js", () => {
     describe("DEFAULT_DESCRIPTION", () => {
-        test("has mass of 1", () => {
-            expect(DEFAULT_DESCRIPTION.mass).toBe(1);
+        test("has mass of 0", () => {
+            expect(DEFAULT_DESCRIPTION.mass).toBe(0);
         });
 
         test("has friction of 1", () => {
