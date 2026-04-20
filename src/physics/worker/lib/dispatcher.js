@@ -22,6 +22,12 @@ export class Dispatcher {
             eventName,
             eventData,
         });
+
+    sendElementDisposed = ({ uuid }) =>
+        postMessage({
+            event: PHYSICS_EVENTS.ELEMENT.DISPOSE,
+            uuid,
+        });
 }
 
 export default new Dispatcher();
