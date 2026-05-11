@@ -80,6 +80,11 @@ export class Level extends EventDispatcher {
             Scene.render(dt);
         }
 
+        // Render gizmo layer on top of everything (separate pass with depth clear)
+        // This ensures gizmos are always visible regardless of sky, post-processing,
+        // or the sortObjects=false setting used when shadows are enabled.
+        Scene.renderGizmoLayer();
+
         Particles.update(dt);
         this.onUpdate(dt);
         Scene.update(dt);

@@ -199,10 +199,12 @@ export class Scene {
 
     createCamera(camera) {
         this.camera = camera;
-        // Enable layer 1 so camera can see editor-only objects (helpers, grid, gizmos)
+        // Enable layer 1 so camera can see editor-only objects (helpers, grid)
+        // Enable layer 2 so camera can see gizmos (rendered in separate pass)
         // Mirror cameras only use layer 0, so they won't render these
         if (this.camera && this.camera.getBody()) {
             this.camera.getBody().layers.enable(1);
+            this.camera.getBody().layers.enable(2);
         }
     }
 
@@ -303,6 +305,50 @@ export class Scene {
         this.renderer.clear();
         this.renderer.setRenderTarget(null);
         this.renderer.render(this.scene, this.camera.getBody());
+    }
+
+    // Render gizmo layer (layer 2) on top of everything.
+    // Called after main render or post-processing to ensure gizmos are always visible
+    // regardless of sky, post-processing, or sortObjects setting.
+    renderGizmoLayer() {
+        if (!this.renderer || !this.camera) return;
+
+        const cameraBody = this.camera.getBody();
+
+        // Save current camera layer mask
+        const savedLayers = cameraBody.layers.mask;
+
+        // Set camera to only see layer 2 (gizmo layer)
+        cameraBody.layers.set(2);
+
+        // Ensure we render to screen (not a post-processing buffer)
+        this.renderer.setRenderTarget(null);
+        // Clear only depth so gizmo renders on top of the already-drawn frame
+        this.renderer.autoClear = false;
+        this.renderer.clearDepth();
+        this.renderer.render(this.scene, cameraBody);
+        this.renderer.autoClear = true;
+
+        // Restore camera layers
+        cameraBody.layers.mask = savedLayers;
+    }
+
+    // Toggle editor helpers visibility (layer 1: grid, light helpers, camera helpers)
+    // Does NOT affect gizmos (layer 2) which are always visible
+    setHelpersVisible(visible) {
+        if (!this.camera || !this.camera.getBody()) return;
+
+        const cameraBody = this.camera.getBody();
+        if (visible) {
+            cameraBody.layers.enable(1);
+        } else {
+            cameraBody.layers.disable(1);
+        }
+        this.helpersVisible = visible;
+    }
+
+    getHelpersVisible() {
+        return this.helpersVisible !== false;
     }
 
     setFog(color, density) {

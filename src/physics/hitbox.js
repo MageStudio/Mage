@@ -11,23 +11,23 @@ const DEFAULT_HITBOX_OPTIONS = {
 };
 
 export const getBoxHitbox = element => {
-    const size = new Vector3();
-    element.boundingBox.getSize(size);
+    const opts = element.getPhysicsOptions() || {};
+    let w, h, l;
 
-    const scaledSize = {
-        x: size.x + HIT_BOX_INCREASE,
-        y: size.y + HIT_BOX_INCREASE,
-        z: size.z + HIT_BOX_INCREASE,
-    };
-    const box = new Box(
-        scaledSize.x,
-        scaledSize.y,
-        scaledSize.z,
-        HIT_BOX_COLOR,
-        DEFAULT_HITBOX_OPTIONS,
-    );
+    if (opts.colliderWidth != null || opts.colliderHeight != null || opts.colliderLength != null) {
+        w = (opts.colliderWidth ?? 1) + HIT_BOX_INCREASE;
+        h = (opts.colliderHeight ?? 1) + HIT_BOX_INCREASE;
+        l = (opts.colliderLength ?? 1) + HIT_BOX_INCREASE;
+    } else {
+        const size = new Vector3();
+        element.boundingBox.getSize(size);
+        w = size.x + HIT_BOX_INCREASE;
+        h = size.y + HIT_BOX_INCREASE;
+        l = size.z + HIT_BOX_INCREASE;
+    }
 
-    //box.setQuaternion(quaternion);
+    const box = new Box(w, h, l, HIT_BOX_COLOR, DEFAULT_HITBOX_OPTIONS);
+
     box.setWireframe(true);
     box.setWireframeLineWidth(2);
 
@@ -35,7 +35,8 @@ export const getBoxHitbox = element => {
 };
 
 export const getSphereHitbox = element => {
-    const radius = element.boundingSphere.radius;
+    const opts = element.getPhysicsOptions() || {};
+    const radius = opts.colliderRadius != null ? opts.colliderRadius : element.boundingSphere.radius;
     const sphere = new Sphere(radius, HIT_BOX_COLOR, DEFAULT_HITBOX_OPTIONS);
 
     sphere.setWireframe(true);
