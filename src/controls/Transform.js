@@ -29,10 +29,11 @@ export default class TransformControls extends Object3D {
         this.gizmo = new Gizmo();
         this.plane = new Plane();
 
-        // Set gizmo and plane to layer 1 ONLY so mirrors don't render them
-        // Main camera must enable layer 1 to see these
-        this.gizmo.layers.set(1);
-        this.plane.layers.set(1);
+        // Set gizmo and plane to layer 2 ONLY so they render in a dedicated pass
+        // on top of everything (sky, post-processing, etc.)
+        // Layer 1 = editor helpers (togglable), Layer 2 = gizmo (always visible)
+        this.gizmo.layers.set(2);
+        this.plane.layers.set(2);
 
         // Helper function to set depth properties on materials
         const setMaterialDepth = material => {
@@ -46,15 +47,15 @@ export default class TransformControls extends Object3D {
             });
         };
 
-        // Also set layer 1 on all children recursively
-        // Set high renderOrder and disable depthTest so gizmos render on top of sky/water
+        // Also set layer 2 on all children recursively
+        // Disable depthTest so gizmos render on top of everything
         this.gizmo.traverse(child => {
-            child.layers.set(1);
+            child.layers.set(2);
             child.renderOrder = 999;
             setMaterialDepth(child.material);
         });
         this.plane.traverse(child => {
-            child.layers.set(1);
+            child.layers.set(2);
             child.renderOrder = 999;
             setMaterialDepth(child.material);
         });
@@ -97,8 +98,8 @@ export default class TransformControls extends Object3D {
         this.setAndDispatch("showZ", true);
 
         this.ray = new Raycaster();
-        // Enable layer 1 so raycaster can pick gizmo objects (which are on layer 1)
-        this.ray.layers.enable(1);
+        // Enable layer 2 so raycaster can pick gizmo objects (which are on layer 2)
+        this.ray.layers.enable(2);
 
         this._tempVector = new Vector3();
         this._tempVector2 = new Vector3();

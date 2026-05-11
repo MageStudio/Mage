@@ -215,13 +215,25 @@ export class Physics extends EventDispatcher {
 
     add(element, options = {}) {
         if (Config.physics().enabled) {
-            const { colliderType = COLLIDER_TYPES.BOX } = options;
+            const {
+                colliderType = COLLIDER_TYPES.BOX,
+                colliderWidth,
+                colliderHeight,
+                colliderLength,
+                colliderRadius,
+                ...rest
+            } = options;
 
             const uuid = element.uuid();
             const description = {
                 ...mapColliderTypeToDescription(colliderType)(element),
-                ...options,
+                ...rest,
             };
+
+            if (colliderWidth != null) description.width = colliderWidth;
+            if (colliderHeight != null) description.height = colliderHeight;
+            if (colliderLength != null) description.length = colliderLength;
+            if (colliderRadius != null) description.radius = colliderRadius;
 
             this.storeElement(element, options);
 
