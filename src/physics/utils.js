@@ -165,7 +165,22 @@ const extractWorldBoxDescription = element => {
 };
 
 export const extractSphereDescription = element => {
-    const radius = element.boundingSphere.radius;
+    const body = element.getBody();
+    let radius;
+
+    if (body) {
+        const worldBox = new Box3().setFromObject(body);
+        const worldSize = new Vector3();
+        worldBox.getSize(worldSize);
+
+        if (worldSize.x > 0 || worldSize.y > 0 || worldSize.z > 0) {
+            radius = Math.max(worldSize.x, worldSize.y, worldSize.z) / 2;
+        }
+    }
+
+    if (radius == null) {
+        radius = element.boundingSphere.radius;
+    }
 
     return {
         radius,
@@ -187,7 +202,7 @@ export const getSphereDescriptionForElement = element => ({
 
 export const getPlayerDescriptionForElement = element => ({
     ...DEFAULT_PLAYER_DESCRIPTION,
-    ...extractBoxDescription(element),
+    ...extractWorldBoxDescription(element),
 });
 
 export const mapColliderTypeToDescription = (colliderType = COLLIDER_TYPES.BOX) =>

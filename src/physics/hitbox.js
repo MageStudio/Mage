@@ -45,8 +45,21 @@ export const getBoxHitbox = element => {
 
 export const getSphereHitbox = element => {
     const opts = element.getPhysicsOptions() || {};
-    const radius =
-        opts.colliderRadius != null ? opts.colliderRadius : element.boundingSphere.radius;
+    let radius;
+
+    if (opts.colliderRadius != null) {
+        radius = opts.colliderRadius;
+    } else {
+        const worldSize = new Vector3();
+        new Box3().setFromObject(element.getBody()).getSize(worldSize);
+
+        if (worldSize.x > 0 || worldSize.y > 0 || worldSize.z > 0) {
+            radius = Math.max(worldSize.x, worldSize.y, worldSize.z) / 2;
+        } else {
+            radius = element.boundingSphere.radius;
+        }
+    }
+
     const sphere = new Sphere(radius, HIT_BOX_COLOR, DEFAULT_HITBOX_OPTIONS);
 
     sphere.setWireframe(true);

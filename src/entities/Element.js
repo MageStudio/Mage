@@ -150,6 +150,9 @@ export default class Element extends Entity {
                     result.width = parseFloat(worldSize.x.toFixed(3));
                     result.height = parseFloat(worldSize.y.toFixed(3));
                     result.length = parseFloat(worldSize.z.toFixed(3));
+                    result.radius = parseFloat(
+                        (Math.max(worldSize.x, worldSize.y, worldSize.z) / 2).toFixed(3),
+                    );
                 } else if (this.boundingBox) {
                     const size = parseBoundingBoxSize(this.boundingBox);
                     const scale = this.getScale();
@@ -158,7 +161,7 @@ export default class Element extends Entity {
                     result.length = parseFloat((size.z * scale.z).toFixed(3));
                 }
             }
-            if (this.boundingSphere) {
+            if (result.radius == null && this.boundingSphere) {
                 result.radius = parseFloat(this.boundingSphere.radius.toFixed(3));
             }
         } catch {
