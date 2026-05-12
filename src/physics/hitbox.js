@@ -1,7 +1,8 @@
-import { Box3, Vector3 } from "three";
+import { Vector3 } from "three";
 import Box from "../entities/base/Box";
 import Sphere from "../entities/base/Sphere";
 import { COLLIDER_TYPES } from "./constants";
+import { getWorldBoundingBoxSize, getWorldBoundingSphereRadius } from "./utils";
 
 const HIT_BOX_COLOR = 0xf368e0;
 const HIT_BOX_INCREASE = 0.03;
@@ -19,19 +20,18 @@ export const getBoxHitbox = element => {
         h = (opts.colliderHeight ?? 1) + HIT_BOX_INCREASE;
         l = (opts.colliderLength ?? 1) + HIT_BOX_INCREASE;
     } else {
-        const worldSize = new Vector3();
-        new Box3().setFromObject(element.getBody()).getSize(worldSize);
+        const size = getWorldBoundingBoxSize(element.getBody());
 
-        if (worldSize.x > 0 || worldSize.y > 0 || worldSize.z > 0) {
-            w = worldSize.x + HIT_BOX_INCREASE;
-            h = worldSize.y + HIT_BOX_INCREASE;
-            l = worldSize.z + HIT_BOX_INCREASE;
+        if (size) {
+            w = size.width + HIT_BOX_INCREASE;
+            h = size.height + HIT_BOX_INCREASE;
+            l = size.length + HIT_BOX_INCREASE;
         } else {
-            const size = new Vector3();
-            element.boundingBox.getSize(size);
-            w = size.x + HIT_BOX_INCREASE;
-            h = size.y + HIT_BOX_INCREASE;
-            l = size.z + HIT_BOX_INCREASE;
+            const fallback = new Vector3();
+            element.boundingBox.getSize(fallback);
+            w = fallback.x + HIT_BOX_INCREASE;
+            h = fallback.y + HIT_BOX_INCREASE;
+            l = fallback.z + HIT_BOX_INCREASE;
         }
     }
 
@@ -45,20 +45,9 @@ export const getBoxHitbox = element => {
 
 export const getSphereHitbox = element => {
     const opts = element.getPhysicsOptions() || {};
-    let radius;
-
-    if (opts.colliderRadius != null) {
-        radius = opts.colliderRadius;
-    } else {
-        const worldSize = new Vector3();
-        new Box3().setFromObject(element.getBody()).getSize(worldSize);
-
-        if (worldSize.x > 0 || worldSize.y > 0 || worldSize.z > 0) {
-            radius = Math.max(worldSize.x, worldSize.y, worldSize.z) / 2;
-        } else {
-            radius = element.boundingSphere.radius;
-        }
-    }
+    const radius = opts.colliderRadius
+        ?? getWorldBoundingSphereRadius(element.getBody())
+        ?? element.boundingSphere.radius;
 
     const sphere = new Sphere(radius, HIT_BOX_COLOR, DEFAULT_HITBOX_OPTIONS);
 

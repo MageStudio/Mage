@@ -1,4 +1,4 @@
-import { Box3, Mesh, RepeatWrapping, Raycaster, Color, Vector3, sRGBEncoding } from "three";
+import { Mesh, RepeatWrapping, Raycaster, Color, Vector3, sRGBEncoding } from "three";
 
 import Entity from "../entities/Entity";
 import { ENTITY_TYPES, ENTITY_EVENTS } from "../entities/constants";
@@ -34,6 +34,8 @@ import {
     extractBoundingSphere,
     extractBiggestBoundingSphere,
     parseBoundingBoxSize,
+    getWorldBoundingBoxSize,
+    getWorldBoundingSphereRadius,
 } from "../physics/utils";
 
 import { clamp } from "../lib/math";
@@ -141,26 +143,23 @@ export default class Element extends Entity {
 
         try {
             const body = this.getBody();
-            if (body) {
-                const worldBox = new Box3().setFromObject(body);
-                const worldSize = new Vector3();
-                worldBox.getSize(worldSize);
+            const worldSize = body ? getWorldBoundingBoxSize(body) : null;
 
-                if (worldSize.x > 0 || worldSize.y > 0 || worldSize.z > 0) {
-                    result.width = parseFloat(worldSize.x.toFixed(3));
-                    result.height = parseFloat(worldSize.y.toFixed(3));
-                    result.length = parseFloat(worldSize.z.toFixed(3));
-                    result.radius = parseFloat(
-                        (Math.max(worldSize.x, worldSize.y, worldSize.z) / 2).toFixed(3),
-                    );
-                } else if (this.boundingBox) {
-                    const size = parseBoundingBoxSize(this.boundingBox);
-                    const scale = this.getScale();
-                    result.width = parseFloat((size.x * scale.x).toFixed(3));
-                    result.height = parseFloat((size.y * scale.y).toFixed(3));
-                    result.length = parseFloat((size.z * scale.z).toFixed(3));
-                }
+            if (worldSize) {
+                result.width = parseFloat(worldSize.width.toFixed(3));
+                result.height = parseFloat(worldSize.height.toFixed(3));
+                result.length = parseFloat(worldSize.length.toFixed(3));
+                result.radius = parseFloat(
+                    (getWorldBoundingSphereRadius(body)).toFixed(3),
+                );
+            } else if (this.boundingBox) {
+                const size = parseBoundingBoxSize(this.boundingBox);
+                const scale = this.getScale();
+                result.width = parseFloat((size.x * scale.x).toFixed(3));
+                result.height = parseFloat((size.y * scale.y).toFixed(3));
+                result.length = parseFloat((size.z * scale.z).toFixed(3));
             }
+
             if (result.radius == null && this.boundingSphere) {
                 result.radius = parseFloat(this.boundingSphere.radius.toFixed(3));
             }
