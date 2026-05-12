@@ -1,4 +1,4 @@
-import { Vector3 } from "three";
+import { Box3, Vector3 } from "three";
 import Box from "../entities/base/Box";
 import Sphere from "../entities/base/Sphere";
 import { COLLIDER_TYPES } from "./constants";
@@ -19,11 +19,20 @@ export const getBoxHitbox = element => {
         h = (opts.colliderHeight ?? 1) + HIT_BOX_INCREASE;
         l = (opts.colliderLength ?? 1) + HIT_BOX_INCREASE;
     } else {
-        const size = new Vector3();
-        element.boundingBox.getSize(size);
-        w = size.x + HIT_BOX_INCREASE;
-        h = size.y + HIT_BOX_INCREASE;
-        l = size.z + HIT_BOX_INCREASE;
+        const worldSize = new Vector3();
+        new Box3().setFromObject(element.getBody()).getSize(worldSize);
+
+        if (worldSize.x > 0 || worldSize.y > 0 || worldSize.z > 0) {
+            w = worldSize.x + HIT_BOX_INCREASE;
+            h = worldSize.y + HIT_BOX_INCREASE;
+            l = worldSize.z + HIT_BOX_INCREASE;
+        } else {
+            const size = new Vector3();
+            element.boundingBox.getSize(size);
+            w = size.x + HIT_BOX_INCREASE;
+            h = size.y + HIT_BOX_INCREASE;
+            l = size.z + HIT_BOX_INCREASE;
+        }
     }
 
     const box = new Box(w, h, l, HIT_BOX_COLOR, DEFAULT_HITBOX_OPTIONS);

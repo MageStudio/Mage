@@ -1,4 +1,4 @@
-import { Mesh, RepeatWrapping, Raycaster, Color, Vector3, sRGBEncoding } from "three";
+import { Box3, Mesh, RepeatWrapping, Raycaster, Color, Vector3, sRGBEncoding } from "three";
 
 import Entity from "../entities/Entity";
 import { ENTITY_TYPES, ENTITY_EVENTS } from "../entities/constants";
@@ -140,12 +140,23 @@ export default class Element extends Entity {
         const result = {};
 
         try {
-            if (this.boundingBox) {
-                const size = parseBoundingBoxSize(this.boundingBox);
-                const scale = this.getScale();
-                result.width = parseFloat((size.x * scale.x).toFixed(3));
-                result.height = parseFloat((size.y * scale.y).toFixed(3));
-                result.length = parseFloat((size.z * scale.z).toFixed(3));
+            const body = this.getBody();
+            if (body) {
+                const worldBox = new Box3().setFromObject(body);
+                const worldSize = new Vector3();
+                worldBox.getSize(worldSize);
+
+                if (worldSize.x > 0 || worldSize.y > 0 || worldSize.z > 0) {
+                    result.width = parseFloat(worldSize.x.toFixed(3));
+                    result.height = parseFloat(worldSize.y.toFixed(3));
+                    result.length = parseFloat(worldSize.z.toFixed(3));
+                } else if (this.boundingBox) {
+                    const size = parseBoundingBoxSize(this.boundingBox);
+                    const scale = this.getScale();
+                    result.width = parseFloat((size.x * scale.x).toFixed(3));
+                    result.height = parseFloat((size.y * scale.y).toFixed(3));
+                    result.length = parseFloat((size.z * scale.z).toFixed(3));
+                }
             }
             if (this.boundingSphere) {
                 result.radius = parseFloat(this.boundingSphere.radius.toFixed(3));
