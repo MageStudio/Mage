@@ -2,6 +2,7 @@ import { Vector3 } from "three";
 import Box from "../entities/base/Box";
 import Sphere from "../entities/base/Sphere";
 import { COLLIDER_TYPES } from "./constants";
+import { getWorldBoundingBoxSize, getWorldBoundingSphereRadius } from "./utils";
 
 const HIT_BOX_COLOR = 0xf368e0;
 const HIT_BOX_INCREASE = 0.03;
@@ -19,11 +20,19 @@ export const getBoxHitbox = element => {
         h = (opts.colliderHeight ?? 1) + HIT_BOX_INCREASE;
         l = (opts.colliderLength ?? 1) + HIT_BOX_INCREASE;
     } else {
-        const size = new Vector3();
-        element.boundingBox.getSize(size);
-        w = size.x + HIT_BOX_INCREASE;
-        h = size.y + HIT_BOX_INCREASE;
-        l = size.z + HIT_BOX_INCREASE;
+        const size = getWorldBoundingBoxSize(element.getBody());
+
+        if (size) {
+            w = size.width + HIT_BOX_INCREASE;
+            h = size.height + HIT_BOX_INCREASE;
+            l = size.length + HIT_BOX_INCREASE;
+        } else {
+            const fallback = new Vector3();
+            element.boundingBox.getSize(fallback);
+            w = fallback.x + HIT_BOX_INCREASE;
+            h = fallback.y + HIT_BOX_INCREASE;
+            l = fallback.z + HIT_BOX_INCREASE;
+        }
     }
 
     const box = new Box(w, h, l, HIT_BOX_COLOR, DEFAULT_HITBOX_OPTIONS);
@@ -37,7 +46,10 @@ export const getBoxHitbox = element => {
 export const getSphereHitbox = element => {
     const opts = element.getPhysicsOptions() || {};
     const radius =
-        opts.colliderRadius != null ? opts.colliderRadius : element.boundingSphere.radius;
+        opts.colliderRadius ??
+        getWorldBoundingSphereRadius(element.getBody()) ??
+        element.boundingSphere.radius;
+
     const sphere = new Sphere(radius, HIT_BOX_COLOR, DEFAULT_HITBOX_OPTIONS);
 
     sphere.setWireframe(true);

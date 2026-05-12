@@ -34,6 +34,8 @@ import {
     extractBoundingSphere,
     extractBiggestBoundingSphere,
     parseBoundingBoxSize,
+    getWorldBoundingBoxSize,
+    getWorldBoundingSphereRadius,
 } from "../physics/utils";
 
 import { clamp } from "../lib/math";
@@ -140,14 +142,23 @@ export default class Element extends Entity {
         const result = {};
 
         try {
-            if (this.boundingBox) {
+            const body = this.getBody();
+            const worldSize = body ? getWorldBoundingBoxSize(body) : null;
+
+            if (worldSize) {
+                result.width = parseFloat(worldSize.width.toFixed(3));
+                result.height = parseFloat(worldSize.height.toFixed(3));
+                result.length = parseFloat(worldSize.length.toFixed(3));
+                result.radius = parseFloat(getWorldBoundingSphereRadius(body).toFixed(3));
+            } else if (this.boundingBox) {
                 const size = parseBoundingBoxSize(this.boundingBox);
                 const scale = this.getScale();
                 result.width = parseFloat((size.x * scale.x).toFixed(3));
                 result.height = parseFloat((size.y * scale.y).toFixed(3));
                 result.length = parseFloat((size.z * scale.z).toFixed(3));
             }
-            if (this.boundingSphere) {
+
+            if (result.radius == null && this.boundingSphere) {
                 result.radius = parseFloat(this.boundingSphere.radius.toFixed(3));
             }
         } catch {

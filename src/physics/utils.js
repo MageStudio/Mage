@@ -114,6 +114,32 @@ export const parseBoundingBoxSize = (boundingBox = {}) => {
     }
 };
 
+/**
+ * Compute the world-space AABB size for a body using Box3.setFromObject().
+ * Returns { width, height, length } or null if the box is degenerate (all zeros).
+ */
+export const getWorldBoundingBoxSize = body => {
+    const worldBox = new Box3().setFromObject(body);
+    const worldSize = new Vector3();
+    worldBox.getSize(worldSize);
+
+    if (worldSize.x === 0 && worldSize.y === 0 && worldSize.z === 0) {
+        return null;
+    }
+
+    return { width: worldSize.x, height: worldSize.y, length: worldSize.z };
+};
+
+/**
+ * Derive a bounding sphere radius from the world-space AABB.
+ * Returns the radius (half the longest axis) or null if the box is degenerate.
+ */
+export const getWorldBoundingSphereRadius = body => {
+    const size = getWorldBoundingBoxSize(body);
+    if (!size) return null;
+    return Math.max(size.width, size.height, size.length) / 2;
+};
+
 export const extractPositionAndQuaternion = element => {
     const { x, y, z } = element.getPosition();
     const quaternion = element.getQuaternion();
@@ -145,27 +171,22 @@ export const extractBoxDescription = element => {
 // More accurate for imported models whose geometry may be offset from the
 // element origin, but can produce unexpected results for complex hierarchies.
 const extractWorldBoxDescription = element => {
-    const body = element.getBody();
-    const worldBox = new Box3().setFromObject(body);
-    const worldSize = new Vector3();
-    worldBox.getSize(worldSize);
+    const size = getWorldBoundingBoxSize(element.getBody());
 
     // Fall back to the legacy path if the world box is degenerate.
-    if (worldSize.x === 0 && worldSize.y === 0 && worldSize.z === 0) {
+    if (!size) {
         return extractBoxDescription(element);
     }
 
     return {
-        width: worldSize.x,
-        height: worldSize.y,
-        length: worldSize.z,
-        size: { x: worldSize.x, y: worldSize.y, z: worldSize.z },
+        ...size,
+        size: { x: size.width, y: size.height, z: size.length },
         ...extractPositionAndQuaternion(element),
     };
 };
 
 export const extractSphereDescription = element => {
-    const radius = element.boundingSphere.radius;
+    const radius = getWorldBoundingSphereRadius(element.getBody()) ?? element.boundingSphere.radius;
 
     return {
         radius,
@@ -187,7 +208,7 @@ export const getSphereDescriptionForElement = element => ({
 
 export const getPlayerDescriptionForElement = element => ({
     ...DEFAULT_PLAYER_DESCRIPTION,
-    ...extractBoxDescription(element),
+    ...extractWorldBoxDescription(element),
 });
 
 export const mapColliderTypeToDescription = (colliderType = COLLIDER_TYPES.BOX) =>
