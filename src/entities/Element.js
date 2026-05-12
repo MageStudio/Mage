@@ -149,9 +149,7 @@ export default class Element extends Entity {
                 result.width = parseFloat(worldSize.width.toFixed(3));
                 result.height = parseFloat(worldSize.height.toFixed(3));
                 result.length = parseFloat(worldSize.length.toFixed(3));
-                result.radius = parseFloat(
-                    (getWorldBoundingSphereRadius(body)).toFixed(3),
-                );
+                result.radius = parseFloat(getWorldBoundingSphereRadius(body).toFixed(3));
             } else if (this.boundingBox) {
                 const size = parseBoundingBoxSize(this.boundingBox);
                 const scale = this.getScale();

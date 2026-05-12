@@ -45,9 +45,10 @@ export const getBoxHitbox = element => {
 
 export const getSphereHitbox = element => {
     const opts = element.getPhysicsOptions() || {};
-    const radius = opts.colliderRadius
-        ?? getWorldBoundingSphereRadius(element.getBody())
-        ?? element.boundingSphere.radius;
+    const radius =
+        opts.colliderRadius ??
+        getWorldBoundingSphereRadius(element.getBody()) ??
+        element.boundingSphere.radius;
 
     const sphere = new Sphere(radius, HIT_BOX_COLOR, DEFAULT_HITBOX_OPTIONS);
 
