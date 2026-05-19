@@ -46,7 +46,7 @@ export const DEFAULT_ANGULAR_VELOCITY = { x: 0, y: 0, z: 0 };
 export const DEFAULT_IMPULSE = { x: 0, y: 0, z: 0 };
 
 export const DISABLE_DEACTIVATION = 4;
-export const GRAVITY = { x: 0, y: -9.8, z: 0 };
+export const GRAVITY = { x: 0, y: -30, z: 0 };
 
 export const FRONT_LEFT = 0;
 export const FRONT_RIGHT = 1;

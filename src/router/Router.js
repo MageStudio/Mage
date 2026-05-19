@@ -47,6 +47,7 @@ class Router {
         this.currentLevel = hash;
 
         Assets.setCurrentLevel(this.currentLevel);
+        Config.setCurrentLevel(this.currentLevel);
     };
 
     getCurrentLevel = () => this.currentLevel;

@@ -1,12 +1,13 @@
 import { SHADOW_TYPES } from "../lights/constants";
 import { createElementFromSelector } from "../lib/dom";
+import { deepMerge } from "../lib/object";
 import { getWindow } from "./window";
 
 const DEFAULT_HEIGHT = 600;
 const DEFAULT_WIDTH = 800;
 const DEFAULT_RATIO = DEFAULT_WIDTH / DEFAULT_HEIGHT;
 
-const DEFAULT_CONFIG = {
+const DEFAULT_COMMON = {
     tests: [],
 
     scripts: {
@@ -44,6 +45,9 @@ const DEFAULT_CONFIG = {
     physics: {
         enabled: false,
         path: "./ammo.js",
+        gravity: { x: 0, y: -30, z: 0 },
+        fixedTimeStep: 1 / 60,
+        maxSubSteps: 3,
     },
 
     camera: {
@@ -58,29 +62,34 @@ const DEFAULT_CONFIG = {
     },
 };
 
-class Config {
+export class Config {
     constructor() {
-        this.default = DEFAULT_CONFIG;
-        this.isDefault = true;
+        this.config = {
+            common: { ...DEFAULT_COMMON },
+            levels: {},
+        };
+        this.currentLevel = null;
     }
 
     setContainer(container) {
         this._container = container;
     }
 
-    setConfig(config) {
-        if (this.isDefault) {
-            this.isDefault = false;
-            this.config = {
-                ...this.default,
-                ...config,
-            };
-        } else {
-            this.config = {
-                ...this.config,
-                config,
-            };
-        }
+    setConfig(config = {}) {
+        const { levels = {}, ...commonOverrides } = config;
+        this.config.common = deepMerge(this.config.common, commonOverrides);
+        this.config.levels = deepMerge(this.config.levels, levels);
+    }
+
+    setCurrentLevel(level) {
+        this.currentLevel = level;
+    }
+
+    resolve(key, level = this.currentLevel) {
+        const commonValue = this.config.common[key];
+        const levelValue = level ? this.config.levels[level]?.[key] : undefined;
+        if (levelValue === undefined) return commonValue;
+        return deepMerge(commonValue, levelValue);
     }
 
     container() {
@@ -94,16 +103,16 @@ class Config {
         return container;
     }
 
-    tests() {
-        return this.config.tests;
+    tests(level) {
+        return this.resolve("tests", level);
     }
 
-    lights() {
-        return this.config.lights;
+    lights(level) {
+        return this.resolve("lights", level);
     }
 
-    fog() {
-        return this.config.fog;
+    fog(level) {
+        return this.resolve("fog", level);
     }
 
     getContainerSize() {
@@ -137,43 +146,44 @@ class Config {
         };
     }
 
-    screen() {
+    screen(level) {
         const { h, w, ratio } =
             this.getContainerSize() || this.getWindowSize() || this.getScreenDefaults();
 
-        this.config.screen = {
-            ...this.config.screen,
+        this.config.common.screen = {
+            ...this.config.common.screen,
             h,
             w,
             ratio,
             devicePixelRatio: window.devicePixelRatio,
         };
 
-        return this.config.screen;
+        return this.resolve("screen", level);
     }
 
-    postprocessing() {
-        return this.config.postprocessing;
+    postprocessing(level) {
+        return this.resolve("postprocessing", level);
     }
 
-    ui() {
-        return this.config.ui;
+    ui(level) {
+        return this.resolve("ui", level);
     }
 
-    physics() {
-        return this.config.physics;
+    physics(level) {
+        return this.resolve("physics", level);
     }
 
-    camera() {
-        return this.config.camera;
+    camera(level) {
+        return this.resolve("camera", level);
     }
 
-    scripts() {
-        return this.config.scripts;
+    scripts(level) {
+        return this.resolve("scripts", level);
     }
 
     getLevelData(levelPath) {
-        return levelPath ? this.config.levelsData[levelPath] : this.config.levelsData;
+        const levelsData = this.config.common.levelsData;
+        return levelPath ? levelsData[levelPath] : levelsData;
     }
 
     toJSON() {
