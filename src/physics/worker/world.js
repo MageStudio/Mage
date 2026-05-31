@@ -51,7 +51,10 @@ export class World {
     }
 
     init = options => {
-        const { gravity = GRAVITY } = options;
+        const { gravity = GRAVITY, fixedTimeStep = 1 / 60, maxSubSteps = 3 } = options;
+
+        this.fixedTimeStep = fixedTimeStep;
+        this.maxSubSteps = maxSubSteps;
 
         this.collisionConfiguration = new Ammo.btDefaultCollisionConfiguration();
         this.dispatcher = new Ammo.btCollisionDispatcher(this.collisionConfiguration);
@@ -110,7 +113,7 @@ export class World {
     };
 
     stepSimulation = dt => {
-        this.dynamicsWorld.stepSimulation(dt);
+        this.dynamicsWorld.stepSimulation(dt, this.maxSubSteps, this.fixedTimeStep);
     };
 
     simulate = () => {

@@ -198,6 +198,8 @@ export const handleVehicleUpdate = (
         maxBreakingForce = DEFAULT_MAX_BREAKING_FORCE,
     } = options;
 
+    const speed = vehicle.getCurrentSpeedKmHour();
+
     if (state.acceleration) {
         if (speed < -1) breakingForce = maxBreakingForce;
         else engineForce = maxEngineForce;
@@ -252,7 +254,6 @@ export const handleVehicleUpdate = (
     q = tm.getRotation();
 
     const direction = vehicle.getForwardVector();
-    const speed = vehicle.getCurrentSpeedKmHour();
 
     const extraData = {
         direction: {

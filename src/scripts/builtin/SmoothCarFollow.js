@@ -48,7 +48,8 @@ export default class SmoothCarFollow extends BaseScript {
         const direction = this.target.getPhysicsState("direction");
         if (direction) {
             const { x, y, z } = direction;
-            const cameraPosition = this.camera.getPosition();
+            const { x: cx, y: cy, z: cz } = this.camera.getPosition();
+            const cameraPosition = new Vector3(cx, cy, cz);
             const targetPosition = this.target.getPosition();
             const vector = new Vector3(x, y, z).negate().normalize().multiplyScalar(this.distance);
 
@@ -56,7 +57,7 @@ export default class SmoothCarFollow extends BaseScript {
             const desiredPosition = targetPosition.add(vector);
             const lerpFactor = this.lerpFactor || 1 - Math.pow(0.1, dt);
 
-            cameraPosition.lerpVectors(cameraPosition, desiredPosition, lerpFactor);
+            cameraPosition.lerp(desiredPosition, lerpFactor);
 
             this.camera.setPosition(cameraPosition);
 

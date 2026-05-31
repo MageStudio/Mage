@@ -3,6 +3,7 @@ import { EventDispatcher, Vector3, Euler, Quaternion, MathUtils } from "three";
 import { debounce } from "../lib/functions";
 import { PHYSICS_ELEMENT_MISSING, THIRD_PERSON_CONTROL_TARGET_MISSING } from "../lib/messages";
 
+import Config from "../core/config";
 import Physics, { PHYSICS_CONSTANTS } from "../physics";
 
 const { COLLIDER_TYPES } = PHYSICS_CONSTANTS;
@@ -404,8 +405,9 @@ export default class ThirdPersonControl extends EventDispatcher {
             pos.z += moveZ * speed * dt;
         }
 
-        // Gravity
-        this.velocity.y -= 9.8 * dt;
+        // Gravity — read from engine config so it matches the physics world
+        const gravityY = Math.abs(Config.physics()?.gravity?.y ?? 30);
+        this.velocity.y -= gravityY * dt;
         pos.y += this.velocity.y * dt;
 
         // Ground clamp
