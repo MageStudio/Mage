@@ -9,8 +9,7 @@ export const omit = (keys, map) =>
         return rest;
     }, map);
 
-const isPlainObject = value =>
-    value !== null && typeof value === "object" && !Array.isArray(value);
+const isPlainObject = value => value !== null && typeof value === "object" && !Array.isArray(value);
 
 export const deepMerge = (base, override) => {
     if (!isPlainObject(base) || !isPlainObject(override)) {
