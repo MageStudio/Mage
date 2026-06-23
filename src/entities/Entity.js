@@ -258,11 +258,12 @@ export default class Entity extends EventDispatcher {
             if (index !== -1) oldParent.children.splice(index, 1);
         }
 
-        // Detach from old THREE.js parent
+        // NOTE: do NOT remove the body from its current THREE.js parent here.
+        // attach() preserves the world transform by reading body.parent.matrixWorld,
+        // and internally re-parents via add() (which detaches from the old parent).
+        // Removing first nulls body.parent, so attach() skips the world-preservation
+        // step and the entity snaps to its stale local coordinates instead.
         const body = this.getBody();
-        if (body.parent) {
-            body.parent.remove(body);
-        }
 
         if (newParent && newParent.hasBody()) {
             // Attach to new parent (preserves world position)
@@ -270,7 +271,7 @@ export default class Entity extends EventDispatcher {
             this.setParent(newParent);
             newParent.getBody().attach(body);
         } else {
-            // Move to scene root
+            // Move to scene root (also preserves world position)
             this.setParent(false);
             Scene.getScene().attach(body);
         }
