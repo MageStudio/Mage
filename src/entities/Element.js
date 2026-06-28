@@ -924,9 +924,15 @@ export default class Element extends Entity {
         }
 
         if (textureId) {
-            const { repeat = { x: 1, y: 1 }, wrap = RepeatWrapping, assetPath } = options;
+            const {
+                repeat = { x: 1, y: 1 },
+                offset = { x: 0, y: 0 },
+                wrap = RepeatWrapping,
+                assetPath,
+            } = options;
             const textureOptions = {
                 repeat,
+                offset,
                 wrap,
             };
 
@@ -943,6 +949,7 @@ export default class Element extends Entity {
                 texture.wrapS = textureOptions.wrap;
                 texture.wrapT = textureOptions.wrap;
                 texture.repeat.set(textureOptions.repeat.x, textureOptions.repeat.y);
+                texture.offset.set(textureOptions.offset.x, textureOptions.offset.y);
 
                 // Set sRGB encoding for color textures (map, emissiveMap, specularMap)
                 // This is required for textures to display with correct colors
@@ -960,6 +967,19 @@ export default class Element extends Entity {
 
             applyMaterialChange(this.getBody(), applyTextureTo);
         }
+    }
+
+    setTextureOptions(textureType = TEXTURES.MAP, options = {}) {
+        const existing = this.textures.get(textureType);
+
+        if (!existing) {
+            return;
+        }
+
+        const { id, assetPath, options: currentOptions = {} } = existing;
+        const mergedOptions = { ...currentOptions, ...options };
+
+        this.setTexture(id, textureType, { ...mergedOptions, assetPath });
     }
 
     getTexture(textureType = TEXTURES.MAP) {
