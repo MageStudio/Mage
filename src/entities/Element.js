@@ -930,10 +930,15 @@ export default class Element extends Entity {
                 wrap = RepeatWrapping,
                 assetPath,
             } = options;
+            // Per-axis wrapping. Fall back to the legacy single `wrap` so textures
+            // recorded before per-axis support still resolve correctly.
+            const wrapS = options.wrapS !== undefined ? options.wrapS : wrap;
+            const wrapT = options.wrapT !== undefined ? options.wrapT : wrap;
             const textureOptions = {
                 repeat,
                 offset,
-                wrap,
+                wrapS,
+                wrapT,
             };
 
             this.recordTexture(textureId, textureType, textureOptions, assetPath);
@@ -946,10 +951,13 @@ export default class Element extends Entity {
                     return;
                 }
 
-                texture.wrapS = textureOptions.wrap;
-                texture.wrapT = textureOptions.wrap;
+                texture.wrapS = textureOptions.wrapS;
+                texture.wrapT = textureOptions.wrapT;
                 texture.repeat.set(textureOptions.repeat.x, textureOptions.repeat.y);
                 texture.offset.set(textureOptions.offset.x, textureOptions.offset.y);
+                // Wrapping is a sampler-level setting, so the texture must be
+                // re-uploaded for a wrap change to take effect.
+                texture.needsUpdate = true;
 
                 // Set sRGB encoding for color textures (map, emissiveMap, specularMap)
                 // This is required for textures to display with correct colors
