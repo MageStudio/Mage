@@ -8,9 +8,33 @@ import {
     TYPES,
     DEFAULT_SCALE,
     DISABLE_DEACTIVATION,
+    CF_STATIC_OBJECT,
+    CF_KINEMATIC_OBJECT,
     DEFAULT_LINEAR_VELOCITY,
     DEFAULT_IMPULSE,
 } from "../constants";
+
+// Turn a body into a kinematic one: it stays mass-0 (infinite mass to the
+// solver) but is driven by its motionState transform rather than frozen like a
+// static body. Bullet derives its linear/angular velocity from the per-step
+// motionState delta and applies that to contacting dynamic bodies, so objects
+// resting on it are carried along instead of falling through.
+export const makeKinematic = body => {
+    const flags = (body.getCollisionFlags() & ~CF_STATIC_OBJECT) | CF_KINEMATIC_OBJECT;
+    body.setCollisionFlags(flags);
+    body.setActivationState(DISABLE_DEACTIVATION);
+    body.activate(true);
+};
+
+// Auto-promote a static body the first time it is moved/rotated by a script.
+// A static body teleported via setWorldTransform reports zero velocity to the
+// solver, so resting dynamic bodies lose their support contact (and can tunnel
+// through a thin collider). Promoting to kinematic fixes both.
+const ensureKinematic = body => {
+    if (body.isStaticObject()) {
+        makeKinematic(body);
+    }
+};
 
 export const createRigidBody = (shape, options) => {
     const {
@@ -21,6 +45,8 @@ export const createRigidBody = (shape, options) => {
         friction,
         restitution = 0.9,
         damping = { linear: 0.2, angular: 0.2 },
+        kinematic = false,
+        ccdRadius = 0,
     } = options;
 
     const transform = new Ammo.btTransform();
@@ -42,10 +68,27 @@ export const createRigidBody = (shape, options) => {
         body.setRestitution(restitution);
         body.setDamping(damping.linear, damping.angular);
         body.setActivationState(DISABLE_DEACTIVATION);
+        // Continuous collision detection so a fast-moving dynamic body can't
+        // tunnel through a thin collider — e.g. a sphere ejected by a rotating
+        // kinematic platform. Mirrors the player capsule's CCD setup.
+        if (ccdRadius > 0) {
+            body.setCcdMotionThreshold(ccdRadius * 0.5);
+            body.setCcdSweptSphereRadius(ccdRadius * 0.8);
+        }
+    } else if (kinematic) {
+        // mass-0 body explicitly flagged as a movable (kinematic) collider.
+        if (friction != null) body.setFriction(friction);
+        makeKinematic(body);
     }
 
     // storing uuid for future reference
     body.uuid = uuid;
+
+    // Authoritative position for kinematic bodies. Bullet extrapolates a
+    // kinematic body's transform from its derived velocity; if we read that
+    // back (getWorldTransform) when only changing rotation, the position drifts
+    // and runs away. We instead pin the origin to this stored value.
+    body.kinematicPosition = { x: position.x, y: position.y, z: position.z };
 
     world.addRigidBody(body);
 
@@ -139,21 +182,48 @@ export const addModel = options => {
 };
 
 export const addBox = data => {
-    const { uuid, width, length, height, position, quaternion, mass = 0, friction = 2 } = data;
+    const {
+        uuid,
+        width,
+        length,
+        height,
+        position,
+        quaternion,
+        mass = 0,
+        friction = 2,
+        kinematic = false,
+    } = data;
 
     const geometry = new Ammo.btBoxShape(
         new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5),
     );
-    const body = createRigidBody(geometry, { uuid, position, quaternion, mass, friction });
+    const body = createRigidBody(geometry, {
+        uuid,
+        position,
+        quaternion,
+        mass,
+        friction,
+        kinematic,
+        // size CCD from the thinnest half-extent
+        ccdRadius: Math.min(width, height, length) * 0.5,
+    });
 
     world.addElement({ uuid, body, type: TYPES.BOX, state: DEFAULT_RIGIDBODY_STATE });
 };
 
 export const addSphere = data => {
-    const { uuid, radius, position, quaternion, mass = 0, friction = 2 } = data;
+    const { uuid, radius, position, quaternion, mass = 0, friction = 2, kinematic = false } = data;
 
     const geometry = new Ammo.btSphereShape(radius);
-    const body = createRigidBody(geometry, { uuid, position, quaternion, mass, friction });
+    const body = createRigidBody(geometry, {
+        uuid,
+        position,
+        quaternion,
+        mass,
+        friction,
+        kinematic,
+        ccdRadius: radius,
+    });
 
     world.addElement({ uuid, body, type: TYPES.SPHERE, state: DEFAULT_RIGIDBODY_STATE });
 };
@@ -173,6 +243,13 @@ export const setLinearVelocity = data => {
 export const setPosition = data => {
     const { uuid, position } = data;
     const { body } = world.getElement(uuid);
+
+    // A script is moving this collider — promote it from static to kinematic so
+    // it carries resting bodies and doesn't let them tunnel through.
+    ensureKinematic(body);
+
+    // This is the new authoritative position for the kinematic body.
+    body.kinematicPosition = { x: position.x, y: position.y, z: position.z };
 
     const transform = new Ammo.btTransform();
 
@@ -234,8 +311,24 @@ export const setQuaternion = data => {
     const { uuid, quaternion } = data;
     const { body } = world.getElement(uuid);
 
+    // A script is rotating this collider — promote it from static to kinematic
+    // so it carries resting bodies and doesn't let them tunnel through.
+    ensureKinematic(body);
+
     const transform = new Ammo.btTransform();
     body.getWorldTransform(transform);
+
+    // Pin the origin to the authoritative kinematic position rather than
+    // preserving whatever Bullet extrapolated into the world transform. A
+    // kinematic body driven only by rotation must not accumulate positional
+    // drift — reading getWorldTransform back here is what let the platform slide
+    // off and blow up. Fall back to the current origin if we have no stored
+    // position (e.g. a dynamic body being oriented explicitly).
+    const kp = body.kinematicPosition;
+    if (kp && (body.getCollisionFlags() & CF_KINEMATIC_OBJECT) !== 0) {
+        transform.setOrigin(new Ammo.btVector3(kp.x, kp.y, kp.z));
+    }
+
     transform.setRotation(
         new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
     );
