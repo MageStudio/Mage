@@ -68,6 +68,16 @@ export class World {
         );
         this.dynamicsWorld.setGravity(new Ammo.btVector3(gravity.x, gravity.y, gravity.z));
 
+        // Harden the solver against deep-penetration blow-ups: split impulse
+        // separates positional correction from velocity so recovering from a
+        // deep overlap (e.g. a thin kinematic platform rotating into a large
+        // resting sphere under strong gravity) doesn't inject huge velocities.
+        // More iterations converge stiff contacts under high gravity.
+        const solverInfo = this.dynamicsWorld.getSolverInfo();
+        solverInfo.set_m_splitImpulse(true);
+        solverInfo.set_m_splitImpulsePenetrationThreshold(-0.02);
+        solverInfo.set_m_numIterations(20);
+
         // this is needed for ghostObject collisions
         this.dynamicsWorld
             .getBroadphase()
