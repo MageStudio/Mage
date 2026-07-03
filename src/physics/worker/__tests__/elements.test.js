@@ -4,11 +4,14 @@ jest.mock("../world", () => ({
     __esModule: true,
     default: { addRigidBody: jest.fn(), addElement: jest.fn(), getElement: jest.fn() },
 }));
-jest.mock("../lib/dispatcher", () => ({ __esModule: true, default: { sendBodyUpdate: jest.fn() } }));
+jest.mock("../lib/dispatcher", () => ({
+    __esModule: true,
+    default: { sendBodyUpdate: jest.fn() },
+}));
 jest.mock("../lib/math", () => ({ applyMatrix4ToVector3: jest.fn() }));
 
 import world from "../world";
-import { makeKinematic, createRigidBody, addBox, addSphere, setQuaternion } from "../elements";
+import { makeKinematic, createRigidBody, addSphere, setQuaternion } from "../elements";
 
 // Minimal fake body that tracks collision flags and activation state.
 const makeFakeBody = (initialFlags = CF_STATIC_OBJECT) => {
