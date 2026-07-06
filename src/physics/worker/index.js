@@ -4,6 +4,7 @@ import { addVehicle, resetVehicle, setVehiclePosition, setVehicleQuaternion } fr
 import {
     addBox,
     addModel,
+    addCompound,
     setLinearVelocity,
     applyImpuse,
     addSphere,
@@ -28,6 +29,9 @@ const handleLoadEvent = options => Ammo => {
                 break;
             case PHYSICS_EVENTS.ADD.SPHERE:
                 addSphere(data);
+                break;
+            case PHYSICS_EVENTS.ADD.COMPOUND:
+                addCompound(data);
                 break;
             case PHYSICS_EVENTS.ADD.VEHICLE:
                 addVehicle(data);

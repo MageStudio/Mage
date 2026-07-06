@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { EventDispatcher, Vector3, Quaternion } from "three";
 import Universe from "../core/universe";
 import Config from "../core/config";
 import PhysicsWorker from "worker:./worker";
@@ -243,6 +243,112 @@ export class Physics extends EventDispatcher {
                 uuid,
             });
         }
+    }
+
+    // Collect every physics-enabled descendant of `root` (its rigidly-attached
+    // children), descending through non-physics elements too. These become child
+    // shapes of the root's compound body.
+    collectPhysicsSubtree(root) {
+        const collected = [];
+        const walk = element => {
+            (element.children || []).forEach(child => {
+                if (child.isPhysicsEnabled && child.isPhysicsEnabled()) {
+                    collected.push(child);
+                }
+                walk(child);
+            });
+        };
+        walk(root);
+        return collected;
+    }
+
+    // Describe one collider element in the compound root's local frame: its
+    // collider type, world-space size, and parent-relative position/rotation.
+    buildCompoundShape(element, rootWorldPos, invRootQuat) {
+        const options = element.getPhysicsOptions() || {};
+        const colliderType = options.colliderType || COLLIDER_TYPES.BOX;
+        const description = mapColliderTypeToDescription(colliderType)(element);
+
+        const body = element.getBody();
+        const worldPos = body.getWorldPosition(new Vector3());
+        const worldQuat = body.getWorldQuaternion(new Quaternion());
+
+        // The compound body sits at (rootWorldPos, rootWorldQuat) with no scale,
+        // so a child's offset in that frame is its world displacement rotated
+        // back into the root's rotation. Size already comes from the world AABB,
+        // so we intentionally carry only rotation+translation here (no scale).
+        const localPos = worldPos.clone().sub(rootWorldPos).applyQuaternion(invRootQuat);
+        const localQuat = invRootQuat.clone().multiply(worldQuat);
+
+        const shape = {
+            childUuid: element.uuid(),
+            colliderType,
+            localPosition: { x: localPos.x, y: localPos.y, z: localPos.z },
+            localQuaternion: { x: localQuat.x, y: localQuat.y, z: localQuat.z, w: localQuat.w },
+        };
+
+        // World-space size, with explicit per-axis overrides (mirrors add()).
+        if (colliderType === COLLIDER_TYPES.SPHERE) {
+            shape.radius =
+                options.colliderRadius != null ? options.colliderRadius : description.radius;
+        } else {
+            shape.width = options.colliderWidth != null ? options.colliderWidth : description.width;
+            shape.height =
+                options.colliderHeight != null ? options.colliderHeight : description.height;
+            shape.length =
+                options.colliderLength != null ? options.colliderLength : description.length;
+        }
+
+        return shape;
+    }
+
+    // Realize a physics subtree as a single rigid body. If `root` has no
+    // physics-enabled descendants it takes the normal single-body path; otherwise
+    // root + welded children become one btCompoundShape body so rotating the root
+    // (e.g. a kinematic platform) carries every child collider with it.
+    realizeSubtree(root) {
+        if (!Config.physics().enabled) return;
+        if (this.hasElement(root)) return;
+
+        const descendants = this.collectPhysicsSubtree(root);
+
+        if (descendants.length === 0) {
+            this.add(root, root.getPhysicsOptions());
+            return;
+        }
+
+        const rootBody = root.getBody();
+        rootBody.updateWorldMatrix(true, true);
+
+        const rootWorldPos = rootBody.getWorldPosition(new Vector3());
+        const rootWorldQuat = rootBody.getWorldQuaternion(new Quaternion());
+        const invRootQuat = rootWorldQuat.clone().invert();
+
+        // shapes[0] is the root collider at local identity; the rest are children.
+        const colliders = [root, ...descendants];
+        const shapes = colliders.map(element =>
+            this.buildCompoundShape(element, rootWorldPos, invRootQuat),
+        );
+
+        const options = root.getPhysicsOptions() || {};
+
+        this.storeElement(root, options);
+
+        this.worker.postMessage({
+            event: PHYSICS_EVENTS.ADD.COMPOUND,
+            uuid: root.uuid(),
+            position: { x: rootWorldPos.x, y: rootWorldPos.y, z: rootWorldPos.z },
+            quaternion: {
+                x: rootWorldQuat.x,
+                y: rootWorldQuat.y,
+                z: rootWorldQuat.z,
+                w: rootWorldQuat.w,
+            },
+            mass: options.mass != null ? options.mass : 0,
+            friction: options.friction,
+            kinematic: !!options.kinematic,
+            shapes,
+        });
     }
 
     addVehicle(element, options) {

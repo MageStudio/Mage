@@ -435,12 +435,22 @@ export default class Element extends Entity {
     }
 
     enablePhysics(options = {}) {
-        this.setPhysicsOptions(options);
+        const { deferPhysics = false, ...physicsOptions } = options;
+        this.setPhysicsOptions(physicsOptions);
         this._physicsEnabled = true;
 
-        if (Config.physics().enabled) {
-            Physics.add(this, options);
+        // During import (deferPhysics) the scene hierarchy isn't wired up yet, so
+        // we only record the intent here. Physics.realizeSubtree then builds one
+        // body per physics subtree — a compound of a parent plus its rigidly
+        // attached (scene-graph child) colliders — once parenting is complete.
+        // Direct runtime calls keep creating the body immediately.
+        if (!deferPhysics && Config.physics().enabled) {
+            Physics.add(this, physicsOptions);
         }
+    }
+
+    isPhysicsEnabled() {
+        return !!this._physicsEnabled;
     }
 
     getAngularVelocity() {

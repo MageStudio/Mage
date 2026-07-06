@@ -14,6 +14,7 @@ export const PHYSICS_EVENTS = {
         MODEL: "physics:add:model",
         PLAYER: "physics:add:player",
         SPHERE: "physics:add:sphere",
+        COMPOUND: "physics:add:compound",
     },
 
     ELEMENT: {

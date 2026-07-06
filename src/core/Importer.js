@@ -46,6 +46,7 @@ import { Object3D } from "three";
 import Universe from "./universe";
 import Images from "../images/Images";
 import Scene from "./Scene";
+import Physics from "../physics";
 
 // class responsible for importing level data from a file
 export class Importer {
@@ -190,9 +191,36 @@ export class Importer {
             }
         }
 
-        // enable physics if options were configured
+        // Record physics intent, but defer body creation. The scene hierarchy
+        // isn't wired up yet at this point, so a parent + its rigidly-attached
+        // children can't be resolved into a single (compound) body until after
+        // the parenting passes below. Importer.realizePhysics() does that.
         if (elementData.physics?.options) {
-            element.enablePhysics(elementData.physics.options);
+            element.enablePhysics({ ...elementData.physics.options, deferPhysics: true });
+        }
+    }
+
+    // True if any ancestor of `element` already owns physics — meaning `element`
+    // is a welded child that belongs in an ancestor's compound body, not a root.
+    static hasPhysicsEnabledAncestor(element) {
+        let current = element.getParent && element.getParent();
+        while (current) {
+            if (current.isPhysicsEnabled && current.isPhysicsEnabled()) return true;
+            current = current.getParent ? current.getParent() : null;
+        }
+        return false;
+    }
+
+    // Build physics bodies now that the full hierarchy exists. Each physics
+    // subtree root (physics-enabled, no physics ancestor) is realized once;
+    // realizeSubtree folds its welded descendants into one compound body.
+    static realizePhysics(elements) {
+        for (const elementData of elements) {
+            if (!elementData.physics?.options) continue;
+            const element = Universe.getByUUID(elementData.uuid);
+            if (!element || !element.isPhysicsEnabled()) continue;
+            if (Importer.hasPhysicsEnabledAncestor(element)) continue;
+            Physics.realizeSubtree(element);
         }
     }
 
@@ -626,6 +654,10 @@ export class Importer {
                 }
             }
         }
+
+        // Hierarchy is fully wired up — now realize deferred physics bodies so a
+        // parent and its rigidly-attached children collide as one compound body.
+        Importer.realizePhysics(elements);
 
         lights.forEach(data => {
             try {
