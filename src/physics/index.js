@@ -351,6 +351,104 @@ export class Physics extends EventDispatcher {
         });
     }
 
+    // Walk from `element` up its parent chain (inclusive) and return the topmost
+    // physics-enabled ancestor — the root whose compound body owns element's
+    // collider — or null if element is under no physics umbrella.
+    topmostPhysicsRoot(element) {
+        let root = null;
+        let current = element;
+        while (current) {
+            if (current.isPhysicsEnabled && current.isPhysicsEnabled()) root = current;
+            current = current.getParent ? current.getParent() : null;
+        }
+        return root;
+    }
+
+    // Physics roots (topmost-physics nodes) located within `element`'s subtree
+    // (inclusive) — used when a moved subtree ends up under no physics parent and
+    // each such node must become its own body again.
+    collectRootsInSubtree(element) {
+        const roots = [];
+        const visit = el => {
+            if (
+                el.isPhysicsEnabled &&
+                el.isPhysicsEnabled() &&
+                this.topmostPhysicsRoot(el) === el
+            ) {
+                roots.push(el);
+            }
+            (el.children || []).forEach(visit);
+        };
+        visit(element);
+        return roots;
+    }
+
+    // Already-realized bodies whose element sits inside `element`'s subtree
+    // (inclusive) — independent roots that travel with a moved subtree and whose
+    // bodies are therefore stale after the move.
+    realizedRootsInSubtree(element) {
+        const found = [];
+        const visit = el => {
+            if (el.uuid && this.elements.includes(el.uuid())) found.push(el);
+            (el.children || []).forEach(visit);
+        };
+        visit(element);
+        return found;
+    }
+
+    // Tear down a realized body by uuid (its compound or single body) without
+    // needing the element instance — used when reconciling reparents.
+    disposeByUuid(uuid) {
+        if (!this.worker || !this.elements.includes(uuid)) return;
+        this.elements.splice(this.elements.indexOf(uuid), 1);
+        this.worker.postMessage({ event: PHYSICS_EVENTS.ELEMENT.DISPOSE, uuid });
+    }
+
+    // Reconcile compound bodies after `element` was reparented away from
+    // `oldParent`. A child leaving/joining a physics parent changes which
+    // compound its collider belongs to, so we tear down the stale bodies on both
+    // sides of the move and rebuild the affected roots from the current hierarchy.
+    // No-op until physics is realized (e.g. during import), so import-time
+    // parenting is unaffected.
+    rebuildAfterReparent(element, oldParent) {
+        if (!Config.physics().enabled || !this.worker) return;
+        // Nothing realized yet (e.g. mid-import, before realizePhysics runs) —
+        // the final hierarchy will be realized in one pass, so stay out of it.
+        if (this.elements.length === 0) return;
+
+        const disposeUuids = new Set();
+        const realizeRoots = new Map();
+        const wantRealize = el => {
+            if (el && el.isPhysicsEnabled && el.isPhysicsEnabled()) {
+                realizeRoots.set(el.uuid(), el);
+            }
+        };
+
+        // Independent bodies that travelled inside the moved subtree are stale.
+        this.realizedRootsInSubtree(element).forEach(el => disposeUuids.add(el.uuid()));
+
+        // The root of the position element left loses element's colliders.
+        const oldRoot = oldParent ? this.topmostPhysicsRoot(oldParent) : null;
+        if (oldRoot) {
+            disposeUuids.add(oldRoot.uuid());
+            wantRealize(oldRoot);
+        }
+
+        // The root element landed under (inclusive of element) gains them; with no
+        // physics umbrella, each physics root in the moved subtree stands alone.
+        const newRoot = this.topmostPhysicsRoot(element);
+        if (newRoot) {
+            disposeUuids.add(newRoot.uuid());
+            wantRealize(newRoot);
+        } else {
+            this.collectRootsInSubtree(element).forEach(wantRealize);
+        }
+
+        // Dispose stale bodies first so realizeSubtree rebuilds from a clean slate.
+        disposeUuids.forEach(uuid => this.disposeByUuid(uuid));
+        realizeRoots.forEach(el => this.realizeSubtree(el));
+    }
+
     addVehicle(element, options) {
         if (Config.physics().enabled) {
             const uuid = element.uuid();

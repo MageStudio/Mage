@@ -168,6 +168,21 @@ ammoFactory().then(A => {
         `sphere.x=${pos.x.toFixed(2)} (expect >3.5), wallCollisions=${wallCollisions()}`,
     );
 
+    // ── Scenario 3: rebuild-on-reparent — worker tears down the compound and
+    //    re-adds the floor alone (what Physics.rebuildAfterReparent emits when the
+    //    wall leaves its parent). The wall collider must physically disappear. ───
+    resetWorld();
+    buildFloor({ withWall: true });
+    world.disposeBody({ uuid: "floor" }); // dispose the floor+wall compound body
+    buildFloor({ withWall: false }); // rebuild the floor alone (wall reparented out)
+    addRollingSphere({ x: 0, y: 1.1, z: 0 }, { x: 12, y: 0, z: 0 });
+    pos = run();
+    check(
+        "reparent-out rebuild removes the wall collider",
+        pos.x > 3.5 && wallCollisions() === 0,
+        `sphere.x=${pos.x.toFixed(2)} (expect >3.5), wallCollisions=${wallCollisions()}`,
+    );
+
     const failed = results.filter(r => !r.pass);
     console.log(`\n${results.length - failed.length}/${results.length} checks passed`);
     process.exit(failed.length ? 1 : 0);
