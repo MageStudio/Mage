@@ -1,4 +1,4 @@
-import { Object3D } from "three";
+import { Object3D, Mesh, BoxGeometry } from "three";
 import { PHYSICS_EVENTS } from "../messages";
 import { COLLIDER_TYPES } from "../constants";
 
@@ -129,6 +129,40 @@ describe("Physics.realizeSubtree", () => {
         expect(near(wall.localPosition.x, 4, 1e-4)).toBe(true);
         expect(near(wall.localPosition.y, 0, 1e-4)).toBe(true);
         expect(near(wall.localPosition.z, 0, 1e-4)).toBe(true);
+    });
+
+    it("sizes a rotated child by its true extents, not the inflated world AABB", () => {
+        // A thin upright wall (1 x 4 x 0.2) rotated 45° about Y and parented to an
+        // unrotated floor. Its world-axis-aligned AABB footprint is inflated to
+        // ~0.85 x 0.85; the collider must instead keep the true 1 x 0.2 footprint.
+        const floorBody = new Mesh(new BoxGeometry(10, 1, 10));
+        const wallBody = new Mesh(new BoxGeometry(1, 4, 0.2));
+        wallBody.position.set(0, 2.5, 3);
+        wallBody.rotation.set(0, Math.PI / 4, 0); // 45° about Y
+        floorBody.add(wallBody);
+        floorBody.updateMatrixWorld(true);
+
+        const wall = makeElement("wall", { colliderType: COLLIDER_TYPES.BOX }, wallBody);
+        const floor = makeElement("floor", { colliderType: COLLIDER_TYPES.BOX }, floorBody, [wall]);
+
+        Physics.realizeSubtree(floor);
+
+        const msg = Physics.worker.postMessage.mock.calls[0][0];
+        const wallShape = msg.shapes.find(s => s.childUuid === "wall");
+        // True extents preserved (not the ~0.85 inflated AABB).
+        expect(near(wallShape.width, 1, 1e-3)).toBe(true);
+        expect(near(wallShape.height, 4, 1e-3)).toBe(true);
+        expect(near(wallShape.length, 0.2, 1e-3)).toBe(true);
+        // Centered at the wall's world position, in the (unrotated) root frame.
+        expect(near(wallShape.localPosition.x, 0, 1e-3)).toBe(true);
+        expect(near(wallShape.localPosition.y, 2.5, 1e-3)).toBe(true);
+        expect(near(wallShape.localPosition.z, 3, 1e-3)).toBe(true);
+
+        // The floor shape must NOT swallow the wall child's geometry.
+        const floorShape = msg.shapes.find(s => s.childUuid === "floor");
+        expect(near(floorShape.width, 10, 1e-3)).toBe(true);
+        expect(near(floorShape.height, 1, 1e-3)).toBe(true);
+        expect(near(floorShape.length, 10, 1e-3)).toBe(true);
     });
 
     it("falls back to a single body when the root has no physics children", () => {

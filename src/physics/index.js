@@ -1,4 +1,4 @@
-import { EventDispatcher, Vector3, Quaternion } from "three";
+import { EventDispatcher, Vector3, Quaternion, Box3, Matrix4 } from "three";
 import Universe from "../core/universe";
 import Config from "../core/config";
 import PhysicsWorker from "worker:./worker";
@@ -15,6 +15,7 @@ const { COLLIDER_TYPES } = PHYSICS_CONSTANTS;
 
 const {
     getBoxDescriptionForElement,
+    getWorldBoundingBoxSize,
     extractPositionAndQuaternion,
     mapColliderTypeToDescription,
     iterateGeometries,
@@ -263,22 +264,27 @@ export class Physics extends EventDispatcher {
     }
 
     // Describe one collider element in the compound root's local frame: its
-    // collider type, world-space size, and parent-relative position/rotation.
-    buildCompoundShape(element, rootWorldPos, invRootQuat) {
+    // collider type, size, and parent-relative position/rotation. `siblingBodies`
+    // are the bodies of the OTHER colliders in the compound (each becomes its own
+    // shape), so this element's geometry is measured without swallowing them.
+    buildCompoundShape(element, rootWorldPos, invRootQuat, siblingBodies) {
         const options = element.getPhysicsOptions() || {};
         const colliderType = options.colliderType || COLLIDER_TYPES.BOX;
-        const description = mapColliderTypeToDescription(colliderType)(element);
 
         const body = element.getBody();
-        const worldPos = body.getWorldPosition(new Vector3());
         const worldQuat = body.getWorldQuaternion(new Quaternion());
+        const excluded = new Set(siblingBodies.filter(b => b !== body));
 
-        // The compound body sits at (rootWorldPos, rootWorldQuat) with no scale,
-        // so a child's offset in that frame is its world displacement rotated
-        // back into the root's rotation. Size already comes from the world AABB,
-        // so we intentionally carry only rotation+translation here (no scale).
-        const localPos = worldPos.clone().sub(rootWorldPos).applyQuaternion(invRootQuat);
+        // Orientation of this collider relative to the compound root. The root
+        // body carries no scale, so children are placed with rotation +
+        // translation only.
         const localQuat = invRootQuat.clone().multiply(worldQuat);
+
+        const { worldCenter, size } = this.measureCollider(body, worldQuat, excluded);
+
+        // Position the shape at the collider's true world CENTER (a mesh's
+        // geometry can be offset from its element origin), in the root's frame.
+        const localPos = worldCenter.clone().sub(rootWorldPos).applyQuaternion(invRootQuat);
 
         const shape = {
             childUuid: element.uuid(),
@@ -287,19 +293,60 @@ export class Physics extends EventDispatcher {
             localQuaternion: { x: localQuat.x, y: localQuat.y, z: localQuat.z, w: localQuat.w },
         };
 
-        // World-space size, with explicit per-axis overrides (mirrors add()).
         if (colliderType === COLLIDER_TYPES.SPHERE) {
-            shape.radius =
-                options.colliderRadius != null ? options.colliderRadius : description.radius;
+            const radius = Math.max(size.width, size.height, size.length) / 2;
+            shape.radius = options.colliderRadius != null ? options.colliderRadius : radius;
         } else {
-            shape.width = options.colliderWidth != null ? options.colliderWidth : description.width;
-            shape.height =
-                options.colliderHeight != null ? options.colliderHeight : description.height;
-            shape.length =
-                options.colliderLength != null ? options.colliderLength : description.length;
+            shape.width = options.colliderWidth != null ? options.colliderWidth : size.width;
+            shape.height = options.colliderHeight != null ? options.colliderHeight : size.height;
+            shape.length = options.colliderLength != null ? options.colliderLength : size.length;
         }
 
         return shape;
+    }
+
+    // Measure a collider's own geometry: its world-space center and its *un-rotated*
+    // box size. Two things matter here:
+    //  - We skip `excluded` bodies (the compound's other collider elements, which
+    //    are THREE children of this body) so a parent shape doesn't swallow its
+    //    children's geometry.
+    //  - Size is measured after removing the element's world rotation, so a rotated
+    //    element (e.g. an upright wall) reports its real extents instead of an
+    //    inflated axis-aligned bound that localQuaternion would then rotate again.
+    // Falls back to the body origin / a unit box when there is no own geometry.
+    measureCollider(body, worldQuat, excluded) {
+        body.updateWorldMatrix(true, true);
+        const unrotate = new Matrix4().makeRotationFromQuaternion(worldQuat.clone().invert());
+        const worldBox = new Box3(); // for the center (axis-aligned, world)
+        const sizeBox = new Box3(); // for the size (rotation removed)
+        let found = false;
+
+        const visit = obj => {
+            if (obj !== body && excluded.has(obj)) return; // skip a child element's subtree
+            if (obj.geometry) {
+                if (!obj.geometry.boundingBox) obj.geometry.computeBoundingBox();
+                // World AABB (its center is the true world center of the box).
+                worldBox.union(obj.geometry.boundingBox.clone().applyMatrix4(obj.matrixWorld));
+                // Un-rotate and measure in ONE transform: applying matrixWorld
+                // first would already collapse the rotated box to an inflated
+                // axis-aligned bound. `unrotate * matrixWorld` has no net rotation,
+                // so the resulting AABB is the box's true (scaled) extent.
+                const combined = unrotate.clone().multiply(obj.matrixWorld);
+                sizeBox.union(obj.geometry.boundingBox.clone().applyMatrix4(combined));
+                found = true;
+            }
+            for (const child of obj.children) visit(child);
+        };
+        visit(body);
+
+        if (!found) {
+            const fallback = getWorldBoundingBoxSize(body) || { width: 1, height: 1, length: 1 };
+            return { worldCenter: body.getWorldPosition(new Vector3()), size: fallback };
+        }
+
+        const worldCenter = worldBox.getCenter(new Vector3());
+        const s = sizeBox.getSize(new Vector3());
+        return { worldCenter, size: { width: s.x, height: s.y, length: s.z } };
     }
 
     // Realize a physics subtree as a single rigid body. If `root` has no
@@ -326,8 +373,9 @@ export class Physics extends EventDispatcher {
 
         // shapes[0] is the root collider at local identity; the rest are children.
         const colliders = [root, ...descendants];
+        const colliderBodies = colliders.map(c => c.getBody());
         const shapes = colliders.map(element =>
-            this.buildCompoundShape(element, rootWorldPos, invRootQuat),
+            this.buildCompoundShape(element, rootWorldPos, invRootQuat, colliderBodies),
         );
 
         const options = root.getPhysicsOptions() || {};
