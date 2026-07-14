@@ -6,6 +6,9 @@ export const TYPES = {
     VEHICLE: "VEHICLE",
     MESH: "MESH",
     PLAYER: "PLAYER",
+    // A single rigid body whose shape is a btCompoundShape made of a parent
+    // element's collider plus its rigidly-attached (scene-graph child) colliders.
+    COMPOUND: "COMPOUND",
 };
 
 export const COLLIDER_TYPES = {

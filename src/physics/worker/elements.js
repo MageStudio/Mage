@@ -6,6 +6,7 @@ import { applyMatrix4ToVector3 } from "./lib/math";
 import {
     DEFAULT_RIGIDBODY_STATE,
     TYPES,
+    COLLIDER_TYPES,
     DEFAULT_SCALE,
     DISABLE_DEACTIVATION,
     CF_STATIC_OBJECT,
@@ -226,6 +227,86 @@ export const addSphere = data => {
     });
 
     world.addElement({ uuid, body, type: TYPES.SPHERE, state: DEFAULT_RIGIDBODY_STATE });
+};
+
+// Build the leaf Ammo shape for one collider of a compound body. Mirrors the
+// shape construction in addBox/addSphere so a compound child collides exactly
+// like the equivalent standalone element would.
+const createLeafShape = ({ colliderType, width = 1, height = 1, length = 1, radius = 0.5 }) => {
+    if (colliderType === COLLIDER_TYPES.SPHERE) {
+        return new Ammo.btSphereShape(radius);
+    }
+    return new Ammo.btBoxShape(new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5));
+};
+
+// Descriptor kept per child shape so calculateCollisions can resolve which
+// child of the compound a contact belongs to (see world.resolveChildUuid). We
+// store the child's local placement + half-extents/radius so a contact's local
+// point can be tested against each child region.
+const makeChildDescriptor = (shape, index) => ({
+    index,
+    uuid: shape.childUuid,
+    colliderType: shape.colliderType,
+    localPosition: shape.localPosition || { x: 0, y: 0, z: 0 },
+    localQuaternion: shape.localQuaternion || { x: 0, y: 0, z: 0, w: 1 },
+    halfExtents: {
+        x: (shape.width || 1) * 0.5,
+        y: (shape.height || 1) * 0.5,
+        z: (shape.length || 1) * 0.5,
+    },
+    radius: shape.radius || 0.5,
+});
+
+// Realize a parent element and its rigidly-attached children as ONE rigid body
+// backed by a btCompoundShape. shapes[0] is the parent (root) collider at local
+// identity; the rest are children at their parent-relative transforms. Rotating
+// the single body rotates every child collider for free — no per-frame sync.
+export const addCompound = data => {
+    const {
+        uuid,
+        position,
+        quaternion,
+        mass = 0,
+        friction = 2,
+        kinematic = false,
+        shapes = [],
+    } = data;
+
+    const compound = new Ammo.btCompoundShape();
+    const childMap = [];
+
+    shapes.forEach((shape, index) => {
+        const leaf = createLeafShape(shape);
+
+        const localTransform = new Ammo.btTransform();
+        localTransform.setIdentity();
+        const lp = shape.localPosition || { x: 0, y: 0, z: 0 };
+        const lq = shape.localQuaternion || { x: 0, y: 0, z: 0, w: 1 };
+        localTransform.setOrigin(new Ammo.btVector3(lp.x, lp.y, lp.z));
+        localTransform.setRotation(new Ammo.btQuaternion(lq.x, lq.y, lq.z, lq.w));
+
+        compound.addChildShape(localTransform, leaf);
+        Ammo.destroy(localTransform);
+
+        childMap.push(makeChildDescriptor(shape, index));
+    });
+
+    const body = createRigidBody(compound, {
+        uuid,
+        position,
+        quaternion,
+        mass,
+        friction,
+        kinematic,
+    });
+
+    world.addElement({
+        uuid,
+        body,
+        type: TYPES.COMPOUND,
+        state: DEFAULT_RIGIDBODY_STATE,
+        childMap,
+    });
 };
 
 export const setLinearVelocity = data => {

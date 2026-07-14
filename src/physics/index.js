@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { EventDispatcher, Vector3, Quaternion, Box3, Matrix4 } from "three";
 import Universe from "../core/universe";
 import Config from "../core/config";
 import PhysicsWorker from "worker:./worker";
@@ -15,6 +15,7 @@ const { COLLIDER_TYPES } = PHYSICS_CONSTANTS;
 
 const {
     getBoxDescriptionForElement,
+    getWorldBoundingBoxSize,
     extractPositionAndQuaternion,
     mapColliderTypeToDescription,
     iterateGeometries,
@@ -243,6 +244,257 @@ export class Physics extends EventDispatcher {
                 uuid,
             });
         }
+    }
+
+    // Collect every physics-enabled descendant of `root` (its rigidly-attached
+    // children), descending through non-physics elements too. These become child
+    // shapes of the root's compound body.
+    collectPhysicsSubtree(root) {
+        const collected = [];
+        const walk = element => {
+            (element.children || []).forEach(child => {
+                if (child.isPhysicsEnabled && child.isPhysicsEnabled()) {
+                    collected.push(child);
+                }
+                walk(child);
+            });
+        };
+        walk(root);
+        return collected;
+    }
+
+    // Describe one collider element in the compound root's local frame: its
+    // collider type, size, and parent-relative position/rotation. `siblingBodies`
+    // are the bodies of the OTHER colliders in the compound (each becomes its own
+    // shape), so this element's geometry is measured without swallowing them.
+    buildCompoundShape(element, rootWorldPos, invRootQuat, siblingBodies) {
+        const options = element.getPhysicsOptions() || {};
+        const colliderType = options.colliderType || COLLIDER_TYPES.BOX;
+
+        const body = element.getBody();
+        const worldQuat = body.getWorldQuaternion(new Quaternion());
+        const excluded = new Set(siblingBodies.filter(b => b !== body));
+
+        // Orientation of this collider relative to the compound root. The root
+        // body carries no scale, so children are placed with rotation +
+        // translation only.
+        const localQuat = invRootQuat.clone().multiply(worldQuat);
+
+        const { worldCenter, size } = this.measureCollider(body, worldQuat, excluded);
+
+        // Position the shape at the collider's true world CENTER (a mesh's
+        // geometry can be offset from its element origin), in the root's frame.
+        const localPos = worldCenter.clone().sub(rootWorldPos).applyQuaternion(invRootQuat);
+
+        const shape = {
+            childUuid: element.uuid(),
+            colliderType,
+            localPosition: { x: localPos.x, y: localPos.y, z: localPos.z },
+            localQuaternion: { x: localQuat.x, y: localQuat.y, z: localQuat.z, w: localQuat.w },
+        };
+
+        if (colliderType === COLLIDER_TYPES.SPHERE) {
+            const radius = Math.max(size.width, size.height, size.length) / 2;
+            shape.radius = options.colliderRadius != null ? options.colliderRadius : radius;
+        } else {
+            shape.width = options.colliderWidth != null ? options.colliderWidth : size.width;
+            shape.height = options.colliderHeight != null ? options.colliderHeight : size.height;
+            shape.length = options.colliderLength != null ? options.colliderLength : size.length;
+        }
+
+        return shape;
+    }
+
+    // Measure a collider's own geometry: its world-space center and its *un-rotated*
+    // box size. Two things matter here:
+    //  - We skip `excluded` bodies (the compound's other collider elements, which
+    //    are THREE children of this body) so a parent shape doesn't swallow its
+    //    children's geometry.
+    //  - Size is measured after removing the element's world rotation, so a rotated
+    //    element (e.g. an upright wall) reports its real extents instead of an
+    //    inflated axis-aligned bound that localQuaternion would then rotate again.
+    // Falls back to the body origin / a unit box when there is no own geometry.
+    measureCollider(body, worldQuat, excluded) {
+        body.updateWorldMatrix(true, true);
+        const unrotate = new Matrix4().makeRotationFromQuaternion(worldQuat.clone().invert());
+        const worldBox = new Box3(); // for the center (axis-aligned, world)
+        const sizeBox = new Box3(); // for the size (rotation removed)
+        let found = false;
+
+        const visit = obj => {
+            if (obj !== body && excluded.has(obj)) return; // skip a child element's subtree
+            if (obj.geometry) {
+                if (!obj.geometry.boundingBox) obj.geometry.computeBoundingBox();
+                // World AABB (its center is the true world center of the box).
+                worldBox.union(obj.geometry.boundingBox.clone().applyMatrix4(obj.matrixWorld));
+                // Un-rotate and measure in ONE transform: applying matrixWorld
+                // first would already collapse the rotated box to an inflated
+                // axis-aligned bound. `unrotate * matrixWorld` has no net rotation,
+                // so the resulting AABB is the box's true (scaled) extent.
+                const combined = unrotate.clone().multiply(obj.matrixWorld);
+                sizeBox.union(obj.geometry.boundingBox.clone().applyMatrix4(combined));
+                found = true;
+            }
+            for (const child of obj.children) visit(child);
+        };
+        visit(body);
+
+        if (!found) {
+            const fallback = getWorldBoundingBoxSize(body) || { width: 1, height: 1, length: 1 };
+            return { worldCenter: body.getWorldPosition(new Vector3()), size: fallback };
+        }
+
+        const worldCenter = worldBox.getCenter(new Vector3());
+        const s = sizeBox.getSize(new Vector3());
+        return { worldCenter, size: { width: s.x, height: s.y, length: s.z } };
+    }
+
+    // Realize a physics subtree as a single rigid body. If `root` has no
+    // physics-enabled descendants it takes the normal single-body path; otherwise
+    // root + welded children become one btCompoundShape body so rotating the root
+    // (e.g. a kinematic platform) carries every child collider with it.
+    realizeSubtree(root) {
+        if (!Config.physics().enabled) return;
+        if (this.hasElement(root)) return;
+
+        const descendants = this.collectPhysicsSubtree(root);
+
+        if (descendants.length === 0) {
+            this.add(root, root.getPhysicsOptions());
+            return;
+        }
+
+        const rootBody = root.getBody();
+        rootBody.updateWorldMatrix(true, true);
+
+        const rootWorldPos = rootBody.getWorldPosition(new Vector3());
+        const rootWorldQuat = rootBody.getWorldQuaternion(new Quaternion());
+        const invRootQuat = rootWorldQuat.clone().invert();
+
+        // shapes[0] is the root collider at local identity; the rest are children.
+        const colliders = [root, ...descendants];
+        const colliderBodies = colliders.map(c => c.getBody());
+        const shapes = colliders.map(element =>
+            this.buildCompoundShape(element, rootWorldPos, invRootQuat, colliderBodies),
+        );
+
+        const options = root.getPhysicsOptions() || {};
+
+        this.storeElement(root, options);
+
+        this.worker.postMessage({
+            event: PHYSICS_EVENTS.ADD.COMPOUND,
+            uuid: root.uuid(),
+            position: { x: rootWorldPos.x, y: rootWorldPos.y, z: rootWorldPos.z },
+            quaternion: {
+                x: rootWorldQuat.x,
+                y: rootWorldQuat.y,
+                z: rootWorldQuat.z,
+                w: rootWorldQuat.w,
+            },
+            mass: options.mass != null ? options.mass : 0,
+            friction: options.friction,
+            kinematic: !!options.kinematic,
+            shapes,
+        });
+    }
+
+    // Walk from `element` up its parent chain (inclusive) and return the topmost
+    // physics-enabled ancestor — the root whose compound body owns element's
+    // collider — or null if element is under no physics umbrella.
+    topmostPhysicsRoot(element) {
+        let root = null;
+        let current = element;
+        while (current) {
+            if (current.isPhysicsEnabled && current.isPhysicsEnabled()) root = current;
+            current = current.getParent ? current.getParent() : null;
+        }
+        return root;
+    }
+
+    // Physics roots (topmost-physics nodes) located within `element`'s subtree
+    // (inclusive) — used when a moved subtree ends up under no physics parent and
+    // each such node must become its own body again.
+    collectRootsInSubtree(element) {
+        const roots = [];
+        const visit = el => {
+            if (
+                el.isPhysicsEnabled &&
+                el.isPhysicsEnabled() &&
+                this.topmostPhysicsRoot(el) === el
+            ) {
+                roots.push(el);
+            }
+            (el.children || []).forEach(visit);
+        };
+        visit(element);
+        return roots;
+    }
+
+    // Already-realized bodies whose element sits inside `element`'s subtree
+    // (inclusive) — independent roots that travel with a moved subtree and whose
+    // bodies are therefore stale after the move.
+    realizedRootsInSubtree(element) {
+        const found = [];
+        const visit = el => {
+            if (el.uuid && this.elements.includes(el.uuid())) found.push(el);
+            (el.children || []).forEach(visit);
+        };
+        visit(element);
+        return found;
+    }
+
+    // Tear down a realized body by uuid (its compound or single body) without
+    // needing the element instance — used when reconciling reparents.
+    disposeByUuid(uuid) {
+        if (!this.worker || !this.elements.includes(uuid)) return;
+        this.elements.splice(this.elements.indexOf(uuid), 1);
+        this.worker.postMessage({ event: PHYSICS_EVENTS.ELEMENT.DISPOSE, uuid });
+    }
+
+    // Reconcile compound bodies after `element` was reparented away from
+    // `oldParent`. A child leaving/joining a physics parent changes which
+    // compound its collider belongs to, so we tear down the stale bodies on both
+    // sides of the move and rebuild the affected roots from the current hierarchy.
+    // No-op until physics is realized (e.g. during import), so import-time
+    // parenting is unaffected.
+    rebuildAfterReparent(element, oldParent) {
+        if (!Config.physics().enabled || !this.worker) return;
+        // Nothing realized yet (e.g. mid-import, before realizePhysics runs) —
+        // the final hierarchy will be realized in one pass, so stay out of it.
+        if (this.elements.length === 0) return;
+
+        const disposeUuids = new Set();
+        const realizeRoots = new Map();
+        const wantRealize = el => {
+            if (el && el.isPhysicsEnabled && el.isPhysicsEnabled()) {
+                realizeRoots.set(el.uuid(), el);
+            }
+        };
+
+        // Independent bodies that travelled inside the moved subtree are stale.
+        this.realizedRootsInSubtree(element).forEach(el => disposeUuids.add(el.uuid()));
+
+        // The root of the position element left loses element's colliders.
+        const oldRoot = oldParent ? this.topmostPhysicsRoot(oldParent) : null;
+        if (oldRoot) {
+            disposeUuids.add(oldRoot.uuid());
+            wantRealize(oldRoot);
+        }
+
+        // The root element landed under (inclusive of element) gains them; with no
+        // physics umbrella, each physics root in the moved subtree stands alone.
+        const newRoot = this.topmostPhysicsRoot(element);
+        if (newRoot) {
+            disposeUuids.add(newRoot.uuid());
+            wantRealize(newRoot);
+        } else {
+            this.collectRootsInSubtree(element).forEach(wantRealize);
+        }
+
+        // Dispose stale bodies first so realizeSubtree rebuilds from a clean slate.
+        disposeUuids.forEach(uuid => this.disposeByUuid(uuid));
+        realizeRoots.forEach(el => this.realizeSubtree(el));
     }
 
     addVehicle(element, options) {

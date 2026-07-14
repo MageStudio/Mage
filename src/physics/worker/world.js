@@ -1,4 +1,4 @@
-import { GRAVITY, TYPES } from "../constants";
+import { GRAVITY, TYPES, COLLIDER_TYPES } from "../constants";
 
 import { handleElementUpdate } from "./elements";
 import { handleVehicleUpdate } from "./vehicles";
@@ -35,6 +35,74 @@ class Clock {
         }
     }
 }
+// Rotate a plain vector by the inverse (conjugate, for a unit quaternion) of q.
+// Used to bring a body-local contact point into a compound child's own frame.
+const rotateByInverseQuaternion = (v, q) => {
+    const cx = -q.x;
+    const cy = -q.y;
+    const cz = -q.z;
+    const cw = q.w;
+    // t = 2 * cross(c.xyz, v)
+    const tx = 2 * (cy * v.z - cz * v.y);
+    const ty = 2 * (cz * v.x - cx * v.z);
+    const tz = 2 * (cx * v.y - cy * v.x);
+    // v' = v + cw * t + cross(c.xyz, t)
+    return {
+        x: v.x + cw * tx + (cy * tz - cz * ty),
+        y: v.y + cw * ty + (cz * tx - cx * tz),
+        z: v.z + cw * tz + (cx * ty - cy * tx),
+    };
+};
+
+// Signed distance from a body-local point to one compound child's region:
+// negative inside, ~0 on the surface, positive outside.
+const signedDistanceToChild = (localPoint, child) => {
+    const rel = {
+        x: localPoint.x - child.localPosition.x,
+        y: localPoint.y - child.localPosition.y,
+        z: localPoint.z - child.localPosition.z,
+    };
+    const d = rotateByInverseQuaternion(rel, child.localQuaternion);
+
+    if (child.colliderType === COLLIDER_TYPES.SPHERE) {
+        return Math.sqrt(d.x * d.x + d.y * d.y + d.z * d.z) - child.radius;
+    }
+
+    const qx = Math.abs(d.x) - child.halfExtents.x;
+    const qy = Math.abs(d.y) - child.halfExtents.y;
+    const qz = Math.abs(d.z) - child.halfExtents.z;
+    const ox = Math.max(qx, 0);
+    const oy = Math.max(qy, 0);
+    const oz = Math.max(qz, 0);
+    const outside = Math.sqrt(ox * ox + oy * oy + oz * oz);
+    const inside = Math.min(Math.max(qx, qy, qz), 0);
+    return outside + inside;
+};
+
+// Resolve which element uuid a contact belongs to. Plain bodies (no childMap)
+// resolve to their own uuid — a no-op that keeps existing behaviour. Compound
+// bodies pick the child whose region the body-local contact point falls in (or
+// is closest to), so per-child OnCollision/applyImpulse still fire. `localPoint`
+// is an Ammo btVector3 (accessed via .x()/.y()/.z()).
+export const resolveChildUuid = (element, localPoint) => {
+    if (!element) return undefined;
+    const { childMap, uuid } = element;
+    if (!childMap || childMap.length === 0) return uuid;
+    if (childMap.length === 1) return childMap[0].uuid;
+
+    const point = { x: localPoint.x(), y: localPoint.y(), z: localPoint.z() };
+    let best = childMap[0];
+    let bestDist = Infinity;
+    for (let k = 0; k < childMap.length; k++) {
+        const dist = signedDistanceToChild(point, childMap[k]);
+        if (dist < bestDist) {
+            bestDist = dist;
+            best = childMap[k];
+        }
+    }
+    return best.uuid;
+};
+
 export class World {
     constructor() {
         this.elements = {};
@@ -138,6 +206,7 @@ export class World {
                     case TYPES.BOX:
                     case TYPES.SPHERE:
                     case TYPES.MESH:
+                    case TYPES.COMPOUND:
                         handleElementUpdate(element, dt);
                         break;
                     case TYPES.PLAYER:
@@ -175,7 +244,16 @@ export class World {
             // this iteration doesn't have uuids
             if (!rb0.uuid || !rb1.uuid) continue;
 
+            // For compound bodies these carry a childMap; for plain bodies the
+            // lookup returns an entry with no childMap and resolution is a no-op
+            // that yields the body's own uuid.
+            const element0 = this.getElement(rb0.uuid);
+            const element1 = this.getElement(rb1.uuid);
+
             let contacts = [];
+            // Elements that should receive this collision: the two body roots
+            // plus, for compounds, the specific child colliders actually hit.
+            const targets = new Set([rb0.uuid, rb1.uuid]);
 
             for (let j = 0; j < numContacts; j++) {
                 let contactPoint = contactManifold.getContactPoint(j);
@@ -190,17 +268,25 @@ export class World {
                 let localPos0 = contactPoint.get_m_localPointA();
                 let localPos1 = contactPoint.get_m_localPointB();
 
+                // Map the contact to the compound child it belongs to (or the
+                // body's own uuid for a plain body) so per-child collision
+                // scripting keeps working.
+                const uuid0 = resolveChildUuid(element0, localPos0);
+                const uuid1 = resolveChildUuid(element1, localPos1);
+                targets.add(uuid0);
+                targets.add(uuid1);
+
                 contacts.push({
                     distance,
                     elements: [
                         {
-                            uuid: rb0.uuid,
+                            uuid: uuid0,
                             velocity: { x: velocity0.x(), y: velocity0.y(), z: velocity0.z() },
                             worldPos: { x: worldPos0.x(), y: worldPos0.y(), z: worldPos0.z() },
                             localPos: { x: localPos0.x(), y: localPos0.y(), z: localPos0.z() },
                         },
                         {
-                            uuid: rb1.uuid,
+                            uuid: uuid1,
                             velocity: { x: velocity1.x(), y: velocity1.y(), z: velocity1.z() },
                             worldPos: { x: worldPos1.x(), y: worldPos1.y(), z: worldPos1.z() },
                             localPos: { x: localPos1.x(), y: localPos1.y(), z: localPos1.z() },
@@ -209,8 +295,9 @@ export class World {
                 });
             }
 
-            dispatcher.sendDispatchEvent(rb0.uuid, PHYSICS_EVENTS.ELEMENT.COLLISION, { contacts });
-            dispatcher.sendDispatchEvent(rb1.uuid, PHYSICS_EVENTS.ELEMENT.COLLISION, { contacts });
+            targets.forEach(uuid =>
+                dispatcher.sendDispatchEvent(uuid, PHYSICS_EVENTS.ELEMENT.COLLISION, { contacts }),
+            );
         }
     };
 
