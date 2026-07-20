@@ -100,7 +100,14 @@ export class Importer {
         }
 
         // world transform
-        if (!skipWorldTransform && elementData.worldTransform) {
+        //
+        // Only apply the saved world transform to ROOT elements. For an element
+        // that will be parented (parentUUID set), its saved LOCAL transform plus
+        // parent.add() already reproduces the correct world transform. Writing the
+        // world-space position/quaternion into the element's LOCAL slot here and
+        // then parenting would re-apply the parent's transform on top, mis-placing
+        // (and, under a scaled parent, mis-scaling) the child on reload.
+        if (!skipWorldTransform && !elementData.parentUUID && elementData.worldTransform) {
             element.setWorldTransform(elementData.worldTransform);
         }
 
@@ -635,7 +642,14 @@ export class Importer {
                     if (child) {
                         parent.add(child);
                         const childData = elements.find(e => e.uuid === uuid);
-                        Importer.completeCommonCreationSteps(child, childData, options);
+                        // Re-apply the saved LOCAL transform now that the child is
+                        // parented. skipWorldTransform: the world transform must not
+                        // be written into the (now local) slot of a parented child —
+                        // parent.add already positions it via its local transform.
+                        Importer.completeCommonCreationSteps(child, childData, {
+                            ...options,
+                            skipWorldTransform: true,
+                        });
                     }
                 }
             }
