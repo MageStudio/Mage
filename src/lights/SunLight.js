@@ -1,4 +1,4 @@
-import Light from "./Light";
+import Light from "./light";
 import Config from "../core/config";
 import Element from "../entities/Element";
 import {

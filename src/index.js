@@ -23,9 +23,9 @@ import { ENTITY_TYPES, ENTITY_EVENTS } from "./entities/constants";
 import Proton from "three.proton";
 
 import Audio, { AUDIO_RAMPS } from "./audio/Audio";
-import AmbientSound from "./audio/AmbientSound";
-import DirectionalSound from "./audio/DirectionalSound";
-import Sound from "./audio/Sound";
+import AmbientSound from "./audio/ambientSound";
+import DirectionalSound from "./audio/directionalSound";
+import Sound from "./audio/sound";
 
 import * as THREE from "three";
 import { Vector3, EventDispatcher } from "three";
@@ -79,9 +79,9 @@ import BaseScript from "./scripts/BaseScript";
 
 import Input, { INPUT_EVENTS } from "./core/input/Input";
 
-import AmbientLight from "./lights/AmbientLight";
+import AmbientLight from "./lights/ambientLight";
 import SunLight from "./lights/SunLight";
-import PointLight from "./lights/PointLight";
+import PointLight from "./lights/pointLight";
 import SpotLight from "./lights/SpotLight";
 import HemisphereLight from "./lights/HemisphereLight";
 import Lights from "./lights/Lights";
@@ -98,7 +98,7 @@ import Water from "./fx/materials/Water";
 import Sky from "./fx/scenery/Sky";
 import Skybox from "./fx/scenery/Skybox";
 
-import Shader from "./fx/shaders/Shader";
+import Shader from "./fx/shaders/shader";
 
 import Particles, { PARTICLES } from "./fx/particles/Particles";
 
