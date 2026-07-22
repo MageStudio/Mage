@@ -1,4 +1,4 @@
-import Light from "./Light";
+import Light from "./light";
 import Scene from "../core/Scene";
 import Config from "../core/config";
 
