@@ -15,7 +15,6 @@ const { COLLIDER_TYPES } = PHYSICS_CONSTANTS;
 
 const {
     getBoxDescriptionForElement,
-    getWorldBoundingBoxSize,
     extractPositionAndQuaternion,
     mapColliderTypeToDescription,
     iterateGeometries,
@@ -37,6 +36,9 @@ export class Physics extends EventDispatcher {
         this.elements = [];
         this.isWorkerReady = false;
         this.state = PHYSICS_STATES.READY;
+        // Debounce state for refreshOwningBody.
+        this.pendingRefreshRoots = new Map();
+        this.refreshTimer = null;
     }
 
     createWorker() {
@@ -216,6 +218,14 @@ export class Physics extends EventDispatcher {
 
     add(element, options = {}) {
         if (Config.physics().enabled) {
+            if (options.colliderType === COLLIDER_TYPES.NONE) {
+                // NONE only makes sense as the shapeless frame of a compound —
+                // a standalone NONE body would silently collide as a default
+                // box, so fail loudly instead.
+                throw new Error(
+                    `Physics.add: colliderType NONE is only valid for an element with physics-enabled descendants (got standalone element ${element.uuid()})`,
+                );
+            }
             const {
                 colliderType = COLLIDER_TYPES.BOX,
                 colliderWidth,
@@ -340,8 +350,16 @@ export class Physics extends EventDispatcher {
         visit(body);
 
         if (!found) {
-            const fallback = getWorldBoundingBoxSize(body) || { width: 1, height: 1, length: 1 };
-            return { worldCenter: body.getWorldPosition(new Vector3()), size: fallback };
+            // No own geometry (visit() above already skipped the `excluded`
+            // child-element subtrees). Do NOT measure the world AABB of the
+            // whole subtree here: the only geometry it could pick up is the
+            // excluded children's, which would turn a geometry-less holder
+            // root into one giant box filling the gaps between its children.
+            // A unit box at the body origin is the honest fallback.
+            return {
+                worldCenter: body.getWorldPosition(new Vector3()),
+                size: { width: 1, height: 1, length: 1 },
+            };
         }
 
         const worldCenter = worldBox.getCenter(new Vector3());
@@ -371,10 +389,25 @@ export class Physics extends EventDispatcher {
         const rootWorldQuat = rootBody.getWorldQuaternion(new Quaternion());
         const invRootQuat = rootWorldQuat.clone().invert();
 
-        // shapes[0] is the root collider at local identity; the rest are children.
+        // The root collider comes first, at local identity; the rest are
+        // children. Elements with colliderType NONE stay part of the compound
+        // frame (their descendants still weld to this body) but contribute no
+        // shape — the worker's childMap carries no positional assumptions, so
+        // skipping any of them (including the root) is safe.
         const colliders = [root, ...descendants];
         const colliderBodies = colliders.map(c => c.getBody());
-        const shapes = colliders.map(element =>
+        const shaped = colliders.filter(
+            element =>
+                (element.getPhysicsOptions() || {}).colliderType !== COLLIDER_TYPES.NONE,
+        );
+
+        if (shaped.length === 0) {
+            throw new Error(
+                `Physics.realizeSubtree: every collider in the subtree of ${root.uuid()} has colliderType NONE — a compound needs at least one shape`,
+            );
+        }
+
+        const shapes = shaped.map(element =>
             this.buildCompoundShape(element, rootWorldPos, invRootQuat, colliderBodies),
         );
 
@@ -450,6 +483,36 @@ export class Physics extends EventDispatcher {
         if (!this.worker || !this.elements.includes(uuid)) return;
         this.elements.splice(this.elements.indexOf(uuid), 1);
         this.worker.postMessage({ event: PHYSICS_EVENTS.ELEMENT.DISPOSE, uuid });
+    }
+
+    // Rebuild the realized body owning `element`'s collider after a change that
+    // stales baked shape data: the scale of any collider, or the local
+    // position/rotation of a compound member (compound shapes bake child sizes
+    // and parent-relative transforms at build time — see buildCompoundShape).
+    // Debounced per root so a drag rebuilds each affected body once per flush,
+    // not once per mouse event. Elements outside any realized physics body
+    // (mid-import, editor with physics off, plain visuals) are not physics
+    // callers to fail loudly on — this is a broadcast hook from the transform
+    // setters, so those simply fall through. Note a dynamic (mass > 0) body
+    // loses its velocities on rebuild, as with rebuildAfterReparent.
+    refreshOwningBody(element) {
+        if (!Config.physics().enabled || !this.worker) return;
+
+        const root = this.topmostPhysicsRoot(element);
+        if (!root || !this.elements.includes(root.uuid())) return;
+
+        this.pendingRefreshRoots.set(root.uuid(), root);
+
+        if (this.refreshTimer !== null) return;
+        this.refreshTimer = setTimeout(() => {
+            this.refreshTimer = null;
+            const roots = this.pendingRefreshRoots;
+            this.pendingRefreshRoots = new Map();
+            roots.forEach(pendingRoot => {
+                this.disposeByUuid(pendingRoot.uuid());
+                this.realizeSubtree(pendingRoot);
+            });
+        }, 0);
     }
 
     // Reconcile compound bodies after `element` was reparented away from

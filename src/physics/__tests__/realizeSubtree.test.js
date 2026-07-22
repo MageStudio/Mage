@@ -176,4 +176,85 @@ describe("Physics.realizeSubtree", () => {
         expect(Physics.worker.postMessage).not.toHaveBeenCalled();
         addSpy.mockRestore();
     });
+
+    it("skips the root shape when the root's colliderType is NONE", () => {
+        // A geometry-less holder groups two slats; with NONE it contributes no
+        // shape of its own, so the gap between the slats stays open.
+        const rootBody = new Object3D();
+        const slatABody = new Mesh(new BoxGeometry(2, 0.2, 1));
+        slatABody.position.set(-2, 0, 0);
+        const slatBBody = new Mesh(new BoxGeometry(2, 0.2, 1));
+        slatBBody.position.set(2, 0, 0);
+        rootBody.add(slatABody);
+        rootBody.add(slatBBody);
+        rootBody.updateMatrixWorld(true);
+
+        const slatA = makeElement("slatA", { colliderType: COLLIDER_TYPES.BOX }, slatABody);
+        const slatB = makeElement("slatB", { colliderType: COLLIDER_TYPES.BOX }, slatBBody);
+        const root = makeElement("holder", { colliderType: COLLIDER_TYPES.NONE }, rootBody, [
+            slatA,
+            slatB,
+        ]);
+
+        Physics.realizeSubtree(root);
+
+        const msg = Physics.worker.postMessage.mock.calls[0][0];
+        expect(msg.event).toBe(PHYSICS_EVENTS.ADD.COMPOUND);
+        // Only the slats — no shape for the NONE root.
+        expect(msg.shapes.map(s => s.childUuid).sort()).toEqual(["slatA", "slatB"]);
+        // Children still expressed in the root's frame.
+        const a = msg.shapes.find(s => s.childUuid === "slatA");
+        expect(near(a.localPosition.x, -2, 1e-3)).toBe(true);
+    });
+
+    it("throws when every collider in the subtree is NONE", () => {
+        const rootBody = new Object3D();
+        const childBody = new Object3D();
+        rootBody.add(childBody);
+        rootBody.updateMatrixWorld(true);
+
+        const child = makeElement("child", { colliderType: COLLIDER_TYPES.NONE }, childBody);
+        const root = makeElement("root", { colliderType: COLLIDER_TYPES.NONE }, rootBody, [
+            child,
+        ]);
+
+        expect(() => Physics.realizeSubtree(root)).toThrow(/NONE/);
+        expect(Physics.worker.postMessage).not.toHaveBeenCalled();
+    });
+
+    it("throws for a standalone element with colliderType NONE", () => {
+        const root = makeElement("lonely", { colliderType: COLLIDER_TYPES.NONE }, new Object3D());
+        expect(() => Physics.realizeSubtree(root)).toThrow(/NONE/);
+    });
+
+    it("gives a geometry-less root a unit box, not the subtree's AABB", () => {
+        // Regression: the fallback used to measure Box3.setFromObject(root),
+        // which only ever picks up the (excluded) children's geometry — turning
+        // a holder root into one giant box that fills the gaps between slats.
+        const rootBody = new Object3D(); // no geometry of its own
+        const slatABody = new Mesh(new BoxGeometry(2, 0.2, 1));
+        slatABody.position.set(-4, 0, 0);
+        const slatBBody = new Mesh(new BoxGeometry(2, 0.2, 1));
+        slatBBody.position.set(4, 0, 0);
+        rootBody.add(slatABody);
+        rootBody.add(slatBBody);
+        rootBody.updateMatrixWorld(true);
+
+        const slatA = makeElement("slatA", { colliderType: COLLIDER_TYPES.BOX }, slatABody);
+        const slatB = makeElement("slatB", { colliderType: COLLIDER_TYPES.BOX }, slatBBody);
+        const root = makeElement("holder", { colliderType: COLLIDER_TYPES.BOX }, rootBody, [
+            slatA,
+            slatB,
+        ]);
+
+        Physics.realizeSubtree(root);
+
+        const msg = Physics.worker.postMessage.mock.calls[0][0];
+        const holderShape = msg.shapes.find(s => s.childUuid === "holder");
+        // Unit box at the root origin — NOT ~10 wide spanning both slats.
+        expect(near(holderShape.width, 1, 1e-3)).toBe(true);
+        expect(near(holderShape.height, 1, 1e-3)).toBe(true);
+        expect(near(holderShape.length, 1, 1e-3)).toBe(true);
+        expect(holderShape.localPosition).toEqual({ x: 0, y: 0, z: 0 });
+    });
 });

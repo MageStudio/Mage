@@ -16,6 +16,10 @@ export const COLLIDER_TYPES = {
     VEHICLE: "VEHICLE",
     PLAYER: "PLAYER",
     SPHERE: "SPHERE",
+    // No collider of its own. Valid only inside a compound: the element still
+    // acts as the rigid frame its physics-enabled descendants weld to, but
+    // contributes no shape (e.g. a grouping/holder parent).
+    NONE: "NONE",
 };
 
 export const DEFAULT_VEHICLE_STATE = {

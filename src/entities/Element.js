@@ -1119,6 +1119,10 @@ export default class Element extends Entity {
         super.setPosition(where);
         if (Physics.hasElement(this)) {
             Physics.setElementPosition(this, this.getPosition());
+        } else {
+            // Not a realized body itself — but possibly a compound member whose
+            // baked local offset just went stale. Rebuild the owning body.
+            Physics.refreshOwningBody(this);
         }
     }
 
@@ -1132,6 +1136,8 @@ export default class Element extends Entity {
                 z: quaternion.z,
                 w: quaternion.w,
             });
+        } else {
+            Physics.refreshOwningBody(this);
         }
     }
 
@@ -1139,7 +1145,17 @@ export default class Element extends Entity {
         super.setQuaternion({ x, y, z, w });
         if (Physics.hasElement(this)) {
             Physics.setElementQuaternion(this, { x, y, z, w });
+        } else {
+            Physics.refreshOwningBody(this);
         }
+    }
+
+    setScale(howbig) {
+        super.setScale(howbig);
+        // Scale is baked into collider shape sizes at (re)build time, so any
+        // owning body — this element's own single body, or the compound of a
+        // physics ancestor — must be rebuilt to pick it up.
+        Physics.refreshOwningBody(this);
     }
 
     handlePhysicsUpdate = ({ position, quaternion, ...data }) => {
