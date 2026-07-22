@@ -15,7 +15,7 @@ module.exports = {
     moduleNameMapper: {
         // Rollup `worker:` imports have no jest resolver; stub them so modules
         // that pull in a web worker can be loaded in unit tests.
-        "^worker:.*$": "<rootDir>/src/__mocks__/workerStub.js",
+        "^worker:.*$": "<rootDir>/__mocks__/workerStub.js",
     },
 
     transformIgnorePatterns: [
