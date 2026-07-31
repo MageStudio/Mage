@@ -79,11 +79,12 @@ describe("Physics.rebuildAfterReparent", () => {
         Physics.rebuildAfterReparent(wall, floor);
 
         const floorEvents = eventsFor("floor").map(m => m.event);
-        // Old compound torn down, floor rebuilt as a lone box (no physics children).
+        // Old compound torn down, floor rebuilt on its own. A lone box/sphere now
+        // realizes as a one-shape compound (uniform world-space placement).
         expect(floorEvents).toContain(PHYSICS_EVENTS.ELEMENT.DISPOSE);
-        expect(floorEvents).toContain(PHYSICS_EVENTS.ADD.BOX);
+        expect(floorEvents).toContain(PHYSICS_EVENTS.ADD.COMPOUND);
         // Wall becomes its own body.
-        expect(eventsFor("wall").map(m => m.event)).toContain(PHYSICS_EVENTS.ADD.BOX);
+        expect(eventsFor("wall").map(m => m.event)).toContain(PHYSICS_EVENTS.ADD.COMPOUND);
         expect(Physics.elements.sort()).toEqual(["floor", "wall"]);
     });
 
@@ -112,9 +113,10 @@ describe("Physics.rebuildAfterReparent", () => {
         link(floorB, wall);
         Physics.rebuildAfterReparent(wall, floorA);
 
-        // Both roots torn down and rebuilt: A loses the wall, B gains it.
+        // Both roots torn down and rebuilt: A loses the wall (now a lone
+        // one-shape compound), B gains it.
         expect(eventsFor("floorA").map(m => m.event)).toEqual(
-            expect.arrayContaining([PHYSICS_EVENTS.ELEMENT.DISPOSE, PHYSICS_EVENTS.ADD.BOX]),
+            expect.arrayContaining([PHYSICS_EVENTS.ELEMENT.DISPOSE, PHYSICS_EVENTS.ADD.COMPOUND]),
         );
         expect(eventsFor("floorB").map(m => m.event)).toEqual(
             expect.arrayContaining([PHYSICS_EVENTS.ELEMENT.DISPOSE, PHYSICS_EVENTS.ADD.COMPOUND]),

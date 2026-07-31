@@ -269,6 +269,7 @@ export const addCompound = data => {
         mass = 0,
         friction = 2,
         kinematic = false,
+        ccdRadius = 0,
         shapes = [],
     } = data;
 
@@ -298,6 +299,7 @@ export const addCompound = data => {
         mass,
         friction,
         kinematic,
+        ccdRadius,
     });
 
     world.addElement({

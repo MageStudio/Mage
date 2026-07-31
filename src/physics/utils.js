@@ -1,4 +1,4 @@
-import { Box3, Matrix4, Vector3 } from "three";
+import { Box3, Matrix4, Quaternion, Vector3 } from "three";
 import { PHYSICS_EVENTS } from "./messages";
 
 import { getSphereVolume } from "../lib/math";
@@ -131,6 +131,37 @@ export const getWorldBoundingBoxSize = body => {
 };
 
 /**
+ * Box size measured with the body's WORLD ROTATION REMOVED, so a rotated element
+ * reports its true (scaled) extents instead of the inflated axis-aligned world
+ * AABB. Applying `unrotate * matrixWorld` in one transform has no net rotation,
+ * so the resulting AABB is the box's real footprint — the collider's quaternion
+ * (carried separately) then orients it. Mirrors Physics.measureCollider's sizing.
+ * Returns { width, height, length } or null when there is no geometry / it is
+ * degenerate. WITHOUT this, a thin slab tilted 20° would be sized as an ~8x
+ * taller block and sit well above its visible surface.
+ */
+export const getUnrotatedWorldBoxSize = body => {
+    body.updateWorldMatrix(true, true);
+    const worldQuat = body.getWorldQuaternion(new Quaternion());
+    const unrotate = new Matrix4().makeRotationFromQuaternion(worldQuat.clone().invert());
+    const sizeBox = new Box3();
+    let found = false;
+
+    body.traverse(obj => {
+        if (!obj.geometry) return;
+        if (!obj.geometry.boundingBox) obj.geometry.computeBoundingBox();
+        const combined = unrotate.clone().multiply(obj.matrixWorld);
+        sizeBox.union(obj.geometry.boundingBox.clone().applyMatrix4(combined));
+        found = true;
+    });
+
+    if (!found) return null;
+    const s = sizeBox.getSize(new Vector3());
+    if (s.x === 0 && s.y === 0 && s.z === 0) return null;
+    return { width: s.x, height: s.y, length: s.z };
+};
+
+/**
  * Derive a bounding sphere radius from the world-space AABB.
  * Returns the radius (half the longest axis) or null if the box is degenerate.
  */
@@ -166,14 +197,15 @@ export const extractBoxDescription = element => {
     };
 };
 
-// World-space AABB path — uses Box3.setFromObject() to compute the full
-// bounding box of the entire object hierarchy including child transforms.
-// More accurate for imported models whose geometry may be offset from the
-// element origin, but can produce unexpected results for complex hierarchies.
+// World-geometry path — measures the body's real extents (handling geometry
+// offset from the element origin) but with the world rotation removed, so a
+// rotated element is sized by its true footprint rather than the inflated
+// axis-aligned world AABB. The collider's quaternion (from
+// extractPositionAndQuaternion) then orients that box.
 const extractWorldBoxDescription = element => {
-    const size = getWorldBoundingBoxSize(element.getBody());
+    const size = getUnrotatedWorldBoxSize(element.getBody());
 
-    // Fall back to the legacy path if the world box is degenerate.
+    // Fall back to the legacy path if there is no measurable geometry.
     if (!size) {
         return extractBoxDescription(element);
     }

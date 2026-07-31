@@ -443,9 +443,11 @@ export default class Element extends Entity {
         // we only record the intent here. Physics.realizeSubtree then builds one
         // body per physics subtree — a compound of a parent plus its rigidly
         // attached (scene-graph child) colliders — once parenting is complete.
-        // Direct runtime calls keep creating the body immediately.
+        // Direct runtime calls realize immediately through the SAME world-space
+        // path (realizeElement → realizeSubtree), so a runtime-enabled collider
+        // is placed and sized identically to an imported one.
         if (!deferPhysics && Config.physics().enabled) {
-            Physics.add(this, physicsOptions);
+            Physics.realizeElement(this);
         }
     }
 
@@ -1119,6 +1121,10 @@ export default class Element extends Entity {
         super.setPosition(where);
         if (Physics.hasElement(this)) {
             Physics.setElementPosition(this, this.getPosition());
+        } else {
+            // Not a realized body itself — but possibly a compound member whose
+            // baked local offset just went stale. Rebuild the owning body.
+            Physics.refreshOwningBody(this);
         }
     }
 
@@ -1132,6 +1138,8 @@ export default class Element extends Entity {
                 z: quaternion.z,
                 w: quaternion.w,
             });
+        } else {
+            Physics.refreshOwningBody(this);
         }
     }
 
@@ -1139,7 +1147,17 @@ export default class Element extends Entity {
         super.setQuaternion({ x, y, z, w });
         if (Physics.hasElement(this)) {
             Physics.setElementQuaternion(this, { x, y, z, w });
+        } else {
+            Physics.refreshOwningBody(this);
         }
+    }
+
+    setScale(howbig) {
+        super.setScale(howbig);
+        // Scale is baked into collider shape sizes at (re)build time, so any
+        // owning body — this element's own single body, or the compound of a
+        // physics ancestor — must be rebuilt to pick it up.
+        Physics.refreshOwningBody(this);
     }
 
     handlePhysicsUpdate = ({ position, quaternion, ...data }) => {

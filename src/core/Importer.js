@@ -202,9 +202,24 @@ export class Importer {
         // isn't wired up yet at this point, so a parent + its rigidly-attached
         // children can't be resolved into a single (compound) body until after
         // the parenting passes below. Importer.realizePhysics() does that.
-        if (elementData.physics?.options) {
+        //
+        // Sky/Skybox are pure visual backdrops with no collider UI. They serialize
+        // default physics options like every Element (toJSON always writes them),
+        // but a Sky is a huge (~10k unit) box rendered on BackSide — realizing it
+        // as a SOLID static box traps every dynamic body inside it and blows up the
+        // Bullet solver. Never give a backdrop a collider.
+        if (elementData.physics?.options && !Importer.isNonCollidableBackdrop(element)) {
             element.enablePhysics({ ...elementData.physics.options, deferPhysics: true });
         }
+    }
+
+    // Sky and Skybox scenery are visual-only backdrops that must never collide.
+    static isNonCollidableBackdrop(element) {
+        const subtype = element.getEntitySubtype && element.getEntitySubtype();
+        return (
+            subtype === ENTITY_TYPES.SCENERY.SUBTYPES.SKY ||
+            subtype === ENTITY_TYPES.SCENERY.SUBTYPES.SKYBOX
+        );
     }
 
     // True if any ancestor of `element` already owns physics — meaning `element`
@@ -227,7 +242,17 @@ export class Importer {
             const element = Universe.getByUUID(elementData.uuid);
             if (!element || !element.isPhysicsEnabled()) continue;
             if (Importer.hasPhysicsEnabledAncestor(element)) continue;
-            Physics.realizeSubtree(element);
+            // Contain per-element realize failures (e.g. an invalid standalone
+            // NONE collider): surface them loudly, but don't let one bad object
+            // abort physics for the entire level.
+            try {
+                Physics.realizeSubtree(element);
+            } catch (error) {
+                console.error(
+                    `[Mage] Failed to realize physics for element ${elementData.uuid}:`,
+                    error,
+                );
+            }
         }
     }
 
