@@ -443,9 +443,11 @@ export default class Element extends Entity {
         // we only record the intent here. Physics.realizeSubtree then builds one
         // body per physics subtree — a compound of a parent plus its rigidly
         // attached (scene-graph child) colliders — once parenting is complete.
-        // Direct runtime calls keep creating the body immediately.
+        // Direct runtime calls realize immediately through the SAME world-space
+        // path (realizeElement → realizeSubtree), so a runtime-enabled collider
+        // is placed and sized identically to an imported one.
         if (!deferPhysics && Config.physics().enabled) {
-            Physics.add(this, physicsOptions);
+            Physics.realizeElement(this);
         }
     }
 

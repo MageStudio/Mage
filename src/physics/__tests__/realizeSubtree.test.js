@@ -165,10 +165,23 @@ describe("Physics.realizeSubtree", () => {
         expect(near(floorShape.length, 10, 1e-3)).toBe(true);
     });
 
-    it("falls back to a single body when the root has no physics children", () => {
-        const addSpy = jest.spyOn(Physics, "add").mockImplementation(() => {});
+    it("realizes a lone box as a one-shape compound (uniform world-space path)", () => {
         const rootBody = new Object3D();
         const root = makeElement("lonely", { colliderType: COLLIDER_TYPES.BOX }, rootBody, []);
+
+        Physics.realizeSubtree(root);
+
+        expect(Physics.worker.postMessage).toHaveBeenCalledTimes(1);
+        const msg = Physics.worker.postMessage.mock.calls[0][0];
+        expect(msg.event).toBe(PHYSICS_EVENTS.ADD.COMPOUND);
+        expect(msg.shapes).toHaveLength(1);
+        expect(msg.shapes[0].childUuid).toBe("lonely");
+    });
+
+    it("uses the dedicated single-body path for a lone non-box/sphere collider", () => {
+        const addSpy = jest.spyOn(Physics, "add").mockImplementation(() => {});
+        const rootBody = new Object3D();
+        const root = makeElement("player", { colliderType: COLLIDER_TYPES.PLAYER }, rootBody, []);
 
         Physics.realizeSubtree(root);
 
@@ -214,9 +227,7 @@ describe("Physics.realizeSubtree", () => {
         rootBody.updateMatrixWorld(true);
 
         const child = makeElement("child", { colliderType: COLLIDER_TYPES.NONE }, childBody);
-        const root = makeElement("root", { colliderType: COLLIDER_TYPES.NONE }, rootBody, [
-            child,
-        ]);
+        const root = makeElement("root", { colliderType: COLLIDER_TYPES.NONE }, rootBody, [child]);
 
         expect(() => Physics.realizeSubtree(root)).toThrow(/NONE/);
         expect(Physics.worker.postMessage).not.toHaveBeenCalled();
