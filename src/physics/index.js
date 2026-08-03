@@ -443,10 +443,17 @@ export class Physics extends EventDispatcher {
             element => (element.getPhysicsOptions() || {}).colliderType !== COLLIDER_TYPES.NONE,
         );
 
+        // Every collider in this subtree is NONE. That is a legitimate thing to
+        // author — an element that exists in the scene graph, keeps its physics
+        // options, and can gain colliding children later, but is itself
+        // transparent to collisions. Build no body and leave the subtree
+        // physics-free rather than failing: there is no invalid call here to
+        // surface, only a configuration that needs no rigid body.
+        //
+        // A NONE root WITH shaped descendants is unaffected — it still frames
+        // their compound below; only the all-NONE case returns here.
         if (shaped.length === 0) {
-            throw new Error(
-                `Physics.realizeSubtree: every collider in the subtree of ${root.uuid()} has colliderType NONE — a compound needs at least one shape`,
-            );
+            return;
         }
 
         const shapes = shaped.map(element =>

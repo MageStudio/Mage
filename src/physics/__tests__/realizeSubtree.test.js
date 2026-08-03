@@ -220,7 +220,7 @@ describe("Physics.realizeSubtree", () => {
         expect(near(a.localPosition.x, -2, 1e-3)).toBe(true);
     });
 
-    it("throws when every collider in the subtree is NONE", () => {
+    it("builds no body when every collider in the subtree is NONE", () => {
         const rootBody = new Object3D();
         const childBody = new Object3D();
         rootBody.add(childBody);
@@ -229,13 +229,26 @@ describe("Physics.realizeSubtree", () => {
         const child = makeElement("child", { colliderType: COLLIDER_TYPES.NONE }, childBody);
         const root = makeElement("root", { colliderType: COLLIDER_TYPES.NONE }, rootBody, [child]);
 
-        expect(() => Physics.realizeSubtree(root)).toThrow(/NONE/);
+        // Transparent to collisions is a valid configuration, not an error.
+        expect(() => Physics.realizeSubtree(root)).not.toThrow();
         expect(Physics.worker.postMessage).not.toHaveBeenCalled();
     });
 
-    it("throws for a standalone element with colliderType NONE", () => {
+    it("builds no body for a standalone element with colliderType NONE", () => {
         const root = makeElement("lonely", { colliderType: COLLIDER_TYPES.NONE }, new Object3D());
-        expect(() => Physics.realizeSubtree(root)).toThrow(/NONE/);
+
+        expect(() => Physics.realizeSubtree(root)).not.toThrow();
+        expect(Physics.worker.postMessage).not.toHaveBeenCalled();
+    });
+
+    it("does not register an all-NONE subtree as a physics element", () => {
+        // Nothing was created, so nothing should later be disposed or rebuilt
+        // as though it owned a body.
+        const root = makeElement("ghost", { colliderType: COLLIDER_TYPES.NONE }, new Object3D());
+
+        Physics.realizeSubtree(root);
+
+        expect(Physics.hasElement(root)).toBe(false);
     });
 
     it("gives a geometry-less root a unit box, not the subtree's AABB", () => {
