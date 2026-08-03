@@ -8,6 +8,8 @@ import {
     TYPES,
     COLLIDER_TYPES,
     DEFAULT_SCALE,
+    DEFAULT_HULL_MAX_POINTS,
+    COLLISION_FILTER_GROUPS,
     DISABLE_DEACTIVATION,
     CF_STATIC_OBJECT,
     CF_KINEMATIC_OBJECT,
@@ -48,6 +50,7 @@ export const createRigidBody = (shape, options) => {
         damping = { linear: 0.2, angular: 0.2 },
         kinematic = false,
         ccdRadius = 0,
+        collisionEvents = false,
     } = options;
 
     const transform = new Ammo.btTransform();
@@ -91,7 +94,23 @@ export const createRigidBody = (shape, options) => {
     // and runs away. We instead pin the origin to this stored value.
     body.kinematicPosition = { x: position.x, y: position.y, z: position.z };
 
-    world.addRigidBody(body);
+    // Bullet never pairs two non-dynamic bodies: addRigidBody(body) puts static
+    // AND kinematic bodies in the STATIC filter group, whose mask excludes
+    // STATIC, and needsCollision() additionally drops a pair where neither body
+    // is active. So two mass-0 elements produce no manifold — no contacts, no
+    // ELEMENT.COLLISION — whatever shape they have.
+    //
+    // `collisionEvents` opts a static body out of that: it joins the DEFAULT
+    // group with an ALL mask and stays awake, so overlapping static pairs report
+    // contacts. There is still no physical response (infinite mass on both
+    // sides) — this buys collision EVENTS, which is the trigger/overlap
+    // behaviour authors actually want here.
+    if (collisionEvents && mass === 0 && !kinematic) {
+        body.setActivationState(DISABLE_DEACTIVATION);
+        world.addRigidBody(body, COLLISION_FILTER_GROUPS.DEFAULT, COLLISION_FILTER_GROUPS.ALL);
+    } else {
+        world.addRigidBody(body);
+    }
 
     return body;
 };
@@ -193,6 +212,7 @@ export const addBox = data => {
         mass = 0,
         friction = 2,
         kinematic = false,
+        collisionEvents = false,
     } = data;
 
     const geometry = new Ammo.btBoxShape(
@@ -205,6 +225,7 @@ export const addBox = data => {
         mass,
         friction,
         kinematic,
+        collisionEvents,
         // size CCD from the thinnest half-extent
         ccdRadius: Math.min(width, height, length) * 0.5,
     });
@@ -213,7 +234,16 @@ export const addBox = data => {
 };
 
 export const addSphere = data => {
-    const { uuid, radius, position, quaternion, mass = 0, friction = 2, kinematic = false } = data;
+    const {
+        uuid,
+        radius,
+        position,
+        quaternion,
+        mass = 0,
+        friction = 2,
+        kinematic = false,
+        collisionEvents = false,
+    } = data;
 
     const geometry = new Ammo.btSphereShape(radius);
     const body = createRigidBody(geometry, {
@@ -223,6 +253,7 @@ export const addSphere = data => {
         mass,
         friction,
         kinematic,
+        collisionEvents,
         ccdRadius: radius,
     });
 
@@ -232,7 +263,52 @@ export const addSphere = data => {
 // Build the leaf Ammo shape for one collider of a compound body. Mirrors the
 // shape construction in addBox/addSphere so a compound child collides exactly
 // like the equivalent standalone element would.
-const createLeafShape = ({ colliderType, width = 1, height = 1, length = 1, radius = 0.5 }) => {
+// Build a convex hull from the flat [x, y, z, ...] list computed on the main
+// thread. Those points are already QuickHull output — the mesh's extreme
+// vertices only — so this adds them verbatim rather than re-reducing them.
+const createHullShape = points => {
+    const hull = new Ammo.btConvexHullShape();
+    const vertex = new Ammo.btVector3();
+    const count = Math.floor(points.length / 3);
+
+    for (let i = 0; i < count; i++) {
+        vertex.setValue(points[i * 3], points[i * 3 + 1], points[i * 3 + 2]);
+        // Recalculating the local AABB is O(n); only do it on the final point.
+        hull.addPoint(vertex, i === count - 1);
+    }
+    Ammo.destroy(vertex);
+
+    if (count > DEFAULT_HULL_MAX_POINTS) {
+        // Convex-vs-convex narrowphase is linear in vertex count, so this is a
+        // performance warning, not a correctness one — the shape is still valid.
+        console.warn(
+            `[Mage] Physics: hull built from ${count} vertices (over ${DEFAULT_HULL_MAX_POINTS}) — consider a simplified collision mesh for this model`,
+        );
+    } else {
+        // SAT-based polyhedral contact clipping rather than GJK/EPA point
+        // contacts: markedly steadier resting contacts for the flat-faced shapes
+        // most props reduce to. Skipped above the cap, where the precompute
+        // costs more than it returns.
+        hull.initializePolyhedralFeatures(0);
+    }
+
+    return hull;
+};
+
+const createLeafShape = ({
+    colliderType,
+    width = 1,
+    height = 1,
+    length = 1,
+    radius = 0.5,
+    points,
+}) => {
+    // A hull needs at least a tetrahedron's worth of coordinates; the main
+    // thread already degrades to BOX when it can't produce that, so this is a
+    // belt-and-braces guard against a malformed message.
+    if (colliderType === COLLIDER_TYPES.HULL && points && points.length >= 12) {
+        return createHullShape(points);
+    }
     if (colliderType === COLLIDER_TYPES.SPHERE) {
         return new Ammo.btSphereShape(radius);
     }
@@ -269,6 +345,7 @@ export const addCompound = data => {
         mass = 0,
         friction = 2,
         kinematic = false,
+        collisionEvents = false,
         ccdRadius = 0,
         shapes = [],
     } = data;
@@ -299,6 +376,7 @@ export const addCompound = data => {
         mass,
         friction,
         kinematic,
+        collisionEvents,
         ccdRadius,
     });
 

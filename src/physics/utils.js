@@ -1,4 +1,5 @@
 import { Box3, Matrix4, Quaternion, Vector3 } from "three";
+import { ConvexHull } from "three/examples/jsm/math/ConvexHull.js";
 import { PHYSICS_EVENTS } from "./messages";
 
 import { getSphereVolume } from "../lib/math";
@@ -242,6 +243,69 @@ export const getPlayerDescriptionForElement = element => ({
     ...DEFAULT_PLAYER_DESCRIPTION,
     ...extractWorldBoxDescription(element),
 });
+
+// Vertices of the element's own geometry, expressed in the frame its compound
+// leaf will occupy: translated to `worldCenter` and with `worldQuat` removed —
+// the exact frame buildCompoundShape places the shape in, so the hull lines up
+// with the visual mesh whatever the element's scale, rotation or nesting.
+//
+// `excluded` holds the OTHER collider bodies of the compound; their subtrees are
+// skipped so a parent's hull doesn't swallow its children (same rule
+// measureCollider follows).
+//
+// Returns a flat [x, y, z, ...] array of hull vertices, or null when the
+// geometry can't enclose a volume (fewer than 4 points, or all coplanar) — the
+// caller then falls back to a box.
+export const extractHullPoints = (body, worldCenter, worldQuat, excluded = new Set()) => {
+    body.updateWorldMatrix(true, true);
+
+    // p_leaf = R⁻¹ · (p_world − center)
+    const toLeafFrame = new Matrix4()
+        .makeRotationFromQuaternion(worldQuat.clone().invert())
+        .multiply(new Matrix4().makeTranslation(-worldCenter.x, -worldCenter.y, -worldCenter.z));
+
+    const points = [];
+    const vertex = new Vector3();
+
+    const visit = obj => {
+        if (obj !== body && excluded.has(obj)) return;
+
+        const position =
+            obj.geometry && obj.geometry.attributes && obj.geometry.attributes.position;
+        if (position) {
+            const matrix = toLeafFrame.clone().multiply(obj.matrixWorld);
+            for (let i = 0; i < position.count; i++) {
+                points.push(vertex.fromBufferAttribute(position, i).applyMatrix4(matrix).clone());
+            }
+        }
+
+        for (const child of obj.children) visit(child);
+    };
+    visit(body);
+
+    // A convex hull needs at least a tetrahedron.
+    if (points.length < 4) return null;
+
+    // QuickHull reduces the raw mesh (potentially 100k+ vertices) to just its
+    // extreme points — typically tens. Cost is a one-off at body creation.
+    // Degenerate/coplanar input leaves faces empty, which we report as null.
+    const hull = new ConvexHull().setFromPoints(points);
+
+    const unique = new Map();
+    for (const face of hull.faces) {
+        let edge = face.edge;
+        do {
+            const point = edge.head().point;
+            unique.set(`${point.x}|${point.y}|${point.z}`, point);
+            edge = edge.next;
+        } while (edge !== face.edge);
+    }
+
+    const flattened = [];
+    unique.forEach(point => flattened.push(point.x, point.y, point.z));
+
+    return flattened.length >= 12 ? flattened : null;
+};
 
 export const mapColliderTypeToDescription = (colliderType = COLLIDER_TYPES.BOX) =>
     ({

@@ -19,6 +19,7 @@ const {
     mapColliderTypeToDescription,
     iterateGeometries,
     mapColliderTypeToAddEvent,
+    extractHullPoints,
     DEFAULT_DESCRIPTION,
 } = physicsUtils;
 
@@ -226,6 +227,14 @@ export class Physics extends EventDispatcher {
                     `Physics.add: colliderType NONE is only valid for an element with physics-enabled descendants (got standalone element ${element.uuid()})`,
                 );
             }
+            if (options.colliderType === COLLIDER_TYPES.HULL) {
+                // Hulls are built as compound leaves — this path has no way to
+                // carry the hull's points and would silently fall back to a box
+                // description. realizeSubtree is the only correct entry point.
+                throw new Error(
+                    `Physics.add: colliderType HULL must be realized through realizeSubtree (got standalone element ${element.uuid()})`,
+                );
+            }
             const {
                 colliderType = COLLIDER_TYPES.BOX,
                 colliderWidth,
@@ -312,6 +321,25 @@ export class Physics extends EventDispatcher {
             shape.length = options.colliderLength != null ? options.colliderLength : size.length;
         }
 
+        // A hull is defined by its geometry, so the measured box above is kept
+        // only as the shape's AABB — it still sizes CCD and drives the childMap
+        // region test — while `points` carries the actual shape to the worker.
+        if (colliderType === COLLIDER_TYPES.HULL) {
+            const points = extractHullPoints(body, worldCenter, worldQuat, excluded);
+
+            if (points) {
+                shape.points = points;
+            } else {
+                // No geometry to wrap (an empty holder, or fully coplanar
+                // vertices). Degrade to the measured box rather than shipping a
+                // shapeless hull the worker can't build.
+                shape.colliderType = COLLIDER_TYPES.BOX;
+                console.warn(
+                    `[Mage] Physics: element ${element.uuid()} has colliderType HULL but no geometry to wrap — falling back to a BOX collider`,
+                );
+            }
+        }
+
         return shape;
     }
 
@@ -383,10 +411,15 @@ export class Physics extends EventDispatcher {
         // way: in world space, offset to its true geometry center, sized by its
         // un-rotated extents, and oriented by its world rotation. This keeps a
         // lone box/sphere aligned with its geometry regardless of scale, rotation,
-        // offset, or being nested under a non-physics parent. Player/Vehicle/Model
-        // keep their dedicated single-body path (the compound worker only builds
-        // box/sphere leaves).
-        const COMPOUND_CAPABLE = [COLLIDER_TYPES.BOX, COLLIDER_TYPES.SPHERE, COLLIDER_TYPES.NONE];
+        // offset, or being nested under a non-physics parent. Hulls join them for
+        // the same reason — and because a hull is only useful if it can weld into
+        // a compound. Player/Vehicle/Model keep their dedicated single-body path.
+        const COMPOUND_CAPABLE = [
+            COLLIDER_TYPES.BOX,
+            COLLIDER_TYPES.SPHERE,
+            COLLIDER_TYPES.HULL,
+            COLLIDER_TYPES.NONE,
+        ];
         if (descendants.length === 0 && !COMPOUND_CAPABLE.includes(rootType)) {
             this.add(root, root.getPhysicsOptions());
             return;
@@ -449,6 +482,7 @@ export class Physics extends EventDispatcher {
             mass: options.mass != null ? options.mass : 0,
             friction: options.friction,
             kinematic: !!options.kinematic,
+            collisionEvents: !!options.collisionEvents,
             ccdRadius: Number.isFinite(ccdRadius) ? ccdRadius : 0,
             shapes,
         });
