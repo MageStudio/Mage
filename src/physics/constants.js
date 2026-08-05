@@ -16,10 +16,36 @@ export const COLLIDER_TYPES = {
     VEHICLE: "VEHICLE",
     PLAYER: "PLAYER",
     SPHERE: "SPHERE",
+    // Convex hull wrapped around the element's own geometry — "Model Shape" in
+    // the editor. The only shape that collides with everything (boxes, spheres,
+    // players, other hulls) AND can be dynamic or a compound leaf, so it is the
+    // collider imported models want.
+    //
+    // Convex, so concave detail is lost: it fills in arches and doorways, and
+    // reduces a staircase to a ramp. Implementation names below stay "hull" —
+    // that is what it is; MODEL_SHAPE is the vocabulary authors see.
+    MODEL_SHAPE: "MODEL_SHAPE",
     // No collider of its own. Valid only inside a compound: the element still
     // acts as the rigid frame its physics-enabled descendants weld to, but
     // contributes no shape (e.g. a grouping/holder parent).
     NONE: "NONE",
+};
+
+// Upper bound on the vertices of a single hull. Convex-vs-convex narrowphase is
+// linear in vertex count, so an unreduced 5k-vertex hull is a performance bug.
+// Bullet's btShapeHull reduces to this in the worker.
+export const DEFAULT_HULL_MAX_POINTS = 64;
+
+// btBroadphaseProxy::CollisionFilterGroups. Bullet assigns these implicitly in
+// addRigidBody(body): dynamic bodies get DEFAULT/ALL, while static AND kinematic
+// bodies get STATIC with a mask that excludes STATIC — which is why two mass-0
+// bodies never generate a contact manifold, however they are shaped. Passing the
+// groups explicitly lets a static body opt into being paired anyway.
+export const COLLISION_FILTER_GROUPS = {
+    DEFAULT: 1,
+    STATIC: 2,
+    KINEMATIC: 4,
+    ALL: -1,
 };
 
 export const DEFAULT_VEHICLE_STATE = {

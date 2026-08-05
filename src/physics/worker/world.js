@@ -178,8 +178,16 @@ export class World {
 
     getDynamicsWorld = () => this.dynamicsWorld;
 
-    addRigidBody = body => {
-        this.dynamicsWorld.addRigidBody(body);
+    // `group`/`mask` are optional: omitting them keeps Bullet's implicit
+    // assignment (DEFAULT/ALL for dynamic bodies, STATIC/~STATIC for static and
+    // kinematic ones). Pass them to override that — see the collisionEvents
+    // handling in createRigidBody.
+    addRigidBody = (body, group, mask) => {
+        if (group === undefined || mask === undefined) {
+            this.dynamicsWorld.addRigidBody(body);
+            return;
+        }
+        this.dynamicsWorld.addRigidBody(body, group, mask);
     };
 
     addAction = action => {

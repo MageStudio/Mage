@@ -32,6 +32,7 @@ import { Vector3, EventDispatcher } from "three";
 import { LineSegments2 } from "three/examples/jsm/lines/LineSegments2.js";
 import { LineSegmentsGeometry } from "three/examples/jsm/lines/LineSegmentsGeometry.js";
 import { LineMaterial } from "three/examples/jsm/lines/LineMaterial.js";
+import { ConvexGeometry } from "three/examples/jsm/geometries/ConvexGeometry.js";
 import Level, { author } from "./core/Level";
 
 import Universe from "./core/universe";
@@ -227,6 +228,9 @@ export {
     LineSegments2,
     LineSegmentsGeometry,
     LineMaterial,
+    // Lets the editor draw a HULL collider as the convex wrap it actually is
+    // rather than as its bounding box.
+    ConvexGeometry,
     rxjs,
     xstate,
     map,
