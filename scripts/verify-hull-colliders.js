@@ -61,7 +61,7 @@ const cubePoints = (width, height, length) => {
 
 const hullShape = ({ childUuid, width, height, length, localPosition }) => ({
     childUuid,
-    colliderType: COLLIDER_TYPES.HULL,
+    colliderType: COLLIDER_TYPES.MODEL_SHAPE,
     points: cubePoints(width, height, length),
     // The measured AABB still travels with a hull leaf: it sizes CCD and drives
     // the childMap region test.

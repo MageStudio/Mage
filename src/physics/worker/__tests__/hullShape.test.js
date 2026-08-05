@@ -26,7 +26,7 @@ const BASE = {
 
 const hullShape = (overrides = {}) => ({
     childUuid: "hull-child",
-    colliderType: COLLIDER_TYPES.HULL,
+    colliderType: COLLIDER_TYPES.MODEL_SHAPE,
     points: CUBE_POINTS,
     width: 2,
     height: 2,

@@ -306,7 +306,7 @@ const createLeafShape = ({
     // A hull needs at least a tetrahedron's worth of coordinates; the main
     // thread already degrades to BOX when it can't produce that, so this is a
     // belt-and-braces guard against a malformed message.
-    if (colliderType === COLLIDER_TYPES.HULL && points && points.length >= 12) {
+    if (colliderType === COLLIDER_TYPES.MODEL_SHAPE && points && points.length >= 12) {
         return createHullShape(points);
     }
     if (colliderType === COLLIDER_TYPES.SPHERE) {

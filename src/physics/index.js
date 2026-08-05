@@ -227,12 +227,12 @@ export class Physics extends EventDispatcher {
                     `Physics.add: colliderType NONE is only valid for an element with physics-enabled descendants (got standalone element ${element.uuid()})`,
                 );
             }
-            if (options.colliderType === COLLIDER_TYPES.HULL) {
+            if (options.colliderType === COLLIDER_TYPES.MODEL_SHAPE) {
                 // Hulls are built as compound leaves — this path has no way to
                 // carry the hull's points and would silently fall back to a box
                 // description. realizeSubtree is the only correct entry point.
                 throw new Error(
-                    `Physics.add: colliderType HULL must be realized through realizeSubtree (got standalone element ${element.uuid()})`,
+                    `Physics.add: colliderType MODEL_SHAPE must be realized through realizeSubtree (got standalone element ${element.uuid()})`,
                 );
             }
             const {
@@ -324,7 +324,7 @@ export class Physics extends EventDispatcher {
         // A hull is defined by its geometry, so the measured box above is kept
         // only as the shape's AABB — it still sizes CCD and drives the childMap
         // region test — while `points` carries the actual shape to the worker.
-        if (colliderType === COLLIDER_TYPES.HULL) {
+        if (colliderType === COLLIDER_TYPES.MODEL_SHAPE) {
             const points = extractHullPoints(body, worldCenter, worldQuat, excluded);
 
             if (points) {
@@ -335,7 +335,7 @@ export class Physics extends EventDispatcher {
                 // shapeless hull the worker can't build.
                 shape.colliderType = COLLIDER_TYPES.BOX;
                 console.warn(
-                    `[Mage] Physics: element ${element.uuid()} has colliderType HULL but no geometry to wrap — falling back to a BOX collider`,
+                    `[Mage] Physics: element ${element.uuid()} has colliderType MODEL_SHAPE but no geometry to wrap — falling back to a BOX collider`,
                 );
             }
         }
@@ -417,7 +417,7 @@ export class Physics extends EventDispatcher {
         const COMPOUND_CAPABLE = [
             COLLIDER_TYPES.BOX,
             COLLIDER_TYPES.SPHERE,
-            COLLIDER_TYPES.HULL,
+            COLLIDER_TYPES.MODEL_SHAPE,
             COLLIDER_TYPES.NONE,
         ];
         if (descendants.length === 0 && !COMPOUND_CAPABLE.includes(rootType)) {

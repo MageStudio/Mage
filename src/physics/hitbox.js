@@ -111,7 +111,7 @@ export const mapColliderTypeToHitbox = (colliderType = COLLIDER_TYPES.BOX) =>
     ({
         [COLLIDER_TYPES.BOX]: getBoxHitbox,
         [COLLIDER_TYPES.SPHERE]: getSphereHitbox,
-        [COLLIDER_TYPES.HULL]: getHullHitbox,
+        [COLLIDER_TYPES.MODEL_SHAPE]: getHullHitbox,
     })[colliderType] || getBoxHitbox;
 
 export const addHitBox = element => {

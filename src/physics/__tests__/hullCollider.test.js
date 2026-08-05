@@ -121,19 +121,27 @@ describe("extractHullPoints", () => {
 
 describe("Physics.realizeSubtree with a HULL collider", () => {
     it("emits a compound whose leaf carries hull points", () => {
-        const element = makeElement("hull-1", { colliderType: COLLIDER_TYPES.HULL }, boxMesh(2));
+        const element = makeElement(
+            "hull-1",
+            { colliderType: COLLIDER_TYPES.MODEL_SHAPE },
+            boxMesh(2),
+        );
 
         Physics.realizeSubtree(element);
 
         const message = lastMessage();
         expect(message.event).toBe(PHYSICS_EVENTS.ADD.COMPOUND);
         expect(message.shapes).toHaveLength(1);
-        expect(message.shapes[0].colliderType).toBe(COLLIDER_TYPES.HULL);
+        expect(message.shapes[0].colliderType).toBe(COLLIDER_TYPES.MODEL_SHAPE);
         expect(message.shapes[0].points).toHaveLength(24);
     });
 
     it("keeps the measured box on the leaf so CCD and contact attribution still work", () => {
-        const element = makeElement("hull-2", { colliderType: COLLIDER_TYPES.HULL }, boxMesh(2));
+        const element = makeElement(
+            "hull-2",
+            { colliderType: COLLIDER_TYPES.MODEL_SHAPE },
+            boxMesh(2),
+        );
 
         Physics.realizeSubtree(element);
 
@@ -147,7 +155,7 @@ describe("Physics.realizeSubtree with a HULL collider", () => {
         const warn = jest.spyOn(console, "warn").mockImplementation(() => {});
         const element = makeElement(
             "hull-3",
-            { colliderType: COLLIDER_TYPES.HULL },
+            { colliderType: COLLIDER_TYPES.MODEL_SHAPE },
             new Object3D(),
         );
 
@@ -167,14 +175,14 @@ describe("Physics.realizeSubtree with a HULL collider", () => {
         rootBody.add(childBody);
         rootBody.updateMatrixWorld(true);
 
-        const child = makeElement("child", { colliderType: COLLIDER_TYPES.HULL }, childBody);
+        const child = makeElement("child", { colliderType: COLLIDER_TYPES.MODEL_SHAPE }, childBody);
         const root = makeElement("root", { colliderType: COLLIDER_TYPES.BOX }, rootBody, [child]);
 
         Physics.realizeSubtree(root);
 
         const message = lastMessage();
         expect(message.shapes).toHaveLength(2);
-        expect(message.shapes[1].colliderType).toBe(COLLIDER_TYPES.HULL);
+        expect(message.shapes[1].colliderType).toBe(COLLIDER_TYPES.MODEL_SHAPE);
         expect(message.shapes[1].points.length).toBeGreaterThan(0);
         expect(message.shapes[1].localPosition.x).toBeCloseTo(4);
     });
