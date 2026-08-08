@@ -11,7 +11,7 @@ import SkeletonUtils from "./SkeletonUtils";
 
 import { prepareModel, processMaterial } from "../lib/meshUtils";
 import { buildAssetId } from "../lib/utils/assets";
-import { ROOT } from "../lib/constants";
+import { ROOT, COLLISION_DEPENDENCY_PREFIX } from "../lib/constants";
 import { ASSETS_MODEL_LOAD_FAIL, DEPRECATIONS } from "../lib/messages";
 import { NOOP } from "../lib/functions";
 import RequirementsTracer, { REQUIREMENTS_EVENTS } from "../loaders/RequirementsTracer";
@@ -290,7 +290,7 @@ class Models extends EventDispatcher {
             return false;
         }
 
-        const { scene, animations, extension } = modelData;
+        const { scene, animations, extension, collisionVariants } = modelData;
 
         // Debug: Log model structure
         console.log(`[Mage] Creating model "${name}":`, {
@@ -381,6 +381,12 @@ class Models extends EventDispatcher {
         element.setEntityType(ENTITY_TYPES.MODEL.TYPE);
         element.setEntitySubtype(ENTITY_TYPES.MODEL.SUBTYPES.DEFAULT);
 
+        // Every instance of this asset shares the same precomputed hull sets;
+        // which one it uses is a per-instance physics option.
+        if (collisionVariants) {
+            element.setCollisionVariants(collisionVariants);
+        }
+
         if (hasAnimations(animations)) {
             element.addAnimationHandler(animations);
         }
@@ -403,6 +409,58 @@ class Models extends EventDispatcher {
     storeModel = (name, model, extension) => {
         model.extension = extension;
         this.map[name] = model;
+    };
+
+    /**
+     * Fetch the convex hull sets a model depends on.
+     *
+     * These arrive as ordinary asset dependencies keyed "collision:<variant>",
+     * so a model can offer several — a high-fidelity set and a cheap one, say —
+     * and each placed instance chooses by name. The points are precomputed by
+     * the editor, so nothing is decomposed at runtime.
+     *
+     * A variant that fails to load is skipped rather than rejected: the
+     * collider degrades to the single hull the engine computes itself, which is
+     * a worse shape but still a working collider.
+     *
+     * @param {object} options - loader options, which carry the dependencies
+     * @returns {Promise<object>} { [variant]: hull[] }, empty when there are none
+     */
+    loadCollisionVariants = async (options = {}) => {
+        const entries = Object.keys(options).filter(key =>
+            key.startsWith(`${COLLISION_DEPENDENCY_PREFIX}:`),
+        );
+
+        if (!entries.length) return {};
+
+        const variants = {};
+
+        await Promise.all(
+            entries.map(async key => {
+                const variant = key.slice(COLLISION_DEPENDENCY_PREFIX.length + 1);
+                const path = resolveAssetPath(options[key]);
+
+                try {
+                    const response = await fetch(path);
+                    if (!response.ok) {
+                        throw new Error(`${response.status} ${response.statusText}`);
+                    }
+
+                    const payload = await response.json();
+                    if (Array.isArray(payload?.hulls) && payload.hulls.length) {
+                        variants[variant] = payload.hulls;
+                    }
+                } catch (error) {
+                    console.warn(
+                        `[Mage] Failed to load collision variant "${variant}" from ${path}; ` +
+                            `falling back to a computed hull:`,
+                        error?.message || error,
+                    );
+                }
+            }),
+        );
+
+        return variants;
     };
 
     loadModels = (models, level) => {
@@ -463,10 +521,13 @@ class Models extends EventDispatcher {
         return new Promise(resolve => {
             loader.load(
                 resolvedPath,
-                model => {
+                async model => {
                     const parsedModel = parser(model);
 
                     if (parsedModel) {
+                        // Hull sets travel with the model so an instance can
+                        // pick a variant at realize time without another fetch.
+                        parsedModel.collisionVariants = await this.loadCollisionVariants(options);
                         this.storeModel(id, parsedModel, extension);
                     }
 
