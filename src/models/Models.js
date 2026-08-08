@@ -433,6 +433,8 @@ class Models extends EventDispatcher {
 
         if (!entries.length) return {};
 
+        console.log(`[Mage] Loading ${entries.length} collision variant(s):`, entries.join(", "));
+
         const variants = {};
 
         await Promise.all(
@@ -449,6 +451,18 @@ class Models extends EventDispatcher {
                     const payload = await response.json();
                     if (Array.isArray(payload?.hulls) && payload.hulls.length) {
                         variants[variant] = payload.hulls;
+                        console.log(
+                            `[Mage] Loaded collision variant "${variant}": ` +
+                                `${payload.hulls.length} hulls from ${path}`,
+                        );
+                    } else {
+                        // Loaded, but there was nothing usable in it — worth
+                        // distinguishing from a failed request, since the
+                        // symptom (no variant offered) is identical.
+                        console.warn(
+                            `[Mage] Collision variant "${variant}" at ${path} contains no hulls`,
+                            payload,
+                        );
                     }
                 } catch (error) {
                     console.warn(

@@ -446,7 +446,17 @@ export default class Element extends Entity {
         if (!variant || !this.collisionVariants) return null;
 
         const hulls = this.collisionVariants[variant];
-        return Array.isArray(hulls) && hulls.length ? hulls : null;
+        if (Array.isArray(hulls) && hulls.length) return hulls;
+
+        // Selected a variant this element does not have. The collider silently
+        // becomes a single computed hull, so say which names ARE available —
+        // that is the difference between "wrong name" and "never loaded".
+        console.warn(
+            `[Mage] Element "${this.uuid()}" wants collision variant "${variant}", ` +
+                `but has: ${Object.keys(this.collisionVariants).join(", ") || "(none)"}. ` +
+                `Falling back to a computed hull.`,
+        );
+        return null;
     }
 
     getPhysicsOptions(option) {
