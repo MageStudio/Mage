@@ -331,6 +331,11 @@ export const OUTPUT_ENCODINGS = {
 export const DEFAULT_OUTPUT_ENCODING = OUTPUT_ENCODINGS.LINEAR;
 
 export const ROOT = "/";
+
+// Generated convex hull sets arrive as asset dependencies keyed
+// "collision:<variant>", so one model can carry several colliders and each
+// placed instance picks one by name. Must match the editor's constant.
+export const COLLISION_DEPENDENCY_PREFIX = "collision";
 export const DIVIDER = "/";
 export const HASH = "#";
 export const EMPTY = "";

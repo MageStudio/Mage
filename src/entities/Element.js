@@ -422,6 +422,43 @@ export default class Element extends Entity {
         this.physicsOptions = parsedOptions;
     }
 
+    /**
+     * Precomputed convex hull sets for this element's source asset, keyed by
+     * variant name. Generated in the editor and loaded with the model, so a
+     * concave shape can be represented by several convex pieces without
+     * decomposing anything at runtime.
+     * @param {object} variants - { [variant]: Array<{ points: number[] }> }
+     */
+    setCollisionVariants(variants = {}) {
+        this.collisionVariants = variants;
+    }
+
+    /**
+     * Hulls for the variant this element is configured to use.
+     *
+     * Returns null when the element has no variant selected, names one that was
+     * never generated, or the asset carries none — all of which mean "fall back
+     * to the single hull the engine computes from the mesh".
+     * @returns {Array<{points: number[]}>|null}
+     */
+    getCollisionHulls() {
+        const variant = this.getPhysicsOptions("collisionVariant");
+        if (!variant || !this.collisionVariants) return null;
+
+        const hulls = this.collisionVariants[variant];
+        if (Array.isArray(hulls) && hulls.length) return hulls;
+
+        // Selected a variant this element does not have. The collider silently
+        // becomes a single computed hull, so say which names ARE available —
+        // that is the difference between "wrong name" and "never loaded".
+        console.warn(
+            `[Mage] Element "${this.uuid()}" wants collision variant "${variant}", ` +
+                `but has: ${Object.keys(this.collisionVariants).join(", ") || "(none)"}. ` +
+                `Falling back to a computed hull.`,
+        );
+        return null;
+    }
+
     getPhysicsOptions(option) {
         return option ? this.physicsOptions[option] : this.physicsOptions;
     }

@@ -282,6 +282,92 @@ export class Physics extends EventDispatcher {
         return collected;
     }
 
+    /**
+     * Leaves contributed by one collider element, in the compound root's frame.
+     *
+     * Usually one, but an element using a generated collision variant yields one
+     * per stored hull — that is what gives a concave model a collider with real
+     * gaps rather than a single shape filling them in.
+     */
+    buildCompoundShapes(element, rootWorldPos, invRootQuat, siblingBodies) {
+        const hulls = element.getCollisionHulls && element.getCollisionHulls();
+
+        if (hulls) {
+            return this.buildStoredHullShapes(element, hulls, rootWorldPos, invRootQuat);
+        }
+
+        return [this.buildCompoundShape(element, rootWorldPos, invRootQuat, siblingBodies)];
+    }
+
+    /**
+     * Turn a stored hull set into compound leaves.
+     *
+     * Stored points are in the model's own local space, unscaled and unrotated —
+     * they encode each piece's offset from the model origin. So unlike the
+     * measured path, which centres a shape on the geometry it found, these are
+     * placed at the element's ORIGIN and carry their offsets internally. The
+     * element's world scale is baked into the points, since a compound leaf has
+     * no scale of its own.
+     */
+    buildStoredHullShapes(element, hulls, rootWorldPos, invRootQuat) {
+        const body = element.getBody();
+        body.updateWorldMatrix(true, true);
+
+        const worldPos = body.getWorldPosition(new Vector3());
+        const worldQuat = body.getWorldQuaternion(new Quaternion());
+        const worldScale = body.getWorldScale(new Vector3());
+
+        const localPos = worldPos.clone().sub(rootWorldPos).applyQuaternion(invRootQuat);
+        const localQuat = invRootQuat.clone().multiply(worldQuat);
+
+        const uuid = element.uuid();
+
+        return hulls
+            .map(hull => {
+                const source = hull.points || [];
+                const points = new Array(source.length);
+                let min = [Infinity, Infinity, Infinity];
+                let max = [-Infinity, -Infinity, -Infinity];
+
+                for (let i = 0; i < source.length; i += 3) {
+                    const x = source[i] * worldScale.x;
+                    const y = source[i + 1] * worldScale.y;
+                    const z = source[i + 2] * worldScale.z;
+                    points[i] = x;
+                    points[i + 1] = y;
+                    points[i + 2] = z;
+
+                    min = [Math.min(min[0], x), Math.min(min[1], y), Math.min(min[2], z)];
+                    max = [Math.max(max[0], x), Math.max(max[1], y), Math.max(max[2], z)];
+                }
+
+                // A hull needs at least a tetrahedron; anything less cannot be
+                // built and would otherwise degrade silently into a unit box.
+                if (points.length < 12) return null;
+
+                return {
+                    // Every leaf carries the ELEMENT's uuid, so contact
+                    // attribution resolves to the model however it was split.
+                    childUuid: uuid,
+                    colliderType: COLLIDER_TYPES.MODEL_SHAPE,
+                    points,
+                    // The measured box still travels with each leaf: it sizes
+                    // CCD and drives the childMap region test.
+                    width: max[0] - min[0],
+                    height: max[1] - min[1],
+                    length: max[2] - min[2],
+                    localPosition: { x: localPos.x, y: localPos.y, z: localPos.z },
+                    localQuaternion: {
+                        x: localQuat.x,
+                        y: localQuat.y,
+                        z: localQuat.z,
+                        w: localQuat.w,
+                    },
+                };
+            })
+            .filter(Boolean);
+    }
+
     // Describe one collider element in the compound root's local frame: its
     // collider type, size, and parent-relative position/rotation. `siblingBodies`
     // are the bodies of the OTHER colliders in the compound (each becomes its own
@@ -456,8 +542,11 @@ export class Physics extends EventDispatcher {
             return;
         }
 
-        const shapes = shaped.map(element =>
-            this.buildCompoundShape(element, rootWorldPos, invRootQuat, colliderBodies),
+        // flatMap, not map: an element using a generated collision variant
+        // contributes one leaf PER HULL, which is how a concave model gets a
+        // collider with real openings in it.
+        const shapes = shaped.flatMap(element =>
+            this.buildCompoundShapes(element, rootWorldPos, invRootQuat, colliderBodies),
         );
 
         const options = root.getPhysicsOptions() || {};
