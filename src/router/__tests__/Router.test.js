@@ -37,6 +37,15 @@ describe("Router.extractHashAndQuery", () => {
         expect(query).toEqual({ difficulty: "hard", lives: "3" });
     });
 
+    test("decodes only the route, leaving encoded query characters in place", () => {
+        getLocationHash.mockReturnValue("#/Sunny%20Meadow?x=a%26b");
+
+        const { hash, query } = Router.extractHashAndQuery();
+
+        expect(hash).toBe("/Sunny Meadow");
+        expect(query).toEqual({ x: "a%26b" });
+    });
+
     test("leaves plain hashes untouched", () => {
         getLocationHash.mockReturnValue("#/");
 

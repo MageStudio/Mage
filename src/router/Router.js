@@ -25,14 +25,13 @@ class Router {
     }
 
     static extractHashAndQuery() {
-        // location.hash is percent-encoded (e.g. "#/Sunny%20Meadow"), while routes
-        // registered via on() are raw strings.
-        const [hash, query] = decodeURIComponent(Router.cleanRoute(getLocationHash())).split(
-            QUERY_START,
-        );
+        const [route, query] = Router.cleanRoute(getLocationHash()).split(QUERY_START);
 
         return {
-            hash,
+            // location.hash is percent-encoded (e.g. "#/Sunny%20Meadow"), while routes
+            // registered via on() are raw strings. Only the route is decoded, after splitting,
+            // so encoded "?", "&" or "=" can't change where the query is split.
+            hash: decodeURIComponent(route),
             query: parseQuery(query),
         };
     }
