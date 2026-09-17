@@ -9,6 +9,7 @@ import { FEATURE_NOT_SUPPORTED } from "../lib/messages";
 import {
     ROOT,
     HASH,
+    DIVIDER,
     BEFORE_UNLOAD,
     HASH_CHANGE,
     DEFAULT_SELECTOR,
@@ -70,7 +71,11 @@ class Router {
 
     goTo(path, options = {}, origin = this.getCurrentLevel()) {
         if (!Router.areRoutesIdentical(origin, path)) {
-            setLocationHash(path, toQueryString(options));
+            // browsers leave "%", "?" and "#" unencoded when assigning location.hash,
+            // so encode each segment here to mirror the decoding in extractHashAndQuery.
+            const encodedPath = path.split(DIVIDER).map(encodeURIComponent).join(DIVIDER);
+
+            setLocationHash(encodedPath, toQueryString(options));
         }
     }
 
