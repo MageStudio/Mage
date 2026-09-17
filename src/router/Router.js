@@ -9,6 +9,7 @@ import { FEATURE_NOT_SUPPORTED } from "../lib/messages";
 import {
     ROOT,
     HASH,
+    DIVIDER,
     BEFORE_UNLOAD,
     HASH_CHANGE,
     DEFAULT_SELECTOR,
@@ -25,10 +26,13 @@ class Router {
     }
 
     static extractHashAndQuery() {
-        const [hash, query] = Router.cleanRoute(getLocationHash()).split(QUERY_START);
+        const [route, query] = Router.cleanRoute(getLocationHash()).split(QUERY_START);
 
         return {
-            hash,
+            // location.hash is percent-encoded (e.g. "#/Sunny%20Meadow"), while routes
+            // registered via on() are raw strings. Only the route is decoded, after splitting,
+            // so encoded "?", "&" or "=" can't change where the query is split.
+            hash: decodeURIComponent(route),
             query: parseQuery(query),
         };
     }
@@ -67,7 +71,11 @@ class Router {
 
     goTo(path, options = {}, origin = this.getCurrentLevel()) {
         if (!Router.areRoutesIdentical(origin, path)) {
-            setLocationHash(path, toQueryString(options));
+            // browsers leave "%", "?" and "#" unencoded when assigning location.hash,
+            // so encode each segment here to mirror the decoding in extractHashAndQuery.
+            const encodedPath = path.split(DIVIDER).map(encodeURIComponent).join(DIVIDER);
+
+            setLocationHash(encodedPath, toQueryString(options));
         }
     }
 
