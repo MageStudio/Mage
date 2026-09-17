@@ -434,7 +434,12 @@ export class Importer {
 
         // Load particle texture if one was saved
         const particleOptions = particleData.options || {};
-        if (particleOptions.texture && particleOptions.textureAssetPath) {
+        // an already loaded texture was picked up when the emitter was created
+        if (
+            particleOptions.texture &&
+            particleOptions.textureAssetPath &&
+            !Images.get(particleOptions.texture)
+        ) {
             try {
                 await Images.loadAssetByPath(
                     particleOptions.textureAssetPath,
