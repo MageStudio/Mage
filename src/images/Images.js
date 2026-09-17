@@ -85,6 +85,10 @@ export class Images {
         this.images = {};
         this.textures = {};
 
+        // in-flight and completed loads, keyed by loader type + resolved url,
+        // so the same file is only fetched/decoded once regardless of the id it's loaded under.
+        this.loadsByUrl = {};
+
         this.currentLevel = ROOT;
     }
 
@@ -153,7 +157,7 @@ export class Images {
     loadTextureByName = (name, level) => {
         const path = this.textures[name];
 
-        this.loadAssetByPath(path, name, level, this.LOADERS.TEXTURE);
+        return this.loadAssetByPath(path, name, level, this.LOADERS.TEXTURE);
     };
 
     loadCubeTextureByName = (name, level) => {
@@ -169,15 +173,36 @@ export class Images {
 
     loadAssetByPath = (path, name, level, loaderType = this.LOADERS.TEXTURE) => {
         const id = buildAssetId(name, level);
-        const loader = this.getLoaderByType(loaderType);
         // Resolve the path using MAGE_ASSETS_BASE_URL if available
         const resolvedPath = resolveAssetPath(path);
+        // stringified so cube texture path arrays produce a stable key
+        const cacheKey = `${loaderType}:${JSON.stringify(resolvedPath)}`;
+        const cachedLoad = this.loadsByUrl[cacheKey];
 
-        return new Promise(resolve => {
+        if (cachedLoad) {
+            return cachedLoad.promise.then(asset => {
+                this.add(id, asset);
+                return asset;
+            });
+        }
+
+        const loader = this.getLoaderByType(loaderType);
+        // registered before loading starts: loaders can call back synchronously,
+        // and the error path needs to remove this entry so a later call can retry.
+        const entry = { asset: null };
+        this.loadsByUrl[cacheKey] = entry;
+
+        entry.promise = new Promise(resolve => {
+            const handleFailure = () => {
+                delete this.loadsByUrl[cacheKey];
+                resolve(null);
+            };
+
             try {
                 loader.load(
                     resolvedPath,
                     asset => {
+                        entry.asset = asset;
                         this.add(id, asset);
                         resolve(asset);
                     },
@@ -190,20 +215,28 @@ export class Images {
                             path,
                             error?.message || "",
                         );
-                        resolve(null);
+                        handleFailure();
                     },
                 );
             } catch (e) {
                 // Log warning but resolve anyway to allow other assets to continue loading
                 console.warn(`[Mage] ${ERROR_LOADING_TEXTURE}`, name, path, e?.message || "");
-                resolve(null);
+                handleFailure();
             }
         });
+
+        return entry.promise;
     };
 
     disposeTexture(id) {
         const texture = this.get(id);
         texture.dispose();
+
+        Object.keys(this.loadsByUrl).forEach(cacheKey => {
+            if (this.loadsByUrl[cacheKey].asset === texture) {
+                delete this.loadsByUrl[cacheKey];
+            }
+        });
 
         this.map[id] = null;
     }

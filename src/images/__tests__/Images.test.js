@@ -109,6 +109,126 @@ describe("Images", () => {
         });
     });
 
+    describe("loadAssetByPath de-duplication", () => {
+        let load;
+        let pendingLoads;
+
+        beforeEach(() => {
+            pendingLoads = [];
+            load = jest.fn((path, onLoad, onProgress, onError) => {
+                pendingLoads.push({ path, onLoad, onError });
+            });
+            images.textureLoader = { load };
+            images.cubeTexturesLoader = { load };
+            jest.spyOn(console, "warn").mockImplementation(() => {});
+        });
+
+        afterEach(() => {
+            console.warn.mockRestore();
+        });
+
+        const completePendingLoads = () =>
+            pendingLoads.forEach(({ path, onLoad }) => onLoad({ path }));
+
+        test("loads the same path once and stores the texture under both ids", async () => {
+            const first = images.loadAssetByPath("/_wall.png", "wall.png", "/");
+            completePendingLoads();
+            const firstTexture = await first;
+
+            const secondTexture = await images.loadAssetByPath("/_wall.png", "asset-id", "/");
+
+            expect(load).toHaveBeenCalledTimes(1);
+            expect(secondTexture).toBe(firstTexture);
+            expect(images.map["/_wall.png"]).toBe(firstTexture);
+            expect(images.map["/_asset-id"]).toBe(firstTexture);
+        });
+
+        test("concurrent in-flight calls share a single load", async () => {
+            const first = images.loadAssetByPath("/_wall.png", "wall.png", "/");
+            const second = images.loadAssetByPath("/_wall.png", "asset-id", "/");
+
+            expect(load).toHaveBeenCalledTimes(1);
+
+            completePendingLoads();
+            const [firstTexture, secondTexture] = await Promise.all([first, second]);
+
+            expect(secondTexture).toBe(firstTexture);
+            expect(images.map["/_wall.png"]).toBe(firstTexture);
+            expect(images.map["/_asset-id"]).toBe(firstTexture);
+        });
+
+        test("keeps separate loads for different loader types on the same path", () => {
+            images.loadAssetByPath("/_wall.png", "wall", "/", images.LOADERS.TEXTURE);
+            images.loadAssetByPath("/_wall.png", "wall", "/", images.LOADERS.CUBE_TEXTURE);
+
+            expect(load).toHaveBeenCalledTimes(2);
+        });
+
+        test("does not cache a failed load", async () => {
+            const failed = images.loadAssetByPath("/_wall.png", "wall.png", "/");
+            pendingLoads[0].onError(new Error("load failed"));
+            expect(await failed).toBeNull();
+
+            const retry = images.loadAssetByPath("/_wall.png", "wall.png", "/");
+            expect(load).toHaveBeenCalledTimes(2);
+
+            pendingLoads[1].onLoad({ path: "/_wall.png" });
+            expect(await retry).toEqual({ path: "/_wall.png" });
+        });
+
+        test("does not cache a load that throws synchronously", async () => {
+            load.mockImplementationOnce(() => {
+                throw new Error("boom");
+            });
+
+            expect(await images.loadAssetByPath("/_wall.png", "wall.png", "/")).toBeNull();
+
+            images.loadAssetByPath("/_wall.png", "wall.png", "/");
+            expect(load).toHaveBeenCalledTimes(2);
+        });
+
+        test("disposeTexture clears the cached load for that texture", async () => {
+            const first = images.loadAssetByPath("/_wall.png", "wall.png", "/");
+            completePendingLoads();
+            const texture = await first;
+            texture.dispose = jest.fn();
+
+            images.disposeTexture("/_wall.png");
+
+            expect(texture.dispose).toHaveBeenCalled();
+            expect(images.loadsByUrl).toEqual({});
+
+            images.loadAssetByPath("/_wall.png", "wall.png", "/");
+            expect(load).toHaveBeenCalledTimes(2);
+        });
+    });
+
+    describe("load with textures", () => {
+        test("waits for textures to finish loading", async () => {
+            let finishLoad;
+            images.textureLoader = {
+                load: jest.fn((path, onLoad) => {
+                    finishLoad = () => onLoad({ path });
+                }),
+            };
+
+            const loading = images.load({}, { wall: "/_wall.png" }, {}, "/");
+            let settled = false;
+            loading.then(() => {
+                settled = true;
+            });
+
+            await Promise.resolve();
+            expect(settled).toBe(false);
+
+            finishLoad();
+            const result = await loading;
+
+            expect(settled).toBe(true);
+            expect(result).toEqual([{ path: "/_wall.png" }]);
+        });
+    });
+
     describe("areThereImagesToLoad", () => {
         test("returns 0 (falsy) when all empty", () => {
             images.images = {};
