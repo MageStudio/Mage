@@ -181,6 +181,16 @@ export class Images {
 
         if (cachedLoad) {
             return cachedLoad.promise.then(asset => {
+                // textures carry per-use state (wrap, repeat, offset, encoding), so each id
+                // gets its own clone. Clones share the decoded image with the original.
+                if (asset && asset.isTexture) {
+                    const texture = asset.clone();
+                    texture.needsUpdate = true;
+
+                    this.add(id, texture);
+                    return texture;
+                }
+
                 this.add(id, asset);
                 return asset;
             });

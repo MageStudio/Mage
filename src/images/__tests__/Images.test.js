@@ -127,10 +127,26 @@ describe("Images", () => {
             console.warn.mockRestore();
         });
 
-        const completePendingLoads = () =>
-            pendingLoads.forEach(({ path, onLoad }) => onLoad({ path }));
+        // minimal stand-in for three's Texture: clone() shares the decoded image
+        class FakeTexture {
+            constructor(image) {
+                this.isTexture = true;
+                this.image = image;
+                this.repeat = { x: 1, y: 1 };
+                this.needsUpdate = false;
+            }
 
-        test("loads the same path once and stores the texture under both ids", async () => {
+            clone() {
+                const texture = new FakeTexture(this.image);
+                texture.repeat = { ...this.repeat };
+                return texture;
+            }
+        }
+
+        const completePendingLoads = () =>
+            pendingLoads.forEach(({ path, onLoad }) => onLoad(new FakeTexture({ src: path })));
+
+        test("loads the same path once and gives each id its own texture sharing the image", async () => {
             const first = images.loadAssetByPath("/_wall.png", "wall.png", "/");
             completePendingLoads();
             const firstTexture = await first;
@@ -138,9 +154,45 @@ describe("Images", () => {
             const secondTexture = await images.loadAssetByPath("/_wall.png", "asset-id", "/");
 
             expect(load).toHaveBeenCalledTimes(1);
-            expect(secondTexture).toBe(firstTexture);
             expect(images.map["/_wall.png"]).toBe(firstTexture);
-            expect(images.map["/_asset-id"]).toBe(firstTexture);
+            expect(images.map["/_asset-id"]).toBe(secondTexture);
+            expect(secondTexture).not.toBe(firstTexture);
+            expect(secondTexture.image).toBe(firstTexture.image);
+            expect(secondTexture.needsUpdate).toBe(true);
+        });
+
+        test("per-use texture settings on one id don't leak to the other", async () => {
+            const first = images.loadAssetByPath("/_wall.png", "wall.png", "/");
+            completePendingLoads();
+            await first;
+            await images.loadAssetByPath("/_wall.png", "asset-id", "/");
+
+            images.get("/_asset-id").repeat.x = 4;
+
+            expect(images.get("/_wall.png").repeat.x).toBe(1);
+        });
+
+        test("does not clone non-texture assets", async () => {
+            images.imageLoader = { load };
+            const first = images.loadAssetByPath(
+                "/_wall.png",
+                "wall.png",
+                "/",
+                images.LOADERS.IMAGE,
+            );
+            const image = { src: "/_wall.png" };
+            pendingLoads[0].onLoad(image);
+            await first;
+
+            const second = await images.loadAssetByPath(
+                "/_wall.png",
+                "asset-id",
+                "/",
+                images.LOADERS.IMAGE,
+            );
+
+            expect(second).toBe(image);
+            expect(images.map["/_asset-id"]).toBe(image);
         });
 
         test("concurrent in-flight calls share a single load", async () => {
@@ -152,9 +204,9 @@ describe("Images", () => {
             completePendingLoads();
             const [firstTexture, secondTexture] = await Promise.all([first, second]);
 
-            expect(secondTexture).toBe(firstTexture);
             expect(images.map["/_wall.png"]).toBe(firstTexture);
-            expect(images.map["/_asset-id"]).toBe(firstTexture);
+            expect(images.map["/_asset-id"]).toBe(secondTexture);
+            expect(secondTexture.image).toBe(firstTexture.image);
         });
 
         test("keeps separate loads for different loader types on the same path", () => {
@@ -172,8 +224,9 @@ describe("Images", () => {
             const retry = images.loadAssetByPath("/_wall.png", "wall.png", "/");
             expect(load).toHaveBeenCalledTimes(2);
 
-            pendingLoads[1].onLoad({ path: "/_wall.png" });
-            expect(await retry).toEqual({ path: "/_wall.png" });
+            const texture = new FakeTexture({ src: "/_wall.png" });
+            pendingLoads[1].onLoad(texture);
+            expect(await retry).toBe(texture);
         });
 
         test("does not cache a load that throws synchronously", async () => {
