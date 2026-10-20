@@ -53,10 +53,11 @@ export class Assets {
 
             if (validAssetsTypes.includes(lowerCaseType)) {
                 group.common[lowerCaseType] = assets[assetType];
-            } else if (isLevelName(lowerCaseType)) {
+            } else if (isLevelName(assetType)) {
                 const levelAssets = assets[assetType] || {};
 
-                group.levels[lowerCaseType] = {
+                // level keys are routes, and routes are matched exact-case.
+                group.levels[assetType] = {
                     ...DEFAULT_COMMON_ASSETS,
                     ...levelAssets,
                 };
