@@ -75,6 +75,12 @@ const handleLoadEvent = options => Ammo => {
             case PHYSICS_EVENTS.EFFECTS.EXPLOSION:
                 createExplosion(data);
                 break;
+            case PHYSICS_EVENTS.PAUSE:
+                world.pause();
+                break;
+            case PHYSICS_EVENTS.RESUME:
+                world.resume();
+                break;
             case PHYSICS_EVENTS.TERMINATE:
                 world.terminate();
                 break;

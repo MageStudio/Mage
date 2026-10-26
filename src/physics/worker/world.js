@@ -116,6 +116,7 @@ export class World {
 
         this.requestAnimationFrameId = null;
         this.clock = new Clock();
+        this.paused = false;
     }
 
     init = options => {
@@ -202,7 +203,23 @@ export class World {
         this.dynamicsWorld.stepSimulation(dt, this.maxSubSteps, this.fixedTimeStep);
     };
 
+    pause = () => {
+        this.paused = true;
+    };
+
+    resume = () => {
+        this.paused = false;
+        // Reset the clock timestamp so the first step after resume covers one
+        // frame, not the whole time spent paused.
+        this.clock.getDelta();
+    };
+
     simulate = () => {
+        if (this.paused) {
+            this.requestAnimationFrameId = requestNextFrame(this.simulate.bind(this));
+            return;
+        }
+
         const dt = this.clock.getDelta() / 1000;
         this.stepSimulation(dt);
 

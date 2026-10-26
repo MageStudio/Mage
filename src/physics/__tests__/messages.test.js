@@ -9,6 +9,11 @@ describe("physics/messages.js", () => {
         expect(PHYSICS_EVENTS.UPDATE).toBeDefined();
     });
 
+    test("has pause and resume events", () => {
+        expect(PHYSICS_EVENTS.PAUSE).toBe("physics:pause");
+        expect(PHYSICS_EVENTS.RESUME).toBe("physics:resume");
+    });
+
     describe("LOAD events", () => {
         test("has AMMO load event", () => {
             expect(PHYSICS_EVENTS.LOAD.AMMO).toBeDefined();

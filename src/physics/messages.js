@@ -7,6 +7,8 @@ export const PHYSICS_EVENTS = {
     READY: "physics:ready",
     INIT: "physics:init",
     UPDATE: "physics:update",
+    PAUSE: "physics:pause",
+    RESUME: "physics:resume",
 
     ADD: {
         BOX: "physics:add:box",
