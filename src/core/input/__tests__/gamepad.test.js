@@ -81,4 +81,20 @@ describe("Gamepad pausing", () => {
         expect(released).toHaveBeenCalledTimes(1);
         expect(released.mock.calls[0][0].button.index).toBe(1);
     });
+
+    it("does not throw when navigator is undefined (Node 20, workers, SSR)", () => {
+        const descriptor = Object.getOwnPropertyDescriptor(global, "navigator");
+        delete global.navigator;
+
+        try {
+            expect(typeof navigator).toBe("undefined");
+            gamepad.addGamepad({ index: 0, buttons: [{ pressed: true, value: 1 }] });
+            const snapshot = gamepad.getPressedButtons();
+
+            expect(() => gamepad.dispatchMissedReleases(snapshot)).not.toThrow();
+            expect(() => gamepad.update()).not.toThrow();
+        } finally {
+            if (descriptor) Object.defineProperty(global, "navigator", descriptor);
+        }
+    });
 });

@@ -20,6 +20,9 @@ export const BUTTON_RELEASED_EVENT = "gamepadButtonReleased";
 export const isValidGamepad = gamepad => !!gamepad;
 
 export const getConnectedGamepads = () => {
+    // No navigator on Node < 21, in workers or during SSR.
+    if (typeof navigator === "undefined") return [];
+
     const list = navigator.getGamepads
         ? navigator.getGamepads()
         : navigator.webkitGetGamepads
