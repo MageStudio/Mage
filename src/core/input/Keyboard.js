@@ -1,7 +1,7 @@
 import hotkeys from "hotkeys-js";
 import { KEYBOARD_COMBO_IS_INVALID } from "../../lib/messages";
 
-import { EventDispatcher } from "three";
+import { Pausable } from "./pausable";
 
 const HOTKEYS_DEFAULT_OPTIONS = {
     keyup: true,
@@ -14,12 +14,14 @@ export const KEY_PRESS = "keyPress";
 export const KEY_DOWN = "keyDown";
 export const KEY_UP = "keyUp";
 export const KEY_COMBO = "keyCombo";
-export default class Keyboard extends EventDispatcher {
+export default class Keyboard extends Pausable() {
     constructor() {
         super();
 
         this.combos = [];
         this.pressedKeys = new Set();
+        // event.code -> event.key, for every key currently held down
+        this.keysDown = new Map();
 
         this.enabled = false;
     }
@@ -44,6 +46,7 @@ export default class Keyboard extends EventDispatcher {
 
     handleKeydown = event => {
         this.pressedKeys.add(event.key.toLowerCase());
+        this.keysDown.set(event.code, event.key);
         this.dispatchEvent({
             type: KEY_DOWN,
             event,
@@ -52,6 +55,7 @@ export default class Keyboard extends EventDispatcher {
 
     handleKeyup = event => {
         this.pressedKeys.delete(event.key.toLowerCase());
+        this.keysDown.delete(event.code);
         this.dispatchEvent({
             type: KEY_UP,
             event,
@@ -80,6 +84,7 @@ export default class Keyboard extends EventDispatcher {
     disable() {
         this.enabled = false;
         this.pressedKeys.clear();
+        this.keysDown.clear();
 
         hotkeys.unbind();
         window.removeEventListener(KEY_DOWN.toLowerCase(), this.handleKeydown.bind(this));
