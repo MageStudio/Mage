@@ -155,7 +155,7 @@ export default class TransformControls extends Object3D {
         this._scaleStart = new Vector3();
 
         this.isTransformControls = true;
-        Scene.add(this, null, false);
+        Scene.addGizmo(this);
     }
 
     render() {}
@@ -364,6 +364,7 @@ export default class TransformControls extends Object3D {
     }
 
     dispose() {
+        Scene.removeGizmo(this);
         this.domElement.removeEventListener("mousedown", this.onPointerDown);
         this.domElement.removeEventListener("touchstart", this.onPointerDown);
         this.domElement.removeEventListener("mousemove", this.onPointerHover);

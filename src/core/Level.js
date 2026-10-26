@@ -72,6 +72,10 @@ export class Level extends EventDispatcher {
     cancelNextAnimationFrame = () => cancelAnimationFrame(this.requestAnimationFrameId);
 
     render() {
+        // renderer.info.autoReset is off, so it is reset here, once per frame. Renders made
+        // between frames (e.g. Controls change handlers) count towards the next frame.
+        Scene.getRenderer().info.reset();
+
         const dt = Scene.clock.getDelta();
 
         if (PostProcessing.isEnabled()) {
@@ -89,7 +93,7 @@ export class Level extends EventDispatcher {
         this.onUpdate(dt);
         Scene.update(dt);
         Assets.update(dt);
-        Stats.update(dt);
+        Stats.update(dt, Scene.getRenderer().info);
         Controls.update(dt);
         Input.update(dt);
 

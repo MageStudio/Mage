@@ -15,6 +15,9 @@ class Stats {
         this._fps = 0;
         this._fpsMax = 100;
         this.fps = new Subject();
+        this.render = new Subject();
+        this._calls = 0;
+        this._triangles = 0;
         this.memory = new Subject();
         this.memoryMax = new Subject();
     }
@@ -32,6 +35,13 @@ class Stats {
             this.prevTime = time;
             this.frames = 0;
             this.fps.next(this._fps);
+            // instanced* are filled in once instancing exists; 0 while it is off
+            this.render.next({
+                calls: this._calls,
+                triangles: this._triangles,
+                instancedGroups: 0,
+                instancedMeshes: 0,
+            });
         }
 
         this.beginTime = time;
@@ -52,7 +62,10 @@ class Stats {
         }
     }
 
-    update() {
+    update(dt, info) {
+        // info is the renderer's WebGLInfo; it holds the last completed frame's totals
+        this._calls = info?.render?.calls ?? 0;
+        this._triangles = info?.render?.triangles ?? 0;
         this.getFPS();
     }
 }
