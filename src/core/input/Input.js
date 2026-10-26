@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { Pausable } from "./pausable";
 
 import Keyboard, { KEY_COMBO, KEY_DOWN, KEY_PRESS, KEY_UP } from "./Keyboard";
 
@@ -58,13 +58,53 @@ export const INPUT_EVENTS = {
 
 const DEFAULT_ENABLE_OPTIONS = {};
 
-export class Input extends EventDispatcher {
+export class Input extends Pausable() {
     constructor() {
         super();
         this.enabled = false;
         this.mouse = new Mouse();
         this.keyboard = new Keyboard();
         this.gamepad = new Gamepad();
+        this.snapshot = { keys: new Map(), mouseButtons: new Set(), gamepadButtons: [] };
+    }
+
+    setPaused(flag) {
+        const wasPaused = this.paused;
+        super.setPaused(flag);
+
+        [this.keyboard, this.mouse, this.gamepad].forEach(device => {
+            if (device) device.setPaused(flag);
+        });
+
+        if (this.paused && !wasPaused) {
+            this.snapshot = {
+                keys: new Map(this.keyboard ? this.keyboard.keysDown : []),
+                mouseButtons: new Set(this.mouse ? this.mouse.buttonsDown : []),
+                gamepadButtons: this.gamepad ? this.gamepad.getPressedButtons() : [],
+            };
+        }
+    }
+
+    dispatchMissedReleases() {
+        const { keys, mouseButtons, gamepadButtons } = this.snapshot;
+
+        keys.forEach((key, code) => {
+            if (!this.keyboard || !this.keyboard.keysDown.has(code)) {
+                window.dispatchEvent(new KeyboardEvent("keyup", { key, code }));
+            }
+        });
+
+        mouseButtons.forEach(button => {
+            if (!this.mouse || !this.mouse.buttonsDown.has(button)) {
+                document.dispatchEvent(new MouseEvent("mouseup", { button }));
+            }
+        });
+
+        if (this.gamepad) {
+            this.gamepad.dispatchMissedReleases(gamepadButtons);
+        }
+
+        this.snapshot = { keys: new Map(), mouseButtons: new Set(), gamepadButtons: [] };
     }
 
     get EVENTS() {
@@ -99,32 +139,48 @@ export class Input extends EventDispatcher {
         dispatch(gamepadEnabled());
 
         this.gamepad.enable(options);
-        this.gamepad.addEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this));
-        this.gamepad.addEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate.bind(this));
-        this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this));
-        this.gamepad.addEventListener(BUTTON_PRESSED_EVENT, this.propagate.bind(this));
-        this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this));
-        this.gamepad.addEventListener(AXIS_CHANGE_EVENT, this.propagate.bind(this));
+        this.gamepad.addEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this), {
+            whilePaused: true,
+        });
+        this.gamepad.addEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate.bind(this), {
+            whilePaused: true,
+        });
+        this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this), {
+            whilePaused: true,
+        });
+        this.gamepad.addEventListener(BUTTON_PRESSED_EVENT, this.propagate.bind(this), {
+            whilePaused: true,
+        });
+        this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this), {
+            whilePaused: true,
+        });
+        this.gamepad.addEventListener(AXIS_CHANGE_EVENT, this.propagate.bind(this), {
+            whilePaused: true,
+        });
     }
 
     enableKeyboard(options = {}) {
         dispatch(keyboardEnabled());
         this.keyboard.enable(options);
 
-        this.keyboard.addEventListener(KEY_DOWN, this.propagate.bind(this));
-        this.keyboard.addEventListener(KEY_UP, this.propagate.bind(this));
-        this.keyboard.addEventListener(KEY_COMBO, this.propagate.bind(this));
+        this.keyboard.addEventListener(KEY_DOWN, this.propagate.bind(this), { whilePaused: true });
+        this.keyboard.addEventListener(KEY_UP, this.propagate.bind(this), { whilePaused: true });
+        this.keyboard.addEventListener(KEY_COMBO, this.propagate.bind(this), { whilePaused: true });
     }
 
     enableMouse(options = {}) {
         dispatch(mouseEnabled());
 
         this.mouse.enable(options);
-        this.mouse.addEventListener(MOUSE_DOWN, this.propagate.bind(this));
-        this.mouse.addEventListener(MOUSE_UP, this.propagate.bind(this));
-        this.mouse.addEventListener(MOUSE_MOVE, this.propagate.bind(this));
-        this.mouse.addEventListener(ELEMENT_CLICK, this.propagate.bind(this));
-        this.mouse.addEventListener(ELEMENT_DESELECT, this.propagate.bind(this));
+        this.mouse.addEventListener(MOUSE_DOWN, this.propagate.bind(this), { whilePaused: true });
+        this.mouse.addEventListener(MOUSE_UP, this.propagate.bind(this), { whilePaused: true });
+        this.mouse.addEventListener(MOUSE_MOVE, this.propagate.bind(this), { whilePaused: true });
+        this.mouse.addEventListener(ELEMENT_CLICK, this.propagate.bind(this), {
+            whilePaused: true,
+        });
+        this.mouse.addEventListener(ELEMENT_DESELECT, this.propagate.bind(this), {
+            whilePaused: true,
+        });
     }
 
     propagate = event => {
