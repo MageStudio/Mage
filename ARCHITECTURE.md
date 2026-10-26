@@ -66,7 +66,13 @@ a single ES module.
 7. Entities that have colliders send `physics:add:*` messages to the worker. The worker steps
    the Ammo world and posts `physics:update` and collision messages back; `Physics` is an
    `EventDispatcher`, and `Scene` listens for `PHYSICS_EVENTS.UPDATE` to move bodies.
-8. Disposing a level calls `Physics.dispose()`, which sends `physics:terminate` and moves the
+8. `GameRunner.pause()` sets a paused flag on `GameRunner` and the level (`Level.render` keeps
+   drawing but skips updates, controls and assets), posts `physics:pause` through
+   `Physics.pause()`, pauses tweens, suspends audio and input, then calls `onPause` on the level
+   and `Universe`; `resume()` reverses it. `GameRunner.restart()` defers (`setTimeout 0`) a
+   dispose of the current level and a `start` of the same path and options, and concurrent calls
+   share one promise.
+9. Disposing a level calls `Physics.dispose()`, which sends `physics:terminate` and moves the
    state to TERMINATING.
 
 ## Boundaries and invariants
