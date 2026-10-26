@@ -44,6 +44,10 @@ export default class BaseScript {
 
     physicsUpdate(_dt) {}
 
+    onPause() {}
+
+    onResume() {}
+
     onDispose() {}
 
     toJSON(_parseJSON = false) {
