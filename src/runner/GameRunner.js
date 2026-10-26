@@ -163,14 +163,23 @@ export class GameRunner {
 
         this.restartPromise = new Promise((resolve, reject) => {
             setTimeout(() => {
-                requestLoadingScreen();
-                this.disposeCurrentLevel();
-                this.start(this.currentPath, this.currentOptions)
-                    .then(level => {
-                        removeLoadingScreen();
-                        resolve(level);
-                    })
-                    .catch(reject);
+                const fail = error => {
+                    removeLoadingScreen();
+                    reject(error);
+                };
+
+                try {
+                    requestLoadingScreen();
+                    this.disposeCurrentLevel();
+                    this.start(this.currentPath, this.currentOptions)
+                        .then(level => {
+                            removeLoadingScreen();
+                            resolve(level);
+                        })
+                        .catch(fail);
+                } catch (error) {
+                    fail(error);
+                }
             }, 0);
         });
         this.restartPromise.then(settle, settle);

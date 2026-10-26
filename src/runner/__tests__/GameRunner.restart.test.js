@@ -2,6 +2,7 @@ import { GameRunner } from "../GameRunner";
 import { Importer } from "../../core/Importer";
 import config from "../../core/config";
 import Assets from "../../core/Assets";
+import Input from "../../core/input/Input";
 import { requestLoadingScreen, removeLoadingScreen } from "../../ui";
 
 jest.mock("../../store/Store", () => ({ subscribe: jest.fn(), unsubscribeAll: jest.fn() }));
@@ -131,6 +132,8 @@ describe("GameRunner.restart", () => {
         const p = runner.restart();
         await flush();
         await p;
+        expect(runner.paused).toBe(false);
+        expect(Input.setPaused).toHaveBeenLastCalledWith(false);
         expect(runner.isPaused()).toBe(false);
     });
 
@@ -140,5 +143,48 @@ describe("GameRunner.restart", () => {
         expect(runner.restart()).toBe(p1);
         await flush();
         await p1;
+    });
+
+    it("rejects and clears the in-flight promise when the loading screen request throws", async () => {
+        requestLoadingScreen.mockImplementationOnce(() => {
+            throw new Error("boom");
+        });
+        const p1 = runner.restart();
+        const rejection = expect(p1).rejects.toThrow("boom");
+        await flush();
+        await rejection;
+        expect(removeLoadingScreen).toHaveBeenCalledTimes(1);
+
+        const p2 = runner.restart();
+        expect(p2).not.toBe(p1);
+        await flush();
+        await p2;
+        expect(instances).toHaveLength(2);
+    });
+
+    it("rejects when dispose throws and does not leave a dead promise behind", async () => {
+        instances[0].dispose.mockImplementation(() => {
+            throw new Error("dispose failed");
+        });
+        const p1 = runner.restart();
+        const rejection = expect(p1).rejects.toThrow("dispose failed");
+        await flush();
+        await rejection;
+        expect(removeLoadingScreen).toHaveBeenCalledTimes(1);
+        expect(runner.restartPromise).toBeNull();
+        // no level is running any more, so a retry fails fast instead of returning p1
+        expect(() => runner.restart()).toThrow("no level is running");
+    });
+
+    it("rejects and removes the loading screen when start rejects", async () => {
+        Importer.importLevelSnapshot.mockImplementationOnce(() =>
+            Promise.reject(new Error("import failed")),
+        );
+        const p1 = runner.restart();
+        const rejection = expect(p1).rejects.toThrow("import failed");
+        await flush();
+        await rejection;
+        expect(removeLoadingScreen).toHaveBeenCalledTimes(1);
+        expect(runner.restartPromise).toBeNull();
     });
 });
