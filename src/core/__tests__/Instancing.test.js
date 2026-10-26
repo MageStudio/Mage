@@ -374,18 +374,42 @@ describe("Instancing", () => {
         leafMeshes(clone).forEach(m => expect(m.visible).toBe(true));
     });
 
-    test("a clone of a batched mesh that ends up alone is visible, not stuck hidden", () => {
-        const [only] = makeCopies(source, 2);
+    test("serialisation is identical on or off when meshes carry their own userData", () => {
+        const withData = makeSource();
+        withData.traverse(c => c.isMesh && (c.userData = { foo: 1 }));
+        makeCopies(withData, 3);
         Instancing.markDirty();
         Instancing.update();
-        Scene.remove(only.getBody());
-        const lone = makeModel(only.getBody().clone());
-        Instancing.markDirty();
-        Instancing.update();
-        // the removed element's meshes were ejected; the clone is a group of one per key
-        // together with the remaining element, so keep only the visibility invariant here
+        expect(Instancing.getStats()).toEqual({ groups: 2, meshes: 6 });
+
+        const hierarchy = JSON.stringify(Scene.getHierarchy());
+        const universe = JSON.stringify(Universe.toJSON());
+        expect(hierarchy).not.toContain("mageInstancing");
+        expect(universe).not.toContain("mageInstancing");
+
         Instancing.setEnabled(false);
-        leafMeshes(lone).forEach(m => expect(m.visible).toBe(true));
+
+        expect(JSON.stringify(Scene.getHierarchy())).toEqual(hierarchy);
+        expect(JSON.stringify(Universe.toJSON())).toEqual(universe);
+    });
+
+    test("a clone of a batched mesh with userData is shown again and keeps its userData", () => {
+        const withData = makeSource();
+        withData.traverse(c => c.isMesh && (c.userData = { foo: 1 }));
+        const elements = makeCopies(withData, 2);
+        Instancing.markDirty();
+        Instancing.update();
+
+        const clone = makeModel(elements[0].getBody().clone());
+        Instancing.markDirty();
+        Instancing.update();
+
+        expect(Instancing.getStats()).toEqual({ groups: 2, meshes: 6 });
+        Instancing.setEnabled(false);
+        leafMeshes(clone).forEach(m => {
+            expect(m.visible).toBe(true);
+            expect(m.userData).toEqual({ foo: 1 });
+        });
     });
 
     test("setEnabled(false) restores everything; update keeps autoUpdate off while enabled", () => {

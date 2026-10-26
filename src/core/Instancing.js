@@ -43,12 +43,25 @@ const hideMesh = mesh => {
     mesh.toJSON = function (meta) {
         const visible = this.visible;
         this.visible = true;
-        delete this.userData.mageInstancingHidden;
         try {
-            return serialise.call(this, meta);
+            const output = serialise.call(this, meta);
+            const object = output && output.object;
+
+            // Object3D.toJSON embeds userData by reference: copy it without our tag, and drop
+            // it when empty, exactly as the untouched mesh would have serialised.
+            if (object && object.userData) {
+                // eslint-disable-next-line no-unused-vars
+                const { mageInstancingHidden, ...userData } = object.userData;
+                if (Object.keys(userData).length > 0) {
+                    object.userData = userData;
+                } else {
+                    delete object.userData;
+                }
+            }
+
+            return output;
         } finally {
             this.visible = visible;
-            this.userData.mageInstancingHidden = true;
         }
     };
 };
