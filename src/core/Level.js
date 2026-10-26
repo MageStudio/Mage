@@ -27,6 +27,7 @@ export class Level extends EventDispatcher {
         this.name = this.constructor.name;
         this.debug = true;
         this.inputListenersAreSet = false;
+        this.__paused = false;
 
         this.render = this.render.bind(this);
     }
@@ -45,6 +46,16 @@ export class Level extends EventDispatcher {
     onCreate() {}
     onStart() {}
     onUpdate() {}
+    onPause() {}
+    onResume() {}
+
+    __setPaused(flag) {
+        this.__paused = !!flag;
+    }
+
+    __isPaused() {
+        return this.__paused;
+    }
 
     onBeforeDispose() {}
     onDispose() {}
@@ -85,13 +96,18 @@ export class Level extends EventDispatcher {
         // or the sortObjects=false setting used when shadows are enabled.
         Scene.renderGizmoLayer();
 
-        Particles.update(dt);
-        this.onUpdate(dt);
-        Scene.update(dt);
-        Assets.update(dt);
-        Stats.update(dt);
-        Controls.update(dt);
-        Input.update(dt);
+        if (this.__paused) {
+            Stats.update(dt);
+            Input.update(dt);
+        } else {
+            Particles.update(dt);
+            this.onUpdate(dt);
+            Scene.update(dt);
+            Assets.update(dt);
+            Stats.update(dt);
+            Controls.update(dt);
+            Input.update(dt);
+        }
 
         this.requestNextAnimationFrame();
     }
