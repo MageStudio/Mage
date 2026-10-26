@@ -354,6 +354,40 @@ describe("Instancing", () => {
         fresh.forEach(im => expect(old).not.toContain(im));
     });
 
+    test("a clone of a batched body is shown again and batched on the next regroup", () => {
+        const elements = makeCopies(source, 2);
+        Instancing.markDirty();
+        Instancing.update();
+        expect(Instancing.getStats().meshes).toBe(4);
+
+        // cloning while batched copies visible=false onto the new meshes
+        const clone = makeModel(elements[0].getBody().clone());
+        leafMeshes(clone).forEach(m => expect(m.visible).toBe(false));
+
+        Instancing.markDirty();
+        Instancing.update();
+
+        expect(Instancing.getStats()).toEqual({ groups: 2, meshes: 6 });
+        instancedMeshes().forEach(im => expect(im.count).toBe(3));
+
+        Instancing.setEnabled(false);
+        leafMeshes(clone).forEach(m => expect(m.visible).toBe(true));
+    });
+
+    test("a clone of a batched mesh that ends up alone is visible, not stuck hidden", () => {
+        const [only] = makeCopies(source, 2);
+        Instancing.markDirty();
+        Instancing.update();
+        Scene.remove(only.getBody());
+        const lone = makeModel(only.getBody().clone());
+        Instancing.markDirty();
+        Instancing.update();
+        // the removed element's meshes were ejected; the clone is a group of one per key
+        // together with the remaining element, so keep only the visibility invariant here
+        Instancing.setEnabled(false);
+        leafMeshes(lone).forEach(m => expect(m.visible).toBe(true));
+    });
+
     test("setEnabled(false) restores everything; update keeps autoUpdate off while enabled", () => {
         const elements = makeCopies(source, 3);
         Instancing.markDirty();

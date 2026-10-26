@@ -22,6 +22,7 @@ const isEligible = mesh => {
     if (!mesh.isMesh || mesh.isSkinnedMesh || mesh.isInstancedMesh) return false;
     // Only leaf meshes: a mesh with children would be hidden together with them.
     if (mesh.children.length > 0) return false;
+    // Hidden by someone else: leave it alone (a mesh hidden by instancing was already shown).
     if (mesh.visible === false) return false;
     if (!mesh.geometry || !mesh.material) return false;
     if (Array.isArray(mesh.material) || mesh.material.transparent) return false;
@@ -36,19 +37,25 @@ const hideMesh = mesh => {
     const serialise = mesh.toJSON;
 
     mesh.visible = false;
+    // userData is copied by Object3D.clone, so a clone of a batched mesh stays recognisable
+    // as hidden by us (and not by the user).
+    mesh.userData.mageInstancingHidden = true;
     mesh.toJSON = function (meta) {
         const visible = this.visible;
         this.visible = true;
+        delete this.userData.mageInstancingHidden;
         try {
             return serialise.call(this, meta);
         } finally {
             this.visible = visible;
+            this.userData.mageInstancingHidden = true;
         }
     };
 };
 
 const showMesh = mesh => {
     mesh.visible = true;
+    delete mesh.userData.mageInstancingHidden;
     delete mesh.toJSON;
 };
 
@@ -180,6 +187,9 @@ export class Instancing {
             const body = element.getBody();
 
             body.traverse(mesh => {
+                // A clone of a batched mesh inherits visible=false and our flag but is in no
+                // group: show it again so it is judged like any other mesh.
+                if (mesh.userData.mageInstancingHidden) showMesh(mesh);
                 if (mesh === body || seen.has(mesh) || !isEligible(mesh)) return;
 
                 seen.add(mesh);
