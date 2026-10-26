@@ -15,6 +15,24 @@ export const FUNCTIONS = {
     ...between.Easing,
 };
 
+const liveTweens = new Set();
+let tweensPaused = false;
+
+export const pauseAllTweens = () => {
+    tweensPaused = true;
+    liveTweens.forEach(tween => tween.pause());
+};
+
+export const resumeAllTweens = () => {
+    tweensPaused = false;
+    liveTweens.forEach(tween => tween.play());
+};
+
+export const clearAllTweens = () => {
+    liveTweens.clear();
+    tweensPaused = false;
+};
+
 export const tweenTo = (origin, target, options = {}) =>
     new Promise(resolve => {
         const {
@@ -33,6 +51,12 @@ export const tweenTo = (origin, target, options = {}) =>
         const infinite = loop && !repeat;
         const onComplete = () => resolve(tween, infinite);
 
+        liveTweens.add(tween);
+
+        if (tweensPaused) {
+            tween.pause();
+        }
+
         if (loop) {
             tween.loop(loop, repeat);
         }
@@ -41,6 +65,9 @@ export const tweenTo = (origin, target, options = {}) =>
             const timeToCompleteLoop = time * 2;
             setTimeout(onComplete, timeToCompleteLoop);
         } else {
-            tween.on(EASING_EVENTS.COMPLETE, onComplete);
+            tween.on(EASING_EVENTS.COMPLETE, () => {
+                liveTweens.delete(tween);
+                onComplete();
+            });
         }
     });
