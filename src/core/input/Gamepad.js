@@ -112,6 +112,8 @@ export default class Gamepad extends Pausable() {
 
     // Dispatches BUTTON_RELEASED_EVENT for each snapshotted button that is no longer pressed.
     dispatchMissedReleases(snapshot = []) {
+        this.updateGamepads();
+
         snapshot.forEach(({ gamepadIndex, buttonIndex, gamepad: previousGamepad }) => {
             const gamepad = this.gamepads[gamepadIndex] || previousGamepad;
             const rawButton = this.gamepads[gamepadIndex]

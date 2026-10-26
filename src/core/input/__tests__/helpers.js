@@ -5,7 +5,12 @@ export class FakeKeyboardEvent {
     }
 }
 
-export class FakeMouseEvent extends FakeKeyboardEvent {}
+export class FakeMouseEvent extends FakeKeyboardEvent {
+    constructor(type, init = {}) {
+        super(type, { clientX: 0, clientY: 0, ...init });
+        this.preventDefault = jest.fn();
+    }
+}
 
 export const installWindowStub = () => {
     global.window = {

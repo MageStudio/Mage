@@ -22,6 +22,7 @@ jest.mock("../../../lib/features", () => ({
 
 import { Input } from "../Input";
 import { KEY_DOWN } from "../Keyboard";
+import { MOUSE_UP } from "../Mouse";
 import { BUTTON_RELEASED_EVENT } from "../Gamepad";
 import { installWindowStub, windowEventsOfType } from "./helpers";
 
@@ -125,17 +126,44 @@ describe("Input pausing", () => {
         expect(global.window.dispatchEvent).not.toHaveBeenCalled();
     });
 
-    it("dispatches mouseup for a button released during the pause only", () => {
+    it("delivers mouseup to the Mouse handler for a button released during the pause only", () => {
+        const listeners = {};
+        global.document = {
+            addEventListener: jest.fn((type, fn) => {
+                listeners[type] = fn;
+            }),
+            removeEventListener: jest.fn(),
+            dispatchEvent: jest.fn(e => listeners[e.type] && listeners[e.type](e)),
+        };
+        input.mouse.enabled = true;
+        input.mouse.getIntersections = jest.fn(() => []);
+        global.document.addEventListener("mouseup", input.mouse.onMouseUp);
+        const mouseUp = jest.fn();
+        input.mouse.addEventListener(MOUSE_UP, mouseUp);
         input.mouse.buttonsDown.add(0);
         input.mouse.buttonsDown.add(2);
+
         input.setPaused(true);
         input.mouse.buttonsDown.delete(0);
         input.setPaused(false);
         input.dispatchMissedReleases();
 
-        const ups = windowEventsOfType("mouseup");
-        expect(ups).toHaveLength(1);
-        expect(ups[0].button).toBe(0);
+        expect(global.window.dispatchEvent).not.toHaveBeenCalled();
+        expect(global.document.dispatchEvent).toHaveBeenCalledTimes(1);
+        expect(global.document.dispatchEvent.mock.calls[0][0].button).toBe(0);
+        expect(mouseUp).toHaveBeenCalledTimes(1);
+        expect(input.mouse.buttonsDown.has(2)).toBe(true);
+    });
+
+    it("snapshots held inputs only on the false-to-true pause transition", () => {
+        input.keyboard.handleKeydown({ key: "a", code: "KeyA" });
+        input.setPaused(true);
+        input.keyboard.handleKeyup({ key: "a", code: "KeyA" });
+        input.setPaused(true);
+        input.setPaused(false);
+        input.dispatchMissedReleases();
+
+        expect(windowEventsOfType("keyup")).toHaveLength(1);
     });
 
     it("dispatches a gamepad button release for a button released during the pause", () => {

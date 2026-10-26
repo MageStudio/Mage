@@ -69,13 +69,14 @@ export class Input extends Pausable() {
     }
 
     setPaused(flag) {
+        const wasPaused = this.paused;
         super.setPaused(flag);
 
         [this.keyboard, this.mouse, this.gamepad].forEach(device => {
             if (device) device.setPaused(flag);
         });
 
-        if (this.paused) {
+        if (this.paused && !wasPaused) {
             this.snapshot = {
                 keys: new Map(this.keyboard ? this.keyboard.keysDown : []),
                 mouseButtons: new Set(this.mouse ? this.mouse.buttonsDown : []),
@@ -95,7 +96,7 @@ export class Input extends Pausable() {
 
         mouseButtons.forEach(button => {
             if (!this.mouse || !this.mouse.buttonsDown.has(button)) {
-                window.dispatchEvent(new MouseEvent("mouseup", { button }));
+                document.dispatchEvent(new MouseEvent("mouseup", { button }));
             }
         });
 
