@@ -2,7 +2,12 @@ import { InstancedMesh, Matrix4 } from "three";
 import Scene from "./Scene";
 
 const EDITOR_LAYERS_MASK = (1 << 1) | (1 << 2);
-const ZERO_SCALE_MATRIX = new Matrix4().makeScale(0, 0, 0);
+// Built on first use so that importing this module never needs a full THREE.Matrix4.
+let zeroScaleMatrix = null;
+const getZeroScaleMatrix = () => {
+    if (!zeroScaleMatrix) zeroScaleMatrix = new Matrix4().makeScale(0, 0, 0);
+    return zeroScaleMatrix;
+};
 
 const groupKey = mesh =>
     `${mesh.geometry.uuid}|${mesh.material.uuid}|${Boolean(mesh.castShadow)}|${Boolean(
@@ -81,6 +86,7 @@ export class Instancing {
     constructor() {
         this.enabled = false;
         this.dirty = false;
+        this.elementsVersion = -1;
         this.groups = [];
     }
 
@@ -102,6 +108,7 @@ export class Instancing {
             const scene = Scene.getScene();
             if (scene) scene.autoUpdate = true;
             this.dirty = false;
+            this.elementsVersion = -1;
         }
     }
 
@@ -121,6 +128,12 @@ export class Instancing {
 
         const scene = Scene.getScene();
         if (!scene) return;
+
+        // Scene.add/remove bump elementsVersion: a changed counter means the elements changed.
+        if (Scene.elementsVersion !== this.elementsVersion) {
+            this.elementsVersion = Scene.elementsVersion;
+            this.dirty = true;
+        }
 
         // The instance matrices copied below must be this frame's, not last frame's.
         scene.autoUpdate = false;
@@ -163,7 +176,7 @@ export class Instancing {
                     return;
                 }
 
-                const matrix = hasHiddenAncestor(mesh) ? ZERO_SCALE_MATRIX : mesh.matrixWorld;
+                const matrix = hasHiddenAncestor(mesh) ? getZeroScaleMatrix() : mesh.matrixWorld;
 
                 if (!member.matrix || !member.matrix.equals(matrix)) {
                     member.matrix = (member.matrix || new Matrix4()).copy(matrix);
