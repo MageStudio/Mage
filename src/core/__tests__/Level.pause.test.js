@@ -9,6 +9,7 @@ jest.mock("../Scene", () => ({
     render: track("Scene.render"),
     renderGizmoLayer: track("Scene.renderGizmoLayer"),
     update: track("Scene.update"),
+    getRenderer: () => ({ info: { reset: jest.fn() } }),
 }));
 jest.mock("../Stats", () => ({ update: track("Stats.update") }));
 jest.mock("../../audio/Audio", () => ({}));
@@ -56,7 +57,7 @@ describe("Level pause", () => {
         }).not.toThrow();
     });
 
-    test("running render keeps the original order", () => {
+    test("running render runs gameplay updates, then stats and input", () => {
         level.render();
 
         expect(mockCalls).toEqual([
@@ -66,8 +67,8 @@ describe("Level pause", () => {
             "onUpdate",
             "Scene.update",
             "Assets.update",
-            "Stats.update",
             "Controls.update",
+            "Stats.update",
             "Input.update",
             "requestNextFrame",
         ]);

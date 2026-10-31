@@ -34,8 +34,25 @@ export class Scene {
         this.scene.name = name;
         this.elements = [];
 
+        // Dedicated scene for editor gizmos, rendered in its own pass (see renderGizmoLayer)
+        this.gizmoScene = new THREEScene();
+        this.gizmoScene.name = `${name}-gizmos`;
+
         if (fog.enabled) {
             this.fog(fog.color, fog.density);
+        }
+    }
+
+    // Gizmos live in their own scene: no Universe sync, no entry in `elements`.
+    addGizmo(object) {
+        if (this.gizmoScene) {
+            this.gizmoScene.add(object);
+        }
+    }
+
+    removeGizmo(object) {
+        if (this.gizmoScene) {
+            this.gizmoScene.remove(object);
         }
     }
 
@@ -195,16 +212,20 @@ export class Scene {
         this.detachListeners();
         // clear elements array
         this.elements = [];
+        // drop any remaining gizmos
+        if (this.gizmoScene) {
+            this.gizmoScene.clear();
+        }
     }
 
     createCamera(camera) {
         this.camera = camera;
         // Enable layer 1 so camera can see editor-only objects (helpers, grid)
-        // Enable layer 2 so camera can see gizmos (rendered in separate pass)
+        // Layer 2 (gizmos) stays disabled here: renderGizmoLayer() sets the mask to
+        // layer 2 only while rendering Scene.gizmoScene, so the level pass never draws gizmos.
         // Mirror cameras only use layer 0, so they won't render these
         if (this.camera && this.camera.getBody()) {
             this.camera.getBody().layers.enable(1);
-            this.camera.getBody().layers.enable(2);
         }
     }
 
@@ -265,6 +286,9 @@ export class Scene {
             this.setRendererShadowMap();
         }
 
+        // Level.render() resets renderer.info once per frame, so it covers every pass
+        this.renderer.info.autoReset = false;
+
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(w, h);
 
@@ -311,7 +335,8 @@ export class Scene {
     // Called after main render or post-processing to ensure gizmos are always visible
     // regardless of sky, post-processing, or sortObjects setting.
     renderGizmoLayer() {
-        if (!this.renderer || !this.camera) return;
+        if (!this.renderer || !this.camera || !this.gizmoScene) return;
+        if (!this.gizmoScene.children.some(child => child.visible === true)) return;
 
         const cameraBody = this.camera.getBody();
 
@@ -326,7 +351,7 @@ export class Scene {
         // Clear only depth so gizmo renders on top of the already-drawn frame
         this.renderer.autoClear = false;
         this.renderer.clearDepth();
-        this.renderer.render(this.scene, cameraBody);
+        this.renderer.render(this.gizmoScene, cameraBody);
         this.renderer.autoClear = true;
 
         // Restore camera layers

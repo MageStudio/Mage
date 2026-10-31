@@ -83,6 +83,10 @@ export class Level extends EventDispatcher {
     cancelNextAnimationFrame = () => cancelAnimationFrame(this.requestAnimationFrameId);
 
     render() {
+        // renderer.info.autoReset is off, so it is reset here, once per frame. Renders made
+        // between frames (e.g. Controls change handlers) count towards the next frame.
+        Scene.getRenderer().info.reset();
+
         const dt = Scene.clock.getDelta();
 
         if (PostProcessing.isEnabled()) {
@@ -96,18 +100,16 @@ export class Level extends EventDispatcher {
         // or the sortObjects=false setting used when shadows are enabled.
         Scene.renderGizmoLayer();
 
-        if (this.__paused) {
-            Stats.update(dt);
-            Input.update(dt);
-        } else {
+        if (!this.__paused) {
             Particles.update(dt);
             this.onUpdate(dt);
             Scene.update(dt);
             Assets.update(dt);
-            Stats.update(dt);
             Controls.update(dt);
-            Input.update(dt);
         }
+
+        Stats.update(dt, Scene.getRenderer().info);
+        Input.update(dt);
 
         this.requestNextAnimationFrame();
     }
