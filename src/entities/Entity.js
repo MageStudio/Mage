@@ -374,6 +374,26 @@ export default class Entity extends EventDispatcher {
         }
     }
 
+    onPause() {
+        if (this.hasScripts()) {
+            this.dynamicScripts.forEach(({ script, enabled }) => {
+                if (script && enabled) {
+                    script.onPause();
+                }
+            });
+        }
+    }
+
+    onResume() {
+        if (this.hasScripts()) {
+            this.dynamicScripts.forEach(({ script, enabled }) => {
+                if (script && enabled) {
+                    script.onResume();
+                }
+            });
+        }
+    }
+
     disposeBody() {
         this.getBody().clear();
         if (this.getBody().dispose && !isScene(this.getBody())) {

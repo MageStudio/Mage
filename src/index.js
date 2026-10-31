@@ -54,6 +54,7 @@ import Config from "./core/config";
 import GameRunner from "./runner/GameRunner";
 import Router from "./router/Router";
 import Scene from "./core/Scene";
+import Instancing from "./core/Instancing";
 import { Importer } from "./core/Importer";
 import { Exporter } from "./core/Exporter";
 import Scripts, { BUILTIN } from "./scripts/Scripts";
@@ -141,6 +142,7 @@ export {
     Features,
     Config,
     Scene,
+    Instancing,
     Universe,
     Scripts,
     BUILTIN,

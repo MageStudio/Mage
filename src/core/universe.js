@@ -151,6 +151,14 @@ export class Universe {
         Object.keys(this.reality).forEach(k => this.reality[k].onPhysicsUpdate(dt));
     }
 
+    onPause() {
+        Object.keys(this.reality).forEach(k => this.reality[k].onPause());
+    }
+
+    onResume() {
+        Object.keys(this.reality).forEach(k => this.reality[k].onResume());
+    }
+
     bigfreeze = () => {
         this.forEach(o => {
             o && o.dispose && o.dispose();

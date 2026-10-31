@@ -76,6 +76,18 @@ export class Physics extends EventDispatcher {
         });
     }
 
+    pause() {
+        if (Config.physics().enabled && this.worker) {
+            this.worker.postMessage({ event: PHYSICS_EVENTS.PAUSE });
+        }
+    }
+
+    resume() {
+        if (Config.physics().enabled && this.worker) {
+            this.worker.postMessage({ event: PHYSICS_EVENTS.RESUME });
+        }
+    }
+
     dispose() {
         if (Config.physics().enabled) {
             this.state = PHYSICS_STATES.TERMINATING;

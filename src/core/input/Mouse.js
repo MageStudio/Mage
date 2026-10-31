@@ -1,4 +1,5 @@
-import { EventDispatcher, Raycaster, Vector2 } from "three";
+import { Raycaster, Vector2 } from "three";
+import { Pausable } from "./pausable";
 import { DEFAULT_TAG } from "../../entities/constants";
 
 import Config from "../config";
@@ -16,13 +17,14 @@ const DEFAULT_OPTIONS = {
     selectTags: [DEFAULT_TAG],
 };
 
-export default class Mouse extends EventDispatcher {
+export default class Mouse extends Pausable() {
     constructor() {
         super();
 
         this.enabled = false;
         this.mouseMoveIntersectionEnabled = false;
         this.mouse = new Vector2();
+        this.buttonsDown = new Set();
 
         this.options = DEFAULT_OPTIONS;
 
@@ -68,6 +70,7 @@ export default class Mouse extends EventDispatcher {
         this.enabled = false;
         this.mouseMoveIntersectionEnabled = false;
         this.options = DEFAULT_OPTIONS;
+        this.buttonsDown.clear();
 
         document.removeEventListener("mouseup", this.onMouseUp);
         Scene.getDOMElement().removeEventListener("mousemove", this.onMouseMove);
@@ -113,6 +116,7 @@ export default class Mouse extends EventDispatcher {
         if (!this.enabled) return;
         event.preventDefault();
 
+        this.buttonsDown.delete(event.button);
         this.mouseUpEvent.mouse = this.parseMouseEvent(event);
 
         this.dispatchEvent(this.mouseUpEvent);
@@ -148,6 +152,8 @@ export default class Mouse extends EventDispatcher {
     onMouseDown = event => {
         if (!this.enabled) return;
         event.preventDefault();
+
+        this.buttonsDown.add(event.button);
 
         const mouseEvent = this.parseMouseEvent(event);
         this.mouseDownEvent.mouse = mouseEvent;

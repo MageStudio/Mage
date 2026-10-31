@@ -1,4 +1,4 @@
-import { EventDispatcher } from "three";
+import { Pausable } from "./pausable";
 import Features, { FEATURES } from "../../lib/features";
 import { gamepadDisconnected, gamepadConnected } from "../../store/actions/input";
 import { dispatch } from "../../store/Store";
@@ -20,6 +20,9 @@ export const BUTTON_RELEASED_EVENT = "gamepadButtonReleased";
 export const isValidGamepad = gamepad => !!gamepad;
 
 export const getConnectedGamepads = () => {
+    // No navigator on Node < 21, in workers or during SSR.
+    if (typeof navigator === "undefined") return [];
+
     const list = navigator.getGamepads
         ? navigator.getGamepads()
         : navigator.webkitGetGamepads
@@ -59,7 +62,7 @@ export const parseButton = (button, index) => {
     };
 };
 
-export default class Gamepad extends EventDispatcher {
+export default class Gamepad extends Pausable() {
     constructor() {
         super();
         this.enabled = false;
@@ -91,6 +94,44 @@ export default class Gamepad extends EventDispatcher {
 
     getConnectedGamepads() {
         return this.gamepads;
+    }
+
+    // Returns [{ gamepadIndex, buttonIndex, gamepad }] for every button currently pressed.
+    getPressedButtons() {
+        const pressed = [];
+
+        Object.keys(this.gamepads).forEach(gamepadIndex => {
+            const gamepad = this.gamepads[gamepadIndex];
+
+            (gamepad.buttons || []).forEach((button, buttonIndex) => {
+                if (parseButton(button, buttonIndex).pressed) {
+                    pressed.push({ gamepadIndex, buttonIndex, gamepad });
+                }
+            });
+        });
+
+        return pressed;
+    }
+
+    // Dispatches BUTTON_RELEASED_EVENT for each snapshotted button that is no longer pressed.
+    dispatchMissedReleases(snapshot = []) {
+        this.updateGamepads();
+
+        snapshot.forEach(({ gamepadIndex, buttonIndex, gamepad: previousGamepad }) => {
+            const gamepad = this.gamepads[gamepadIndex] || previousGamepad;
+            const rawButton = this.gamepads[gamepadIndex]
+                ? gamepad.buttons && gamepad.buttons[buttonIndex]
+                : undefined;
+            const button = parseButton(rawButton === undefined ? 0 : rawButton, buttonIndex);
+
+            if (!button.pressed) {
+                this.dispatchEvent({
+                    type: BUTTON_RELEASED_EVENT,
+                    button,
+                    gamepad,
+                });
+            }
+        });
     }
 
     transformGamepadsForEvent = () =>
