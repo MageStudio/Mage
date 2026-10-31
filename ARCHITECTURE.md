@@ -16,7 +16,8 @@ a single ES module.
 - `src/index.js`: package entry. Re-exports entities, lights, audio, fx, controls, physics,
   store, UI helpers and a few third-party namespaces (`THREE`, `rxjs`, `xstate`, inferno).
 - `src/core/Scene.js`: THREE scene, renderer and element list. `src/core/Level.js`: base class
-  for levels and the frame loop. Also in `src/core/`: `config.js`, `universe.js` (uuid to element
+  for levels and the frame loop. Also in `src/core/`: `config.js`, `Instancing.js` (opt-in
+  InstancedMesh batching of repeated model meshes), `universe.js` (uuid to element
   lookup), `Assets.js`, `Importer.js` and `Exporter.js` (level data in and out), `Stats.js`,
   `window.js`, and `src/core/input/` (keyboard, mouse, gamepad).
 - `src/entities/Entity.js` and `src/entities/Element.js`: base classes. Also `src/entities/camera.js`,

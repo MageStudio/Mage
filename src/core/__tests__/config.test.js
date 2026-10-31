@@ -27,6 +27,33 @@ describe("Config", () => {
         });
     });
 
+    describe("rendering", () => {
+        test("is undefined when neither common nor level sets it", () => {
+            expect(config.rendering()).toBeUndefined();
+            expect(config.rendering("moon")).toBeUndefined();
+        });
+
+        test("resolves from common config", () => {
+            config.setConfig({ rendering: { instancing: true } });
+            expect(config.rendering()).toEqual({ instancing: true });
+        });
+
+        test("per-level override wins over common", () => {
+            config.setConfig({
+                rendering: { instancing: false },
+                levels: { moon: { rendering: { instancing: true } } },
+            });
+            expect(config.rendering("moon")).toEqual({ instancing: true });
+            expect(config.rendering("other")).toEqual({ instancing: false });
+        });
+
+        test("per-level value applies when common is unset", () => {
+            config.setConfig({ levels: { moon: { rendering: { instancing: true } } } });
+            expect(config.rendering("moon")).toEqual({ instancing: true });
+            expect(config.rendering()).toBeUndefined();
+        });
+    });
+
     describe("setConfig (flat shape → common)", () => {
         test("merges flat overrides into common", () => {
             config.setConfig({ physics: { enabled: true } });

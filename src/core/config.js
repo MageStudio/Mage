@@ -115,6 +115,10 @@ export class Config {
         return this.resolve("fog", level);
     }
 
+    rendering(level) {
+        return this.resolve("rendering", level);
+    }
+
     getContainerSize() {
         const container = this.container();
         if (!container) return false;
