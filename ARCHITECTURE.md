@@ -62,7 +62,8 @@ a single ES module.
 5. `GameRunner` imports level data via `Importer.importLevelSnapshot` (from `Config`) or
    `Importer.parseLevelData` (from `storage`, in the loading flow), then calls `onStart` and
    resolves with the level.
-6. Each frame, `Level.render` (scheduled with `requestAnimationFrame`) updates particles,
+6. Each frame, `Level.render` (scheduled with `requestAnimationFrame`) runs `Instancing.update()`
+   when instancing is enabled, then updates particles,
    scene, assets, stats, controls and input, then renders.
 7. Entities that have colliders send `physics:add:*` messages to the worker. The worker steps
    the Ammo world and posts `physics:update` and collision messages back; `Physics` is an

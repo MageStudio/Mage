@@ -50,3 +50,27 @@ describe("Stats.render", () => {
         expect(() => Stats.update(0.016)).not.toThrow();
     });
 });
+
+describe("Stats.render instancing counts", () => {
+    const emitted = () => {
+        const handler = jest.fn();
+        Stats.render.subscribe(handler);
+        now += 1000;
+        Stats.update(0.016, info(1, 2));
+        return handler.mock.calls[0][0];
+    };
+
+    test("reports Instancing.getStats groups and meshes", () => {
+        // Load Stats and Instancing from the same isolated registry so the spy is the one Stats uses.
+        jest.isolateModules(() => {
+            const I = require("../Instancing").default;
+            jest.spyOn(I, "getStats").mockReturnValue({ groups: 3, meshes: 12 });
+            Stats = require("../Stats").default;
+        });
+        expect(emitted()).toMatchObject({ instancedGroups: 3, instancedMeshes: 12 });
+    });
+
+    test("reports 0/0 when instancing is off", () => {
+        expect(emitted()).toMatchObject({ instancedGroups: 0, instancedMeshes: 0 });
+    });
+});

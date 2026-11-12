@@ -17,6 +17,8 @@ export class Scene {
         this.clock = new Clock();
         this.rendererElements = {};
         this.elements = [];
+        // bumped whenever `elements` changes; Instancing treats a change as dirty
+        this.elementsVersion = 0;
         this.clearColor = 0x000000;
         this.alpha = 1.0;
 
@@ -33,6 +35,7 @@ export class Scene {
         this.scene = new THREEScene();
         this.scene.name = name;
         this.elements = [];
+        this.elementsVersion = 0;
 
         // Dedicated scene for editor gizmos, rendered in its own pass (see renderGizmoLayer)
         this.gizmoScene = new THREEScene();
@@ -86,6 +89,7 @@ export class Scene {
 
     add(body, element, addUniverse = true) {
         this.scene.add(body);
+        this.elementsVersion++;
         if (element) {
             // Prevent duplicate entries in elements array (same element instance
             // or same body UUID). Duplicates can occur from double-renders, HMR,
@@ -133,6 +137,7 @@ export class Scene {
 
     remove(body) {
         this.scene.remove(body);
+        this.elementsVersion++;
         Universe.remove(body.uuid);
 
         // Remove the element from the elements array
@@ -212,6 +217,7 @@ export class Scene {
         this.detachListeners();
         // clear elements array
         this.elements = [];
+        this.elementsVersion = 0;
         // drop any remaining gizmos
         if (this.gizmoScene) {
             this.gizmoScene.clear();

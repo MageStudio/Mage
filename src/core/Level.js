@@ -2,6 +2,8 @@ import Assets from "./Assets";
 import Universe from "./universe";
 import Scene from "./Scene";
 import Stats from "./Stats";
+import Instancing from "./Instancing";
+import Config from "./config";
 import Audio from "../audio/Audio";
 import PostProcessing from "../fx/postprocessing/PostProcessing";
 import Particles from "../fx/particles/Particles";
@@ -89,6 +91,10 @@ export class Level extends EventDispatcher {
 
         const dt = Scene.clock.getDelta();
 
+        if (Instancing.isEnabled()) {
+            Instancing.update();
+        }
+
         if (PostProcessing.isEnabled()) {
             PostProcessing.render(dt);
         } else {
@@ -116,6 +122,7 @@ export class Level extends EventDispatcher {
 
     init = () => {
         Scene.create(this.getName());
+        Instancing.setEnabled(Boolean(Config.rendering()?.instancing));
         // Scene camera is for editor navigation, not serializable
         Scene.createCamera(new Camera({ serializable: false }));
 
@@ -143,6 +150,7 @@ export class Level extends EventDispatcher {
         Particles.dispose();
         PostProcessing.dispose();
         Universe.bigfreeze();
+        Instancing.setEnabled(false);
         Scene.dispose();
         Controls.dispose();
         this.cancelNextAnimationFrame();

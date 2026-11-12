@@ -2,6 +2,7 @@
  * @author mrdoob / http://mrdoob.com/
  */
 import { Subject } from "rxjs";
+import Instancing from "./Instancing";
 import features, { FEATURES } from "../lib/features";
 
 const ONE_MB = 1048576;
@@ -35,12 +36,12 @@ class Stats {
             this.prevTime = time;
             this.frames = 0;
             this.fps.next(this._fps);
-            // instanced* are filled in once instancing exists; 0 while it is off
+            const { groups, meshes } = Instancing.getStats();
             this.render.next({
                 calls: this._calls,
                 triangles: this._triangles,
-                instancedGroups: 0,
-                instancedMeshes: 0,
+                instancedGroups: groups,
+                instancedMeshes: meshes,
             });
         }
 
