@@ -71,3 +71,46 @@ describe("Router.extractHashAndQuery", () => {
         },
     );
 });
+
+describe("Router loading screen", () => {
+    const GameRunner = require("../../runner/GameRunner");
+    const Assets = require("../../core/Assets").default;
+    const UI = require("../../ui");
+
+    let resolveStart;
+
+    beforeEach(() => {
+        getLocationHash.mockReset();
+        getLocationHash.mockReturnValue("#/home");
+        RouterInstance.routes = ["/home"];
+        const level = {};
+        GameRunner.start = jest.fn(
+            () =>
+                new Promise(resolve => {
+                    resolveStart = () => resolve(level);
+                }),
+        );
+        jest.spyOn(Assets, "load").mockResolvedValue();
+        jest.spyOn(Assets, "setCurrentLevel").mockImplementation(() => {});
+        if (UI.isLoadingScreenVisible()) UI.removeLoadingScreen();
+    });
+
+    afterEach(() => jest.restoreAllMocks());
+
+    test("is visible from handleHashChange until the level resolves, then hidden", async () => {
+        expect(UI.isLoadingScreenVisible()).toBe(false);
+
+        const pending = RouterInstance.handleHashChange();
+        expect(UI.isLoadingScreenVisible()).toBe(true);
+
+        await Promise.resolve();
+        await Promise.resolve();
+        await Promise.resolve();
+        expect(GameRunner.start).toHaveBeenCalled();
+        expect(UI.isLoadingScreenVisible()).toBe(true);
+
+        resolveStart();
+        await pending;
+        expect(UI.isLoadingScreenVisible()).toBe(false);
+    });
+});

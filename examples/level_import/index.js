@@ -1,4 +1,4 @@
-import { Router, store, Level, Scene, Controls, BaseScript, Universe } from "../../dist/mage.js";
+import { Router, Level, Scene, Controls, BaseScript, Universe } from "../../dist/mage.js";
 
 class SimpleScript extends BaseScript {
     constructor() {
@@ -47,7 +47,6 @@ const loadExportedData = async () => {
 };
 
 window.addEventListener("load", async () => {
-    store.createStore({}, {}, true);
 
     Router.on("/", Intro);
 

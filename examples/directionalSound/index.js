@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, AmbientSound, Input, INPUT_EVENTS, Cube, DirectionalSound, easing, Models, HemisphereLight, SunLight, PALETTES, constants, Sky, Lights, Particles, PARTICLES, PointLight, BaseScript, Scripts, Audio, AUDIO_RAMPS } from '../../dist/mage.js';
+import { Router, Level, Box, Scene, Controls, AmbientLight, AmbientSound, Input, INPUT_EVENTS, Cube, DirectionalSound, easing, Models, HemisphereLight, SunLight, PALETTES, constants, Sky, Lights, Particles, PARTICLES, PointLight, BaseScript, Scripts, Audio, AUDIO_RAMPS } from '../../dist/mage.js';
 
 const AMBIENTLIGHT_OPTIONS = {
     color: PALETTES.FRENCH_PALETTE.SPRAY,
@@ -166,8 +166,6 @@ const config = {
 };
 
 window.addEventListener('load', () => {
-    store.createStore({}, {}, true);
-
     Router.on('/', Example);
 
     Router.start(config, assets);

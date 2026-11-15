@@ -12,18 +12,6 @@ import Gamepad, {
     AXIS_CHANGE_EVENT,
 } from "./Gamepad";
 
-import { dispatch } from "../../store/Store";
-import {
-    inputEnabled,
-    inputDisabled,
-    gamepadEnabled,
-    keyboardEnabled,
-    mouseEnabled,
-    keyboardDisabled,
-    mouseDisabled,
-    gamepadDisabled,
-} from "../../store/actions/input";
-
 export const INPUT_EVENTS_LIST = [
     KEY_PRESS,
     KEY_DOWN,
@@ -113,7 +101,6 @@ export class Input extends Pausable() {
 
     enable(options = DEFAULT_ENABLE_OPTIONS) {
         if (!this.enabled) {
-            dispatch(inputEnabled());
             this.enableGamepad(options.gamepad);
             this.enableKeyboard(options.keyboard);
             this.enableMouse(options.mouse);
@@ -123,7 +110,6 @@ export class Input extends Pausable() {
 
     disable() {
         if (this.enabled) {
-            dispatch(inputDisabled());
             this.disableKeyboard();
             this.disableMouse();
             this.disableGamepad();
@@ -136,8 +122,6 @@ export class Input extends Pausable() {
     }
 
     enableGamepad(options = {}) {
-        dispatch(gamepadEnabled());
-
         this.gamepad.enable(options);
         this.gamepad.addEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this), {
             whilePaused: true,
@@ -160,7 +144,6 @@ export class Input extends Pausable() {
     }
 
     enableKeyboard(options = {}) {
-        dispatch(keyboardEnabled());
         this.keyboard.enable(options);
 
         this.keyboard.addEventListener(KEY_DOWN, this.propagate.bind(this), { whilePaused: true });
@@ -169,8 +152,6 @@ export class Input extends Pausable() {
     }
 
     enableMouse(options = {}) {
-        dispatch(mouseEnabled());
-
         this.mouse.enable(options);
         this.mouse.addEventListener(MOUSE_DOWN, this.propagate.bind(this), { whilePaused: true });
         this.mouse.addEventListener(MOUSE_UP, this.propagate.bind(this), { whilePaused: true });
@@ -188,8 +169,6 @@ export class Input extends Pausable() {
     };
 
     disableKeyboard() {
-        dispatch(keyboardDisabled());
-
         this.keyboard.disable();
         this.keyboard.removeEventListener(KEY_DOWN, this.propagate.bind(this));
         this.keyboard.removeEventListener(KEY_UP, this.propagate.bind(this));
@@ -198,8 +177,6 @@ export class Input extends Pausable() {
     }
 
     disableMouse() {
-        dispatch(mouseDisabled());
-
         this.mouse.disable();
         this.mouse.removeEventListener(MOUSE_DOWN, this.propagate.bind(this));
         this.mouse.removeEventListener(MOUSE_UP, this.propagate.bind(this));
@@ -211,8 +188,6 @@ export class Input extends Pausable() {
     }
 
     disableGamepad() {
-        dispatch(gamepadDisabled());
-
         this.gamepad.disable();
         this.gamepad.removeEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this));
         this.gamepad.removeEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate.bind(this));

@@ -1,14 +1,9 @@
 import { render } from "inferno";
 import { createElement } from "inferno-create-element";
-import { Provider } from "inferno-redux";
-import { getStore } from "../store/Store";
 import BaseUI from "./BaseUI";
 import Config from "../core/config";
 import Router from "../router/Router";
-import { dispatch } from "../store";
 import { createElementFromSelector, removeElement } from "../lib/dom";
-import { showLoadingScreen, hideLoadingScreen } from "../store/actions/ui";
-import { locationPathChange } from "../store/actions/location";
 
 const ROOT_ID = "#ui";
 export const LABELS_ROOT_ID = "#labels_ui";
@@ -28,29 +23,21 @@ export const getUIContainer = (id = ROOT_ID) => {
     return rootElement;
 };
 
-export const requestLoadingScreen = () => dispatch(showLoadingScreen());
-export const removeLoadingScreen = () => dispatch(hideLoadingScreen());
+let loadingScreenVisible = false;
 
-export const dispatchLocationPathChange = path => dispatch(locationPathChange(path));
+export const requestLoadingScreen = () => {
+    loadingScreenVisible = true;
+};
+export const removeLoadingScreen = () => {
+    loadingScreenVisible = false;
+};
+export const isLoadingScreenVisible = () => loadingScreenVisible;
 
 export const mount = () => {
     const { root = BaseUI, enabled = true } = Config.ui();
     if (!enabled) return;
 
-    const store = getStore();
-    const uiElement = createElement(root, createProps());
-
-    if (store) {
-        render(
-            createElement(Provider, {
-                store: getStore(),
-                children: uiElement,
-            }),
-            getUIContainer(),
-        );
-    } else {
-        render(uiElement, getUIContainer());
-    }
+    render(createElement(root, createProps()), getUIContainer());
 };
 
 export const unmount = (id = ROOT_ID) => {

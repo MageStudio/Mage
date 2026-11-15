@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES, Cube, BaseScript, Scripts } from '../../dist/mage.js';
+import { Router, Level, Box, Scene, Controls, AmbientLight, Particles, PARTICLES, Cube, BaseScript, Scripts } from '../../dist/mage.js';
 
 class SimpleScript extends BaseScript {
     constructor() { super('SimpleScript'); }
@@ -109,8 +109,6 @@ const config = {
 };
 
 window.addEventListener('load', () => {
-    store.createStore({}, {}, true);
-
     Router.on('/', Intro);
 
     Router.start(config, assets);

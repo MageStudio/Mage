@@ -13,7 +13,6 @@ jest.mock("../../config", () => ({
     screen: jest.fn(() => ({ w: 100, h: 100 })),
 }));
 jest.mock("../../universe", () => ({ find: jest.fn() }));
-jest.mock("../../../store/Store", () => ({ dispatch: jest.fn() }));
 jest.mock("../../../lib/features", () => ({
     __esModule: true,
     default: { isFeatureSupported: jest.fn(() => true) },

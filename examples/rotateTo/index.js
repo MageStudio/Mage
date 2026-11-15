@@ -1,6 +1,5 @@
 import {
     Router,
-    store,
     Level,
     Box,
     Scene,
@@ -110,8 +109,6 @@ const config = {
 };
 
 window.addEventListener("load", () => {
-    store.createStore({}, {}, true);
-
     Router.on("/", Intro);
 
     Router.start(config, assets);

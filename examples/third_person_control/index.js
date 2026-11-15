@@ -1,6 +1,5 @@
 import {
     Router,
-    store,
     Level,
     Box,
     Cube,
@@ -138,8 +137,6 @@ const config = {
 };
 
 window.addEventListener("load", () => {
-    store.createStore({}, {}, true);
-
     Router.on("/", ThirdPersonExample);
 
     Router.start(config, {});
