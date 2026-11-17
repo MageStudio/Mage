@@ -1,0 +1,145 @@
+# factory label auto-merge. Template from the factory plugin (references/automerge-workflow.yml);
+# copy to .github/workflows/factory-automerge.yml in each repo listed in auto_merge.label_repos.
+#
+# The factory reviewer adds the `factory-automerge` label to a PR only after a CLEAN review that meets
+# every auto_merge condition in factory.md. This workflow then squash-merges the PR, pinned to the head
+# commit, once every check on that commit is green. New commits remove the label.
+#
+# EDIT per repo: the `workflow_run.workflows` list and REQUIRED_WORKFLOWS (the CI workflows that run on
+# PRs). A repo with no CI: delete the whole `workflow_run` trigger and set REQUIRED_WORKFLOWS: "".
+# The label name is hard-coded in the two `if:` lines too; keep them in sync with LABEL.
+name: factory-automerge
+
+on:
+  pull_request_target:            # base-branch context; never checks out or runs the PR's code
+    types: [labeled, synchronize]
+  workflow_run:
+    workflows: ["Tests"]
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  checks: read
+  statuses: read
+  actions: read
+
+env:
+  LABEL: factory-automerge
+  REQUIRED_WORKFLOWS: "Tests"  # comma-separated workflow names; "" = no CI required
+
+jobs:
+  unlabel:
+    name: factory-automerge-unlabel
+    if: >-
+      github.event_name == 'pull_request_target' && github.event.action == 'synchronize' &&
+      contains(github.event.pull_request.labels.*.name, 'factory-automerge')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Remove the label after new commits
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          gh api -X DELETE "repos/$REPO/issues/$PR/labels/$LABEL" >/dev/null || true
+          gh api "repos/$REPO/issues/$PR/comments" -f body="New commits were pushed after the review, so the \`$LABEL\` label was removed. This PR won't auto-merge until it's reviewed again." >/dev/null
+
+  merge:
+    name: factory-automerge
+    if: >-
+      (github.event_name == 'pull_request_target' && github.event.action == 'labeled' &&
+       github.event.label.name == 'factory-automerge') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.event == 'pull_request')
+    runs-on: ubuntu-latest
+    concurrency:
+      group: factory-automerge-${{ github.event.pull_request.head.sha || github.event.workflow_run.head_sha }}
+    steps:
+      - name: Merge if labelled and every check is green
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          PRS: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          set -euo pipefail
+
+          # Post a comment once per (kind, commit), so failures are visible but never spammed.
+          notify() {
+            local n=$1 msg=$4 marker="<!-- factory-automerge-$2 sha=$3 -->"
+            local bodies
+            bodies=$(gh api --paginate "repos/$REPO/issues/$n/comments?per_page=100" --jq '.[].body')
+            if grep -qF -- "$marker" <<<"$bodies"; then
+              return 0
+            fi
+            gh api "repos/$REPO/issues/$n/comments" -f body="$marker
+          $msg" >/dev/null
+          }
+
+          if [ -z "$PRS" ] && [ -n "$HEAD_SHA" ]; then
+            PRS=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" --jq '[.[] | select(.state == "open") | .number] | join(" ")')
+          fi
+          default_branch=$(gh api "repos/$REPO" --jq .default_branch)
+
+          for n in $PRS; do
+            pr=$(gh api "repos/$REPO/pulls/$n")
+            if [ "$(jq -r .state <<<"$pr")" != open ] || [ "$(jq -r .draft <<<"$pr")" = true ] ||
+               [ "$(jq -r .base.ref <<<"$pr")" != "$default_branch" ] ||
+               ! jq -e --arg l "$LABEL" 'any(.labels[]; .name == $l)' <<<"$pr" >/dev/null; then
+              echo "#$n: not open, draft, off the default branch, or unlabelled; skipping"
+              continue
+            fi
+            head=$(jq -r .head.sha <<<"$pr")
+            short=${head:0:7}
+
+            files=$(gh api --paginate "repos/$REPO/pulls/$n/files?per_page=100" --jq '.[].filename')
+            if grep -q '^\.github/' <<<"$files"; then
+              notify "$n" github "$head" "This PR changes \`.github/\`, so it's left for a human to merge even though it's labelled \`$LABEL\`."
+              continue
+            fi
+
+            # Check runs on the head commit (the latest attempt of each), ignoring this workflow's own jobs.
+            runs=$(gh api --paginate "repos/$REPO/commits/$head/check-runs?per_page=100" \
+              --jq '.check_runs[] | select(.name | startswith("factory-automerge") | not) | [.name, .status, (.conclusion // "")] | @tsv')
+            pending=$(awk -F'\t' '$2 != "completed" {print $1}' <<<"$runs" | paste -sd, -)
+            failed=$(awk -F'\t' '$2 == "completed" && $3 != "success" && $3 != "skipped" && $3 != "neutral" {print $1 " (" $3 ")"}' <<<"$runs" | paste -sd, -)
+
+            # Commit statuses (from apps that don't use check runs). No statuses at all = nothing to wait for.
+            status=$(gh api "repos/$REPO/commits/$head/status" --jq 'if .total_count == 0 then "none" else .state end')
+            case "$status" in
+              pending) pending="${pending:+$pending,}commit statuses" ;;
+              failure|error) failed="${failed:+$failed,}commit statuses ($status)" ;;
+            esac
+
+            # Every required workflow must have a successful pull_request run on this exact commit.
+            IFS=',' read -ra required <<<"$REQUIRED_WORKFLOWS"
+            for w in "${required[@]}"; do
+              w=$(xargs <<<"$w")
+              [ -z "$w" ] && continue
+              latest=$(gh api "repos/$REPO/actions/runs?head_sha=$head&event=pull_request&per_page=100" |
+                jq -r --arg w "$w" '[.workflow_runs[] | select(.name == $w)] | sort_by(.run_started_at) | last | "\(.status // "missing") \(.conclusion // "")"')
+              case "$latest" in
+                "completed success") ;;
+                completed*) failed="${failed:+$failed,}$w (${latest#completed })" ;;
+                *) pending="${pending:+$pending,}$w" ;;
+              esac
+            done
+
+            if [ -n "$failed" ]; then
+              notify "$n" failed "$head" "Not auto-merging: checks failed on $short: $failed. The \`$LABEL\` label stays, so a passing re-run still merges; a new push removes it."
+              continue
+            fi
+            if [ -n "$pending" ]; then
+              echo "#$n: waiting for $pending on $short"
+              continue
+            fi
+
+            if out=$(gh api -X PUT "repos/$REPO/pulls/$n/merge" -f merge_method=squash -f sha="$head" 2>&1); then
+              echo "#$n: merged $short"
+            elif [ "$(gh api "repos/$REPO/pulls/$n" --jq .merged)" = true ]; then
+              echo "#$n: already merged"
+            else
+              notify "$n" mergefail "$head" "Auto-merge of $short failed: $out"
+            fi
+          done
