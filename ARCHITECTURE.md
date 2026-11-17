@@ -33,6 +33,10 @@ a single ES module.
   hash-based routing.
 - `src/store/`: redux store, actions and reducers used by levels and UI.
 - `src/ui/`: inferno-based UI components, such as the loading screen and labels.
+- `src/ui/hud/`: the public `UI` export, a DOM HUD layer (`.mage-hud` root inside
+  `Config.container()`) of button, label and input widgets driven through `HudElement` handles
+  (`index.js`, `HudElement.js`, `anchors.js`, `styles.js`). Built per level from
+  `Config.ui(path).hud` and cleared on dispose; has an edit mode used by the editor.
 - `src/scripts/`: `BaseScript.js`, `StaticScript.js`, `Scripts.js` and `src/scripts/builtin/`.
 - `src/lights/`, `src/materials/`, `src/models/`, `src/images/`, `src/audio/`, `src/video/`,
   `src/loaders/`, `src/controls/`, `src/storage/`: asset managers and feature modules.
@@ -54,7 +58,9 @@ a single ES module.
 2. A hash change (or `Router.goTo`) leads `Router` to ask `GameRunner.start(path, options)` for
    the level. Any running level is disposed first (store subscriptions removed,
    `Level.dispose`).
-3. `GameRunner` instantiates the level class and subscribes it to the store. Unless a loading
+3. `GameRunner` instantiates the level class and subscribes it to the store, then builds the
+   HUD with `UI.loadHUD(Config.ui(path).hud)` (even when `Config.ui().enabled` is false);
+   `disposeCurrentLevel` calls `UI.clear()`. Unless a loading
    flow is requested, it waits for `Physics.waitForState(READY)`, then calls `prepareScene()`
    and `init()` on the level.
 4. `Level.init` calls `Physics.init()`, which spawns the worker, posts `physics:load:ammo` and

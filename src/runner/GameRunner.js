@@ -5,6 +5,7 @@ import { PATH_NOT_FOUND } from "../lib/messages";
 import Physics, { PHYSICS_STATES } from "../physics";
 import { Importer } from "../core/Importer";
 import config from "../core/config";
+import UI from "../ui/hud";
 import Audio from "../audio/Audio";
 import Input from "../core/input/Input";
 import Universe from "../core/universe";
@@ -196,6 +197,7 @@ export class GameRunner {
         clearAllTweens();
         this.levelReady = false;
         Store.unsubscribeAll();
+        UI.clear();
         this.running.dispose();
         this.running = null;
     };
@@ -215,6 +217,9 @@ export class GameRunner {
             this.setCurrentPath(path);
             this.currentOptions = options;
             this.setCurrentLevel(this.createNewLevel(path, options));
+            // Built even when Config.ui().enabled is false, before init() so
+            // onCreate, scripts and onStart can reach the widgets.
+            UI.loadHUD(config.ui?.(path)?.hud);
 
             if (loading) {
                 this.getCurrentLevel().prepareScene();
