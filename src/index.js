@@ -73,6 +73,7 @@ import * as inferno from "inferno";
 import { createElement } from "inferno-create-element";
 import { Provider, connect } from "inferno-redux";
 import LabelComponent from "./ui/LabelComponent";
+import UI from "./ui/hud";
 
 import * as lib_constants from "./lib/constants";
 import * as functions from "./lib/functions";
@@ -226,6 +227,7 @@ export {
     functions,
     easing,
     Stats,
+    UI,
     THREE,
     LineSegments2,
     LineSegmentsGeometry,
