@@ -1,3 +1,5 @@
+jest.mock("../../runner/GameRunner", () => ({ getCurrentPath: jest.fn(() => "/level1") }));
+
 import { State } from "../index";
 
 describe("State subscriptions", () => {

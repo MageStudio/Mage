@@ -1,8 +1,10 @@
 import { getIn, parsePath, pathToString, removeIn, setIn } from "./paths";
 import { validateAndFreeze } from "./validate";
 import { History } from "./history";
+import * as saves from "./saves";
 
 const DEFAULT_HISTORY_LIMIT = 100;
+const DEFAULT_DEBOUNCE_MS = 500;
 
 const SNAPSHOT_VERSION = 1;
 const MAX_CHAINED_COMMITS = 100;
@@ -31,6 +33,8 @@ export class State {
         this._draining = false;
         this._chained = 0;
         this._started = false;
+        this._storage = saves.createLocalStorageAdapter();
+        this._autosave = null;
         this.history = new History(this);
     }
 
@@ -167,6 +171,29 @@ export class State {
         return () => this._unsubscribe(subscription);
     }
 
+    // Saves
+
+    save(slot) {
+        return saves.save(this, slot);
+    }
+
+    load(slot) {
+        return saves.load(this, slot);
+    }
+
+    listSaves() {
+        return saves.listSaves(this);
+    }
+
+    deleteSave(slot) {
+        saves.deleteSave(this, slot);
+    }
+
+    setStorage(adapter) {
+        saves.assertAdapter(adapter);
+        this._storage = adapter;
+    }
+
     // Internal hooks used by GameRunner
 
     _beginLevel() {
@@ -197,6 +224,39 @@ export class State {
 
         this._started = true;
         this.history._setLimit(stateConfig?.history?.limit ?? DEFAULT_HISTORY_LIMIT);
+
+        const slot = stateConfig?.persist?.slot;
+
+        if (slot === undefined || slot === null) return;
+
+        // Restore first, so its hydrate doesn't schedule a redundant write.
+        this.load(slot);
+        this._installAutosave(slot, stateConfig.persist.debounceMs ?? DEFAULT_DEBOUNCE_MS);
+    }
+
+    _installAutosave(slot, debounceMs) {
+        const autosave = { slot, debounceMs, timer: null };
+
+        autosave.flush = () => {
+            clearTimeout(autosave.timer);
+            autosave.timer = null;
+            this.save(slot);
+        };
+
+        this._autosave = autosave;
+
+        if (typeof window !== "undefined" && window.addEventListener) {
+            window.addEventListener("pagehide", () => {
+                if (autosave.timer !== null) autosave.flush();
+            });
+        }
+    }
+
+    _scheduleAutosave() {
+        const autosave = this._autosave;
+
+        clearTimeout(autosave.timer);
+        autosave.timer = setTimeout(autosave.flush, autosave.debounceMs);
     }
 
     _assertCanTravel(kind) {
@@ -227,6 +287,8 @@ export class State {
     // Seam for history (record the root) and autosave (schedule a save). Runs once per
     // commit, after the root changed and before subscribers are notified.
     _afterCommit(commit, prevRoot, nextRoot) {
+        if (this._autosave && prevRoot.game !== nextRoot.game) this._scheduleAutosave();
+
         if (commit.kind === "undo" || commit.kind === "redo" || commit.kind === "goTo") return;
 
         this.history._record(commit, nextRoot);
