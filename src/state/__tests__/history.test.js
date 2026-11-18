@@ -193,6 +193,22 @@ describe("State history", () => {
         expect(state.get("game.a")).toBe(2);
     });
 
+    test("hydrate clears history even when a subscriber throws", () => {
+        const state = started(5);
+
+        state.set("game.a", 1);
+        state.set("game.a", 2);
+        state.subscribe("game.b", () => {
+            throw new Error("boom");
+        });
+
+        expect(() => state.hydrate({ version: 1, game: { b: 1 }, level: {} })).toThrow("boom");
+
+        expect(state.get("game")).toEqual({ b: 1 });
+        expect(state.history.canUndo()).toBe(false);
+        expect(state.history.entries()).toHaveLength(1);
+    });
+
     describe("_start", () => {
         test("applies only on its first call", () => {
             const state = new State();

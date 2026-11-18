@@ -141,8 +141,12 @@ export class State {
         const game = freezeScope(snapshot.game, "game", "hydrate");
         const level = freezeScope(snapshot.level, "level", "hydrate");
 
-        this._replaceScopes(game, level, "hydrate", "hydrate");
-        this.history.clear();
+        try {
+            this._replaceScopes(game, level, "hydrate", "hydrate");
+        } finally {
+            // A throwing subscriber must not leave the old undo chain behind.
+            this.history.clear();
+        }
     }
 
     // Subscriptions
