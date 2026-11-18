@@ -28,6 +28,7 @@ permissions:
 env:
   LABEL: factory-automerge
   REQUIRED_WORKFLOWS: "Tests"  # comma-separated workflow names; "" = no CI required
+  MAX_CONFLICTS: 2                # conflict loops per PR before handing it to a human
 
 jobs:
   unlabel:
@@ -77,6 +78,41 @@ jobs:
           $msg" >/dev/null
           }
 
+          # Merge conflict: hand the PR back to the factory (picker merges the base in, reviewer
+          # checks the resolution), or to a human after MAX_CONFLICTS. Once per head commit.
+          conflict() {
+            local n=$1 sha=$2 pr=$3 bodies count i ilabels swapped=""
+            bodies=$(gh api --paginate "repos/$REPO/issues/$n/comments?per_page=100" --jq '.[].body')
+            if grep -qE -- "<!-- factory-conflict(-cap)? sha=$sha -->" <<<"$bodies"; then
+              return 0
+            fi
+            count=$(grep -c '^<!-- factory-conflict sha=' <<<"$bodies" || true)
+            gh api -X DELETE "repos/$REPO/issues/$n/labels/$LABEL" >/dev/null 2>&1 || true
+            local to=claude-in-review marker="factory-conflict"
+            if [ "$count" -ge "$MAX_CONFLICTS" ]; then
+              to=needs-human; marker="factory-conflict-cap"
+            fi
+            for i in $(jq -r '[(.body // "") | scan("(?i)(?:closes|fixes|resolves) #([0-9]+)") | .[0]] | join(" ")' <<<"$pr"); do
+              ilabels=$(gh api "repos/$REPO/issues/$i" --jq '[.labels[].name] | join(",")' 2>/dev/null || true)
+              case ",$ilabels," in
+                *,claude-reviewed,*)
+                  gh api -X DELETE "repos/$REPO/issues/$i/labels/claude-reviewed" >/dev/null 2>&1 || true
+                  gh api "repos/$REPO/issues/$i/labels" -f "labels[]=$to" >/dev/null
+                  swapped="$swapped #$i" ;;
+              esac
+            done
+            local msg
+            if [ -z "$swapped" ]; then
+              msg="Merge conflict with \`$default_branch\`, so this didn't auto-merge. No linked \`claude-reviewed\` issue, so it's left for a human."
+            elif [ "$to" = needs-human ]; then
+              msg="Merge conflict with \`$default_branch\` again ($((count + 1)) on this PR), so it's handed to a human:$swapped labelled \`needs-human\`."
+            else
+              msg="Merge conflict with \`$default_branch\`, so this didn't auto-merge.$swapped is back in \`claude-in-review\`: the picker will merge \`$default_branch\` in and the reviewer will check the resolution. It can still auto-merge after that."
+            fi
+            gh api "repos/$REPO/issues/$n/comments" -f body="<!-- $marker sha=$sha -->
+          $msg" >/dev/null
+          }
+
           if [ -z "$PRS" ] && [ -n "$HEAD_SHA" ]; then
             PRS=$(gh api "repos/$REPO/commits/$HEAD_SHA/pulls" --jq '[.[] | select(.state == "open") | .number] | join(" ")')
           fi
@@ -102,6 +138,13 @@ jobs:
             files=$(gh api --paginate "repos/$REPO/pulls/$n/files?per_page=100" --jq '.[].filename')
             if grep -q '^\.github/' <<<"$files"; then
               notify "$n" github "$head" "This PR changes \`.github/\`, so it's left for a human to merge even though it's labelled \`$LABEL\`."
+              continue
+            fi
+
+            # A conflicting PR gets no pull_request CI at all, so catch it before waiting on checks.
+            # (mergeable is null while GitHub is still computing it: carry on, the merge call decides.)
+            if [ "$(jq -r .mergeable <<<"$pr")" = false ] && [ "$(jq -r .mergeable_state <<<"$pr")" = dirty ]; then
+              conflict "$n" "$head" "$pr"
               continue
             fi
 
@@ -143,8 +186,18 @@ jobs:
 
             if out=$(gh api -X PUT "repos/$REPO/pulls/$n/merge" -f merge_method=squash -f sha="$head" 2>&1); then
               echo "#$n: merged $short"
+              # GitHub doesn't reliably auto-close "Closes #N" issues on merges made with GITHUB_TOKEN,
+              # and the picker only promotes dependants once those issues are CLOSED: close them here.
+              for i in $(jq -r '[(.body // "") | scan("(?i)(?:closes|fixes|resolves) #([0-9]+)") | .[0]] | join(" ")' <<<"$pr"); do
+                if [ "$(gh api "repos/$REPO/issues/$i" --jq .state 2>/dev/null)" = open ]; then
+                  gh api -X PATCH "repos/$REPO/issues/$i" -f state=closed -f state_reason=completed >/dev/null &&
+                    echo "#$n: closed issue #$i"
+                fi
+              done
             elif [ "$(gh api "repos/$REPO/pulls/$n" --jq .merged)" = true ]; then
               echo "#$n: already merged"
+            elif grep -qi 'merge conflict' <<<"$out"; then
+              conflict "$n" "$head" "$pr"
             else
               notify "$n" mergefail "$head" "Auto-merge of $short failed: $out"
             fi
