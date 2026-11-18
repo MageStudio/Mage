@@ -53,6 +53,7 @@ import Stats from "./core/Stats";
 import Config from "./core/config";
 import GameRunner from "./runner/GameRunner";
 import Router from "./router/Router";
+import State from "./state";
 import Scene from "./core/Scene";
 import Instancing from "./core/Instancing";
 import { Importer } from "./core/Importer";
@@ -140,6 +141,7 @@ export {
     FEATURES,
     Features,
     Config,
+    State as state,
     Scene,
     Instancing,
     Universe,
