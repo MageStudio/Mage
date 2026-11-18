@@ -14,6 +14,23 @@ export const KEY_PRESS = "keyPress";
 export const KEY_DOWN = "keyDown";
 export const KEY_UP = "keyUp";
 export const KEY_COMBO = "keyCombo";
+const FORM_TAGS = ["INPUT", "TEXTAREA", "SELECT"];
+
+// Keys typed into form fields (for example HUD inputs) are not game input.
+// jsdom has no `isContentEditable`, so look at the attribute instead.
+export const isEditableTarget = target => {
+    if (!target || typeof target.closest !== "function") {
+        return false;
+    }
+    if (FORM_TAGS.includes(target.tagName)) {
+        return true;
+    }
+
+    const editable = target.closest("[contenteditable]");
+
+    return Boolean(editable) && editable.getAttribute("contenteditable") !== "false";
+};
+
 export default class Keyboard extends Pausable() {
     constructor() {
         super();
@@ -45,6 +62,10 @@ export default class Keyboard extends Pausable() {
     };
 
     handleKeydown = event => {
+        if (isEditableTarget(event.target)) {
+            return;
+        }
+
         this.pressedKeys.add(event.key.toLowerCase());
         this.keysDown.set(event.code, event.key);
         this.dispatchEvent({
@@ -54,6 +75,10 @@ export default class Keyboard extends Pausable() {
     };
 
     handleKeyup = event => {
+        if (isEditableTarget(event.target)) {
+            return;
+        }
+
         this.pressedKeys.delete(event.key.toLowerCase());
         this.keysDown.delete(event.code);
         this.dispatchEvent({
@@ -63,6 +88,10 @@ export default class Keyboard extends Pausable() {
     };
 
     handleKeypress = event => {
+        if (isEditableTarget(event.target)) {
+            return;
+        }
+
         this.dispatchEvent({
             type: KEY_PRESS,
             event,

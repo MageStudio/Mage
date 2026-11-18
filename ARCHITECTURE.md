@@ -32,6 +32,10 @@ a single ES module.
 - `src/runner/GameRunner.js` and `src/router/Router.js`: level registry, lifecycle and
   hash-based routing.
 - `src/ui/`: inferno-based UI components, such as the loading screen and labels. `UI.isLoadingScreenVisible()` reports whether the loading screen is requested.
+- `src/ui/hud/`: the public `UI` export, a DOM HUD layer (`.mage-hud` root inside
+  `Config.container()`) of button, label and input widgets driven through `HudElement` handles
+  (`index.js`, `HudElement.js`, `anchors.js`, `styles.js`). Built per level from
+  `Config.ui(path).hud` and cleared on dispose; has an edit mode used by the editor.
 - `src/scripts/`: `BaseScript.js`, `StaticScript.js`, `Scripts.js` and `src/scripts/builtin/`.
 - `src/lights/`, `src/materials/`, `src/models/`, `src/images/`, `src/audio/`, `src/video/`,
   `src/loaders/`, `src/controls/`: asset managers and feature modules.
@@ -52,8 +56,10 @@ a single ES module.
    `GameRunner.register`.
 2. A hash change (or `Router.goTo`) leads `Router` to ask `GameRunner.start(path, options)` for
    the level. Any running level is disposed first (`Level.dispose`).
-3. `GameRunner` instantiates the level class, waits for `Physics.waitForState(READY)`, then
-   calls `prepareScene()` and `init()` on the level.
+3. `GameRunner` instantiates the level class, then builds the HUD with
+   `UI.loadHUD(Config.ui(path).hud)` (even when `Config.ui().enabled` is false);
+   `disposeCurrentLevel` calls `UI.clear()`. It waits for `Physics.waitForState(READY)`, then calls
+   `prepareScene()` and `init()` on the level.
 4. `Level.init` calls `Physics.init()`, which spawns the worker, posts `physics:load:ammo` and
    polls until the worker reports ready. Physics can be turned off through `Config.physics()`.
 5. `GameRunner` imports level data via `Importer.importLevelSnapshot` (from `Config`), then
