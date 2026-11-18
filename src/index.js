@@ -68,10 +68,8 @@ import * as material_constants from "./materials/constants";
 
 import * as hitboxUtils from "./physics/hitbox";
 
-import * as store from "./store";
 import * as inferno from "inferno";
 import { createElement } from "inferno-create-element";
-import { Provider, connect } from "inferno-redux";
 import LabelComponent from "./ui/LabelComponent";
 import UI from "./ui/hud";
 
@@ -149,12 +147,9 @@ export {
     BUILTIN,
     Router,
     GameRunner,
-    store,
-    Provider,
     inferno,
     createElement,
     LabelComponent,
-    connect,
     Controls,
     CONTROL_EVENTS,
     THREEJS_CONTROL_EVENTS,

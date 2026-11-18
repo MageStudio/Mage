@@ -1,7 +1,6 @@
 import GameRunner from "../runner/GameRunner";
 import Assets from "../core/Assets";
 import Features from "../lib/features";
-import * as network from "../lib/network";
 import Config from "../core/config";
 
 import { toQueryString, parseQuery } from "../lib/query";
@@ -60,7 +59,7 @@ class Router {
 
     handleHashChange = () => {
         UI.requestLoadingScreen();
-        this.startLevel();
+        return this.startLevel();
     };
 
     on(route, classname) {
@@ -80,15 +79,11 @@ class Router {
     }
 
     setGlobalWindowEventsListeners() {
-        network.listenToNetworkChanges();
-
         window.addEventListener(HASH_CHANGE, this.handleHashChange, false);
         window.addEventListener(BEFORE_UNLOAD, this.stop);
     }
 
     removeGlobaWindowEventsListeners() {
-        network.stopListeningToNetworkChanges();
-
         window.removeEventListener(HASH_CHANGE, this.handleHashChange);
         window.removeEventListener(BEFORE_UNLOAD, this.stop);
     }
@@ -101,8 +96,6 @@ class Router {
 
     startLevel = () => {
         const { hash, query } = Router.extractHashAndQuery();
-
-        UI.dispatchLocationPathChange(hash);
 
         if (this.isValidRoute(hash)) {
             this.setCurrentLevel(hash);

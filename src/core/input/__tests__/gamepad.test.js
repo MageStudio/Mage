@@ -1,4 +1,3 @@
-jest.mock("../../../store/Store", () => ({ dispatch: jest.fn() }));
 jest.mock("../../../lib/features", () => ({
     __esModule: true,
     default: { isFeatureSupported: jest.fn(() => true) },

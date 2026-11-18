@@ -1,6 +1,4 @@
 import Level from "../core/Level";
-import * as Store from "../store/Store";
-import storage from "../storage/storage";
 import { PATH_NOT_FOUND } from "../lib/messages";
 import Physics, { PHYSICS_STATES } from "../physics";
 import { Importer } from "../core/Importer";
@@ -70,8 +68,6 @@ export class GameRunner {
             path,
         };
         const level = new classname(levelConfig);
-
-        Store.subscribe(level);
 
         return level;
     };
@@ -196,7 +192,6 @@ export class GameRunner {
         }
         clearAllTweens();
         this.levelReady = false;
-        Store.unsubscribeAll();
         UI.clear();
         this.running.dispose();
         this.running = null;
@@ -204,8 +199,6 @@ export class GameRunner {
 
     start = (path, options = {}) => {
         return new Promise((resolve, reject) => {
-            const { loading = false } = options;
-
             if (!this.has(path)) {
                 reject(PATH_NOT_FOUND);
             }
@@ -221,14 +214,15 @@ export class GameRunner {
             // onCreate, scripts and onStart can reach the widgets.
             UI.loadHUD(config.ui?.(path)?.hud);
 
-            if (loading) {
+            Physics.waitForState(PHYSICS_STATES.READY).then(() => {
                 this.getCurrentLevel().prepareScene();
                 this.getCurrentLevel()
                     .init()
                     .then(() => {
-                        storage
-                            .load()
-                            .then(Importer.parseLevelData)
+                        const levelData =
+                            config.getLevelData(this.getCurrentLevel().getPath()) || {};
+
+                        Importer.importLevelSnapshot(levelData)
                             .then(() => {
                                 this.levelReady = true;
                                 if (typeof this.getCurrentLevel().onStart === "function") {
@@ -237,29 +231,9 @@ export class GameRunner {
                                 resolve(this.getCurrentLevel());
                             })
                             .catch(reject);
-                    });
-            } else {
-                Physics.waitForState(PHYSICS_STATES.READY).then(() => {
-                    this.getCurrentLevel().prepareScene();
-                    this.getCurrentLevel()
-                        .init()
-                        .then(() => {
-                            const levelData =
-                                config.getLevelData(this.getCurrentLevel().getPath()) || {};
-
-                            Importer.importLevelSnapshot(levelData)
-                                .then(() => {
-                                    this.levelReady = true;
-                                    if (typeof this.getCurrentLevel().onStart === "function") {
-                                        this.getCurrentLevel().onStart();
-                                    }
-                                    resolve(this.getCurrentLevel());
-                                })
-                                .catch(reject);
-                        })
-                        .catch(reject);
-                });
-            }
+                    })
+                    .catch(reject);
+            });
         });
     };
 }

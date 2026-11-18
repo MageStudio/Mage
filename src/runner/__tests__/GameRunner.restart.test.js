@@ -5,11 +5,6 @@ import Assets from "../../core/Assets";
 import Input from "../../core/input/Input";
 import { requestLoadingScreen, removeLoadingScreen } from "../../ui";
 
-jest.mock("../../store/Store", () => ({ subscribe: jest.fn(), unsubscribeAll: jest.fn() }));
-jest.mock("../../storage/storage", () => ({
-    __esModule: true,
-    default: { load: jest.fn(() => Promise.resolve()) },
-}));
 jest.mock("../../physics", () => ({
     __esModule: true,
     PHYSICS_STATES: { READY: "ready" },

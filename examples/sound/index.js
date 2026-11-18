@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Scene, Controls, AmbientLight, AmbientSound, Input, INPUT_EVENTS } from '../../dist/mage.js';
+import { Router, Level, Box, Scene, Controls, AmbientLight, AmbientSound, Input, INPUT_EVENTS } from '../../dist/mage.js';
 
 export default class Example extends Level {
 
@@ -74,8 +74,6 @@ const config = {
 };
 
 window.addEventListener('load', () => {
-    store.createStore({}, {}, true);
-
     Router.on('/', Example);
 
     Router.start(config, assets);

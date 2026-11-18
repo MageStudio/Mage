@@ -1,7 +1,5 @@
 import { Pausable } from "./pausable";
 import Features, { FEATURES } from "../../lib/features";
-import { gamepadDisconnected, gamepadConnected } from "../../store/actions/input";
-import { dispatch } from "../../store/Store";
 import { GAMEPAD_BUTTON_MAPPINGS, STANDARD } from "./constants";
 
 const WINDOW_GAMEPAD_CONNECTED_EVENT = "gamepadconnected";
@@ -155,7 +153,6 @@ export default class Gamepad extends Pausable() {
             type: GAMEPAD_CONNECTED_EVENT,
             gamepad: e.gamepad,
         });
-        dispatch(gamepadConnected(this.transformGamepadsForEvent()));
     };
     onGamepadDisconnected = e => {
         this.removeGamepad(e.gamepad);
@@ -163,7 +160,6 @@ export default class Gamepad extends Pausable() {
             type: GAMEPAD_DISCONNECTED_EVENT,
             gamepad: e.gamepad,
         });
-        dispatch(gamepadDisconnected(this.transformGamepadsForEvent()));
     };
 
     addGamepad(gamepad) {

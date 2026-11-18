@@ -1,4 +1,4 @@
-import { Router, store, Level, Box, Cube, Sphere, Scene, Controls, Color, PHYSICS_CONSTANTS } from '../../dist/mage.js';
+import { Router, Level, Box, Cube, Sphere, Scene, Controls, Color, PHYSICS_CONSTANTS } from '../../dist/mage.js';
 
 class Intro extends Level {
 
@@ -98,8 +98,6 @@ const config = {
 };
 
 window.addEventListener('load', () => {
-    store.createStore({}, {}, true);
-
     Router.on('/', Intro);
 
     Router.start(config, {});

@@ -3,11 +3,6 @@ import { GameRunner } from "../GameRunner";
 import UI from "../../ui/hud";
 import config from "../../core/config";
 
-jest.mock("../../store/Store", () => ({ subscribe: jest.fn(), unsubscribeAll: jest.fn() }));
-jest.mock("../../storage/storage", () => ({
-    __esModule: true,
-    default: { load: jest.fn(() => Promise.resolve()) },
-}));
 jest.mock("../../physics", () => ({
     __esModule: true,
     PHYSICS_STATES: { READY: "ready" },
@@ -97,13 +92,6 @@ describe("GameRunner HUD lifecycle", () => {
 
         expect(seenInOnCreate).not.toBeNull();
         expect(seenInOnCreate.name).toBe("start");
-    });
-
-    it("builds the HUD in the loading branch too", async () => {
-        setHud("menu", { elements: [button("start")] });
-        await runner.start("menu", { loading: true });
-
-        expect(seenInOnCreate).not.toBeNull();
     });
 
     it("clears code-created and config widgets when switching level", async () => {
