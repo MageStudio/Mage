@@ -1,5 +1,8 @@
 import { getIn, parsePath, pathToString, removeIn, setIn } from "./paths";
 import { validateAndFreeze } from "./validate";
+import { History } from "./history";
+
+const DEFAULT_HISTORY_LIMIT = 100;
 
 const SNAPSHOT_VERSION = 1;
 const MAX_CHAINED_COMMITS = 100;
@@ -27,6 +30,8 @@ export class State {
         this._queue = [];
         this._draining = false;
         this._chained = 0;
+        this._started = false;
+        this.history = new History(this);
     }
 
     // Reads
@@ -137,6 +142,7 @@ export class State {
         const level = freezeScope(snapshot.level, "level", "hydrate");
 
         this._replaceScopes(game, level, "hydrate", "hydrate");
+        this.history.clear();
     }
 
     // Subscriptions
@@ -181,10 +187,42 @@ export class State {
         );
     }
 
+    // Applies the resolved state config once per page session. Later calls are no-ops.
+    _start(stateConfig) {
+        if (this._started) return;
+
+        this._started = true;
+        this.history._setLimit(stateConfig?.history?.limit ?? DEFAULT_HISTORY_LIMIT);
+    }
+
+    // Makes an already recorded root current again (undo, redo, goTo). It restores the
+    // revision of that entry instead of taking a new one.
+    _travel(root, revision, kind) {
+        if (this._batchDepth > 0) {
+            throw new Error(`mage.state.history: can't ${kind} inside a batch`);
+        }
+
+        const prevRoot = this._root;
+        const changes = [];
+
+        if (root.game !== prevRoot.game) {
+            changes.push({ path: "game", prev: prevRoot.game, next: root.game });
+        }
+
+        if (root.level !== prevRoot.level) {
+            changes.push({ path: "level", prev: prevRoot.level, next: root.level });
+        }
+
+        this._commit(root, changes, kind, kind, revision);
+    }
+
     // Seam for history (record the root) and autosave (schedule a save). Runs once per
     // commit, after the root changed and before subscribers are notified.
-    // eslint-disable-next-line no-unused-vars
-    _afterCommit(commit, prevRoot, nextRoot) {}
+    _afterCommit(commit, prevRoot, nextRoot) {
+        if (commit.kind === "undo" || commit.kind === "redo" || commit.kind === "goTo") return;
+
+        this.history._record(commit, nextRoot);
+    }
 
     // Private
 
@@ -242,7 +280,7 @@ export class State {
         this._commit(nextRoot, changes, kind, label);
     }
 
-    _commit(nextRoot, changes, kind, label) {
+    _commit(nextRoot, changes, kind, label, revision) {
         if (this._draining && ++this._chained > MAX_CHAINED_COMMITS) {
             throw new Error(
                 "mage.state: more than 100 chained commits, a subscriber is probably writing the value it listens to",
@@ -251,7 +289,7 @@ export class State {
 
         const prevRoot = this._root;
         const commit = {
-            revision: ++this._revision,
+            revision: revision === undefined ? ++this._revision : (this._revision = revision),
             label,
             timestamp: Date.now(),
             kind,
