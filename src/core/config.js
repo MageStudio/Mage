@@ -8,6 +8,8 @@ const DEFAULT_WIDTH = 800;
 const DEFAULT_RATIO = DEFAULT_WIDTH / DEFAULT_HEIGHT;
 
 const DEFAULT_COMMON = {
+    state: { history: { limit: 100 } },
+
     tests: [],
 
     scripts: {
@@ -171,6 +173,10 @@ export class Config {
 
     ui(level) {
         return this.resolve("ui", level);
+    }
+
+    state(level) {
+        return this.resolve("state", level);
     }
 
     physics(level) {

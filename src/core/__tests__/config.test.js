@@ -8,6 +8,10 @@ describe("Config", () => {
     });
 
     describe("defaults", () => {
+        test("state defaults", () => {
+            expect(config.state()).toEqual({ history: { limit: 100 } });
+        });
+
         test("physics defaults", () => {
             expect(config.physics()).toEqual({
                 enabled: false,
