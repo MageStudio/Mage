@@ -90,6 +90,12 @@ jobs:
               echo "#$n: not open, draft, off the default branch, or unlabelled; skipping"
               continue
             fi
+            # Only branches pushed to this repo (by someone with write access). Fork PRs never auto-merge,
+            # even if labelled: anyone can open one on a public repo.
+            if [ "$(jq -r .head.repo.full_name <<<"$pr")" != "$REPO" ]; then
+              echo "#$n: head is a fork; never auto-merged"
+              continue
+            fi
             head=$(jq -r .head.sha <<<"$pr")
             short=${head:0:7}
 
