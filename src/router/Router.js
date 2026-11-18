@@ -2,6 +2,7 @@ import GameRunner from "../runner/GameRunner";
 import Assets from "../core/Assets";
 import Features from "../lib/features";
 import Config from "../core/config";
+import State from "../state";
 
 import { toQueryString, parseQuery } from "../lib/query";
 import { FEATURE_NOT_SUPPORTED } from "../lib/messages";
@@ -141,6 +142,7 @@ class Router {
         Assets.setAssets(assets);
 
         return Features.checkSupportedFeatures()
+            .then(() => State._start(Config.state(null)))
             .then(() => Assets.load(hash))
             .then(this.startLevel)
             .catch(this.handleStartError);

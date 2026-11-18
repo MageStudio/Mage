@@ -31,6 +31,10 @@ a single ES module.
   `src/physics/worker/lib/` in the same folder.
 - `src/runner/GameRunner.js` and `src/router/Router.js`: level registry, lifecycle and
   hash-based routing.
+- `src/state/`: `mage.state`, the game state store. `index.js` is the `State` singleton (immutable
+  `{ game, level }` tree, subscriptions, `batch`, `hydrate`, restore and autosave), `paths.js` and
+  `validate.js` (path parsing, JSON-safe check and freeze), `history.js` (undo/redo of roots) and
+  `saves.js` (save slots over a storage adapter, `localStorage` by default).
 - `src/ui/`: inferno-based UI components, such as the loading screen and labels. `UI.isLoadingScreenVisible()` reports whether the loading screen is requested.
 - `src/ui/hud/`: the public `UI` export, a DOM HUD layer (`.mage-hud` root inside
   `Config.container()`) of button, label and input widgets driven through `HudElement` handles
@@ -76,7 +80,14 @@ a single ES module.
    and `Universe`; `resume()` reverses it. `GameRunner.restart()` defers (`setTimeout 0`) a
    dispose of the current level and a `start` of the same path and options, and concurrent calls
    share one promise.
-9. Disposing a level calls `Physics.dispose()`, which sends `physics:terminate` and moves the
+9. The state level boundary: `Router.start` calls `State._start(Config.state(null))` once, after
+   `Config.setConfig` and before the first `startLevel`, which sets the history limit and runs the
+   optional restore (`persist.slot`). `GameRunner.createNewLevel` calls `State._beginLevel()` right
+   before `new classname(...)`, so subscriptions made from `onCreate` on belong to the level.
+   `disposeCurrentLevel` runs `running.dispose()` (so `onDispose` still sees `level`), then
+   `State._endLevel()` (drops the level's subscriptions), `State._resetLevel()` (`level` back to
+   `{}`) and `State.history.clear()`. `game` is untouched, also across `restart()`.
+10. Disposing a level calls `Physics.dispose()`, which sends `physics:terminate` and moves the
    state to TERMINATING.
 
 ## Boundaries and invariants
@@ -91,6 +102,8 @@ a single ES module.
   how elements are registered.
 - `Universe` keys elements by body uuid; `Scene.add` and `Scene.remove` keep it in sync.
 - Only one level runs at a time (`GameRunner.running`).
+- `src/state/saves.js` reaches `GameRunner` only at call time, because `state/index` and
+  `GameRunner` import each other; keep it that way and don't read `State` at module top level.
 - The bundle is a build artefact and is gitignored; `dist/ammo.js` is tracked.
 
 ## Cross-repo context

@@ -43,7 +43,7 @@ not run the build. `.nvmrc` says 14.19.3, which disagrees with CI; use Node 20 t
   `Router`, `Config`); classes use `export class` alongside.
 - Public API is whatever `src/index.js` exports. Add new public symbols there.
 - Modules in `src/`: audio, controls, core, entities, fx, images, lib, lights, loaders,
-  materials, models, physics (with `worker/`), router, runner, scripts, ui,
+  materials, models, physics (with `worker/`), router, runner, scripts, state, ui,
   video, plus `env.js`.
 - `examples/` holds small runnable demos, one folder each, served by `npm run dev` / `npm start`
   (http-server on port 8085).

@@ -9,6 +9,7 @@ import Input from "../core/input/Input";
 import Universe from "../core/universe";
 import { pauseAllTweens, resumeAllTweens, clearAllTweens } from "../lib/easing";
 import { requestLoadingScreen, removeLoadingScreen } from "../ui";
+import State from "../state";
 
 export class GameRunner {
     constructor() {
@@ -67,6 +68,7 @@ export class GameRunner {
             ...options,
             path,
         };
+        State._beginLevel();
         const level = new classname(levelConfig);
 
         return level;
@@ -194,6 +196,9 @@ export class GameRunner {
         this.levelReady = false;
         UI.clear();
         this.running.dispose();
+        State._endLevel();
+        State._resetLevel();
+        State.history.clear();
         this.running = null;
     };
 
