@@ -125,6 +125,29 @@ describe("State subscriptions", () => {
             expect(cb).toHaveBeenCalledTimes(1);
         });
 
+        test("a caught inner throw rolls back only the inner batch", () => {
+            const cb = jest.fn();
+            state.subscribe("game", cb);
+
+            state.batch(() => {
+                state.set("game.a", 1);
+                try {
+                    state.batch(() => {
+                        state.set("game.b", 2);
+                        throw new Error("inner");
+                    });
+                } catch {
+                    // swallowed on purpose
+                }
+                state.set("game.c", 3);
+            });
+
+            expect(state.get("game")).toEqual({ a: 1, c: 3 });
+            expect(cb).toHaveBeenCalledTimes(1);
+            expect(cb.mock.calls[0][2].changes.map(c => c.path)).toEqual(["game.a", "game.c"]);
+            expect(state.snapshot().revision).toBe(1);
+        });
+
         test("a batch that changes nothing commits nothing", () => {
             const cb = jest.fn();
             const before = state.get();
@@ -169,13 +192,13 @@ describe("State subscriptions", () => {
         test("the chain counter restarts for the next top-level write", () => {
             state.set("game.n", 0);
             const off = state.subscribe("game.n", next => {
-                if (next < 50) state.set("game.n", next + 1);
+                if (next % 80 !== 0) state.set("game.n", next + 1);
             });
 
             state.set("game.n", 1);
-            expect(state.get("game.n")).toBe(50);
-            state.set("game.n", 1);
-            expect(state.get("game.n")).toBe(50);
+            expect(state.get("game.n")).toBe(80);
+            state.set("game.n", 81);
+            expect(state.get("game.n")).toBe(160);
             off();
         });
     });

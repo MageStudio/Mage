@@ -88,6 +88,9 @@ export class State {
             this._batch = { prevRoot: this._root, changes: [] };
         }
 
+        const rootBefore = this._root;
+        const changesBefore = this._batch.changes.length;
+
         this._batchDepth++;
 
         let result;
@@ -96,9 +99,10 @@ export class State {
             result = fn();
         } catch (error) {
             this._batchDepth--;
+            this._root = rootBefore;
+            this._batch.changes.length = changesBefore;
 
             if (this._batchDepth === 0) {
-                this._root = this._batch.prevRoot;
                 this._batch = null;
             }
 
