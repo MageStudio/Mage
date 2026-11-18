@@ -173,6 +173,26 @@ describe("State history", () => {
         expect(state.get("game")).toEqual({});
     });
 
+    test("a rejected undo inside a batch leaves history consistent", () => {
+        const state = started(5);
+
+        state.set("game.a", 1);
+        state.set("game.a", 2);
+
+        const before = state.history.entries();
+
+        state.batch(() => {
+            expect(() => state.history.undo()).toThrow("inside a batch");
+            expect(() => state.history.goTo(1)).toThrow("inside a batch");
+        });
+
+        expect(state.history.entries().slice(0, before.length)).toEqual(before);
+        expect(state.history.entries().filter(e => e.current)).toHaveLength(1);
+        expect(state.history.canRedo()).toBe(false);
+        expect(state.history.canUndo()).toBe(true);
+        expect(state.get("game.a")).toBe(2);
+    });
+
     describe("_start", () => {
         test("applies only on its first call", () => {
             const state = new State();

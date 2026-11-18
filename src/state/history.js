@@ -105,6 +105,9 @@ export class History {
     _move(index, kind) {
         const entry = this._entries[index];
 
+        // Rejected moves must not touch the index. It moves before _travel so that
+        // subscribers see the new position, and a subscriber error must not undo it.
+        this._state._assertCanTravel(kind);
         this._index = index;
         this._state._travel(entry.root, entry.revision, kind);
     }

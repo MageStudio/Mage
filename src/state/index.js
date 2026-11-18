@@ -195,12 +195,16 @@ export class State {
         this.history._setLimit(stateConfig?.history?.limit ?? DEFAULT_HISTORY_LIMIT);
     }
 
-    // Makes an already recorded root current again (undo, redo, goTo). It restores the
-    // revision of that entry instead of taking a new one.
-    _travel(root, revision, kind) {
+    _assertCanTravel(kind) {
         if (this._batchDepth > 0) {
             throw new Error(`mage.state.history: can't ${kind} inside a batch`);
         }
+    }
+
+    // Makes an already recorded root current again (undo, redo, goTo). It restores the
+    // revision of that entry instead of taking a new one.
+    _travel(root, revision, kind) {
+        this._assertCanTravel(kind);
 
         const prevRoot = this._root;
         const changes = [];
