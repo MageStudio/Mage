@@ -144,7 +144,7 @@ export class State {
         try {
             this._replaceScopes(game, level, "hydrate", "hydrate");
         } finally {
-            // A throwing subscriber rethrows after the commit stood; history must still reset.
+            // A throwing subscriber must not leave the old undo chain behind.
             this.history.clear();
         }
     }
