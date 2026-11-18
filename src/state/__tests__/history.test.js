@@ -157,6 +157,18 @@ describe("State history", () => {
             expect(state.history.canRedo()).toBe(false);
             expect(state.history.entries()).toHaveLength(1);
         });
+
+        test("hydrate clears history even when a subscriber throws", () => {
+            state.subscribe("game.b", () => {
+                throw new Error("boom");
+            });
+
+            expect(() => state.hydrate({ version: 1, game: { b: 1 }, level: {} })).toThrow("boom");
+
+            expect(state.get("game.b")).toBe(1);
+            expect(state.history.canUndo()).toBe(false);
+            expect(state.history.entries()).toHaveLength(1);
+        });
     });
 
     test("a batch produces one entry", () => {
@@ -211,6 +223,19 @@ describe("State history", () => {
             for (let i = 0; i < 150; i++) state.set("game.a", i);
 
             expect(state.history.entries()).toHaveLength(100);
+        });
+
+        test.each([
+            [-5, 0],
+            [NaN, 100],
+            ["abc", 100],
+            [2.9, 2],
+        ])("limit %p is normalised to %p", (limit, expected) => {
+            const state = new State();
+
+            state._start({ history: { limit } });
+
+            expect(state.history._limit).toBe(expected);
         });
 
         test("a lower limit trims the oldest entries", () => {

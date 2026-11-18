@@ -63,6 +63,9 @@ export class History {
     // Internal
 
     _setLimit(limit) {
+        const parsed = Number(limit);
+
+        limit = Number.isFinite(parsed) ? Math.max(0, Math.floor(parsed)) : DEFAULT_LIMIT;
         this._limit = limit;
 
         if (limit === 0) {
