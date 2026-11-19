@@ -211,8 +211,12 @@ export class Scene {
     }
 
     dispose() {
-        // destroy renderer
+        // destroy renderer, release its WebGL context and drop its canvas
         this.renderer.dispose();
+        if (typeof this.renderer.forceContextLoss === "function") {
+            this.renderer.forceContextLoss();
+        }
+        this.removeRendererElement(this.renderer.domElement);
         // remove listener to resize
         this.detachListeners();
         // clear elements array
@@ -261,6 +265,18 @@ export class Scene {
                 element.remove();
             }
         });
+    }
+
+    removeRendererElement(domElement) {
+        if (!domElement) return;
+
+        if (typeof domElement.remove === "function") {
+            domElement.remove();
+        } else if (domElement.parentNode) {
+            domElement.parentNode.removeChild(domElement);
+        }
+
+        delete this.rendererElements[domElement.id];
     }
 
     storeRenderer(rendererElement) {
