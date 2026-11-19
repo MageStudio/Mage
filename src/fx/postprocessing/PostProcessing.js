@@ -71,6 +71,20 @@ export class PostProcessing {
 
     dispose = () => {
         window.removeEventListener("resize", this.onWindowResize);
+
+        [...this.effects, ...this.customs].forEach(effect => {
+            if (effect && typeof effect.dispose === "function") {
+                effect.dispose();
+            }
+        });
+
+        if (this.composer) {
+            this.composer.dispose();
+            this.composer = undefined;
+        }
+
+        this.effects = [];
+        this.customs = [];
     };
 
     onWindowResize = () => {

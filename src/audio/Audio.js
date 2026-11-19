@@ -223,6 +223,10 @@ export class Audio {
         this.levelSounds.push(sound);
     }
 
+    removeSound(sound) {
+        this.levelSounds = this.levelSounds.filter(s => s !== sound);
+    }
+
     updateListenerPosition() {
         Scene.getCameraBody().updateMatrixWorld();
         const p = new Vector3();
@@ -261,10 +265,8 @@ export class Audio {
     }
 
     dispose() {
-        for (let index in this.levelSounds) {
-            const sound = this.levelSounds[index];
-            sound.dispose();
-        }
+        // Sound.dispose() removes itself from levelSounds, so iterate over a copy
+        [...this.levelSounds].forEach(sound => sound.dispose());
 
         this.reset();
     }

@@ -64,6 +64,7 @@ export default class Sound extends Entity {
         this.volumeNode = null;
 
         this.detuneValue = 0;
+        this.stopTimeout = null;
 
         if (!this.setupConfig.deferred) {
             this.setupAudio();
@@ -190,7 +191,18 @@ export default class Sound extends Entity {
         }
     }
 
+    clearStopTimeout() {
+        if (this.stopTimeout) {
+            clearTimeout(this.stopTimeout);
+            this.stopTimeout = null;
+        }
+    }
+
     reset = () => {
+        this.stopTimeout = null;
+
+        if (this.isDisposed()) return;
+
         this.playing = false;
 
         this.disconnect();
@@ -200,9 +212,17 @@ export default class Sound extends Entity {
     };
 
     dispose() {
+        // mark as disposed before anything else: Entity.dispose() calls reset(),
+        // and a pending stop timer must not rebuild the audio graph afterwards.
+        this.disposed = true;
+        this.clearStopTimeout();
+
         super.dispose();
         this.stop();
+        this.clearStopTimeout();
         this.disconnect();
+
+        Audio.removeSound(this);
     }
 
     getVolume() {
@@ -288,7 +308,8 @@ export default class Sound extends Entity {
             );
         }
 
-        setTimeout(this.reset, delay);
+        this.clearStopTimeout();
+        this.stopTimeout = setTimeout(this.reset, delay);
 
         return this;
     }
