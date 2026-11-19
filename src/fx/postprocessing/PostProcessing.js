@@ -71,9 +71,28 @@ export class PostProcessing {
 
     dispose = () => {
         window.removeEventListener("resize", this.onWindowResize);
+
+        const disposables = new Set([
+            ...(this.composer ? this.composer.passes : []),
+            ...this.effects,
+            ...this.customs,
+        ]);
+        disposables.forEach(item => {
+            if (item && typeof item.dispose === "function") item.dispose();
+        });
+
+        if (this.composer) {
+            this.composer.dispose();
+            this.composer = undefined;
+        }
+
+        this.effects = [];
+        this.customs = [];
     };
 
     onWindowResize = () => {
+        if (!this.composer) return;
+
         const { h, w } = Config.screen();
 
         this.composer.setSize(w, h);

@@ -54,6 +54,8 @@ export default class Sound extends Entity {
         this.reconnectOnReset = reconnectOnReset;
         this.name = name;
 
+        this.disposing = false;
+        this.stopTimeout = undefined;
         this.connected = false;
         this.playing = false;
         this.setupCompleted = false;
@@ -191,6 +193,8 @@ export default class Sound extends Entity {
     }
 
     reset = () => {
+        if (this.disposing || this.isDisposed()) return;
+
         this.playing = false;
 
         this.disconnect();
@@ -200,9 +204,23 @@ export default class Sound extends Entity {
     };
 
     dispose() {
+        if (this.disposing || this.isDisposed()) return;
+
+        // set before stop() so nothing rebuilds the audio graph afterwards
+        this.disposing = true;
+
         super.dispose();
         this.stop();
+        this.clearStopTimeout();
         this.disconnect();
+        Audio.removeSound(this);
+    }
+
+    clearStopTimeout() {
+        if (this.stopTimeout !== undefined) {
+            clearTimeout(this.stopTimeout);
+            this.stopTimeout = undefined;
+        }
     }
 
     getVolume() {
@@ -288,7 +306,13 @@ export default class Sound extends Entity {
             );
         }
 
-        setTimeout(this.reset, delay);
+        this.clearStopTimeout();
+        if (!this.disposing) {
+            this.stopTimeout = setTimeout(() => {
+                this.stopTimeout = undefined;
+                this.reset();
+            }, delay);
+        }
 
         return this;
     }

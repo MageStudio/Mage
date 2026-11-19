@@ -111,7 +111,7 @@ export class Particles {
 
     isRegisteredEmitter = name => typeof name === "string" && this.map.has(name);
 
-    hasEmitters = () => this.emitters.length > 0;
+    hasEmitters = () => this.emitters.size > 0;
 
     updateEmitters = dt => {
         this.toDispose = [];
@@ -136,11 +136,15 @@ export class Particles {
 
             if (!emitter) return;
 
-            if (emitter.isProtonEmitter()) {
+            if (emitter.getType() === GROUP) {
+                emitter.forEach(member => {
+                    if (member.isProtonEmitter()) this.removeProtonEmitter(member);
+                });
+            } else if (emitter.isProtonEmitter()) {
                 this.removeProtonEmitter(emitter);
-            } else {
-                emitter.dispose();
             }
+
+            emitter.dispose();
 
             this.emitters.delete(uuid);
         });
@@ -158,6 +162,9 @@ export class Particles {
             this.proton.destroy();
             this.proton = null;
         }
+
+        this.emitters = new Map();
+        this.toDispose = [];
     }
 }
 

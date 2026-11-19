@@ -167,6 +167,11 @@ export default class EffectComposer {
         this.readBuffer = this.renderTarget2;
     }
 
+    dispose() {
+        this.renderTarget1.dispose();
+        this.renderTarget2.dispose();
+    }
+
     setSize(width, height) {
         this._width = width;
         this._height = height;
