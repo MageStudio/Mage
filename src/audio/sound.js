@@ -191,6 +191,10 @@ export default class Sound extends Entity {
     }
 
     reset = () => {
+        // Entity.dispose() calls reset() before it sets the disposed flag, so check both.
+        if (this.disposing || this.isDisposed()) return;
+
+        this.stopTimeout = undefined;
         this.playing = false;
 
         this.disconnect();
@@ -200,9 +204,19 @@ export default class Sound extends Entity {
     };
 
     dispose() {
+        this.disposing = true;
         super.dispose();
         this.stop();
+        this.clearStopTimeout();
         this.disconnect();
+        Audio.removeSound(this);
+    }
+
+    clearStopTimeout() {
+        if (this.stopTimeout !== undefined) {
+            clearTimeout(this.stopTimeout);
+            this.stopTimeout = undefined;
+        }
     }
 
     getVolume() {
@@ -288,7 +302,8 @@ export default class Sound extends Entity {
             );
         }
 
-        setTimeout(this.reset, delay);
+        this.clearStopTimeout();
+        this.stopTimeout = setTimeout(this.reset, delay);
 
         return this;
     }
