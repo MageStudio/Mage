@@ -296,7 +296,9 @@ export default class Sound extends Entity {
     stop(delay = DEFAULT_AUDIO_NODE_RAMP_TIME, ramp = AUDIO_RAMPS.LINEAR) {
         const audioDelay = delay / 1000; // linearRampToValueAtTime/exponentialRampToValueAtTime requires time to be expressed in seconds
 
-        if (ramp === AUDIO_RAMPS.LINEAR) {
+        if (!this.volumeNode) {
+            // deferred sound that was never set up: nothing to ramp
+        } else if (ramp === AUDIO_RAMPS.LINEAR) {
             this.volumeNode.gain.linearRampToValueAtTime(
                 ALMOST_ZERO,
                 Audio.context.currentTime + audioDelay,

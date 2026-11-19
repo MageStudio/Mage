@@ -128,4 +128,21 @@ describe("Sound disposal", () => {
         spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1));
         expect(AudioSingleton.levelSounds).toEqual([]);
     });
+
+    it("S10: disposing a deferred (never set up) sound does not throw and Audio.dispose still disposes the rest", () => {
+        const deferred = new Sound({ source: "a.mp3", setupConfig: { deferred: true } });
+        const other = new Sound({ source: "a.mp3" });
+        const otherSpy = jest.spyOn(other, "dispose");
+
+        expect(deferred.volumeNode).toBeNull();
+        expect(() => deferred.dispose()).not.toThrow();
+        expect(AudioSingleton.levelSounds).not.toContain(deferred);
+
+        const deferred2 = new Sound({ source: "a.mp3", setupConfig: { deferred: true } });
+        expect(() => AudioSingleton.dispose()).not.toThrow();
+        expect(deferred2.isDisposed()).toBe(true);
+        expect(otherSpy).toHaveBeenCalledTimes(1);
+        expect(AudioSingleton.levelSounds).toEqual([]);
+        jest.runAllTimers();
+    });
 });
