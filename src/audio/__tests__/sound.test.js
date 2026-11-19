@@ -118,4 +118,19 @@ describe("Sound disposal", () => {
         spies.forEach(spy => expect(spy).toHaveBeenCalledTimes(1));
         expect(Audio.levelSounds.length).toBe(0);
     });
+
+    test("disposing a deferred sound does not throw and Audio.dispose still clears every level sound", () => {
+        const deferred = new Sound({ source: "boom", setupConfig: { deferred: true } });
+        const other = makeSound();
+
+        expect(deferred.volumeNode).toBeNull();
+        expect(() => deferred.dispose()).not.toThrow();
+        expect(Audio.levelSounds).toEqual([other]);
+
+        const deferredToo = new Sound({ source: "boom", setupConfig: { deferred: true } });
+        expect(() => Audio.dispose()).not.toThrow();
+        expect(Audio.levelSounds.length).toBe(0);
+        expect(deferredToo.isDisposed()).toBe(true);
+        expect(other.isDisposed()).toBe(true);
+    });
 });

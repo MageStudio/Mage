@@ -206,7 +206,10 @@ export default class Sound extends Entity {
     dispose() {
         this.disposing = true;
         super.dispose();
-        this.stop();
+        // A deferred sound that never played has no volumeNode to ramp down.
+        if (this.volumeNode) {
+            this.stop();
+        }
         this.clearStopTimeout();
         this.disconnect();
         Audio.removeSound(this);
