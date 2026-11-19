@@ -274,4 +274,25 @@ describe("Entity", () => {
             expect(listener).not.toHaveBeenCalled();
         });
     });
+
+    describe("disposeScripts", () => {
+        const makeScript = () => ({ onDispose: jest.fn(), __setStartedFlag: jest.fn() });
+
+        test("calls onDispose and resets started flag on enabled and disabled scripts", () => {
+            const on = makeScript();
+            const off = makeScript();
+            entity.hasScripts = () => true;
+            entity.allScripts = () => [
+                { script: on, enabled: true },
+                { script: off, enabled: false },
+            ];
+
+            entity.disposeScripts();
+
+            expect(on.onDispose).toHaveBeenCalledTimes(1);
+            expect(on.__setStartedFlag).toHaveBeenCalledWith(false);
+            expect(off.onDispose).toHaveBeenCalledTimes(1);
+            expect(off.__setStartedFlag).toHaveBeenCalledWith(false);
+        });
+    });
 });

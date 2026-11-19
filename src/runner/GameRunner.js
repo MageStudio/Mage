@@ -206,6 +206,7 @@ export class GameRunner {
         return new Promise((resolve, reject) => {
             if (!this.has(path)) {
                 reject(PATH_NOT_FOUND);
+                return;
             }
 
             if (this.running) {

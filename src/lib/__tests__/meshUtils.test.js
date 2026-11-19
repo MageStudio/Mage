@@ -360,6 +360,14 @@ describe("meshUtils.js", () => {
                 expect(dispose).toHaveBeenCalled();
             });
 
+            test("disposes every material when material is an array", () => {
+                const a = jest.fn();
+                const b = jest.fn();
+                disposeMaterial({ material: [{ dispose: a }, { dispose: b }] });
+                expect(a).toHaveBeenCalledTimes(1);
+                expect(b).toHaveBeenCalledTimes(1);
+            });
+
             test("does nothing when no material", () => {
                 expect(() => disposeMaterial({})).not.toThrow();
             });

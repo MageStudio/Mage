@@ -137,7 +137,7 @@ export const disposeTextures = mesh => {
 
 export const disposeMaterial = mesh => {
     if (hasMaterial(mesh)) {
-        mesh.material.dispose && mesh.material.dispose();
+        processMaterial(mesh.material, material => material?.dispose && material.dispose());
     }
 };
 

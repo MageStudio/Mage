@@ -334,11 +334,9 @@ export default class Entity extends EventDispatcher {
         if (this.hasScripts()) {
             const length = this.allScripts().length;
             for (let i = 0; i < length; i++) {
-                const { script, enabled } = this.allScripts()[i];
-                if (enabled) {
-                    script.onDispose();
-                    script.__setStartedFlag(false);
-                }
+                const { script } = this.allScripts()[i];
+                script.onDispose();
+                script.__setStartedFlag(false);
             }
         }
     }
