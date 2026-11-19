@@ -339,10 +339,44 @@ export class World {
         }
     };
 
+    // Remove an element from the simulation and free its Ammo objects. The record
+    // is deleted up front so the next simulate() tick can never touch freed memory,
+    // and a repeated dispose of the same uuid finds nothing and is a no-op.
     disposeBody({ uuid }) {
         const element = this.getElement(uuid);
-        this.dynamicsWorld.removeRigidBody(element.body);
-        this.removeElement(uuid);
+
+        if (!element) {
+            console.warn("[Physics Worker] disposeBody: element not found for uuid:", uuid);
+            return;
+        }
+
+        delete this.elements[uuid];
+
+        if (element.type === TYPES.VEHICLE) {
+            this.dynamicsWorld.removeAction(element.vehicle);
+            this.dynamicsWorld.removeRigidBody(element.chassis);
+
+            Ammo.destroy(element.vehicle);
+            Ammo.destroy(element.tuning);
+            Ammo.destroy(element.rayCaster);
+            Ammo.destroy(element.chassis);
+            Ammo.destroy(element.motionState);
+            Ammo.destroy(element.shape);
+        } else if (element.body) {
+            const { body } = element;
+            const { motionState, collisionShape } = body;
+
+            this.dynamicsWorld.removeRigidBody(body);
+
+            Ammo.destroy(body);
+            if (motionState) Ammo.destroy(motionState);
+            if (collisionShape) {
+                // Parent shapes first, then whatever they referenced.
+                Ammo.destroy(collisionShape);
+                (collisionShape.childShapes || []).forEach(child => Ammo.destroy(child));
+                (collisionShape.resources || []).forEach(resource => Ammo.destroy(resource));
+            }
+        }
 
         dispatcher.sendElementDisposed({ uuid });
     }

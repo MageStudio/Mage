@@ -19,7 +19,12 @@ import dispatcher from "./lib/dispatcher";
 import world from "./world";
 import { PHYSICS_EVENTS } from "../messages";
 
+// Set when TERMINATE arrives before Ammo has finished loading.
+let terminatedBeforeLoad = false;
+
 const handleLoadEvent = options => Ammo => {
+    if (terminatedBeforeLoad) return;
+
     self.Ammo = Ammo;
 
     onmessage = ({ data }) => {
@@ -103,6 +108,11 @@ onmessage = ({ data }) => {
     switch (data.event) {
         case PHYSICS_EVENTS.LOAD.AMMO:
             loadAmmo(data);
+            break;
+        case PHYSICS_EVENTS.TERMINATE:
+            // Nothing to free yet: just stop the pending load from starting a world.
+            terminatedBeforeLoad = true;
+            dispatcher.sendTerminateEvent();
             break;
         default:
             break;
