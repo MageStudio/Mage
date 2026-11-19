@@ -80,7 +80,7 @@ describe("Particles dead emitter disposal", () => {
         jest.useRealTimers();
     });
 
-    test("a dead proton emitter is removed from proton, disposed, and leaves the universe", () => {
+    test("S9: a dead proton emitter is removed from proton, disposed, and leaves the universe", () => {
         const emitter = new ProtonParticleEmitter({ name: "single" });
         const body = emitter.getBody();
         const disposeSpy = jest.spyOn(emitter, "dispose");
@@ -96,7 +96,7 @@ describe("Particles dead emitter disposal", () => {
         expect(particles.emitters.has(emitter.uuid())).toBe(false);
     });
 
-    test("a dead group removes each member system from proton and disposes the group", () => {
+    test("S9: a dead group removes each member system from proton and disposes the group", () => {
         const a = new ProtonParticleEmitter({ name: "a" });
         const b = new ProtonParticleEmitter({ name: "b" });
         const group = new ParticleEmitterGroup({ name: "group", system: [a, b] });

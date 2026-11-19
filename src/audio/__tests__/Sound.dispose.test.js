@@ -52,7 +52,7 @@ describe("Sound disposal", () => {
 
     const create = () => new Sound({ source: "clip" });
 
-    test("dispose followed by timers does not rebuild or reconnect the audio graph", () => {
+    test("S10: dispose followed by timers does not rebuild or reconnect the audio graph", () => {
         const sound = create();
         const setupAudio = jest.spyOn(sound, "setupAudio");
         const connect = jest.spyOn(sound, "connect");
