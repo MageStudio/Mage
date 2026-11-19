@@ -64,7 +64,7 @@ export default class FlyControl extends EventDispatcher {
     dispose = () => {
         this.domElement.removeEventListener("contextmenu", this.onContextMenu, false);
         this.domElement.removeEventListener("mousedown", this.onMouseDown, false);
-        this.domElement.removeEventListener("mousemove", this.onMoudeMove, false);
+        this.domElement.removeEventListener("mousemove", this.onMouseMove, false);
         this.domElement.removeEventListener("mouseup", this.onMouseUp, false);
 
         window.removeEventListener("keydown", this.onKeyDown, false);

@@ -152,6 +152,7 @@ export class Level extends EventDispatcher {
         Instancing.setEnabled(false);
         Scene.dispose();
         Controls.dispose();
+        Input.disable();
         this.cancelNextAnimationFrame();
 
         this.onDispose();

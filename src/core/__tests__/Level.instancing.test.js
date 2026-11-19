@@ -26,7 +26,10 @@ jest.mock("../Stats", () => ({
     default: { update: jest.fn(), init: jest.fn() },
 }));
 jest.mock("../Assets", () => ({ __esModule: true, default: { update: jest.fn() } }));
-jest.mock("../input/Input", () => ({ __esModule: true, default: { update: jest.fn() } }));
+jest.mock("../input/Input", () => ({
+    __esModule: true,
+    default: { update: jest.fn(), disable: jest.fn() },
+}));
 jest.mock("../universe", () => ({ __esModule: true, default: { bigfreeze: jest.fn() } }));
 jest.mock("../../audio/Audio", () => ({ __esModule: true, default: { dispose: jest.fn() } }));
 jest.mock("../../physics", () => ({

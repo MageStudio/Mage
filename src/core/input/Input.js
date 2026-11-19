@@ -101,6 +101,14 @@ export class Input extends Pausable() {
 
     enable(options = DEFAULT_ENABLE_OPTIONS) {
         if (!this.enabled) {
+            // disable* drops the devices; build fresh ones so a later enable works.
+            this.keyboard = this.keyboard || new Keyboard();
+            this.mouse = this.mouse || new Mouse();
+            this.gamepad = this.gamepad || new Gamepad();
+            [this.keyboard, this.mouse, this.gamepad].forEach(device =>
+                device.setPaused(this.paused),
+            );
+
             this.enableGamepad(options.gamepad);
             this.enableKeyboard(options.keyboard);
             this.enableMouse(options.mouse);
@@ -123,22 +131,19 @@ export class Input extends Pausable() {
 
     enableGamepad(options = {}) {
         this.gamepad.enable(options);
-        this.gamepad.addEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this), {
+        this.gamepad.addEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate, {
             whilePaused: true,
         });
-        this.gamepad.addEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate.bind(this), {
+        this.gamepad.addEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate, {
             whilePaused: true,
         });
-        this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this), {
+        this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate, {
             whilePaused: true,
         });
-        this.gamepad.addEventListener(BUTTON_PRESSED_EVENT, this.propagate.bind(this), {
+        this.gamepad.addEventListener(BUTTON_PRESSED_EVENT, this.propagate, {
             whilePaused: true,
         });
-        this.gamepad.addEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this), {
-            whilePaused: true,
-        });
-        this.gamepad.addEventListener(AXIS_CHANGE_EVENT, this.propagate.bind(this), {
+        this.gamepad.addEventListener(AXIS_CHANGE_EVENT, this.propagate, {
             whilePaused: true,
         });
     }
@@ -146,20 +151,20 @@ export class Input extends Pausable() {
     enableKeyboard(options = {}) {
         this.keyboard.enable(options);
 
-        this.keyboard.addEventListener(KEY_DOWN, this.propagate.bind(this), { whilePaused: true });
-        this.keyboard.addEventListener(KEY_UP, this.propagate.bind(this), { whilePaused: true });
-        this.keyboard.addEventListener(KEY_COMBO, this.propagate.bind(this), { whilePaused: true });
+        this.keyboard.addEventListener(KEY_DOWN, this.propagate, { whilePaused: true });
+        this.keyboard.addEventListener(KEY_UP, this.propagate, { whilePaused: true });
+        this.keyboard.addEventListener(KEY_COMBO, this.propagate, { whilePaused: true });
     }
 
     enableMouse(options = {}) {
         this.mouse.enable(options);
-        this.mouse.addEventListener(MOUSE_DOWN, this.propagate.bind(this), { whilePaused: true });
-        this.mouse.addEventListener(MOUSE_UP, this.propagate.bind(this), { whilePaused: true });
-        this.mouse.addEventListener(MOUSE_MOVE, this.propagate.bind(this), { whilePaused: true });
-        this.mouse.addEventListener(ELEMENT_CLICK, this.propagate.bind(this), {
+        this.mouse.addEventListener(MOUSE_DOWN, this.propagate, { whilePaused: true });
+        this.mouse.addEventListener(MOUSE_UP, this.propagate, { whilePaused: true });
+        this.mouse.addEventListener(MOUSE_MOVE, this.propagate, { whilePaused: true });
+        this.mouse.addEventListener(ELEMENT_CLICK, this.propagate, {
             whilePaused: true,
         });
-        this.mouse.addEventListener(ELEMENT_DESELECT, this.propagate.bind(this), {
+        this.mouse.addEventListener(ELEMENT_DESELECT, this.propagate, {
             whilePaused: true,
         });
     }
@@ -170,30 +175,31 @@ export class Input extends Pausable() {
 
     disableKeyboard() {
         this.keyboard.disable();
-        this.keyboard.removeEventListener(KEY_DOWN, this.propagate.bind(this));
-        this.keyboard.removeEventListener(KEY_UP, this.propagate.bind(this));
+        this.keyboard.removeEventListener(KEY_DOWN, this.propagate);
+        this.keyboard.removeEventListener(KEY_UP, this.propagate);
+        this.keyboard.removeEventListener(KEY_COMBO, this.propagate);
 
         this.keyboard = undefined;
     }
 
     disableMouse() {
         this.mouse.disable();
-        this.mouse.removeEventListener(MOUSE_DOWN, this.propagate.bind(this));
-        this.mouse.removeEventListener(MOUSE_UP, this.propagate.bind(this));
-        this.mouse.removeEventListener(MOUSE_MOVE, this.propagate.bind(this));
-        this.mouse.removeEventListener(ELEMENT_CLICK, this.propagate.bind(this));
-        this.mouse.removeEventListener(ELEMENT_DESELECT, this.propagate.bind(this));
+        this.mouse.removeEventListener(MOUSE_DOWN, this.propagate);
+        this.mouse.removeEventListener(MOUSE_UP, this.propagate);
+        this.mouse.removeEventListener(MOUSE_MOVE, this.propagate);
+        this.mouse.removeEventListener(ELEMENT_CLICK, this.propagate);
+        this.mouse.removeEventListener(ELEMENT_DESELECT, this.propagate);
 
         this.mouse = undefined;
     }
 
     disableGamepad() {
         this.gamepad.disable();
-        this.gamepad.removeEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate.bind(this));
-        this.gamepad.removeEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate.bind(this));
-        this.gamepad.removeEventListener(BUTTON_PRESSED_EVENT, this.propagate.bind(this));
-        this.gamepad.removeEventListener(BUTTON_RELEASED_EVENT, this.propagate.bind(this));
-        this.gamepad.removeEventListener(AXIS_CHANGE_EVENT, this.propagate.bind(this));
+        this.gamepad.removeEventListener(GAMEPAD_CONNECTED_EVENT, this.propagate);
+        this.gamepad.removeEventListener(GAMEPAD_DISCONNECTED_EVENT, this.propagate);
+        this.gamepad.removeEventListener(BUTTON_PRESSED_EVENT, this.propagate);
+        this.gamepad.removeEventListener(BUTTON_RELEASED_EVENT, this.propagate);
+        this.gamepad.removeEventListener(AXIS_CHANGE_EVENT, this.propagate);
 
         this.gamepad = null;
     }

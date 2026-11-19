@@ -105,9 +105,9 @@ export default class Keyboard extends Pausable() {
             this.listenTo(options.combos);
         }
 
-        window.addEventListener(KEY_DOWN.toLowerCase(), this.handleKeydown.bind(this));
-        window.addEventListener(KEY_UP.toLowerCase(), this.handleKeyup.bind(this));
-        window.addEventListener(KEY_PRESS.toLowerCase(), this.handleKeypress.bind(this));
+        window.addEventListener(KEY_DOWN.toLowerCase(), this.handleKeydown);
+        window.addEventListener(KEY_UP.toLowerCase(), this.handleKeyup);
+        window.addEventListener(KEY_PRESS.toLowerCase(), this.handleKeypress);
     }
 
     disable() {
@@ -116,9 +116,9 @@ export default class Keyboard extends Pausable() {
         this.keysDown.clear();
 
         hotkeys.unbind();
-        window.removeEventListener(KEY_DOWN.toLowerCase(), this.handleKeydown.bind(this));
-        window.removeEventListener(KEY_UP.toLowerCase(), this.handleKeyup.bind(this));
-        window.removeEventListener(KEY_PRESS.toLowerCase(), this.handleKeypress.bind(this));
+        window.removeEventListener(KEY_DOWN.toLowerCase(), this.handleKeydown);
+        window.removeEventListener(KEY_UP.toLowerCase(), this.handleKeyup);
+        window.removeEventListener(KEY_PRESS.toLowerCase(), this.handleKeypress);
     }
 
     isPressed(key) {
