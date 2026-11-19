@@ -84,12 +84,12 @@ export default class FirstPersonControl extends EventDispatcher {
     }
 
     init() {
-        document.addEventListener("click", this.onClick.bind(this), false);
-        document.addEventListener("mousemove", this.onMouseMove.bind(this), false);
-        document.addEventListener("keydown", this.onKeyDown.bind(this), false);
-        document.addEventListener("keyup", this.onKeyUp.bind(this), false);
-        document.addEventListener("pointerlockchange", this.onPointerlockChange.bind(this), false);
-        document.addEventListener("pointerlockerror", this.onPointerlockError.bind(this), false);
+        document.addEventListener("click", this.onClick, false);
+        document.addEventListener("mousemove", this.onMouseMove, false);
+        document.addEventListener("keydown", this.onKeyDown, false);
+        document.addEventListener("keyup", this.onKeyUp, false);
+        document.addEventListener("pointerlockchange", this.onPointerlockChange, false);
+        document.addEventListener("pointerlockerror", this.onPointerlockError, false);
     }
 
     dispose() {
@@ -118,13 +118,13 @@ export default class FirstPersonControl extends EventDispatcher {
         };
     })();
 
-    onClick() {
+    onClick = () => {
         if (!this.isLocked) {
             this.lock();
         }
-    }
+    };
 
-    onKeyDown(event) {
+    onKeyDown = event => {
         switch (event.keyCode) {
             case 38: // up
             case 87: // w
@@ -147,9 +147,9 @@ export default class FirstPersonControl extends EventDispatcher {
                 this.canJump = false;
                 break;
         }
-    }
+    };
 
-    onKeyUp(event) {
+    onKeyUp = event => {
         switch (event.keyCode) {
             case 38: // up
             case 87: // w
@@ -168,9 +168,9 @@ export default class FirstPersonControl extends EventDispatcher {
                 this.movement.right = false;
                 break;
         }
-    }
+    };
 
-    onMouseMove(event) {
+    onMouseMove = event => {
         if (!this.isLocked) return;
 
         const movementX = event.movementX || event.mozMovementX || event.webkitMovementX || 0;
@@ -189,9 +189,9 @@ export default class FirstPersonControl extends EventDispatcher {
         this.camera.setQuaternion(quaternion);
 
         this.dispatchEvent(CHANGE_EVENT);
-    }
+    };
 
-    onPointerlockChange() {
+    onPointerlockChange = () => {
         if (document.pointerLockElement === this.domElement) {
             this.dispatchEvent(LOCK_EVENT);
             this.isLocked = true;
@@ -199,11 +199,11 @@ export default class FirstPersonControl extends EventDispatcher {
             this.dispatchEvent(UNLOCK_EVENT);
             this.isLocked = false;
         }
-    }
+    };
 
-    onPointerlockError(e) {
+    onPointerlockError = e => {
         console.error("Unable to use Pointer Lock API", e);
-    }
+    };
 
     moveForward(distance) {
         // move forward parallel to the xz-plane

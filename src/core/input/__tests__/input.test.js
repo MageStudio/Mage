@@ -21,8 +21,8 @@ jest.mock("../../../lib/features", () => ({
 
 import { Input } from "../Input";
 import { KEY_DOWN } from "../Keyboard";
-import { MOUSE_UP } from "../Mouse";
-import { BUTTON_RELEASED_EVENT } from "../Gamepad";
+import Mouse, { MOUSE_UP } from "../Mouse";
+import Gamepad, { BUTTON_RELEASED_EVENT } from "../Gamepad";
 import { installWindowStub, windowEventsOfType } from "./helpers";
 
 describe("Input pausing", () => {
@@ -179,5 +179,45 @@ describe("Input pausing", () => {
         input.dispatchMissedReleases();
 
         expect(released).toHaveBeenCalledTimes(1);
+    });
+});
+
+describe("Input listener teardown", () => {
+    beforeEach(() => {
+        installWindowStub();
+        // Mouse and Gamepad enable/disable touch DOM and THREE; only the Input wiring matters here.
+        [Mouse, Gamepad].forEach(Device => {
+            jest.spyOn(Device.prototype, "enable").mockImplementation(() => {});
+            jest.spyOn(Device.prototype, "disable").mockImplementation(() => {});
+        });
+    });
+
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
+
+    it("removes every propagate registration on disable", () => {
+        const input = new Input();
+        input.enable();
+        const devices = [input.keyboard, input.mouse, input.gamepad];
+
+        input.disable();
+
+        devices.forEach(device => {
+            Object.values(device._listeners || {}).forEach(list => {
+                expect(list).toHaveLength(0);
+            });
+        });
+    });
+
+    it("can be enabled again after disable", () => {
+        const input = new Input();
+        input.enable();
+        input.disable();
+
+        expect(() => input.enable()).not.toThrow();
+        expect(input.keyboard).toBeDefined();
+        expect(input.mouse).toBeDefined();
+        expect(input.gamepad).toBeDefined();
     });
 });
