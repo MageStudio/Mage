@@ -19,7 +19,13 @@ import dispatcher from "./lib/dispatcher";
 import world from "./world";
 import { PHYSICS_EVENTS } from "../messages";
 
+// Set when TERMINATE arrives before Ammo has finished loading.
+let terminated = false;
+
 const handleLoadEvent = options => Ammo => {
+    // terminated while loading: never build the world or start simulating
+    if (terminated) return;
+
     self.Ammo = Ammo;
 
     onmessage = ({ data }) => {
@@ -103,6 +109,12 @@ onmessage = ({ data }) => {
     switch (data.event) {
         case PHYSICS_EVENTS.LOAD.AMMO:
             loadAmmo(data);
+            break;
+        case PHYSICS_EVENTS.TERMINATE:
+            // Nothing exists to tear down yet; remember it so the pending
+            // Ammo load becomes a no-op, and acknowledge.
+            terminated = true;
+            dispatcher.sendTerminateEvent();
             break;
         default:
             break;

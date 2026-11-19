@@ -42,6 +42,7 @@ const installAmmo = (initialFlags = CF_STATIC_OBJECT) => {
     const body = makeFakeBody(initialFlags);
     const shape = { calculateLocalInertia: jest.fn() };
     global.Ammo = {
+        destroy: jest.fn(),
         btTransform: function () {
             return { setIdentity: jest.fn(), setOrigin: jest.fn(), setRotation: jest.fn() };
         },

@@ -54,18 +54,25 @@ export const createRigidBody = (shape, options) => {
     } = options;
 
     const transform = new Ammo.btTransform();
+    const origin = new Ammo.btVector3(position.x, position.y, position.z);
+    const rotation = new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
 
     transform.setIdentity();
-    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
-    transform.setRotation(
-        new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-    );
+    transform.setOrigin(origin);
+    transform.setRotation(rotation);
     const motionState = new Ammo.btDefaultMotionState(transform);
     const localInertia = new Ammo.btVector3(0, 0, 0);
     shape.calculateLocalInertia(mass, localInertia);
 
     const rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, motionState, shape, localInertia);
     const body = new Ammo.btRigidBody(rbInfo);
+
+    // Bullet copies all of these; only the motion state and shape live on.
+    Ammo.destroy(rbInfo);
+    Ammo.destroy(localInertia);
+    Ammo.destroy(transform);
+    Ammo.destroy(origin);
+    Ammo.destroy(rotation);
 
     if (mass > 0) {
         body.setFriction(friction);
@@ -87,6 +94,11 @@ export const createRigidBody = (shape, options) => {
 
     // storing uuid for future reference
     body.uuid = uuid;
+
+    // getMotionState()/getCollisionShape() return fresh wrappers without custom
+    // properties, so keep the owning wrappers here for disposeBody.
+    body.motionState = motionState;
+    body.collisionShape = shape;
 
     // Authoritative position for kinematic bodies. Bullet extrapolates a
     // kinematic body's transform from its derived velocity; if we read that
@@ -215,9 +227,9 @@ export const addBox = data => {
         collisionEvents = false,
     } = data;
 
-    const geometry = new Ammo.btBoxShape(
-        new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5),
-    );
+    const halfExtents = new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5);
+    const geometry = new Ammo.btBoxShape(halfExtents);
+    Ammo.destroy(halfExtents);
     const body = createRigidBody(geometry, {
         uuid,
         position,
@@ -312,7 +324,10 @@ const createLeafShape = ({
     if (colliderType === COLLIDER_TYPES.SPHERE) {
         return new Ammo.btSphereShape(radius);
     }
-    return new Ammo.btBoxShape(new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5));
+    const halfExtents = new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5);
+    const box = new Ammo.btBoxShape(halfExtents);
+    Ammo.destroy(halfExtents);
+    return box;
 };
 
 // Descriptor kept per child shape so calculateCollisions can resolve which
@@ -352,6 +367,8 @@ export const addCompound = data => {
 
     const compound = new Ammo.btCompoundShape();
     const childMap = [];
+    // Leaf shapes are owned by the compound's body; disposeBody destroys them.
+    compound.childShapes = [];
 
     shapes.forEach((shape, index) => {
         const leaf = createLeafShape(shape);
@@ -360,11 +377,16 @@ export const addCompound = data => {
         localTransform.setIdentity();
         const lp = shape.localPosition || { x: 0, y: 0, z: 0 };
         const lq = shape.localQuaternion || { x: 0, y: 0, z: 0, w: 1 };
-        localTransform.setOrigin(new Ammo.btVector3(lp.x, lp.y, lp.z));
-        localTransform.setRotation(new Ammo.btQuaternion(lq.x, lq.y, lq.z, lq.w));
+        const localOrigin = new Ammo.btVector3(lp.x, lp.y, lp.z);
+        const localRotation = new Ammo.btQuaternion(lq.x, lq.y, lq.z, lq.w);
+        localTransform.setOrigin(localOrigin);
+        localTransform.setRotation(localRotation);
 
         compound.addChildShape(localTransform, leaf);
+        compound.childShapes.push(leaf);
         Ammo.destroy(localTransform);
+        Ammo.destroy(localOrigin);
+        Ammo.destroy(localRotation);
 
         childMap.push(makeChildDescriptor(shape, index));
     });
@@ -415,7 +437,8 @@ export const setPosition = data => {
     const transform = new Ammo.btTransform();
 
     body.getWorldTransform(transform);
-    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
+    const origin = new Ammo.btVector3(position.x, position.y, position.z);
+    transform.setOrigin(origin);
 
     body.setWorldTransform(transform);
     // Also update motion state so static bodies (mass=0) reflect the change
@@ -423,6 +446,9 @@ export const setPosition = data => {
     if (motionState) {
         motionState.setWorldTransform(transform);
     }
+
+    Ammo.destroy(origin);
+    Ammo.destroy(transform);
 };
 
 export const resetElement = data => {
@@ -432,10 +458,10 @@ export const resetElement = data => {
     const transform = new Ammo.btTransform();
 
     body.getWorldTransform(transform);
-    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
-    transform.setRotation(
-        new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-    );
+    const origin = new Ammo.btVector3(position.x, position.y, position.z);
+    const rotation = new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+    transform.setOrigin(origin);
+    transform.setRotation(rotation);
 
     body.setWorldTransform(transform);
     // Also update motion state so static bodies (mass=0) reflect the change
@@ -443,6 +469,10 @@ export const resetElement = data => {
     if (motionState) {
         motionState.setWorldTransform(transform);
     }
+
+    Ammo.destroy(origin);
+    Ammo.destroy(rotation);
+    Ammo.destroy(transform);
 };
 
 export const applyImpuse = ({ uuid, impulse = DEFAULT_IMPULSE }) => {
@@ -487,18 +517,22 @@ export const setQuaternion = data => {
     // position (e.g. a dynamic body being oriented explicitly).
     const kp = body.kinematicPosition;
     if (kp && (body.getCollisionFlags() & CF_KINEMATIC_OBJECT) !== 0) {
-        transform.setOrigin(new Ammo.btVector3(kp.x, kp.y, kp.z));
+        const origin = new Ammo.btVector3(kp.x, kp.y, kp.z);
+        transform.setOrigin(origin);
+        Ammo.destroy(origin);
     }
 
-    transform.setRotation(
-        new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-    );
+    const rotation = new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
+    transform.setRotation(rotation);
     body.setWorldTransform(transform);
     // Also update motion state so static bodies (mass=0) reflect the change
     const motionState = body.getMotionState();
     if (motionState) {
         motionState.setWorldTransform(transform);
     }
+
+    Ammo.destroy(rotation);
+    Ammo.destroy(transform);
 };
 
 export const handleElementUpdate = (

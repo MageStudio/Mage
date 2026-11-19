@@ -53,21 +53,30 @@ export const addVehicle = data => {
     const { stiffness = 20.0, damping = 2.3, compression = 4.4, restLength = 0.6 } = suspensions;
 
     // Chassis
-    const geometry = new Ammo.btBoxShape(
-        new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5),
-    );
+    const halfExtents = new Ammo.btVector3(width * 0.5, height * 0.5, length * 0.5);
+    const geometry = new Ammo.btBoxShape(halfExtents);
+    Ammo.destroy(halfExtents);
     const transform = new Ammo.btTransform();
+    const origin = new Ammo.btVector3(position.x, position.y, position.z);
+    const rotation = new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w);
     transform.setIdentity();
-    transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
-    transform.setRotation(
-        new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
-    );
+    transform.setOrigin(origin);
+    transform.setRotation(rotation);
     const motionState = new Ammo.btDefaultMotionState(transform);
     const localInertia = new Ammo.btVector3(0, 0, 0);
     geometry.calculateLocalInertia(mass, localInertia);
-    const chassis = new Ammo.btRigidBody(
-        new Ammo.btRigidBodyConstructionInfo(mass, motionState, geometry, localInertia),
+    const constructionInfo = new Ammo.btRigidBodyConstructionInfo(
+        mass,
+        motionState,
+        geometry,
+        localInertia,
     );
+    const chassis = new Ammo.btRigidBody(constructionInfo);
+    Ammo.destroy(constructionInfo);
+    Ammo.destroy(localInertia);
+    Ammo.destroy(transform);
+    Ammo.destroy(origin);
+    Ammo.destroy(rotation);
     chassis.setActivationState(DISABLE_DEACTIVATION);
     world.addRigidBody(chassis);
 
@@ -81,8 +90,9 @@ export const addVehicle = data => {
     const wheelDirectionCS0 = new Ammo.btVector3(0, -1, 0);
     const wheelAxleCS = new Ammo.btVector3(-1, 0, 0);
 
-    const addWheel = (isFront, pos, radius) => {
-        var wheelInfo = vehicle.addWheel(
+    const addWheel = (isFront, x, y, z, radius) => {
+        const pos = new Ammo.btVector3(x, y, z);
+        const wheelInfo = vehicle.addWheel(
             pos,
             wheelDirectionCS0,
             wheelAxleCS,
@@ -97,28 +107,16 @@ export const addVehicle = data => {
         wheelInfo.set_m_wheelsDampingCompression(compression);
         wheelInfo.set_m_frictionSlip(friction);
         wheelInfo.set_m_rollInfluence(rollInfluence);
+        Ammo.destroy(pos);
     };
 
-    addWheel(
-        true,
-        new Ammo.btVector3(wheelHalfTrackFront, wheelAxisHeightFront, axisPositionFront),
-        wheelRadiusFront,
-    );
-    addWheel(
-        true,
-        new Ammo.btVector3(-wheelHalfTrackFront, wheelAxisHeightFront, axisPositionFront),
-        wheelRadiusFront,
-    );
-    addWheel(
-        false,
-        new Ammo.btVector3(-wheelHalfTrackBack, wheelAxisHeightBack, axisPositionBack),
-        wheelRadiusBack,
-    );
-    addWheel(
-        false,
-        new Ammo.btVector3(wheelHalfTrackBack, wheelAxisHeightBack, axisPositionBack),
-        wheelRadiusBack,
-    );
+    addWheel(true, wheelHalfTrackFront, wheelAxisHeightFront, axisPositionFront, wheelRadiusFront);
+    addWheel(true, -wheelHalfTrackFront, wheelAxisHeightFront, axisPositionFront, wheelRadiusFront);
+    addWheel(false, -wheelHalfTrackBack, wheelAxisHeightBack, axisPositionBack, wheelRadiusBack);
+    addWheel(false, wheelHalfTrackBack, wheelAxisHeightBack, axisPositionBack, wheelRadiusBack);
+
+    Ammo.destroy(wheelDirectionCS0);
+    Ammo.destroy(wheelAxleCS);
 
     vehicle.uuid = uuid;
 
@@ -126,6 +124,12 @@ export const addVehicle = data => {
         type: TYPES.VEHICLE,
         uuid,
         vehicle: vehicle,
+        // kept so disposeBody can tear the vehicle down
+        chassis,
+        motionState,
+        shape: geometry,
+        tuning,
+        rayCaster,
         wheels,
         options: data,
         state: DEFAULT_VEHICLE_STATE,
@@ -141,9 +145,12 @@ export const setVehiclePosition = data => {
         const transform = new Ammo.btTransform();
 
         body.getWorldTransform(transform);
-        transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
+        const origin = new Ammo.btVector3(position.x, position.y, position.z);
+        transform.setOrigin(origin);
 
         body.setWorldTransform(transform);
+        Ammo.destroy(origin);
+        Ammo.destroy(transform);
     }
 };
 
@@ -156,11 +163,17 @@ export const setVehicleQuaternion = data => {
         const transform = new Ammo.btTransform();
 
         body.getWorldTransform(transform);
-        transform.setRotation(
-            new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
+        const rotation = new Ammo.btQuaternion(
+            quaternion.x,
+            quaternion.y,
+            quaternion.z,
+            quaternion.w,
         );
+        transform.setRotation(rotation);
 
         body.setWorldTransform(transform);
+        Ammo.destroy(rotation);
+        Ammo.destroy(transform);
     }
 };
 
@@ -175,12 +188,20 @@ export const resetVehicle = data => {
         body.getWorldTransform(transform);
 
         transform.setIdentity();
-        transform.setOrigin(new Ammo.btVector3(position.x, position.y, position.z));
-        transform.setRotation(
-            new Ammo.btQuaternion(quaternion.x, quaternion.y, quaternion.z, quaternion.w),
+        const origin = new Ammo.btVector3(position.x, position.y, position.z);
+        const rotation = new Ammo.btQuaternion(
+            quaternion.x,
+            quaternion.y,
+            quaternion.z,
+            quaternion.w,
         );
+        transform.setOrigin(origin);
+        transform.setRotation(rotation);
 
         body.setWorldTransform(transform);
+        Ammo.destroy(origin);
+        Ammo.destroy(rotation);
+        Ammo.destroy(transform);
     }
 };
 

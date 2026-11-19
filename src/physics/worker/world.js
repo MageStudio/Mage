@@ -226,7 +226,7 @@ export class World {
         Object.keys(this.elements).forEach(uuid => {
             const element = this.getElement(uuid);
 
-            if (element) {
+            if (element && !element.deleted) {
                 switch (element.type) {
                     case TYPES.BOX:
                     case TYPES.SPHERE:
@@ -339,10 +339,47 @@ export class World {
         }
     };
 
+    // Destroy a shape and what it owns. Parents go before children: a compound
+    // before its leaf shapes, a BVH shape before its triangle mesh.
+    destroyShape = shape => {
+        if (!shape) return;
+
+        Ammo.destroy(shape);
+        (shape.childShapes || []).forEach(child => Ammo.destroy(child));
+        (shape.resources || []).forEach(resource => Ammo.destroy(resource));
+    };
+
     disposeBody({ uuid }) {
         const element = this.getElement(uuid);
-        this.dynamicsWorld.removeRigidBody(element.body);
-        this.removeElement(uuid);
+
+        if (!element || element.deleted) {
+            console.warn("[Physics Worker] disposeBody: no element for uuid:", uuid);
+            return;
+        }
+
+        // Drop the record first so no tick can reach the objects destroyed below
+        // (and an ADD with the same uuid can follow straight away).
+        delete this.elements[uuid];
+
+        if (element.type === TYPES.VEHICLE) {
+            const { vehicle, chassis, motionState, shape, tuning, rayCaster } = element;
+
+            this.dynamicsWorld.removeAction(vehicle);
+            this.dynamicsWorld.removeRigidBody(chassis);
+            Ammo.destroy(vehicle);
+            Ammo.destroy(rayCaster);
+            Ammo.destroy(tuning);
+            Ammo.destroy(chassis);
+            Ammo.destroy(motionState);
+            this.destroyShape(shape);
+        } else {
+            const { body } = element;
+
+            this.dynamicsWorld.removeRigidBody(body);
+            Ammo.destroy(body);
+            if (body.motionState) Ammo.destroy(body.motionState);
+            this.destroyShape(body.collisionShape);
+        }
 
         dispatcher.sendElementDisposed({ uuid });
     }

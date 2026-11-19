@@ -5,16 +5,22 @@ export const createGhostCollider = (radius, position) => {
     const ghostCollider = new Ammo.btGhostObject();
     const transform = new Ammo.btTransform();
 
-    ghostCollider.setCollisionShape(new Ammo.btSphereShape(radius));
+    const shape = new Ammo.btSphereShape(radius);
+    const rotation = new Ammo.btQuaternion(0, 0, 0, 1);
+
+    ghostCollider.setCollisionShape(shape);
     ghostCollider.getWorldTransform(transform);
 
     transform.setIdentity();
     transform.setOrigin(position);
-    transform.setRotation(new Ammo.btQuaternion(0, 0, 0, 1));
+    transform.setRotation(rotation);
 
     ghostCollider.setWorldTransform(transform);
+    Ammo.destroy(rotation);
 
-    return { ghostCollider, transform };
+    // The ghost keeps a pointer to `shape`: the caller destroys it after the
+    // ghost itself is gone.
+    return { ghostCollider, transform, shape };
 };
 
 export const forEachGhostCollision = (ghostCollider, forEachCallback = () => {}) => {
@@ -38,7 +44,10 @@ export const getExplosionPosition = (uuid, position) => {
         const transform = new Ammo.btTransform();
 
         motionState.getWorldTransform(transform);
-        explosionPosition = transform.getOrigin();
+        // getOrigin() is a reference into the transform: copy it, then free the transform.
+        const origin = transform.getOrigin();
+        explosionPosition = new Ammo.btVector3(origin.x(), origin.y(), origin.z());
+        Ammo.destroy(transform);
     }
 
     return explosionPosition;
@@ -89,7 +98,9 @@ export const createExplosion = ({
                 : null;
 
         const explosionPosition = getExplosionPosition(uuid, position);
-        const { ghostCollider, transform } = createGhostCollider(radius, explosionPosition);
+        // only free the position when getExplosionPosition created it
+        const ownsPosition = explosionPosition !== position;
+        const { ghostCollider, transform, shape } = createGhostCollider(radius, explosionPosition);
 
         world.addCollisionObject(ghostCollider);
 
@@ -113,7 +124,9 @@ export const createExplosion = ({
 
         world.getDynamicsWorld().removeCollisionObject(ghostCollider);
         Ammo.destroy(ghostCollider);
+        Ammo.destroy(shape);
         Ammo.destroy(transform);
+        if (ownsPosition) Ammo.destroy(explosionPosition);
     } catch (e) {
         console.error("[Physics Worker] createExplosion error:", e);
     }
