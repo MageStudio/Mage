@@ -39,7 +39,7 @@ export class LabelHandle extends HudElement {
         this.entity = entity;
         this.offset3 = normalizeOffset(offset);
         this.maxDistance = Math.max(0, toNumber(maxDistance));
-        this.frameHidden = false;
+        this.frameHidden = true;
 
         const { element } = this;
         element.classList.add(LABEL_CLASS);

@@ -77,6 +77,25 @@ describe("layer", () => {
         expect(root.querySelector(".mage-labels").style.pointerEvents).toBe("none");
     });
 
+    it("gives the labels layer its own stacking context so widgets always draw above labels", () => {
+        makeEntity().setLabel({ text: "Hero" });
+
+        const layer = document.querySelector(".mage-labels");
+        expect(layer.style.position).toBe("absolute");
+        expect(layer.style.zIndex).toBe("0");
+        const css = document.getElementById("mage-hud-styles").textContent;
+        expect(/\.mage-labels \{[^}]*z-index: 0/.test(css)).toBe(true);
+    });
+
+    it("starts a new label hidden until its first update", () => {
+        const entity = makeEntity();
+        entity.setLabel({ text: "Hero" });
+        expect(labelOf(entity).style.display).toBe("none");
+
+        UI.updateLabels(makeCamera());
+        expect(labelOf(entity).style.display).toBe("");
+    });
+
     it("survives UI.clear() and UI.loadHUD(), and is not a HUD widget", () => {
         const entity = makeEntity();
         entity.setLabel({ text: "Hero" });
@@ -159,6 +178,26 @@ describe("projection", () => {
         entity.getBody().updateMatrixWorld(true);
         UI.updateLabels(camera);
         expect(labelOf(entity).style.display).toBe("");
+    });
+
+    it("uses the camera's current transform even if its matrix was not updated", () => {
+        const entity = makeEntity(0, 0, 0);
+        entity.setLabel({ text: "Hero" });
+        const camera = makeCamera(10);
+        UI.updateLabels(camera);
+        expect(labelOf(entity).style.display).toBe("");
+
+        // Moves behind the entity; no updateMatrixWorld, as when Scene.update moves it mid-frame.
+        camera.position.z = -10;
+        UI.updateLabels(camera);
+        expect(labelOf(entity).style.display).toBe("none");
+
+        camera.position.set(2, 0, 10);
+        UI.updateLabels(camera);
+        camera.updateMatrixWorld();
+        const expected = new THREE.Vector3(0, 0, 0).project(camera);
+        expect(labelOf(entity).style.display).toBe("");
+        expect(parseTranslate(labelOf(entity)).x).toBeCloseTo(((expected.x + 1) / 2) * W, 3);
     });
 
     it("hides beyond the far plane", () => {
@@ -259,6 +298,7 @@ describe("handle", () => {
 
     it("supports setStyle, show, hide and isVisible", () => {
         const handle = makeEntity().setLabel({ text: "a" });
+        UI.updateLabels(makeCamera());
 
         handle.setStyle({ color: "blue" });
         expect(handle.element.style.color).toBe("blue");

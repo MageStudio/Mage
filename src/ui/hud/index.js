@@ -25,6 +25,8 @@ class HudUI {
             layer.style.bottom = "0";
             layer.style.left = "0";
             layer.style.pointerEvents = "none";
+            // Own stacking context: label z-indexes stay inside it, below every HUD widget.
+            layer.style.zIndex = "0";
             this.labelsLayer = layer;
         }
 
@@ -167,6 +169,9 @@ class HudUI {
         if (!camera || this.labels.size === 0) {
             return;
         }
+
+        // The camera may have moved since the renderer last refreshed its matrices.
+        camera.updateMatrixWorld();
 
         const { width, height } = getContainerSize();
         const options = { width, height, editMode: this.editMode };

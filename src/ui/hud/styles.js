@@ -5,6 +5,7 @@ const STYLE_ID = "mage-hud-styles";
 const CSS = `
 .mage-labels {
     position: absolute;
+    z-index: 0;
     top: 0;
     right: 0;
     bottom: 0;
