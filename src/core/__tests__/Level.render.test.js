@@ -7,8 +7,15 @@ jest.mock("../Scene", () => ({
         getRenderer: () => ({ info: mockInfo }),
         render: () => mockCalls.push("scene.render"),
         renderGizmoLayer: () => mockCalls.push("scene.renderGizmoLayer"),
-        update: jest.fn(),
+        update: jest.fn(() => mockCalls.push("scene.update")),
+        getCameraBody: () => mockCamera,
     },
+}));
+const mockCamera = { isCamera: true };
+
+jest.mock("../../ui/hud", () => ({
+    __esModule: true,
+    default: { updateLabels: jest.fn(() => mockCalls.push("ui.updateLabels")) },
 }));
 const mockInfo = { reset: () => mockCalls.push("info.reset"), render: { calls: 0, triangles: 0 } };
 
@@ -34,6 +41,7 @@ jest.mock("../../fx/postprocessing/PostProcessing", () => ({
 
 import { Level } from "../Level";
 import Stats from "../Stats";
+import UI from "../../ui/hud";
 
 describe("Level.render", () => {
     beforeEach(() => {
@@ -58,5 +66,17 @@ describe("Level.render", () => {
         level.render();
 
         expect(Stats.update).toHaveBeenCalledWith(0.016, mockInfo);
+    });
+
+    test("updates labels once per frame, after Scene.update, with the active camera", () => {
+        const level = new Level({});
+        level.requestNextAnimationFrame = jest.fn();
+        level.render();
+
+        expect(UI.updateLabels).toHaveBeenCalledTimes(1);
+        expect(UI.updateLabels).toHaveBeenCalledWith(mockCamera);
+        expect(mockCalls.indexOf("ui.updateLabels")).toBeGreaterThan(
+            mockCalls.indexOf("scene.update"),
+        );
     });
 });

@@ -4,6 +4,7 @@ import Scene from "./Scene";
 import Stats from "./Stats";
 import Instancing from "./Instancing";
 import Config from "./config";
+import UI from "../ui/hud";
 import Audio from "../audio/Audio";
 import PostProcessing from "../fx/postprocessing/PostProcessing";
 import Particles from "../fx/particles/Particles";
@@ -109,6 +110,7 @@ export class Level extends EventDispatcher {
             Particles.update(dt);
             this.onUpdate(dt);
             Scene.update(dt);
+            UI.updateLabels(Scene.getCameraBody());
             Assets.update(dt);
             Controls.update(dt);
         }

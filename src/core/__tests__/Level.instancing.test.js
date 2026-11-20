@@ -10,6 +10,7 @@ jest.mock("../Scene", () => ({
         render: () => mockCalls.push("scene.render"),
         renderGizmoLayer: () => mockCalls.push("scene.renderGizmoLayer"),
         update: jest.fn(),
+        getCameraBody: () => ({}),
         dispose: () => mockCalls.push("scene.dispose"),
     },
 }));
@@ -25,6 +26,7 @@ jest.mock("../Stats", () => ({
     __esModule: true,
     default: { update: jest.fn(), init: jest.fn() },
 }));
+jest.mock("../../ui/hud", () => ({ __esModule: true, default: { updateLabels: jest.fn() } }));
 jest.mock("../Assets", () => ({ __esModule: true, default: { update: jest.fn() } }));
 jest.mock("../input/Input", () => ({
     __esModule: true,
