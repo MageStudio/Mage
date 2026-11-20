@@ -89,6 +89,13 @@ export class Physics extends EventDispatcher {
     }
 
     dispose() {
+        if (this.refreshTimer !== null) {
+            clearTimeout(this.refreshTimer);
+            this.refreshTimer = null;
+        }
+        this.pendingRefreshRoots = new Map();
+        this.workerReady = false;
+
         if (Config.physics().enabled) {
             this.state = PHYSICS_STATES.TERMINATING;
             this.worker.postMessage({

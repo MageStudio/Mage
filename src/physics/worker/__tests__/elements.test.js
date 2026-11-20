@@ -58,6 +58,7 @@ const installAmmo = (initialFlags = CF_STATIC_OBJECT) => {
         btRigidBody: function () {
             return body;
         },
+        destroy: jest.fn(),
     };
     return body;
 };
