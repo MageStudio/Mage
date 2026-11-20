@@ -39,7 +39,9 @@ a single ES module.
 - `src/ui/hud/`: the public `UI` export, a DOM HUD layer (`.mage-hud` root inside
   `Config.container()`) of button, label and input widgets driven through `HudElement` handles
   (`index.js`, `HudElement.js`, `anchors.js`, `styles.js`). Built per level from
-  `Config.ui(path).hud` and cleared on dispose; has an edit mode used by the editor.
+  `Config.ui(path).hud` and cleared on dispose; has an edit mode used by the editor. It also holds
+  entity labels (`labels.js`): `Entity.setLabel` creates a DOM label in a `.mage-labels` layer
+  (first child of `.mage-hud`) that `UI.updateLabels(camera)` projects every frame.
 - `src/scripts/`: `BaseScript.js`, `StaticScript.js`, `Scripts.js` and `src/scripts/builtin/`.
 - `src/lights/`, `src/materials/`, `src/models/`, `src/images/`, `src/audio/`, `src/video/`,
   `src/loaders/`, `src/controls/`: asset managers and feature modules.
@@ -70,7 +72,7 @@ a single ES module.
    calls `onStart` and resolves with the level.
 6. Each frame, `Level.render` (scheduled with `requestAnimationFrame`) runs `Instancing.update()`
    when instancing is enabled, then updates particles,
-   scene, assets, stats, controls and input, then renders.
+   scene, entity labels (`UI.updateLabels`), assets, stats, controls and input, then renders.
 7. Entities that have colliders send `physics:add:*` messages to the worker. The worker steps
    the Ammo world and posts `physics:update` and collision messages back; `Physics` is an
    `EventDispatcher`, and `Scene` listens for `PHYSICS_EVENTS.UPDATE` to move bodies.

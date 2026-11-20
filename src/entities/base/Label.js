@@ -9,6 +9,10 @@ import { ENTITY_TYPES } from "../constants";
 import { LABEL_DOMELEMENT_MISSING } from "../../lib/messages";
 import { generateRandomName } from "../../lib/uuid";
 
+/**
+ * @deprecated Use `Entity.setLabel` instead: it draws a DOM label that follows the entity, with no
+ * per-change PNG conversion.
+ */
 export default class Label extends Element {
     constructor({ Component, format = "png", width, height, ...options }) {
         super({ format, width, height, options });

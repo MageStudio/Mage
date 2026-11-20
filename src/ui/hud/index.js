@@ -2,6 +2,7 @@ import Config from "../../core/config";
 import { HudElement, isValidType } from "./HudElement";
 import { isValidAnchor } from "./anchors";
 import { HUD_CLASS, injectStyles } from "./styles";
+import { LabelHandle, LABELS_CLASS, updateLabel, getContainerSize } from "./labels";
 
 export { HudElement };
 
@@ -10,6 +11,24 @@ class HudUI {
         this.root = null;
         this.elements = new Map();
         this.editMode = false;
+        this.labels = new Map();
+        this.labelsLayer = null;
+    }
+
+    getLabelsLayer() {
+        if (!this.labelsLayer) {
+            const layer = document.createElement("div");
+            layer.className = LABELS_CLASS;
+            layer.style.position = "absolute";
+            layer.style.top = "0";
+            layer.style.right = "0";
+            layer.style.bottom = "0";
+            layer.style.left = "0";
+            layer.style.pointerEvents = "none";
+            this.labelsLayer = layer;
+        }
+
+        return this.labelsLayer;
     }
 
     // Created lazily so importing the engine never touches `document`.
@@ -38,6 +57,8 @@ class HudUI {
             root.style.bottom = "0";
             root.style.left = "0";
             root.style.pointerEvents = "none";
+            // The labels layer goes first so every HUD widget draws above labels.
+            root.appendChild(this.getLabelsLayer());
             container.appendChild(root);
 
             this.root = root;
@@ -105,6 +126,52 @@ class HudUI {
     setEditMode(editMode) {
         this.editMode = Boolean(editMode);
         this.elements.forEach(handle => handle.setEditMode(this.editMode));
+        this.labels.forEach(handle => handle.setEditMode(this.editMode));
+    }
+
+    setLabel(entity, definition = {}) {
+        this.removeLabel(entity, { silent: true });
+
+        const handle = new LabelHandle(entity, definition, { editMode: this.editMode });
+        this.getRoot();
+        this.getLabelsLayer().appendChild(handle.element);
+        this.labels.set(entity, handle);
+
+        return handle;
+    }
+
+    hasLabel(entity) {
+        return this.labels.has(entity);
+    }
+
+    getLabel(entity) {
+        const handle = this.labels.get(entity);
+
+        if (!handle) {
+            throw new Error(`Entity "${entity.getName()}" has no label`);
+        }
+
+        return handle;
+    }
+
+    removeLabel(entity, { silent = false } = {}) {
+        const handle = silent ? this.labels.get(entity) : this.getLabel(entity);
+
+        if (handle) {
+            handle.dispose();
+            this.labels.delete(entity);
+        }
+    }
+
+    updateLabels(camera) {
+        if (!camera || this.labels.size === 0) {
+            return;
+        }
+
+        const { width, height } = getContainerSize();
+        const options = { width, height, editMode: this.editMode };
+
+        this.labels.forEach(handle => updateLabel(handle, camera, options));
     }
 
     isEditMode() {

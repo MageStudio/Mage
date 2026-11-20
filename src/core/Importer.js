@@ -132,6 +132,11 @@ export class Importer {
         if (!skipTags && elementData.tags) {
             element.addTags(elementData.tags);
         }
+
+        // floating label
+        if (elementData.label) {
+            element.setLabel(elementData.label);
+        }
     }
 
     static async completeElementCreation(element, elementData, options) {

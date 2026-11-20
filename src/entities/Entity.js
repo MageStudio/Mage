@@ -17,6 +17,7 @@ import {
 } from "../lib/messages";
 import Scripts from "../scripts/Scripts";
 import Scene from "../core/Scene";
+import UI from "../ui/hud";
 import Universe from "../core/universe";
 
 import { isScene, serializeQuaternion, serializeVector } from "../lib/meshUtils";
@@ -399,7 +400,31 @@ export default class Entity extends EventDispatcher {
         }
     }
 
+    /**
+     * Creates (or replaces) the entity's floating label, a DOM element in the HUD layer that
+     * follows the entity's projected position. Returns its handle.
+     */
+    setLabel(definition = {}) {
+        return UI.setLabel(this, definition);
+    }
+
+    getLabel() {
+        return UI.getLabel(this);
+    }
+
+    hasLabel() {
+        return UI.hasLabel(this);
+    }
+
+    removeLabel() {
+        UI.removeLabel(this);
+    }
+
     dispose() {
+        if (this.hasLabel()) {
+            this.removeLabel();
+        }
+
         if (this.hasChildren()) {
             this.children.forEach(child => {
                 child.dispose();
@@ -901,6 +926,7 @@ export default class Entity extends EventDispatcher {
                     cast: this.getBody().castShadow,
                     receive: this.getBody().receiveShadow,
                 },
+                ...(this.hasLabel() ? { label: this.getLabel().toDefinition() } : {}),
             };
         }
     }

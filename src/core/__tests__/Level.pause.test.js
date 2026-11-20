@@ -9,8 +9,10 @@ jest.mock("../Scene", () => ({
     render: track("Scene.render"),
     renderGizmoLayer: track("Scene.renderGizmoLayer"),
     update: track("Scene.update"),
+    getCameraBody: () => ({}),
     getRenderer: () => ({ info: { reset: jest.fn() } }),
 }));
+jest.mock("../../ui/hud", () => ({ updateLabels: jest.fn() }));
 jest.mock("../Stats", () => ({ update: track("Stats.update") }));
 jest.mock("../../audio/Audio", () => ({}));
 jest.mock("../../fx/postprocessing/PostProcessing", () => ({
