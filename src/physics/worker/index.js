@@ -10,6 +10,7 @@ import {
     addSphere,
     setPosition,
     setQuaternion,
+    setChildTransform,
     resetElement,
 } from "./elements";
 import { createExplosion } from "./effects";
@@ -58,6 +59,9 @@ const handleLoadEvent = options => Ammo => {
                 break;
             case PHYSICS_EVENTS.ELEMENT.SET.QUATERNION:
                 setQuaternion(data);
+                break;
+            case PHYSICS_EVENTS.ELEMENT.SET.CHILD_TRANSFORM:
+                setChildTransform(data);
                 break;
             case PHYSICS_EVENTS.VEHICLE.SET.POSITION:
                 setVehiclePosition(data);
