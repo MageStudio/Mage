@@ -28,6 +28,7 @@ export const PHYSICS_EVENTS = {
         SET: {
             POSITION: "physics:element:set:position",
             QUATERNION: "physics:element:set:quaternion",
+            CHILD_TRANSFORM: "physics:element:set:child_transform",
             LINEAR_VELOCITY: "physics:element:set:linear_velocity",
         },
 

@@ -1160,8 +1160,9 @@ export default class Element extends Entity {
             Physics.setElementPosition(this, this.getPosition());
         } else {
             // Not a realized body itself — but possibly a compound member whose
-            // baked local offset just went stale. Rebuild the owning body.
-            Physics.refreshOwningBody(this);
+            // baked local offset just went stale. Move just its leaves in the
+            // owning compound; no rebuild.
+            Physics.updateCompoundMember(this);
         }
     }
 
@@ -1176,7 +1177,7 @@ export default class Element extends Entity {
                 w: quaternion.w,
             });
         } else {
-            Physics.refreshOwningBody(this);
+            Physics.updateCompoundMember(this);
         }
     }
 
@@ -1185,7 +1186,7 @@ export default class Element extends Entity {
         if (Physics.hasElement(this)) {
             Physics.setElementQuaternion(this, { x, y, z, w });
         } else {
-            Physics.refreshOwningBody(this);
+            Physics.updateCompoundMember(this);
         }
     }
 

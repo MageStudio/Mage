@@ -658,9 +658,10 @@ export class Physics extends EventDispatcher {
     }
 
     // Rebuild the realized body owning `element`'s collider after a change that
-    // stales baked shape data: the scale of any collider, or the local
-    // position/rotation of a compound member (compound shapes bake child sizes
-    // and parent-relative transforms at build time — see buildCompoundShape).
+    // stales baked shape data: the scale of any collider (compound shapes bake
+    // child sizes at build time — see buildCompoundShape). A compound member's
+    // plain move/rotate does NOT come here: updateCompoundMember moves just its
+    // leaves in place.
     // Debounced per root so a drag rebuilds each affected body once per flush,
     // not once per mouse event. Elements outside any realized physics body
     // (mid-import, editor with physics off, plain visuals) are not physics
@@ -685,6 +686,61 @@ export class Physics extends EventDispatcher {
                 this.realizeSubtree(pendingRoot);
             });
         }, 0);
+    }
+
+    // A compound member moved or rotated (but did not change size). Only its
+    // leaf transforms inside the already-built compound change, so instead of
+    // rebuilding the owning body (which loses velocities and, for a member
+    // animated every frame, churns the whole compound) send the new
+    // root-relative placement of the member's leaves — and of every physics
+    // descendant, which travels with it. Scale changes still go through
+    // refreshOwningBody: leaf sizes are baked. A rebuild already pending for the
+    // root picks the change up itself.
+    updateCompoundMember(element) {
+        if (!Config.physics().enabled || !this.worker) return;
+
+        const root = this.topmostPhysicsRoot(element);
+        if (!root || root === element || !this.elements.includes(root.uuid())) return;
+        if (this.pendingRefreshRoots.has(root.uuid())) return;
+
+        const rootBody = root.getBody();
+        rootBody.updateWorldMatrix(true, true);
+        const rootWorldPos = rootBody.getWorldPosition(new Vector3());
+        const invRootQuat = rootBody.getWorldQuaternion(new Quaternion()).invert();
+
+        // Siblings are measured out of each member's geometry exactly as at build
+        // time, so the placement matches what a rebuild would have produced.
+        const colliderBodies = [root, ...this.collectPhysicsSubtree(root)].map(c => c.getBody());
+        const moved = [
+            ...(element.isPhysicsEnabled && element.isPhysicsEnabled() ? [element] : []),
+            ...this.collectPhysicsSubtree(element),
+        ].filter(member => (member.getPhysicsOptions() || {}).colliderType !== COLLIDER_TYPES.NONE);
+
+        const children = moved
+            .map(member => {
+                const [shape] = this.buildCompoundShapes(
+                    member,
+                    rootWorldPos,
+                    invRootQuat,
+                    colliderBodies,
+                );
+                // A hull set with no usable hull has no leaves to move.
+                if (!shape) return null;
+                return {
+                    uuid: member.uuid(),
+                    localPosition: shape.localPosition,
+                    localQuaternion: shape.localQuaternion,
+                };
+            })
+            .filter(Boolean);
+
+        if (children.length === 0) return;
+
+        this.worker.postMessage({
+            event: PHYSICS_EVENTS.ELEMENT.SET.CHILD_TRANSFORM,
+            uuid: root.uuid(),
+            children,
+        });
     }
 
     // Realize physics for `element` after it is enabled at RUNTIME (not during

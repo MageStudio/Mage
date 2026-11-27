@@ -414,6 +414,57 @@ export const addCompound = data => {
     });
 };
 
+// Re-place compound leaves inside an existing compound body. `children` lists
+// element uuids with their new transform in the root's frame; every leaf of an
+// element (a generated collision variant contributes several) moves together.
+// The rigid body, its world transform and its flags are left alone, so a
+// kinematic root keeps rotating and a dynamic one keeps its velocities. The
+// childMap descriptors follow, so contact attribution (resolveChildUuid) keeps
+// matching the shapes. Unknown uuids throw, before anything is changed.
+export const setChildTransform = data => {
+    const { uuid, children = [] } = data;
+    const element = world.getElement(uuid);
+
+    if (!element || !element.childMap || !element.body || !element.body.collisionShape) {
+        throw new Error(`[Physics Worker] setChildTransform: no compound body for uuid ${uuid}`);
+    }
+
+    const { childMap } = element;
+    const compound = element.body.collisionShape;
+
+    const resolved = children.map(child => {
+        const descriptors = childMap.filter(descriptor => descriptor.uuid === child.uuid);
+        if (descriptors.length === 0) {
+            throw new Error(
+                `[Physics Worker] setChildTransform: compound ${uuid} has no child ${child.uuid}`,
+            );
+        }
+        return { child, descriptors };
+    });
+
+    const transform = new Ammo.btTransform();
+    resolved.forEach(({ child, descriptors }) => {
+        const { localPosition: p, localQuaternion: q } = child;
+        const origin = new Ammo.btVector3(p.x, p.y, p.z);
+        const rotation = new Ammo.btQuaternion(q.x, q.y, q.z, q.w);
+
+        transform.setIdentity();
+        transform.setOrigin(origin);
+        transform.setRotation(rotation);
+
+        descriptors.forEach(descriptor => {
+            // Recomputes the compound's local AABB so the broadphase stays right.
+            compound.updateChildTransform(descriptor.index, transform);
+            descriptor.localPosition = { x: p.x, y: p.y, z: p.z };
+            descriptor.localQuaternion = { x: q.x, y: q.y, z: q.z, w: q.w };
+        });
+
+        Ammo.destroy(origin);
+        Ammo.destroy(rotation);
+    });
+    Ammo.destroy(transform);
+};
+
 export const setLinearVelocity = data => {
     const { uuid, velocity = DEFAULT_LINEAR_VELOCITY } = data;
     const { body } = world.getElement(uuid);

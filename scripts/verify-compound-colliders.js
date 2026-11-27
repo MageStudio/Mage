@@ -33,7 +33,7 @@ require("@babel/register")({
 });
 
 const world = require("../src/physics/worker/world").default;
-const { addCompound, addSphere, setLinearVelocity } = require("../src/physics/worker/elements");
+const { addCompound, addSphere, setLinearVelocity, setChildTransform } = require("../src/physics/worker/elements");
 const { PHYSICS_EVENTS } = require("../src/physics/messages");
 const { COLLIDER_TYPES } = require("../src/physics/constants");
 
@@ -181,6 +181,49 @@ ammoFactory().then(A => {
         "reparent-out rebuild removes the wall collider",
         pos.x > 3.5 && wallCollisions() === 0,
         `sphere.x=${pos.x.toFixed(2)} (expect >3.5), wallCollisions=${wallCollisions()}`,
+    );
+
+    // ── Scenario 4: moving a child leaf in place (setChildTransform) ─────────
+    //    The wall leaf is moved out of the sphere's path without rebuilding: the
+    //    rigid body instance must survive and the sphere must now pass through
+    //    where the wall used to be. Moving it back must block the sphere again.
+    resetWorld();
+    buildFloor({ withWall: true });
+    const bodyBefore = world.getElement("floor").body;
+    setChildTransform({
+        uuid: "floor",
+        children: [
+            { uuid: "wall", localPosition: { x: 4, y: 2.5, z: 40 }, localQuaternion: IDENTITY_Q },
+        ],
+    });
+    addRollingSphere({ x: 0, y: 1.1, z: 0 }, { x: 12, y: 0, z: 0 });
+    pos = run();
+    check(
+        "child moved in place no longer blocks, body kept",
+        pos.x > 3.5 && wallCollisions() === 0 && world.getElement("floor").body === bodyBefore,
+        `sphere.x=${pos.x.toFixed(2)} (expect >3.5), wallCollisions=${wallCollisions()}`,
+    );
+
+    resetWorld();
+    buildFloor({ withWall: true });
+    setChildTransform({
+        uuid: "floor",
+        children: [
+            { uuid: "wall", localPosition: { x: 4, y: 2.5, z: 40 }, localQuaternion: IDENTITY_Q },
+        ],
+    });
+    setChildTransform({
+        uuid: "floor",
+        children: [
+            { uuid: "wall", localPosition: { x: 4, y: 2.5, z: 0 }, localQuaternion: IDENTITY_Q },
+        ],
+    });
+    addRollingSphere({ x: 0, y: 1.1, z: 0 }, { x: 12, y: 0, z: 0 });
+    pos = run();
+    check(
+        "child moved back blocks the sphere again",
+        pos.x < 3.5 && wallCollisions() > 0,
+        `sphere.x=${pos.x.toFixed(2)} (expect <3.5), wallCollisions=${wallCollisions()}`,
     );
 
     const failed = results.filter(r => !r.pass);
